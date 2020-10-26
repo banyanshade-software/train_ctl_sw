@@ -1,0 +1,428 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 50;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		1B67360F2531E4450063EA9A /* SimTrain.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B67360E2531E4450063EA9A /* SimTrain.m */; };
+		1BD93C6C2546FF44006C4D70 /* param.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BD93C4B2546FF42006C4D70 /* param.c */; };
+		1BD93C6D2546FF44006C4D70 /* railconfig.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BD93C4E2546FF42006C4D70 /* railconfig.c */; };
+		1BD93C6E2546FF44006C4D70 /* inertia.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BD93C4F2546FF42006C4D70 /* inertia.c */; };
+		1BD93C6F2546FF44006C4D70 /* auto1.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BD93C502546FF42006C4D70 /* auto1.c */; };
+		1BD93C702546FF44006C4D70 /* traincontrol.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BD93C532546FF42006C4D70 /* traincontrol.c */; };
+		1BD93C712546FF44006C4D70 /* txrxcmd.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BD93C552546FF42006C4D70 /* txrxcmd.c */; };
+		1BD93C722546FF44006C4D70 /* turnout.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BD93C562546FF42006C4D70 /* turnout.c */; };
+		1BD93C732546FF44006C4D70 /* train.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BD93C582546FF42006C4D70 /* train.c */; };
+		1BD93C772546FF44006C4D70 /* readme.txt in Resources */ = {isa = PBXBuildFile; fileRef = 1BD93C652546FF42006C4D70 /* readme.txt */; };
+		1BD93C782546FF44006C4D70 /* misc.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BD93C682546FF42006C4D70 /* misc.c */; };
+		1BD93C792546FF44006C4D70 /* pidctl.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BD93C692546FF42006C4D70 /* pidctl.c */; };
+		1BD93C7A2546FF44006C4D70 /* canton.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BD93C6A2546FF42006C4D70 /* canton.c */; };
+		1BED2A9825173CF40080FC97 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BED2A9725173CF40080FC97 /* AppDelegate.m */; };
+		1BED2A9A25173D1E0080FC97 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1BED2A9925173D1E0080FC97 /* Assets.xcassets */; };
+		1BED2A9D25173D1F0080FC97 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1BED2A9B25173D1F0080FC97 /* MainMenu.xib */; };
+		1BED2AA025173D1F0080FC97 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BED2A9F25173D1F0080FC97 /* main.m */; };
+		1BED2AA8251804310080FC97 /* stop.png in Resources */ = {isa = PBXBuildFile; fileRef = 1BED2AA7251804310080FC97 /* stop.png */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		1B67360D2531E4450063EA9A /* SimTrain.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SimTrain.h; sourceTree = "<group>"; };
+		1B67360E2531E4450063EA9A /* SimTrain.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SimTrain.m; sourceTree = "<group>"; };
+		1BD93C4B2546FF42006C4D70 /* param.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = param.c; sourceTree = "<group>"; };
+		1BD93C4C2546FF42006C4D70 /* trainctl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = trainctl.h; sourceTree = "<group>"; };
+		1BD93C4D2546FF42006C4D70 /* train.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = train.h; sourceTree = "<group>"; };
+		1BD93C4E2546FF42006C4D70 /* railconfig.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = railconfig.c; sourceTree = "<group>"; };
+		1BD93C4F2546FF42006C4D70 /* inertia.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = inertia.c; sourceTree = "<group>"; };
+		1BD93C502546FF42006C4D70 /* auto1.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = auto1.c; sourceTree = "<group>"; };
+		1BD93C512546FF42006C4D70 /* misc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = misc.h; sourceTree = "<group>"; };
+		1BD93C522546FF42006C4D70 /* pidctl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pidctl.h; sourceTree = "<group>"; };
+		1BD93C532546FF42006C4D70 /* traincontrol.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = traincontrol.c; sourceTree = "<group>"; };
+		1BD93C542546FF42006C4D70 /* train_simu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = train_simu.h; sourceTree = "<group>"; };
+		1BD93C552546FF42006C4D70 /* txrxcmd.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = txrxcmd.c; sourceTree = "<group>"; };
+		1BD93C562546FF42006C4D70 /* turnout.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = turnout.c; sourceTree = "<group>"; };
+		1BD93C572546FF42006C4D70 /* canton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = canton.h; sourceTree = "<group>"; };
+		1BD93C582546FF42006C4D70 /* train.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = train.c; sourceTree = "<group>"; };
+		1BD93C602546FF42006C4D70 /* param.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = param.h; sourceTree = "<group>"; };
+		1BD93C612546FF42006C4D70 /* auto1.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = auto1.h; sourceTree = "<group>"; };
+		1BD93C622546FF42006C4D70 /* inertia.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = inertia.h; sourceTree = "<group>"; };
+		1BD93C632546FF42006C4D70 /* railconfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = railconfig.h; sourceTree = "<group>"; };
+		1BD93C642546FF42006C4D70 /* trainctl_iface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = trainctl_iface.h; sourceTree = "<group>"; };
+		1BD93C652546FF42006C4D70 /* readme.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = readme.txt; sourceTree = "<group>"; };
+		1BD93C662546FF42006C4D70 /* txrxcmd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = txrxcmd.h; sourceTree = "<group>"; };
+		1BD93C672546FF42006C4D70 /* traincontrol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = traincontrol.h; sourceTree = "<group>"; };
+		1BD93C682546FF42006C4D70 /* misc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = misc.c; sourceTree = "<group>"; };
+		1BD93C692546FF42006C4D70 /* pidctl.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pidctl.c; sourceTree = "<group>"; };
+		1BD93C6A2546FF42006C4D70 /* canton.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = canton.c; sourceTree = "<group>"; };
+		1BD93C6B2546FF42006C4D70 /* turnout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = turnout.h; sourceTree = "<group>"; };
+		1BED2A9325173CF40080FC97 /* train_throttle.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = train_throttle.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		1BED2A9625173CF40080FC97 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		1BED2A9725173CF40080FC97 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		1BED2A9925173D1E0080FC97 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		1BED2A9C25173D1F0080FC97 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		1BED2A9E25173D1F0080FC97 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		1BED2A9F25173D1F0080FC97 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		1BED2AA125173D1F0080FC97 /* train_throttle.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = train_throttle.entitlements; sourceTree = "<group>"; };
+		1BED2AA7251804310080FC97 /* stop.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = stop.png; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		1BED2A9025173CF40080FC97 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		1BD93C4A2546FF42006C4D70 /* trainctl */ = {
+			isa = PBXGroup;
+			children = (
+				1BD93C4B2546FF42006C4D70 /* param.c */,
+				1BD93C4C2546FF42006C4D70 /* trainctl.h */,
+				1BD93C4D2546FF42006C4D70 /* train.h */,
+				1BD93C4E2546FF42006C4D70 /* railconfig.c */,
+				1BD93C4F2546FF42006C4D70 /* inertia.c */,
+				1BD93C502546FF42006C4D70 /* auto1.c */,
+				1BD93C512546FF42006C4D70 /* misc.h */,
+				1BD93C522546FF42006C4D70 /* pidctl.h */,
+				1BD93C532546FF42006C4D70 /* traincontrol.c */,
+				1BD93C542546FF42006C4D70 /* train_simu.h */,
+				1BD93C552546FF42006C4D70 /* txrxcmd.c */,
+				1BD93C562546FF42006C4D70 /* turnout.c */,
+				1BD93C572546FF42006C4D70 /* canton.h */,
+				1BD93C582546FF42006C4D70 /* train.c */,
+				1BD93C602546FF42006C4D70 /* param.h */,
+				1BD93C612546FF42006C4D70 /* auto1.h */,
+				1BD93C622546FF42006C4D70 /* inertia.h */,
+				1BD93C632546FF42006C4D70 /* railconfig.h */,
+				1BD93C642546FF42006C4D70 /* trainctl_iface.h */,
+				1BD93C652546FF42006C4D70 /* readme.txt */,
+				1BD93C662546FF42006C4D70 /* txrxcmd.h */,
+				1BD93C672546FF42006C4D70 /* traincontrol.h */,
+				1BD93C682546FF42006C4D70 /* misc.c */,
+				1BD93C692546FF42006C4D70 /* pidctl.c */,
+				1BD93C6A2546FF42006C4D70 /* canton.c */,
+				1BD93C6B2546FF42006C4D70 /* turnout.h */,
+			);
+			name = trainctl;
+			path = ../../trainctl;
+			sourceTree = "<group>";
+		};
+		1BED2A8A25173CF40080FC97 = {
+			isa = PBXGroup;
+			children = (
+				1BD93C4A2546FF42006C4D70 /* trainctl */,
+				1BED2A9525173CF40080FC97 /* train_throttle */,
+				1BED2A9425173CF40080FC97 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		1BED2A9425173CF40080FC97 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				1BED2A9325173CF40080FC97 /* train_throttle.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		1BED2A9525173CF40080FC97 /* train_throttle */ = {
+			isa = PBXGroup;
+			children = (
+				1BED2A9625173CF40080FC97 /* AppDelegate.h */,
+				1BED2A9725173CF40080FC97 /* AppDelegate.m */,
+				1B67360D2531E4450063EA9A /* SimTrain.h */,
+				1B67360E2531E4450063EA9A /* SimTrain.m */,
+				1BED2A9925173D1E0080FC97 /* Assets.xcassets */,
+				1BED2A9B25173D1F0080FC97 /* MainMenu.xib */,
+				1BED2A9E25173D1F0080FC97 /* Info.plist */,
+				1BED2A9F25173D1F0080FC97 /* main.m */,
+				1BED2AA125173D1F0080FC97 /* train_throttle.entitlements */,
+				1BED2AA7251804310080FC97 /* stop.png */,
+			);
+			path = train_throttle;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		1BED2A9225173CF40080FC97 /* train_throttle */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1BED2AA425173D1F0080FC97 /* Build configuration list for PBXNativeTarget "train_throttle" */;
+			buildPhases = (
+				1BED2A8F25173CF40080FC97 /* Sources */,
+				1BED2A9025173CF40080FC97 /* Frameworks */,
+				1BED2A9125173CF40080FC97 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = train_throttle;
+			productName = train_throttle;
+			productReference = 1BED2A9325173CF40080FC97 /* train_throttle.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		1BED2A8B25173CF40080FC97 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 1130;
+				ORGANIZATIONNAME = "Daniel BRAUN";
+				TargetAttributes = {
+					1BED2A9225173CF40080FC97 = {
+						CreatedOnToolsVersion = 11.3;
+					};
+				};
+			};
+			buildConfigurationList = 1BED2A8E25173CF40080FC97 /* Build configuration list for PBXProject "train_throttle" */;
+			compatibilityVersion = "Xcode 9.3";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 1BED2A8A25173CF40080FC97;
+			productRefGroup = 1BED2A9425173CF40080FC97 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				1BED2A9225173CF40080FC97 /* train_throttle */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		1BED2A9125173CF40080FC97 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1BED2A9A25173D1E0080FC97 /* Assets.xcassets in Resources */,
+				1BED2A9D25173D1F0080FC97 /* MainMenu.xib in Resources */,
+				1BD93C772546FF44006C4D70 /* readme.txt in Resources */,
+				1BED2AA8251804310080FC97 /* stop.png in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		1BED2A8F25173CF40080FC97 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1BD93C782546FF44006C4D70 /* misc.c in Sources */,
+				1BED2AA025173D1F0080FC97 /* main.m in Sources */,
+				1BD93C6D2546FF44006C4D70 /* railconfig.c in Sources */,
+				1BD93C6E2546FF44006C4D70 /* inertia.c in Sources */,
+				1BD93C732546FF44006C4D70 /* train.c in Sources */,
+				1BD93C6C2546FF44006C4D70 /* param.c in Sources */,
+				1BED2A9825173CF40080FC97 /* AppDelegate.m in Sources */,
+				1BD93C792546FF44006C4D70 /* pidctl.c in Sources */,
+				1BD93C722546FF44006C4D70 /* turnout.c in Sources */,
+				1BD93C7A2546FF44006C4D70 /* canton.c in Sources */,
+				1B67360F2531E4450063EA9A /* SimTrain.m in Sources */,
+				1BD93C702546FF44006C4D70 /* traincontrol.c in Sources */,
+				1BD93C6F2546FF44006C4D70 /* auto1.c in Sources */,
+				1BD93C712546FF44006C4D70 /* txrxcmd.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		1BED2A9B25173D1F0080FC97 /* MainMenu.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				1BED2A9C25173D1F0080FC97 /* Base */,
+			);
+			name = MainMenu.xib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		1BED2AA225173D1F0080FC97 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+					TRAIN_SIMU,
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = /Users/danielbraun/STM32CubeIDE/workspace_1.4.0/test_usb_f103/trainctl/;
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		1BED2AA325173D1F0080FC97 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = TRAIN_SIMU;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = /Users/danielbraun/STM32CubeIDE/workspace_1.4.0/test_usb_f103/trainctl/;
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		1BED2AA525173D1F0080FC97 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = train_throttle/train_throttle.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = 86FRVQ49X4;
+				ENABLE_HARDENED_RUNTIME = YES;
+				INFOPLIST_FILE = train_throttle/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.banyanshade-software.train-throttle";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		1BED2AA625173D1F0080FC97 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = train_throttle/train_throttle.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = 86FRVQ49X4;
+				ENABLE_HARDENED_RUNTIME = YES;
+				INFOPLIST_FILE = train_throttle/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.banyanshade-software.train-throttle";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1BED2A8E25173CF40080FC97 /* Build configuration list for PBXProject "train_throttle" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1BED2AA225173D1F0080FC97 /* Debug */,
+				1BED2AA325173D1F0080FC97 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1BED2AA425173D1F0080FC97 /* Build configuration list for PBXNativeTarget "train_throttle" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1BED2AA525173D1F0080FC97 /* Debug */,
+				1BED2AA625173D1F0080FC97 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 1BED2A8B25173CF40080FC97 /* Project object */;
+}

@@ -67,7 +67,7 @@ static  canton_config_t Cantons[NUM_CANTONS] = {
 static  train_config_t Trains[NUM_TRAINS] = {
 		{
 				{ // pidctl_config_t
-						50, 30, 350,  // kP, kI, kD
+						50, 30, 750,  // kP, kI, kD
                     /*
                      * 50, 30, -50,
                      */
@@ -106,28 +106,28 @@ static int setup_done = 0;
 
 const canton_config_t *get_canton_cnf(int idx)
 {
-	if (!setup_done) return config_error(-1, "railconfig_setup_default not called");
+	if (!setup_done) return config_error(ERR_SETUP_KO, "railconfig_setup_default not called");
 	if ((idx<0) || (idx>= NUM_CANTONS)) return NULL;
 	return &Cantons[idx];
 }
 
 canton_vars_t *get_canton_vars(int idx)
 {
-	if (!setup_done) return config_error(-1, "railconfig_setup_default not called");
+	if (!setup_done) return config_error(ERR_SETUP_KO, "railconfig_setup_default not called");
 	if ((idx<0) || (idx>= NUM_CANTONS)) return NULL;
 	return &CantonsVars[idx];
 }
 
 const train_config_t *get_train_cnf(int idx)
 {
-	if (!setup_done) return config_error(-1, "railconfig_setup_default not called");
+	if (!setup_done) return config_error(ERR_SETUP_KO, "railconfig_setup_default not called");
 	if ((idx<0) || (idx>= NUM_TRAINS)) return NULL;
 	return &Trains[idx];
 }
 
 train_vars_t *get_train_vars(int idx)
 {
-	if (!setup_done) return config_error(-1, "railconfig_setup_default not called");
+	if (!setup_done) return config_error(ERR_SETUP_KO, "railconfig_setup_default not called");
 	if ((idx<0) || (idx>= NUM_TRAINS)) return NULL;
 	return &TrainsVars[idx];
 }
@@ -135,13 +135,13 @@ train_vars_t *get_train_vars(int idx)
 
 const turnout_config_t  *get_turnout_cnf(int idx)
 {
-	if (!setup_done) return config_error(-1, "railconfig_setup_default not called");
+	if (!setup_done) return config_error(ERR_SETUP_KO, "railconfig_setup_default not called");
 	if ((idx<0) || (idx>= NUM_TURNOUTS)) return NULL;
 	return &Turnouts[idx];
 }
 turnout_vars_t  *get_turnout_vars(int idx)
 {
-	if (!setup_done) return config_error(-1, "railconfig_setup_default not called");
+	if (!setup_done) return config_error(ERR_SETUP_KO, "railconfig_setup_default not called");
 	if ((idx<0) || (idx>= NUM_TURNOUTS)) return NULL;
 	return &TurnoutVars[idx];
 }
@@ -163,20 +163,21 @@ int turnout_idx(turnout_vars_t *v)
 
 void railconfig_setup_default(void)
 {
+    setup_done = 1;
 	for (int i=0; i<NUM_CANTONS; i++) {
 		canton_reset(&Cantons[i], &CantonsVars[i]);
 	}
 	for (int i=0; i<NUM_TRAINS; i++) {
 		train_reset(&Trains[i], &TrainsVars[i]);
 	}
-    canton_take(&Cantons[0], &CantonsVars[0], canton_occupied_loco,  0);
+    canton_take(0, canton_occupied_loco,  0);
     TrainsVars[0].current_canton = 0;
     TrainsVars[0].current_canton_dir = 1;
-    canton_take(&Cantons[1], &CantonsVars[1], canton_occupied_loco,  0);
+    canton_take(1, canton_occupied_loco,  0);
     TrainsVars[0].next_canton = 1;
     TrainsVars[0].next_canton_dir = 1;
-	setup_done = 1;
-	for (int i=0; i<NUM_TURNOUTS; i++) {
+
+    for (int i=0; i<NUM_TURNOUTS; i++) {
 		turnout_reset(i);
 	}
 }

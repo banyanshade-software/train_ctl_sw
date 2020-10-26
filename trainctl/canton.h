@@ -109,9 +109,9 @@ int volt_index(uint16_t mili_power,
 
 void canton_reset(const canton_config_t *c, canton_vars_t *v);
 
-int canton_take(const canton_config_t *c, canton_vars_t *v, canton_occupency_t st,  int trainidx);
-int canton_change_status(const canton_config_t *c, canton_vars_t *v, canton_occupency_t st,  int trainidx);
-int canton_release(const canton_config_t *c, canton_vars_t *v, int trainidx);
+int canton_take(int numcanton, canton_occupency_t st,  int trainidx);
+int canton_change_status(int numcanton, canton_occupency_t st,  int trainidx);
+int canton_release(int numcanton, int trainidx);
 
 void canton_set_pwm(const canton_config_t *c, canton_vars_t *v,  int dir, int duty);
 void canton_set_volt(const canton_config_t *c, canton_vars_t *v,  int voltidx);

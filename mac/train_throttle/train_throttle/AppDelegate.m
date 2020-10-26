@@ -229,7 +229,7 @@ typedef void (^respblk_t)(void);
     spdfrm[3] = (uint8_t)t;
     int l = 2+4+0;
     [self sendFrame:spdfrm len:l blen:sizeof(spdfrm) then:^{
-        NSLog(@"hop");
+        NSLog(@"turnout done");
     }];
 }
 
@@ -240,7 +240,7 @@ typedef void (^respblk_t)(void);
     spdfrm[3] = (uint8_t)t;
     int l = 2+4+0;
     [self sendFrame:spdfrm len:l blen:sizeof(spdfrm) then:^{
-        NSLog(@"hop");
+        NSLog(@"turnout done");
     }];
 }
 
@@ -252,7 +252,7 @@ typedef void (^respblk_t)(void);
     spdfrm[3] = (uint8_t)t;
     int l = 2+4+0;
     [self sendFrame:spdfrm len:l blen:sizeof(spdfrm) then:^{
-        NSLog(@"hop");
+        NSLog(@"turnoutW done");
     }];
 }
 
@@ -263,7 +263,7 @@ typedef void (^respblk_t)(void);
     //spdfrm[3] = (uint8_t)t;
     int l = 2+4+0;
     [self sendFrame:spdfrm len:l blen:sizeof(spdfrm) then:^{
-        NSLog(@"hop");
+        NSLog(@"clearePose done");
     }];
 }
 
@@ -446,7 +446,7 @@ typedef void (^respblk_t)(void);
                 return ;
             }
             NSAssert(self->frm.pidx == 4*sizeof(int32_t), @"wrong resp len");
-            NSLog(@"hop");
+            NSLog(@"param val");
             int32_t val, min, max, def;
             memcpy(&val, self->frm.param + 0*sizeof(int32_t), sizeof(int32_t));
             memcpy(&def, self->frm.param + 1*sizeof(int32_t), sizeof(int32_t));
@@ -456,7 +456,7 @@ typedef void (^respblk_t)(void);
             NSLog(@"val %d def %d min %d max %d\n", val, def ,min, max);
             
         }];
-        NSLog(@"hop");
+        //NSLog(@"hop");
     }];
 }
 
@@ -535,7 +535,7 @@ typedef void (^respblk_t)(void);
                 return ;
             }
             NSAssert(self->frm.pidx == 4*sizeof(int32_t), @"wrong resp len");
-            NSLog(@"hop");
+            NSLog(@"reset to default val");
             int32_t val, min, max, def;
             memcpy(&val, self->frm.param + 0*sizeof(int32_t), sizeof(int32_t));
             memcpy(&def, self->frm.param + 1*sizeof(int32_t), sizeof(int32_t));
@@ -591,7 +591,7 @@ typedef void (^respblk_t)(void);
                 return ;
             }
             NSAssert(self->frm.pidx == 4*sizeof(int32_t), @"wrong resp len");
-            NSLog(@"hop");
+            NSLog(@"resetToZero val");
             int32_t val, min, max, def;
             memcpy(&val, self->frm.param + 0*sizeof(int32_t), sizeof(int32_t));
             memcpy(&def, self->frm.param + 1*sizeof(int32_t), sizeof(int32_t));
@@ -811,7 +811,7 @@ static int frm_unescape(uint8_t *buf, int len)
     dta = [d bytes];
     for (int i=0; i<l; i++) {
         uint8_t c = dta[i];
-        if ((TRC)) NSLog(@"st %d -- c %c %2.2X -- e=%d pidx=%d\n", frm.state, c, c, frm.escape, frm.pidx);
+        if ((TRC>1)) NSLog(@"st %d -- c %c %2.2X -- e=%d pidx=%d\n", frm.state, c, c, frm.escape, frm.pidx);
         
         if ((c == FRAME_DELIM) && !frm.escape) {
             if (0 == frm.state) {

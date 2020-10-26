@@ -49,32 +49,38 @@ void canton_reset(const canton_config_t *c, canton_vars_t *v)
 	v->status = canton_free;
 }
 
-int canton_take(const canton_config_t *c, canton_vars_t *v, canton_occupency_t st,  int trainidx)
+int canton_take(int numcanton, canton_occupency_t st,  int trainidx)
 {
 	if (trainidx<0 || trainidx>32) return canton_error(ERR_BAD_PARAM, "bad params 1");
 	if (st < canton_next) return canton_error(ERR_BAD_PARAM, "bad params 2");
+	USE_CANTON(numcanton) // cconf cvars
 	//if (v->curtrain) return canton_error(ERR_CANTON_USED, "canton alreday in use");
-	if (v->status != canton_free) return canton_error(ERR_CANTON_USED, "canton already in use");
+	if (cvars->status != canton_free) return canton_error(ERR_CANTON_USED, "canton already in use");
 
-	v->status = st;
-	v->curtrainidx = trainidx;
+	cvars->status = st;
+	cvars->curtrainidx = trainidx;
+	(void) cconf; // unused
 	return 0;
 }
 
-int canton_change_status(const canton_config_t *c, canton_vars_t *v, canton_occupency_t st,  int trainidx)
+int canton_change_status(int numcanton, canton_occupency_t st,  int trainidx)
 {
 	if (trainidx<0 || trainidx>32) return canton_error(ERR_BAD_PARAM, "bad params 3");
 	if (st < canton_next) return canton_error(ERR_BAD_PARAM, "bad params 4");
-	if (v->curtrainidx != trainidx) return canton_error(ERR_CANTON_USED, "canton already in use 2");
-	v->status = st;
+	USE_CANTON(numcanton) // cconf cvars
+	if (cvars->curtrainidx != trainidx) return canton_error(ERR_CANTON_USED, "canton already in use 2");
+	cvars->status = st;
+	(void)cconf; // unused
 	return 0;
 }
 
-int canton_release(const canton_config_t *c, canton_vars_t *v, int trainidx)
+int canton_release(int numcanton, int trainidx)
 {
-	if (v->curtrainidx != trainidx) return canton_error(ERR_CANTON_USED, "canton already in use 3");
-	v->curtrainidx = 0xFF;
-	v->status = canton_free;
+	USE_CANTON(numcanton) // cconf cvars
+	if (cvars->curtrainidx != trainidx) return canton_error(ERR_CANTON_USED, "canton already in use 3");
+	cvars->curtrainidx = 0xFF;
+	cvars->status = canton_free;
+	(void)cconf; // unused
 	return 0;
 }
 

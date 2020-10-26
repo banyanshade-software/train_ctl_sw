@@ -19,6 +19,7 @@
 #include "taskauto.h"
 #include "taskctrl.h"
 #include "stm32f1xx_hal.h"
+#include "misc.h"
 //#include "../traincontrol.h"
 
 
@@ -35,7 +36,7 @@ void run_task_ctrl(void)
 	for (;;) {
 		uint32_t notif;
 		xTaskNotifyWait(0, 0xFFFFFFFF, &notif, portMAX_DELAY);
-		//debug_info('G', 0, "HOP", 0, 0);
+		//debug_info('G', 0, "HOP", 0, 0, 0);
 		static uint32_t oldt = 0;
 		static uint32_t t0 = 0;
 		uint32_t t = HAL_GetTick();
@@ -55,3 +56,40 @@ void run_task_ctrl(void)
 	}
 
 }
+
+// ---------------------------------------------------------------
+// ADC DMA callbacks
+// ---------------------------------------------------------------
+
+extern osThreadId_t ctrlTaskHandle;
+
+
+static int nhalf=0;
+static int nfull=0;
+
+
+void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* AdcHandle)
+{
+	nfull++;
+	BaseType_t higher=0;
+	xTaskNotifyFromISR(ctrlTaskHandle, NOTIF_NEW_ADC_2, eSetBits, &higher);
+	portYIELD_FROM_ISR(higher);
+}
+
+void HAL_ADC_ConvHalfCpltCallback(ADC_HandleTypeDef* hadc)
+{
+	nhalf++;
+	BaseType_t higher=0;
+	xTaskNotifyFromISR(ctrlTaskHandle, NOTIF_NEW_ADC_1, eSetBits, &higher);
+	portYIELD_FROM_ISR(higher);
+}
+
+void HAL_ADC_LevelOutOfWindowCallback(ADC_HandleTypeDef* hadc)
+{
+
+}
+void  HAL_ADC_ErrorCallback(ADC_HandleTypeDef *hadc)
+{
+
+}
+

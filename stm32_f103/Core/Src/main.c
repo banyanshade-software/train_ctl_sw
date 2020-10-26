@@ -67,16 +67,16 @@ I2C_HandleTypeDef hi2c1;
 TIM_HandleTypeDef htim1;
 TIM_HandleTypeDef htim3;
 
-/* Definitions for defaultTask */
-osThreadId_t defaultTaskHandle;
-uint32_t defaultTaskBuffer[ 256 ];
-osStaticThreadDef_t defaultTaskControlBlock;
-const osThreadAttr_t defaultTask_attributes = {
-  .name = "defaultTask",
-  .stack_mem = &defaultTaskBuffer[0],
-  .stack_size = sizeof(defaultTaskBuffer),
-  .cb_mem = &defaultTaskControlBlock,
-  .cb_size = sizeof(defaultTaskControlBlock),
+/* Definitions for ctrlTask */
+osThreadId_t ctrlTaskHandle;
+uint32_t ctrlTaskBuffer[ 256 ];
+osStaticThreadDef_t ctrlTaskControlBlock;
+const osThreadAttr_t ctrlTask_attributes = {
+  .name = "ctrlTask",
+  .stack_mem = &ctrlTaskBuffer[0],
+  .stack_size = sizeof(ctrlTaskBuffer),
+  .cb_mem = &ctrlTaskControlBlock,
+  .cb_size = sizeof(ctrlTaskControlBlock),
   .priority = (osPriority_t) osPriorityNormal,
 };
 /* Definitions for txrxFrameTask */
@@ -105,7 +105,7 @@ const osThreadAttr_t taskAuto_attributes = {
 };
 /* Definitions for frameQueue */
 osMessageQueueId_t frameQueueHandle;
-uint8_t frameQueueBuffer[ 16 * sizeof( frame_msg_t ) ];
+uint8_t frameQueueBuffer[ 32 * sizeof( frame_msg_t ) ];
 osStaticMessageQDef_t frameQueueControlBlock;
 const osMessageQueueAttr_t frameQueue_attributes = {
   .name = "frameQueue",
@@ -128,7 +128,7 @@ static void MX_TIM1_Init(void);
 static void MX_ADC1_Init(void);
 static void MX_TIM3_Init(void);
 static void MX_I2C1_Init(void);
-void StartDefaultTask(void *argument);
+void StartCtrlTask(void *argument);
 extern void StartTxRxFrameTask(void *argument);
 extern void StartTaskAuto(void *argument);
 
@@ -221,15 +221,15 @@ int main(void)
 
   /* Create the queue(s) */
   /* creation of frameQueue */
-  frameQueueHandle = osMessageQueueNew (16, sizeof(frame_msg_t), &frameQueue_attributes);
+  frameQueueHandle = osMessageQueueNew (32, sizeof(frame_msg_t), &frameQueue_attributes);
 
   /* USER CODE BEGIN RTOS_QUEUES */
   /* add queues, ... */
   /* USER CODE END RTOS_QUEUES */
 
   /* Create the thread(s) */
-  /* creation of defaultTask */
-  defaultTaskHandle = osThreadNew(StartDefaultTask, NULL, &defaultTask_attributes);
+  /* creation of ctrlTask */
+  ctrlTaskHandle = osThreadNew(StartCtrlTask, NULL, &ctrlTask_attributes);
 
   /* creation of txrxFrameTask */
   txrxFrameTaskHandle = osThreadNew(StartTxRxFrameTask, NULL, &txrxFrameTask_attributes);
@@ -644,47 +644,16 @@ static void start_adc_read()
 static volatile uint16_t ADC_Values[_ADC_NCHAN*_ADC_NSAMPLE]={0xAAAA};
 
 
-static int nhalf=0;
-static int nfull=0;
-
-
-void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* AdcHandle)
-{
-	nfull++;
-	BaseType_t higher=0;
-	xTaskNotifyFromISR(defaultTaskHandle, NOTIF_NEW_ADC_2, eSetBits, &higher);
-	portYIELD_FROM_ISR(higher);
-}
-
-void HAL_ADC_ConvHalfCpltCallback(ADC_HandleTypeDef* hadc)
-{
-	nhalf++;
-	BaseType_t higher=0;
-	xTaskNotifyFromISR(defaultTaskHandle, NOTIF_NEW_ADC_1, eSetBits, &higher);
-	portYIELD_FROM_ISR(higher);
-}
-
-void HAL_ADC_LevelOutOfWindowCallback(ADC_HandleTypeDef* hadc)
-{
-
-}
-void  HAL_ADC_ErrorCallback(ADC_HandleTypeDef *hadc)
-{
-
-}
-/**
-
-
 /* USER CODE END 4 */
 
-/* USER CODE BEGIN Header_StartDefaultTask */
+/* USER CODE BEGIN Header_StartCtrlTask */
 /**
-  * @brief  Function implementing the defaultTask thread.
+  * @brief  Function implementing the ctrlTask thread.
   * @param  argument: Not used
   * @retval None
   */
-/* USER CODE END Header_StartDefaultTask */
-void StartDefaultTask(void *argument)
+/* USER CODE END Header_StartCtrlTask */
+void StartCtrlTask(void *argument)
 {
   /* init code for USB_DEVICE */
   MX_USB_DEVICE_Init();
@@ -767,8 +736,18 @@ void assert_failed(uint8_t *file, uint32_t line)
 
 #define xstr(s) str(s)
 #define str(s) #s
-    char msg[] = "asseert failed " __FILE__ ":" xstr(__LINE__) "\n";
+
+    static char msg[128];
+    //           12345678901234
+    strcpy(msg, "assert failed ");
+    int l = strlen(file);
+    if (l>30) file = file+l-30;
+    strcpy(msg+14, file);
+    strcpy(msg+strlen(msg), ":");
+    itoa(line, msg+strlen(msg), 10);
+    strcpy(msg+strlen(msg), "\r\n");
 	CDC_Transmit_FS((uint8_t *)msg, strlen(msg));
+
   /* USER CODE END 6 */
 }
 #endif /* USE_FULL_ASSERT */

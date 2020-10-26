@@ -23,7 +23,7 @@
 #include "../trainctl_iface.h"
 #include "../txrxcmd.h"
 //#include "main.h"
-
+#include "misc.h"
 #include "stm32f1xx_hal.h"
 
 
@@ -34,9 +34,17 @@ uint32_t num_msg_put = 0;
 uint32_t num_msg_get_err = 0;
 
 static void handleRxChars(frame_msg_t *m);
+static void _send_frm(frame_msg_t *m);
 
 void StartTxRxFrameTask(void *argument)
 {
+	if ((0)) {
+		frame_msg_t tx;
+		tx.t = RXFRAME_CHARS;
+		tx.len = 2+4+2;
+		memcpy(tx.frm, "|xT\0V__|", tx.len);
+		osMessageQueuePut(frameQueueHandle, &tx, 0, portMAX_DELAY);
+	}
 	static frame_msg_t m;
 	for (;;) {
 		uint8_t msg_prio;
@@ -48,14 +56,21 @@ void StartTxRxFrameTask(void *argument)
 			continue;
 		}
 		if (m.t == RXFRAME_CHARS) {
+			//debug_info('G', 0, "RXFRM", m.len,0, 0);
 			handleRxChars(&m);
-			return;
+			continue;
 		}
-		for (;;) {
-			uint8_t rc = CDC_Transmit_FS(m.frm, m.len);
-			if (rc != USBD_BUSY) break;
-			osDelay(10);
-		}
+		_send_frm(&m);
+
+	}
+}
+
+static void _send_frm(frame_msg_t *m)
+{
+	for (;;) {
+		uint8_t rc = CDC_Transmit_FS(m->frm, m->len);
+		if (rc != USBD_BUSY) break;
+		osDelay(10);
 	}
 }
 
@@ -67,6 +82,12 @@ void txframe_send(frame_msg_t *m, int discardable)
 	if (s<=0) {
 		txframe_queue_full++;
 		if (discardable) return;
+	}
+	if ((s<=12) && discardable) {
+		// we use a single queue, and no priority available with freertos
+		// so we just keep some space for non discardable frames
+		txframe_queue_full++;
+		return;
 	}
 	uint32_t t = discardable ? 0 : portMAX_DELAY;
 	if (m->len>FRM_MAX_LEN) m->len=FRM_MAX_LEN;
@@ -88,7 +109,11 @@ static void handleRxChars(frame_msg_t *m)
 		int rlen = FRM_MAX_LEN;
 		txrx_process_char(m->frm[i], frresp.frm, &rlen);
 		if (rlen>0) {
-			txframe_send_response(&frresp, rlen);
+			//debug_info('G', 0, "RESP", rlen,0, 0);
+			// would deadlock if we send (non discardable) through the queue
+			//txframe_send_response(&frresp, rlen);
+			frresp.len = rlen;
+			_send_frm(&frresp);
 		}
 	}
 }
@@ -116,6 +141,7 @@ int8_t impl_CDC_Receive_FS(uint8_t* Buf, uint32_t *Len)
 		memcpy(frrx.frm, p, l);
 		rlen -= l;
 		p += l;
+		frrx.len = l;
 		osMessageQueuePut(frameQueueHandle, &frrx, 0, 0);
 		if (rlen <= 0) break;
 	}

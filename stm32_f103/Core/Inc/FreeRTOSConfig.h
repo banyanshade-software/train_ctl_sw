@@ -132,7 +132,7 @@ header file. */
 /* USER CODE BEGIN 1 */
 #define USE_FULL_ASSERT 1
 void assert_failed(uint8_t *file, uint32_t line);
-#define configASSERT( x ) if ((x) == 0) {assert_failed(__FILE__, __LINE__); taskDISABLE_INTERRUPTS(); for( ;; );}
+#define configASSERT( x ) if ((x) == 0) {assert_failed((uint8_t*)__FILE__, __LINE__); taskDISABLE_INTERRUPTS(); for( ;; );}
 /* USER CODE END 1 */
 
 /* Definitions that map the FreeRTOS port interrupt handlers to their CMSIS

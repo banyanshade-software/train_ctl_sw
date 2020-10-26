@@ -46,6 +46,8 @@ void flash_led(void);
 #define ERR_BAD_PARAM_VPOL  -5
 #define ERR_BAD_STATE		-9
 
+#define ERR_SETUP_KO		-10
+
 #define ERR_DMA             -12
 
 

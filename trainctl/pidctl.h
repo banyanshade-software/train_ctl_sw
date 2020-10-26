@@ -14,6 +14,13 @@
  *
  */
 
+/* pidctl.h : implementation of PID (Proportional Integral Derivative) speed control
+ * 			  feedback is provided by BEMF measured during "off" (high impedance) time of PWM
+ * 			  PWM duty cycle is limited to 90% (thus max power is slightly limited) for this
+ * 			  note that kD parameter is internaly divided by 1000
+ *
+ * 			  pidctl itself is generic, and operates on BEMF measured in centivolt (0.01V)
+ */
 
 #ifndef PIDCTL_H_
 #define PIDCTL_H_
@@ -39,6 +46,8 @@ int32_t pidctl_value(const pidctl_config_t *c, pidctl_vars_t *v, int32_t cur_v, 
 /*
  * PID ctrl operates on raw BEMF values, mmostly between -280..280 (-1V..+1V)
  */
+
+// TODO update this, since we now operate on centivolt
 #define MAX_PID_VALUE 280
 
 #endif /* PIDCTL_H_ */

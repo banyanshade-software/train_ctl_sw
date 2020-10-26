@@ -12,6 +12,10 @@
  *
  */
 
+/* traincontrol.h : main control of train :
+ * 			target_speed -> inertia -> BEMF feedback -> volt + pwm
+ */
+
 #ifndef TRAINCONTROL_H_
 #define TRAINCONTROL_H_
 

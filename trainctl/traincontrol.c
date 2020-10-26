@@ -12,13 +12,10 @@
  *
  */
 
-/*
-#ifndef TRAIN_SIMU
-#include "cmsis_os2.h"                  // ::CMSIS:RTOS2
-#else
-#include "train_simu.h"
-#endif
-*/
+
+/* traincontrol.h : main control of train :
+ * 			target_speed -> inertia -> BEMF feedback -> volt + pwm
+ */
 
 
 #include "misc.h"
@@ -121,6 +118,7 @@ static void train_periodic_control(const train_config_t *cnf, train_vars_t *vars
     if (cnf->enable_pid) {
         // corresponding BEMF target
         // 100% = 1V => ((1 / 4.54) / 3.3) * 4096 = 273
+    	// TODO update this, since we now operate on centivolt
         int32_t tbemf = 280*v/100;
         pidctl_set_target(&cnf->pidcnf, &vars->pidvars, tbemf);
         notif_target_bemf(cnf, vars, tbemf);

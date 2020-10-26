@@ -12,6 +12,19 @@
  *
  */
 
+
+/*
+ * canton.h : control of a block
+ *            and thus of a block control board
+ *            - set main voltage (3.5-10V)
+ *            - set PWM and duty
+ *            - process BEMF measure
+ *
+ *  		  preliminary (but unused for now) support for
+ *  		  - block occupency / free
+ *  		  - remote block for multiple MCU system
+ */
+
 #ifndef CANTON_H_
 #define CANTON_H_
 

@@ -5,6 +5,23 @@
  *      Author: danielbraun
  */
 
+
+/*
+ * (c) Daniel Braun 2020
+ * ---------------------
+ * available under GPLv3 http://www.gnu.org/licenses/gpl-3.0.html
+ *
+ */
+
+
+/* turnout.h : control of turnouts (switches)
+ *    	turnout_tick() is supposed to be invoked every 20ms and will handle the impulse shape
+ *    	TODO: make sure GPIO are reset in HardFault handler (and other), otherwise a turnout
+ *    	may receive continuous current
+ *
+ */
+
+
 #ifndef TURNOUT_H_
 #define TURNOUT_H_
 

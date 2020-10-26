@@ -12,6 +12,11 @@
  *
  */
 
+/*
+ * param.h  : handling of user modifiable parameters
+ *            allows acces to any field in a struct or global variables - or function setters/getter
+ */
+
 #ifndef SRC_PARAM_H_
 #define SRC_PARAM_H_
 
@@ -25,7 +30,7 @@ typedef struct param {
 	off_t offset;
 	int32_t (*getter)(struct param *);
 	void (*setter)(struct param *, int32_t);
-	int  size;
+	int size;
 	int min;
 	int max;
 	int def;

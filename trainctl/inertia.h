@@ -12,6 +12,13 @@
  *
  */
 
+
+/*
+ * inertia.h : control of inertia simulation
+ * 			model train are very light and thus don't have inertia (they brake/accelerate) nearly immediatly
+ * 			thus we add inertia simulation, with a max acceleration and deceleration (braking)
+ */
+
 #ifndef INERTIA_H_
 #define INERTIA_H_
 

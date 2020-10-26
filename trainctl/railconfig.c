@@ -13,6 +13,13 @@
  *
  */
 
+
+/* railconfig.h : this is the main storage for configuration and runtime info
+ *                related to train, blocks, turnout, etc..
+ *                We basically maitains arrays for all trains, all blocks, etc..
+ * 				  Configuration upload/download is planned here, but not implemented
+ */
+
 #include "misc.h"
 #include "railconfig.h"
 #include "canton.h"

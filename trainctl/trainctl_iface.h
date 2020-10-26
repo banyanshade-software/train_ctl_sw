@@ -12,6 +12,12 @@
  *
  */
 
+
+/* trainctl_iface.h : this file should contain all exported symbols/definition
+ *         that are needed to operate (either from RTOS tasks or from simulation program)
+ *         the trainctl library
+ */
+
 #ifndef TRAINCTL_IFACE_H_
 #define TRAINCTL_IFACE_H_
 

@@ -5,6 +5,21 @@
  *      Author: danielbraun
  */
 
+
+/*
+ * (c) Daniel Braun 2020
+ * ---------------------
+ * available under GPLv3 http://www.gnu.org/licenses/gpl-3.0.html
+ *
+ */
+
+/* turnout.c : control of turnouts (switches)
+ *    	turnout_tick() is supposed to be invoked every 20ms and will handle the impulse shape
+ *    	TODO: make sure GPIO are reset in HardFault handler (and other), otherwise a turnout
+ *    	may receive continuous current
+ *
+ */
+
 #include "turnout.h"
 #include "misc.h"
 #include "railconfig.h"
@@ -64,6 +79,9 @@ int turnout_cmd(int tidx, int vab)
 
 int turnout_test(int tidx)
 {
+#if 0
+	// for test, without the actual turnout plugged.. removed since potentially
+	// dangerous for the turnout
 	const turnout_config_t *c = get_turnout_cnf(tidx);
 	turnout_vars_t *v = get_turnout_vars(tidx);
 
@@ -76,6 +94,7 @@ int turnout_test(int tidx)
 #endif
 	v->st = ST_TEST;
 	*/
+#endif
     return 0;
 }
 

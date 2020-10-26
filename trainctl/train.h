@@ -12,6 +12,14 @@
  *
  */
 
+/*
+ * train.h : configuration and variables for trains
+ * 			there is very little more than that here, most processing is in traincontrol.c
+ *
+ * 			TODO: structure here describe more a locomotive than a train
+ * 			so struct should probably be renamed, and train structure make reference to locomotive + cars
+ */
+
 #ifndef TRAIN_H_
 #define TRAIN_H_
 
@@ -27,7 +35,7 @@ typedef struct train_config {
 	inertia_config_t inertiacnf;
 	train_volt_policy_t volt_policy;
 
-	uint8_t enable_inertia; // not has bitfield due to param.h
+	uint8_t enable_inertia; // not as bitfield due to param.h
 	uint8_t enable_pid;
 	uint8_t notify_speed;
 	uint8_t notify_pose;
@@ -40,7 +48,6 @@ typedef struct train_config {
 typedef struct train_vars {
 	pidctl_vars_t pidvars;
 	inertia_vars_t inertiavars;
-	//uint32_t lasttick;
 
 	int16_t current_canton;
 	int16_t next_canton;

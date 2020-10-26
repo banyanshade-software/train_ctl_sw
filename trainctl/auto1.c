@@ -12,6 +12,13 @@
  *
  */
 
+/*
+ * auto1.c : a temporary very simple automatisation, for a single block railway
+ *           (good for now to take videos of the train)
+ *           this is really intended to be removed and replaced by something more useful
+ */
+
+
 #include "misc.h"
 #include "auto1.h"
 #include "train.h"

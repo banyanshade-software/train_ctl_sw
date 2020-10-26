@@ -13,6 +13,12 @@
  *
  */
 
+/*
+ * param.h  : handling of user modifiable parameters
+ *            allows acces to any field in a struct or global variables - or function setters/getter
+ */
+
+
 #include <stddef.h>
 #include <string.h>
 #include "param.h"

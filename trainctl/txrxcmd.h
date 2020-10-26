@@ -5,6 +5,22 @@
  *      Author: danielbraun
  */
 
+
+/*
+ * (c) Daniel Braun 2020
+ * ---------------------
+ * available under GPLv3 http://www.gnu.org/licenses/gpl-3.0.html
+ *
+ */
+
+
+/* txrxcmd.h : process command and send notification to control software
+ * 		for now, control runs on mac, communicating with USB.
+ * 		it is expected that the same command processing can be used
+ * 		- on BT between main board and tablet / computer
+ * 		- on I2C (or other) between main board and slave boards
+ */
+
 #ifndef TXRXCMD_H_
 #define TXRXCMD_H_
 

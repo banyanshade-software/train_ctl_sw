@@ -60,6 +60,20 @@ int turnout_idx(turnout_vars_t *v);
 
 // ---------------------------------------------------------
 
+#define USE_TRAIN(_idx) \
+		const train_config_t *tconf = get_train_cnf(_idx); \
+		train_vars_t         *tvars = get_train_vars(_idx);
+
+#define USE_CANTON(_idx) \
+		const canton_config_t *cconf = get_canton_cnf(_idx); \
+		canton_vars_t         *cvars = get_canton_vars(_idx);
+
+#define USE_TURNOUT(_idx) \
+		const turnout_config_t *aconf = get_turnout_cnf(_idx); \
+		turnout_vars_t         *avars = get_turnout_vars(_idx);
+
+// ---------------------------------------------------------
+
 
 
 extern const param_t train_params[];

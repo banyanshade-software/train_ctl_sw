@@ -18,6 +18,7 @@
  *    	turnout_tick() is supposed to be invoked every 20ms and will handle the impulse shape
  *    	TODO: make sure GPIO are reset in HardFault handler (and other), otherwise a turnout
  *    	may receive continuous current
+ *    	TODO: relyability of marklin switch/turnouts : several impulses might be better ?
  *
  */
 

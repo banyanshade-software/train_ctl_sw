@@ -83,7 +83,7 @@ void txframe_send(frame_msg_t *m, int discardable)
 		txframe_queue_full++;
 		if (discardable) return;
 	}
-	if ((s<=12) && discardable) {
+	if ((s<=15) && discardable) {
 		// we use a single queue, and no priority available with freertos
 		// so we just keep some space for non discardable frames
 		txframe_queue_full++;
@@ -156,6 +156,9 @@ int8_t impl_CDC_Receive_FS(uint8_t* Buf, uint32_t *Len)
 
 /* obsolete -------------------------------------------------------- */
 
+/* obsolete code using FreeRTOSCli (uses too much resources and
+ * no more used)
+ */
 
 #if 0
 /*

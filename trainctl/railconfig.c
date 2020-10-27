@@ -78,8 +78,8 @@ static  train_config_t Trains[NUM_TRAINS] = {
 				vpolicy_normal,  //vpolicy_normal, // vpolicy_pure_volt, //vpolicy_pure_pwm,
 				0, // enable_inertia
 				1, // enable_pid
-				1, // notify_speed
-				1, // notify_pose
+				0, // notify_speed
+				0, // notify_pose
 				1, // bemfIIR;
 				1, // fix_bemf;
 				1,  //	uint8_t en_spd2pow;

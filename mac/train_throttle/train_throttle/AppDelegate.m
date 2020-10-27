@@ -36,10 +36,10 @@ typedef struct {
 } frame_state_t;
 
 // link ok values
-#define LINK_DISC   0
-#define LINK_CNX    1   // connected to tty
-#define LINK_FRM    2   // frame mode set
-#define LINK_OK     3   // fully ok
+#define LINK_DISC      0
+#define LINK_CNX       1   // connected to tty
+#define LINK_FRM       2   // frame mode set
+#define LINK_OK        3   // fully ok
 #define LINK_SIMUHI    4
 #define LINK_SIMULOW   5
 

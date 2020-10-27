@@ -67,7 +67,7 @@ static  canton_config_t Cantons[NUM_CANTONS] = {
 static  train_config_t Trains[NUM_TRAINS] = {
 		{
 				{ // pidctl_config_t
-						50, 30, 750,  // kP, kI, kD
+						150, 30, 750,  // kP, kI, kD
                     /*
                      * 50, 30, -50,
                      */

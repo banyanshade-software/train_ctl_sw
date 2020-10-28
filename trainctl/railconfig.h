@@ -76,7 +76,6 @@ int turnout_idx(turnout_vars_t *v);
 
 
 
-extern const param_t train_params[];
 
 
 #endif /* RAILCONFIG_H_ */

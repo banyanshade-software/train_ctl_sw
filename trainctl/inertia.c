@@ -43,7 +43,7 @@ int16_t inertia_value(const inertia_config_t *config, inertia_vars_t *vars, uint
 	int sc =  SIGNOF(vars->cur);
 	int inc;
 
-    *pchanged = 0;
+    if (pchanged) *pchanged = 0;
     if (vars->target == vars->cur/10) return vars->target;
     //debug_info(0, "INER", vars->target, vars->cur);
 
@@ -70,7 +70,7 @@ int16_t inertia_value(const inertia_config_t *config, inertia_vars_t *vars, uint
 	int vold = vars->cur/10;
 	vars->cur += inc;
 	int vnew = vars->cur/10;
-    *pchanged = (vnew==vold) ? 0 : 1;
+    if (pchanged) *pchanged = (vnew==vold) ? 0 : 1;
     //debug_info(0, "INC/c", inc, vars->cur);
 	return vnew;
 }

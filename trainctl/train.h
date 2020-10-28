@@ -26,7 +26,7 @@
 #include "inertia.h"
 #include "pidctl.h"
 #include "canton.h"
-
+#include "param.h"
 
 
 
@@ -35,11 +35,14 @@ typedef struct train_config {
 	inertia_config_t inertiacnf;
 	train_volt_policy_t volt_policy;
 
-	uint8_t enable_inertia; // not as bitfield due to param.h
+	uint8_t enable_inertia; // 0=none 1=before PID 2=after PID
+
+    // not as bitfield due to param.h
 	uint8_t enable_pid;
 	uint8_t notify_speed;
 	uint8_t notify_pose;
 	uint8_t bemfIIR;
+    uint8_t postIIR;
 	uint8_t fix_bemf;
 	uint8_t en_spd2pow;
 	uint8_t min_power;
@@ -63,10 +66,14 @@ typedef struct train_vars {
 
 	int32_t position_estimate;
 	int32_t bemfiir;
+    int16_t v_iir;
 } train_vars_t;
 
 void train_reset(const train_config_t *c, train_vars_t *v);
 int train_reset_pos_estimate(int tidx);
+
+
+extern const param_t train_params[];
 
 /*
  * Units :

@@ -1354,14 +1354,15 @@
                                                 </constraints>
                                             </view>
                                         </box>
-                                        <box borderType="line" title="Inertia param" translatesAutoresizingMaskIntoConstraints="NO" id="04R-jp-k8h">
+                                        <box borderType="line" title="Inertia param" id="04R-jp-k8h">
                                             <rect key="frame" x="13" y="27" width="192" height="211"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <view key="contentView" id="M9K-Fj-EHU">
                                                 <rect key="frame" x="3" y="3" width="186" height="193"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="cVP-xT-cdM">
-                                                        <rect key="frame" x="115" y="101" width="60" height="27"/>
+                                                        <rect key="frame" x="115" y="94" width="60" height="27"/>
                                                         <constraints>
                                                             <constraint firstAttribute="width" constant="50" id="CZY-zd-KGf"/>
                                                         </constraints>
@@ -1374,7 +1375,7 @@
                                                         </connections>
                                                     </button>
                                                     <textField identifier="par_T0_acc" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="IGo-BM-KIC">
-                                                        <rect key="frame" x="16" y="106" width="96" height="21"/>
+                                                        <rect key="frame" x="16" y="99" width="96" height="21"/>
                                                         <constraints>
                                                             <constraint firstAttribute="width" constant="96" id="bT8-v4-iGu"/>
                                                         </constraints>
@@ -1391,8 +1392,8 @@
                                                             <action selector="changeParam:" target="Voe-Tx-rLC" id="Ibg-cI-pXH"/>
                                                         </connections>
                                                     </textField>
-                                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="fpO-vV-0vK">
-                                                        <rect key="frame" x="14" y="133" width="100" height="14"/>
+                                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="fpO-vV-0vK">
+                                                        <rect key="frame" x="14" y="126" width="100" height="14"/>
                                                         <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" title="acceleration" id="gqN-wc-ttQ">
                                                             <font key="font" metaFont="smallSystem"/>
                                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -1400,7 +1401,7 @@
                                                         </textFieldCell>
                                                     </textField>
                                                     <textField identifier="par_T0_dec" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="vXQ-es-Ck4">
-                                                        <rect key="frame" x="16" y="57" width="96" height="21"/>
+                                                        <rect key="frame" x="16" y="50" width="96" height="21"/>
                                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="B4f-rg-qiK">
                                                             <numberFormatter key="formatter" formatterBehavior="default10_4" numberStyle="decimal" minimumIntegerDigits="1" maximumIntegerDigits="2000000000" maximumFractionDigits="3" id="M1o-dG-gn8">
                                                                 <real key="minimum" value="0.0"/>
@@ -1414,8 +1415,8 @@
                                                             <action selector="changeParam:" target="Voe-Tx-rLC" id="eX1-7I-eCm"/>
                                                         </connections>
                                                     </textField>
-                                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Opi-ph-Qro">
-                                                        <rect key="frame" x="14" y="84" width="100" height="14"/>
+                                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Opi-ph-Qro">
+                                                        <rect key="frame" x="14" y="77" width="100" height="14"/>
                                                         <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" title="deceleration" id="g85-er-H2Z">
                                                             <font key="font" metaFont="smallSystem"/>
                                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -1423,7 +1424,7 @@
                                                         </textFieldCell>
                                                     </textField>
                                                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="UTw-gd-Qm9">
-                                                        <rect key="frame" x="115" y="52" width="60" height="27"/>
+                                                        <rect key="frame" x="115" y="45" width="60" height="27"/>
                                                         <buttonCell key="cell" type="push" title="zero" bezelStyle="rounded" alignment="center" controlSize="small" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="A9u-VX-QQ5">
                                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                             <font key="font" metaFont="smallSystem"/>
@@ -1432,39 +1433,42 @@
                                                             <action selector="zeroInertia:" target="Voe-Tx-rLC" id="PnQ-gh-LdN"/>
                                                         </connections>
                                                     </button>
-                                                    <button identifier="par_T0_en_inertia" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="zCX-5F-HNB">
-                                                        <rect key="frame" x="14" y="161" width="100" height="18"/>
-                                                        <buttonCell key="cell" type="check" title="enable" bezelStyle="regularSquare" imagePosition="left" inset="2" id="z3M-6w-dM1">
-                                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                    <popUpButton identifier="par_T0_en_inertia" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="pqJ-lI-ITW">
+                                                        <rect key="frame" x="14" y="153" width="101" height="25"/>
+                                                        <popUpButtonCell key="cell" type="push" title="disable" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="dtn-d3-lif" id="p96-M5-dhc">
+                                                            <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                                             <font key="font" metaFont="system"/>
-                                                        </buttonCell>
+                                                            <menu key="menu" id="uGO-Hy-dbN">
+                                                                <items>
+                                                                    <menuItem title="disable" state="on" id="dtn-d3-lif"/>
+                                                                    <menuItem title="PRE" tag="1" id="09W-pG-sGa"/>
+                                                                    <menuItem title="POST" tag="2" id="Uw5-pK-gvQ"/>
+                                                                </items>
+                                                            </menu>
+                                                        </popUpButtonCell>
                                                         <connections>
-                                                            <action selector="changeParam:" target="Voe-Tx-rLC" id="Mx4-fU-agr"/>
+                                                            <action selector="changeParam:" target="Voe-Tx-rLC" id="0Hx-Lz-aY0"/>
                                                         </connections>
-                                                    </button>
+                                                    </popUpButton>
                                                 </subviews>
                                                 <constraints>
                                                     <constraint firstItem="IGo-BM-KIC" firstAttribute="top" secondItem="fpO-vV-0vK" secondAttribute="bottom" constant="6" id="2S6-pM-xv4"/>
-                                                    <constraint firstItem="fpO-vV-0vK" firstAttribute="top" secondItem="zCX-5F-HNB" secondAttribute="bottom" constant="16" id="DRJ-9Y-Hmo"/>
-                                                    <constraint firstItem="zCX-5F-HNB" firstAttribute="leading" secondItem="M9K-Fj-EHU" secondAttribute="leading" constant="16" id="HHP-MX-crf"/>
-                                                    <constraint firstItem="Opi-ph-Qro" firstAttribute="leading" secondItem="zCX-5F-HNB" secondAttribute="leading" id="JMQ-h7-JMj"/>
-                                                    <constraint firstItem="vXQ-es-Ck4" firstAttribute="trailing" secondItem="zCX-5F-HNB" secondAttribute="trailing" id="QAk-Ju-FGB"/>
+                                                    <constraint firstItem="vXQ-es-Ck4" firstAttribute="trailing" secondItem="IGo-BM-KIC" secondAttribute="trailing" id="3y8-Rr-Iyu"/>
                                                     <constraint firstItem="Opi-ph-Qro" firstAttribute="top" secondItem="IGo-BM-KIC" secondAttribute="bottom" constant="8" id="QHD-iC-cH5"/>
-                                                    <constraint firstItem="Opi-ph-Qro" firstAttribute="trailing" secondItem="zCX-5F-HNB" secondAttribute="trailing" id="QZG-SU-0yS"/>
+                                                    <constraint firstItem="IGo-BM-KIC" firstAttribute="trailing" secondItem="pqJ-lI-ITW" secondAttribute="trailing" id="TiZ-b4-QNe"/>
+                                                    <constraint firstItem="vXQ-es-Ck4" firstAttribute="leading" secondItem="IGo-BM-KIC" secondAttribute="leading" id="U4f-51-CMp"/>
                                                     <constraint firstItem="cVP-xT-cdM" firstAttribute="firstBaseline" secondItem="IGo-BM-KIC" secondAttribute="firstBaseline" id="UR7-N5-2wz"/>
                                                     <constraint firstItem="UTw-gd-Qm9" firstAttribute="trailing" secondItem="cVP-xT-cdM" secondAttribute="trailing" id="UTV-qX-kSe"/>
-                                                    <constraint firstItem="fpO-vV-0vK" firstAttribute="trailing" secondItem="zCX-5F-HNB" secondAttribute="trailing" id="XrA-qA-sfR"/>
+                                                    <constraint firstItem="pqJ-lI-ITW" firstAttribute="leading" secondItem="M9K-Fj-EHU" secondAttribute="leading" constant="16" id="Z7q-J5-jsX"/>
+                                                    <constraint firstItem="pqJ-lI-ITW" firstAttribute="top" secondItem="M9K-Fj-EHU" secondAttribute="top" constant="16" id="dEi-L7-5aj"/>
                                                     <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="vXQ-es-Ck4" secondAttribute="bottom" constant="16" id="ddZ-XI-Uya"/>
                                                     <constraint firstItem="cVP-xT-cdM" firstAttribute="leading" secondItem="IGo-BM-KIC" secondAttribute="trailing" constant="8" id="eGf-mp-n3f"/>
                                                     <constraint firstAttribute="trailing" secondItem="cVP-xT-cdM" secondAttribute="trailing" constant="16" id="fch-ac-p6s"/>
                                                     <constraint firstItem="UTw-gd-Qm9" firstAttribute="leading" secondItem="vXQ-es-Ck4" secondAttribute="trailing" constant="8" id="g8I-Ag-spS"/>
-                                                    <constraint firstItem="fpO-vV-0vK" firstAttribute="leading" secondItem="zCX-5F-HNB" secondAttribute="leading" id="gaf-af-VKc"/>
-                                                    <constraint firstItem="zCX-5F-HNB" firstAttribute="top" secondItem="M9K-Fj-EHU" secondAttribute="top" constant="16" id="iSo-P4-Lzw"/>
-                                                    <constraint firstItem="IGo-BM-KIC" firstAttribute="trailing" secondItem="zCX-5F-HNB" secondAttribute="trailing" id="mPI-n2-jk8"/>
-                                                    <constraint firstItem="vXQ-es-Ck4" firstAttribute="leading" secondItem="zCX-5F-HNB" secondAttribute="leading" id="rbP-eG-fmH"/>
-                                                    <constraint firstItem="IGo-BM-KIC" firstAttribute="leading" secondItem="zCX-5F-HNB" secondAttribute="leading" id="t29-xh-Vmg"/>
+                                                    <constraint firstItem="fpO-vV-0vK" firstAttribute="top" secondItem="pqJ-lI-ITW" secondAttribute="bottom" constant="16" id="mpI-Jn-vcb"/>
                                                     <constraint firstItem="UTw-gd-Qm9" firstAttribute="firstBaseline" secondItem="vXQ-es-Ck4" secondAttribute="firstBaseline" id="tsn-EW-IAO"/>
                                                     <constraint firstItem="vXQ-es-Ck4" firstAttribute="top" secondItem="Opi-ph-Qro" secondAttribute="bottom" constant="6" id="whC-8k-WFN"/>
+                                                    <constraint firstItem="IGo-BM-KIC" firstAttribute="leading" secondItem="pqJ-lI-ITW" secondAttribute="leading" id="xM3-qM-z73"/>
                                                 </constraints>
                                             </view>
                                         </box>

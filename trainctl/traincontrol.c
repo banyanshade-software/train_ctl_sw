@@ -106,7 +106,8 @@ static void train_periodic_control(int numtrain, int32_t dt)
 
 	int16_t v = tvars->target_speed;
 
-	if (tconf->enable_inertia) {
+    // inertia before PID
+	if (1==tconf->enable_inertia) {
 		int changed;
 		tvars->inertiavars.target = tvars->target_speed;
 		v = inertia_value(&tconf->inertiacnf, &tvars->inertiavars, dt, &changed);
@@ -114,16 +115,15 @@ static void train_periodic_control(int numtrain, int32_t dt)
     
     if (tconf->enable_pid) {
         // corresponding BEMF target
-        // 100% = 1V => ((1 / 4.54) / 3.3) * 4096 = 273
-    	// TODO update this, since we now operate on centivolt
-        int32_t tbemf = 280*v/100;
+        // 100% = 1.5V
+        int32_t tbemf = 150*v/100;
         pidctl_set_target(&tconf->pidcnf, &tvars->pidvars, tbemf);
         notif_target_bemf(tconf, tvars, tbemf);
     }
 
     if (tconf->enable_pid) {
         canton_vars_t *cv = get_canton_vars(tvars->current_canton);
-        if ((tvars->target_speed == 0) && (abs(cv->bemf_centivolt)<15)) {
+        if ((tvars->target_speed == 0) && (abs(cv->bemf_centivolt)<10)) {
         	//debug_info('T', 0, "ZERO", cv->bemf_centivolt,0, 0);
 			pidctl_reset(&tconf->pidcnf, &tvars->pidvars);
         	v = 0;
@@ -135,8 +135,6 @@ static void train_periodic_control(int numtrain, int32_t dt)
         		bemf = tvars->bemfiir;
         	}
 
-        	if ((0)) dt=50; // XXX
-
         	if (bemf>MAX_PID_VALUE)  bemf=MAX_PID_VALUE; // XXX
         	if (bemf<-MAX_PID_VALUE) bemf=-MAX_PID_VALUE;
 
@@ -147,8 +145,15 @@ static void train_periodic_control(int numtrain, int32_t dt)
         	v = (int16_t)v2;
 
         }
-
-
+    }
+    if (tconf->postIIR) {
+        tvars->v_iir = (80*tvars->v_iir+20*v)/100;
+        v = tvars->v_iir;
+    }
+    // or inertia after PID
+    if (2==tconf->enable_inertia) {
+        tvars->inertiavars.target = v;
+        v = inertia_value(&tconf->inertiacnf, &tvars->inertiavars, dt, NULL);
     }
     int changed = (tvars->last_speed != v);
     tvars->last_speed = v;
@@ -158,7 +163,7 @@ static void train_periodic_control(int numtrain, int32_t dt)
     		// [0-100] -> [min_pwm .. MAX_PWM]
     		int s = SIGNOF(v);
     		int a = abs(v);
-    		int v2 = (a>0.1) ? a * (MAX_PWM-tconf->min_power)/100 + tconf->min_power : 0;
+    		int v2 = (a>1) ? a * (MAX_PWM-tconf->min_power)/100 + tconf->min_power : 0;
     		v = s * v2;
     	}
         _set_speed(tconf, tvars, v);

@@ -59,6 +59,7 @@ typedef struct {
 #define TXFRAME_TYPE_RESP  1
 #define TXFRAME_TYPE_NOTIF 2
 #define TXFRAME_TYPE_DEBUG 3
+#define TXFRAME_TYPE_STAT  4
 
 
 void txrx_process_char(uint8_t c, uint8_t *respbuf, int *replen);

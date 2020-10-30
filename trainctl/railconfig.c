@@ -51,7 +51,7 @@ static  canton_config_t Cantons[NUM_CANTONS] = {
 				VOLT_SEL0_GPIO_Port,
 				VOLT_SEL0_Pin, VOLT_SEL1_Pin, VOLT_SEL2_Pin, VOLT_SEL3_Pin,
 				1, TIM_CHANNEL_1, TIM_CHANNEL_2,  // TIM_HandleTypeDef
-				1, /*notif BEMF */
+				0, /*notif BEMF */
 		},
 
 		{CANTON_TYPE_DUMMY,

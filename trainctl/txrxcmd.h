@@ -47,11 +47,27 @@ static inline void txframe_send_notif(frame_msg_t *m, int len)
 }
 
 
+static inline void txframe_send_stat(void)
+{
+    frame_msg_t m;
+    m.t = TXFRAME_TYPE_STAT;
+    txframe_send(&m, 1);
+}
+
 static inline void txframe_send_debug(frame_msg_t *m, int len)
 {
 	m->t = TXFRAME_TYPE_DEBUG;
 	if (len) m->len = len;
 	txframe_send(m, 2);
 }
+
+
+// buf should be long enough to store a int32_t with escape, so 8 bytes
+int frame_gather_stat(int step, uint8_t *buf);
+/*
+ * send stat frame using callback function
+ * frame header and end delimiter are NOT sent by frame_send_stat
+ */
+void frame_send_stat(void(*cb)(uint8_t *d, int l));
 
 #endif /* TXRXCMD_H_ */

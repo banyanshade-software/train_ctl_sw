@@ -40,6 +40,7 @@ void run_task_ctrl(void)
 		static uint32_t oldt = 0;
 		static uint32_t t0 = 0;
 		uint32_t t = HAL_GetTick();
+		// XXX we should have a global t0
 		if (!t0) t0 = t;
 		int32_t dt = (oldt) ? (t-oldt) : 1;
 		oldt = t;

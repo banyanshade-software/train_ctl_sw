@@ -11,6 +11,8 @@
 #import "train_simu.h"
 #import "trainctl_iface.h"
 #import "SimTrain.h"
+#include "statval.h"
+#include "txrxcmd.h"
 
 #define HIGHLEVEL_SIMU_CNX 0
 
@@ -20,7 +22,7 @@
  * notif format
  * |s'N'SNCvv..|
  */
-#define MAX_DATA_LEN 128
+#define MAX_DATA_LEN 120
 typedef struct {
     uint8_t state;
     uint8_t escape;
@@ -462,9 +464,6 @@ typedef void (^respblk_t)(void);
 
 - (void) setParameter:(NSControl *)c value:(int)v def:(int)def min:(int)min max:(int)max enable:(BOOL)ena
 {
-    if ([c isKindOfClass:[NSPopUpButton class]]) {
-        NSLog(@"break here");
-    }
     if ([c respondsToSelector:@selector(selectItemWithTag:)]) {
         [(id)c selectItemWithTag:v];
     } else if ([c respondsToSelector:@selector(setIntValue:)]) {
@@ -869,6 +868,7 @@ static int frm_unescape(uint8_t *buf, int len)
                 break;
             case 6:
                 if (frm.pidx >= MAX_DATA_LEN) {
+                    NSLog(@"long frame");
                     frm.state = 0;
                     frm.escape = 0;
                     continue;
@@ -892,7 +892,7 @@ static int frm_unescape(uint8_t *buf, int len)
 {
     int16_t v,v2;
     int32_t v32;
-    if ((0)) NSLog(@"notif / %c %d %c", frm.sel, frm.num, frm.cmd);
+    if ((1)) NSLog(@"notif / %c %d %c", frm.sel, frm.num, frm.cmd);
     if ('D' == frm.cmd) {
         int32_t v1, v2, v3;
         memcpy(&v1, frm.param, sizeof(int32_t));
@@ -1160,10 +1160,25 @@ void trainctl_notif(uint8_t sel, uint8_t num, uint8_t cmd, uint8_t *dta, int dta
 
 #else
 
+static NSMutableData *statframe=nil;
+static void _send_bytes(uint8_t *b, int l)
+{
+    [statframe appendBytes:&b length:l];
+}
 void txframe_send(frame_msg_t *m, int discardable)
 {
+    if (m->t == TXFRAME_TYPE_STAT) {
+        statframe = [[NSMutableData alloc]initWithBytes:"|_NG\000X____" length:6];
+        NSTimeInterval t = [NSDate timeIntervalSinceReferenceDate];
+        uint32_t dt = 1000*(t-theDelegate->t0);
+        [statframe appendBytes:&dt length:4];
+        frame_send_stat(_send_bytes);
+        _send_bytes((uint8_t *)"|", 1);
+        [theDelegate performSelectorOnMainThread:@selector(processFrames:) withObject:statframe waitUntilDone:NO];
+        statframe = nil;
+    }
     NSData *d = [NSData dataWithBytes:m->frm length:m->len];
-                 [theDelegate performSelectorOnMainThread:@selector(processFrames:) withObject:d waitUntilDone:NO];
+    [theDelegate performSelectorOnMainThread:@selector(processFrames:) withObject:d waitUntilDone:NO];
 }
 #endif
 

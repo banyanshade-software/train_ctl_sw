@@ -34,7 +34,7 @@ uint32_t num_msg_put = 0;
 uint32_t num_msg_get_err = 0;
 
 static void handleRxChars(frame_msg_t *m);
-static void _send_frm(frame_msg_t *m);
+static void _send_bytes(uint8_t *b, int len);
 
 void StartTxRxFrameTask(void *argument)
 {
@@ -60,15 +60,25 @@ void StartTxRxFrameTask(void *argument)
 			handleRxChars(&m);
 			continue;
 		}
-		_send_frm(&m);
+		if (m.t == TXFRAME_TYPE_STAT) {
+			uint32_t t = HAL_GetTick();   // XXX t0
+			uint8_t b[]="|_NG\000X____";
+			memcpy(b+6, &t, 4);
+			_send_bytes(b, 10);
+			frame_send_stat(_send_bytes);
+			_send_bytes((uint8_t *)"|", 1);
+			continue;
+		}
+		_send_bytes(m.frm, m.len);
 
 	}
 }
+//void frame_send_stat(void(*cb)(uint8_t *d, int l));
 
-static void _send_frm(frame_msg_t *m)
+static void _send_bytes(uint8_t *b, int len)
 {
 	for (;;) {
-		uint8_t rc = CDC_Transmit_FS(m->frm, m->len);
+		uint8_t rc = CDC_Transmit_FS(b, len);
 		if (rc != USBD_BUSY) break;
 		osDelay(10);
 	}
@@ -112,8 +122,9 @@ static void handleRxChars(frame_msg_t *m)
 			//debug_info('G', 0, "RESP", rlen,0, 0);
 			// would deadlock if we send (non discardable) through the queue
 			//txframe_send_response(&frresp, rlen);
-			frresp.len = rlen;
-			_send_frm(&frresp);
+			_send_bytes(frresp.frm, rlen);
+			//frresp.len = rlen;
+			//_send_frm(&frresp);
 		}
 	}
 }

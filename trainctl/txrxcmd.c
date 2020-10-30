@@ -29,6 +29,8 @@
 #include <stdint.h>
 #include <memory.h>
 
+#include "trainctl_iface.h"
+
 #include "txrxcmd.h"
 
 #include "canton.h"
@@ -38,7 +40,8 @@
 #include "auto1.h"
 #include "misc.h"
 #include "param.h"
-#include "trainctl_iface.h"
+#include "statval.h"
+
 //#include "stm32/txframe.h"
 //#include "stm32/taskauto.h"
 
@@ -70,6 +73,19 @@ static int _frm_escape(uint8_t *buf, int len, int maxlen)
     return nl;
 }
 
+static int _frm_escape2(uint8_t *buf,  uint8_t *org, int len, int maxlen)
+{
+    int ne = 0;
+    for (int i=0; i<len; i++) {
+    	if (ne>=maxlen) return -1;
+        if ((FRAME_ESC==org[i]) || (FRAME_DELIM==org[i])) {
+        	buf[ne++] = FRAME_ESC;
+        	if (ne>=maxlen) return -1;
+        }
+        buf[ne++] = org[i];
+    }
+    return ne;
+}
 static int frm_escape(uint8_t *buf, int len, int maxlen)
 {
 	//configASSERT(buf[0]==FRAME_DELIM);
@@ -383,5 +399,31 @@ void frame_send_notif(uint8_t sel, uint8_t num, uint8_t cmd, uint8_t *dta, int d
 }
 
 
+// buf should be long enough to store a int32_t with escape, so 8 bytes
+int frame_gather_stat(int step, uint8_t *buf)
+{
+	// int32_t stat_val_get(int step);
+	int done;
+	int32_t v = stat_val_get(step, &done);
+	if (done) return 0;
 
+	int l = _frm_escape2(buf, (void *) &v, 4, 8);
+	if (l<0) {
+		return -1;
+	}
+	return l;
+}
+
+void frame_send_stat(void(*cb)(uint8_t *d, int l))
+{
+	int i;
+	for (i=0; ; i++) {
+		uint8_t buf[8];
+		int l = frame_gather_stat(i, buf);
+		if (l<=0) {
+			return;
+		}
+		cb(buf, l);
+	}
+}
 

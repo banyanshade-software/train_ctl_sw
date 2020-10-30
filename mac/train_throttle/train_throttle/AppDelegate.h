@@ -36,17 +36,18 @@
 
 @property (nonatomic) double canton_0_bemf;
 @property (nonatomic) double canton_0_bemf_lp;
-@property (nonatomic) double canton_0_intensity;
 @property (nonatomic) double canton_0_volts;
 @property (nonatomic) double canton_0_von;
-@property (nonatomic) int canton_0_pwm;
+@property (nonatomic) int    canton_0_pwm;
+@property (nonatomic) double canton_0_intensity;
 
 
 @property (nonatomic) double canton_1_bemf;
-@property (nonatomic) double canton_1_intensity;
+@property (nonatomic) double canton_1_bemf_lp;
 @property (nonatomic) double canton_1_volts;
 @property (nonatomic) double canton_1_von;
-@property (nonatomic) int canton_1_pwm;
+@property (nonatomic) int    canton_1_pwm;
+@property (nonatomic) double canton_1_intensity;
 
 @property (nonatomic) int train0_pose;
 

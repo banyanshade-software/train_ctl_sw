@@ -27,6 +27,7 @@
 #include "traincontrol.h"
 #include "railconfig.h"
 #include "auto1.h"
+#include "txrxcmd.h"
 
 
 static void _set_speed(const train_config_t *cnf, train_vars_t *vars, int16_t v);
@@ -64,6 +65,7 @@ void train_run_tick( uint32_t notif_flags, uint32_t tick, uint32_t dt)
 
 	if (calibrating) {
 		calibrate_periodic(tick, dt, notif_flags);
+		txframe_send_stat();
 		return;
 	}
 
@@ -74,6 +76,7 @@ void train_run_tick( uint32_t notif_flags, uint32_t tick, uint32_t dt)
 		if (stop_all) break;
 		train_periodic_control(i, dt);
 	}
+	txframe_send_stat();
 }
 
 static void process_adc(volatile adc_buffer_t *buf, int32_t ticks)

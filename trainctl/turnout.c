@@ -47,6 +47,7 @@ void turnout_reset(int tidx)
 	HAL_GPIO_WritePin(aconf->cmd_port, aconf->pinB, GPIO_PIN_RESET);
 #endif
 	debug_info('A', 0, "RESET", 0, 0,0);
+    (void)aconf; // unused
 }
 int turnout_state(int tidx)
 {

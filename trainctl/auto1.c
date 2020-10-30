@@ -68,7 +68,7 @@ void auto1_reset(void)
 
 
 static void bh(void) {
-    printf("hop");
+    //printf("hop");
 }
 
 #define GO_STEP(_s) do { 	\

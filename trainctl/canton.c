@@ -145,6 +145,7 @@ void canton_set_volt(const canton_config_t *c, canton_vars_t *v, int voltidx)
 		return;
 	}
 	v->cur_voltidx = voltidx;
+    v-> selected_centivolt =  (c->volts[v->cur_voltidx]);
 
 	uint16_t s = 0;
 	uint16_t r = 0;
@@ -341,7 +342,10 @@ void canton_bemf(const canton_config_t *c, canton_vars_t *v, uint16_t adc1, uint
 	num_canton_bemf++;
 	int32_t val[4];
 	int32_t volt2= bemf_convert_to_centivolt(c,v, adc2-adc1); // unit 1/100 V
-
+    
+    v->bemf_centivolt = volt2;
+    v->von_centivolt = bemf_convert_to_centivolt_for_display(c,v, von2-von1);
+    
 	if (c->notif_bemf) {
 		int32_t volt = bemf_convert_to_centivolt_for_display(c,v, adc2-adc1); // unit 1/100 V
 		val[0] = volt;
@@ -358,7 +362,6 @@ void canton_bemf(const canton_config_t *c, canton_vars_t *v, uint16_t adc1, uint
 	// - fix high duty (90%) since measure is influenced by on state
 	// - bemf to speed
 	// send to train
-	v->bemf_centivolt = volt2;
 	if (calibrating) {
 		calib_store_bemf(adc2-adc1);
 	}

@@ -414,12 +414,15 @@ int frame_gather_stat(int step, uint8_t *buf)
 	return l;
 }
 
-void frame_send_stat(void(*cb)(uint8_t *d, int l))
+void frame_send_stat(void(*cb)(uint8_t *d, int l), uint32_t tick)
 {
+    uint8_t buf[8];
+    int l = _frm_escape2(buf, (void *) &tick, 4, 8);
+    cb(buf, l);
+
 	int i;
 	for (i=0; ; i++) {
-		uint8_t buf[8];
-		int l = frame_gather_stat(i, buf);
+		l = frame_gather_stat(i, buf);
 		if (l<=0) {
 			return;
 		}

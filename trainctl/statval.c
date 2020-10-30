@@ -77,10 +77,14 @@ static int32_t _getval(void *ptr, off_t offset, int l)
 	}
 	return v32;
 }
+
+static const int numvaltrain = sizeof(statvaltrain)/sizeof(statvaltrain[0]);
+static const int numvalcanton = sizeof(statvalcanton)/sizeof(statvalcanton[0]);
+
+
 int32_t stat_val_get(int step, int *pdone)
 {
-	static const int numvaltrain = sizeof(statvaltrain)/sizeof(statvaltrain[0]);
-	static const int numvalcanton = sizeof(statvalcanton)/sizeof(statvalcanton[0]);
+	
 	*pdone = 0;
 	int nt = step / numvaltrain;
 	if (nt>=NUM_TRAINS) {
@@ -102,4 +106,40 @@ int32_t stat_val_get(int step, int *pdone)
 		const stat_val_t *sv = &statvaltrain[idx];
 		return _getval(vars, sv->off, sv->l);
 	}
+}
+
+int get_val_info(int step, off_t *poffset, int *plen, int *ptridx, int *pcntidx, const char  **pzName)
+{
+    *ptridx = -1;
+    *pcntidx = -1;
+    *pzName = NULL;
+    
+    int nt = step / numvaltrain;
+    if (nt>=NUM_TRAINS) {
+        // canton
+        step -= NUM_TRAINS*numvaltrain;
+        int nc = step / numvalcanton;
+        if (nc >= NUM_CANTONS) {
+            // done
+            return -1;
+        }
+        int idx = step % numvalcanton;
+        const stat_val_t *sv = &statvalcanton[idx];
+        *poffset = sv->off;
+        *plen = sv->l;
+        *pcntidx = nc;
+#ifdef HOST_SIDE
+        *pzName = sv->param_name;
+#endif
+    } else {
+        int idx = step % numvaltrain;
+        const stat_val_t *sv = &statvaltrain[idx];
+        *poffset = sv->off;
+        *plen = sv->l;
+        *ptridx = nt;
+#ifdef HOST_SIDE
+        *pzName = sv->param_name;
+#endif
+    }
+    return 0;
 }

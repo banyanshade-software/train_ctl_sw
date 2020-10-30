@@ -22,7 +22,7 @@
  * notif format
  * |s'N'SNCvv..|
  */
-#define MAX_DATA_LEN 120
+#define MAX_DATA_LEN 512
 typedef struct {
     uint8_t state;
     uint8_t escape;
@@ -32,9 +32,11 @@ typedef struct {
     uint8_t sel;
     uint8_t num;
     uint8_t cmd;
-    uint8_t pidx;
-    uint8_t param[MAX_DATA_LEN];
-    //uint8_t resp[MAX_DATA_LEN];
+    uint16_t pidx;
+    union { // ensure alignment
+        uint8_t param[MAX_DATA_LEN];
+        uint32_t param32[MAX_DATA_LEN/4];
+    };
 } frame_state_t;
 
 // link ok values
@@ -915,6 +917,11 @@ static int frm_unescape(uint8_t *buf, int len)
                     [self addLog:str important:YES error:YES];
                     return;
                 }
+                case 'X': {
+                    // stat frame
+                    [self processStatFrame];
+                    return;
+                }
             }
             break;
         case 'C':
@@ -979,6 +986,50 @@ static int frm_unescape(uint8_t *buf, int len)
     [self addLog:str important:YES error:NO];
 }
 
+
+- (void) processStatFrame
+{
+    NSAssert(frm.pidx>8, @"short stat frame");
+    int nval = frm.pidx / 4;
+    uint32_t *ptr = frm.param32;
+    uint32_t tick = *ptr++;
+    nval--;
+    int step = 0;
+    for (;;nval--, step++) {
+        if (nval<0) {
+            NSLog(@"short stat frame");
+            return;
+        }
+        int32_t v = *ptr++;
+        off_t offset; int len;
+        int trnidx;
+        int cntidx;
+        const char *name;
+        int rc = get_val_info(step, &offset, &len, &trnidx, &cntidx, &name);
+        if (rc) {
+            // end
+            if (nval) {
+                NSLog(@"still has val after process");
+            }
+            return;
+        }
+        NSLog(@"stat : '%s'[%d,%d] = %d\n", name, trnidx,cntidx, v);
+        if (name) {
+            NSString *m = [NSString stringWithUTF8String:name];
+            NSString *key = m;
+            if (trnidx >= 0) {
+                key = [NSString stringWithFormat:m, trnidx];
+            } else if (cntidx >= 0) {
+                key = [NSString stringWithFormat:m, cntidx];
+            }
+            @try {
+                [self setValue:@(v) forKey:key];
+            } @catch (NSException *exception) {
+                NSLog(@"key %@ not ok: %@", key, exception);
+            }
+        }
+    }
+}
 #pragma mark -
 
 - (void) frameResponse
@@ -1163,7 +1214,7 @@ void trainctl_notif(uint8_t sel, uint8_t num, uint8_t cmd, uint8_t *dta, int dta
 static NSMutableData *statframe=nil;
 static void _send_bytes(uint8_t *b, int l)
 {
-    [statframe appendBytes:&b length:l];
+    [statframe appendBytes:b length:l];
 }
 void txframe_send(frame_msg_t *m, int discardable)
 {
@@ -1171,8 +1222,7 @@ void txframe_send(frame_msg_t *m, int discardable)
         statframe = [[NSMutableData alloc]initWithBytes:"|_NG\000X____" length:6];
         NSTimeInterval t = [NSDate timeIntervalSinceReferenceDate];
         uint32_t dt = 1000*(t-theDelegate->t0);
-        [statframe appendBytes:&dt length:4];
-        frame_send_stat(_send_bytes);
+        frame_send_stat(_send_bytes, dt);
         _send_bytes((uint8_t *)"|", 1);
         [theDelegate performSelectorOnMainThread:@selector(processFrames:) withObject:statframe waitUntilDone:NO];
         statframe = nil;

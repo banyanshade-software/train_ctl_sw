@@ -19,4 +19,8 @@
 
 int32_t stat_val_get(int step, int *pdone);
 
+
+
+int get_val_info(int step, off_t *poffset, int *plen, int *ptridx, int *pcntidx, const char  **pzName);
+
 #endif /* STATVAL_H_ */

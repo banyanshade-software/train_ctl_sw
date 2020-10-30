@@ -68,6 +68,6 @@ int frame_gather_stat(int step, uint8_t *buf);
  * send stat frame using callback function
  * frame header and end delimiter are NOT sent by frame_send_stat
  */
-void frame_send_stat(void(*cb)(uint8_t *d, int l));
+void frame_send_stat(void(*cb)(uint8_t *d, int l), uint32_t tick);
 
 #endif /* TXRXCMD_H_ */

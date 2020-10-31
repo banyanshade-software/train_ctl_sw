@@ -417,6 +417,7 @@ int frame_gather_stat(int step, uint8_t *buf)
 void frame_send_stat(void(*cb)(uint8_t *d, int l), uint32_t tick)
 {
     uint8_t buf[8];
+    //if ((1)) tick = 0xAA55AA55;
     int l = _frm_escape2(buf, (void *) &tick, 4, 8);
     cb(buf, l);
 

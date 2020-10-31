@@ -67,13 +67,13 @@ static  canton_config_t Cantons[NUM_CANTONS] = {
 static  train_config_t Trains[NUM_TRAINS] = {
 		{
 				{ // pidctl_config_t
-						150, 30, 750,  // kP, kI, kD
+						600, 500, 750,  // kP, kI, kD
                     /*
                      * 50, 30, -50,
                      */
 				},
 				{ // inertia_config_t
-						150, 100		// dec, acc
+						350, 200		// dec, acc
 				},
 				vpolicy_normal,  //vpolicy_normal, // vpolicy_pure_volt, //vpolicy_pure_pwm,
 				0, // enable_inertia
@@ -84,7 +84,7 @@ static  train_config_t Trains[NUM_TRAINS] = {
 				0, // postIIR
 				1, // fix_bemf;
 				1,  //	uint8_t en_spd2pow;
-				30, //	uint8_t min_power;
+				20, //	uint8_t min_power;
 		}
 };
 

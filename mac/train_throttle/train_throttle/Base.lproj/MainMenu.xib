@@ -60,6 +60,13 @@
                                     <action selector="unhideAllApplications:" target="-1" id="Dhg-Le-xox"/>
                                 </connections>
                             </menuItem>
+                            <menuItem isSeparatorItem="YES" id="PB4-nB-4nc"/>
+                            <menuItem title="Emergency stop" keyEquivalent=" " id="J2a-oN-eqE">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="stopAll:" target="Voe-Tx-rLC" id="9UN-VV-2LS"/>
+                                </connections>
+                            </menuItem>
                             <menuItem isSeparatorItem="YES" id="kCx-OE-vgT"/>
                             <menuItem title="Quit train_throttle" keyEquivalent="q" id="4sb-4s-VLi">
                                 <connections>
@@ -1437,7 +1444,7 @@
                                                         <rect key="frame" x="14" y="153" width="101" height="25"/>
                                                         <popUpButtonCell key="cell" type="push" title="disable" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="dtn-d3-lif" id="p96-M5-dhc">
                                                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                                                            <font key="font" metaFont="system"/>
+                                                            <font key="font" metaFont="menu"/>
                                                             <menu key="menu" id="uGO-Hy-dbN">
                                                                 <items>
                                                                     <menuItem title="disable" state="on" id="dtn-d3-lif"/>
@@ -1981,6 +1988,109 @@
                                     <constraints>
                                         <constraint firstItem="Uev-TY-ejt" firstAttribute="top" secondItem="VSP-nF-OXb" secondAttribute="top" constant="16" id="0do-nZ-Qmw"/>
                                         <constraint firstItem="Uev-TY-ejt" firstAttribute="leading" secondItem="VSP-nF-OXb" secondAttribute="leading" constant="16" id="oyq-cM-zbR"/>
+                                    </constraints>
+                                </view>
+                            </tabViewItem>
+                            <tabViewItem label="Record" identifier="" id="WuV-ET-awb">
+                                <view key="view" id="VlL-nK-cbV">
+                                    <rect key="frame" x="10" y="33" width="836" height="370"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                    <subviews>
+                                        <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="cNi-lE-t0Y">
+                                            <rect key="frame" x="14" y="322" width="71" height="32"/>
+                                            <buttonCell key="cell" type="push" title="Start" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="f2O-x0-I2A">
+                                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                <font key="font" metaFont="system"/>
+                                            </buttonCell>
+                                            <connections>
+                                                <action selector="startRecord:" target="Voe-Tx-rLC" id="l4Z-qM-e5Q"/>
+                                                <binding destination="Voe-Tx-rLC" name="enabled" keyPath="recordState" id="gfk-l4-P5W">
+                                                    <dictionary key="options">
+                                                        <string key="NSValueTransformerName">NSNegateBoolean</string>
+                                                    </dictionary>
+                                                </binding>
+                                            </connections>
+                                        </button>
+                                        <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="r1U-ZC-0xu">
+                                            <rect key="frame" x="14" y="285" width="71" height="32"/>
+                                            <buttonCell key="cell" type="push" title="Mark" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="x7r-aJ-be7">
+                                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                <font key="font" metaFont="system"/>
+                                            </buttonCell>
+                                            <connections>
+                                                <action selector="markRecord:" target="Voe-Tx-rLC" id="Dh5-D0-rKI"/>
+                                                <binding destination="Voe-Tx-rLC" name="enabled" keyPath="recordState" id="9vR-m7-XlC"/>
+                                            </connections>
+                                        </button>
+                                        <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="y2E-v8-UxY">
+                                            <rect key="frame" x="14" y="244" width="71" height="32"/>
+                                            <buttonCell key="cell" type="push" title="Stop" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="1p0-8U-FHZ">
+                                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                <font key="font" metaFont="system"/>
+                                            </buttonCell>
+                                            <connections>
+                                                <action selector="stopRecord:" target="Voe-Tx-rLC" id="PGv-mZ-cPI"/>
+                                                <binding destination="Voe-Tx-rLC" name="enabled" keyPath="recordState" id="PYv-pI-uUw"/>
+                                            </connections>
+                                        </button>
+                                        <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="VzA-P6-uii">
+                                            <rect key="frame" x="124" y="329" width="154" height="21"/>
+                                            <constraints>
+                                                <constraint firstAttribute="width" constant="154" id="ZLn-Eh-alv"/>
+                                            </constraints>
+                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" placeholderString="filename" drawsBackground="YES" id="T3M-3S-hlC">
+                                                <font key="font" metaFont="system"/>
+                                                <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                            </textFieldCell>
+                                            <connections>
+                                                <binding destination="Voe-Tx-rLC" name="value" keyPath="recordName" id="Hrv-57-Kvq"/>
+                                            </connections>
+                                        </textField>
+                                        <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="udP-Dr-tjq">
+                                            <rect key="frame" x="14" y="203" width="71" height="32"/>
+                                            <buttonCell key="cell" type="push" title="Plot" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Vnu-7U-LpI">
+                                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                <font key="font" metaFont="system"/>
+                                            </buttonCell>
+                                            <connections>
+                                                <action selector="plotRecord:" target="Voe-Tx-rLC" id="vdC-OI-mLS"/>
+                                                <binding destination="Voe-Tx-rLC" name="enabled" keyPath="recordState" id="fqQ-WV-HDz"/>
+                                            </connections>
+                                        </button>
+                                        <popUpButton verticalHuggingPriority="750" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="dNW-25-dVW">
+                                            <rect key="frame" x="122" y="207" width="77" height="25"/>
+                                            <popUpButtonCell key="cell" type="push" title="Item 1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="DgP-sL-kcM" id="XP9-nh-ts4">
+                                                <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                                <font key="font" metaFont="system"/>
+                                                <menu key="menu" id="9zT-1A-LqK">
+                                                    <items>
+                                                        <menuItem title="Item 1" state="on" id="DgP-sL-kcM"/>
+                                                        <menuItem title="Item 2" id="zQ1-6B-Kqs"/>
+                                                        <menuItem title="Item 3" id="i1r-NN-nrb"/>
+                                                    </items>
+                                                </menu>
+                                            </popUpButtonCell>
+                                            <connections>
+                                                <binding destination="Voe-Tx-rLC" name="selectedIndex" keyPath="plotNum" id="P3R-gn-vzN"/>
+                                            </connections>
+                                        </popUpButton>
+                                    </subviews>
+                                    <constraints>
+                                        <constraint firstItem="y2E-v8-UxY" firstAttribute="trailing" secondItem="cNi-lE-t0Y" secondAttribute="trailing" id="0Jg-Ii-Dhl"/>
+                                        <constraint firstItem="r1U-ZC-0xu" firstAttribute="trailing" secondItem="cNi-lE-t0Y" secondAttribute="trailing" id="0ze-dg-lUG"/>
+                                        <constraint firstItem="udP-Dr-tjq" firstAttribute="leading" secondItem="cNi-lE-t0Y" secondAttribute="leading" id="48f-Wo-4U6"/>
+                                        <constraint firstItem="cNi-lE-t0Y" firstAttribute="top" secondItem="VlL-nK-cbV" secondAttribute="top" constant="20" id="9Ur-S5-rZu"/>
+                                        <constraint firstItem="udP-Dr-tjq" firstAttribute="top" secondItem="y2E-v8-UxY" secondAttribute="bottom" constant="20" id="CEb-if-Ifw"/>
+                                        <constraint firstItem="dNW-25-dVW" firstAttribute="firstBaseline" secondItem="udP-Dr-tjq" secondAttribute="firstBaseline" id="JQI-oq-Tk8"/>
+                                        <constraint firstItem="r1U-ZC-0xu" firstAttribute="leading" secondItem="cNi-lE-t0Y" secondAttribute="leading" id="OR2-je-fSD"/>
+                                        <constraint firstItem="y2E-v8-UxY" firstAttribute="leading" secondItem="cNi-lE-t0Y" secondAttribute="leading" id="SfT-44-pPt"/>
+                                        <constraint firstItem="VzA-P6-uii" firstAttribute="leading" secondItem="cNi-lE-t0Y" secondAttribute="trailing" constant="45" id="TYj-jV-wJl"/>
+                                        <constraint firstItem="cNi-lE-t0Y" firstAttribute="leading" secondItem="VlL-nK-cbV" secondAttribute="leading" constant="20" id="UUb-O1-UYQ"/>
+                                        <constraint firstItem="VzA-P6-uii" firstAttribute="firstBaseline" secondItem="cNi-lE-t0Y" secondAttribute="firstBaseline" id="j8C-Ga-5aC"/>
+                                        <constraint firstItem="y2E-v8-UxY" firstAttribute="top" secondItem="r1U-ZC-0xu" secondAttribute="bottom" constant="20" id="to5-pD-lEj"/>
+                                        <constraint firstItem="r1U-ZC-0xu" firstAttribute="top" secondItem="cNi-lE-t0Y" secondAttribute="bottom" constant="16" id="tve-qM-m6f"/>
+                                        <constraint firstItem="udP-Dr-tjq" firstAttribute="trailing" secondItem="cNi-lE-t0Y" secondAttribute="trailing" id="vbx-3W-1AQ"/>
                                     </constraints>
                                 </view>
                             </tabViewItem>

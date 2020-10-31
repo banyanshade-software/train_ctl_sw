@@ -17,6 +17,8 @@
 #ifndef STATVAL_H_
 #define STATVAL_H_
 
+#include <sys/types.h>
+
 int32_t stat_val_get(int step, int *pdone);
 
 

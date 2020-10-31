@@ -37,24 +37,23 @@ typedef struct {
 #endif
 
 static const stat_val_t statvaltrain[] = {
-		{ offsetof(train_vars_t, pidvars.last_err), 4   _P(NULL)},
-		{ offsetof(train_vars_t, pidvars.sume), 4       _P(NULL)},
-		{ offsetof(train_vars_t, pidvars.target_v), 4   _P(NULL)},
-		{ offsetof(train_vars_t, inertiavars.target), 2 _P(NULL)},
-		{ offsetof(train_vars_t, inertiavars.cur), 2    _P(NULL)},
-		{ offsetof(train_vars_t, target_speed), 2       _P(NULL)},
+		{ offsetof(train_vars_t, pidvars.last_err), 4   _P("pid_last_err")},
+		{ offsetof(train_vars_t, pidvars.sume), 4       _P("pid_sum_e")},
+		{ offsetof(train_vars_t, pidvars.target_v), 4   _P("pid_target")},
+		{ offsetof(train_vars_t, inertiavars.target), 2 _P("ine_t")},
+		{ offsetof(train_vars_t, inertiavars.cur), 2    _P("ine_c")},
+		{ offsetof(train_vars_t, target_speed), 2       _P("target_speed")},
 		{ offsetof(train_vars_t, last_speed), 2         _P("curspeed")},
 		{ offsetof(train_vars_t, position_estimate), 4  _P("train0_pose")},
 };
 
 static const stat_val_t statvalcanton[] = {
-		{ offsetof(canton_vars_t, cur_dir) , 1          _P(NULL)},
-        { offsetof(canton_vars_t, cur_voltidx) , 1      _P(NULL)},
+		{ offsetof(canton_vars_t, cur_dir) , 1          _P("dir")},
+        { offsetof(canton_vars_t, cur_voltidx) , 1      _P("vidx")},
 		{ offsetof(canton_vars_t, cur_pwm_duty) , 2     _P("canton_%d_pwm")},
 		{ offsetof(canton_vars_t, bemf_centivolt) , 4   _P("canton_%d_bemf")},
-    { offsetof(canton_vars_t, selected_centivolt) , 4   _P("canton_%d_volts")},
-    { offsetof(canton_vars_t, von_centivolt) , 4   _P("canton_%d_von")},
-
+        { offsetof(canton_vars_t, selected_centivolt), 4 _P("canton_%d_volts")},
+        { offsetof(canton_vars_t, von_centivolt) , 4    _P("canton_%d_von")},
 };
 
 static int32_t _getval(void *ptr, off_t offset, int l)

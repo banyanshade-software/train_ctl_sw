@@ -105,7 +105,7 @@ const osThreadAttr_t taskAuto_attributes = {
 };
 /* Definitions for frameQueue */
 osMessageQueueId_t frameQueueHandle;
-uint8_t frameQueueBuffer[ 32 * sizeof( frame_msg_t ) ];
+uint8_t frameQueueBuffer[ 48 * sizeof( frame_msg_t ) ];
 osStaticMessageQDef_t frameQueueControlBlock;
 const osMessageQueueAttr_t frameQueue_attributes = {
   .name = "frameQueue",
@@ -221,7 +221,7 @@ int main(void)
 
   /* Create the queue(s) */
   /* creation of frameQueue */
-  frameQueueHandle = osMessageQueueNew (32, sizeof(frame_msg_t), &frameQueue_attributes);
+  frameQueueHandle = osMessageQueueNew (48, sizeof(frame_msg_t), &frameQueue_attributes);
 
   /* USER CODE BEGIN RTOS_QUEUES */
   /* add queues, ... */

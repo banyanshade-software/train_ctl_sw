@@ -67,6 +67,10 @@ typedef void (^respblk_t)(void);
     NSTimeInterval lastSimu;
     NSTimeInterval t0;
     SimTrain *simTrain0;
+    
+    // record
+    NSFileHandle *recordFile;
+    NSMutableDictionary *recordItems;
 }
 
 @property (weak) IBOutlet NSWindow *window;
@@ -83,6 +87,9 @@ typedef void (^respblk_t)(void);
 @synthesize targetspeed = _targetspeed;
 @synthesize polarity = _polarity;
 @synthesize simTrain0 = _simTrain0;
+@synthesize recordState = _recordState;
+
+
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
     self.polarity = 1;
@@ -304,7 +311,7 @@ typedef void (^respblk_t)(void);
     self.linkok = LINK_SIMU;
 #else
     self.linkok = LINK_SIMULOW;
-    [self performSelector:@selector(getParams) withObject:nil afterDelay:0.2];
+    [self performSelector:@selector(getParams) withObject:nil afterDelay:0.3];
 #endif
     [self startSimu];
 }
@@ -360,7 +367,7 @@ typedef void (^respblk_t)(void);
         v = c.intValue;
     }
     NSLog(@"changeParam %@ -> %d", x, (int)v);
-     
+    
     uint8_t chgfrm[80] = "|xT\0Pvvvv......";
     NSArray *pa = [self splitParamName:x];
     NSString *psel = [pa objectAtIndex:1];
@@ -385,7 +392,7 @@ typedef void (^respblk_t)(void);
     [self sendFrame:chgfrm len:(int)(5+nl+4+2) blen:sizeof(chgfrm) then:^{
         NSLog(@"changed rc=%d", self->frm.retcode);
     }];
-
+    
 }
 
 - (NSArray *) splitParamName:(NSString *)s
@@ -402,10 +409,11 @@ typedef void (^respblk_t)(void);
 {
     nparamresp = 0;
     static uint8_t gpfrm[80] = "|xT\0p......";
+    int __block n = 0;
     [self forAllParamsDo:^(NSControl *c){
-        if ((0)) { // XXX
-            [self setParameter:c value:50 def:10 min:3 max:99 enable:YES];
-            return;
+        n++;
+        if (0 && (n % 7)) {
+            usleep(500*1000); // XXX to be fixed
         }
         NSString *s = c.identifier;
         //if (![s isKindOfClass:[NSString class]]) return NO;
@@ -433,7 +441,7 @@ typedef void (^respblk_t)(void);
         memcpy(gpfrm+5, cpn, nl+1);
         gpfrm[5+nl+1] = '|';
         NSLog(@"get param %c%c '%s'\n",  cpsel[0], cpsel[1], cpn);
-       
+        
         [self sendFrame:gpfrm len:(int)(5+nl+2) blen:sizeof(gpfrm) then:^{
             // handle response
             self->nparamresp++;
@@ -458,8 +466,8 @@ typedef void (^respblk_t)(void);
             memcpy(&max, self->frm.param + 3*sizeof(int32_t), sizeof(int32_t));
             [self setParameter:c value:val def:def min:min max:max enable:YES];
             NSLog(@"val %d def %d min %d max %d\n", val, def ,min, max);
-            
         }];
+        
         //NSLog(@"hop");
     }];
 }
@@ -682,6 +690,7 @@ typedef void (^respblk_t)(void);
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NSFileHandleDataAvailableNotification object:usb];
     usb = nil;
     self.linkok = 0;
+    self.transmit = 0;
     [self performSelector:@selector(openUsb) withObject:nil afterDelay:1.0];
 }
 - (void)readUsbTty:(NSNotification*)not
@@ -894,7 +903,7 @@ static int frm_unescape(uint8_t *buf, int len)
 {
     int16_t v,v2;
     int32_t v32;
-    if ((1)) NSLog(@"notif / %c %d %c", frm.sel, frm.num, frm.cmd);
+    if ((0)) NSLog(@"notif / %c %d %c", frm.sel, frm.num, frm.cmd);
     if ('D' == frm.cmd) {
         int32_t v1, v2, v3;
         memcpy(&v1, frm.param, sizeof(int32_t));
@@ -990,44 +999,74 @@ static int frm_unescape(uint8_t *buf, int len)
 - (void) processStatFrame
 {
     NSAssert(frm.pidx>8, @"short stat frame");
+    //if ((1)) return;
+    
     int nval = frm.pidx / 4;
     uint32_t *ptr = frm.param32;
-    uint32_t tick = *ptr++;
+    //uint32_t tick = *ptr++;
     nval--;
-    int step = 0;
+    int step = -1;
     for (;;nval--, step++) {
-        if (nval<0) {
-            NSLog(@"short stat frame");
-            return;
-        }
+       
         int32_t v = *ptr++;
         off_t offset; int len;
-        int trnidx;
-        int cntidx;
-        const char *name;
-        int rc = get_val_info(step, &offset, &len, &trnidx, &cntidx, &name);
-        if (rc) {
-            // end
-            if (nval) {
-                NSLog(@"still has val after process");
+        int trnidx=-1;
+        int cntidx=-1;
+        const char *name = NULL;
+        if (step>=0) {
+            int rc = get_val_info(step, &offset, &len, &trnidx, &cntidx, &name);
+            if (rc) {
+                // end
+                if (nval>-1) {
+                    NSLog(@"still has val after process");
+                }
+                goto done;
             }
-            return;
         }
-        NSLog(@"stat : '%s'[%d,%d] = %d\n", name, trnidx,cntidx, v);
+        if (nval<0) {
+            NSLog(@"short stat frame");
+            goto done;
+        }
+        //NSLog(@"stat : '%s'[%d,%d] = %d\n", name ? name : "_", trnidx,cntidx, v);
+        NSString *key = nil;
+
+        static NSMutableSet *unhandled_key = nil;
+        if (!unhandled_key) unhandled_key = [[NSMutableSet alloc]initWithCapacity:20];
         if (name) {
             NSString *m = [NSString stringWithUTF8String:name];
-            NSString *key = m;
+            key = m;
             if (trnidx >= 0) {
                 key = [NSString stringWithFormat:m, trnidx];
             } else if (cntidx >= 0) {
                 key = [NSString stringWithFormat:m, cntidx];
             }
-            @try {
-                [self setValue:@(v) forKey:key];
-            } @catch (NSException *exception) {
-                NSLog(@"key %@ not ok: %@", key, exception);
+            if (![unhandled_key containsObject:key]) {
+                @try {
+                    [self setValue:@(v) forKey:key];
+                } @catch (NSException *exception) {
+                    NSLog(@"key %@ not ok: %@", key, exception);
+                    [unhandled_key addObject:key];
+                }
             }
         }
+        if (_recordState == 1) {
+            if (!recordItems) recordItems=[[NSMutableDictionary alloc]init];
+            if (-1==step) {
+                [recordFile writeData:[@"T_ms, " dataUsingEncoding:NSUTF8StringEncoding]];
+            } else {
+                if (key) [recordItems setObject:@(step+1) forKey:key];
+                NSString *s = [NSString stringWithFormat:@"%@, ", key ? key : @"_"];
+                [recordFile writeData:[s dataUsingEncoding:NSUTF8StringEncoding]];
+            }
+        } else if (_recordState) {
+            NSString *s = [NSString stringWithFormat:@"%d, ", v];
+            [recordFile writeData:[s dataUsingEncoding:NSUTF8StringEncoding]];
+        }
+    }
+done:
+    if (_recordState) {
+        [recordFile writeData:[@"\n" dataUsingEncoding:NSUTF8StringEncoding]];
+        _recordState = 2;
     }
 }
 #pragma mark -
@@ -1052,6 +1091,14 @@ static int frm_unescape(uint8_t *buf, int len)
 - (void) sendFrame:(uint8_t *)frame len:(int)len blen:(int)blen then:(respblk_t)b
 {
     if (_linkok<LINK_FRM) return;
+    /*
+    if (_transmit > 7) {
+        NSLog(@"delay transmit");
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(100 * NSEC_PER_MSEC)), dispatch_get_main_queue(), ^{
+            [self sendFrame:frame len:len blen:blen then:b];
+        });
+    }*/
+    
     if (!b) b = ^{};
     int ssn = -1;
     for (int i=0; i<256; i++) {
@@ -1095,6 +1142,7 @@ static int frm_unescape(uint8_t *buf, int len)
                 [self performSelectorOnMainThread:@selector(processFrames:) withObject:d waitUntilDone:NO];
             }
         }
+        return;
     }
 #endif
     int fd = [usb fileDescriptor];
@@ -1244,4 +1292,41 @@ void notif_target_bemf(const train_config_t *cnf, train_vars_t *vars, int32_t va
     theDelegate.target_bemf = (BEMF_RAW) ? val : val*1.0/MAX_PID_VALUE;
 }
  */
+
+
+#pragma mark - record and plot
+
+
+- (IBAction) startRecord:(id)sender
+{
+    if (_recordState) return;
+    NSURL * tdir = [[NSFileManager defaultManager]temporaryDirectory];
+    NSString *s = self.recordName;
+    if (!s) s = @"record";
+    s = [s stringByAppendingString:@".csv"];
+    NSURL *fu = [tdir URLByAppendingPathComponent:s];
+    NSLog(@"file : %@", fu);
+    NSError *err;
+    [[NSFileManager defaultManager]createFileAtPath:[fu path] contents:nil attributes:nil];
+    recordFile = [NSFileHandle fileHandleForWritingToURL:fu error:&err];
+    if (!recordFile) {
+        NSLog(@"error creating file : %@", err);
+        return;
+    }
+    self.recordState=1;
+    self.fileURL = fu;
+    [self addLog:[NSString stringWithFormat:@"RECORD : %@\r\n", [fu path]] important:YES error:NO];
+}
+- (IBAction) markRecord:(id)sender
+{
+    if (!_recordState) return;
+}
+- (IBAction) stopRecord:(id)sender
+{
+    if (!_recordState) return;
+    [recordFile closeFile];
+    self.recordState = 0;
+}
+//@property (nonatomic, strong) NSString *recordName;
+
 @end

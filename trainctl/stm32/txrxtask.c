@@ -62,10 +62,10 @@ void StartTxRxFrameTask(void *argument)
 		}
 		if (m.t == TXFRAME_TYPE_STAT) {
 			uint32_t t = HAL_GetTick();   // XXX t0
-			uint8_t b[]="|_NG\000X____";
-			memcpy(b+6, &t, 4);
-			_send_bytes(b, 10);
-			frame_send_stat(_send_bytes);
+			uint8_t b[]="|_NG\000X";
+			//memcpy(b+6, &t, 4);
+			_send_bytes(b, 6);
+			frame_send_stat(_send_bytes, t);
 			_send_bytes((uint8_t *)"|", 1);
 			continue;
 		}
@@ -80,7 +80,7 @@ static void _send_bytes(uint8_t *b, int len)
 	for (;;) {
 		uint8_t rc = CDC_Transmit_FS(b, len);
 		if (rc != USBD_BUSY) break;
-		osDelay(10);
+		osDelay(1);
 	}
 }
 
@@ -93,7 +93,7 @@ void txframe_send(frame_msg_t *m, int discardable)
 		txframe_queue_full++;
 		if (discardable) return;
 	}
-	if ((s<=15) && discardable) {
+	if ((s<=20) && discardable) {
 		// we use a single queue, and no priority available with freertos
 		// so we just keep some space for non discardable frames
 		txframe_queue_full++;

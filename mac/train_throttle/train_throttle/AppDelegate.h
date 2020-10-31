@@ -77,7 +77,16 @@
 - (IBAction) connectSimu:(id)sender;
 
 
+
+- (IBAction) startRecord:(id)sender;
+- (IBAction) markRecord:(id)sender;
+- (IBAction) stopRecord:(id)sender;
+@property (nonatomic, strong) NSString *recordName;
+@property (nonatomic, strong) NSURL *fileURL;
+@property (nonatomic) int plotNum;
+@property (nonatomic) int recordState;
 @property (nonatomic,weak) IBOutlet NSTextView *logView;
+- (IBAction) plotRecord:(id)sender;
 
 @end
 

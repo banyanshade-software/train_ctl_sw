@@ -2055,19 +2055,25 @@
                                             </buttonCell>
                                             <connections>
                                                 <action selector="plotRecord:" target="Voe-Tx-rLC" id="vdC-OI-mLS"/>
-                                                <binding destination="Voe-Tx-rLC" name="enabled" keyPath="recordState" id="fqQ-WV-HDz"/>
+                                                <binding destination="Voe-Tx-rLC" name="enabled" keyPath="fileURL" id="WW1-OP-ci2">
+                                                    <dictionary key="options">
+                                                        <string key="NSValueTransformerName">NSIsNotNil</string>
+                                                    </dictionary>
+                                                </binding>
                                             </connections>
                                         </button>
                                         <popUpButton verticalHuggingPriority="750" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="dNW-25-dVW">
                                             <rect key="frame" x="122" y="207" width="77" height="25"/>
-                                            <popUpButtonCell key="cell" type="push" title="Item 1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="DgP-sL-kcM" id="XP9-nh-ts4">
+                                            <popUpButtonCell key="cell" type="push" title="power" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="DgP-sL-kcM" id="XP9-nh-ts4">
                                                 <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                                                <font key="font" metaFont="system"/>
+                                                <font key="font" metaFont="menu"/>
                                                 <menu key="menu" id="9zT-1A-LqK">
                                                     <items>
-                                                        <menuItem title="Item 1" state="on" id="DgP-sL-kcM"/>
-                                                        <menuItem title="Item 2" id="zQ1-6B-Kqs"/>
-                                                        <menuItem title="Item 3" id="i1r-NN-nrb"/>
+                                                        <menuItem title="power" state="on" id="DgP-sL-kcM" userLabel="power"/>
+                                                        <menuItem title="power2" id="zQ1-6B-Kqs"/>
+                                                        <menuItem title="PID" id="i1r-NN-nrb"/>
+                                                        <menuItem title="inertia" id="bmz-hi-zv5"/>
+                                                        <menuItem title="pose" id="UNx-fi-qfh"/>
                                                     </items>
                                                 </menu>
                                             </popUpButtonCell>

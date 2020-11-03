@@ -14,6 +14,8 @@
 #include "statval.h"
 #include "txrxcmd.h"
 
+#include "StringExtension.h"
+
 #define HIGHLEVEL_SIMU_CNX 0
 
 /*
@@ -71,6 +73,12 @@ typedef void (^respblk_t)(void);
     // record
     NSFileHandle *recordFile;
     NSMutableDictionary *recordItems;
+    // plot
+    NSTask *gnuplotTask;
+    NSPipe *gnuplotStdin;
+    NSPipe *gnuplotStdout;
+    NSFileHandle *gnuplotStdinFh;
+    NSFileHandle *gnuplotStdoutFh;
 }
 
 @property (weak) IBOutlet NSWindow *window;
@@ -92,6 +100,8 @@ typedef void (^respblk_t)(void);
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
+    signal(SIGPIPE, SIG_IGN);
+
     self.polarity = 1;
     self.shunting = 0;
     self.transmit = 0;
@@ -306,6 +316,7 @@ typedef void (^respblk_t)(void);
 - (IBAction) connectSimu:(id)sender
 {
     if (_linkok != LINK_DISC) return;
+    theDelegate = self;
     railconfig_setup_default();
 #if HIGHLEVEL_SIMU_CNX
     self.linkok = LINK_SIMU;
@@ -412,9 +423,9 @@ typedef void (^respblk_t)(void);
     int __block n = 0;
     [self forAllParamsDo:^(NSControl *c){
         n++;
-        if (0 && (n % 7)) {
+        /*if (0 && (n % 7)) {
             usleep(500*1000); // XXX to be fixed
-        }
+        }*/
         NSString *s = c.identifier;
         //if (![s isKindOfClass:[NSString class]]) return NO;
         //if (![s hasPrefix:@"par_"]) return NO;
@@ -846,6 +857,7 @@ static int frm_unescape(uint8_t *buf, int len)
         }
         if (c==FRAME_ESC && !frm.escape) {
             // state is >0 here
+            //NSLog(@"escape");
             frm.escape = 1;
             continue;
         }
@@ -1040,9 +1052,13 @@ static int frm_unescape(uint8_t *buf, int len)
             } else if (cntidx >= 0) {
                 key = [NSString stringWithFormat:m, cntidx];
             }
+            NSNumber *nsv = @(v);
             if (![unhandled_key containsObject:key]) {
+                if ([key hasSubString:@"centi"]) {
+                    nsv = @(v/100.0);
+                }
                 @try {
-                    [self setValue:@(v) forKey:key];
+                    [self setValue:nsv forKey:key];
                 } @catch (NSException *exception) {
                     NSLog(@"key %@ not ok: %@", key, exception);
                     [unhandled_key addObject:key];
@@ -1059,7 +1075,12 @@ static int frm_unescape(uint8_t *buf, int len)
                 [recordFile writeData:[s dataUsingEncoding:NSUTF8StringEncoding]];
             }
         } else if (_recordState) {
-            NSString *s = [NSString stringWithFormat:@"%d, ", v];
+            NSString *s;
+            if ([key hasSubString:@"centi"]) {
+                    s = [NSString stringWithFormat:@"%f, ", v/100.0];
+            } else {
+                    s = [NSString stringWithFormat:@"%d, ", v];
+            }
             [recordFile writeData:[s dataUsingEncoding:NSUTF8StringEncoding]];
         }
     }
@@ -1139,6 +1160,7 @@ done:
             txrx_process_char(frame[i], frresp.frm, &rlen);
             if (rlen>0) {
                 NSData *d = [NSData dataWithBytes:frresp.frm length:rlen];
+                if ((TRC)) NSLog(@"from simu  resp %d bytes : %@\n", rlen, [self dumpFrames:d]);
                 [self performSelectorOnMainThread:@selector(processFrames:) withObject:d waitUntilDone:NO];
             }
         }
@@ -1156,7 +1178,6 @@ static AppDelegate *theDelegate = nil;
 
 - (void) startSimu
 {
-    theDelegate = self;
     self.simTrain0 = [[SimTrain alloc]init];
     lastSimu = [NSDate timeIntervalSinceReferenceDate];
     t0 = lastSimu;
@@ -1272,10 +1293,13 @@ void txframe_send(frame_msg_t *m, int discardable)
         uint32_t dt = 1000*(t-theDelegate->t0);
         frame_send_stat(_send_bytes, dt);
         _send_bytes((uint8_t *)"|", 1);
+        if ((TRC)) NSLog(@"from simu stat frame %d bytes : %@\n", (int)[statframe length], [theDelegate dumpFrames:statframe]);
         [theDelegate performSelectorOnMainThread:@selector(processFrames:) withObject:statframe waitUntilDone:NO];
         statframe = nil;
+        return;
     }
     NSData *d = [NSData dataWithBytes:m->frm length:m->len];
+    if ((TRC)) NSLog(@"from notif frame %d bytes : %@\n", (int)[d length], [theDelegate dumpFrames:d]);
     [theDelegate performSelectorOnMainThread:@selector(processFrames:) withObject:d waitUntilDone:NO];
 }
 #endif
@@ -1329,4 +1353,150 @@ void notif_target_bemf(const train_config_t *cnf, train_vars_t *vars, int32_t va
 }
 //@property (nonatomic, strong) NSString *recordName;
 
+
+/*
+ NSTask *gnuplotTask;
+   NSPipe *gnuplotStdin;
+ */
+
+- (void) startGnuplot
+{
+    if (gnuplotTask) {
+        NSLog(@"previous gnuplot rc=%d %d", gnuplotTask.terminationStatus,
+              (int) gnuplotTask.terminationReason);
+      /*  @property (readonly) int terminationStatus;
+        @property (readonly) NSTaskTerminationReason terminationReason
+  @property (nullable, copy) void (^terminationHandler)(NSTask *) API_AVAILABLE(macos(10.7)) API_UNAVAILABLE(ios, watchos, tvos);
+*/
+    }
+    NSLog(@"start gnuplot");
+    gnuplotTask = [[NSTask alloc] init];
+    gnuplotStdin = [[NSPipe alloc] init];
+    gnuplotStdout = [[NSPipe alloc] init];
+
+    gnuplotStdinFh = [gnuplotStdin fileHandleForWriting];
+    gnuplotStdoutFh = [gnuplotStdout fileHandleForReading];
+
+    [gnuplotTask setLaunchPath:@"/opt/local/bin/gnuplot"];
+    [gnuplotTask setCurrentDirectoryPath:@"/tmp"];
+
+    [gnuplotTask setArguments:[NSArray array]];
+
+    [gnuplotTask setStandardInput:gnuplotStdin];
+    [gnuplotTask setStandardOutput:gnuplotStdout];
+    [gnuplotTask setStandardError:gnuplotStdout];
+
+     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(readStdout:) name:NSFileHandleDataAvailableNotification  object:gnuplotStdoutFh];
+    [gnuplotStdoutFh waitForDataInBackgroundAndNotify];
+
+    // Launch the task
+    NSError *err = nil;
+    gnuplotTask.terminationHandler = ^(NSTask *t) {
+        NSLog(@"terminated gnuplot rc=%d %d", t.terminationStatus,
+              (int) t.terminationReason);
+        NSData *d = [self->gnuplotStdoutFh availableData];
+        if (d) {
+            NSLog(@"out %@\n%@", [self dumpFrames:d],
+                  [[NSString alloc]initWithData:d encoding:NSUTF8StringEncoding]);
+        }
+
+    };
+    [gnuplotTask launchAndReturnError:&err];
+    if (err) {
+        NSLog(@"launch error : %@\n", err);
+    }
+}
+
+- (void) readStdout:(NSNotification *)notif
+{
+    NSData *d;
+    @try {
+        d = [gnuplotStdoutFh availableData];
+    } @catch (NSException *exception) {
+        NSLog(@"exception %@", exception);
+        d = nil;
+    } @finally {
+    }
+    if (!d) {
+        return;
+    }
+    NSString *s = [[NSString alloc]initWithData:d encoding:NSUTF8StringEncoding];
+    NSLog(@"gnuplot: %@", s ? s : d);
+}
+
+- (void) plotWithGnuplot:(NSString *)gnuplotCmd
+{
+    if (![gnuplotTask isRunning]) [self startGnuplot];
+    [gnuplotStdinFh writeData:[gnuplotCmd dataUsingEncoding:NSUTF8StringEncoding]];
+}
+
+- (NSString *) _buildGnuplotCurves:(NSArray *)col x:(int)numx file:(NSString *)file
+{
+    NSMutableString *res = [[NSMutableString alloc]initWithCapacity:400];
+    [col enumerateObjectsUsingBlock:^(id colname, NSUInteger idx,  BOOL *stop) {
+        NSNumber *nnumcol = [recordItems objectForKey:colname];
+        if (!nnumcol) return;
+        char *virg = ([res length]) ? "," : "plot";
+        NSString *title = [colname stringByReplacingOccurrencesOfString:@"_" withString:@" "];
+        [res appendFormat:@"%s '%@' using %d:%d with lines title \"%@\"", virg, file,numx+1,  [nnumcol intValue]+1,
+             title];
+    }];
+    return res;
+}
+
+- (NSString *) buildGnuplotCmd:(NSArray *)col x:(NSString *)colx file:(NSString *)file
+{
+    int numx = 0;
+    NSString *namex = @"t";
+    if (colx) {
+        numx = [[recordItems objectForKey:colx]intValue];
+        namex = colx;
+    }
+    NSMutableString *res = [[NSMutableString alloc]initWithCapacity:400];
+    [res appendFormat:@"set terminal aqua\r\nset xlabel \"%@\"\r\n", namex];
+    [res appendString:[self _buildGnuplotCurves:col x:numx file:file]];
+    [res appendString:@"\r\n"];
+    return res;
+}
+
+- (void) gnuplot:(NSArray *)col x:(NSString *)colx file:(NSString *)file
+{
+    NSString *cmd = [self buildGnuplotCmd:col x:colx file:file];
+    [self plotWithGnuplot:cmd];
+    
+}
+
+
+
+- (void) gnuplotGraph:(int)ngraph
+{
+    static NSDictionary *graphs = nil;
+    if (!graphs) graphs =
+    @{ @"power"  : @[ @"", @"target_speed", @"curspeed", @"canton_0_volts", @"canton_0_pwm", @"vidx"],
+       @"power2" : @[ @"curspped", @"canton_0_volts", @"canton_0_pwm", @"vidx"],
+       @"PID"    : @[ @"", @"pid_target", @"canton_0_bemf", @"pid_last_err", @"bemfiir"/*,  @"pid_sum_e"*/],
+       @"inertia": @[@"ine_t", @"ine_c"],
+       @"pose"   : @[@"curspped", @"canton_0_bemf", @"dir", @"train0_pose"]
+    };
+    NSString *k = nil;
+    switch (ngraph) {
+        case 0: k=@"power"; break;
+        case 1: k=@"power2"; break;
+        case 2: k=@"PID"; break;
+        case 3: k=@"inertia"; break;
+        case 4: k=@"pose"; break;
+        default: return;
+    }
+    NSArray *t = [graphs objectForKey:k];
+    if (!t) return;
+    NSString *colx = [t objectAtIndex:0];
+    if (![colx length]) colx = nil;
+    NSString *f = [self.fileURL path];
+    [self gnuplot:[t subarrayWithRange:NSMakeRange(1, [t count]-1)] x:colx file:f];
+    
+}
+- (IBAction) plotRecord:(id)sender
+{
+    [self gnuplotGraph:self.plotNum];
+}
 @end

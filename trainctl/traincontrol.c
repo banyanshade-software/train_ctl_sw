@@ -129,6 +129,7 @@ static void train_periodic_control(int numtrain, int32_t dt)
         if ((tvars->target_speed == 0) && (abs(cv->bemf_centivolt)<10)) {
         	//debug_info('T', 0, "ZERO", cv->bemf_centivolt,0, 0);
 			pidctl_reset(&tconf->pidcnf, &tvars->pidvars);
+			debug_info('T', numtrain, "STOP_PID", 0,0, 0);
         	v = 0;
         } else {
         	//const canton_config_t *cc = get_canton_cnf(vars->current_canton);

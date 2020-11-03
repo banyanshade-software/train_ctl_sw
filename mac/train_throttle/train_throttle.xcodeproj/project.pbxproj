@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		1B4BCB022549ADC90062961D /* statval.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B4BCB002549ADC70062961D /* statval.c */; };
 		1B67360F2531E4450063EA9A /* SimTrain.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B67360E2531E4450063EA9A /* SimTrain.m */; };
+		1BA4B49F2551DAF70043D763 /* StringExtension.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BA4B49E2551DAF70043D763 /* StringExtension.m */; };
+		1BA4B4A22551DE820043D763 /* NSCalendar+Gmt.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BA4B4A12551DE810043D763 /* NSCalendar+Gmt.m */; };
 		1BD93C6C2546FF44006C4D70 /* param.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BD93C4B2546FF42006C4D70 /* param.c */; };
 		1BD93C6D2546FF44006C4D70 /* railconfig.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BD93C4E2546FF42006C4D70 /* railconfig.c */; };
 		1BD93C6E2546FF44006C4D70 /* inertia.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BD93C4F2546FF42006C4D70 /* inertia.c */; };
@@ -33,6 +35,10 @@
 		1B4BCB012549ADC80062961D /* statval.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = statval.h; sourceTree = "<group>"; };
 		1B67360D2531E4450063EA9A /* SimTrain.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SimTrain.h; sourceTree = "<group>"; };
 		1B67360E2531E4450063EA9A /* SimTrain.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SimTrain.m; sourceTree = "<group>"; };
+		1BA4B49D2551DAF70043D763 /* StringExtension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringExtension.h; sourceTree = "<group>"; };
+		1BA4B49E2551DAF70043D763 /* StringExtension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StringExtension.m; sourceTree = "<group>"; };
+		1BA4B4A02551DE810043D763 /* NSCalendar+Gmt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSCalendar+Gmt.h"; sourceTree = "<group>"; };
+		1BA4B4A12551DE810043D763 /* NSCalendar+Gmt.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSCalendar+Gmt.m"; sourceTree = "<group>"; };
 		1BD93C4B2546FF42006C4D70 /* param.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = param.c; sourceTree = "<group>"; };
 		1BD93C4D2546FF42006C4D70 /* train.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = train.h; sourceTree = "<group>"; };
 		1BD93C4E2546FF42006C4D70 /* railconfig.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = railconfig.c; sourceTree = "<group>"; };
@@ -135,6 +141,10 @@
 		1BED2A9525173CF40080FC97 /* train_throttle */ = {
 			isa = PBXGroup;
 			children = (
+				1BA4B4A02551DE810043D763 /* NSCalendar+Gmt.h */,
+				1BA4B4A12551DE810043D763 /* NSCalendar+Gmt.m */,
+				1BA4B49D2551DAF70043D763 /* StringExtension.h */,
+				1BA4B49E2551DAF70043D763 /* StringExtension.m */,
 				1BED2A9625173CF40080FC97 /* AppDelegate.h */,
 				1BED2A9725173CF40080FC97 /* AppDelegate.m */,
 				1B67360D2531E4450063EA9A /* SimTrain.h */,
@@ -220,6 +230,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1BA4B49F2551DAF70043D763 /* StringExtension.m in Sources */,
 				1BD93C782546FF44006C4D70 /* misc.c in Sources */,
 				1BED2AA025173D1F0080FC97 /* main.m in Sources */,
 				1BD93C6D2546FF44006C4D70 /* railconfig.c in Sources */,
@@ -232,6 +243,7 @@
 				1BD93C7A2546FF44006C4D70 /* canton.c in Sources */,
 				1B67360F2531E4450063EA9A /* SimTrain.m in Sources */,
 				1BD93C702546FF44006C4D70 /* traincontrol.c in Sources */,
+				1BA4B4A22551DE820043D763 /* NSCalendar+Gmt.m in Sources */,
 				1BD93C6F2546FF44006C4D70 /* auto1.c in Sources */,
 				1B4BCB022549ADC90062961D /* statval.c in Sources */,
 				1BD93C712546FF44006C4D70 /* txrxcmd.c in Sources */,

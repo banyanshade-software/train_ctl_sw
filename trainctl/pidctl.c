@@ -27,6 +27,7 @@
 
 #include <stdint.h>
 #include <stddef.h>
+#include <memory.h>
 #include "pidctl.h"
 #include "misc.h"
 
@@ -36,6 +37,8 @@ void pidctl_reset(const pidctl_config_t *c, pidctl_vars_t *v)
 	v->last_err = 0;
 	v->sume     = 0;
 	v->target_v = 0;
+	v->stopped = 1;
+	v->has_last = 0;
 }
 
 void pidctl_set_target(const pidctl_config_t *c, pidctl_vars_t *v, int32_t val)

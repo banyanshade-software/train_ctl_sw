@@ -44,8 +44,11 @@ extern TIM_HandleTypeDef *CantonTimerHandles[8];
 #endif
 
 typedef struct canton_config {
-	uint8_t  canton_type;
-	uint16_t volts[16]; // unit : 1/100 V, from 1000 to 0
+    uint8_t  canton_type;
+    uint16_t volts[16]; // unit : 1/100 V, from 1000 to 0
+    // V2 and V4 vers
+    uint16_t volts_v2[16]; // unit : 1/100 V, from 1000 to 0
+    uint16_t volts_v4[16]; // unit : 1/100 V, from 1000 to 0
 #ifndef TRAIN_SIMU
 	GPIO_TypeDef *volt_port;
 #else
@@ -103,7 +106,9 @@ typedef struct canton_vars {
 typedef enum train_volt_policy /*: uint8_t*/ {
 	vpolicy_normal = 0,
 	vpolicy_pure_pwm,
-	vpolicy_pure_volt
+	vpolicy_pure_volt,
+    vpolicy_v2,
+    vpolicy_v4
 } train_volt_policy_t;
 
 

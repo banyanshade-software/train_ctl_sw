@@ -12,6 +12,11 @@
  *
  */
 
+
+#include <stdint.h>
+#include <stddef.h>
+#include <memory.h>
+
 #include "misc.h"
 #include "train.h"
 #include "railconfig.h"
@@ -37,6 +42,7 @@ typedef struct train_vars {
 	uint16_t cur_c2_volt_idx;
 } train_vars_t;
 	 */
+	memset(v, 0, sizeof(*v));
 	pidctl_reset(&c->pidcnf, &v->pidvars);
 	inertia_reset(&c->inertiacnf, &v->inertiavars);
 	//v->lasttick = 0;

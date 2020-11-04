@@ -28,6 +28,8 @@
  */
 
 
+#include <stddef.h>
+#include <memory.h>
 #include "misc.h"
 #include "trainctl_iface.h"
 #include "canton.h"
@@ -45,6 +47,7 @@ TIM_HandleTypeDef *CantonTimerHandles[8] = {NULL};
 
 void canton_reset(const canton_config_t *c, canton_vars_t *v)
 {
+	memset(v, 0, sizeof(*v));
 	v->curtrainidx = 0xFF;
 	v->status = canton_free;
 }
@@ -191,7 +194,7 @@ int volt_index(uint16_t mili_power,
 	*pvi1 = 15;
 	*pvi2 = 15;
 
-	if (mili_power <0) return canton_error_rc(0, ERR_BAD_PARAM_MPOW, "negative milipower");
+	if (mili_power <0)    return canton_error_rc(0, ERR_BAD_PARAM_MPOW, "negative milipower");
 	if (mili_power >1000) return canton_error_rc(0, ERR_BAD_PARAM_MPOW, "milipower should be 0-999");
 	switch (pol) {
 	default :
@@ -220,6 +223,38 @@ int volt_index(uint16_t mili_power,
                 break;
             }
 		break;
+    case vpolicy_v2:
+    	*pvi1 = *pvi2 = 0;
+    	duty = mili_power / 10;
+    	for (int i=15; i>=0; i--) {
+    		if (!c1->volts_v2[i]) continue;
+    		// c1->volts in 0.01V unit
+			int d = 100*mili_power / c1->volts_v2[i];
+			if (d>MAX_PWM) {
+				continue;
+			}
+			// XXX for now we assume all canton have same board with same voltage level
+			*pvi1 = *pvi2 = i;
+			duty = d;
+			break;
+    	}
+    	break;
+    case vpolicy_v4:
+    	*pvi1 = *pvi2 = 0;
+    	duty = mili_power / 10;
+    	for (int i=15; i>=0; i--) {
+    		if (!c1->volts_v4[i]) continue;
+    		// c1->volts in 0.01V unit
+			int d = 100*mili_power / c1->volts_v4[i];
+			if (d>MAX_PWM) {
+				continue;
+			}
+			// XXX for now we assume all canton have same board with same voltage level
+			*pvi1 = *pvi2 = i;
+			duty = d;
+			break;
+    	}
+    	break;
 	case vpolicy_pure_volt:
 		duty = MAX_PWM;
         int s = 0;

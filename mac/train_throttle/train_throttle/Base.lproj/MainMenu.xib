@@ -1298,6 +1298,8 @@
                                                                     <menuItem title="Normal" state="on" id="YZs-cM-1gR"/>
                                                                     <menuItem title="PWM only" tag="1" id="t2c-RD-jp2"/>
                                                                     <menuItem title="Volt only" tag="2" id="DY5-gO-op9"/>
+                                                                    <menuItem title="2 level V" tag="3" id="CXM-JV-40m"/>
+                                                                    <menuItem title="4 level V" tag="4" id="tyj-oo-elf" userLabel="2 level V"/>
                                                                 </items>
                                                             </menu>
                                                         </popUpButtonCell>
@@ -1642,7 +1644,7 @@
                                                 <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
                                             <connections>
-                                                <binding destination="Voe-Tx-rLC" name="value" keyPath="canton_0_bemf" id="WuW-ch-frI"/>
+                                                <binding destination="Voe-Tx-rLC" name="value" keyPath="canton_0_bemfcentivolt" id="mGb-n6-vm7"/>
                                             </connections>
                                         </textField>
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="GlB-Iw-aDx">
@@ -1661,7 +1663,7 @@
                                                 <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
                                             <connections>
-                                                <binding destination="Voe-Tx-rLC" name="value" keyPath="canton_0_volts" id="d8W-5v-acu"/>
+                                                <binding destination="Voe-Tx-rLC" name="value" keyPath="canton_0_centivolts" id="Eld-gI-iIF"/>
                                             </connections>
                                         </textField>
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="1jJ-dG-NNg">
@@ -1719,7 +1721,7 @@
                                                 <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
                                             <connections>
-                                                <binding destination="Voe-Tx-rLC" name="value" keyPath="canton_0_von" id="a8O-u4-Wvi"/>
+                                                <binding destination="Voe-Tx-rLC" name="value" keyPath="canton_0_centivon" id="DoQ-VM-Y88"/>
                                             </connections>
                                         </textField>
                                         <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="LMZ-ks-gTv">
@@ -1734,7 +1736,7 @@
                                                 <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
                                             <connections>
-                                                <binding destination="Voe-Tx-rLC" name="value" keyPath="canton_0_bemf_lp" id="O1c-nx-IBJ"/>
+                                                <binding destination="Voe-Tx-rLC" name="value" keyPath="bemfiir_centivolts" id="8zO-Nm-OIB"/>
                                             </connections>
                                         </textField>
                                         <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="gYY-Nd-z3F">
@@ -1811,7 +1813,7 @@
                                                 <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
                                             <connections>
-                                                <binding destination="Voe-Tx-rLC" name="value" keyPath="canton_1_volts" id="mZ0-jd-V2m"/>
+                                                <binding destination="Voe-Tx-rLC" name="value" keyPath="canton_1_centivolts" id="m2o-YI-Y49"/>
                                             </connections>
                                         </textField>
                                         <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="cod-UP-oeo">
@@ -1868,7 +1870,7 @@
                                                 <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
                                             <connections>
-                                                <binding destination="Voe-Tx-rLC" name="value" keyPath="canton_1_bemf" id="c9y-qV-3Ku"/>
+                                                <binding destination="Voe-Tx-rLC" name="value" keyPath="canton_1_bemfcentivolt" id="pba-4s-jdp"/>
                                             </connections>
                                         </textField>
                                         <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ZWP-k0-dZL">
@@ -1894,7 +1896,7 @@
                                                 <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
                                             <connections>
-                                                <binding destination="Voe-Tx-rLC" name="value" keyPath="canton_1_von" id="k1T-36-pJY"/>
+                                                <binding destination="Voe-Tx-rLC" name="value" keyPath="canton_1_centivon" id="YZZ-sQ-1he"/>
                                             </connections>
                                         </textField>
                                     </subviews>

@@ -31,6 +31,7 @@ void    inertia_reset(const inertia_config_t *cnf, inertia_vars_t *vars)
 {
 	vars->target = 0;
 	vars->cur = 0;
+
 }
 void    inertia_set_target(const inertia_config_t *cnf, inertia_vars_t *vars, int16_t v)
 {

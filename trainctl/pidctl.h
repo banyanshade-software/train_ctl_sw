@@ -36,6 +36,7 @@ typedef struct pidctl_vars {
 	int32_t sume;
 	int32_t target_v;
     uint8_t has_last:1;
+    uint8_t stopped:1;
 } pidctl_vars_t;
 
 void pidctl_reset(const pidctl_config_t *c, pidctl_vars_t *v);

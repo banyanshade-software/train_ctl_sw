@@ -20,6 +20,11 @@
  *
  */
 
+
+#include <stdint.h>
+#include <stddef.h>
+#include <memory.h>
+
 #include "turnout.h"
 #include "misc.h"
 #include "railconfig.h"
@@ -40,6 +45,7 @@
 void turnout_reset(int tidx)
 {
 	USE_TURNOUT(tidx) 	// aconf avars
+	memset(avars, 0, sizeof(*avars));
 	avars->value = 0;
 	avars->st = ST_IDLE;
 #ifndef TRAIN_SIMU

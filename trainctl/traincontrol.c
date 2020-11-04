@@ -123,21 +123,25 @@ static void train_periodic_control(int numtrain, int32_t dt)
         pidctl_set_target(&tconf->pidcnf, &tvars->pidvars, tbemf);
         notif_target_bemf(tconf, tvars, tbemf);
     }
-
+    canton_vars_t *cv = get_canton_vars(tvars->current_canton);
+    int32_t bemf = cv->bemf_centivolt;
+    if (tconf->bemfIIR) {
+    	tvars->bemfiir = (80*tvars->bemfiir + 20*bemf)/100;
+    	bemf = tvars->bemfiir;
+    }
     if (tconf->enable_pid) {
-        canton_vars_t *cv = get_canton_vars(tvars->current_canton);
-        if ((tvars->target_speed == 0) && (abs(cv->bemf_centivolt)<10)) {
+    	if (tvars->target_speed) tvars->pidvars.stopped = 0;
+        if (!tvars->pidvars.stopped && (tvars->target_speed == 0) && (abs(cv->bemf_centivolt)<10)) {
         	//debug_info('T', 0, "ZERO", cv->bemf_centivolt,0, 0);
 			pidctl_reset(&tconf->pidcnf, &tvars->pidvars);
 			debug_info('T', numtrain, "STOP_PID", 0,0, 0);
+			tvars->pidvars.stopped = 1;
+        	v = 0;
+        } else if (tvars->pidvars.stopped) {
         	v = 0;
         } else {
         	//const canton_config_t *cc = get_canton_cnf(vars->current_canton);
-        	int32_t bemf = cv->bemf_centivolt;
-        	if (tconf->bemfIIR) {
-        		tvars->bemfiir = (80*tvars->bemfiir + 20*bemf)/100;
-        		bemf = tvars->bemfiir;
-        	}
+
 
         	if (bemf>MAX_PID_VALUE)  bemf=MAX_PID_VALUE; // XXX
         	if (bemf<-MAX_PID_VALUE) bemf=-MAX_PID_VALUE;
@@ -147,7 +151,6 @@ static void train_periodic_control(int numtrain, int32_t dt)
         	v2 = (v2>100) ? 100 : v2;
         	v2 = (v2<-100) ? -100: v2;
         	v = (int16_t)v2;
-
         }
     }
     if (tconf->postIIR) {

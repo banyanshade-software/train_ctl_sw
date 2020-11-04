@@ -74,6 +74,7 @@ typedef void (^respblk_t)(void);
     NSFileHandle *recordFile;
     NSMutableDictionary *recordItems;
     // plot
+    uint32_t graph_t0;
     NSTask *gnuplotTask;
     NSPipe *gnuplotStdin;
     NSPipe *gnuplotStdout;
@@ -953,12 +954,12 @@ static int frm_unescape(uint8_t *buf, int len)
                         int32_t v[4];
                         memcpy(&v, frm.param, 4*sizeof(int32_t));
                         //   unit 1/100 V
-                        self.canton_0_bemf =  BEMF_RAW ? v[0] : v[0]/100.0;
+                        self.canton_0_bemfcentivolt =  BEMF_RAW ? v[0] : v[0]/100.0;
                         // IIR low pass on bemf
-                        self.canton_0_bemf_lp = _canton_0_bemf_lp*.97+0.03*_canton_0_bemf;
+                       // self.canton_0_bemf_lp = _canton_0_bemf_lp*.97+0.03*_canton_0_bemfcentivolt;
                         if (frm.cmd == 'B') {
-                            self.canton_0_von =   BEMF_RAW ? v[1] : v[1]/100.0;
-                            self.canton_0_volts = v[2]/100.0;
+                            self.canton_0_centivon =   BEMF_RAW ? v[1] : v[1]/100.0;
+                            self.canton_0_centivolts = v[2]/100.0;
                             self.canton_0_pwm =   v[3];
                         }
                     }
@@ -1054,6 +1055,10 @@ static int frm_unescape(uint8_t *buf, int len)
             }
             NSNumber *nsv = @(v);
             if (![unhandled_key containsObject:key]) {
+                //NSLog(@"---- %@\n", key);
+                if ([key isEqualToString:@"canton_0_volts"]) {
+                    NSLog(@"hop  canton_0_volts %@", nsv);
+                }
                 if ([key hasSubString:@"centi"]) {
                     nsv = @(v/100.0);
                 }
@@ -1068,7 +1073,8 @@ static int frm_unescape(uint8_t *buf, int len)
         if (_recordState == 1) {
             if (!recordItems) recordItems=[[NSMutableDictionary alloc]init];
             if (-1==step) {
-                [recordFile writeData:[@"T_ms, " dataUsingEncoding:NSUTF8StringEncoding]];
+                [recordFile writeData:[@"T_s, " dataUsingEncoding:NSUTF8StringEncoding]];
+                graph_t0 = v;
             } else {
                 if (key) [recordItems setObject:@(step+1) forKey:key];
                 NSString *s = [NSString stringWithFormat:@"%@, ", key ? key : @"_"];
@@ -1078,6 +1084,8 @@ static int frm_unescape(uint8_t *buf, int len)
             NSString *s;
             if ([key hasSubString:@"centi"]) {
                     s = [NSString stringWithFormat:@"%f, ", v/100.0];
+            } else if (step==-1) {
+                        s = [NSString stringWithFormat:@"%f, ", (v-graph_t0)/1000.0];
             } else {
                     s = [NSString stringWithFormat:@"%d, ", v];
             }
@@ -1229,11 +1237,11 @@ void train_simu_canton_volt(int numcanton, int voltidx, int vlt100)
     double vlt = vlt100/100.0;
     switch (numcanton) {
         case 0:
-            self.canton_0_volts = vlt;
+            self.canton_0_centivolts = vlt;
             [_simTrain0 setVolt:vlt];
             break;
         case 1:
-            self.canton_1_volts = vlt;
+            self.canton_1_centivolts = vlt;
             break;
         default:
             break;
@@ -1433,12 +1441,13 @@ void notif_target_bemf(const train_config_t *cnf, train_vars_t *vars, int32_t va
 - (NSString *) _buildGnuplotCurves:(NSArray *)col x:(int)numx file:(NSString *)file
 {
     NSMutableString *res = [[NSMutableString alloc]initWithCapacity:400];
+    BOOL wl = numx ? NO : YES;
     [col enumerateObjectsUsingBlock:^(id colname, NSUInteger idx,  BOOL *stop) {
         NSNumber *nnumcol = [recordItems objectForKey:colname];
         if (!nnumcol) return;
         char *virg = ([res length]) ? "," : "plot";
         NSString *title = [colname stringByReplacingOccurrencesOfString:@"_" withString:@" "];
-        [res appendFormat:@"%s '%@' using %d:%d with lines title \"%@\"", virg, file,numx+1,  [nnumcol intValue]+1,
+        [res appendFormat:@"%s '%@' using %d:%d %s title \"%@\"", virg, file,numx+1,  [nnumcol intValue]+1, wl ? "with lines" : "",
              title];
     }];
     return res;
@@ -1456,6 +1465,7 @@ void notif_target_bemf(const train_config_t *cnf, train_vars_t *vars, int32_t va
     [res appendFormat:@"set terminal aqua\r\nset xlabel \"%@\"\r\n", namex];
     [res appendString:[self _buildGnuplotCurves:col x:numx file:file]];
     [res appendString:@"\r\n"];
+    NSLog(@"gnuplot command :\n%@\n", res);
     return res;
 }
 
@@ -1472,11 +1482,11 @@ void notif_target_bemf(const train_config_t *cnf, train_vars_t *vars, int32_t va
 {
     static NSDictionary *graphs = nil;
     if (!graphs) graphs =
-    @{ @"power"  : @[ @"", @"target_speed", @"curspeed", @"canton_0_volts", @"canton_0_pwm", @"vidx"],
-       @"power2" : @[ @"curspped", @"canton_0_volts", @"canton_0_pwm", @"vidx"],
-       @"PID"    : @[ @"", @"pid_target", @"canton_0_bemf", @"pid_last_err", @"bemfiir"/*,  @"pid_sum_e"*/],
+    @{ @"power"  : @[ @"", @"target_speed", @"curspeed", @"canton_0_centivolts", @"canton_0_pwm", @"vidx"],
+       @"power2" : @[ @"curspeed", @"canton_0_centivolts", @"canton_0_pwm", @"vidx"],
+       @"PID"    : @[ @"", @"pid_target", @"canton_0_bemfcentivolt", @"pid_last_err", @"bemfiir_centivolts"/*,  @"pid_sum_e"*/],
        @"inertia": @[@"ine_t", @"ine_c"],
-       @"pose"   : @[@"curspped", @"canton_0_bemf", @"dir", @"train0_pose"]
+       @"pose"   : @[@"curspped", @"canton_0_bemfcentivolt", @"dir", @"train0_pose"]
     };
     NSString *k = nil;
     switch (ngraph) {

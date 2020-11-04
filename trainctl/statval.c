@@ -45,16 +45,16 @@ static const stat_val_t statvaltrain[] = {
 		{ offsetof(train_vars_t, target_speed), 2       _P("target_speed")},
 		{ offsetof(train_vars_t, last_speed), 2         _P("curspeed")},
         { offsetof(train_vars_t, position_estimate), 4  _P("train0_pose")},
-        { offsetof(train_vars_t, bemfiir), 4  _P("bemfiir")},
+        { offsetof(train_vars_t, bemfiir), 4            _P("bemfiir_centivolts")},
 };
 
 static const stat_val_t statvalcanton[] = {
 		{ offsetof(canton_vars_t, cur_dir) , 1          _P("dir")},
         { offsetof(canton_vars_t, cur_voltidx) , 1      _P("vidx")},
 		{ offsetof(canton_vars_t, cur_pwm_duty) , 2     _P("canton_%d_pwm")},
-		{ offsetof(canton_vars_t, bemf_centivolt) , 4   _P("canton_%d_bemf")},
-        { offsetof(canton_vars_t, selected_centivolt), 2 _P("canton_%d_volts")},
-        { offsetof(canton_vars_t, von_centivolt) , 2    _P("canton_%d_von")},
+		{ offsetof(canton_vars_t, bemf_centivolt) , 4   _P("canton_%d_bemfcentivolt")},
+        { offsetof(canton_vars_t, selected_centivolt),2 _P("canton_%d_centivolts")},
+        { offsetof(canton_vars_t, von_centivolt) , 2    _P("canton_%d_centivon")},
 };
 
 static int32_t _getval(void *ptr, off_t offset, int l)

@@ -23,10 +23,13 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "../../../disp_tft/ssd1306_tests.h"
+#include "../../../disp_tft/ssd1306.h"
+#include <memory.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
+typedef StaticTask_t osStaticThreadDef_t;
 /* USER CODE BEGIN PTD */
 
 /* USER CODE END PTD */
@@ -45,16 +48,27 @@ ADC_HandleTypeDef hadc1;
 
 I2C_HandleTypeDef hi2c1;
 
+RTC_HandleTypeDef hrtc;
+
 TIM_HandleTypeDef htim1;
 TIM_HandleTypeDef htim2;
 TIM_HandleTypeDef htim3;
 
+UART_HandleTypeDef huart4;
+DMA_HandleTypeDef hdma_uart4_rx;
+DMA_HandleTypeDef hdma_uart4_tx;
+
 /* Definitions for defaultTask */
 osThreadId_t defaultTaskHandle;
+uint32_t defaultTaskBuffer[ 256 ];
+osStaticThreadDef_t defaultTaskControlBlock;
 const osThreadAttr_t defaultTask_attributes = {
   .name = "defaultTask",
+  .stack_mem = &defaultTaskBuffer[0],
+  .stack_size = sizeof(defaultTaskBuffer),
+  .cb_mem = &defaultTaskControlBlock,
+  .cb_size = sizeof(defaultTaskControlBlock),
   .priority = (osPriority_t) osPriorityNormal,
-  .stack_size = 256 * 4
 };
 /* USER CODE BEGIN PV */
 
@@ -63,11 +77,14 @@ const osThreadAttr_t defaultTask_attributes = {
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
+static void MX_DMA_Init(void);
 static void MX_ADC1_Init(void);
 static void MX_I2C1_Init(void);
 static void MX_TIM1_Init(void);
 static void MX_TIM2_Init(void);
 static void MX_TIM3_Init(void);
+static void MX_RTC_Init(void);
+static void MX_UART4_Init(void);
 void StartDefaultTask(void *argument);
 
 /* USER CODE BEGIN PFP */
@@ -76,6 +93,22 @@ void StartDefaultTask(void *argument);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+
+static void i2c_ready(int a)
+{
+
+}
+static void I2C_Scan(void)
+{
+    HAL_StatusTypeDef res;
+    for(uint16_t i = 0; i < 128; i++) {
+        res = HAL_I2C_IsDeviceReady(&hi2c1, i << 1, 1, 10);
+        if(res == HAL_OK) {
+        	i2c_ready(i);
+        } else {
+        }
+    }
+}
 
 /* USER CODE END 0 */
 
@@ -107,11 +140,14 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  MX_DMA_Init();
   MX_ADC1_Init();
   MX_I2C1_Init();
   MX_TIM1_Init();
   MX_TIM2_Init();
   MX_TIM3_Init();
+  MX_RTC_Init();
+  MX_UART4_Init();
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
@@ -166,6 +202,7 @@ void SystemClock_Config(void)
 {
   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
   RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
+  RCC_PeriphCLKInitTypeDef PeriphClkInitStruct = {0};
 
   /** Configure the main internal regulator output voltage
   */
@@ -174,8 +211,9 @@ void SystemClock_Config(void)
   /** Initializes the RCC Oscillators according to the specified parameters
   * in the RCC_OscInitTypeDef structure.
   */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE|RCC_OSCILLATORTYPE_LSE;
   RCC_OscInitStruct.HSEState = RCC_HSE_ON;
+  RCC_OscInitStruct.LSEState = RCC_LSE_ON;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
   RCC_OscInitStruct.PLL.PLLM = 8;
@@ -191,11 +229,17 @@ void SystemClock_Config(void)
   RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
                               |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
   RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
-  RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV64;
+  RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV8;
   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
 
   if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_0) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_RTC;
+  PeriphClkInitStruct.RTCClockSelection = RCC_RTCCLKSOURCE_LSE;
+  if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct) != HAL_OK)
   {
     Error_Handler();
   }
@@ -267,7 +311,7 @@ static void MX_I2C1_Init(void)
 
   /* USER CODE END I2C1_Init 1 */
   hi2c1.Instance = I2C1;
-  hi2c1.Init.ClockSpeed = 100000;
+  hi2c1.Init.ClockSpeed = 400000;
   hi2c1.Init.DutyCycle = I2C_DUTYCYCLE_2;
   hi2c1.Init.OwnAddress1 = 0;
   hi2c1.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
@@ -282,6 +326,68 @@ static void MX_I2C1_Init(void)
   /* USER CODE BEGIN I2C1_Init 2 */
 
   /* USER CODE END I2C1_Init 2 */
+
+}
+
+/**
+  * @brief RTC Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_RTC_Init(void)
+{
+
+  /* USER CODE BEGIN RTC_Init 0 */
+
+  /* USER CODE END RTC_Init 0 */
+
+  RTC_TimeTypeDef sTime = {0};
+  RTC_DateTypeDef sDate = {0};
+
+  /* USER CODE BEGIN RTC_Init 1 */
+
+  /* USER CODE END RTC_Init 1 */
+  /** Initialize RTC Only
+  */
+  hrtc.Instance = RTC;
+  hrtc.Init.HourFormat = RTC_HOURFORMAT_24;
+  hrtc.Init.AsynchPrediv = 127;
+  hrtc.Init.SynchPrediv = 255;
+  hrtc.Init.OutPut = RTC_OUTPUT_DISABLE;
+  hrtc.Init.OutPutPolarity = RTC_OUTPUT_POLARITY_HIGH;
+  hrtc.Init.OutPutType = RTC_OUTPUT_TYPE_OPENDRAIN;
+  if (HAL_RTC_Init(&hrtc) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+  /* USER CODE BEGIN Check_RTC_BKUP */
+  return;
+  /* USER CODE END Check_RTC_BKUP */
+
+  /** Initialize RTC and set the Time and Date
+  */
+  sTime.Hours = 0x0;
+  sTime.Minutes = 0x0;
+  sTime.Seconds = 0x0;
+  sTime.DayLightSaving = RTC_DAYLIGHTSAVING_NONE;
+  sTime.StoreOperation = RTC_STOREOPERATION_RESET;
+  if (HAL_RTC_SetTime(&hrtc, &sTime, RTC_FORMAT_BCD) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sDate.WeekDay = RTC_WEEKDAY_MONDAY;
+  sDate.Month = RTC_MONTH_JANUARY;
+  sDate.Date = 0x1;
+  sDate.Year = 0x0;
+
+  if (HAL_RTC_SetDate(&hrtc, &sDate, RTC_FORMAT_BCD) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN RTC_Init 2 */
+
+  /* USER CODE END RTC_Init 2 */
 
 }
 
@@ -477,6 +583,58 @@ static void MX_TIM3_Init(void)
 }
 
 /**
+  * @brief UART4 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_UART4_Init(void)
+{
+
+  /* USER CODE BEGIN UART4_Init 0 */
+
+  /* USER CODE END UART4_Init 0 */
+
+  /* USER CODE BEGIN UART4_Init 1 */
+
+  /* USER CODE END UART4_Init 1 */
+  huart4.Instance = UART4;
+  huart4.Init.BaudRate = 9600;
+  huart4.Init.WordLength = UART_WORDLENGTH_8B;
+  huart4.Init.StopBits = UART_STOPBITS_1;
+  huart4.Init.Parity = UART_PARITY_NONE;
+  huart4.Init.Mode = UART_MODE_TX_RX;
+  huart4.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+  huart4.Init.OverSampling = UART_OVERSAMPLING_16;
+  if (HAL_UART_Init(&huart4) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN UART4_Init 2 */
+
+  /* USER CODE END UART4_Init 2 */
+
+}
+
+/**
+  * Enable DMA controller clock
+  */
+static void MX_DMA_Init(void)
+{
+
+  /* DMA controller clock enable */
+  __HAL_RCC_DMA1_CLK_ENABLE();
+
+  /* DMA interrupt init */
+  /* DMA1_Stream2_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA1_Stream2_IRQn, 6, 0);
+  HAL_NVIC_EnableIRQ(DMA1_Stream2_IRQn);
+  /* DMA1_Stream4_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA1_Stream4_IRQn, 6, 0);
+  HAL_NVIC_EnableIRQ(DMA1_Stream4_IRQn);
+
+}
+
+/**
   * @brief GPIO Initialization Function
   * @param None
   * @retval None
@@ -495,6 +653,70 @@ static void MX_GPIO_Init(void)
 
 /* USER CODE BEGIN 4 */
 
+static void bcd_2_char(char *buf, int v, int nch)
+{
+	while (nch>0) {
+		nch--;
+		buf[nch] = '0' + (v & 0x0F);
+		v = v >> 4;
+	}
+}
+
+static void bh(void)
+{
+
+}
+/*void HAL_UART_IRQHandler(UART_HandleTypeDef *huart)
+{
+	bh();
+}*/
+
+static volatile int tx_on_progress = 0;
+static volatile int rx_on_progress = 0;
+
+void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
+{
+	tx_on_progress=0;
+	bh();
+}
+
+void HAL_UART_TxHalfCpltCallback(UART_HandleTypeDef *huart)
+{
+	//bh();
+}
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+{
+	rx_on_progress=0;
+	int l = sizeof(buf) - __HAL_DMA_GET_COUNTER(&hdma_uart4_rx);
+	bh();
+}
+void HAL_UART_RxHalfCpltCallback(UART_HandleTypeDef *huart)
+{
+	bh();
+}
+
+void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
+{
+	bh();
+}
+void HAL_UART_AbortCpltCallback(UART_HandleTypeDef *huart)
+{
+	bh();
+}
+
+void HAL_UART_AbortTransmitCpltCallback(UART_HandleTypeDef *huart)
+{
+	bh();
+}
+void HAL_UART_AbortReceiveCpltCallback(UART_HandleTypeDef *huart)
+{
+	bh();
+}
+
+static uint8_t buf[128];
+
+
+
 /* USER CODE END 4 */
 
 /* USER CODE BEGIN Header_StartDefaultTask */
@@ -507,14 +729,145 @@ static void MX_GPIO_Init(void)
 void StartDefaultTask(void *argument)
 {
   /* USER CODE BEGIN 5 */
-  /* Infinite loop */
+
+	for (;;) {
+		/* Infinite loop */
+#define MSG "AT\r\nAT+NAME?\r\n"
+		//HAL_UART_Transmit(&huart4, MSG, sizeof(MSG), 100);
+		__HAL_UART_ENABLE_IT(&huart4, UART_IT_IDLE );
+		__HAL_DMA_ENABLE_IT(&hdma_uart4_rx, DMA_IT_TC);
+		tx_on_progress=1;
+		HAL_UART_Transmit_DMA(&huart4, (uint8_t *)MSG, strlen(MSG));
+		while (tx_on_progress) {
+
+		}
+		if (rx_on_progress) {
+			osDelay(100);
+			continue;
+		}
+		rx_on_progress = 1;
+		HAL_UART_Receive_DMA(&huart4, buf, sizeof(buf));
+		/*while (rx_on_progress) {
+
+				}*/
+		osDelay(3000);
+	}
+#if 1
+	  I2C_Scan();
+	  ssd1306_Init();
+	  for (;;) {
+		  ssd1306_Fill(Black);
+		  ssd1306_SetCursor(2,0);
+		  ssd1306_WriteString("OK ", Font_16x26, White);
+		  ssd1306_WriteString("train 1", Font_11x18, White);
+		  ssd1306_UpdateScreen();
+		  osDelay(1000);
+
+		  ssd1306_Fill(Black);
+		  ssd1306_SetCursor(2,0);
+		  ssd1306_WriteString("hophophop", Font_7x10, White);
+		  ssd1306_SetCursor(0,16);
+		  ssd1306_WriteString("Hop !!", Font_11x18, White);
+		  ssd1306_UpdateScreen();
+		  osDelay(1000);
+
+
+		  RTC_DateTypeDef sDate = {0};
+		  RTC_TimeTypeDef sTime = {0};
+		  HAL_RTC_GetTime(&hrtc, &sTime, RTC_FORMAT_BCD);
+		  HAL_RTC_GetDate(&hrtc, &sDate, RTC_FORMAT_BCD);
+		  char buf[32];
+		  bcd_2_char(buf, sTime.Hours, 2);
+		  buf[2]=':';
+		  bcd_2_char(buf+3, sTime.Minutes, 2);
+		  buf[5]=':';
+		  bcd_2_char(buf+6, sTime.Seconds, 2);
+		  buf[8]='\0';
+		  ssd1306_Fill(Black);
+		  ssd1306_SetCursor(2,0);
+		  ssd1306_WriteString(buf, Font_11x18, White);
+
+		  switch (sDate.WeekDay) {
+		  case RTC_WEEKDAY_MONDAY:    memcpy(buf, "Lun", 3); break;
+		  case RTC_WEEKDAY_TUESDAY:   memcpy(buf, "Mar", 3); break;
+		  case RTC_WEEKDAY_WEDNESDAY: memcpy(buf, "Mer", 3); break;
+		  case RTC_WEEKDAY_THURSDAY:  memcpy(buf, "Jeu", 3); break;
+		  case RTC_WEEKDAY_FRIDAY:    memcpy(buf, "Ven", 3); break;
+		  case RTC_WEEKDAY_SATURDAY:  memcpy(buf, "Sam", 3); break;
+		  case RTC_WEEKDAY_SUNDAY:    memcpy(buf, "Dim", 3); break;
+		  }
+		  buf[3]=' ';
+		  bcd_2_char(buf+4, sDate.Date, 2);
+		  buf[6]=' ';
+		  switch (sDate.Month) {
+		  case RTC_MONTH_JANUARY:    memcpy(buf+7, "Jan", 3); break;
+		  case RTC_MONTH_FEBRUARY:   memcpy(buf+7, "Fev", 3); break;
+		  case RTC_MONTH_MARCH:      memcpy(buf+7, "Mar", 3); break;
+		  case RTC_MONTH_APRIL:      memcpy(buf+7, "Avr", 3); break;
+		  case RTC_MONTH_MAY:        memcpy(buf+7, "Mai", 3); break;
+		  case RTC_MONTH_JUNE:       memcpy(buf+7, "Jun", 3); break;
+		  case RTC_MONTH_JULY:       memcpy(buf+7, "Jul", 3); break;
+		  case RTC_MONTH_AUGUST:     memcpy(buf+7, "Aou", 3); break;
+		  case RTC_MONTH_SEPTEMBER:  memcpy(buf+7, "Sep", 3); break;
+		  case RTC_MONTH_OCTOBER:    memcpy(buf+7, "Oct", 3); break;
+		  case RTC_MONTH_NOVEMBER:   memcpy(buf+7, "Nov", 3); break;
+		  case RTC_MONTH_DECEMBER:   memcpy(buf+7, "Dec", 3); break;
+		  }
+		  buf[10]=' ';
+		  buf[11]='2';
+		  buf[12]='0';
+		  bcd_2_char(buf+13, sDate.Year, 2);
+          buf[15]='\0';
+		  ssd1306_SetCursor(20,16);
+		  ssd1306_WriteString(buf, Font_7x10, White);
+
+		  ssd1306_SetContrast(0x20);
+		  ssd1306_UpdateScreen();
+		  osDelay(1000*1);
+		  ssd1306_SetContrast(0xFF);
+		  osDelay(1000*1);
+
+		  if ((1)) continue;
+
+		  ssd1306_Fill(Black);
+
+		  for (int i=0; i<32; i++) {
+			  ssd1306_Fill(Black);
+			  ssd1306_SetCursor(2,0);
+			  char s[4]="L00";
+			  s[1]='0'+i/10;
+			  s[2]='0'+i%10;
+			  ssd1306_WriteString(s, Font_11x18, White);
+			  ssd1306_Line(0,i, 127, i, White);
+			  ssd1306_UpdateScreen();
+			  osDelay(200);
+		  }
+		  for (int i=0; i<128; i++) {
+			  ssd1306_Fill(Black);
+			  ssd1306_SetCursor(2,0);
+			  char s[5]="C000";
+			  s[1]='0'+i/100;
+			  s[2]='0'+(i%100)/10;
+			  s[3]='0'+i%10;
+			  ssd1306_WriteString(s, Font_11x18, White);
+			  ssd1306_Line(i,0, i, 63, White);
+			  ssd1306_UpdateScreen();
+			  osDelay(200);
+		  }
+	  }
+
+#else
   for(;;)
   {
       HAL_GPIO_TogglePin(GPIOA,GPIO_PIN_6);
       osDelay(500);
       HAL_GPIO_TogglePin(GPIOA,GPIO_PIN_7);
       osDelay(500);
+   	  HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
+   	  ssd1306_TestAll();
+      osDelay(1000);
   }
+#endif
   /* USER CODE END 5 */
 }
 

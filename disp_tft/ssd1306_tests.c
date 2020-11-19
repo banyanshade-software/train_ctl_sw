@@ -55,18 +55,29 @@ void ssd1306_TestFonts() {
 
 void ssd1306_TestFPS() {
     ssd1306_Fill(White);
-   
+#ifdef SSD1306_INCLUDE_FONT_11x18
+    FontDef font = Font_11x18;
+#elif defined(SSD1306_INCLUDE_FONT_7x10)
+    FontDef font = Font_7x10;
+#elif defined(SSD1306_INCLUDE_FONT_6x8)
+    FontDef font = Font_6x8;
+#elif defined(SSD1306_INCLUDE_FONT_16x26)
+    FontDef font = Font_16x26;
+#else
+#error no font for fps
+#endif
     uint32_t start = HAL_GetTick();
     uint32_t end = start;
     int fps = 0;
     char message[] = "ABCDEFGHIJK";
    
     ssd1306_SetCursor(2,0);
-    ssd1306_WriteString("Testing...", Font_11x18, Black);
+
+    ssd1306_WriteString("Testing...", font, Black);
    
     do {
         ssd1306_SetCursor(2, 18);
-        ssd1306_WriteString(message, Font_11x18, Black);
+        ssd1306_WriteString(message, font, Black);
         ssd1306_UpdateScreen();
        
         char ch = message[0];
@@ -85,7 +96,7 @@ void ssd1306_TestFPS() {
    
     ssd1306_Fill(White);
     ssd1306_SetCursor(2, 18);
-    ssd1306_WriteString(buff, Font_11x18, Black);
+    ssd1306_WriteString(buff, font, Black);
     ssd1306_UpdateScreen();
 }
 

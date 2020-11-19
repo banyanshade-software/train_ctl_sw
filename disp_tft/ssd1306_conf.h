@@ -8,8 +8,8 @@
 
 // Choose a microcontroller family
 //#define STM32F0
-#define STM32F1
-//#define STM32F4
+//#define STM32F1
+#define STM32F4
 //#define STM32L0
 //#define STM32L4
 //#define STM32F3
@@ -21,7 +21,7 @@
 //#define SSD1306_USE_SPI
 
 // I2C Configuration
-#define SSD1306_I2C_PORT        hi2c2
+#define SSD1306_I2C_PORT        hi2c1
 #define SSD1306_I2C_ADDR        (0x3C << 1)
 
 // Mirror the screen if needed
@@ -33,8 +33,16 @@
 
 // Include only needed fonts
 //#define SSD1306_INCLUDE_FONT_6x8
-//#define SSD1306_INCLUDE_FONT_7x10
+#define SSD1306_INCLUDE_FONT_7x10
 #define SSD1306_INCLUDE_FONT_11x18
-//#define SSD1306_INCLUDE_FONT_16x26
+#define SSD1306_INCLUDE_FONT_16x26
+
+
+
+// SSD1306 OLED height in pixels
+#define SSD1306_HEIGHT          32
+// SSD1306 width in pixels
+#define SSD1306_WIDTH           128
+
 
 #endif /* __SSD1306_CONF_H__ */

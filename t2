@@ -1,0 +1,12 @@
++-o Root  <class IORegistryEntry, id 0x100000100, retain 18>
+  +-o AppleUSBEHCI Root Hub Simulation@1a000000  <class AppleUSBRootHubDevice, id 0x1000002b6, registered, matched, active, busy 0 (9 ms), retain 9>
+  | +-o IOUSBHostDevice@1a100000  <class AppleUSBDevice, id 0x1000002b8, registered, matched, active, busy 0 (16 ms), retain 12>
+  |   +-o FaceTime HD Camera (Built-in)@1a110000  <class AppleUSBDevice, id 0x10000037d, registered, matched, active, busy 0 (22 ms), retain 19>
+  +-o AppleUSBEHCI Root Hub Simulation@1d000000  <class AppleUSBRootHubDevice, id 0x1000002bd, registered, matched, active, busy 0 (10 ms), retain 9>
+  | +-o IOUSBHostDevice@1d100000  <class AppleUSBDevice, id 0x1000002bf, registered, matched, active, busy 0 (15 ms), retain 12>
+  |   +-o IOUSBHostDevice@1d180000  <class AppleUSBDevice, id 0x1000002dd, registered, matched, active, busy 0 (17 ms), retain 14>
+  |     +-o BRCM20702 Hub@1d181000  <class AppleUSBDevice, id 0x100000301, registered, matched, active, busy 0 (17 ms), retain 12>
+  |     | +-o Bluetooth USB Host Controller@1d181300  <class AppleUSBDevice, id 0x100000357, registered, matched, active, busy 0 (64897 ms), retain 17>
+  |     +-o Apple Internal Keyboard / Trackpad@1d183000  <class AppleUSBDevice, id 0x100000312, registered, matched, active, busy 0 (17 ms), retain 15>
+  |     +-o IR Receiver@1d182000  <class AppleUSBDevice, id 0x10000032f, registered, matched, active, busy 0 (18 ms), retain 11>
+  +-o AppleUSBXHCI Root Hub Simulation@14000000  <class AppleUSBRootHubDevice, id 0x1000008fe, registered, matched, active, busy 0 (1 ms), retain 8>

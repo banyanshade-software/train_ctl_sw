@@ -25,6 +25,7 @@
 /* USER CODE BEGIN Includes */
 #include "../../../disp_tft/ssd1306_tests.h"
 #include "../../../disp_tft/ssd1306.h"
+#include "../../../BLE/bletask.h"
 #include <memory.h>
 /* USER CODE END Includes */
 
@@ -662,59 +663,6 @@ static void bcd_2_char(char *buf, int v, int nch)
 	}
 }
 
-static void bh(void)
-{
-
-}
-/*void HAL_UART_IRQHandler(UART_HandleTypeDef *huart)
-{
-	bh();
-}*/
-
-static volatile int tx_on_progress = 0;
-static volatile int rx_on_progress = 0;
-
-void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
-{
-	tx_on_progress=0;
-	bh();
-}
-
-void HAL_UART_TxHalfCpltCallback(UART_HandleTypeDef *huart)
-{
-	//bh();
-}
-void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
-{
-	rx_on_progress=0;
-	int l = sizeof(buf) - __HAL_DMA_GET_COUNTER(&hdma_uart4_rx);
-	bh();
-}
-void HAL_UART_RxHalfCpltCallback(UART_HandleTypeDef *huart)
-{
-	bh();
-}
-
-void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
-{
-	bh();
-}
-void HAL_UART_AbortCpltCallback(UART_HandleTypeDef *huart)
-{
-	bh();
-}
-
-void HAL_UART_AbortTransmitCpltCallback(UART_HandleTypeDef *huart)
-{
-	bh();
-}
-void HAL_UART_AbortReceiveCpltCallback(UART_HandleTypeDef *huart)
-{
-	bh();
-}
-
-static uint8_t buf[128];
-
 
 
 /* USER CODE END 4 */
@@ -730,6 +678,9 @@ void StartDefaultTask(void *argument)
 {
   /* USER CODE BEGIN 5 */
 
+    RunBleTask(&huart4, &hdma_uart4_rx, &hdma_uart4_tx);
+
+#if 0
 	for (;;) {
 		/* Infinite loop */
 #define MSG "AT\r\nAT+NAME?\r\n"
@@ -752,6 +703,8 @@ void StartDefaultTask(void *argument)
 				}*/
 		osDelay(3000);
 	}
+#endif
+
 #if 1
 	  I2C_Scan();
 	  ssd1306_Init();

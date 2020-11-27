@@ -275,6 +275,9 @@ void train_stop_all(void)
 	railconfig_setup_default();
 	for (int i=0; i<NUM_CANTONS; i++) {
 		USE_CANTON(i) // cconf cvars
+		// setup default has put dir=0 + pwm=0 and a canton_set_pwm(0,0)
+		// would be ignored.
+		canton_set_pwm(cconf, cvars,  1, 0);
 		canton_set_pwm(cconf, cvars,  0, 0);
 		canton_set_volt(cconf, cvars, 15);
 	}

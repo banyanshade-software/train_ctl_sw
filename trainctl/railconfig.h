@@ -31,7 +31,11 @@
 
 // ---------------------------------------------------------
 
+#ifndef NUM_LOCAL_CANTONS
 #define NUM_LOCAL_CANTONS 1
+#error ops
+#endif
+
 #define NUM_CANTONS (NUM_LOCAL_CANTONS+1)
 
 #define NUM_TRAINS  1

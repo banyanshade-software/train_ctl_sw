@@ -44,6 +44,10 @@ struct spd_notif {
     int32_t bemf_centivolt;
 };
 
+
+
+extern uint32_t train_tick_last_dt;
+extern uint32_t train_ntick;
 // ---------------------------------------------- txrx
 
 #define FRM_MAX_LEN 31
@@ -87,12 +91,12 @@ void auto1_run(uint32_t notif, uint32_t tick);
 
 // notif_flags
 typedef struct {
+	uint16_t intOff; // XXX
 	uint16_t voffA;
 	uint16_t voffB;
-	//uint16_t intOff; // XXX
+	uint16_t intOn; // XXX
 	uint16_t vonA;
 	uint16_t vonB;
-	//uint16_t intOn; // XXX
 
 } adc_buffer_t;
 

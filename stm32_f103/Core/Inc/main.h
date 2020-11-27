@@ -63,6 +63,8 @@ extern int cur_freqhz;
 
 /* Private defines -----------------------------------------------------------*/
 #define COMMAND_INT_MAX_OUTPUT_SIZE 2096
+#define LED1_Pin GPIO_PIN_13
+#define LED1_GPIO_Port GPIOC
 #define VOLT_SEL0_Pin GPIO_PIN_0
 #define VOLT_SEL0_GPIO_Port GPIOA
 #define VOLT_SEL2_Pin GPIO_PIN_2

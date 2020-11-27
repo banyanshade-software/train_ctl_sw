@@ -30,18 +30,58 @@
 
 #ifndef TRAIN_SIMU
 //#include "main.h"
+
+
+#ifndef VOLT_0_SEL0_Pin
+#define VOLT_0_SEL0_Pin VOLT_SEL0_Pin
+#endif
+#ifndef VOLT_0_SEL1_Pin
+#define VOLT_0_SEL1_Pin VOLT_SEL1_Pin
+#endif
+#ifndef VOLT_0_SEL2_Pin
+#define VOLT_0_SEL2_Pin VOLT_SEL2_Pin
+#endif
+#ifndef VOLT_0_SEL3_Pin
+#define VOLT_0_SEL3_Pin VOLT_SEL3_Pin
+#endif
+
+#ifndef VOLT_0_SEL0_GPIO_Port
+#define VOLT_0_SEL0_GPIO_Port VOLT_SEL0_GPIO_Port
+#endif
+
+#ifndef VOLT_0_SEL1_GPIO_Port
+#define VOLT_0_SEL1_GPIO_Port VOLT_SEL1_GPIO_Port
+#endif
+
+
+#ifndef VOLT_0_SEL2_GPIO_Port
+#define VOLT_0_SEL2_GPIO_Port VOLT_SEL2_GPIO_Port
+#endif
+
+
+#ifndef VOLT_0_SEL3_GPIO_Port
+#define VOLT_0_SEL3_GPIO_Port VOLT_SEL3_GPIO_Port
+#endif
+
+
+
 #else
 
-#define VOLT_SEL0_GPIO_Port NULL
-#define VOLT_SEL0_Pin 0
-#define VOLT_SEL1_Pin 0
-#define VOLT_SEL2_Pin 0
-#define VOLT_SEL3_Pin 0
+#define VOLT_0_SEL0_GPIO_Port NULL
+#define VOLT_0_SEL1_GPIO_Port NULL
+#define VOLT_0_SEL2_GPIO_Port NULL
+#define VOLT_0_SEL3_GPIO_Port NULL
+#define VOLT_0_SEL0_Pin 0
+#define VOLT_0_SEL1_Pin 0
+#define VOLT_0_SEL2_Pin 0
+#define VOLT_0_SEL3_Pin 0
 
 #define TIM1 NULL
 #define TIM_CHANNEL_1 1
 #define TIM_CHANNEL_2 2
 #endif
+
+
 
 
 static  canton_config_t Cantons[NUM_CANTONS] = {
@@ -51,18 +91,55 @@ static  canton_config_t Cantons[NUM_CANTONS] = {
                 { 1000, 0,    0, 0, 0, 621, 0,   0, 0, 0, 0, 0, 0, 0, 0, 0}, // volts[16]  V2
                 { 1000, 874,  0, 0, 0, 621, 538, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // volts[16]  V4
 
-				VOLT_SEL0_GPIO_Port,
-				VOLT_SEL0_Pin, VOLT_SEL1_Pin, VOLT_SEL2_Pin, VOLT_SEL3_Pin,
+				VOLT_0_SEL0_GPIO_Port,VOLT_0_SEL1_GPIO_Port, VOLT_0_SEL2_GPIO_Port,VOLT_0_SEL3_GPIO_Port,
+				VOLT_0_SEL0_Pin, VOLT_0_SEL1_Pin, VOLT_0_SEL2_Pin, VOLT_0_SEL3_Pin,
 				1, TIM_CHANNEL_1, TIM_CHANNEL_2,  // TIM_HandleTypeDef
 				0, /*notif BEMF */
 		},
+#if NUM_LOCAL_CANTONS == 4
+		{CANTON_TYPE_PROTO1,
+				//  0    1    2    3    4    5    6    7    8    9    10   11  12    13   14   15
+				{ 1000, 874, 770, 699, 621, 578, 538, 507, 451, 432, 413, 398, 379, 367, 355, 345}, // volts[16]
+				{ 1000, 0,    0, 0, 0, 621, 0,   0, 0, 0, 0, 0, 0, 0, 0, 0}, // volts[16]  V2
+				{ 1000, 874,  0, 0, 0, 621, 538, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // volts[16]  V4
+
+				VOLT_1_SEL0_GPIO_Port,VOLT_1_SEL1_GPIO_Port, VOLT_1_SEL2_GPIO_Port,VOLT_1_SEL3_GPIO_Port,
+				VOLT_1_SEL0_Pin, VOLT_1_SEL1_Pin, VOLT_1_SEL2_Pin, VOLT_1_SEL3_Pin,
+				1, TIM_CHANNEL_3, TIM_CHANNEL_4,  // TIM_HandleTypeDef
+				0, /*notif BEMF */
+		},
+		{CANTON_TYPE_PROTO1,
+				//  0    1    2    3    4    5    6    7    8    9    10   11  12    13   14   15
+				{ 1000, 874, 770, 699, 621, 578, 538, 507, 451, 432, 413, 398, 379, 367, 355, 345}, // volts[16]
+				{ 1000, 0,    0, 0, 0, 621, 0,   0, 0, 0, 0, 0, 0, 0, 0, 0}, // volts[16]  V2
+				{ 1000, 874,  0, 0, 0, 621, 538, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // volts[16]  V4
+
+				VOLT_2_SEL0_GPIO_Port,VOLT_2_SEL1_GPIO_Port, VOLT_2_SEL2_GPIO_Port,VOLT_2_SEL3_GPIO_Port,
+				VOLT_2_SEL0_Pin, VOLT_2_SEL1_Pin, VOLT_2_SEL2_Pin, VOLT_2_SEL3_Pin,
+				2, TIM_CHANNEL_3, TIM_CHANNEL_4,  // TIM_HandleTypeDef
+				0, /*notif BEMF */
+		},
+		{CANTON_TYPE_PROTO1,
+				//  0    1    2    3    4    5    6    7    8    9    10   11  12    13   14   15
+				{ 1000, 874, 770, 699, 621, 578, 538, 507, 451, 432, 413, 398, 379, 367, 355, 345}, // volts[16]
+				{ 1000, 0,    0, 0, 0, 621, 0,   0, 0, 0, 0, 0, 0, 0, 0, 0}, // volts[16]  V2
+				{ 1000, 874,  0, 0, 0, 621, 538, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // volts[16]  V4
+
+				VOLT_3_SEL0_GPIO_Port, VOLT_3_SEL1_GPIO_Port, VOLT_3_SEL2_GPIO_Port, VOLT_3_SEL3_GPIO_Port,
+				VOLT_3_SEL0_Pin, VOLT_3_SEL1_Pin, VOLT_3_SEL2_Pin, VOLT_3_SEL3_Pin,
+				3, TIM_CHANNEL_1, TIM_CHANNEL_2,  // TIM_HandleTypeDef
+				0, /*notif BEMF */
+		},
+
+#endif
+
 
 		{CANTON_TYPE_DUMMY,
             //  0    1    2    3    4    5    6    7    8    9    10   11  12    13   14   15
             { 1000, 874, 770, 699, 621, 578, 538, 507, 451, 432, 413, 398, 379, 367, 355, 345},// volts[16]
             { 1000, 0,    0, 0, 0, 621, 0,   0, 0, 0, 0, 0, 0, 0, 0, 0}, // volts[16]  V2
             { 1000, 874,  0, 0, 0, 621, 538, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // volts[16]  V4
-				NULL, 0, 0, 0, 0,
+				NULL,NULL,NULL,NULL, 0, 0, 0, 0,
 				0, 0, 0,
 				0, /* notif BEMF */
 		},

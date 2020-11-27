@@ -17,11 +17,13 @@
 #define STM32_TASKCTRL_H_
 
 
-
 extern osThreadId_t taskCtrlHandle;
 
 void run_task_ctrl(void);
 
 
+void set_pwm_freq(int freqhz);
+
+extern int cur_freqhz;
 
 #endif /* STM32_TASKCTRL_H_ */

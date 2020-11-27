@@ -16,6 +16,8 @@
 
 #include "StringExtension.h"
 
+
+
 #define HIGHLEVEL_SIMU_CNX 0
 
 /*
@@ -52,6 +54,7 @@ typedef struct {
 typedef void (^respblk_t)(void);
 
 @interface AppDelegate () {
+    int retry;
     NSFileHandle *usb;
     // frame decode
     frame_state_t frm;
@@ -80,6 +83,12 @@ typedef void (^respblk_t)(void);
     NSPipe *gnuplotStdout;
     NSFileHandle *gnuplotStdinFh;
     NSFileHandle *gnuplotStdoutFh;
+    
+    
+    CBCentralManager *cbcentral;
+    CBPeripheral *trainctlBle;
+    NSTimer *connectTimeout;
+    BOOL connected;
 }
 
 @property (weak) IBOutlet NSWindow *window;
@@ -111,8 +120,11 @@ typedef void (^respblk_t)(void);
         c.enabled = NO;
         self->nparam++;
     }];
+    self.numtrains = 1;
+    self.numcantons = 1+1;
     // for deebug
     //[self getParams]; //XXX XXX
+    //[self startBLE];
     [self openUsb];
 }
 
@@ -453,7 +465,7 @@ typedef void (^respblk_t)(void);
         memcpy(gpfrm+5, cpn, nl+1);
         gpfrm[5+nl+1] = '|';
         NSLog(@"get param %c%c '%s'\n",  cpsel[0], cpsel[1], cpn);
-        
+    
         [self sendFrame:gpfrm len:(int)(5+nl+2) blen:sizeof(gpfrm) then:^{
             // handle response
             self->nparamresp++;
@@ -486,6 +498,12 @@ typedef void (^respblk_t)(void);
 
 - (void) setParameter:(NSControl *)c value:(int)v def:(int)def min:(int)min max:(int)max enable:(BOOL)ena
 {
+    if ((0)) {
+    } else if ([[c identifier] isEqualToString:@"par_G0_numtrains"]) {
+        self.numtrains = v;
+    } else if ([[c identifier] isEqualToString:@"par_G0_numcantons"]) {
+        self.numcantons = v;
+    }
     if ([c respondsToSelector:@selector(selectItemWithTag:)]) {
         [(id)c selectItemWithTag:v];
     } else if ([c respondsToSelector:@selector(setIntValue:)]) {
@@ -652,15 +670,20 @@ typedef void (^respblk_t)(void);
 
 #pragma mark -
 
-#define USBTTY  "/dev/cu.usbmodem6D94487754571"
+#define USBTTY1 "/dev/cu.usbmodem6D94487754571"
+#define USBTTY2 "/dev/cu.usbmodem376A356634381"
+
 - (void) openUsb
 {
     if ((_linkok == LINK_SIMUHI) || (_linkok == LINK_SIMULOW)) return;
-    int fd = open(USBTTY, O_RDWR|O_NOCTTY);
+    retry++;
+    int fd = open((retry %2) ? USBTTY2 : USBTTY1, O_RDWR|O_NOCTTY);
     if (fd<0) {
         self.linkok = NO;
         usb = nil;
-        perror("open:");
+        if (errno != ENOENT) {
+            perror("open:");
+        }
         [self performSelector:@selector(openUsb) withObject:nil afterDelay:1.0];
         return;
     }
@@ -1027,7 +1050,7 @@ static int frm_unescape(uint8_t *buf, int len)
         int cntidx=-1;
         const char *name = NULL;
         if (step>=0) {
-            int rc = get_val_info(step, &offset, &len, &trnidx, &cntidx, &name);
+            int rc = get_val_info(step, &offset, &len, &trnidx, &cntidx, &name, self.numtrains, self.numcantons);
             if (rc) {
                 // end
                 if (nval>-1) {
@@ -1509,4 +1532,157 @@ void notif_target_bemf(const train_config_t *cnf, train_vars_t *vars, int32_t va
 {
     [self gnuplotGraph:self.plotNum];
 }
+
+
+
+
+#pragma mark - BLE
+
+- (IBAction) startBLE:(id)sender
+{
+    if (!cbcentral) [self _startBLE];
+}
+- (void)_startBLE
+{
+    connected = NO;
+    cbcentral = [[CBCentralManager alloc] initWithDelegate:self queue:nil options:nil];
+    NSAssert(cbcentral, @"no cbcentral");
+    //[cbcentral scanForPeripheralsWithServices:nil options:nil];
+}
+
+- (void)centralManager:(CBCentralManager *)central
+didDiscoverPeripheral:(CBPeripheral *)peripheral
+    advertisementData:(NSDictionary *)advertisementData
+                 RSSI:(NSNumber *)RSSI
+{
+
+   NSLog(@"Discovered %@", peripheral.name);
+    // identifier = E6DF4001-59B0-45F2-A31C-BBE4DE58B07B
+    if (([peripheral.name isEqual:@"trainctl"])) {
+        NSLog(@"connecting\n");
+        trainctlBle = peripheral;
+        trainctlBle.delegate = self;
+        connected = NO;
+        [self reconnectBLE];
+        [cbcentral stopScan];
+    }
+}
+
+- (void) connectionTimeout
+{
+    NSLog(@"connectionTimeout state=%d", (int) trainctlBle.state);
+    [connectTimeout invalidate];
+    if (connected) {
+        NSLog(@"problem here");
+    }
+    [cbcentral cancelPeripheralConnection:trainctlBle];
+    [self performSelector:@selector(reconnectBLE) withObject:nil afterDelay:1];
+}
+
+- (void) reconnectBLE
+{
+    NSAssert(trainctlBle, @"no periph");
+    NSAssert(cbcentral, @"no cbcentral");
+    NSAssert(!connected, @"already connected");
+    NSLog(@"connecting BLE...");
+    connectTimeout = [NSTimer timerWithTimeInterval:15.0 target:self selector:@selector(connectionTimeout) userInfo:nil repeats:NO];
+    [[NSRunLoop mainRunLoop]addTimer:connectTimeout forMode:NSDefaultRunLoopMode];
+    [cbcentral connectPeripheral:trainctlBle options:nil];
+}
+- (void)centralManager:(CBCentralManager *)central
+ didConnectPeripheral:(CBPeripheral *)peripheral
+{
+    NSLog(@"Peripheral connected");
+    [connectTimeout invalidate];
+    connected = YES;
+    //peripheral.delegate = self;
+    [peripheral discoverServices:nil];
+}
+
+- (void)centralManager:(CBCentralManager *)central
+didDisconnectPeripheral:(CBPeripheral *)peripheral
+                 error:(NSError *)error
+{
+    [connectTimeout invalidate];
+    connected = NO;
+}
+- (void)centralManager:(CBCentralManager *)central
+didFailToConnectPeripheral:(CBPeripheral *)peripheral
+                 error:(NSError *)error
+{
+    [connectTimeout invalidate];
+    connected = NO;
+}
+
+
+- (void)centralManagerDidUpdateState:(CBCentralManager *)central
+{
+    switch (central.state) {
+        case CBManagerStatePoweredOn:
+            NSLog(@"power on");
+            [cbcentral scanForPeripheralsWithServices:@[[CBUUID UUIDWithString:@"FFE0"]] options:nil];
+            break;
+        default:
+            NSLog(@"state %d", (int) central.state);
+            break;
+    }
+}
+
+/*
+- (void)centralManager:(CBCentralManager *)central
+willRestoreState:(NSDictionary<NSString *,id> *)dict
+{
+    
+}
+ 
+*/
+
+
+- (void)peripheral:(CBPeripheral *)peripheral
+didDiscoverServices:(NSError *)error
+{
+ 
+    for (CBService *service in peripheral.services) {
+        NSLog(@"Discovered service %@", service);
+        if ([service.UUID isEqual:[CBUUID UUIDWithString:@"FFE0"]]) {
+            [peripheral discoverCharacteristics:nil forService:service];
+        }
+    }
+}
+
+- (void)peripheral:(CBPeripheral *)peripheral
+didDiscoverCharacteristicsForService:(CBService *)service
+             error:(NSError *)error
+{
+    NSArray *cs = service.characteristics;
+    for (CBCharacteristic *c in cs) {
+        if ((1)) {
+            [peripheral setNotifyValue:YES forCharacteristic:c];
+        }
+        [peripheral readValueForCharacteristic:c];
+    }
+}
+
+- (void)peripheral:(CBPeripheral *)peripheral
+didUpdateValueForCharacteristic:(CBCharacteristic *)characteristic
+             error:(NSError *)error
+{
+ 
+    NSData *data = characteristic.value;
+    NSLog(@"characteristic  %@ val %@ %@\n",  characteristic, data, [[NSString alloc]initWithData:data encoding:NSUTF8StringEncoding]);
+}
+
+- (void)peripheral:(CBPeripheral *)peripheral
+didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic
+             error:(NSError *)error
+{
+    if (error) {
+        NSLog(@"Error changing notification state: %@",
+              [error localizedDescription]);
+    }
+    NSData *data = characteristic.value;
+    NSLog(@"notif characteristic  %@ val %@ %@\n",  characteristic, data,  [[NSString alloc]initWithData:data encoding:NSUTF8StringEncoding]);
+}
+
+
 @end

@@ -205,8 +205,26 @@ static void param_set_pwm(struct param *p, int32_t v) // XXX to be moved away
 {
         set_pwm_freq(v);
 }
+
+/*
+int32_t (*getter)(struct param *);
+	void (*setter)(struct param *, int32_t);
+*/
+
+static int32_t param_get_numtrains(param_t *p)
+{
+	return NUM_TRAINS;
+}
+
+static int32_t param_get_numcantons(param_t *p)
+{
+	return NUM_CANTONS;
+}
+
 static const param_t glob_params[] = {
-                { "pwmfreq", &cur_freqhz, 0, NULL, param_set_pwm, sizeof(int), 0, 60000,  50},
+        { "pwmfreq",    &cur_freqhz, 0, NULL, param_set_pwm, sizeof(int), 0, 60000,  50},
+		{ "numtrains",   NULL, 0, 	    param_get_numtrains,  NULL, sizeof(uint32_t), 1, 1, 10},
+		{ "numcantons",  NULL, 0, 	    param_get_numcantons, NULL, sizeof(uint32_t), 2, 1, 50},
 
                 { NULL,     NULL,0,    NULL,NULL, 0, 0, 0,   0}
 };

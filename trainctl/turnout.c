@@ -30,7 +30,11 @@
 #include "railconfig.h"
 #include "trainctl_iface.h"
 #ifndef TRAIN_SIMU
+#ifdef STM32_F4
+#include "stm32f4xx_hal.h"
+#else
 #include "stm32f1xx_hal.h"
+#endif
 #else
 #include "train_simu.h"
 #endif

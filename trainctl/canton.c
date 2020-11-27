@@ -34,7 +34,11 @@
 #include "trainctl_iface.h"
 #include "canton.h"
 #ifndef TRAIN_SIMU
+#ifdef STM32_F4
+#include "stm32f4xx_hal.h"
+#else
 #include "stm32f1xx_hal.h"
+#endif
 #else
 #include "train_simu.h"
 #endif
@@ -150,14 +154,21 @@ void canton_set_volt(const canton_config_t *c, canton_vars_t *v, int voltidx)
 	v->cur_voltidx = voltidx;
     v-> selected_centivolt =  (c->volts[v->cur_voltidx]);
 
+
+	HAL_GPIO_WritePin(c->volt_port_b0, c->volt_b0, (voltidx & 0x01) ? GPIO_PIN_SET : GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(c->volt_port_b1, c->volt_b1, (voltidx & 0x02) ? GPIO_PIN_SET : GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(c->volt_port_b2, c->volt_b2, (voltidx & 0x04) ? GPIO_PIN_SET : GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(c->volt_port_b3, c->volt_b3, (voltidx & 0x08) ? GPIO_PIN_SET : GPIO_PIN_RESET);
+#if 0
 	uint16_t s = 0;
 	uint16_t r = 0;
-	if (voltidx & 0x01) s |= VOLT_SEL0_Pin; else r |=  c->volt_b0;
-	if (voltidx & 0x02) s |= VOLT_SEL1_Pin; else r |=  c->volt_b1;
-	if (voltidx & 0x04) s |= VOLT_SEL2_Pin; else r |=  c->volt_b2;
-	if (voltidx & 0x08) s |= VOLT_SEL3_Pin; else r |=  c->volt_b3;
+	if (voltidx & 0x01) s |= VOLT_0_SEL0_Pin; else r |=  c->volt_b0;
+	if (voltidx & 0x02) s |= VOLT_0_SEL1_Pin; else r |=  c->volt_b1;
+	if (voltidx & 0x04) s |= VOLT_0_SEL2_Pin; else r |=  c->volt_b2;
+	if (voltidx & 0x08) s |= VOLT_0_SEL3_Pin; else r |=  c->volt_b3;
 	HAL_GPIO_WritePin(c->volt_port, s, GPIO_PIN_SET);
 	HAL_GPIO_WritePin(c->volt_port, r, GPIO_PIN_RESET);
+#endif
 }
 
 #else  // TRAIN_SIMU
@@ -370,6 +381,11 @@ static inline int32_t bemf_convert_to_centivolt(const canton_config_t *c, canton
 }
 
 
+void canton_intensity(const canton_config_t *c, canton_vars_t *v, uint16_t ioff, uint16_t ion)
+{
+	v->i_off = ioff;
+	v->i_on = ion;
+}
 
 
 void canton_bemf(const canton_config_t *c, canton_vars_t *v, uint16_t adc1, uint16_t adc2, uint16_t von1, uint16_t von2)

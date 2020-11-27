@@ -16,7 +16,7 @@
         <customObject id="Voe-Tx-rLC" customClass="AppDelegate">
             <connections>
                 <outlet property="logView" destination="YXl-3q-GOv" id="4k0-Qy-nvZ"/>
-                <outlet property="paramView" destination="0UB-on-HXZ" id="Jj6-G2-zR1"/>
+                <outlet property="paramView" destination="EiT-Mj-1SZ" id="74H-sB-9zt"/>
                 <outlet property="sliderCur" destination="eUe-hX-T9L" id="P1g-zu-f6I"/>
                 <outlet property="sliderTarget" destination="hKn-Uc-u5t" id="Bb0-3J-TRY"/>
                 <outlet property="window" destination="QvC-M9-y7g" id="gIp-Ho-8D9"/>
@@ -104,6 +104,13 @@
                                 </menu>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="m54-Is-iLE"/>
+                            <menuItem title="Start BLE" id="hIm-l3-jzx">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="startBLE:" target="Voe-Tx-rLC" id="bGc-kI-SAB"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="FHU-Hx-f4t"/>
                             <menuItem title="Close" keyEquivalent="w" id="DVo-aG-piG">
                                 <connections>
                                     <action selector="performClose:" target="-1" id="HmO-Ls-i7Q"/>
@@ -1038,6 +1045,24 @@
                                                 </constraints>
                                             </view>
                                         </box>
+                                        <textField identifier="par_G0_numtrains" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="kjr-h1-sGD">
+                                            <rect key="frame" x="22" y="146" width="96" height="21"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" drawsBackground="YES" id="EnO-4n-NgV">
+                                                <font key="font" metaFont="system"/>
+                                                <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                            </textFieldCell>
+                                        </textField>
+                                        <textField identifier="par_G0_numcantons" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="uke-Lb-jLY">
+                                            <rect key="frame" x="22" y="115" width="96" height="21"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" drawsBackground="YES" id="ocD-T2-QY5">
+                                                <font key="font" metaFont="system"/>
+                                                <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                            </textFieldCell>
+                                        </textField>
                                     </subviews>
                                     <constraints>
                                         <constraint firstItem="qAe-tV-no8" firstAttribute="leading" secondItem="LMP-1L-UsR" secondAttribute="trailing" constant="57" id="0Yg-aF-ETp"/>
@@ -1682,7 +1707,7 @@
                                                 <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
                                             <connections>
-                                                <binding destination="Voe-Tx-rLC" name="value" keyPath="canton_0_intensity" id="yZY-qt-1aT"/>
+                                                <binding destination="Voe-Tx-rLC" name="value" keyPath="canton_0_ion" id="l4J-OB-4YA"/>
                                             </connections>
                                         </textField>
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="567-3W-PLK">
@@ -1725,7 +1750,7 @@
                                             </connections>
                                         </textField>
                                         <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="LMZ-ks-gTv">
-                                            <rect key="frame" x="184" y="322" width="96" height="21"/>
+                                            <rect key="frame" x="184" y="325" width="96" height="21"/>
                                             <constraints>
                                                 <constraint firstAttribute="width" constant="96" id="CQ2-JO-cEJ"/>
                                             </constraints>
@@ -1740,7 +1765,7 @@
                                             </connections>
                                         </textField>
                                         <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="gYY-Nd-z3F">
-                                            <rect key="frame" x="184" y="293" width="96" height="21"/>
+                                            <rect key="frame" x="184" y="296" width="96" height="21"/>
                                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="lo9-CN-mrj">
                                                 <numberFormatter key="formatter" formatterBehavior="default10_4" numberStyle="decimal" minimumIntegerDigits="1" maximumIntegerDigits="2000000000" maximumFractionDigits="3" id="kpk-bf-k2a"/>
                                                 <font key="font" metaFont="system"/>
@@ -1751,7 +1776,7 @@
                                                 </connections>
                                             </textFieldCell>
                                             <connections>
-                                                <binding destination="Voe-Tx-rLC" name="value" keyPath="target_bemf" id="2zZ-BS-Nwo"/>
+                                                <binding destination="Voe-Tx-rLC" name="value" keyPath="canton_0_ioff" id="qbZ-Ve-8X6"/>
                                             </connections>
                                         </textField>
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="7YT-e7-ySa">
@@ -1762,6 +1787,17 @@
                                                 <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
                                         </textField>
+                                        <textField verticalHuggingPriority="750" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="PVr-dA-oc1">
+                                            <rect key="frame" x="302" y="325" width="96" height="21"/>
+                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" drawsBackground="YES" id="HqA-pi-eSC">
+                                                <font key="font" metaFont="system"/>
+                                                <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                            </textFieldCell>
+                                            <connections>
+                                                <binding destination="Voe-Tx-rLC" name="value" keyPath="target_bemf" id="LcV-i3-02I"/>
+                                            </connections>
+                                        </textField>
                                     </subviews>
                                     <constraints>
                                         <constraint firstItem="WcK-Sl-7YT" firstAttribute="trailing" secondItem="GlB-Iw-aDx" secondAttribute="trailing" id="0sI-EX-M6A"/>
@@ -1771,7 +1807,7 @@
                                         <constraint firstItem="1jJ-dG-NNg" firstAttribute="leading" secondItem="WcK-Sl-7YT" secondAttribute="leading" id="8nx-Ub-tKl"/>
                                         <constraint firstItem="f6D-9z-qNd" firstAttribute="leading" secondItem="xai-Ln-1Q8" secondAttribute="leading" id="9mg-c6-i5C"/>
                                         <constraint firstItem="yI9-c9-FZi" firstAttribute="leading" secondItem="7YT-e7-ySa" secondAttribute="leading" id="CYf-lH-OQ7"/>
-                                        <constraint firstItem="LMZ-ks-gTv" firstAttribute="top" secondItem="I6W-s6-2Ks" secondAttribute="top" constant="27" id="Cks-HJ-P9S"/>
+                                        <constraint firstItem="LMZ-ks-gTv" firstAttribute="firstBaseline" secondItem="KEp-tz-Pwe" secondAttribute="firstBaseline" id="DcV-AG-ajJ"/>
                                         <constraint firstItem="f6D-9z-qNd" firstAttribute="top" secondItem="KEp-tz-Pwe" secondAttribute="bottom" constant="8" id="Ijf-kf-vIn"/>
                                         <constraint firstItem="yI9-c9-FZi" firstAttribute="top" secondItem="7YT-e7-ySa" secondAttribute="bottom" constant="8" id="JbJ-BE-kGN"/>
                                         <constraint firstItem="GlB-Iw-aDx" firstAttribute="leading" secondItem="567-3W-PLK" secondAttribute="leading" id="Psj-7f-W0Q"/>
@@ -1786,6 +1822,7 @@
                                         <constraint firstItem="KEp-tz-Pwe" firstAttribute="trailing" secondItem="f6D-9z-qNd" secondAttribute="trailing" id="coa-Nw-r4w"/>
                                         <constraint firstItem="xai-Ln-1Q8" firstAttribute="trailing" secondItem="m7a-SF-wSv" secondAttribute="trailing" id="crU-Eb-D5B"/>
                                         <constraint firstItem="567-3W-PLK" firstAttribute="trailing" secondItem="GlB-Iw-aDx" secondAttribute="trailing" id="laK-R7-QeZ"/>
+                                        <constraint firstItem="PVr-dA-oc1" firstAttribute="firstBaseline" secondItem="LMZ-ks-gTv" secondAttribute="firstBaseline" id="mpp-eh-HH7"/>
                                         <constraint firstItem="gYY-Nd-z3F" firstAttribute="top" secondItem="LMZ-ks-gTv" secondAttribute="bottom" constant="8" id="npD-8K-idB"/>
                                         <constraint firstItem="gYY-Nd-z3F" firstAttribute="leading" secondItem="yI9-c9-FZi" secondAttribute="leading" id="oIA-bY-aIE"/>
                                         <constraint firstItem="KEp-tz-Pwe" firstAttribute="leading" secondItem="GlB-Iw-aDx" secondAttribute="trailing" constant="17" id="oVj-pD-GFF"/>
@@ -1796,6 +1833,7 @@
                                         <constraint firstItem="567-3W-PLK" firstAttribute="leading" secondItem="1jJ-dG-NNg" secondAttribute="leading" id="s8r-PO-h75"/>
                                         <constraint firstItem="GlB-Iw-aDx" firstAttribute="bottom" secondItem="KEp-tz-Pwe" secondAttribute="bottom" id="uMm-Rt-e6N"/>
                                         <constraint firstItem="KEp-tz-Pwe" firstAttribute="leading" secondItem="f6D-9z-qNd" secondAttribute="leading" id="uy0-6u-yZW"/>
+                                        <constraint firstItem="PVr-dA-oc1" firstAttribute="leading" secondItem="LMZ-ks-gTv" secondAttribute="trailing" constant="20" id="xCo-Th-DBn"/>
                                         <constraint firstItem="WcK-Sl-7YT" firstAttribute="bottom" secondItem="m7a-SF-wSv" secondAttribute="bottom" id="zfs-92-Tt3"/>
                                     </constraints>
                                 </view>
@@ -2281,6 +2319,7 @@
             </textFieldCell>
             <point key="canvasLocation" x="3" y="-76"/>
         </textField>
+        <menuItem isSeparatorItem="YES" id="AgD-VD-m9I"/>
     </objects>
     <resources>
         <image name="stop" width="768" height="768"/>

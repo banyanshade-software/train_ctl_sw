@@ -1,28 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <section name="Workbench">
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
-		<item key="selection" value="bemfIIR"/>
+		<item key="selection" value="MX_USB_DEVICE_Init"/>
 		<item key="wrap" value="true"/>
 		<item key="casesensitive" value="false"/>
 		<item key="wholeword" value="false"/>
 		<item key="incremental" value="false"/>
 		<item key="isRegEx" value="false"/>
 		<list key="findhistory">
-			<item value="bemfiir"/>
-			<item value="stopall"/>
-			<item value="debug_info"/>
-			<item value="target"/>
-			<item value="cdc"/>
+			<item value="MX_USB_DEVICE_Init"/>
 			<item value="usb"/>
-			<item value="USBD_Interface_fops_FS"/>
-			<item value="frameQueueHandle"/>
-			<item value="notif"/>
-			<item value="Get_"/>
-			<item value="_send_frame"/>
-			<item value="void frame_send_stat(void(*cb)(uint8_t *d, int l));&#x0A;"/>
-			<item value="frm_escape"/>
-			<item value="frame_escape"/>
-			<item value="escape"/>
+			<item value="usb_ini"/>
+			<item value="canton_occupency"/>
+			<item value="set_pwm_freq"/>
+			<item value="glob_params"/>
+			<item value="TIM8"/>
+			<item value="_IRQ"/>
+			<item value="ADC_"/>
+			<item value="user"/>
+			<item value="taskdisp"/>
+			<item value="impl"/>
+			<item value="hrtc"/>
+			<item value="I2C_Scan"/>
+			<item value="ssd"/>
 		</list>
 		<list key="replacehistory">
 		</list>

@@ -7,10 +7,13 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import <CoreBluetooth/CoreBluetooth.h>
 
 @class SimTrain;
 
-@interface AppDelegate : NSObject <NSApplicationDelegate>
+@interface AppDelegate : NSObject <NSApplicationDelegate,
+    CBCentralManagerDelegate,CBPeripheralDelegate>
+
 @property (nonatomic,readonly) int curspeed;
 @property (nonatomic) int targetspeed;
 @property (nonatomic) double train_bemf;
@@ -34,12 +37,18 @@
 
 @property (nonatomic) double target_bemf;
 
+@property (nonatomic) int numtrains;
+@property (nonatomic) int numcantons;
+
+
 @property (nonatomic) double canton_0_bemfcentivolt;
 @property (nonatomic) double bemfiir_centivolts;
 @property (nonatomic) double canton_0_centivolts;
 @property (nonatomic) double canton_0_centivon;
 @property (nonatomic) int    canton_0_pwm;
-@property (nonatomic) double canton_0_intensity;
+//@property (nonatomic) double canton_0_intensity;
+@property (nonatomic) double canton_0_ion;
+@property (nonatomic) double canton_0_ioff;
 
 
 @property (nonatomic) double canton_1_bemfcentivolt;
@@ -87,6 +96,10 @@
 @property (nonatomic,weak) IBOutlet NSTextView *logView;
 @property (nonatomic) int plotNum;
 - (IBAction) plotRecord:(id)sender;
+
+
+
+- (IBAction) startBLE:(id)sender;
 
 @end
 

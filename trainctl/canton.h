@@ -32,7 +32,11 @@
 #include "misc.h"
 
 #ifndef TRAIN_SIMU
+#ifdef STM32_F4
+#include "stm32f4xx_hal.h"
+#else
 #include "stm32f1xx_hal.h"
+#endif
 #endif
 
 #define CANTON_TYPE_DUMMY    (0)
@@ -50,7 +54,10 @@ typedef struct canton_config {
     uint16_t volts_v2[16]; // unit : 1/100 V, from 1000 to 0
     uint16_t volts_v4[16]; // unit : 1/100 V, from 1000 to 0
 #ifndef TRAIN_SIMU
-	GPIO_TypeDef *volt_port;
+	GPIO_TypeDef *volt_port_b0;
+	GPIO_TypeDef *volt_port_b1;
+	GPIO_TypeDef *volt_port_b2;
+	GPIO_TypeDef *volt_port_b3;
 #else
     void *dummy; // for structure initialisation
 #endif
@@ -58,7 +65,7 @@ typedef struct canton_config {
 	uint16_t volt_b1;
 	uint16_t volt_b2;
 	uint16_t volt_b3;
-	uint8_t pwm_timer_num; // 1..
+	uint8_t pwm_timer_num; // 1.. index in CantonTimerHandles
 	uint32_t ch0;
 	uint32_t ch1;
 
@@ -89,6 +96,9 @@ typedef struct canton_vars {
 	canton_occupency_t status;
 	uint8_t curtrainidx;
 	uint8_t fix_bemf;
+
+	uint16_t i_on;
+	uint16_t i_off;
 } canton_vars_t;
 
 
@@ -128,6 +138,7 @@ void canton_set_volt(const canton_config_t *c, canton_vars_t *v,  int voltidx);
 
 //void canton_bemf(const canton_config_t *c, canton_vars_t *v, uint16_t adc1, uint16_t adc2);
 void canton_bemf(const canton_config_t *c, canton_vars_t *v, uint16_t adc1, uint16_t adc2, uint16_t von1, uint16_t von2);
+void canton_intensity(const canton_config_t *c, canton_vars_t *v, uint16_t ioff, uint16_t ion);
 
 
 

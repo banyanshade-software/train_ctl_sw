@@ -14,14 +14,22 @@
 
 #include "misc.h"
 #ifndef TRAIN_SIMU
+#include "main.h"
+#ifdef STM32_F4
+#include "stm32f4xx_hal.h"
+#else
 #include "stm32f1xx_hal.h"
+#endif
 #include "cmsis_os2.h"                  // ::CMSIS:RTOS2
 #endif
+
+
 
 void flash_led(void)
 {
 #ifndef TRAIN_SIMU
-	HAL_GPIO_TogglePin(GPIOC,GPIO_PIN_13);
+	HAL_GPIO_TogglePin(LED1_GPIO_Port,LED1_Pin);
+	//HAL_GPIO_TogglePin(GPIOC,GPIO_PIN_13);
 #endif
 }
 

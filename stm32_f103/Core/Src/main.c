@@ -144,6 +144,7 @@ void vApplicationStackOverflowHook(TaskHandle_t xTask, signed char *pcTaskName)
 	configASSERT(0);
 }
 
+#if 0
 int cur_freqhz = 50;
 // #define __HAL_TIM_SET_PRESCALER(__HANDLE__, __PRESC__)       ((__HANDLE__)->Instance->PSC = (__PRESC__))
 void set_pwm_freq(int freqhz)
@@ -157,6 +158,7 @@ void set_pwm_freq(int freqhz)
 	__HAL_TIM_SET_PRESCALER(&htim1, ps);
 
 }
+#endif
 
 /* USER CODE END 0 */
 
@@ -341,16 +343,24 @@ static void MX_ADC1_Init(void)
   hadc1.Init.DiscontinuousConvMode = DISABLE;
   hadc1.Init.ExternalTrigConv = ADC_EXTERNALTRIGCONV_T3_TRGO;
   hadc1.Init.DataAlign = ADC_DATAALIGN_RIGHT;
-  hadc1.Init.NbrOfConversion = 2;
+  hadc1.Init.NbrOfConversion = 3;
   if (HAL_ADC_Init(&hadc1) != HAL_OK)
   {
     Error_Handler();
   }
   /** Configure Regular Channel
   */
-  sConfig.Channel = ADC_CHANNEL_8;
+  sConfig.Channel = ADC_CHANNEL_7;
   sConfig.Rank = ADC_REGULAR_RANK_1;
-  sConfig.SamplingTime = ADC_SAMPLETIME_28CYCLES_5;
+  sConfig.SamplingTime = ADC_SAMPLETIME_55CYCLES_5;
+  if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /** Configure Regular Channel
+  */
+  sConfig.Channel = ADC_CHANNEL_8;
+  sConfig.Rank = ADC_REGULAR_RANK_2;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
     Error_Handler();
@@ -358,7 +368,7 @@ static void MX_ADC1_Init(void)
   /** Configure Regular Channel
   */
   sConfig.Channel = ADC_CHANNEL_9;
-  sConfig.Rank = ADC_REGULAR_RANK_2;
+  sConfig.Rank = ADC_REGULAR_RANK_3;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
     Error_Handler();
@@ -561,7 +571,7 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOA, VOLT_SEL0_Pin|VOLT_SEL2_Pin|VOLT_SEL3_Pin|VOLT_SEL1_Pin
@@ -570,12 +580,12 @@ static void MX_GPIO_Init(void)
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOB, TURN1A_Pin|TURN1B_Pin, GPIO_PIN_RESET);
 
-  /*Configure GPIO pin : PC13 */
-  GPIO_InitStruct.Pin = GPIO_PIN_13;
+  /*Configure GPIO pin : LED1_Pin */
+  GPIO_InitStruct.Pin = LED1_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+  HAL_GPIO_Init(LED1_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pins : VOLT_SEL0_Pin VOLT_SEL2_Pin VOLT_SEL3_Pin VOLT_SEL1_Pin
                            M0_D1_x_Pin */
@@ -641,7 +651,7 @@ static void start_adc_read()
 
 #define _ADC_NCHAN 2
 #define _ADC_NSAMPLE 4
-static volatile uint16_t ADC_Values[_ADC_NCHAN*_ADC_NSAMPLE]={0xAAAA};
+//static volatile uint16_t ADC_Values[_ADC_NCHAN*_ADC_NSAMPLE]={0xAAAA};
 
 
 /* USER CODE END 4 */
@@ -740,9 +750,9 @@ void assert_failed(uint8_t *file, uint32_t line)
     static char msg[128];
     //           12345678901234
     strcpy(msg, "assert failed ");
-    int l = strlen(file);
+    int l = strlen((char *)file);
     if (l>30) file = file+l-30;
-    strcpy(msg+14, file);
+    strcpy(msg+14, (char *)file);
     strcpy(msg+strlen(msg), ":");
     itoa(line, msg+strlen(msg), 10);
     strcpy(msg+strlen(msg), "\r\n");

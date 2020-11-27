@@ -42,8 +42,14 @@ static int calibrating=0;
 void calibrate_periodic(uint32_t tick, uint32_t dt, uint32_t notif_Flags);
 
 
+uint32_t train_tick_last_dt = 0;
+uint32_t train_ntick = 0;
+
 void train_run_tick( uint32_t notif_flags, uint32_t tick, uint32_t dt)
 {
+	train_tick_last_dt = dt;
+	train_ntick++;
+
 	if (notif_flags & NOTIF_STARTUP) {
 		static int n=0;
 		if (n) {
@@ -86,13 +92,14 @@ static void process_adc(volatile adc_buffer_t *buf, int32_t ticks)
 		// process intensity / presence
 		// process BEMF
 		USE_CANTON(i)  // cconf cvars
+	    canton_intensity(cconf, cvars, buf[i].intOff, buf[i].intOn);
 		if ((cvars->status > canton_free) || calibrating) {
 			canton_bemf(cconf, cvars, buf[i].voffB , buf[i].voffA, buf[i].vonB , buf[i].vonA);
 		}
 	}
 }
 
-static int num_train_periodic_control = 0;
+int num_train_periodic_control = 0;
 static int num_set_speed = 0;
 void __attribute__((weak))  notif_target_bemf(const train_config_t *cnf, train_vars_t *vars, int32_t val)
 {

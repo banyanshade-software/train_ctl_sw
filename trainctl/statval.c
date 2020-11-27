@@ -55,6 +55,8 @@ static const stat_val_t statvalcanton[] = {
 		{ offsetof(canton_vars_t, bemf_centivolt) , 4   _P("canton_%d_bemfcentivolt")},
         { offsetof(canton_vars_t, selected_centivolt),2 _P("canton_%d_centivolts")},
         { offsetof(canton_vars_t, von_centivolt) , 2    _P("canton_%d_centivon")},
+        { offsetof(canton_vars_t, i_on) , 2   		    _P("canton_%d_ion")},
+        { offsetof(canton_vars_t, i_off) , 2            _P("canton_%d_ioff")},
 };
 
 static int32_t _getval(void *ptr, off_t offset, int l)
@@ -108,7 +110,7 @@ int32_t stat_val_get(int step, int *pdone)
 	}
 }
 
-int get_val_info(int step, off_t *poffset, int *plen, int *ptridx, int *pcntidx, const char  **pzName)
+int get_val_info(int step, off_t *poffset, int *plen, int *ptridx, int *pcntidx, const char  **pzName, int numtrain, int numcanton)
 {
     *ptridx = -1;
     *pcntidx = -1;

@@ -7,11 +7,16 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "LayoutItem.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface TcoLayout : NSObject
+@interface TcoLayout : NSObject 
+
+- (BOOL) layout:(NSArray *)a;
 
 @end
+
+
 
 NS_ASSUME_NONNULL_END

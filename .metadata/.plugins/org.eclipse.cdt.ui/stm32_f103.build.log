@@ -1,7 +1,7 @@
-10:15:07 **** Clean-only build of configuration Debug for project stm32_f103 ****
+12:52:38 **** Clean-only build of configuration Debug for project stm32_f103 ****
 make -j3 clean 
 rm -rf *
  
 
-10:15:09 Build Finished. 0 errors, 0 warnings. (took 2s.130ms)
+12:52:38 Build Finished. 0 errors, 0 warnings. (took 383ms)
 

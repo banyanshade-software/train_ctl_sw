@@ -18,6 +18,10 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)setPwm:(double)duty dir:(int)d;
 - (double) bemfAfter:(NSTimeInterval)ellapsed sinceStart:(NSTimeInterval)ts;
 
+
+- (int) simuCurCanton;
+- (int) simuNextCanton;
+
 @end
 
 NS_ASSUME_NONNULL_END

@@ -41,6 +41,7 @@ static volatile int stop_all = 0;
 static int calibrating=0;
 void calibrate_periodic(uint32_t tick, uint32_t dt, uint32_t notif_Flags);
 
+static void highlevel_tick(void);
 
 uint32_t train_tick_last_dt = 0;
 uint32_t train_ntick = 0;
@@ -68,6 +69,7 @@ void train_run_tick( uint32_t notif_flags, uint32_t tick, uint32_t dt)
 	}
 
 	turnout_tick();
+	highlevel_tick();
 
 	if (calibrating) {
 		calibrate_periodic(tick, dt, notif_flags);
@@ -93,7 +95,7 @@ static void process_adc(volatile adc_buffer_t *buf, int32_t ticks)
 		// process BEMF
 		USE_CANTON(i)  // cconf cvars
 	    canton_intensity(cconf, cvars, buf[i].intOff, buf[i].intOn);
-		if ((cvars->status > canton_free) || calibrating) {
+		if ((cvars->curtrainidx != 0xFF) || calibrating) {
 			canton_bemf(cconf, cvars, buf[i].voffB , buf[i].voffA, buf[i].vonB , buf[i].vonA);
 		}
 	}
@@ -373,6 +375,98 @@ void calibrate_periodic(uint32_t tick, uint32_t dt, uint32_t notif_Flags)
 }
 #endif
 
+/* ------------------------------------------------------------------------ */
 
+static void unexpected_canton_occupency(uint8_t numcanton);
+static void unexpected_unknown_canton_occupency(uint8_t numtrain, uint8_t numcanton, uint8_t cur);
+static void lost_train(uint8_t numtrain);
+static void train_switching_canton(uint8_t numtrain);
+static void train_did_switch_canton(uint8_t numtrain);
+
+static void highlevel_tick(void)
+{
+	// check unexpected presence
+	for (int i=0; i<NUM_CANTONS; i++) {
+		USE_CANTON(i);
+        (void) cconf; // unused;
+		if (cvars->curtrainidx != 0xFF) continue;
+		if (cvars->occupency == CANTON_OCCUPENCY_FREE) continue;
+		if (cvars->occupency == CANTON_OCCUPENCY_UNKNOWN) continue;
+		unexpected_canton_occupency(i);
+	}
+	// check for next
+	for (int i=0; i<NUM_TRAINS; i++) {
+		USE_TRAIN(i);
+        (void) tconf; // unused
+		int c1 = tvars->current_canton;
+		int c2 = tvars->next_canton;
+		//canton_config_t *cc1 =  get_canton_cnf(c1);
+		//canton_config_t *cc2 =  get_canton_cnf(c2);
+		canton_vars_t   *cv1 = get_canton_vars(c1);
+		canton_vars_t   *cv2 = get_canton_vars(c2);
+
+		if (cv1->occupency == CANTON_OCCUPENCY_UNKNOWN) unexpected_unknown_canton_occupency(i, c1, 0);
+		if (!cv2) {
+			if (cv1->occupency == CANTON_OCCUPENCY_FREE) {
+				lost_train(i);
+			}
+			return;
+		}
+		if (cv2->occupency == CANTON_OCCUPENCY_UNKNOWN) unexpected_unknown_canton_occupency(i, c2, 1);
+		if ((cv1->occupency == CANTON_OCCUPENCY_FREE) && (cv2->occupency == CANTON_OCCUPENCY_FREE)) {
+			lost_train(i);
+		}
+		if (cv2->occupency > CANTON_OCCUPENCY_FREE) {
+			if (cv1->occupency > CANTON_OCCUPENCY_FREE) train_switching_canton(i);
+			else train_did_switch_canton(i);
+		}
+	}
+}
+
+
+static void unexpected(void)
+{
+	// insert breakpoint
+}
+static void unexpected_canton_occupency(uint8_t numcanton)
+{
+	unexpected();
+}
+static void unexpected_unknown_canton_occupency(uint8_t numtrain, uint8_t numcanton, uint8_t cur)
+{
+	unexpected();
+}
+static void lost_train(uint8_t numtrain)
+{
+    debug_info('T', numtrain, "LOST", 0, 0,0);
+}
+static void train_switching_canton(uint8_t numtrain)
+{
+    USE_TRAIN(numtrain)
+    (void) tconf; // unused
+    debug_info('T', numtrain, "SWITCHING", tvars->current_canton, tvars->next_canton,0);
+}
+
+static void train_did_switch_canton(uint8_t numtrain)
+{
+	USE_TRAIN(numtrain);
+    (void) tconf; // unused
+    debug_info('T', numtrain, "SWITCH DONE", tvars->current_canton, tvars->next_canton, tvars->next_canton_dir);
+	const canton_config_t *c_old = get_canton_cnf(tvars->current_canton);
+	canton_vars_t *v_old = get_canton_vars(tvars->current_canton);
+	canton_set_pwm(c_old, v_old, 0, 0);
+
+	block_canton_exit(numtrain, tvars->current_canton);
+
+	tvars->current_canton = tvars->next_canton;
+	tvars->current_canton_dir = tvars->next_canton_dir;
+
+	block_canton_enter(numtrain, tvars->current_canton);
+
+	// find next canton and next canton dir
+	block_canton_get_next(tvars->current_canton, tvars->current_canton_dir, &(tvars->next_canton), &(tvars->next_canton_dir));
+    debug_info('T', numtrain, "NEXT", tvars->next_canton, tvars->next_canton_dir,0);
+
+}
 
 

@@ -1240,10 +1240,26 @@ void task_auto_stop_auto(void)
     lastSimu = t;
     uint32_t ticks = (uint32_t)(dt * 1000.0);
     double bemf = [_simTrain0 bemfAfter:ticks sinceStart:(t-t0)];
+    // xxxx
     int bemfi = -(bemf/4.545) * 3.3 *4096;
     //NSLog(@"bemf %f -> %d\n", bemf, bemfi);
-    train_adc_buffer[0].voffA=(bemfi>0) ? 0 : -bemfi;
-    train_adc_buffer[0].voffB=(bemfi>0) ? bemfi : 0;
+    
+    for (int i =0; i<NUM_LOCAL_CANTONS; i++) {
+        memset((void*)&(train_adc_buffer[i]), 0, sizeof(adc_buffer_t));
+    }
+    int n1 = [_simTrain0 simuCurCanton];
+    if (n1>=0) {
+        train_adc_buffer[n1].voffA=(bemfi>0) ? 0 : -bemfi;
+        train_adc_buffer[n1].voffB=(bemfi>0) ? bemfi : 0;
+        train_adc_buffer[n1].intOn=1500;
+    }
+    int n2 = [_simTrain0 simuNextCanton];
+    if (n2>=0) {
+        train_adc_buffer[n2].voffA=(bemfi>0) ? 0 : -bemfi;
+        train_adc_buffer[n2].voffB=(bemfi>0) ? bemfi : 0;
+        train_adc_buffer[n2].intOn=1500;
+    }
+
     train_run_tick(NOTIF_NEW_ADC_1, (t-t0)*1000, ticks);
     task_auto_notif |= AUTO1_NOTIF_TICK;
     auto1_run(task_auto_notif, (t-t0)*1000);

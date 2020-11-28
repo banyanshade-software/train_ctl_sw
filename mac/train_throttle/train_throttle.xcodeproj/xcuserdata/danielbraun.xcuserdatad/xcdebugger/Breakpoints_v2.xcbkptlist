@@ -803,7 +803,7 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "36DEFF6A-F441-4E0D-83BB-DAC584BE7229"
-            shouldBeEnabled = "No"
+            shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "train_throttle/SimTrain.m"
@@ -1579,8 +1579,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "110"
             endingLineNumber = "110"
-            landmarkName = "train_periodic_control(numtrain, dt)"
-            landmarkType = "9">
+            landmarkName = "unknown"
+            landmarkType = "0">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -1737,10 +1737,10 @@
             filePath = "train_throttle/AppDelegate.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1355"
-            endingLineNumber = "1355"
-            landmarkName = "-startRecord:"
-            landmarkType = "7">
+            startingLineNumber = "1357"
+            endingLineNumber = "1357"
+            landmarkName = "set_pwm_freq(freqhz)"
+            landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -1832,10 +1832,10 @@
             filePath = "train_throttle/AppDelegate.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1312"
-            endingLineNumber = "1312"
-            landmarkName = "AppDelegate"
-            landmarkType = "3">
+            startingLineNumber = "1314"
+            endingLineNumber = "1314"
+            landmarkName = "trainctl_notif(sel, num, cmd, dta, dtalen)"
+            landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -1848,8 +1848,8 @@
             filePath = "train_throttle/AppDelegate.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1311"
-            endingLineNumber = "1311"
+            startingLineNumber = "1313"
+            endingLineNumber = "1313"
             landmarkName = "AppDelegate"
             landmarkType = "3">
          </BreakpointContent>
@@ -1880,9 +1880,9 @@
             filePath = "train_throttle/AppDelegate.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1473"
-            endingLineNumber = "1473"
-            landmarkName = "-_buildGnuplotCurves:x:file:"
+            startingLineNumber = "1475"
+            endingLineNumber = "1475"
+            landmarkName = "-plotWithGnuplot:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1912,9 +1912,9 @@
             filePath = "train_throttle/AppDelegate.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1450"
-            endingLineNumber = "1450"
-            landmarkName = "-readStdout:"
+            startingLineNumber = "1452"
+            endingLineNumber = "1452"
+            landmarkName = "-startGnuplot"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1960,10 +1960,10 @@
             filePath = "train_throttle/AppDelegate.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1323"
-            endingLineNumber = "1323"
-            landmarkName = "txframe_send(m, discardable)"
-            landmarkType = "9">
+            startingLineNumber = "1325"
+            endingLineNumber = "1325"
+            landmarkName = "-simuNotifSel:num:cmd:dta:dtalen:"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -1976,10 +1976,10 @@
             filePath = "train_throttle/AppDelegate.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1324"
-            endingLineNumber = "1324"
-            landmarkName = "txframe_send(m, discardable)"
-            landmarkType = "9">
+            startingLineNumber = "1326"
+            endingLineNumber = "1326"
+            landmarkName = "-simuNotifSel:num:cmd:dta:dtalen:"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -1992,9 +1992,9 @@
             filePath = "train_throttle/AppDelegate.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1445"
-            endingLineNumber = "1445"
-            landmarkName = "-readStdout:"
+            startingLineNumber = "1447"
+            endingLineNumber = "1447"
+            landmarkName = "-startGnuplot"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -2008,8 +2008,8 @@
             filePath = "train_throttle/AppDelegate.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1433"
-            endingLineNumber = "1433"
+            startingLineNumber = "1435"
+            endingLineNumber = "1435"
             landmarkName = "-startGnuplot"
             landmarkType = "7">
          </BreakpointContent>
@@ -2024,8 +2024,8 @@
             filePath = "train_throttle/AppDelegate.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1426"
-            endingLineNumber = "1426"
+            startingLineNumber = "1428"
+            endingLineNumber = "1428"
             landmarkName = "-startGnuplot"
             landmarkType = "7">
          </BreakpointContent>
@@ -2040,8 +2040,8 @@
             filePath = "train_throttle/AppDelegate.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1418"
-            endingLineNumber = "1418"
+            startingLineNumber = "1420"
+            endingLineNumber = "1420"
             landmarkName = "-startGnuplot"
             landmarkType = "7">
          </BreakpointContent>
@@ -2056,8 +2056,8 @@
             filePath = "train_throttle/AppDelegate.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1419"
-            endingLineNumber = "1419"
+            startingLineNumber = "1421"
+            endingLineNumber = "1421"
             landmarkName = "-startGnuplot"
             landmarkType = "7">
          </BreakpointContent>
@@ -2072,9 +2072,9 @@
             filePath = "train_throttle/AppDelegate.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1482"
-            endingLineNumber = "1482"
-            landmarkName = "-buildGnuplotCmd:x:file:"
+            startingLineNumber = "1484"
+            endingLineNumber = "1484"
+            landmarkName = "-_buildGnuplotCurves:x:file:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -2088,10 +2088,10 @@
             filePath = "train_throttle/AppDelegate.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1463"
-            endingLineNumber = "1463"
-            landmarkName = "AppDelegate"
-            landmarkType = "3">
+            startingLineNumber = "1465"
+            endingLineNumber = "1465"
+            landmarkName = "-readStdout:"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -2104,9 +2104,9 @@
             filePath = "train_throttle/AppDelegate.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1466"
-            endingLineNumber = "1466"
-            landmarkName = "-_buildGnuplotCurves:x:file:"
+            startingLineNumber = "1468"
+            endingLineNumber = "1468"
+            landmarkName = "-readStdout:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -2146,7 +2146,7 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "89D925E5-6513-40DE-99A2-43BF8DAD7FFC"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../../trainctl/traincontrol.c"
@@ -2200,9 +2200,9 @@
             filePath = "train_throttle/AppDelegate.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1555"
-            endingLineNumber = "1555"
-            landmarkName = "-centralManager:didDiscoverPeripheral:advertisementData:RSSI:"
+            startingLineNumber = "1557"
+            endingLineNumber = "1557"
+            landmarkName = "-startBLE:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -2216,9 +2216,9 @@
             filePath = "train_throttle/AppDelegate.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1603"
-            endingLineNumber = "1603"
-            landmarkName = "-centralManager:didDisconnectPeripheral:error:"
+            startingLineNumber = "1605"
+            endingLineNumber = "1605"
+            landmarkName = "-reconnectBLE"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -2232,9 +2232,9 @@
             filePath = "train_throttle/AppDelegate.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1610"
-            endingLineNumber = "1610"
-            landmarkName = "-centralManager:didFailToConnectPeripheral:error:"
+            startingLineNumber = "1612"
+            endingLineNumber = "1612"
+            landmarkName = "-centralManager:didConnectPeripheral:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -2248,10 +2248,10 @@
             filePath = "train_throttle/AppDelegate.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1616"
-            endingLineNumber = "1616"
-            landmarkName = "AppDelegate"
-            landmarkType = "3">
+            startingLineNumber = "1618"
+            endingLineNumber = "1618"
+            landmarkName = "-centralManager:didDisconnectPeripheral:error:"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -2264,9 +2264,9 @@
             filePath = "train_throttle/AppDelegate.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1641"
-            endingLineNumber = "1641"
-            landmarkName = "-peripheral:didDiscoverServices:"
+            startingLineNumber = "1643"
+            endingLineNumber = "1643"
+            landmarkName = "-centralManagerDidUpdateState:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -2280,8 +2280,8 @@
             filePath = "train_throttle/AppDelegate.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1652"
-            endingLineNumber = "1652"
+            startingLineNumber = "1654"
+            endingLineNumber = "1654"
             landmarkName = "AppDelegate"
             landmarkType = "3">
          </BreakpointContent>
@@ -2296,9 +2296,9 @@
             filePath = "train_throttle/AppDelegate.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1594"
-            endingLineNumber = "1594"
-            landmarkName = "-centralManager:didConnectPeripheral:"
+            startingLineNumber = "1596"
+            endingLineNumber = "1596"
+            landmarkName = "-connectionTimeout"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -2312,9 +2312,9 @@
             filePath = "train_throttle/AppDelegate.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1668"
-            endingLineNumber = "1668"
-            landmarkName = "-peripheral:didUpdateValueForCharacteristic:error:"
+            startingLineNumber = "1670"
+            endingLineNumber = "1670"
+            landmarkName = "-peripheral:didDiscoverCharacteristicsForService:error:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -2328,9 +2328,9 @@
             filePath = "train_throttle/AppDelegate.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1680"
-            endingLineNumber = "1680"
-            landmarkName = "-peripheral:didUpdateNotificationStateForCharacteristic:error:"
+            startingLineNumber = "1682"
+            endingLineNumber = "1682"
+            landmarkName = "-peripheral:didUpdateValueForCharacteristic:error:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -2360,9 +2360,9 @@
             filePath = "train_throttle/AppDelegate.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1586"
-            endingLineNumber = "1586"
-            landmarkName = "-reconnectBLE"
+            startingLineNumber = "1588"
+            endingLineNumber = "1588"
+            landmarkName = "-connectionTimeout"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -2376,10 +2376,10 @@
             filePath = "train_throttle/AppDelegate.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1570"
-            endingLineNumber = "1570"
-            landmarkName = "AppDelegate"
-            landmarkType = "3">
+            startingLineNumber = "1572"
+            endingLineNumber = "1572"
+            landmarkName = "-centralManager:didDiscoverPeripheral:advertisementData:RSSI:"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy

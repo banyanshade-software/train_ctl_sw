@@ -59,7 +59,10 @@ typedef struct canton_config {
 	GPIO_TypeDef *volt_port_b2;
 	GPIO_TypeDef *volt_port_b3;
 #else
-    void *dummy; // for structure initialisation
+    void *dummy0; // for structure initialisation
+    void *dummy1; // for structure initialisation
+    void *dummy2; // for structure initialisation
+    void *dummy3; // for structure initialisation
 #endif
 	uint16_t volt_b0;
 	uint16_t volt_b1;
@@ -72,15 +75,22 @@ typedef struct canton_config {
 	uint8_t notif_bemf:1;
 } canton_config_t;
 
-
+/*
 typedef enum canton_occupency {
 	canton_free = 0,
 	canton_next,
 	canton_occupied_cars,
 	canton_occupied_loco
 } canton_occupency_t;
+*/
 
-struct train;
+//struct train;
+
+#define CANTON_OCCUPENCY_UNKNOWN 0
+#define CANTON_OCCUPENCY_FREE 	 1
+#define CANTON_OCCUPENCY_WAGON	 2
+#define CANTON_OCCUPENCY_LOCO    0xFF
+
 
 typedef struct canton_vars {
 	int8_t cur_dir;
@@ -93,10 +103,12 @@ typedef struct canton_vars {
     int16_t von_centivolt;
     
 	//canton_volt_policy_t volt_policy;
-	canton_occupency_t status;
+	//canton_occupency_t status;
 	uint8_t curtrainidx;
 	uint8_t fix_bemf;
 
+	uint8_t occupency;
+	uint8_t prev_occupency;
 	uint16_t i_on;
 	uint16_t i_off;
 } canton_vars_t;
@@ -129,9 +141,12 @@ int volt_index(uint16_t mili_power,
 
 void canton_reset(const canton_config_t *c, canton_vars_t *v);
 
+/*
 int canton_take(int numcanton, canton_occupency_t st,  int trainidx);
 int canton_change_status(int numcanton, canton_occupency_t st,  int trainidx);
 int canton_release(int numcanton, int trainidx);
+*/
+void canton_set_train(int numcanton,   int trainidx);
 
 void canton_set_pwm(const canton_config_t *c, canton_vars_t *v,  int dir, int duty);
 void canton_set_volt(const canton_config_t *c, canton_vars_t *v,  int voltidx);

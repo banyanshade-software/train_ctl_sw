@@ -67,6 +67,7 @@
 
 #else
 
+//simu
 #define VOLT_0_SEL0_GPIO_Port NULL
 #define VOLT_0_SEL1_GPIO_Port NULL
 #define VOLT_0_SEL2_GPIO_Port NULL
@@ -76,9 +77,41 @@
 #define VOLT_0_SEL2_Pin 0
 #define VOLT_0_SEL3_Pin 0
 
+#define VOLT_1_SEL0_GPIO_Port NULL
+#define VOLT_1_SEL1_GPIO_Port NULL
+#define VOLT_1_SEL2_GPIO_Port NULL
+#define VOLT_1_SEL3_GPIO_Port NULL
+#define VOLT_1_SEL0_Pin 0
+#define VOLT_1_SEL1_Pin 0
+#define VOLT_1_SEL2_Pin 0
+#define VOLT_1_SEL3_Pin 0
+
+
+#define VOLT_2_SEL0_GPIO_Port NULL
+#define VOLT_2_SEL1_GPIO_Port NULL
+#define VOLT_2_SEL2_GPIO_Port NULL
+#define VOLT_2_SEL3_GPIO_Port NULL
+#define VOLT_2_SEL0_Pin 0
+#define VOLT_2_SEL1_Pin 0
+#define VOLT_2_SEL2_Pin 0
+#define VOLT_2_SEL3_Pin 0
+
+
+#define VOLT_3_SEL0_GPIO_Port NULL
+#define VOLT_3_SEL1_GPIO_Port NULL
+#define VOLT_3_SEL2_GPIO_Port NULL
+#define VOLT_3_SEL3_GPIO_Port NULL
+#define VOLT_3_SEL0_Pin 0
+#define VOLT_3_SEL1_Pin 0
+#define VOLT_3_SEL2_Pin 0
+#define VOLT_3_SEL3_Pin 0
+
+
 #define TIM1 NULL
 #define TIM_CHANNEL_1 1
 #define TIM_CHANNEL_2 2
+#define TIM_CHANNEL_3 3
+#define TIM_CHANNEL_4 4
 #endif
 
 
@@ -144,7 +177,22 @@ static  canton_config_t Cantons[NUM_CANTONS] = {
 				0, /* notif BEMF */
 		},
 };
+static  block_canton_config_t BlockCantons[NUM_CANTONS] = {
+		/*  uint8_t left_a;
+			uint8_t left_b;
+				uint8_t left_turnout;
+			uint8_t right_a;
+			uint8_t right_b;
+				uint8_t right_turnout;
+			uint8_t len; */
+		{{0xFF, 0xFF, 0xFF},    {0x02, 0xFF, 0xFF},   50},
+		{{0xFF, 0xFF, 0xFF},    {0x02, 0xFF, 0xFF},   50},
+		{{0x02, 0x01, 0   },    {0xFF, 0xFF, 0xFF},   50},
 
+		{{0xFF, 0xFF, 0xFF}, {0xFF, 0xFF, 0xFF},  50},
+		{{0xFF, 0xFF, 0xFF}, {0xFF, 0xFF, 0xFF},  50},
+
+};
 
 static  train_config_t Trains[NUM_TRAINS] = {
 		{
@@ -181,9 +229,10 @@ static const turnout_config_t Turnouts[NUM_TURNOUTS] = {
 };
 
 
-static canton_vars_t  CantonsVars[NUM_CANTONS];
-static train_vars_t   TrainsVars[NUM_TRAINS];
-static turnout_vars_t TurnoutVars[NUM_TURNOUTS];
+        static canton_vars_t  CantonsVars[NUM_CANTONS];
+        static block_canton_vars_t  BlockCantonsVars[NUM_CANTONS];
+        static train_vars_t   TrainsVars[NUM_TRAINS];
+        static turnout_vars_t TurnoutVars[NUM_TURNOUTS];
 
 static int setup_done = 0;
 
@@ -201,6 +250,19 @@ canton_vars_t *get_canton_vars(int idx)
 	return &CantonsVars[idx];
 }
 
+const block_canton_config_t *get_block_canton_cnf(int idx)
+{
+	if (!setup_done) return config_error(ERR_SETUP_KO, "railconfig_setup_default not called");
+	if ((idx<0) || (idx>= NUM_CANTONS)) return NULL;
+	return &BlockCantons[idx];
+}
+
+block_canton_vars_t *get_block_canton_vars(int idx)
+{
+	if (!setup_done) return config_error(ERR_SETUP_KO, "railconfig_setup_default not called");
+	if ((idx<0) || (idx>= NUM_CANTONS)) return NULL;
+	return &BlockCantonsVars[idx];
+}
 const train_config_t *get_train_cnf(int idx)
 {
 	if (!setup_done) return config_error(ERR_SETUP_KO, "railconfig_setup_default not called");
@@ -234,6 +296,11 @@ int canton_idx(canton_vars_t *v)
 {
 	return (int)(v-&CantonsVars[0]);
 }
+
+int block_canton_idx(block_canton_vars_t *v)
+{
+	return (int)(v-&BlockCantonsVars[0]);
+}
 int train_idx(train_vars_t *v)
 {
 	return (int)(v-&TrainsVars[0]);
@@ -249,14 +316,17 @@ void railconfig_setup_default(void)
     setup_done = 1;
 	for (int i=0; i<NUM_CANTONS; i++) {
 		canton_reset(&Cantons[i], &CantonsVars[i]);
+		block_canton_reset(&BlockCantons[i], &BlockCantonsVars[i]);
 	}
 	for (int i=0; i<NUM_TRAINS; i++) {
 		train_reset(&Trains[i], &TrainsVars[i]);
 	}
-    canton_take(0, canton_occupied_loco,  0);
+    canton_set_train(0,  0);
+    //canton_take(0, canton_occupied_loco,  0);
     TrainsVars[0].current_canton = 0;
     TrainsVars[0].current_canton_dir = 1;
-    canton_take(1, canton_occupied_loco,  0);
+    canton_set_train(1,  0);
+    //canton_take(1, canton_occupied_loco,  0);
     TrainsVars[0].next_canton = 1;
     TrainsVars[0].next_canton_dir = 1;
 

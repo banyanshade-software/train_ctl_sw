@@ -60,4 +60,17 @@
     //bemf *= dir;
     return bemf;
 }
+
+- (int) simuCurCanton
+{
+    return 0;
+}
+- (int) simuNextCanton
+{
+    return -1;
+}
+
+
+
+
 @end

@@ -53,9 +53,16 @@ void canton_reset(const canton_config_t *c, canton_vars_t *v)
 {
 	memset(v, 0, sizeof(*v));
 	v->curtrainidx = 0xFF;
-	v->status = canton_free;
+	//v->status = canton_free;
 }
 
+void canton_set_train(int numcanton,   int trainidx)
+{
+	USE_CANTON(numcanton) // cconf cvars
+	(void)cconf; // unused
+	cvars->curtrainidx = trainidx;
+}
+/*
 int canton_take(int numcanton, canton_occupency_t st,  int trainidx)
 {
 	if (trainidx<0 || trainidx>32) return canton_error(ERR_BAD_PARAM, "bad params 1");
@@ -90,6 +97,8 @@ int canton_release(int numcanton, int trainidx)
 	(void)cconf; // unused
 	return 0;
 }
+*/
+
 
 // #pragma mark -
 
@@ -385,6 +394,32 @@ void canton_intensity(const canton_config_t *c, canton_vars_t *v, uint16_t ioff,
 {
 	v->i_off = ioff;
 	v->i_on = ion;
+	// convert to mA
+	/*
+	 *  R=0.1, gain=60, Vout=60*(I*0.1) = 6*I
+	 *  200mA -> 6*.2 -> 1,2V -> ADC=4096*1.2/3.3 = 1490
+	 *  adc = 4096*6*i/3.3,  adc=7447*i
+	 *  mA = 1000*adc/7447
+	 */
+	v->prev_occupency = v->occupency;
+	if (v->cur_pwm_duty>0) {
+		uint32_t mA = 1000*ion/7447;
+		// evaluate R
+		// R=U/I
+		uint32_t Rohm = mA ? ((uint32_t)(c->volts[v->cur_voltidx]*10))/mA : 9999999;
+		if (Rohm>100000) {
+			v->occupency = CANTON_OCCUPENCY_FREE;
+		} else if (Rohm>100) {
+			const int Rwagon = 10000;
+			int nwag = Rwagon / Rohm;
+			if (nwag>10) nwag = 10;
+			v->occupency = CANTON_OCCUPENCY_WAGON+nwag;
+		} else {
+			v->occupency = CANTON_OCCUPENCY_LOCO;
+		}
+	} else {
+		v->occupency = CANTON_OCCUPENCY_UNKNOWN;
+	}
 }
 
 

@@ -44,7 +44,7 @@ typedef struct turnout_config {
 } turnout_config_t;
 
 typedef struct turnout_vars {
-	uint8_t value;	// -1 = A, 1 = B, 0 = unknown
+	int8_t value;	// -1 = A, 1 = B, 0 = unknown
 	uint8_t st;
 } turnout_vars_t;
 

@@ -1,10 +1,10 @@
-16:32:40 **** Incremental Build of configuration Debug for project stm32f407VETx ****
+20:56:55 **** Incremental Build of configuration Debug for project stm32f407VETx ****
 make -j3 all 
 arm-none-eabi-size   stm32f407VETx.elf 
    text	   data	    bss	    dec	    hex	filename
-  97044	   1368	  35696	 134108	  20bdc	stm32f407VETx.elf
+  97364	   1368	  35704	 134436	  20d24	stm32f407VETx.elf
 Finished building: default.size.stdout
  
 
-16:32:42 Build Finished. 0 errors, 0 warnings. (took 2s.131ms)
+20:57:00 Build Finished. 0 errors, 0 warnings. (took 4s.951ms)
 

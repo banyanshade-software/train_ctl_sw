@@ -12,7 +12,8 @@
 @class SimTrain;
 
 @interface AppDelegate : NSObject <NSApplicationDelegate,
-    CBCentralManagerDelegate,CBPeripheralDelegate>
+    CBCentralManagerDelegate,CBPeripheralDelegate,
+    NSTableViewDelegate,NSTableViewDataSource>
 
 @property (nonatomic,readonly) int curspeed;
 @property (nonatomic) int targetspeed;
@@ -34,6 +35,7 @@
 @property (nonatomic, weak) IBOutlet NSSlider *sliderCur;
 
 @property (nonatomic, weak) IBOutlet NSView *paramView;
+@property (nonatomic, weak) IBOutlet NSTableView *cantonTableView;
 
 @property (nonatomic) double target_bemf;
 

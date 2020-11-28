@@ -23,7 +23,7 @@
 #include "trainctl_iface.h"
 
 
-
+extern volatile uint8_t trainctl_test_mode;
 
 
 #define NUM_VAL_PER_CANTON (sizeof(adc_buffer_t)/sizeof(uint16_t))

@@ -670,7 +670,9 @@ void StartCtrlTask(void *argument)
   /* USER CODE BEGIN 5 */
 
   CantonTimerHandles[1]=&htim1;
+  CantonTimerHandles[2]=&htim2;
   CantonTimerHandles[3]=&htim3;
+  //CantonTimerHandles[4]=&htim3;
   railconfig_setup_default();
 
 

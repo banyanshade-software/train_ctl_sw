@@ -1172,6 +1172,8 @@ void StartCtrlTask(void *argument)
 	  MX_USB_DEVICE_Init();
 
 	  CantonTimerHandles[1]=&htim1;
+	  CantonTimerHandles[2]=&htim2;
+	  CantonTimerHandles[3]=&htim3;
 	  //CantonTimerHandles[3]=&htim3;
 	  railconfig_setup_default();
 

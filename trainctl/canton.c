@@ -116,6 +116,7 @@ void canton_set_pwm(const canton_config_t *c, canton_vars_t *v,  int dir, int du
 	if ((v->cur_dir == dir) && (v->cur_pwm_duty==duty)) return;
 
 	TIM_HandleTypeDef *pwm_timer = CantonTimerHandles[c->pwm_timer_num];
+	if (!pwm_timer) return;
 	if (v->cur_dir != dir) {
 		v->cur_dir = dir;
 		if (dir>0) {

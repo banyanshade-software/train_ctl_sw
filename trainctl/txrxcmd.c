@@ -222,11 +222,12 @@ static int32_t param_get_numcantons(param_t *p)
 }
 
 static const param_t glob_params[] = {
-        { "pwmfreq",    &cur_freqhz, 0, NULL, param_set_pwm, sizeof(int), 0, 60000,  50},
+		{ "pwmfreq",    &cur_freqhz, 0, NULL, param_set_pwm, sizeof(int), 0, 60000,  50},
 		{ "numtrains",   NULL, 0, 	    param_get_numtrains,  NULL, sizeof(uint32_t), 1, 1, 10},
 		{ "numcantons",  NULL, 0, 	    param_get_numcantons, NULL, sizeof(uint32_t), 2, 1, 50},
+		{ "test_mode",   &trainctl_test_mode, 0, 	    NULL, NULL, sizeof(uint8_t), 2, 1, 50},
 
-                { NULL,     NULL,0,    NULL,NULL, 0, 0, 0,   0}
+		{ NULL,     NULL,0,    NULL,NULL, 0, 0, 0,   0}
 };
 
 

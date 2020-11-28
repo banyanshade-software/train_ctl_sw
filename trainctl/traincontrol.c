@@ -30,7 +30,10 @@
 #include "txrxcmd.h"
 
 
+volatile  uint8_t trainctl_test_mode = 0;
+
 static void _set_speed(const train_config_t *cnf, train_vars_t *vars, int16_t v);
+static void _set_speed_test_mode(int16_t sv100);
 
 volatile adc_buffer_t train_adc_buffer[2*NUM_LOCAL_CANTONS];
 
@@ -83,6 +86,7 @@ void train_run_tick( uint32_t notif_flags, uint32_t tick, uint32_t dt)
 	for (int i=0; i<NUM_TRAINS; i++) {
 		if (stop_all) break;
 		train_periodic_control(i, dt);
+		if (trainctl_test_mode) break;
 	}
 	txframe_send_stat();
 }
@@ -118,6 +122,14 @@ static void train_periodic_control(int numtrain, int32_t dt)
 
 	int16_t v = tvars->target_speed;
 
+	if (trainctl_test_mode) {
+		static int16_t lastspeed = 9999;
+		if (lastspeed != v) {
+			_set_speed_test_mode(v);
+			lastspeed = v;
+		}
+        return;
+	}
     // inertia before PID
 	if (1==tconf->enable_inertia) {
 		int changed;
@@ -206,6 +218,28 @@ static void train_periodic_control(int numtrain, int32_t dt)
         }
     }
 }
+
+static void _set_speed_test_mode(int16_t sv100)
+{
+	USE_TRAIN(0)
+	(void) tvars; // unused
+	for (int i=0; i<NUM_LOCAL_CANTONS; i++) {
+		const canton_config_t *c1;
+		canton_vars_t *cv1;
+		c1 =  get_canton_cnf(i);
+		cv1 = get_canton_vars(i);
+		int pvi1, pvi2;
+		int sig = SIGNOF(sv100);
+		uint16_t v = abs(sv100);
+		uint16_t pwm_duty = volt_index(v*10 /* mili*/,
+				c1, cv1, NULL, NULL,
+				&pvi1, &pvi2, tconf->volt_policy);
+		canton_set_volt(c1, cv1, pvi1);
+		canton_set_pwm(c1, cv1, sig, pwm_duty);
+	}
+}
+
+
 
 static void _set_speed(const train_config_t *cnf, train_vars_t *vars, int16_t sv100)
 {

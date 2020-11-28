@@ -84,6 +84,7 @@ static const int numvaltrain = sizeof(statvaltrain)/sizeof(statvaltrain[0]);
 static const int numvalcanton = sizeof(statvalcanton)/sizeof(statvalcanton[0]);
 
 
+
 int32_t stat_val_get(int step, int *pdone)
 {
 	

@@ -76,6 +76,7 @@ typedef void (^respblk_t)(void);
     // record
     NSFileHandle *recordFile;
     NSMutableDictionary *recordItems;
+    NSMutableDictionary *cantons_value;
     // plot
     uint32_t graph_t0;
     NSTask *gnuplotTask;
@@ -1037,6 +1038,8 @@ static int frm_unescape(uint8_t *buf, int len)
     NSAssert(frm.pidx>8, @"short stat frame");
     //if ((1)) return;
     
+    cantons_value = [[NSMutableDictionary alloc]initWithCapacity:25];
+    
     int nval = frm.pidx / 4;
     uint32_t *ptr = frm.param32;
     //uint32_t tick = *ptr++;
@@ -1077,6 +1080,9 @@ static int frm_unescape(uint8_t *buf, int len)
                 key = [NSString stringWithFormat:m, cntidx];
             }
             NSNumber *nsv = @(v);
+            if ([key hasPrefix:@"canton_"]) {
+                [cantons_value setValue:nsv forKey:key];
+            }
             if (![unhandled_key containsObject:key]) {
                 //NSLog(@"---- %@\n", key);
                 if ([key isEqualToString:@"canton_0_volts"]) {
@@ -1091,6 +1097,7 @@ static int frm_unescape(uint8_t *buf, int len)
                     NSLog(@"key %@ not ok: %@", key, exception);
                     [unhandled_key addObject:key];
                 }
+              
             }
         }
         if (_recordState == 1) {
@@ -1120,7 +1127,29 @@ done:
         [recordFile writeData:[@"\n" dataUsingEncoding:NSUTF8StringEncoding]];
         _recordState = 2;
     }
+    [self.cantonTableView reloadData];
 }
+
+
+- (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView
+{
+    return self.numcantons;
+}
+
+- (id)tableView:(NSTableView *)tableView objectValueForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row
+{
+    NSString *cn = [tableColumn identifier];
+    if (![cn length]) return @"-";
+    if ([cn isEqual:@"canton_num"]) return @(row);
+    NSString *k = [NSString stringWithFormat:@"canton_%d_%@", (int)row, cn];
+    NSNumber *n = [cantons_value objectForKey:k];
+    if (cantons_value && !n) {
+        NSLog(@"unknown %@",k);
+    }
+    return n;
+}
+
+
 #pragma mark -
 
 - (void) frameResponse

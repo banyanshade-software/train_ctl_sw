@@ -1303,6 +1303,9 @@ void train_simu_canton_volt(int numcanton, int voltidx, int vlt100)
 - (void) simuSetVoltCanton:(int)numcanton voltidx:(int)voltidx vlt100:(int)vlt100
 {
     double vlt = vlt100/100.0;
+    if (numcanton == [_simTrain0 simuCurCanton]) {
+        [_simTrain0 setVolt:vlt];
+    }
     switch (numcanton) {
         case 0:
             self.canton_0_centivolts = vlt;
@@ -1323,10 +1326,12 @@ void train_simu_canton_set_pwm(int numcanton, int dir, int duty)
 - (void) simuSetPwmCanton:(int)numcanton dir:(int)dir duty:(int)duty
 {
     int sduty = duty*dir;
+    if (numcanton == [_simTrain0 simuCurCanton]) {
+        [_simTrain0 setPwm:duty dir:dir];
+    }
     switch (numcanton) {
         case 0:
             self.canton_0_pwm = sduty;
-            [_simTrain0 setPwm:duty dir:dir];
             break;
         case 1:
             self.canton_1_pwm = sduty;

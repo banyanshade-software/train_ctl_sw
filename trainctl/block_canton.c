@@ -73,6 +73,10 @@ void block_canton_get_next(uint8_t numcanton, int8_t dir, uint8_t *pnext, int8_t
 		return;
 	}
 	*pnext = n;
+    if (n == 0xFF) {
+        *pnextdir = 0;
+        return;
+    }
 	const block_canton_config_t *nconf = get_block_canton_cnf(n);
 	if (nconf->left.a == numcanton || nconf->left.b == numcanton) {
 		*pnextdir = 1;

@@ -186,11 +186,14 @@ void canton_set_volt(const canton_config_t *c, canton_vars_t *v, int voltidx)
 {
     int vlt = c->volts[voltidx];
     int n = canton_idx(v);
+    v->cur_voltidx = voltidx;
     train_simu_canton_volt(n, voltidx, vlt);
 }
 void canton_set_pwm(const canton_config_t *c, canton_vars_t *v,  int dir, int duty)
 {
     int n = canton_idx(v);
+    v->cur_pwm_duty = duty;
+    v->cur_dir = dir;
     train_simu_canton_set_pwm(n, dir, duty);
 }
 

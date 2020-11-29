@@ -106,6 +106,15 @@
 #define VOLT_3_SEL2_Pin 0
 #define VOLT_3_SEL3_Pin 0
 
+#define VOLT_4_SEL0_GPIO_Port NULL
+#define VOLT_4_SEL1_GPIO_Port NULL
+#define VOLT_4_SEL2_GPIO_Port NULL
+#define VOLT_4_SEL3_GPIO_Port NULL
+#define VOLT_4_SEL0_Pin 0
+#define VOLT_4_SEL1_Pin 0
+#define VOLT_4_SEL2_Pin 0
+#define VOLT_4_SEL3_Pin 0
+
 
 #define TIM1 NULL
 #define TIM_CHANNEL_1 1
@@ -129,7 +138,7 @@ static  canton_config_t Cantons[NUM_CANTONS] = {
 				1, TIM_CHANNEL_1, TIM_CHANNEL_2,  // TIM_HandleTypeDef
 				0, /*notif BEMF */
 		},
-#if NUM_LOCAL_CANTONS == 4
+#if NUM_LOCAL_CANTONS == 5
 		{CANTON_TYPE_PROTO1,
 				//  0    1    2    3    4    5    6    7    8    9    10   11  12    13   14   15
 				{ 1000, 874, 770, 699, 621, 578, 538, 507, 451, 432, 413, 398, 379, 367, 355, 345}, // volts[16]
@@ -185,9 +194,9 @@ static  block_canton_config_t BlockCantons[NUM_CANTONS] = {
 			uint8_t right_b;
 				uint8_t right_turnout;
 			uint8_t len; */
-		{{0xFF, 0xFF, 0xFF},    {0x02, 0xFF, 0xFF},   50},
-		{{0xFF, 0xFF, 0xFF},    {0x02, 0xFF, 0xFF},   50},
-		{{0x02, 0x01, 0   },    {0xFF, 0xFF, 0xFF},   50},
+		{{0xFF, 0xFF, 0xFF},    {0x02, 0xFF, 0xFF},   50},	// 0
+		{{0xFF, 0xFF, 0xFF},    {0x02, 0xFF, 0xFF},   50},  // 1
+		{{0x02, 0x01, 0   },    {0xFF, 0xFF, 0xFF},   50},  // 2
 
 		{{0xFF, 0xFF, 0xFF}, {0xFF, 0xFF, 0xFF},  50},
 		{{0xFF, 0xFF, 0xFF}, {0xFF, 0xFF, 0xFF},  50},
@@ -325,9 +334,9 @@ void railconfig_setup_default(void)
     //canton_take(0, canton_occupied_loco,  0);
     TrainsVars[0].current_canton = 0;
     TrainsVars[0].current_canton_dir = 1;
-    canton_set_train(1,  0);
+    canton_set_train(2,  0);
     //canton_take(1, canton_occupied_loco,  0);
-    TrainsVars[0].next_canton = 1;
+    TrainsVars[0].next_canton = 2;
     TrainsVars[0].next_canton_dir = 1;
 
     for (int i=0; i<NUM_TURNOUTS; i++) {

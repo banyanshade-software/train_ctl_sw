@@ -485,7 +485,7 @@ static void train_did_switch_canton(uint8_t numtrain)
 {
 	USE_TRAIN(numtrain);
     (void) tconf; // unused
-    debug_info('T', numtrain, "SWITCH DONE", tvars->current_canton, tvars->next_canton, tvars->next_canton_dir);
+    debug_info('T', numtrain, "SWT DONE", tvars->current_canton, tvars->next_canton, tvars->next_canton_dir);
 	const canton_config_t *c_old = get_canton_cnf(tvars->current_canton);
 	canton_vars_t *v_old = get_canton_vars(tvars->current_canton);
 	canton_set_pwm(c_old, v_old, 0, 0);

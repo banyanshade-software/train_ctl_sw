@@ -80,19 +80,31 @@
     //bemf += (rand()%100-50)*0.001; // more noise
     //bemf *= dir;
     
-    
+    int d=0;
+    double delta=-1;
     if (position<0) {
         NSLog(@"neg pos");
+        if (s>0) {
+            NSLog(@"but speed>0 ?");
+        }
+        d = -1;
+        delta = -position;
     } else if (position>=len) {
         if (s<0) {
             NSLog(@"but speed<0 ?");
         }
+        d = 1;
+        delta = position-len;
+    }
+    if (d) {
+        NSAssert(delta>=0, @"holala");
         if (c1==0xFF) {
-            [self findC1:1];
+            [self findC1:d];
             if (c1==0xFF) {
                 NSLog(@"end of track");
+                position = (d>=0) ? len : 0;
             }
-        } else if (fabs(position-len)>0.9) {
+        } else if (delta>0.9) {
             c0 = c1;
             c1 = 0xFF;
             position = 0;
@@ -100,6 +112,7 @@
             if (c0 != 0xFF) {
                 const block_canton_config_t *bcnf = get_block_canton_cnf(c0);
                 len = bcnf->len;
+                position = (d>=0) ? 0 : len;
             }
         }
     }
@@ -115,8 +128,11 @@
             default: c1 = 0xFF; break;
         }
     } else {
-        // TODO
-    }
+        switch (c0) {
+            case 0: c1 = 0xFF; break;
+            case 1: c1 = 0xFF; break;
+            default: c1 = 1; break;
+        }    }
 }
 
 - (int) simuCurCanton

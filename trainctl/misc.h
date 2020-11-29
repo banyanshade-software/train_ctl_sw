@@ -30,6 +30,13 @@ void flash_led(void);
 
 
 #define SIGNOF(_v) (((_v)<0) ? -1 : 1)
+static inline int signof0(int v)
+{
+    if (v>0) return 1;
+    if (v<0) return -1;
+    return 0;
+}
+
 #ifndef MIN
 #define MIN(a, b)  (((a) < (b)) ? (a) : (b))
 #endif

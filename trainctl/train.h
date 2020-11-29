@@ -52,14 +52,17 @@ typedef struct train_vars {
 	pidctl_vars_t pidvars;
 	inertia_vars_t inertiavars;
 
-	uint8_t current_canton;
+    //uint8_t prev_canton;
+    uint8_t current_canton;
 	uint8_t next_canton;
+	//int8_t  prev_canton_dir; // -1 or +1
 	int8_t  current_canton_dir; // -1 or +1
 	int8_t  next_canton_dir;
 
 	int16_t target_speed;
 
 	int16_t last_speed;
+	int16_t prev_last_speed;
 
 	uint16_t cur_c1_volt_idx;
 	uint16_t cur_c2_volt_idx;

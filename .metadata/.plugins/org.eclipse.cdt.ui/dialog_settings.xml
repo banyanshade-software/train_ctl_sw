@@ -11,6 +11,13 @@
 		<item key="caseSensitive" value="false"/>
 		<item key="searchFlags" value="227191"/>
 		<list key="previousPatterns">
+			<item value="CantonTimerHandles"/>
+			<item value="trainctl_test_mode"/>
+			<item value="pwm_freq"/>
+			<item value="stat_val_get"/>
+			<item value="statval"/>
+			<item value="current_canton"/>
+			<item value="curtrainidx"/>
 			<item value="intOff"/>
 			<item value="voffB"/>
 			<item value="12"/>

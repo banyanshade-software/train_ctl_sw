@@ -1,28 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <section name="Workbench">
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
-		<item key="selection" value="MX_USB_DEVICE_Init"/>
+		<item key="selection" value="_set_speed"/>
 		<item key="wrap" value="true"/>
 		<item key="casesensitive" value="false"/>
 		<item key="wholeword" value="false"/>
 		<item key="incremental" value="false"/>
 		<item key="isRegEx" value="false"/>
 		<list key="findhistory">
-			<item value="MX_USB_DEVICE_Init"/>
-			<item value="usb"/>
-			<item value="usb_ini"/>
-			<item value="canton_occupency"/>
-			<item value="set_pwm_freq"/>
-			<item value="glob_params"/>
-			<item value="TIM8"/>
-			<item value="_IRQ"/>
-			<item value="ADC_"/>
-			<item value="user"/>
-			<item value="taskdisp"/>
-			<item value="impl"/>
-			<item value="hrtc"/>
-			<item value="I2C_Scan"/>
-			<item value="ssd"/>
+			<item value="_set_speed"/>
+			<item value="&apos;G&apos;"/>
+			<item value="trainctl_test_mode"/>
+			<item value="set_spe"/>
+			<item value="_set_speed_test_mode"/>
+			<item value="glob"/>
+			<item value="stat_val_get"/>
+			<item value="statval"/>
+			<item value="get_canton_conf"/>
+			<item value="cv1"/>
+			<item value="pwm"/>
+			<item value="next_canton"/>
+			<item value="high"/>
+			<item value="canton_set_train"/>
+			<item value="cur_voltidx"/>
 		</list>
 		<list key="replacehistory">
 		</list>

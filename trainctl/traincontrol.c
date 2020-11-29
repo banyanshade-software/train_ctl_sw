@@ -432,6 +432,24 @@ static void highlevel_tick(void)
 	for (int i=0; i<NUM_TRAINS; i++) {
 		USE_TRAIN(i);
         (void) tconf; // unused
+        if ((signof0(tvars->prev_last_speed) != signof0(tvars->last_speed)) && signof0(tvars->last_speed)) {
+            // change dir
+            int oldc = tvars->next_canton;
+            block_canton_get_next(tvars->current_canton, tvars->current_canton_dir*signof0(tvars->last_speed), &tvars->next_canton, &tvars->next_canton_dir);
+            //printf("dir change");
+            if (oldc != tvars->next_canton) {
+                if (oldc != 0xFF) {
+                    USE_CANTON(oldc)
+                    canton_set_pwm(cconf, cvars, 0, 0);
+                    canton_set_train(oldc, 0xFF);
+                }
+                if (tvars->next_canton != 0xFF) {
+                    canton_set_train(tvars->next_canton, i);
+                }
+            }
+        }
+        tvars->prev_last_speed = tvars->last_speed;
+        
 		int c1 = tvars->current_canton;
 		int c2 = tvars->next_canton;
 		//canton_config_t *cc1 =  get_canton_cnf(c1);

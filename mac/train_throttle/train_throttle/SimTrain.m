@@ -83,7 +83,7 @@
     int d=0;
     double delta=-1;
     if (position<0) {
-        NSLog(@"neg pos");
+        //NSLog(@"neg pos");
         if (s>0) {
             NSLog(@"but speed>0 ?");
         }

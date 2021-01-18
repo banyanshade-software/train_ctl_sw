@@ -1,0 +1,5 @@
+txrxtask.c:42:6:StartTxRxFrameTask	72	static
+txrxtask.c:81:13:_send_bytes	24	static
+txrxtask.c:92:6:txframe_send	24	static
+txrxtask.c:113:13:handleRxChars	64	static
+txrxtask.c:139:8:impl_CDC_Receive_FS	32	static

@@ -1,0 +1,14 @@
+txrxcmd.h:42:20:txframe_send_notif	16	static
+txrxcmd.c:55:12:_frm_escape	40	static
+txrxcmd.c:76:12:_frm_escape2	32	static
+txrxcmd.c:89:12:frm_escape	32	static
+txrxcmd.c:120:6:txrx_process_char	80	static
+txrxcmd.c:204:13:param_set_pwm	16	static
+txrxcmd.c:214:16:param_get_numtrains	16	static
+txrxcmd.c:219:16:param_get_numcantons	16	static
+txrxcmd.c:236:16:process_frame_cmd	80	static
+txrxcmd.c:355:6:trainctl_notif	24	static
+txrxcmd.c:363:6:trainctl_notif2	32	static
+txrxcmd.c:402:6:frame_send_notif	24	static
+txrxcmd.c:422:5:frame_gather_stat	32	static
+txrxcmd.c:436:6:frame_send_stat	32	static

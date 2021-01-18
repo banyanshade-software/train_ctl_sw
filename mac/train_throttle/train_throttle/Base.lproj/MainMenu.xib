@@ -1568,6 +1568,7 @@
                                                     <items>
                                                         <menuItem title="power" state="on" id="DgP-sL-kcM" userLabel="power"/>
                                                         <menuItem title="power2" id="zQ1-6B-Kqs"/>
+                                                        <menuItem title="BEMF" id="bz2-Mr-Qg4" userLabel="BEMF"/>
                                                         <menuItem title="PID" id="i1r-NN-nrb"/>
                                                         <menuItem title="inertia" id="bmz-hi-zv5"/>
                                                         <menuItem title="pose" id="UNx-fi-qfh"/>
@@ -1607,7 +1608,7 @@
                                             <rect key="frame" x="16" y="16" width="804" height="338"/>
                                             <clipView key="contentView" id="OXu-El-CJ6">
                                                 <rect key="frame" x="1" y="0.0" width="802" height="337"/>
-                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                <autoresizingMask key="autoresizingMask"/>
                                                 <subviews>
                                                     <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" headerView="71L-Yv-M5N" id="gBS-dQ-Fjb">
                                                         <rect key="frame" x="0.0" y="0.0" width="802" height="312"/>
@@ -1925,7 +1926,7 @@
             <rect key="contentRect" x="109" y="138" width="708" height="600"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1280" height="800"/>
             <view key="contentView" identifier="par_G0_test_mode" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="eW8-Bh-GGe">
-                <rect key="frame" x="0.0" y="0.0" width="665" height="415"/>
+                <rect key="frame" x="0.0" y="185" width="665" height="415"/>
                 <subviews>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Cnw-SD-Jxt">
                         <rect key="frame" x="18" y="345" width="56" height="14"/>
@@ -2426,7 +2427,7 @@
                         </textFieldCell>
                     </textField>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ZjS-L6-RW5">
-                        <rect key="frame" x="166" y="564" width="46" height="16"/>
+                        <rect key="frame" x="166" y="934" width="46" height="16"/>
                         <textFieldCell key="cell" lineBreakMode="clipping" title="Train 0" id="l0l-uz-MaN">
                             <font key="font" usesAppearanceFont="YES"/>
                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>

@@ -1,0 +1,6 @@
+taskctrl.c:37:6:set_pwm_freq	24	static
+taskctrl.c:52:6:run_task_ctrl	24	static
+taskctrl.c:91:6:HAL_ADC_ConvCpltCallback	32	static,ignoring_inline_asm
+taskctrl.c:99:6:HAL_ADC_ConvHalfCpltCallback	32	static,ignoring_inline_asm
+taskctrl.c:107:6:HAL_ADC_LevelOutOfWindowCallback	16	static
+taskctrl.c:111:7:HAL_ADC_ErrorCallback	16	static

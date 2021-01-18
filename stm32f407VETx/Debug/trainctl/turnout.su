@@ -1,0 +1,7 @@
+misc.h:80:19:turnout_error	16	static
+misc.h:118:20:debug_info	40	static
+turnout.c:49:6:turnout_reset	32	static
+turnout.c:62:5:turnout_state	24	static
+turnout.c:69:5:turnout_cmd	32	static
+turnout.c:90:5:turnout_test	16	static
+turnout.c:114:6:turnout_tick	32	static

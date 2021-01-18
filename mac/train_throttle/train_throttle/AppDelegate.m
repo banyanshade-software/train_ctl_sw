@@ -139,7 +139,7 @@ typedef void (^respblk_t)(void);
     if (s == _shunting) return;
     _shunting = s;
     
-    int m = _shunting ? 10 : 100;
+    int m = _shunting ? 30 : 100;
     self.sliderCur.minValue = -m;
     self.sliderCur.maxValue = m;
     [self willChangeValueForKey:@"minslider"];
@@ -1557,6 +1557,8 @@ void notif_target_bemf(const train_config_t *cnf, train_vars_t *vars, int32_t va
     if (!graphs) graphs =
     @{ @"power"  : @[ @"", @"target_speed", @"curspeed", @"canton_0_centivolts", @"canton_0_pwm", @"vidx"],
        @"power2" : @[ @"curspeed", @"canton_0_centivolts", @"canton_0_pwm", @"vidx"],
+       @"BEMF"   : @[ @"",  @"canton_0_bemfcentivolt", @"bemfiir_centivolts"/*,  @"pid_sum_e"*/],
+
        @"PID"    : @[ @"", @"pid_target", @"canton_0_bemfcentivolt", @"pid_last_err", @"bemfiir_centivolts"/*,  @"pid_sum_e"*/],
        @"inertia": @[@"ine_t", @"ine_c"],
        @"pose"   : @[@"curspped", @"canton_0_bemfcentivolt", @"dir", @"train0_pose"]
@@ -1565,9 +1567,10 @@ void notif_target_bemf(const train_config_t *cnf, train_vars_t *vars, int32_t va
     switch (ngraph) {
         case 0: k=@"power"; break;
         case 1: k=@"power2"; break;
-        case 2: k=@"PID"; break;
-        case 3: k=@"inertia"; break;
-        case 4: k=@"pose"; break;
+        case 2: k=@"BEMF"; break;
+        case 3: k=@"PID"; break;
+        case 4: k=@"inertia"; break;
+        case 5: k=@"pose"; break;
         default: return;
     }
     NSArray *t = [graphs objectForKey:k];

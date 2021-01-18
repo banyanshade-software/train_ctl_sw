@@ -1,0 +1,4 @@
+misc.c:28:6:flash_led	8	static
+misc.c:39:5:trainctl_error	40	static
+misc.c:48:28:trainctl_notif	16	static
+misc.c:52:28:trainctl_notif2	16	static

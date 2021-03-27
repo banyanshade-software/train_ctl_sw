@@ -20,6 +20,13 @@
  * 				  Configuration upload/download is planned here, but not implemented
  */
 
+
+/* 20201204 good setup for lowspeed 8875 :
+ 200Hz
+ spd_to_pow disabled
+ PID 900/500/3000
+ pre-iir
+ */
 #include "misc.h"
 #include "railconfig.h"
 #include "canton.h"

@@ -11,6 +11,7 @@
 		1B75030C25F8AC980049F0B8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1B75030B25F8AC980049F0B8 /* Assets.xcassets */; };
 		1B75030F25F8AC980049F0B8 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1B75030D25F8AC980049F0B8 /* MainMenu.xib */; };
 		1B75031225F8AC980049F0B8 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B75031125F8AC980049F0B8 /* main.m */; };
+		1B75031B25F8ACCC0049F0B8 /* trkplan.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B75031A25F8ACCC0049F0B8 /* trkplan.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -22,6 +23,8 @@
 		1B75031025F8AC980049F0B8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1B75031125F8AC980049F0B8 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		1B75031325F8AC980049F0B8 /* trackplan.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = trackplan.entitlements; sourceTree = "<group>"; };
+		1B75031925F8ACCC0049F0B8 /* trkplan.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = trkplan.h; sourceTree = "<group>"; };
+		1B75031A25F8ACCC0049F0B8 /* trkplan.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = trkplan.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -55,6 +58,8 @@
 			isa = PBXGroup;
 			children = (
 				1B75030825F8AC910049F0B8 /* AppDelegate.h */,
+				1B75031925F8ACCC0049F0B8 /* trkplan.h */,
+				1B75031A25F8ACCC0049F0B8 /* trkplan.c */,
 				1B75030925F8AC910049F0B8 /* AppDelegate.m */,
 				1B75030B25F8AC980049F0B8 /* Assets.xcassets */,
 				1B75030D25F8AC980049F0B8 /* MainMenu.xib */,
@@ -136,6 +141,7 @@
 			files = (
 				1B75031225F8AC980049F0B8 /* main.m in Sources */,
 				1B75030A25F8AC910049F0B8 /* AppDelegate.m in Sources */,
+				1B75031B25F8ACCC0049F0B8 /* trkplan.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

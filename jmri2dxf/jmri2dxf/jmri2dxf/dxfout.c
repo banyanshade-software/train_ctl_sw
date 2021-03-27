@@ -68,6 +68,7 @@ void DXF_Arc(FILE *F1, char *Layer, int Colour, double CX, double CY, double CZ,
     fprintf(F1,"100\n"); fprintf(F1, "AcDbArc\n");
     fprintf(F1,"50\n"); fprintf(F1,"%0.4lf\n",ANG0);       // angle 0
     fprintf(F1,"51\n"); fprintf(F1,"%0.4lf\n",ANG1);       // angle 1
+    //fprintf(F1,"210\n"); fprintf(F1," 0, 0, -1\n");       // Extrusion direction//
 }
 
 void DXF_PolylineBegin(FILE *F1,char *Layer,int Colour) {

@@ -17,6 +17,7 @@
 
 
 #include "cmsis_os.h"
+
 #include "../trainctl_iface.h"
 
 extern osMessageQueueId_t frameQueueHandle;

@@ -162,13 +162,19 @@ void canton_set_volt(const canton_config_t *c, canton_vars_t *v, int voltidx)
 		return;
 	}
 	v->cur_voltidx = voltidx;
-    v-> selected_centivolt =  (c->volts[v->cur_voltidx]);
+    v->selected_centivolt =  (c->volts_cv[v->cur_voltidx]);
 
+    if ((0)) debug_info('C', 0, "SET VLT ", voltidx,  v->selected_centivolt,0);
+    if ((0)) debug_info('C', 0, "VLT BIT ", (voltidx & 0x03) ? 1 : 0,
+    				(voltidx & 0x02) ? 1 : 0,
+    				(voltidx & 0x01) ? 1 : 0);
 
 	HAL_GPIO_WritePin(c->volt_port_b0, c->volt_b0, (voltidx & 0x01) ? GPIO_PIN_SET : GPIO_PIN_RESET);
 	HAL_GPIO_WritePin(c->volt_port_b1, c->volt_b1, (voltidx & 0x02) ? GPIO_PIN_SET : GPIO_PIN_RESET);
 	HAL_GPIO_WritePin(c->volt_port_b2, c->volt_b2, (voltidx & 0x04) ? GPIO_PIN_SET : GPIO_PIN_RESET);
+#ifndef VOLT_SEL_3BITS
 	HAL_GPIO_WritePin(c->volt_port_b3, c->volt_b3, (voltidx & 0x08) ? GPIO_PIN_SET : GPIO_PIN_RESET);
+#endif
 #if 0
 	uint16_t s = 0;
 	uint16_t r = 0;
@@ -184,10 +190,10 @@ void canton_set_volt(const canton_config_t *c, canton_vars_t *v, int voltidx)
 #else  // TRAIN_SIMU
 void canton_set_volt(const canton_config_t *c, canton_vars_t *v, int voltidx)
 {
-    int vlt = c->volts[voltidx];
+    int vlt = c->volts_cv[voltidx];
     int n = canton_idx(v);
     v->cur_voltidx = voltidx;
-    v->selected_centivolt =  (c->volts[v->cur_voltidx]);
+    v->selected_centivolt =  (c->volts_cv[v->cur_voltidx]);
     train_simu_canton_volt(n, voltidx, vlt);
 }
 void canton_set_pwm(const canton_config_t *c, canton_vars_t *v,  int dir, int duty)
@@ -211,6 +217,8 @@ void __attribute__((weak)) train_simu_canton_set_pwm(int numcanton, int dir, int
 #endif
 
 
+#define MAX_PVI (NUM_VOLTS_VAL-1)
+
 int volt_index(uint16_t mili_power,
 		const canton_config_t *c1, canton_vars_t *v1,
 		const canton_config_t *c2, canton_vars_t *v2,
@@ -218,8 +226,8 @@ int volt_index(uint16_t mili_power,
 		train_volt_policy_t pol)
 {
 	int duty=0;
-	*pvi1 = 15;
-	*pvi2 = 15;
+	*pvi1 = MAX_PVI;
+	*pvi2 = MAX_PVI;
 
 	if (mili_power <0)    return canton_error_rc(0, ERR_BAD_PARAM_MPOW, "negative milipower");
 	if (mili_power >1000) return canton_error_rc(0, ERR_BAD_PARAM_MPOW, "milipower should be 0-999");
@@ -237,10 +245,10 @@ int volt_index(uint16_t mili_power,
             // fall back to full volt +  pwm
             *pvi1 = *pvi2 = 0;
             duty = mili_power / 10;
-            for (int i=15; i>=0; i--) {
-                if (!c1->volts[i]) continue;
+            for (int i=MAX_PVI; i>=0; i--) {
+                if (!c1->volts_cv[i]) continue;
                 // c1->volts in 0.01V unit
-                int d = 100*mili_power / c1->volts[i];
+                int d = 100*mili_power / c1->volts_cv[i];
                 if (d>MAX_PWM) {
                     continue;
                 }
@@ -250,6 +258,7 @@ int volt_index(uint16_t mili_power,
                 break;
             }
 		break;
+#if 0
     case vpolicy_v2:
     	*pvi1 = *pvi2 = 0;
     	duty = mili_power / 10;
@@ -282,13 +291,14 @@ int volt_index(uint16_t mili_power,
 			break;
     	}
     	break;
+#endif
 	case vpolicy_pure_volt:
 		duty = MAX_PWM;
         int s = 0;
-		for (int i=15; i>=0; i--) {
-			if (!c1->volts[i]) continue;
+		for (int i=MAX_PVI; i>=0; i--) {
+			if (!c1->volts_cv[i]) continue;
 			// c1->volts in 0.01V unit. 10V = 1000
-			int p = c1->volts[i]*MAX_PWM/100;  // 0.01V * % , ex : 345*90
+			int p = c1->volts_cv[i]*MAX_PWM/100;  // 0.01V * % , ex : 345*90
 			if (p <= mili_power) {
                 s = 1;
 				*pvi1 = i;
@@ -413,7 +423,7 @@ void canton_intensity(const canton_config_t *c, canton_vars_t *v, uint16_t ioff,
 		uint32_t mA = 1000*ion/7447;
 		// evaluate R
 		// R=U/I
-		uint32_t Rohm = mA ? ((uint32_t)(c->volts[v->cur_voltidx]*10))/mA : 9999999;
+		uint32_t Rohm = mA ? ((uint32_t)(c->volts_cv[v->cur_voltidx]*10))/mA : 9999999;
 		if (Rohm>100000) {
 			v->occupency = CANTON_OCCUPENCY_FREE;
 		} else if (Rohm>100) {
@@ -443,7 +453,7 @@ void canton_bemf(const canton_config_t *c, canton_vars_t *v, uint16_t adc1, uint
 		int32_t volt = bemf_convert_to_centivolt_for_display(c,v, adc2-adc1); // unit 1/100 V
 		val[0] = volt;
 		val[1] = bemf_convert_to_centivolt_for_display(c,v, von2-von1);
-		val[2] = (int32_t) (c->volts[v->cur_voltidx]);
+		val[2] = (int32_t) (c->volts_cv[v->cur_voltidx]);
 		val[3] = (int32_t) v->cur_pwm_duty;
         uint8_t cmd = 'B';
 #ifdef TRAIN_SIMU

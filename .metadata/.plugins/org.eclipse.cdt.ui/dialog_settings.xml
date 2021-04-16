@@ -11,6 +11,11 @@
 		<item key="caseSensitive" value="false"/>
 		<item key="searchFlags" value="227191"/>
 		<list key="previousPatterns">
+			<item value="adc_buffer_t"/>
+			<item value="NOTIF_NEW_ADC_2"/>
+			<item value="SWITCHING"/>
+			<item value="HAL_I2C_MemRxCpltCallback"/>
+			<item value="HAL_I2C_Mem_Read"/>
 			<item value="CantonTimerHandles"/>
 			<item value="trainctl_test_mode"/>
 			<item value="pwm_freq"/>

@@ -50,7 +50,8 @@ trainctl/traincontrol.o: \
  /Users/danielbraun/devel/train/sw/trainctl/railconfig.h \
  /Users/danielbraun/devel/train/sw/trainctl/block_canton.h \
  /Users/danielbraun/devel/train/sw/trainctl/auto1.h \
- /Users/danielbraun/devel/train/sw/trainctl/txrxcmd.h
+ /Users/danielbraun/devel/train/sw/trainctl/txrxcmd.h \
+ /Users/danielbraun/devel/train/sw/trainctl/../ina3221/ina3221.h
 
 /Users/danielbraun/devel/train/sw/trainctl/misc.h:
 
@@ -155,3 +156,5 @@ trainctl/traincontrol.o: \
 /Users/danielbraun/devel/train/sw/trainctl/auto1.h:
 
 /Users/danielbraun/devel/train/sw/trainctl/txrxcmd.h:
+
+/Users/danielbraun/devel/train/sw/trainctl/../ina3221/ina3221.h:

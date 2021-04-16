@@ -37,7 +37,15 @@
 #error ops
 #endif
 
+
+//#define ADD_DUMMY_CANTON
+
+
+#ifdef ADD_DUMMY_CANTON
 #define NUM_CANTONS (NUM_LOCAL_CANTONS+1)
+#else
+#define NUM_CANTONS (NUM_LOCAL_CANTONS)
+#endif
 
 #define NUM_TRAINS  1
 

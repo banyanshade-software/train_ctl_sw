@@ -467,6 +467,9 @@ typedef void (^respblk_t)(void);
         gpfrm[5+nl+1] = '|';
         NSLog(@"get param %c%c '%s'\n",  cpsel[0], cpsel[1], cpn);
     
+        if ((1) & (0==(n%10))) {
+            sleep(1);
+        }
         [self sendFrame:gpfrm len:(int)(5+nl+2) blen:sizeof(gpfrm) then:^{
             // handle response
             self->nparamresp++;
@@ -1558,6 +1561,7 @@ void notif_target_bemf(const train_config_t *cnf, train_vars_t *vars, int32_t va
     @{ @"power"  : @[ @"", @"target_speed", @"curspeed", @"canton_0_centivolts", @"canton_0_pwm", @"vidx"],
        @"power2" : @[ @"curspeed", @"canton_0_centivolts", @"canton_0_pwm", @"vidx"],
        @"BEMF"   : @[ @"",  @"canton_0_bemfcentivolt", @"bemfiir_centivolts"/*,  @"pid_sum_e"*/],
+       @"Vsense" : @[ @"", @"canton_0_bemf_centivolt", @"canton_0_von_centivolt"],
 
        @"PID"    : @[ @"", @"pid_target", @"canton_0_bemfcentivolt", @"pid_last_err", @"bemfiir_centivolts"/*,  @"pid_sum_e"*/],
        @"inertia": @[@"ine_t", @"ine_c"],

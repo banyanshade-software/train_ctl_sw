@@ -37,7 +37,7 @@
 #include "stm32/taskauto.h"
 #include "stm32/taskctrl.h"
 #include "stm32/taskdisp.h"
-
+#include "../../../ina3221/ina3221.h"
 
 /* USER CODE END Includes */
 
@@ -62,6 +62,7 @@ ADC_HandleTypeDef hadc1;
 DMA_HandleTypeDef hdma_adc1;
 
 I2C_HandleTypeDef hi2c1;
+I2C_HandleTypeDef hi2c3;
 
 RTC_HandleTypeDef hrtc;
 
@@ -70,6 +71,7 @@ TIM_HandleTypeDef htim2;
 TIM_HandleTypeDef htim3;
 TIM_HandleTypeDef htim4;
 TIM_HandleTypeDef htim8;
+TIM_HandleTypeDef htim12;
 
 UART_HandleTypeDef huart4;
 DMA_HandleTypeDef hdma_uart4_rx;
@@ -174,6 +176,8 @@ static void MX_RTC_Init(void);
 static void MX_UART4_Init(void);
 static void MX_TIM4_Init(void);
 static void MX_TIM8_Init(void);
+static void MX_I2C3_Init(void);
+static void MX_TIM12_Init(void);
 void StartDefaultTask(void *argument);
 void StartTaskBLE(void *argument);
 void StartCtrlTask(void *argument);
@@ -227,6 +231,8 @@ int main(void)
   MX_UART4_Init();
   MX_TIM4_Init();
   MX_TIM8_Init();
+  MX_I2C3_Init();
+  MX_TIM12_Init();
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
@@ -371,7 +377,7 @@ static void MX_ADC1_Init(void)
   hadc1.Init.ExternalTrigConvEdge = ADC_EXTERNALTRIGCONVEDGE_RISING;
   hadc1.Init.ExternalTrigConv = ADC_EXTERNALTRIGCONV_T8_TRGO;
   hadc1.Init.DataAlign = ADC_DATAALIGN_RIGHT;
-  hadc1.Init.NbrOfConversion = 15;
+  hadc1.Init.NbrOfConversion = 10;
   hadc1.Init.DMAContinuousRequests = ENABLE;
   hadc1.Init.EOCSelection = ADC_EOC_SINGLE_CONV;
   if (HAL_ADC_Init(&hadc1) != HAL_OK)
@@ -447,7 +453,7 @@ static void MX_ADC1_Init(void)
   }
   /** Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time.
   */
-  sConfig.Channel = ADC_CHANNEL_9;
+  sConfig.Channel = ADC_CHANNEL_10;
   sConfig.Rank = 9;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
@@ -455,48 +461,8 @@ static void MX_ADC1_Init(void)
   }
   /** Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time.
   */
-  sConfig.Channel = ADC_CHANNEL_10;
-  sConfig.Rank = 10;
-  if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /** Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time.
-  */
   sConfig.Channel = ADC_CHANNEL_11;
-  sConfig.Rank = 11;
-  if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /** Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time.
-  */
-  sConfig.Channel = ADC_CHANNEL_12;
-  sConfig.Rank = 12;
-  if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /** Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time.
-  */
-  sConfig.Channel = ADC_CHANNEL_13;
-  sConfig.Rank = 13;
-  if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /** Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time.
-  */
-  sConfig.Channel = ADC_CHANNEL_14;
-  sConfig.Rank = 14;
-  if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /** Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time.
-  */
-  sConfig.Channel = ADC_CHANNEL_15;
-  sConfig.Rank = 15;
+  sConfig.Rank = 10;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
     Error_Handler();
@@ -538,6 +504,40 @@ static void MX_I2C1_Init(void)
   /* USER CODE BEGIN I2C1_Init 2 */
 
   /* USER CODE END I2C1_Init 2 */
+
+}
+
+/**
+  * @brief I2C3 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_I2C3_Init(void)
+{
+
+  /* USER CODE BEGIN I2C3_Init 0 */
+
+  /* USER CODE END I2C3_Init 0 */
+
+  /* USER CODE BEGIN I2C3_Init 1 */
+
+  /* USER CODE END I2C3_Init 1 */
+  hi2c3.Instance = I2C3;
+  hi2c3.Init.ClockSpeed = 400000;
+  hi2c3.Init.DutyCycle = I2C_DUTYCYCLE_2;
+  hi2c3.Init.OwnAddress1 = 0;
+  hi2c3.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
+  hi2c3.Init.DualAddressMode = I2C_DUALADDRESS_DISABLE;
+  hi2c3.Init.OwnAddress2 = 0;
+  hi2c3.Init.GeneralCallMode = I2C_GENERALCALL_DISABLE;
+  hi2c3.Init.NoStretchMode = I2C_NOSTRETCH_DISABLE;
+  if (HAL_I2C_Init(&hi2c3) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN I2C3_Init 2 */
+
+  /* USER CODE END I2C3_Init 2 */
 
 }
 
@@ -823,6 +823,14 @@ static void MX_TIM3_Init(void)
   {
     Error_Handler();
   }
+  if (HAL_TIM_PWM_ConfigChannel(&htim3, &sConfigOC, TIM_CHANNEL_3) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  if (HAL_TIM_PWM_ConfigChannel(&htim3, &sConfigOC, TIM_CHANNEL_4) != HAL_OK)
+  {
+    Error_Handler();
+  }
   /* USER CODE BEGIN TIM3_Init 2 */
 
   /* USER CODE END TIM3_Init 2 */
@@ -955,6 +963,52 @@ static void MX_TIM8_Init(void)
 }
 
 /**
+  * @brief TIM12 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_TIM12_Init(void)
+{
+
+  /* USER CODE BEGIN TIM12_Init 0 */
+
+  /* USER CODE END TIM12_Init 0 */
+
+  TIM_OC_InitTypeDef sConfigOC = {0};
+
+  /* USER CODE BEGIN TIM12_Init 1 */
+
+  /* USER CODE END TIM12_Init 1 */
+  htim12.Instance = TIM12;
+  htim12.Init.Prescaler = 0;
+  htim12.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim12.Init.Period = 65535;
+  htim12.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  htim12.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  if (HAL_TIM_PWM_Init(&htim12) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sConfigOC.OCMode = TIM_OCMODE_PWM1;
+  sConfigOC.Pulse = 0;
+  sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
+  sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
+  if (HAL_TIM_PWM_ConfigChannel(&htim12, &sConfigOC, TIM_CHANNEL_1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  if (HAL_TIM_PWM_ConfigChannel(&htim12, &sConfigOC, TIM_CHANNEL_2) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN TIM12_Init 2 */
+
+  /* USER CODE END TIM12_Init 2 */
+  HAL_TIM_MspPostInit(&htim12);
+
+}
+
+/**
   * @brief UART4 Initialization Function
   * @param None
   * @retval None
@@ -1028,28 +1082,31 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOD_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOE, TURN4A_Pin|TURN4B_Pin|TURN5A_Pin|TURN5B_Pin
-                          |TURN3A_Pin|TURN3B_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOE, VOLT_4_SEL0_Pin|VOLT_4_SEL1_Pin|VOLT_4_SEL2_Pin|TURN3A_Pin
+                          |GPIO_PIN_8|GPIO_PIN_10|GPIO_PIN_12|GPIO_PIN_15
+                          |TURN2A_Pin|TURN2B_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, LED1_Pin|VOLT_4_SEL2_Pin|VOLT_4_SEL3_Pin|VOLT4_SEL0_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOC, TURN3B_Pin|GPIO_PIN_12, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOB, VOLT_3_SEL0_Pin|VOLT_3_SEL1_Pin|VOLT_3_SEL2_Pin|VOLT_3_SEL3_Pin
-                          |TURN1B_Pin|TURN1A_Pin|TURN2A_Pin|TURN2B_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOA, LED1_Pin|GPIO_PIN_9|GPIO_PIN_10|GPIO_PIN_15, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOD, VOLT_2_SEL0_Pin|VOLT_2_SEL1_Pin|VOLT_2_SEL2_Pin|VOLT_2_SEL3_Pin
-                          |VOLT_0_SEL0_Pin|VOLT_0_SEL1_Pin|VOLT_0_SEL2_Pin|VOLT_0_SEL3_Pin
-                          |VOLT_1_SEL0_Pin|VOLT_1_SEL1_Pin|VOLT_1_SEL2_Pin|VOLT_1_SEL3_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_2|VOLT_3_SEL0_Pin|GPIO_PIN_13|TURN1B_Pin
+                          |TURN1A_Pin|GPIO_PIN_8|GPIO_PIN_9, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(VOLT_4_SEL1_GPIO_Port, VOLT_4_SEL1_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOD, VOLT_2_SEL2_Pin|VOLT_3_SEL0D9_Pin|VOLT_3_SEL1_Pin|VOLT_3_SEL2_Pin
+                          |VOLT_0_SEL0_Pin|VOLT_0_SEL1_Pin|VOLT_0_SEL2_Pin|VOLT_1_SEL0_Pin
+                          |VOLT_1_SEL1_Pin|VOLT_1_SEL2_Pin|VOLT_2_SEL0_Pin|VOLT_2_SEL1_Pin, GPIO_PIN_RESET);
 
-  /*Configure GPIO pins : TURN4A_Pin TURN4B_Pin TURN5A_Pin TURN5B_Pin
-                           TURN3A_Pin TURN3B_Pin */
-  GPIO_InitStruct.Pin = TURN4A_Pin|TURN4B_Pin|TURN5A_Pin|TURN5B_Pin
-                          |TURN3A_Pin|TURN3B_Pin;
+  /*Configure GPIO pins : VOLT_4_SEL0_Pin VOLT_4_SEL1_Pin VOLT_4_SEL2_Pin TURN3A_Pin
+                           PE8 PE10 PE12 PE15
+                           TURN2A_Pin TURN2B_Pin */
+  GPIO_InitStruct.Pin = VOLT_4_SEL0_Pin|VOLT_4_SEL1_Pin|VOLT_4_SEL2_Pin|TURN3A_Pin
+                          |GPIO_PIN_8|GPIO_PIN_10|GPIO_PIN_12|GPIO_PIN_15
+                          |TURN2A_Pin|TURN2B_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
@@ -1061,39 +1118,39 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_PULLUP;
   HAL_GPIO_Init(USER_BTN_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : LED1_Pin VOLT_4_SEL2_Pin VOLT_4_SEL3_Pin VOLT4_SEL0_Pin */
-  GPIO_InitStruct.Pin = LED1_Pin|VOLT_4_SEL2_Pin|VOLT_4_SEL3_Pin|VOLT4_SEL0_Pin;
+  /*Configure GPIO pins : TURN3B_Pin PC12 */
+  GPIO_InitStruct.Pin = TURN3B_Pin|GPIO_PIN_12;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : LED1_Pin PA9 PA10 PA15 */
+  GPIO_InitStruct.Pin = LED1_Pin|GPIO_PIN_9|GPIO_PIN_10|GPIO_PIN_15;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : VOLT_3_SEL0_Pin VOLT_3_SEL1_Pin VOLT_3_SEL2_Pin VOLT_3_SEL3_Pin
-                           TURN1B_Pin TURN1A_Pin TURN2A_Pin TURN2B_Pin */
-  GPIO_InitStruct.Pin = VOLT_3_SEL0_Pin|VOLT_3_SEL1_Pin|VOLT_3_SEL2_Pin|VOLT_3_SEL3_Pin
-                          |TURN1B_Pin|TURN1A_Pin|TURN2A_Pin|TURN2B_Pin;
+  /*Configure GPIO pins : PB2 VOLT_3_SEL0_Pin PB13 TURN1B_Pin
+                           TURN1A_Pin PB8 PB9 */
+  GPIO_InitStruct.Pin = GPIO_PIN_2|VOLT_3_SEL0_Pin|GPIO_PIN_13|TURN1B_Pin
+                          |TURN1A_Pin|GPIO_PIN_8|GPIO_PIN_9;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : VOLT_2_SEL0_Pin VOLT_2_SEL1_Pin VOLT_2_SEL2_Pin VOLT_2_SEL3_Pin
-                           VOLT_0_SEL0_Pin VOLT_0_SEL1_Pin VOLT_0_SEL2_Pin VOLT_0_SEL3_Pin
-                           VOLT_1_SEL0_Pin VOLT_1_SEL1_Pin VOLT_1_SEL2_Pin VOLT_1_SEL3_Pin */
-  GPIO_InitStruct.Pin = VOLT_2_SEL0_Pin|VOLT_2_SEL1_Pin|VOLT_2_SEL2_Pin|VOLT_2_SEL3_Pin
-                          |VOLT_0_SEL0_Pin|VOLT_0_SEL1_Pin|VOLT_0_SEL2_Pin|VOLT_0_SEL3_Pin
-                          |VOLT_1_SEL0_Pin|VOLT_1_SEL1_Pin|VOLT_1_SEL2_Pin|VOLT_1_SEL3_Pin;
+  /*Configure GPIO pins : VOLT_2_SEL2_Pin VOLT_3_SEL0D9_Pin VOLT_3_SEL1_Pin VOLT_3_SEL2_Pin
+                           VOLT_0_SEL0_Pin VOLT_0_SEL1_Pin VOLT_0_SEL2_Pin VOLT_1_SEL0_Pin
+                           VOLT_1_SEL1_Pin VOLT_1_SEL2_Pin VOLT_2_SEL0_Pin VOLT_2_SEL1_Pin */
+  GPIO_InitStruct.Pin = VOLT_2_SEL2_Pin|VOLT_3_SEL0D9_Pin|VOLT_3_SEL1_Pin|VOLT_3_SEL2_Pin
+                          |VOLT_0_SEL0_Pin|VOLT_0_SEL1_Pin|VOLT_0_SEL2_Pin|VOLT_1_SEL0_Pin
+                          |VOLT_1_SEL1_Pin|VOLT_1_SEL2_Pin|VOLT_2_SEL0_Pin|VOLT_2_SEL1_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
-
-  /*Configure GPIO pin : VOLT_4_SEL1_Pin */
-  GPIO_InitStruct.Pin = VOLT_4_SEL1_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(VOLT_4_SEL1_GPIO_Port, &GPIO_InitStruct);
 
 }
 
@@ -1143,8 +1200,9 @@ void StartDefaultTask(void *argument)
 #endif
 
 #if 1
-	taskdisp();
+	ina3221_init();
 
+	taskdisp();
 
 #else
   for(;;)
@@ -1172,7 +1230,7 @@ void StartTaskBLE(void *argument)
 {
   /* USER CODE BEGIN StartTaskBLE */
   /* Infinite loop */
-  RunBleTask(&huart4, &hdma_uart4_rx, &hdma_uart4_tx, bleRespQueueHandle);
+  if (0) RunBleTask(&huart4, &hdma_uart4_rx, &hdma_uart4_tx, bleRespQueueHandle);
   for(;;)
   {
     osDelay(1);
@@ -1203,7 +1261,7 @@ void StartCtrlTask(void *argument)
 	  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
 	  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2);
 	  HAL_TIM_PWM_Stop(&htim1, TIM_CHANNEL_2);
-
+	  // XX
 
 	  HAL_TIM_Base_Start_IT(&htim8);
 

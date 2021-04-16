@@ -77,14 +77,14 @@ const param_t train_params[] = {
 		{ "acc",  	 NULL, offsetof(train_config_t, inertiacnf.acc),   	NULL,NULL, sizeof(int16_t), 0, 1000,   200},
 
 		{"en_inertia", NULL, offsetof(train_config_t,enable_inertia),	NULL,NULL, sizeof(uint8_t), 0, 1, 0},
-		{"en_pid",     NULL, offsetof(train_config_t,enable_pid),		NULL,NULL, sizeof(uint8_t), 0, 1, 1},
+		{"en_pid",     NULL, offsetof(train_config_t,enable_pid),		NULL,NULL, sizeof(uint8_t), 0, 1, 0 /*1*/},
 		{"notify_spd", NULL, offsetof(train_config_t,notify_speed),     NULL,NULL, sizeof(uint8_t), 0, 1, 1},
 		{"notify_pose",NULL, offsetof(train_config_t,notify_pose),      NULL,NULL, sizeof(uint8_t), 0, 1, 0},
 		{"bemfIIR",    NULL, offsetof(train_config_t,bemfIIR),   	    NULL,NULL, sizeof(uint8_t), 0, 1, 1},
 		{"postIIR",    NULL, offsetof(train_config_t,postIIR ),   	    NULL,NULL, sizeof(uint8_t), 0, 1, 1},
 		{"fix_bemf",   NULL, offsetof(train_config_t,fix_bemf),   	    NULL,NULL, sizeof(uint8_t), 0, 1, 1},
-		{"volt_policy",NULL, offsetof(train_config_t,volt_policy),      NULL,NULL, sizeof(uint8_t), 0, 1, 0},
-		{"en_spd2pow", NULL, offsetof(train_config_t,en_spd2pow),       NULL,NULL, sizeof(uint8_t), 0, 1, 1},
+		{"volt_policy",NULL, offsetof(train_config_t,volt_policy),      NULL,NULL, sizeof(uint8_t), 0, 1, 2 /*0*/},
+		{"en_spd2pow", NULL, offsetof(train_config_t,en_spd2pow),       NULL,NULL, sizeof(uint8_t), 0, 1, 0 /*1*/},
 		{"min_power",  NULL, offsetof(train_config_t,min_power),        NULL,NULL, sizeof(uint8_t), 0, 80, 40},
 
 		{ NULL,     NULL,0,    NULL,NULL, 0, 0, 0,   0}

@@ -1,9 +1,9 @@
 trainctl/txrxcmd.o: /Users/danielbraun/devel/train/sw/trainctl/txrxcmd.c \
  /Users/danielbraun/devel/train/sw/trainctl/trainctl_iface.h \
- /Users/danielbraun/devel/train/sw/trainctl/txrxcmd.h \
- /Users/danielbraun/devel/train/sw/trainctl/canton.h \
  /Users/danielbraun/devel/train/sw/trainctl/misc.h \
  ../Core/Inc/trainctl_config.h \
+ /Users/danielbraun/devel/train/sw/trainctl/txrxcmd.h \
+ /Users/danielbraun/devel/train/sw/trainctl/canton.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h \
  ../Core/Inc/stm32f4xx_hal_conf.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h \
@@ -54,13 +54,13 @@ trainctl/txrxcmd.o: /Users/danielbraun/devel/train/sw/trainctl/txrxcmd.c \
 
 /Users/danielbraun/devel/train/sw/trainctl/trainctl_iface.h:
 
-/Users/danielbraun/devel/train/sw/trainctl/txrxcmd.h:
-
-/Users/danielbraun/devel/train/sw/trainctl/canton.h:
-
 /Users/danielbraun/devel/train/sw/trainctl/misc.h:
 
 ../Core/Inc/trainctl_config.h:
+
+/Users/danielbraun/devel/train/sw/trainctl/txrxcmd.h:
+
+/Users/danielbraun/devel/train/sw/trainctl/canton.h:
 
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:
 

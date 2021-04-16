@@ -3,6 +3,7 @@ trainctl/stm32/taskdisp.o: \
  /Users/danielbraun/devel/train/sw/trainctl/stm32/../misc.h \
  ../Core/Inc/trainctl_config.h \
  /Users/danielbraun/devel/train/sw/trainctl/stm32/../trainctl_iface.h \
+ /Users/danielbraun/devel/train/sw/trainctl/stm32/../misc.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h \
  ../Core/Inc/stm32f4xx_hal_conf.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h \
@@ -64,6 +65,8 @@ trainctl/stm32/taskdisp.o: \
 ../Core/Inc/trainctl_config.h:
 
 /Users/danielbraun/devel/train/sw/trainctl/stm32/../trainctl_iface.h:
+
+/Users/danielbraun/devel/train/sw/trainctl/stm32/../misc.h:
 
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:
 

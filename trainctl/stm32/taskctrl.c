@@ -30,7 +30,7 @@
 
 
 
-int cur_freqhz = 50;
+int cur_freqhz = 350;
 extern TIM_HandleTypeDef htim1;
 
 // #define __HAL_TIM_SET_PRESCALER(__HANDLE__, __PRESC__)       ((__HANDLE__)->Instance->PSC = (__PRESC__))

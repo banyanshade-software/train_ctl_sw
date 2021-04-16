@@ -29,6 +29,9 @@
 #include "auto1.h"
 #include "txrxcmd.h"
 
+#ifdef USE_INA3221
+#include "../ina3221/ina3221.h"
+#endif
 
 volatile  uint8_t trainctl_test_mode = 0;
 
@@ -54,6 +57,7 @@ void train_run_tick( uint32_t notif_flags, uint32_t tick, uint32_t dt)
 	train_tick_last_dt = dt;
 	train_ntick++;
 
+
 	if (notif_flags & NOTIF_STARTUP) {
 		static int n=0;
 		if (n) {
@@ -61,6 +65,7 @@ void train_run_tick( uint32_t notif_flags, uint32_t tick, uint32_t dt)
 		}
 		n++;
 	}
+
 	if (notif_flags & NOTIF_NEW_ADC_1) {
 		if (notif_flags & NOTIF_NEW_ADC_2) {
 			runtime_error(ERR_DMA, "both NEW_ADC1 and NEW_ADC2");
@@ -70,6 +75,14 @@ void train_run_tick( uint32_t notif_flags, uint32_t tick, uint32_t dt)
 	if (notif_flags & NOTIF_NEW_ADC_2) {
 		process_adc(train_adc_buffer+NUM_LOCAL_CANTONS, dt);
 	}
+
+#ifdef USE_INA3221
+	if (0 || (train_ntick%51)==1) {
+	    if ((notif_flags & NOTIF_NEW_ADC_1)) debug_info('T', 0, "INA3221/1 ", ina3221_values[0], ina3221_values[1], ina3221_values[2]);
+	    if ((notif_flags & NOTIF_NEW_ADC_2)) debug_info('T', 0, "INA3221/2 ", ina3221_values[0], ina3221_values[1], ina3221_values[2]);
+		ina3221_start_read();
+	}
+#endif
 
 	turnout_tick();
 	highlevel_tick();
@@ -98,7 +111,9 @@ static void process_adc(volatile adc_buffer_t *buf, int32_t ticks)
 		// process intensity / presence
 		// process BEMF
 		USE_CANTON(i)  // cconf cvars
+#ifndef USE_INA3221
 	    canton_intensity(cconf, cvars, buf[i].intOff, buf[i].intOn);
+#endif
 		if ((cvars->curtrainidx != 0xFF) || calibrating) {
 			canton_bemf(cconf, cvars, buf[i].voffB , buf[i].voffA, buf[i].vonB , buf[i].vonA);
 		}
@@ -496,7 +511,7 @@ static void train_switching_canton(uint8_t numtrain)
 {
     USE_TRAIN(numtrain)
     (void) tconf; // unused
-    debug_info('T', numtrain, "SWITCHING", tvars->current_canton, tvars->next_canton,0);
+    //debug_info('T', numtrain, "SWITCHING", tvars->current_canton, tvars->next_canton,0);
 }
 
 static void train_did_switch_canton(uint8_t numtrain)

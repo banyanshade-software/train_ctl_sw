@@ -13,7 +13,8 @@ trainctl/stm32/txrxtask.o: \
  ../Middlewares/Third_Party/FreeRTOS/Source/include/list.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h \
  /Users/danielbraun/devel/train/sw/trainctl/stm32/../trainctl_iface.h \
- ../USB_DEVICE/App/usbd_cdc_if.h \
+ /Users/danielbraun/devel/train/sw/trainctl/stm32/../misc.h \
+ ../Core/Inc/trainctl_config.h ../USB_DEVICE/App/usbd_cdc_if.h \
  ../Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc/usbd_cdc.h \
  ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ioreq.h \
  ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_def.h \
@@ -60,7 +61,7 @@ trainctl/stm32/txrxtask.o: \
  ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ctlreq.h \
  /Users/danielbraun/devel/train/sw/trainctl/stm32/../txrxcmd.h \
  /Users/danielbraun/devel/train/sw/trainctl/stm32/../trainctl_iface.h \
- ../../trainctl/misc.h ../Core/Inc/trainctl_config.h
+ ../../trainctl/misc.h
 
 /Users/danielbraun/devel/train/sw/trainctl/stm32/txrxtask.h:
 
@@ -87,6 +88,10 @@ trainctl/stm32/txrxtask.o: \
 ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h:
 
 /Users/danielbraun/devel/train/sw/trainctl/stm32/../trainctl_iface.h:
+
+/Users/danielbraun/devel/train/sw/trainctl/stm32/../misc.h:
+
+../Core/Inc/trainctl_config.h:
 
 ../USB_DEVICE/App/usbd_cdc_if.h:
 
@@ -185,5 +190,3 @@ trainctl/stm32/txrxtask.o: \
 /Users/danielbraun/devel/train/sw/trainctl/stm32/../trainctl_iface.h:
 
 ../../trainctl/misc.h:
-
-../Core/Inc/trainctl_config.h:

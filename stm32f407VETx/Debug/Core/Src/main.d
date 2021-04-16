@@ -50,15 +50,15 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
  ../USB_DEVICE/App/usb_device.h \
  ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_def.h \
  ../USB_DEVICE/Target/usbd_conf.h ../Core/Src/../../../BLE/bletask.h \
- ../../trainctl/trainctl_iface.h ../../trainctl/traincontrol.h \
+ ../../trainctl/trainctl_iface.h ../../trainctl/misc.h \
+ ../Core/Inc/trainctl_config.h ../../trainctl/traincontrol.h \
  ../../trainctl/railconfig.h ../../trainctl/trainctl_iface.h \
- ../../trainctl/canton.h ../../trainctl/misc.h \
- ../Core/Inc/trainctl_config.h ../../trainctl/block_canton.h \
+ ../../trainctl/canton.h ../../trainctl/block_canton.h \
  ../../trainctl/train.h ../../trainctl/inertia.h ../../trainctl/pidctl.h \
  ../../trainctl/param.h ../../trainctl/turnout.h ../../trainctl/canton.h \
  ../../trainctl/stm32/txrxtask.h ../../trainctl/stm32/../trainctl_iface.h \
  ../../trainctl/stm32/taskauto.h ../../trainctl/stm32/taskctrl.h \
- ../../trainctl/stm32/taskdisp.h
+ ../../trainctl/stm32/taskdisp.h ../Core/Src/../../../ina3221/ina3221.h
 
 ../Core/Inc/main.h:
 
@@ -168,6 +168,10 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
 
 ../../trainctl/trainctl_iface.h:
 
+../../trainctl/misc.h:
+
+../Core/Inc/trainctl_config.h:
+
 ../../trainctl/traincontrol.h:
 
 ../../trainctl/railconfig.h:
@@ -175,10 +179,6 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
 ../../trainctl/trainctl_iface.h:
 
 ../../trainctl/canton.h:
-
-../../trainctl/misc.h:
-
-../Core/Inc/trainctl_config.h:
 
 ../../trainctl/block_canton.h:
 
@@ -203,3 +203,5 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
 ../../trainctl/stm32/taskctrl.h:
 
 ../../trainctl/stm32/taskdisp.h:
+
+../Core/Src/../../../ina3221/ina3221.h:

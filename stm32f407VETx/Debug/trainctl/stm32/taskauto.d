@@ -52,6 +52,7 @@ trainctl/stm32/taskauto.o: \
  ../Core/Inc/trainctl_config.h \
  /Users/danielbraun/devel/train/sw/trainctl/stm32/taskauto.h \
  /Users/danielbraun/devel/train/sw/trainctl/stm32/../trainctl_iface.h \
+ /Users/danielbraun/devel/train/sw/trainctl/stm32/../misc.h \
  /Users/danielbraun/devel/train/sw/trainctl/stm32/../auto1.h \
  /Users/danielbraun/devel/train/sw/trainctl/stm32/../trainctl_iface.h
 
@@ -160,6 +161,8 @@ trainctl/stm32/taskauto.o: \
 /Users/danielbraun/devel/train/sw/trainctl/stm32/taskauto.h:
 
 /Users/danielbraun/devel/train/sw/trainctl/stm32/../trainctl_iface.h:
+
+/Users/danielbraun/devel/train/sw/trainctl/stm32/../misc.h:
 
 /Users/danielbraun/devel/train/sw/trainctl/stm32/../auto1.h:
 

@@ -77,7 +77,7 @@ void train_run_tick( uint32_t notif_flags, uint32_t tick, uint32_t dt)
 	}
 
 #ifdef USE_INA3221
-	if (0 || (train_ntick%51)==1) {
+	if (0 || (train_ntick%11)==1) {
 	    if ((notif_flags & NOTIF_NEW_ADC_1)) debug_info('T', 0, "INA3221/1 ", ina3221_values[0], ina3221_values[1], ina3221_values[2]);
 	    if ((notif_flags & NOTIF_NEW_ADC_2)) debug_info('T', 0, "INA3221/2 ", ina3221_values[0], ina3221_values[1], ina3221_values[2]);
 		ina3221_start_read();

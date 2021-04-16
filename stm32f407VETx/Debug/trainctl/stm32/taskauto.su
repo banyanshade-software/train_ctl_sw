@@ -1,5 +1,0 @@
-taskauto.c:24:13:StartTaskAuto	32	static
-taskauto.c:36:6:task_auto_tick_isr	24	static,ignoring_inline_asm
-taskauto.c:44:6:task_auto_tick	8	static
-taskauto.c:49:6:task_auto_start_auto	8	static
-taskauto.c:54:6:task_auto_stop_auto	8	static

@@ -164,7 +164,7 @@ static void disp_ble2(void)
 
 static void disp_hop(void)
 {
-	ssd1306_WriteString("HOP/20", Font_7x10, White);
+	ssd1306_WriteString("INA3221/21", Font_7x10, White);
 	ssd1306_SetCursor(0,16);
 	ssd1306_WriteString("16", Font_11x18, White);
 }

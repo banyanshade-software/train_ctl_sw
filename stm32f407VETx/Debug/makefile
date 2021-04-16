@@ -10,6 +10,7 @@ RM := rm -rf
 -include sources.mk
 -include trainctl/stm32/subdir.mk
 -include trainctl/subdir.mk
+-include ina3221/subdir.mk
 -include disp_tft/subdir.mk
 -include USB_DEVICE/Target/subdir.mk
 -include USB_DEVICE/App/subdir.mk

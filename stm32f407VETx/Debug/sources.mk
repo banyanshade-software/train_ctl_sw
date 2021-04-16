@@ -32,6 +32,7 @@ Middlewares/Third_Party/FreeRTOS/Source/portable/MemMang \
 USB_DEVICE/App \
 USB_DEVICE/Target \
 disp_tft \
+ina3221 \
 trainctl \
 trainctl/stm32 \
 

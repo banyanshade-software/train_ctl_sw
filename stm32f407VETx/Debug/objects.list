@@ -54,6 +54,7 @@
 "disp_tft/ssd1306.o"
 "disp_tft/ssd1306_fonts.o"
 "disp_tft/ssd1306_tests.o"
+"ina3221/ina3221.o"
 "trainctl/auto1.o"
 "trainctl/block_canton.o"
 "trainctl/canton.o"

@@ -64,8 +64,8 @@ static void i2c_ready(int a)
     	osDelay(100*5);
     	//if ((1)) return;
     }
-    w16 = INA3221_CONF_CH1_EN | INA3221_CONF_CH2_EN | INA3221_CONF_CH3_EN
-    		| INA3221_CONF_VS_CT_140u /*| INA3221_CONF_AVG1*/
+    w16 = INA3221_CONF_CH1_EN | /*INA3221_CONF_CH2_EN |*/ INA3221_CONF_CH3_EN
+    		| INA3221_CONF_VS_CT_140u | INA3221_CONF_AVG1
 			| INA3221_CONF_MODE_CONTINUOUS | INA3221_CONF_MODE_SHUNT;
 	ina3221_write16(a, INA3221_REG_CONFIG, w16);
 
@@ -83,11 +83,11 @@ static void i2c_ready(int a)
     HAL_StatusTypeDef s1,s2, s3;
     //HAL_StatusTypeDef HAL_I2C_Mem_Read_IT(I2C_HandleTypeDef *hi2c, uint16_t DevAddress,
     //uint16_t MemAddress, uint16_t MemAddSize, uint8_t *pData, uint16_t Size);
-    s1 = HAL_I2C_Mem_Read_IT(&INA3221_I2C_PORT, a<<1, INA3221_REG_CH1_BUSVOLT, I2C_MEMADD_SIZE_8BIT,
+    s1 = HAL_I2C_Mem_Read_IT(&INA3221_I2C_PORT, a<<1, INA3221_REG_CH1_SHUNTVOLT, I2C_MEMADD_SIZE_8BIT,
     		(uint8_t *)&ch1vs, 2);
-    s2 = HAL_I2C_Mem_Read_IT(&INA3221_I2C_PORT, a<<1, INA3221_REG_CH1_BUSVOLT, I2C_MEMADD_SIZE_8BIT,
+    s2 = HAL_I2C_Mem_Read_IT(&INA3221_I2C_PORT, a<<1, INA3221_REG_CH2_SHUNTVOLT, I2C_MEMADD_SIZE_8BIT,
     		(uint8_t *)&ch1vs, 2);
-    s3 = HAL_I2C_Mem_Read_IT(&INA3221_I2C_PORT, a<<1, INA3221_REG_CH1_BUSVOLT, I2C_MEMADD_SIZE_8BIT,
+    s3 = HAL_I2C_Mem_Read_IT(&INA3221_I2C_PORT, a<<1, INA3221_REG_CH3_SHUNTVOLT, I2C_MEMADD_SIZE_8BIT,
     		(uint8_t *)&ch1vs, 2);
 
     //int16_t it = i1+i2+i3;
@@ -102,13 +102,13 @@ static void _get_next_reg(void)
 	int reg;
 	switch (get_reg_step) {
 	case 0:
-		reg = INA3221_REG_CH1_BUSVOLT;
+		reg = INA3221_REG_CH1_SHUNTVOLT;
 		break;
 	case 1:
-		reg = INA3221_REG_CH2_BUSVOLT;
+		reg = INA3221_REG_CH2_SHUNTVOLT;
 		break;
 	case 2:
-		reg = INA3221_REG_CH3_BUSVOLT;
+		reg = INA3221_REG_CH3_SHUNTVOLT;
 		break;
 	case 3:
 		for (int i=0 ;i<3; i++) {
@@ -139,9 +139,9 @@ void HAL_I2C_MemRxCpltCallback(I2C_HandleTypeDef *hi2c)
 // polling version for test
 void ina3221_start_read(void)
 {
-	ina3221_values[0] = ina3221_read16(addr, INA3221_REG_CH1_BUSVOLT);
-	ina3221_values[1] = ina3221_read16(addr, INA3221_REG_CH2_BUSVOLT);
-	ina3221_values[2] = ina3221_read16(addr, INA3221_REG_CH3_BUSVOLT);
+	ina3221_values[0] = ina3221_read16(addr, INA3221_REG_CH1_SHUNTVOLT);
+	ina3221_values[1] = ina3221_read16(addr, INA3221_REG_CH2_SHUNTVOLT);
+	ina3221_values[2] = ina3221_read16(addr, INA3221_REG_CH3_SHUNTVOLT);
 	return;
 	uint16_t  w16 = INA3221_CONF_CH1_EN | INA3221_CONF_CH2_EN | INA3221_CONF_CH3_EN
 	    		| INA3221_CONF_VS_CT_1m | INA3221_CONF_AVG1

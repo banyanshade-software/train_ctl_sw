@@ -1,18 +1,43 @@
-15:10:30 **** Incremental Build of configuration Debug for project stm32f407VETx ****
+15:47:34 **** Incremental Build of configuration Debug for project stm32f407VETx ****
 make -j3 all 
-arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DUSE_HAL_DRIVER -DDEBUG -DSTM32F407xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -I../../trainctl -I../Middlewares/Third_Party/FreeRTOS/Source/include -I../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F -I../USB_DEVICE/App -I../USB_DEVICE/Target -I../Middlewares/ST/STM32_USB_Device_Library/Core/Inc -I../Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
-arm-none-eabi-gcc "../Core/Src/sysmem.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DUSE_HAL_DRIVER -DDEBUG -DSTM32F407xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -I../../trainctl -I../Middlewares/Third_Party/FreeRTOS/Source/include -I../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F -I../USB_DEVICE/App -I../USB_DEVICE/Target -I../Middlewares/ST/STM32_USB_Device_Library/Core/Inc -I../Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Core/Src/sysmem.d" -MT"Core/Src/sysmem.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/sysmem.o"
-arm-none-eabi-gcc "../Core/Src/system_stm32f4xx.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DUSE_HAL_DRIVER -DDEBUG -DSTM32F407xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -I../../trainctl -I../Middlewares/Third_Party/FreeRTOS/Source/include -I../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F -I../USB_DEVICE/App -I../USB_DEVICE/Target -I../Middlewares/ST/STM32_USB_Device_Library/Core/Inc -I../Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Core/Src/system_stm32f4xx.d" -MT"Core/Src/system_stm32f4xx.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/system_stm32f4xx.o"
-arm-none-eabi-gcc "/Users/danielbraun/devel/train/sw/BLE/bletask.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DUSE_HAL_DRIVER -DDEBUG -DSTM32F407xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -I../../trainctl -I../Middlewares/Third_Party/FreeRTOS/Source/include -I../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F -I../USB_DEVICE/App -I../USB_DEVICE/Target -I../Middlewares/ST/STM32_USB_Device_Library/Core/Inc -I../Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"BLE/bletask.d" -MT"BLE/bletask.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "BLE/bletask.o"
+arm-none-eabi-gcc "/Users/danielbraun/devel/train/sw/ina3221/ina3221.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DUSE_HAL_DRIVER -DDEBUG -DSTM32F407xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -I../../trainctl -I../Middlewares/Third_Party/FreeRTOS/Source/include -I../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F -I../USB_DEVICE/App -I../USB_DEVICE/Target -I../Middlewares/ST/STM32_USB_Device_Library/Core/Inc -I../Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"ina3221/ina3221.d" -MT"ina3221/ina3221.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "ina3221/ina3221.o"
+/Users/danielbraun/devel/train/sw/ina3221/ina3221.c: In function 'i2c_ready':
+/Users/danielbraun/devel/train/sw/ina3221/ina3221.c:64:6: warning: implicit declaration of function 'osDelay'; did you mean 'HAL_Delay'? [-Wimplicit-function-declaration]
+      osDelay(100*5);
+      ^~~~~~~
+      HAL_Delay
+/Users/danielbraun/devel/train/sw/ina3221/ina3221.c:83:30: warning: variable 's3' set but not used [-Wunused-but-set-variable]
+     HAL_StatusTypeDef s1,s2, s3;
+                              ^~
+/Users/danielbraun/devel/train/sw/ina3221/ina3221.c:83:26: warning: variable 's2' set but not used [-Wunused-but-set-variable]
+     HAL_StatusTypeDef s1,s2, s3;
+                          ^~
+/Users/danielbraun/devel/train/sw/ina3221/ina3221.c:83:23: warning: variable 's1' set but not used [-Wunused-but-set-variable]
+     HAL_StatusTypeDef s1,s2, s3;
+                       ^~
+/Users/danielbraun/devel/train/sw/ina3221/ina3221.c:57:14: warning: unused variable 'did' [-Wunused-variable]
+     uint16_t did = ina3221_read16(a,  INA3221_REG_DIE_ID);
+              ^~~
+/Users/danielbraun/devel/train/sw/ina3221/ina3221.c:55:14: warning: unused variable 'mid' [-Wunused-variable]
+     uint16_t mid = ina3221_read16(a, INA3221_REG_MANUFACTURER_ID);
+              ^~~
+/Users/danielbraun/devel/train/sw/ina3221/ina3221.c:52:20: warning: unused variable 'status' [-Wunused-variable]
+  HAL_StatusTypeDef status;
+                    ^~~~~~
 arm-none-eabi-gcc -o "stm32f407VETx.elf" @"objects.list"   -mcpu=cortex-m4 -T"/Users/danielbraun/devel/train/sw/stm32f407VETx/STM32F407VETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="stm32f407VETx.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
-Core/Src/main.o: In function `StartDefaultTask':
-/Users/danielbraun/devel/train/sw/stm32f407VETx/Debug/../Core/Src/main.c:1203: undefined reference to `ina3221_init'
-trainctl/traincontrol.o: In function `train_run_tick':
-/Users/danielbraun/devel/train/sw/trainctl/traincontrol.c:83: undefined reference to `ina3221_start_read'
-/Users/danielbraun/devel/train/sw/trainctl/traincontrol.c:105: undefined reference to `ina3221_values'
-collect2: error: ld returned 1 exit status
-make: *** [makefile:62: stm32f407VETx.elf] Error 1
-"make -j3 all" terminated with exit code 2. Build might be incomplete.
+Finished building target: stm32f407VETx.elf
+ 
+arm-none-eabi-objdump -h -S  stm32f407VETx.elf  > "stm32f407VETx.list"
+arm-none-eabi-objcopy  -O binary  stm32f407VETx.elf  "stm32f407VETx.bin"
+arm-none-eabi-size   stm32f407VETx.elf 
+   text	   data	    bss	    dec	    hex	filename
+  94084	    912	  35840	 130836	  1ff14	stm32f407VETx.elf
+Finished building: default.size.stdout
+ 
+Finished building: stm32f407VETx.bin
+ 
+Finished building: stm32f407VETx.list
+ 
 
-15:13:05 Build Failed. 4 errors, 0 warnings. (took 2m:34s.805ms)
+15:47:46 Build Finished. 0 errors, 7 warnings. (took 11s.766ms)
 

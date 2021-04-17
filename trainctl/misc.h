@@ -24,6 +24,8 @@
 #include "train_simu.h"
 #endif
 
+#include "utils/itm_debug.h"
+
 void flash_led(void);
 
 #define INCLUDE_CALIB 0
@@ -129,10 +131,5 @@ static inline void debug_info(uint32_t sel, uint32_t num, char *msg, int v1, int
 	trainctl_notif2(sel, num, 'D', msg, v1, v2, v3);
 }
 /* ================================================================= */
-
-void itm_debug1(const char *msg, int v);
-void itm_debug2(const char *msg, int v1, int v2);
-void itm_debug3(const char *msg, int v1, int v2, int v3);
-
 
 #endif /* TRAINCTL_MISC_H_ */

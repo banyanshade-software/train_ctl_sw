@@ -48,7 +48,7 @@ void pidctl_set_target(const pidctl_config_t *c, pidctl_vars_t *v, int32_t val)
 	v->target_v = val;
 }
 
-#define MAX_I (3000*100)
+#define MAX_I (25000)
 
 int32_t pidctl_value(const pidctl_config_t *c, pidctl_vars_t *v, int32_t cur_v, uint32_t dt)
 {
@@ -69,6 +69,8 @@ int32_t pidctl_value(const pidctl_config_t *c, pidctl_vars_t *v, int32_t cur_v, 
 	int32_t iv = v->sume / 100;
 
 	//debug_info('T', 0, "PID  ", err, iv, dv);
+	itm_debug2("pid tc", v->target_v, cur_v);
+    itm_debug3("pid edi", err, dv, v->sume);
 
 	int32_t r = c->kP * err + (c->kD * dv)/1000 + c->kI * iv;
 	//debug_info('T', 0, "PID*k",  c->kP * err, c->kI * iv, (c->kD * dv)/1000);

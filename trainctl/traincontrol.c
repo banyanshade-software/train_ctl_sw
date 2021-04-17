@@ -77,12 +77,33 @@ void train_run_tick( uint32_t notif_flags, uint32_t tick, uint32_t dt)
 	}
 
 #ifdef USE_INA3221
-	if (0 || (train_ntick%11)==1) {
-	    if ((notif_flags & NOTIF_NEW_ADC_1)) debug_info('T', 0, "INA3221/1 ", ina3221_values[0], ina3221_values[1], ina3221_values[2]);
-	    if ((notif_flags & NOTIF_NEW_ADC_2)) debug_info('T', 0, "INA3221/2 ", ina3221_values[0], ina3221_values[1], ina3221_values[2]);
+	if (0 || (train_ntick%3)==1) {
+	    if (0 &&(notif_flags & NOTIF_NEW_ADC_1)) debug_info('T', 0, "INA3221/1 ", ina3221_values[0], ina3221_values[1], ina3221_values[2]);
+	    if (0 &&(notif_flags & NOTIF_NEW_ADC_2)) debug_info('T', 0, "INA3221/2 ", ina3221_values[0], ina3221_values[1], ina3221_values[2]);
 		ina3221_start_read();
 	}
 #endif
+	// write(1, "train tick\r\n", 8);
+	if ((1)) {
+		switch (train_ntick%1000) {
+		case 0:
+			debug_info('T', 0, "INA NS", ina3221_nscan, train_ntick, HAL_GetTick());
+			break;
+		case 100:
+			debug_info('T', 0, "INA SD", ina3221_scan_dur, ina3221_inter_dur, 0);
+			break;
+		case 200: {
+			USE_TRAIN(0);
+			debug_info('C', 0, "SUME", tvars->pidvars.sume, 0, 0);
+			break;
+		}
+
+		default:
+			break;
+		}
+	}
+    itm_debug1("tick", train_ntick);
+
 
 	turnout_tick();
 	highlevel_tick();
@@ -137,6 +158,8 @@ static void train_periodic_control(int numtrain, int32_t dt)
 
 	int16_t v = tvars->target_speed;
 
+	itm_debug2("target", numtrain, v);
+
 	if (trainctl_test_mode) {
 		static int16_t lastspeed = 9999;
 		if (lastspeed != v) {
@@ -150,8 +173,14 @@ static void train_periodic_control(int numtrain, int32_t dt)
 		int changed;
 		tvars->inertiavars.target = tvars->target_speed;
 		v = inertia_value(&tconf->inertiacnf, &tvars->inertiavars, dt, &changed);
+		itm_debug3("inertia", numtrain, tvars->target_speed, v);
 	}
     
+	if ((1)) {
+		static int16_t lastspeed = 9999;
+		if (v != lastspeed) debug_info('T', 0, "trg.v= ", v,0,0);
+		lastspeed = v;
+	}
     if (tconf->enable_pid) {
         // corresponding BEMF target
         // 100% = 1.5V
@@ -291,6 +320,7 @@ static void _set_speed(const train_config_t *cnf, train_vars_t *vars, int16_t sv
 	}
 	int dir1 = sig * vars->current_canton_dir;
 	int dir2 = sig * vars->next_canton_dir;
+	itm_debug3("pwm", pvi1, dir1, pwm_duty);
 	canton_set_pwm(c1, cv1, dir1, pwm_duty);
 	if (cv2) canton_set_pwm(c2, cv2, dir2, pwm_duty);
 

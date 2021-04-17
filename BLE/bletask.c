@@ -10,15 +10,6 @@
 #include "cmsis_os.h"
 #include "bletask.h"
 
-int _write(int32_t file, uint8_t *ptr, int32_t len)
-{
-	for (int i = 0; i < len; i++)
-	{
-		ITM_SendChar(*ptr++);
-	}
-	return len;
-}
-
 static UART_HandleTypeDef *huart;
 static DMA_HandleTypeDef  *hdma_uart_rx;
 static DMA_HandleTypeDef  *hdma_uart_tx;

@@ -51,6 +51,7 @@ void set_pwm_freq(int freqhz)
 
 void run_task_ctrl(void)
 {
+
 	if ((0))   calibrate_bemf(); //XXXX
 	for (;;) {
 		uint32_t notif;

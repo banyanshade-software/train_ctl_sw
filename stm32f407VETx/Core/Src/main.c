@@ -190,6 +190,21 @@ extern void StartTaskAuto(void *argument);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+uint32_t GetCurrentMicro(void)
+{
+  uint32_t m0 = HAL_GetTick();
+  uint32_t u0 = SysTick->LOAD - SysTick->VAL;
+  uint32_t m1 = HAL_GetTick();
+  uint32_t u1 = SysTick->LOAD - SysTick->VAL;
+
+  if (m1 > m0) {
+    return ( m1 * 1000 + (u1 * 1000) / SysTick->LOAD);
+  } else {
+    return ( m0 * 1000 + (u0 * 1000) / SysTick->LOAD);
+  }
+}
+
+
 
 /* USER CODE END 0 */
 
@@ -523,7 +538,7 @@ static void MX_I2C3_Init(void)
 
   /* USER CODE END I2C3_Init 1 */
   hi2c3.Instance = I2C3;
-  hi2c3.Init.ClockSpeed = 400000;
+  hi2c3.Init.ClockSpeed = 100000;
   hi2c3.Init.DutyCycle = I2C_DUTYCYCLE_2;
   hi2c3.Init.OwnAddress1 = 0;
   hi2c3.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;

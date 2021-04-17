@@ -256,18 +256,11 @@ void TIM8_TRG_COM_TIM14_IRQHandler(void)
 void UART4_IRQHandler(void)
 {
   /* USER CODE BEGIN UART4_IRQn 0 */
-	if (huart4.Instance->SR & UART_FLAG_IDLE) {     /* if Idle flag is set */
-		volatile uint32_t tmp;                  	/* volatile to prevent optimizations */
-		tmp = huart4.Instance->SR;                  /* Read status register and data reg to clear RX flag*/
-		tmp = huart4.Instance->DR;
-		(void) tmp;									/* only to not have the compiler warning (variable not used) */
 
-		hdma_uart4_rx.Instance->CR &= ~DMA_SxCR_EN; /* Disabling DMA will force transfer complete interrupt if enabled */
-	} else {  // else (not IDLE interrupt) use the normal HAL IRQHandler function
   /* USER CODE END UART4_IRQn 0 */
   HAL_UART_IRQHandler(&huart4);
   /* USER CODE BEGIN UART4_IRQn 1 */
-	}
+
   /* USER CODE END UART4_IRQn 1 */
 }
 

@@ -91,12 +91,14 @@ static inline int turnout_error(int code, const char *msg)
 
 static inline void *config_error(int code, const char *msg)
 {
+	itm_debug1(msg, code);
 	trainctl_error('G', code, msg);
 	return NULL;
 }
 
 static inline void *runtime_error(int code, const char *msg)
 {
+	itm_debug1(msg, code);
 	trainctl_error('G', code, msg);
 	return NULL;
 }
@@ -128,6 +130,9 @@ static inline void debug_info(uint32_t sel, uint32_t num, char *msg, int v1, int
 }
 /* ================================================================= */
 
+void itm_debug1(const char *msg, int v);
+void itm_debug2(const char *msg, int v1, int v2);
+void itm_debug3(const char *msg, int v1, int v2, int v3);
 
 
 #endif /* TRAINCTL_MISC_H_ */

@@ -53,7 +53,7 @@ void StartTxRxFrameTask(void *argument)
 		uint8_t msg_prio;
 		osStatus_t rc = osMessageQueueGet(frameQueueHandle, &m, &msg_prio, portMAX_DELAY);
 		num_msg_get++;
-		flash_led();
+		if ((0)) flash_led();
 		if (rc != osOK) {
 			num_msg_get_err++;
 			continue;

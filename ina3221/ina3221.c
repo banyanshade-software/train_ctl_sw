@@ -14,6 +14,8 @@
 #include "ina3221_config.h"
 
 
+#include "railconfig.h" // for ugly hack
+
 uint16_t ina3221_errors = 0;
 
 static uint16_t ina3221_read16(int a, int reg)
@@ -46,6 +48,7 @@ int16_t ch2vs;
 int16_t ch3vs;
 
 static uint16_t addr = 0;
+
 static void i2c_ready(int a)
 {
 	addr = a;
@@ -65,7 +68,7 @@ static void i2c_ready(int a)
     	//if ((1)) return;
     }
     w16 = INA3221_CONF_CH1_EN | INA3221_CONF_CH2_EN | INA3221_CONF_CH3_EN
-    		| INA3221_CONF_VS_CT_140u | INA3221_CONF_AVG4
+    		| INA3221_CONF_VS_CT_140u | INA3221_CONF_AVG1
 			| INA3221_CONF_MODE_CONTINUOUS | INA3221_CONF_MODE_SHUNT;
 	ina3221_write16(a, INA3221_REG_CONFIG, w16);
 
@@ -94,9 +97,18 @@ static void i2c_ready(int a)
 }
 
 int16_t ina3221_values[3];
+int16_t ina3221_prev[3];
+uint32_t ina3221_nscan = 0;
+uint32_t ina3221_scan_dur = 0;
+uint32_t ina3221_inter_dur = 0;
+uint32_t ina3221_errcnt = 0;
+static uint32_t t0;
+static uint32_t t1;
 
-#if 0
-static int get_reg_step;
+uint32_t GetCurrentMicro(void);
+
+#if 1
+static int get_reg_step = -1;
 static void _get_next_reg(void)
 {
 	int reg;
@@ -111,8 +123,39 @@ static void _get_next_reg(void)
 		reg = INA3221_REG_CH3_SHUNTVOLT;
 		break;
 	case 3:
+		ina3221_nscan++;
+		//ina3221_scan_dur = HAL_GetTick() - t0;
+		uint32_t tm = GetCurrentMicro();
+		ina3221_scan_dur = tm - t0;
+		t1 = tm;
 		for (int i=0 ;i<3; i++) {
+#if 0
 			ina3221_values[i]=__builtin_bswap16(ina3221_values[i]);
+#else
+			//ugly hack
+			ina3221_prev[i] = ina3221_values[i];
+			ina3221_values[i] =__builtin_bswap16(ina3221_values[i]);
+
+			USE_TRAIN(0)	// tconf tvars
+			int16_t v = tvars->target_speed;
+			if (i==1) {
+				if ((abs(ina3221_prev[i])<5000) && (abs(ina3221_values[i])>=5000) && (v>0)) {
+					tvars->target_speed = -v;
+					itm_debug1("inv1", tvars->target_speed);
+					flash_led();
+				}
+			} else if (i==0) {
+				if ((abs(ina3221_prev[i])<5000) && (abs(ina3221_values[i])>=5000) && (v<0)) {
+					tvars->target_speed = -v;
+					itm_debug1("inv0", tvars->target_speed);
+					flash_led();
+				}
+			}
+			ina3221_values[i]=__builtin_bswap16(ina3221_values[i]);
+#endif
+			get_reg_step = -1;
+			itm_debug3("i", ina3221_values[0],ina3221_values[1],ina3221_values[2]);
+
 		}
 		return;
 	default:
@@ -126,6 +169,14 @@ static void _get_next_reg(void)
 
 void ina3221_start_read(void)
 {
+	if (get_reg_step != -1) {
+		itm_debug1("ina rd ko", get_reg_step);
+		return;
+	}
+	itm_debug1("ina rd", ina3221_errcnt);
+	//t0 = HAL_GetTick();
+	t0 = GetCurrentMicro();
+	ina3221_inter_dur = t0 - t1;
 	get_reg_step = 0;
 	_get_next_reg();
 }
@@ -159,7 +210,9 @@ void HAL_I2C_MemRxCpltCallback(I2C_HandleTypeDef *hi2c)
 
 void HAL_I2C_ErrorCallback(I2C_HandleTypeDef *hi2c)
 {
-
+	ina3221_errcnt++;
+    itm_debug2("i2c err", hi2c->ErrorCode, get_reg_step);
+    get_reg_step = -1;
 }
 static void I2C_Scan(void)
 {

@@ -89,4 +89,6 @@ LFMQUEUE_DEF_H(to_forward, msg_64_t)
 LFMQUEUE_DEF_H(from_forward, msg_64_t)
 
 
+void msgsrv_tick(uint32_t tick, uint32_t dt);
+
 #endif /* MSG_TRAINMSG_H_ */

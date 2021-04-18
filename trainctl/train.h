@@ -48,31 +48,7 @@ typedef struct train_config {
 	uint8_t min_power;
 } train_config_t;
 
-typedef struct train_vars {
-	pidctl_vars_t pidvars;
-	inertia_vars_t inertiavars;
-
-    //uint8_t prev_canton;
-    uint8_t current_canton;
-	uint8_t next_canton;
-	//int8_t  prev_canton_dir; // -1 or +1
-	int8_t  current_canton_dir; // -1 or +1
-	int8_t  next_canton_dir;
-
-	int16_t target_speed;
-
-	int16_t last_speed;
-	int16_t prev_last_speed;
-
-	uint16_t cur_c1_volt_idx;
-	uint16_t cur_c2_volt_idx;
-
-	int32_t position_estimate;
-	int32_t bemfiir;
-    int16_t v_iir;
-} train_vars_t;
-
-void train_reset(const train_config_t *c, train_vars_t *v);
+//void train_reset(const train_config_t *c, train_vars_t *v);
 int train_reset_pos_estimate(int tidx);
 
 

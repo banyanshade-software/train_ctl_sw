@@ -19,7 +19,7 @@
 
 #include "statval.h"
 #include "train.h"
-#include "canton.h"
+#include "low/canton_config.h"
 #include "railconfig.h"
 
 typedef struct {
@@ -37,7 +37,7 @@ typedef struct {
 #endif
 
 static const stat_val_t statvaltrain[] = {
-		{ offsetof(train_vars_t, pidvars.last_err), 4   _P("pid_last_err")},
+		/*{ offsetof(train_vars_t, pidvars.last_err), 4   _P("pid_last_err")},
 		{ offsetof(train_vars_t, pidvars.sume), 4       _P("pid_sum_e")},
 		{ offsetof(train_vars_t, pidvars.target_v), 4   _P("pid_target")},
 		{ offsetof(train_vars_t, inertiavars.target), 2 _P("ine_t")},
@@ -46,10 +46,10 @@ static const stat_val_t statvaltrain[] = {
 		{ offsetof(train_vars_t, last_speed), 2         _P("curspeed")},
         { offsetof(train_vars_t, position_estimate), 4  _P("train0_pose")},
         { offsetof(train_vars_t, bemfiir), 4            _P("bemfiir_centivolts")},
-};
+*/};
 
 static const stat_val_t statvalcanton[] = {
-		{ offsetof(canton_vars_t, cur_dir) , 1          _P("dir")},
+/*		{ offsetof(canton_vars_t, cur_dir) , 1          _P("dir")},
         { offsetof(canton_vars_t, cur_voltidx) , 1      _P("vidx")},
 		{ offsetof(canton_vars_t, cur_pwm_duty) , 2     _P("canton_%d_pwm")},
 		{ offsetof(canton_vars_t, bemf_centivolt) , 4   _P("canton_%d_bemfcentivolt")},
@@ -57,7 +57,7 @@ static const stat_val_t statvalcanton[] = {
         { offsetof(canton_vars_t, von_centivolt) , 2    _P("canton_%d_centivon")},
         { offsetof(canton_vars_t, i_on) , 2   		    _P("canton_%d_ion")},
         { offsetof(canton_vars_t, i_off) , 2            _P("canton_%d_ioff")},
-};
+*/};
 
 static int32_t _getval(void *ptr, off_t offset, int l)
 {
@@ -87,7 +87,9 @@ static const int numvalcanton = sizeof(statvalcanton)/sizeof(statvalcanton[0]);
 
 int32_t stat_val_get(int step, int *pdone)
 {
-	
+	*pdone = 1;
+	return 0;
+#if 0
 	*pdone = 0;
 	int nt = step / numvaltrain;
 	if (nt>=NUM_TRAINS) {
@@ -109,6 +111,7 @@ int32_t stat_val_get(int step, int *pdone)
 		const stat_val_t *sv = &statvaltrain[idx];
 		return _getval(vars, sv->off, sv->l);
 	}
+#endif
 }
 
 int get_val_info(int step, off_t *poffset, int *plen, int *ptridx, int *pcntidx, const char  **pzName, int numtrain, int numcanton)

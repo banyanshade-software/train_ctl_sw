@@ -29,16 +29,16 @@
  */
 #include "misc.h"
 #include "railconfig.h"
-#include "canton.h"
+#include "low/canton_config.h"
 #include "train.h"
-#include "turnout.h"
+#include "low/turnout_config.h"
 #include "param.h"
 
 
 #ifndef TRAIN_SIMU
-//#include "main.h"
+#include "main.h"
 
-
+#if 0
 #ifndef VOLT_0_SEL0_Pin
 #define VOLT_0_SEL0_Pin VOLT_SEL0_Pin
 #endif
@@ -70,6 +70,7 @@
 #define VOLT_0_SEL3_GPIO_Port VOLT_SEL3_GPIO_Port
 #endif
 
+#endif
 
 
 #else
@@ -134,7 +135,7 @@
 
 
 static  canton_config_t Cantons[NUM_CANTONS] = {
-		{CANTON_TYPE_PROTO1,
+		{//CANTON_TYPE_PROTO1,
 				//  0    1    2    3    4    5    6    7    8    9    10   11  12    13   14   15
 				//{ 1000, 874, 770, 699, 621, 578, 538, 507, 451, 432, 413, 398, 379, 367, 355, 345}, // volts[16]
 				{ 1000, 770, 621,  538, 451, 413, 379, 355}, // volts[8]
@@ -146,8 +147,8 @@ static  canton_config_t Cantons[NUM_CANTONS] = {
 				1, TIM_CHANNEL_1, TIM_CHANNEL_2,  // TIM_HandleTypeDef
 				0, /*notif BEMF */
 		},
-#if NUM_LOCAL_CANTONS == 5
-		{CANTON_TYPE_PROTO1,
+#if NUM_LOCAL_CANTONS == 8
+		{//CANTON_TYPE_PROTO1,
 				//  0    1    2    3    4    5    6    7    8    9    10   11  12    13   14   15
 				//{ 1000, 874, 770, 699, 621, 578, 538, 507, 451, 432, 413, 398, 379, 367, 355, 345}, // volts[16]
 								{ 1000, 770, 621,  538, 451, 413, 379, 355}, // volts[8]				//{ 1000, 0,    0, 0, 0, 621, 0,   0, 0, 0, 0, 0, 0, 0, 0, 0}, // volts[16]  V2
@@ -158,7 +159,7 @@ static  canton_config_t Cantons[NUM_CANTONS] = {
 				1, TIM_CHANNEL_3, TIM_CHANNEL_4,  // TIM_HandleTypeDef
 				0, /*notif BEMF */
 		},
-		{CANTON_TYPE_PROTO1,
+		{//CANTON_TYPE_PROTO1,
 				//  0    1    2    3    4    5    6    7    8    9    10   11  12    13   14   15
 				//{ 1000, 874, 770, 699, 621, 578, 538, 507, 451, 432, 413, 398, 379, 367, 355, 345}, // volts[16]
 								{ 1000, 770, 621,  538, 451, 413, 379, 355}, // volts[8]				//{ 1000, 0,    0, 0, 0, 621, 0,   0, 0, 0, 0, 0, 0, 0, 0, 0}, // volts[16]  V2
@@ -169,7 +170,7 @@ static  canton_config_t Cantons[NUM_CANTONS] = {
 				2, TIM_CHANNEL_3, TIM_CHANNEL_4,  // TIM_HandleTypeDef
 				0, /*notif BEMF */
 		},
-		{CANTON_TYPE_PROTO1,
+		{//CANTON_TYPE_PROTO1,
 				//  0    1    2    3    4    5    6    7    8    9    10   11  12    13   14   15
 				//{ 1000, 874, 770, 699, 621, 578, 538, 507, 451, 432, 413, 398, 379, 367, 355, 345}, // volts[16]
 								{ 1000, 770, 621,  538, 451, 413, 379, 355}, // volts[8]				//{ 1000, 0,    0, 0, 0, 621, 0,   0, 0, 0, 0, 0, 0, 0, 0, 0}, // volts[16]  V2
@@ -180,25 +181,47 @@ static  canton_config_t Cantons[NUM_CANTONS] = {
 				3, TIM_CHANNEL_1, TIM_CHANNEL_2,  // TIM_HandleTypeDef
 				0, /*notif BEMF */
 		},
-		{CANTON_TYPE_PROTO1,
-						//  0    1    2    3    4    5    6    7    8    9    10   11  12    13   14   15
+		{//CANTON_TYPE_PROTO1,
+				//  0    1    2    3    4    5    6    7    8    9    10   11  12    13   14   15
 				//{ 1000, 874, 770, 699, 621, 578, 538, 507, 451, 432, 413, 398, 379, 367, 355, 345}, // volts[16]
-								{ 1000, 770, 621,  538, 451, 413, 379, 355}, // volts[8]						//{ 1000, 0,    0, 0, 0, 621, 0,   0, 0, 0, 0, 0, 0, 0, 0, 0}, // volts[16]  V2
-						//{ 1000, 874,  0, 0, 0, 621, 538, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // volts[16]  V4
+				{ 1000, 770, 621,  538, 451, 413, 379, 355}, // volts[8]						//{ 1000, 0,    0, 0, 0, 621, 0,   0, 0, 0, 0, 0, 0, 0, 0, 0}, // volts[16]  V2
+				//{ 1000, 874,  0, 0, 0, 621, 538, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // volts[16]  V4
 
-						VOLT_4_SEL0_GPIO_Port, VOLT_4_SEL1_GPIO_Port, VOLT_4_SEL2_GPIO_Port, //0/*VOLT_4_SEL3_GPIO_Port*/,
-						VOLT_4_SEL0_Pin, VOLT_4_SEL1_Pin, VOLT_4_SEL2_Pin, //0/* VOLT_4_SEL3_Pin*/,
-						3, TIM_CHANNEL_3, TIM_CHANNEL_4,  // TIM_HandleTypeDef
-						0, /*notif BEMF */
-				},
+				VOLT_4_SEL0_GPIO_Port, VOLT_4_SEL1_GPIO_Port, VOLT_4_SEL2_GPIO_Port, //0/*VOLT_4_SEL3_GPIO_Port*/,
+				VOLT_4_SEL0_Pin, VOLT_4_SEL1_Pin, VOLT_4_SEL2_Pin, //0/* VOLT_4_SEL3_Pin*/,
+				3, TIM_CHANNEL_3, TIM_CHANNEL_4,  // TIM_HandleTypeDef
+				0, /*notif BEMF */
+		},
+
+		{
+				{ 1000, 770, 621,  538, 451, 413, 379, 355}, // volts[8]						//{ 1000, 0,    0, 0, 0, 621, 0,   0, 0, 0, 0, 0, 0, 0, 0, 0}, // volts[16]  V2
+				NULL, NULL, NULL,
+				0, 0, 0,
+				0, 0, 0,
+				0
+		},
+		{
+				{ 1000, 770, 621,  538, 451, 413, 379, 355}, // volts[8]						//{ 1000, 0,    0, 0, 0, 621, 0,   0, 0, 0, 0, 0, 0, 0, 0, 0}, // volts[16]  V2
+				NULL, NULL, NULL,
+				0, 0, 0,
+				0, 0, 0,
+				0
+		},
+		{
+				{ 1000, 770, 621,  538, 451, 413, 379, 355}, // volts[8]						//{ 1000, 0,    0, 0, 0, 621, 0,   0, 0, 0, 0, 0, 0, 0, 0, 0}, // volts[16]  V2
+				NULL, NULL, NULL,
+				0, 0, 0,
+				0, 0, 0,
+				0
+		}
 
 #else
 #error holala
 #endif
 
 #ifdef ADD_DUMMY_CANTON
-
-		{CANTON_TYPE_DUMMY,
+#error obsolete
+		{//CANTON_TYPE_DUMMY,
             //  0    1    2    3    4    5    6    7    8    9    10   11  12    13   14   15
 				//{ 1000, 874, 770, 699, 621, 578, 538, 507, 451, 432, 413, 398, 379, 367, 355, 345}, // volts[16]
 								{ 1000, 770, 621,  538, 451, 413, 379, 355}, // volts[8]            //{ 1000, 0,    0, 0, 0, 621, 0,   0, 0, 0, 0, 0, 0, 0, 0, 0}, // volts[16]  V2
@@ -209,6 +232,8 @@ static  canton_config_t Cantons[NUM_CANTONS] = {
 		},
 #endif
 };
+
+#if 0
 static  block_canton_config_t BlockCantons[NUM_CANTONS] = {
 		/*  uint8_t left_a;
 			uint8_t left_b;
@@ -225,6 +250,7 @@ static  block_canton_config_t BlockCantons[NUM_CANTONS] = {
 		{{0xFF, 0xFF, 0xFF}, {0xFF, 0xFF, 0xFF},  50},
 
 };
+#endif
 
 static  train_config_t Trains[NUM_TRAINS] = {
 		{
@@ -261,10 +287,10 @@ static const turnout_config_t Turnouts[NUM_TURNOUTS] = {
 };
 
 
-        static canton_vars_t  CantonsVars[NUM_CANTONS];
-        static block_canton_vars_t  BlockCantonsVars[NUM_CANTONS];
-        static train_vars_t   TrainsVars[NUM_TRAINS];
-        static turnout_vars_t TurnoutVars[NUM_TURNOUTS];
+        //static canton_vars_t  CantonsVars[NUM_CANTONS];
+        //static block_canton_vars_t  BlockCantonsVars[NUM_CANTONS];
+        //static train_vars_t   TrainsVars[NUM_TRAINS];
+        //static turnout_vars_t TurnoutVars[NUM_TURNOUTS];
 
 static int setup_done = 0;
 
@@ -274,14 +300,15 @@ const canton_config_t *get_canton_cnf(int idx)
 	if ((idx<0) || (idx>= NUM_CANTONS)) return NULL;
 	return &Cantons[idx];
 }
-
+/*
 canton_vars_t *get_canton_vars(int idx)
 {
 	if (!setup_done) return config_error(ERR_SETUP_KO, "railconfig_setup_default not called");
 	if ((idx<0) || (idx>= NUM_CANTONS)) return NULL;
 	return &CantonsVars[idx];
 }
-
+*/
+/*
 const block_canton_config_t *get_block_canton_cnf(int idx)
 {
 	if (!setup_done) return config_error(ERR_SETUP_KO, "railconfig_setup_default not called");
@@ -295,6 +322,7 @@ block_canton_vars_t *get_block_canton_vars(int idx)
 	if ((idx<0) || (idx>= NUM_CANTONS)) return NULL;
 	return &BlockCantonsVars[idx];
 }
+*/
 const train_config_t *get_train_cnf(int idx)
 {
 	if (!setup_done) return config_error(ERR_SETUP_KO, "railconfig_setup_default not called");
@@ -302,6 +330,7 @@ const train_config_t *get_train_cnf(int idx)
 	return &Trains[idx];
 }
 
+/*
 train_vars_t *get_train_vars(int idx)
 {
 	if (!setup_done) return config_error(ERR_SETUP_KO, "railconfig_setup_default not called");
@@ -309,21 +338,23 @@ train_vars_t *get_train_vars(int idx)
 	return &TrainsVars[idx];
 }
 
-
+*/
 const turnout_config_t  *get_turnout_cnf(int idx)
 {
 	if (!setup_done) return config_error(ERR_SETUP_KO, "railconfig_setup_default not called");
 	if ((idx<0) || (idx>= NUM_TURNOUTS)) return NULL;
 	return &Turnouts[idx];
 }
+/*
 turnout_vars_t  *get_turnout_vars(int idx)
 {
 	if (!setup_done) return config_error(ERR_SETUP_KO, "railconfig_setup_default not called");
 	if ((idx<0) || (idx>= NUM_TURNOUTS)) return NULL;
 	return &TurnoutVars[idx];
 }
+*/
 
-
+/*
 int canton_idx(canton_vars_t *v)
 {
 	return (int)(v-&CantonsVars[0]);
@@ -342,7 +373,9 @@ int turnout_idx(turnout_vars_t *v)
 {
 	return (int)(v-&TurnoutVars[0]);
 }
+*/
 
+/*
 void railconfig_setup_default(void)
 {
     setup_done = 1;
@@ -367,5 +400,6 @@ void railconfig_setup_default(void)
 		turnout_reset(i);
 	}
 }
+*/
 
 

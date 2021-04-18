@@ -103,8 +103,8 @@ void canton_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
 				canton_set_volt(cconf, cvars,  7);
 				break;
 			case CMD_SETVPWM:
-				canton_set_pwm(cconf, cvars, 0, 0);
-				canton_set_volt(cconf, cvars,  7);
+				canton_set_pwm(cconf, cvars, SIGNOF(m.v2), abs(m.v2));
+				canton_set_volt(cconf, cvars,  m.v1);
 				break;
 			}
 		} else {

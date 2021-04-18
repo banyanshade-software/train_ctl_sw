@@ -5,6 +5,7 @@
  *      Author: danielbraun
  */
 
+#if 0
 #include <memory.h>
 #include "block_canton.h"
 #include "railconfig.h"
@@ -88,4 +89,4 @@ void block_canton_get_next(uint8_t numcanton, int8_t dir, uint8_t *pnext, int8_t
 	}
 
 }
-
+#endif

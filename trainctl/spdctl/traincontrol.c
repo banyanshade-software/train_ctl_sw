@@ -31,14 +31,13 @@
 #include "auto1.h"
 #include "txrxcmd.h"
 
-#ifdef USE_INA3221
-#include "../ina3221/ina3221.h"
-#endif
+//#ifdef USE_INA3221
+//#include "../ina3221/ina3221.h"
+//#endif
 
-volatile  uint8_t trainctl_test_mode = 0;
+//volatile  uint8_t trainctl_test_mode = 0;
 
-static void _set_speed(const train_config_t *cnf, train_vars_t *vars, int16_t v);
-static void _set_speed_test_mode(int16_t sv100);
+//static void _set_speed_test_mode(int16_t sv100);
 
 
 //static void process_adc(volatile adc_buffer_t *buf, int32_t ticks);
@@ -48,16 +47,109 @@ static volatile int stop_all = 0;
 static int calibrating=0;
 void calibrate_periodic(uint32_t tick, uint32_t dt, uint32_t notif_Flags);
 
-static void highlevel_tick(void);
+//static void highlevel_tick(void);
 
 uint32_t train_tick_last_dt = 0;
 uint32_t train_ntick = 0;
 
-void train_run_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
+
+typedef struct train_vars {
+	int16_t target_speed;
+
+	int32_t bemf_cv;
+	pidctl_vars_t pidvars;
+	inertia_vars_t inertiavars;
+
+    uint8_t C1;	// current canton adress
+	uint8_t C2; // next canton address
+
+	int8_t  current_canton_dir; // -1 or +1
+	int8_t  next_canton_dir;
+
+
+	int16_t last_speed;
+	int16_t prev_last_speed;
+
+	uint16_t cur_c1_volt_idx;
+	uint16_t cur_c2_volt_idx;
+
+	int32_t position_estimate;
+	int32_t bemfiir;
+    int16_t v_iir;
+} train_vars_t;
+
+static train_vars_t trspc_vars[8];
+
+
+#define USE_TRAIN(_idx) \
+		const train_config_t *tconf = get_train_cnf(_idx); \
+		train_vars_t         *tvars = &trspc_vars[_idx];
+
+
+static void train_periodic_control(int numtrain, int32_t dt);
+static void _set_speed(int tidx, const train_config_t *cnf, train_vars_t *vars);
+static void spdctl_reset(void);
+static void set_c1_c2(int num, train_vars_t *tvars, uint8_t c1, int8_t dir1, uint8_t c2, int8_t dir2);
+
+
+static void spdctl_reset(void)
+{
+	memset(trspc_vars, 0, sizeof(trspc_vars));
+	for (int  i = 0; i<8; i++) {
+		trspc_vars[i].C1 = 0xFF;
+		trspc_vars[i].C2 = 0xFF;
+	}
+}
+
+void spdctl_run_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
 {
 	train_tick_last_dt = dt;
 	train_ntick++;
 
+	static int first=1;
+	if (first) {
+		first = 0;
+		spdctl_reset();
+	}
+	/* process messages */
+	for (;;) {
+		msg_64_t m;
+		int rc = mqf_read_to_spdctl(&m);
+		if (rc) break;
+		if (IS_TRAIN_SC(m.to)) {
+			int tidx = m.to & 0x7;
+			USE_TRAIN(tidx)
+			switch (m.cmd) {
+			case CMD_BEMF_NOTIF:
+				if (m.from == tvars->C1) {
+					tvars->bemf_cv = m.v1;
+					break;
+				} else if (m.from == tvars->C2) {
+					// check it ?
+				} else {
+					// error
+				}
+			case CMD_SET_TARGET_SPEED:
+				tvars->target_speed = m.v1;
+				break;
+			case CMD_SET_C1_C2:
+				set_c1_c2(tidx, tvars, m.vbytes[0], m.vbytes[1], m.vbytes[2], m.vbytes[3]);
+				break;
+			}
+
+		} else if (IS_BROADCAST(m.to)) {
+			switch (m.cmd) {
+			case CMD_RESET: // FALLTHRU
+			case CMD_EMERGENCY_STOP:
+				spdctl_reset();
+				break;
+			}
+		}
+	}
+	/* process trains */
+	for (int i=0; i<7; i++) {
+		train_periodic_control(i, dt);
+	}
 /*
 	if (notif_flags & NOTIF_STARTUP) {
 		static int n=0;
@@ -153,7 +245,7 @@ static void train_periodic_control(int numtrain, int32_t dt)
 {
 	if (stop_all) return;
 
-	num_train_periodic_control++;
+	//num_train_periodic_control++;
 
 	USE_TRAIN(numtrain)	// tconf tvars
 
@@ -161,14 +253,14 @@ static void train_periodic_control(int numtrain, int32_t dt)
 
 	itm_debug2("target", numtrain, v);
 
-	if (trainctl_test_mode) {
+	/*if (trainctl_test_mode) {
 		static int16_t lastspeed = 9999;
 		if (lastspeed != v) {
 			_set_speed_test_mode(v);
 			lastspeed = v;
 		}
         return;
-	}
+	}*/
     // inertia before PID
 	if (1==tconf->enable_inertia) {
 		int changed;
@@ -189,15 +281,18 @@ static void train_periodic_control(int numtrain, int32_t dt)
         pidctl_set_target(&tconf->pidcnf, &tvars->pidvars, tbemf);
         notif_target_bemf(tconf, tvars, tbemf);
     }
+    /*
     canton_vars_t *cv = get_canton_vars(tvars->current_canton);
     int32_t bemf = cv->bemf_centivolt;
+    */
+    int32_t bemf = tvars->bemf_cv;
     if (tconf->bemfIIR) {
     	tvars->bemfiir = (80*tvars->bemfiir + 20*bemf)/100;
     	bemf = tvars->bemfiir;
     }
     if (tconf->enable_pid) {
     	if (tvars->target_speed) tvars->pidvars.stopped = 0;
-        if (!tvars->pidvars.stopped && (tvars->target_speed == 0) && (abs(cv->bemf_centivolt)<10)) {
+        if (!tvars->pidvars.stopped && (tvars->target_speed == 0) && (abs(tvars->bemf_cv)<10)) {
         	//debug_info('T', 0, "ZERO", cv->bemf_centivolt,0, 0);
 			pidctl_reset(&tconf->pidcnf, &tvars->pidvars);
 			debug_info('T', numtrain, "STOP_PID", 0,0, 0);
@@ -207,8 +302,6 @@ static void train_periodic_control(int numtrain, int32_t dt)
         	v = 0;
         } else {
         	//const canton_config_t *cc = get_canton_cnf(vars->current_canton);
-
-
         	if (bemf>MAX_PID_VALUE)  bemf=MAX_PID_VALUE; // XXX
         	if (bemf<-MAX_PID_VALUE) bemf=-MAX_PID_VALUE;
 
@@ -228,32 +321,34 @@ static void train_periodic_control(int numtrain, int32_t dt)
         tvars->inertiavars.target = v;
         v = inertia_value(&tconf->inertiacnf, &tvars->inertiavars, dt, NULL);
     }
+
+    if (tconf->en_spd2pow) {
+    	// [0-100] -> [min_pwm .. MAX_PWM]
+    	int s = SIGNOF(v);
+    	int a = abs(v);
+    	int v2 = (a>1) ? a * (MAX_PWM-tconf->min_power)/100 + tconf->min_power : 0;
+    	v = s * v2;
+    }
+
     int changed = (tvars->last_speed != v);
     tvars->last_speed = v;
 
     if (changed) {
-    	if (tconf->en_spd2pow) {
-    		// [0-100] -> [min_pwm .. MAX_PWM]
-    		int s = SIGNOF(v);
-    		int a = abs(v);
-    		int v2 = (a>1) ? a * (MAX_PWM-tconf->min_power)/100 + tconf->min_power : 0;
-    		v = s * v2;
-    	}
-        _set_speed(tconf, tvars, v);
+    	_set_speed(numtrain, tconf, tvars);
     }
     if (tconf->notify_speed) {
-    		struct spd_notif n;
-    		n.sv100 = v;
-    		n.pid_target = tvars->pidvars.target_v;
-    		canton_vars_t *cv1 = get_canton_vars(tvars->current_canton);
-    		n.bemf_centivolt = cv1->bemf_centivolt;
-    		train_notif(numtrain, 'V', (void *)&n, sizeof(n));
-    	}
+    	struct spd_notif n;
+    	n.sv100 = v;
+    	n.pid_target = tvars->pidvars.target_v;
+    	//canton_vars_t *cv1 = get_canton_vars(tvars->current_canton);
+    	n.bemf_centivolt = tvars->bemf_cv; //cv1->bemf_centivolt;
+    	train_notif(numtrain, 'V', (void *)&n, sizeof(n));
+    }
 
     /* estimate speed/position with bemf */
     if ((1)) {
-    	canton_vars_t *cv = get_canton_vars(tvars->current_canton);
-        int32_t b = cv->bemf_centivolt;
+    	//canton_vars_t *cv = get_canton_vars(tvars->current_canton);
+        int32_t b = tvars->bemf_cv; //cv->bemf_centivolt;
         if (abs(b)<25) b = 0;
         // TODO: BEMF to speed. currently part of it is done in convert_to_centivolt
         //       but we assume speed is really proportional to BEMF
@@ -264,6 +359,44 @@ static void train_periodic_control(int numtrain, int32_t dt)
     }
 }
 
+
+static void set_c1_c2(int tidx, train_vars_t *tvars, uint8_t c1, int8_t dir1, uint8_t c2, int8_t dir2)
+{
+	msg_64_t m;
+	m.from = MA_TRAIN_SC(tidx);
+
+	if ((tvars->C1 != 0xFF) && (tvars->C1 != c1)  && (tvars->C1 != c2)) {
+		m.to = tvars->C1;
+		m.cmd = CMD_STOP;
+		mqf_write_from_spdctl(&m);
+		m.cmd = CMD_BEMF_OFF;
+		mqf_write_from_spdctl(&m);
+	}
+	if ((tvars->C2 != 0xFF) && (tvars->C2 != c1)  && (tvars->C2 != c2)) {
+		m.to = tvars->C2;
+		m.cmd = CMD_STOP;
+		mqf_write_from_spdctl(&m);
+		m.cmd = CMD_BEMF_OFF;
+		mqf_write_from_spdctl(&m);
+	}
+	if ((c1 != 0xFF) && (c1 != tvars->C1) && (c1 != tvars->C2)) {
+		m.to = tvars->C1;
+		m.cmd = CMD_BEMF_ON;
+		mqf_write_from_spdctl(&m);
+	}
+	if ((c2 != 0xFF) && (c2 != tvars->C1) && (c2 != tvars->C2)) {
+		m.to = tvars->C2;
+		m.cmd = CMD_BEMF_ON;
+		mqf_write_from_spdctl(&m);
+	}
+	tvars->C1 = c1;
+	tvars->current_canton_dir = dir1;
+	tvars->C2 = c2;
+	tvars->next_canton_dir = dir2;
+	tvars->last_speed = 9000; // make sure cmd is sent
+}
+
+#if 0
 static void _set_speed_test_mode(int16_t sv100)
 {
 	USE_TRAIN(0)
@@ -283,53 +416,59 @@ static void _set_speed_test_mode(int16_t sv100)
 		canton_set_pwm(c1, cv1, sig, pwm_duty);
 	}
 }
+#endif
 
 
-
-static void _set_speed(const train_config_t *cnf, train_vars_t *vars, int16_t sv100)
+static void _set_speed(int tidx, const train_config_t *cnf, train_vars_t *vars)
 {
     const canton_config_t *c1;
     const canton_config_t *c2;
-    canton_vars_t *cv1;
-    canton_vars_t *cv2;
+
+
+	int16_t sv100 = vars->last_speed;
+
+    //num_set_speed++;
+
+
+    c1 =  get_canton_cnf(vars->C1);
+    c2 =  get_canton_cnf(vars->C2);
     
-    num_set_speed++;
-    c1 =  get_canton_cnf(vars->current_canton);
-    c2 =  get_canton_cnf(vars->next_canton);
-    cv1 = get_canton_vars(vars->current_canton);
-    cv2 = get_canton_vars(vars->next_canton);
-    
-    if (!c1 || !cv1) {
+    if (!c1) {
         train_error(ERR_CANTON_NONE, "no canton");
         return;
     }
+
     int pvi1, pvi2;
     int sig = SIGNOF(sv100);
     uint16_t v = abs(sv100);
     uint16_t pwm_duty = volt_index(v*10 /* mili*/,
-                                   c1, cv1, c2, cv2,
+                                   c1, c2,
                                    &pvi1, &pvi2, cnf->volt_policy);
-    if (pvi1 != vars->cur_c1_volt_idx) {
-        vars->cur_c1_volt_idx = pvi1;
-        canton_set_volt(c1, cv1, pvi1);
-        cv1->fix_bemf = cnf->fix_bemf;
-    }
-    if (pvi2 != vars->cur_c2_volt_idx) {
-		vars->cur_c2_volt_idx = pvi2;
-		if (cv2) canton_set_volt(c2, cv2, pvi2);
-        if (cv2) cv2->fix_bemf = cnf->fix_bemf;
-	}
+
 	int dir1 = sig * vars->current_canton_dir;
 	int dir2 = sig * vars->next_canton_dir;
-	itm_debug3("pwm", pvi1, dir1, pwm_duty);
-	canton_set_pwm(c1, cv1, dir1, pwm_duty);
-	if (cv2) canton_set_pwm(c2, cv2, dir2, pwm_duty);
+
+    msg_64_t m;
+    m.from = MA_TRAIN_SC(tidx);
+    m.cmd = CMD_SETVPWM;
+    m.v1u = pvi1;
+    m.v2 = dir1*pwm_duty;
+    m.to = vars->C1;
+    mqf_write_from_spdctl(&m);
+
+    if (c2) {
+    	m.v1u = pvi2;
+    	m.v2 = dir2*pwm_duty;
+    	m.to = vars->C2;
+    	mqf_write_from_spdctl(&m);
+    }
 
 
 }
 
 
 /* =========================================================================== */
+
 
 int train_set_target_speed(int numtrain, int16_t target)
 {
@@ -349,7 +488,7 @@ int train_set_target_speed(int numtrain, int16_t target)
 
 	return 0;
 }
-
+/*
 void train_stop_all(void)
 {
 	stop_all = 1;
@@ -367,6 +506,7 @@ void train_stop_all(void)
 	debug_info('G', 0, "STOPALL", 0,0, 0);
 	stop_all = 0;
 }
+*/
 
 /*
  * calibration of BEMF
@@ -378,6 +518,7 @@ void train_stop_all(void)
  * - difference between BEMF measurement on each rails (thus in each direction), due to different resistors
  * - non-linearity ??
  */
+#if 0
 typedef struct {
 	int16_t spd;
 	int n;
@@ -454,8 +595,12 @@ void calibrate_periodic(uint32_t tick, uint32_t dt, uint32_t notif_Flags)
 
 }
 #endif
+#endif
 
 /* ------------------------------------------------------------------------ */
+
+
+#if 0
 
 static void unexpected_canton_occupency(uint8_t numcanton);
 static void unexpected_unknown_canton_occupency(uint8_t numtrain, uint8_t numcanton, uint8_t cur);
@@ -566,5 +711,5 @@ static void train_did_switch_canton(uint8_t numtrain)
     debug_info('T', numtrain, "NEXT", tvars->next_canton, tvars->next_canton_dir,0);
 
 }
-
+#endif
 

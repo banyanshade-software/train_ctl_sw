@@ -107,11 +107,15 @@ LFMQUEUE_DEF_H(from_canton, msg_64_t)
 #define CMD_SETVPWM			0x01
 #define CMD_STOP			0x02
 
+LFMQUEUE_DEF_H(to_spdctl, msg_64_t)
+LFMQUEUE_DEF_H(from_spdctl, msg_64_t)
+
 /* from canton: */
 #define CMD_BEMF_NOTIF		0x03
 
-LFMQUEUE_DEF_H(to_spdctl, msg_64_t)
-LFMQUEUE_DEF_H(from_spdctl, msg_64_t)
+/* from upper */
+#define CMD_SET_TARGET_SPEED 0x10
+#define CMD_SET_C1_C2		 0x11
 
 LFMQUEUE_DEF_H(to_forward, msg_64_t)
 LFMQUEUE_DEF_H(from_forward, msg_64_t)

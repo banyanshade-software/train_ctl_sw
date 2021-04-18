@@ -23,6 +23,9 @@
 #include "trainctl_iface.h"
 
 
+void spdctl_run_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt);
+
+
 extern volatile uint8_t trainctl_test_mode;
 
 
@@ -32,7 +35,7 @@ extern volatile uint8_t trainctl_test_mode;
 
 
 
-void train_run_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt);
+//void train_run_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt);
 
 
 int train_set_target_speed(int numtrain, int16_t target);

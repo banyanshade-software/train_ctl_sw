@@ -62,13 +62,13 @@ const canton_config_t *get_canton_cnf(int idx);
 //canton_vars_t   *get_canton_vars(int idx);
 //int canton_idx(canton_vars_t *v);
 
-const block_canton_config_t *get_block_canton_cnf(int idx);
+//const block_canton_config_t *get_block_canton_cnf(int idx);
 //block_canton_vars_t   *get_block_canton_vars(int idx);
 //int block_canton_idx(block_canton_vars_t *v);
 
 const train_config_t  *get_train_cnf(int idx);
-train_vars_t  *get_train_vars(int idx);
-int train_idx(train_vars_t *v);
+//train_vars_t  *get_train_vars(int idx);
+//int train_idx(train_vars_t *v);
 
 const turnout_config_t  *get_turnout_cnf(int idx);
 //turnout_vars_t  *get_turnout_vars(int idx);
@@ -77,13 +77,11 @@ const turnout_config_t  *get_turnout_cnf(int idx);
 
 // ---------------------------------------------------------
 
-#define USE_TRAIN(_idx) \
-		const train_config_t *tconf = get_train_cnf(_idx); \
-		train_vars_t         *tvars = get_train_vars(_idx);
-
+/*
 #define USE_BLOCK_CANTON(_idx) \
 		const block_canton_config_t *bcconf = get_block_canton_cnf(_idx); \
 		block_canton_vars_t         *bcvars = get_block_canton_vars(_idx);
+*/
 /*
 #define USE_TURNOUT(_idx) \
 		const turnout_config_t *aconf = get_turnout_cnf(_idx); \

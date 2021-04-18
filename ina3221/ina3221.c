@@ -52,7 +52,7 @@ static uint16_t addr = 0;
 static void i2c_ready(int a)
 {
 	addr = a;
-	HAL_StatusTypeDef status;
+	//HAL_StatusTypeDef status;
 	uint16_t w16;
 
     uint16_t mid = ina3221_read16(a, INA3221_REG_MANUFACTURER_ID);
@@ -129,7 +129,8 @@ static void _get_next_reg(void)
 		ina3221_scan_dur = tm - t0;
 		t1 = tm;
 		for (int i=0 ;i<3; i++) {
-#if 0
+#if 1
+
 			ina3221_values[i]=__builtin_bswap16(ina3221_values[i]);
 #else
 			//ugly hack

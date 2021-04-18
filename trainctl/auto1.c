@@ -18,12 +18,12 @@
  *           this is really intended to be removed and replaced by something more useful
  */
 
-
+#if 0
 #include "misc.h"
 #include "auto1.h"
 #include "train.h"
 #include "low/turnout.h"
-#include "traincontrol.h"
+//#include "traincontrol.h"
 #include "railconfig.h"
 
 typedef struct {
@@ -142,5 +142,5 @@ new_step:
 		train_notif(0, 'A', (void *)v, sizeof(int16_t)*2);
 	}
 }
-
+#endif
 

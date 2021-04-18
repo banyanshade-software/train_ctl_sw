@@ -21,6 +21,7 @@
 #include "train.h"
 #include "railconfig.h"
 
+#if 0
 void train_reset(const train_config_t *c, train_vars_t *v)
 {
 	/*
@@ -64,7 +65,7 @@ int train_reset_pos_estimate(int tidx)
 	v->position_estimate = 0;
 	return 0;
 }
-
+#endif
 
 
 /* ------------------------------------------------------------------------------- */

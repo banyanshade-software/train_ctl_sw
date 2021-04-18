@@ -8,6 +8,16 @@
 #ifndef LOW_CANTON_CONFIG_H_
 #define LOW_CANTON_CONFIG_H_
 
+#include "misc.h"
+
+#ifndef TRAIN_SIMU
+#ifdef STM32_F4
+#include "stm32f4xx_hal.h"
+#else
+#include "stm32f1xx_hal.h"
+#endif
+#endif
+
 #define NUM_CANTON 8
 
 
@@ -21,7 +31,7 @@
 
 
 typedef struct canton_config {
-    uint8_t  canton_type;
+    //uint8_t  canton_type;
     uint16_t volts_cv[NUM_VOLTS_VAL]; // unit : 1/100 V, from 1000 to 0
     // V2 and V4 vers
     //uint16_t volts_v2[16]; // unit : 1/100 V, from 1000 to 0

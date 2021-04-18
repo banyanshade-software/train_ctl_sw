@@ -33,10 +33,11 @@
 
 #include "txrxcmd.h"
 
-#include "canton.h"
+#include "railconfig.h"
+//#include "canton.h"
 #include "train.h"
-#include "turnout.h"
-#include "traincontrol.h"
+//#include "turnout.h"
+//#include "traincontrol.h"
 #include "auto1.h"
 #include "misc.h"
 #include "param.h"
@@ -225,7 +226,7 @@ static const param_t glob_params[] = {
 		{ "pwmfreq",    &cur_freqhz, 0, NULL, param_set_pwm, sizeof(int), 0, 60000,  50},
 		{ "numtrains",   NULL, 0, 	    param_get_numtrains,  NULL, sizeof(uint32_t), 1, 1, 10},
 		{ "numcantons",  NULL, 0, 	    param_get_numcantons, NULL, sizeof(uint32_t), 2, 1, 50},
-		{ "test_mode",   &trainctl_test_mode, 0, 	    NULL, NULL, sizeof(uint8_t), 2, 1, 50},
+		//{ "test_mode",   &trainctl_test_mode, 0, 	    NULL, NULL, sizeof(uint8_t), 2, 1, 50},
 
 		{ NULL,     NULL,0,    NULL,NULL, 0, 0, 0,   0}
 };
@@ -239,19 +240,19 @@ static uint8_t process_frame_cmd(uint8_t sel, uint8_t num,  uint8_t cmd, uint8_t
 	int16_t s;
 	*prlen = 0;
 	int32_t v,d,min,max;
-	int rc;
+	int rc=-1;
 
 	switch(sel) {
 	case 'A':
 		switch (cmd) {
 		case 'S':
-			rc = turnout_cmd(num, 1);
+			//rc = turnout_cmd(num, 1);
 			break;
 		case 's':
-			rc = turnout_cmd(num, -1);
+			//rc = turnout_cmd(num, -1);
 			break;
 		case 'W':
-			rc = turnout_test(num);
+			//rc = turnout_test(num);
 			break;
 		}
 		break;

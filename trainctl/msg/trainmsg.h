@@ -40,43 +40,45 @@ typedef uint8_t  msg_addr_t;
 #define MA_TRAIN_SC(_t) (0xC0 | (((_t)& 0x07)))
 
 
-typedef union {
-	struct {
-		msg_addr_t to;
-		msg_addr_t from;
-		union {
-			uint8_t v1u;
-			int8_t v1;
-		};
-		union {
-			int8_t v2;
-			uint8_t v2u;
-		};
-	};
-	uint32_t raw;
-} msg_32_t;
 
 typedef union {
 	struct {
 		msg_addr_t to;
 		msg_addr_t from;
 		union {
-			uint8_t v[6];
+			uint8_t vbytes[6];
 			struct {
-				uint16_t v16;
-				uint32_t v32;
-			};
+				uint8_t cmd;
+				uint8_t sub;
+				union {
+					uint32_t v32u;
+					int32_t v32;
+					struct {
+						uint16_t v1u;
+						uint16_t v2u;
+					};
+					struct {
+						int16_t v1;
+						int16_t v2;
+					};
+				};
 		};
 	};
 	uint64_t raw;
 } msg_64_t;
 
 
-
+/* general command */
+#define CMD_RESET 			0xFF
+#define CMD_EMERGENCY_STOP 	0xFE
 
 
 LFMQUEUE_DEF_H(to_turnout, msg_64_t)
 LFMQUEUE_DEF_H(from_turnout, msg_64_t)
+
+/* turnout command */
+#define CMD_TURNOUT_A		0x01
+#define CMD_TURBOUT_B		0x02
 
 
 LFMQUEUE_DEF_H(to_canton, msg_64_t)
@@ -89,6 +91,6 @@ LFMQUEUE_DEF_H(to_forward, msg_64_t)
 LFMQUEUE_DEF_H(from_forward, msg_64_t)
 
 
-void msgsrv_tick(uint32_t tick, uint32_t dt);
+void msgsrv_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt);
 
 #endif /* MSG_TRAINMSG_H_ */

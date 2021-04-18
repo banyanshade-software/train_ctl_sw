@@ -77,7 +77,7 @@ forward:
 
 
 
-void msgsrv_tick(uint32_t tick, uint32_t dt)
+void msgsrv_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
 {
 	for (;;) {
 		msg_64_t m;

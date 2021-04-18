@@ -88,11 +88,11 @@ int turnout_idx(turnout_vars_t *v);
 #define USE_BLOCK_CANTON(_idx) \
 		const block_canton_config_t *bcconf = get_block_canton_cnf(_idx); \
 		block_canton_vars_t         *bcvars = get_block_canton_vars(_idx);
-
+/*
 #define USE_TURNOUT(_idx) \
 		const turnout_config_t *aconf = get_turnout_cnf(_idx); \
 		turnout_vars_t         *avars = get_turnout_vars(_idx);
-
+*/
 // ---------------------------------------------------------
 
 

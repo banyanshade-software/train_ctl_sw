@@ -32,32 +32,7 @@
 #include "main.h"
 #endif
 
+void turnout_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt);
 
-typedef struct turnout_config {
-#ifndef TRAIN_SIMU
-	GPIO_TypeDef *cmd_port;
-#else
-    void *dummy; // for structure initialisation
-#endif
-	uint16_t pinA;
-	uint16_t pinB;
-} turnout_config_t;
-
-typedef struct turnout_vars {
-	int8_t value;	// -1 = A, 1 = B, 0 = unknown
-	uint8_t st;
-} turnout_vars_t;
-
-
-void turnout_reset(int tidx);
-
-
-int turnout_state(int tidx);
-int turnout_cmd(int tidx, int vab); // -1 or 1
-
-void turnout_tick(void);
-
-
-int turnout_test(int tidx);
 
 #endif /* TURNOUT_H_ */

@@ -19,7 +19,7 @@
 
 
 #include "misc.h"
-#include "canton.h"
+#include "../low/canton.h"
 #include "inertia.h"
 #include "pidctl.h"
 #include "train.h"

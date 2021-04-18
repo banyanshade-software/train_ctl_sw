@@ -33,6 +33,7 @@
 #include "misc.h"
 #include "trainctl_iface.h"
 #include "canton.h"
+#include "canton_bemf.h"
 #ifndef TRAIN_SIMU
 #ifdef STM32_F4
 #include "stm32f4xx_hal.h"
@@ -49,19 +50,77 @@
 TIM_HandleTypeDef *CantonTimerHandles[8] = {NULL};
 #endif
 
-void canton_reset(const canton_config_t *c, canton_vars_t *v)
+
+typedef struct canton_vars {
+	int8_t cur_dir;
+	uint8_t cur_voltidx;
+	uint16_t cur_pwm_duty;
+	int32_t selected_centivolt;
+} canton_vars_t;
+
+static canton_vars_t canton_vars[NUM_LOCAL_CANTONS];
+
+#define USE_CANTON(_idx) \
+		const canton_config_t *cconf = get_canton_cnf(_idx); \
+		canton_vars_t         *cvars = &canton_vars[_idx];
+
+
+
+static void canton_set_pwm(const canton_config_t *c, canton_vars_t *v,  int dir, int duty);
+void canton_set_volt(const canton_config_t *c, canton_vars_t *v, int voltidx);
+
+static void canton_reset(void)
 {
-	memset(v, 0, sizeof(*v));
-	v->curtrainidx = 0xFF;
-	//v->status = canton_free;
+	for (int i = 0; i<NUM_LOCAL_CANTONS; i++) {
+		USE_CANTON(i)
+		canton_set_pwm(cconf, cvars, 0, 0);
+		canton_set_volt(cconf, cvars,  7);
+	}
 }
 
-void canton_set_train(int numcanton,   int trainidx)
+void canton_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
 {
-	USE_CANTON(numcanton) // cconf cvars
-	(void)cconf; // unused
-	cvars->curtrainidx = trainidx;
+	static int first=1;
+	if (first) {
+		first = 0;
+		canton_reset();
+		bemf_reset();
+	}
+	for (;;) {
+		msg_64_t m;
+		int rc = mqf_read_to_canton(&m);
+		if (rc) break;
+		if (IS_CANTON(m.to)) {
+			if (m.cmd & 0x40) {
+				bemf_msg(&m);
+				continue;
+			}
+			int cidx = m.to & 0x07;
+			USE_CANTON(cidx)
+			switch (m.cmd) {
+			case CMD_STOP:
+				canton_set_pwm(cconf, cvars, 0, 0);
+				canton_set_volt(cconf, cvars,  7);
+				break;
+			case CMD_SETVPWM:
+				canton_set_pwm(cconf, cvars, 0, 0);
+				canton_set_volt(cconf, cvars,  7);
+				break;
+			}
+		} else {
+			switch (m.cmd) {
+			case CMD_RESET: // FALLTHRU
+			case CMD_EMERGENCY_STOP:
+				canton_reset();
+				bemf_reset();
+				break;
+			}
+		}
+	}
 }
+
+// ------------------------------------------------------------
+
 /*
 int canton_take(int numcanton, canton_occupency_t st,  int trainidx)
 {
@@ -104,13 +163,8 @@ int canton_release(int numcanton, int trainidx)
 
 #ifndef TRAIN_SIMU
 
-void canton_set_pwm(const canton_config_t *c, canton_vars_t *v,  int dir, int duty)
+static void canton_set_pwm(const canton_config_t *c, canton_vars_t *v,  int dir, int duty)
 {
-	if (c->canton_type == CANTON_TYPE_DUMMY) return;
-
-	if (c->canton_type == CANTON_TYPE_REMOTE ) {
-		return;
-	}
 	int t = 2*duty; // with centered pwm (or normal)
 
 	if ((v->cur_dir == dir) && (v->cur_pwm_duty==duty)) return;
@@ -156,11 +210,6 @@ void canton_set_pwm(const canton_config_t *c, canton_vars_t *v,  int dir, int du
 }
 void canton_set_volt(const canton_config_t *c, canton_vars_t *v, int voltidx)
 {
-	if (c->canton_type == CANTON_TYPE_DUMMY) return;
-
-	if (c->canton_type == CANTON_TYPE_REMOTE ) {
-		return;
-	}
 	v->cur_voltidx = voltidx;
     v->selected_centivolt =  (c->volts_cv[v->cur_voltidx]);
 
@@ -220,8 +269,8 @@ void __attribute__((weak)) train_simu_canton_set_pwm(int numcanton, int dir, int
 #define MAX_PVI (NUM_VOLTS_VAL-1)
 
 int volt_index(uint16_t mili_power,
-		const canton_config_t *c1, canton_vars_t *v1,
-		const canton_config_t *c2, canton_vars_t *v2,
+		const canton_config_t *c1, //canton_vars_t *v1,
+		const canton_config_t *c2, //canton_vars_t *v2,
 		int *pvi1, int *pvi2,
 		train_volt_policy_t pol)
 {
@@ -324,6 +373,9 @@ int volt_index(uint16_t mili_power,
 }
 
 
+#if 0
+
+
 /*
 =783
 von=2088, voff=781
@@ -338,74 +390,6 @@ von=2093, voff=774
 von=2093, voff=774
  *
  */
-
-// volt_measured * 4.545 = volt_real (10k 2.2k bridge)
-// ADC 12bits: 0x3FF = 3.3V
-// v = meas/1024 * 3.3 * 4.55
-
-static int num_canton_bemf = 0;
-
-// adc1=0, adc2=2163, von1=0, von2=172
-static void calib_store_bemf(int32_t vraw);
-static int calibrating = 0;
-
-#define INCLUDE_FIXBEMF 0
-
-#if INCLUDE_FIXBEMF
-static const int32_t bemf_zero_values[MAX_PWM*2+1] = {-92, -72, -49, -41, -31, -24, -19, -15, -12, -9, -8, -80, -64, -47, -30, -23, -18, -14, -12, -7, -74, -60, -45, -35, -22, -18, -12, -71, -42, -32, -21, -18, -11, -11, -65, -40, -24, -18, -47, -37, -22, -13, -44, -28, -56, -34, -21, -14, -9, -49, -31, -47, -24, -35, -44, -20, -30, -31, -38, -30, -15, -8, -7, -4, -2, -1, -1, -1, 0, 0, -2, -1, -1, -1, -1, -2, -1, -1, -1, 0, -1, 0, -1, -1, -1, 0, 0, 0, -1, -2, 0, 0, 0, 0, 0, -3, -1, 0, 0, 0, 0, 0, 3, 0, 0, -1, -3, -2, 0, 0, 0, 4, 0, -1, 2, 3, 0, 1, 1, 4, 10, 22, 33, 25, 28, 17, 38, 29, 19, 43, 26, 44, 7, 9, 18, 31, 53, 25, 42, 13, 20, 35, 46, 17, 22, 37, 65, 9, 10, 15, 20, 29, 36, 70, 12, 14, 19, 33, 43, 55, 72, 9, 9, 16, 20, 25, 32, 51, 66, 87, 11, 11, 14, 17, 19, 27, 34, 43, 57, 72, 92};
-#endif
-
-
-static inline int32_t bemf_convert_to_centivolt_for_display(const canton_config_t *c, canton_vars_t *v, int32_t m) // unit 0.01v
-{
-#if INCLUDE_FIXBEMF
-	if (v->fix_bemf && (v->curtrainidx!=0xFF)) {
-		// int idx = v->cur_pwm_duty * v->cur_dir;
-		// XXX
-		//const train_config_t *tc = get_train_cnf(v->curtrainidx);
-		train_vars_t *tv = get_train_vars(v->curtrainidx);
-		int idx = tv->last_speed;  //tc->enable_pid ? tv->last_speed2 : tv->last_speed;
-		if (idx<-MAX_PWM)     idx = -MAX_PWM;
-		else if (idx>MAX_PWM) idx =  MAX_PWM;
-		m -= bemf_zero_values[idx+MAX_PWM];
-	}
-#endif
-	if (v->fix_bemf && (v->curtrainidx!=0xFF)) {
-		// XXX calibration
-		// negative value measured on Von are different for >0 than <0
-		// (-2280 vs 2160) probably due to different resistors in division
-		// bridge
-		if (m<0) {
-			m = 2200*m/2000;
-		}
-	}
-    if (BEMF_RAW) return m;
-	return ((m * 4545 * 33) / (4096*100));
-}
-
-
-static inline int32_t bemf_convert_to_centivolt(const canton_config_t *c, canton_vars_t *v, int32_t m)
-{
-#if INCLUDE_FIXBEMF
-	if (v->fix_bemf && (v->curtrainidx!=0xFF)) {
-		//const train_config_t *tc = get_train_cnf(v->curtrainidx);
-		train_vars_t *tv = get_train_vars(v->curtrainidx);
-		int idx = tv->last_speed; // tc->enable_pid ? tv->last_speed2 : tv->last_speed;
-		if (idx<-MAX_PWM)     idx = -MAX_PWM;
-		else if (idx>MAX_PWM) idx =  MAX_PWM;
-		m -= bemf_zero_values[idx+MAX_PWM];
-	}
-#endif
-	if (v->fix_bemf && (v->curtrainidx!=0xFF)) {
-		// XXX calibration
-
-		if (m<0) {
-			m = 2200*m/2000;
-		}
-	}
-	return ((m * 4545 * 33) / (4096*100));
-}
-
 
 void canton_intensity(const canton_config_t *c, canton_vars_t *v, uint16_t ioff, uint16_t ion)
 {
@@ -474,7 +458,7 @@ void canton_bemf(const canton_config_t *c, canton_vars_t *v, uint16_t adc1, uint
 /* ======================================================================================== */
 
 #if INCLUDE_CALIB
-
+#error ohla
 static int calib_spd_to_index(int spd)
 {
 	if ((spd<-MAX_PWM) || (spd>MAX_PWM)) return 0;
@@ -512,4 +496,5 @@ static void calib_store_bemf(int32_t vraw)
 }
 #endif
 
+#endif
 

@@ -9,7 +9,7 @@
 #define MSG_TRAINMSG_H_
 
 #include "../utils/lf_mqueue.h"
-
+#include "notif.h"
 
 extern uint8_t localBoardNum;
 
@@ -21,24 +21,40 @@ typedef uint8_t  msg_addr_t;
 // 1 1 0 x x : (3 bits)
 // 1 1 1 x x x x x
 
+#define MA_ADDR_MASK_2		0xC0
+#define MA_ADDR_MASK_BOARD	0x38
+#define MA_ADDR_MASK_3 		0xE0
+#define MA_ADDR_MASK_5		0xF8
+#define MA_ADDR_MASK_8		0xFF
+
 // canton : up to 8 board with 8 canton
 // 0 0  b b b c c c
-#define MA_CANTON(_board, _c) (0x80 | (((_board) & 0x7)<<3 | ((_c) & 0x07)))
+#define MA_ADDR_2_CANTON	0x00
+#define MA_CANTON(_board, _c) (MA_ADDR_2_CANTON| (((_board) & 0x7)<<3 | ((_c) & 0x07)))
+#define IS_CANTON(_addr) (MA_ADDR_2_CANTON==((_addr) & MA_ADDR_MASK_2))
 
 // turnouts : up to 8 board with 8 turnouts (may be changed to 4 boards with 16 turnouts)
 // 0 1  b b b t t t
-#define MA_TURNOUT(_board, _c) (0xC0 | (((_board) & 0x7)<<3 | ((_c) & 0x07)))
+#define MA_ADDR_2_TURNOUT	0x40
+#define MA_TURNOUT(_board, _c) (MA_ADDR_2_CANTON | (((_board) & 0x7)<<3 | ((_c) & 0x07)))
+#define IS_TURNOUT(_addr) (MA_ADDR_2_CANTON==((_addr) & MA_ADDR_MASK_2))
 
 
 
 // UI up to 32 components
 // 1 0 0  c c c c c c
 #define MA_UI(_c) (0x80 | ((_c) & 0x1F)))
+#define MA_ADDR_3_UI 	0x80
+#define IS_UI(_addr) (MA_ADDR_3_UI == ((_addr) & MA_ADDR_MASK_3))
 
 // train spd control : up to 8 trains
 //  1 1 0 0  1 t t t
-#define MA_TRAIN_SC(_t) (0xC0 | (((_t)& 0x07)))
+#define MA_ADDR_5_TRSC	0xC8
+#define MA_TRAIN_SC(_t) (MA_ADDR_5_TRSC | (((_t)& 0x07)))
+#define IS_TRAIN_SC(_addr) (MA_ADDR_5_TRSC == ((_addr) & MA_ADDR_MASK_5))
 
+
+#define IS_BROADCAST(_addr) (0xFF == (_addr))
 
 
 typedef union {
@@ -62,6 +78,7 @@ typedef union {
 						int16_t v2;
 					};
 				};
+			};
 		};
 	};
 	uint64_t raw;
@@ -78,11 +95,20 @@ LFMQUEUE_DEF_H(from_turnout, msg_64_t)
 
 /* turnout command */
 #define CMD_TURNOUT_A		0x01
-#define CMD_TURBOUT_B		0x02
+#define CMD_TURNOUT_B		0x02
 
 
 LFMQUEUE_DEF_H(to_canton, msg_64_t)
 LFMQUEUE_DEF_H(from_canton, msg_64_t)
+/*to_canton : */
+#define CMD_BEMF_ON			0x40
+#define CMD_BEMF_OFF		0x41
+
+#define CMD_SETVPWM			0x01
+#define CMD_STOP			0x02
+
+/* from canton: */
+#define CMD_BEMF_NOTIF		0x03
 
 LFMQUEUE_DEF_H(to_spdctl, msg_64_t)
 LFMQUEUE_DEF_H(from_spdctl, msg_64_t)
@@ -92,5 +118,9 @@ LFMQUEUE_DEF_H(from_forward, msg_64_t)
 
 
 void msgsrv_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt);
+
+
+
+
 
 #endif /* MSG_TRAINMSG_H_ */

@@ -29,7 +29,7 @@
 #include "turnout_config.h"
 
 #include "misc.h"
-#include "trainmsg.h"
+#include "../msg/trainmsg.h"
 
 
 #include "railconfig.h"
@@ -48,6 +48,7 @@
 
 static void turnout_reset(void);
 static void process_turnout_timers(uint32_t tick, uint32_t dt);
+static void process_turnout_cmd(msg_64_t *m, uint32_t tick, uint32_t dt);
 
 
 void turnout_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
@@ -62,15 +63,17 @@ void turnout_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
 		msg_64_t m;
 		int rc = mqf_read_to_turnout(&m);
 		if (rc) break;
-		if ((m->to & 0xC0) == 0x40) {
+		if (IS_TURNOUT(m.to)) {
 			process_turnout_cmd(&m, tick, dt);
-		} else {
-			switch (m->cmd) {
+		} else if (IS_BROADCAST(m.to)) {
+			switch (m.cmd) {
 			case CMD_RESET: // FALLTHRU
 			case CMD_EMERGENCY_STOP:
 				turnout_reset();
 				break;
 			}
+		} else {
+			// error
 		}
 	}
 }
@@ -82,7 +85,7 @@ typedef struct turnout_vars {
 	uint8_t st;
 } turnout_vars_t;
 
-static tunrout_vars_t tvars[NUM_TURNOUT];
+static turnout_vars_t tvars[NUM_TURNOUT];
 
 
 #define ST_IDLE		0
@@ -98,11 +101,14 @@ static tunrout_vars_t tvars[NUM_TURNOUT];
 		turnout_vars_t         *avars = &tvars[_idx];
 
 
-static void process_turnout_cmd(&m, tick, dt)
+static void process_turnout_cmd(msg_64_t *m, uint32_t tick, uint32_t dt)
 {
-	uint8_t tn = m->to & 0x07;
-	USE_TURNOUT(tn)
-	if (!aconf || !avars) return turnout_error(ERR_BAD_PARAM, "bad idx");
+	uint8_t tidx = m->to & 0x07;
+	USE_TURNOUT(tidx)
+	if (!aconf || !avars) {
+		turnout_error(ERR_BAD_PARAM, "bad idx");
+		return;
+	}
 	debug_info('A', 0, "CMD", tidx, m->cmd, avars->value);
 	if (!aconf->cmd_port) return;
 	switch (m->cmd) {

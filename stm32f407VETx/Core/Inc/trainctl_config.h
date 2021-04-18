@@ -11,7 +11,7 @@
 //#define TRAINCTL_NEW 1
 #define STM32_F4
 
-#define NUM_LOCAL_CANTONS 5
+#define NUM_LOCAL_CANTONS 8
 
 #define TFT_DISP 1
 

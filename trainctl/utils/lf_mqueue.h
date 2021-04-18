@@ -21,9 +21,9 @@ typedef struct {
 } mqf_t;
 
 #define LFMQUEUE_DEF_H(_name, _type) 						\
-    extern mqf_t _name; 									\
+    extern mqf_t  _name; 									\
     														\
-	static inline int mqf_read_ ## _name(_type *ptr)			\
+	static inline int mqf_read_ ## _name(_type *ptr)		\
 	{														\
 		return mqf_read(&_name, ptr);						\
 	}														\

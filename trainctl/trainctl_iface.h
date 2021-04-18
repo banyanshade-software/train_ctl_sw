@@ -90,31 +90,6 @@ void auto1_run(uint32_t notif, uint32_t tick);
 #define BEMF_RAW 0
 
 
-// notif_flags
-#ifndef USE_INA3221
-typedef struct {
-	uint16_t intOff; // XXX
-	uint16_t voffA;
-	uint16_t voffB;
-	uint16_t intOn; // XXX
-	uint16_t vonA;
-	uint16_t vonB;
-
-} adc_buffer_t;
-#error ohla
-#else
-typedef struct {
-	//uint16_t intOff; // XXX
-	uint16_t voffA;
-	uint16_t voffB;
-	//uint16_t intOn; // XXX
-	uint16_t vonA;
-	uint16_t vonB;
-
-} adc_buffer_t;
-#endif
-
-extern volatile adc_buffer_t train_adc_buffer[];
 
 // ---------------------------------------------- param
 

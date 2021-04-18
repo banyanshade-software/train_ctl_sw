@@ -23,9 +23,9 @@
 #ifndef TRAIN_H_
 #define TRAIN_H_
 
-#include "inertia.h"
-#include "pidctl.h"
-#include "canton.h"
+#include "spdctl/inertia.h"
+#include "spdctl/pidctl.h"
+#include "low/canton.h"
 #include "param.h"
 
 

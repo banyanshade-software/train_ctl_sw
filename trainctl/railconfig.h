@@ -23,10 +23,10 @@
 #define RAILCONFIG_H_
 
 #include "trainctl_iface.h"
-#include "canton.h"
-#include "block_canton.h"
+#include "low/canton_config.h"
+//#include "block_canton.h"
 #include "train.h"
-#include "turnout.h"
+#include "low/turnout_config.h"
 #include "param.h"
 
 
@@ -59,20 +59,20 @@ void railconfig_setup_default(void);
 // ---------------------------------------------------------
 
 const canton_config_t *get_canton_cnf(int idx);
-canton_vars_t   *get_canton_vars(int idx);
-int canton_idx(canton_vars_t *v);
+//canton_vars_t   *get_canton_vars(int idx);
+//int canton_idx(canton_vars_t *v);
 
 const block_canton_config_t *get_block_canton_cnf(int idx);
-block_canton_vars_t   *get_block_canton_vars(int idx);
-int block_canton_idx(block_canton_vars_t *v);
+//block_canton_vars_t   *get_block_canton_vars(int idx);
+//int block_canton_idx(block_canton_vars_t *v);
 
 const train_config_t  *get_train_cnf(int idx);
 train_vars_t  *get_train_vars(int idx);
 int train_idx(train_vars_t *v);
 
 const turnout_config_t  *get_turnout_cnf(int idx);
-turnout_vars_t  *get_turnout_vars(int idx);
-int turnout_idx(turnout_vars_t *v);
+//turnout_vars_t  *get_turnout_vars(int idx);
+//int turnout_idx(turnout_vars_t *v);
 
 
 // ---------------------------------------------------------
@@ -80,10 +80,6 @@ int turnout_idx(turnout_vars_t *v);
 #define USE_TRAIN(_idx) \
 		const train_config_t *tconf = get_train_cnf(_idx); \
 		train_vars_t         *tvars = get_train_vars(_idx);
-
-#define USE_CANTON(_idx) \
-		const canton_config_t *cconf = get_canton_cnf(_idx); \
-		canton_vars_t         *cvars = get_canton_vars(_idx);
 
 #define USE_BLOCK_CANTON(_idx) \
 		const block_canton_config_t *bcconf = get_block_canton_cnf(_idx); \

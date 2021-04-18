@@ -22,7 +22,7 @@
 #include "misc.h"
 #include "auto1.h"
 #include "train.h"
-#include "turnout.h"
+#include "low/turnout.h"
 #include "traincontrol.h"
 #include "railconfig.h"
 

@@ -19,11 +19,13 @@
 
 
 #include "misc.h"
+#include "msg/trainmsg.h"
+
 #include "../low/canton.h"
 #include "inertia.h"
 #include "pidctl.h"
 #include "train.h"
-#include "turnout.h"
+#include "../low/turnout.h"
 #include "traincontrol.h"
 #include "railconfig.h"
 #include "auto1.h"
@@ -38,9 +40,8 @@ volatile  uint8_t trainctl_test_mode = 0;
 static void _set_speed(const train_config_t *cnf, train_vars_t *vars, int16_t v);
 static void _set_speed_test_mode(int16_t sv100);
 
-volatile adc_buffer_t train_adc_buffer[2*NUM_LOCAL_CANTONS];
 
-static void process_adc(volatile adc_buffer_t *buf, int32_t ticks);
+//static void process_adc(volatile adc_buffer_t *buf, int32_t ticks);
 static void train_periodic_control(int numtrain, int32_t dt);
 
 static volatile int stop_all = 0;
@@ -52,12 +53,12 @@ static void highlevel_tick(void);
 uint32_t train_tick_last_dt = 0;
 uint32_t train_ntick = 0;
 
-void train_run_tick( uint32_t notif_flags, uint32_t tick, uint32_t dt)
+void train_run_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
 {
 	train_tick_last_dt = dt;
 	train_ntick++;
 
-
+/*
 	if (notif_flags & NOTIF_STARTUP) {
 		static int n=0;
 		if (n) {
@@ -75,7 +76,6 @@ void train_run_tick( uint32_t notif_flags, uint32_t tick, uint32_t dt)
 	if (notif_flags & NOTIF_NEW_ADC_2) {
 		process_adc(train_adc_buffer+NUM_LOCAL_CANTONS, dt);
 	}
-
 #ifdef USE_INA3221
 	if (0 || (train_ntick%3)==1) {
 	    if (0 &&(notif_flags & NOTIF_NEW_ADC_1)) debug_info('T', 0, "INA3221/1 ", ina3221_values[0], ina3221_values[1], ina3221_values[2]);
@@ -107,13 +107,14 @@ void train_run_tick( uint32_t notif_flags, uint32_t tick, uint32_t dt)
 
 	turnout_tick();
 	highlevel_tick();
-
+*/
+	/*
 	if (calibrating) {
 		calibrate_periodic(tick, dt, notif_flags);
 		txframe_send_stat();
 		return;
 	}
-
+*/
 
 	/* per train proces */
     //debug_info(0, "TRAIN", tick, dt);
@@ -124,7 +125,7 @@ void train_run_tick( uint32_t notif_flags, uint32_t tick, uint32_t dt)
 	}
 	txframe_send_stat();
 }
-
+/*
 static void process_adc(volatile adc_buffer_t *buf, int32_t ticks)
 {
 	for (int i=0; i<NUM_LOCAL_CANTONS; i++) {
@@ -147,7 +148,7 @@ void __attribute__((weak))  notif_target_bemf(const train_config_t *cnf, train_v
 {
     
 }
-
+*/
 static void train_periodic_control(int numtrain, int32_t dt)
 {
 	if (stop_all) return;

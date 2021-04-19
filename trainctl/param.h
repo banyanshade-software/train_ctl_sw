@@ -39,4 +39,6 @@ typedef struct param {
 int param_get_value(const param_t *params, void *ptr, const char *name, int32_t *pvalue, int32_t *pdef, int32_t *pmin, int32_t *pmax);
 int param_set_value(const param_t *params, void *ptr, const char *name, int32_t value);
 
+extern const param_t train_params[];
+
 #endif /* SRC_PARAM_H_ */

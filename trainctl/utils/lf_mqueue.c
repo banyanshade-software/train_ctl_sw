@@ -31,11 +31,17 @@ int mqf_len (mqf_t *m)
 
 int mqf_write(mqf_t *m, void *ptr)
 {
-	if (m->num == mqf_len(m)) return -1;
+    if (m->num == mqf_len(m)) {
+        return -1;
+    }
 	void *p = &(m->msgbuf[m->head*m->msgsiz]);
 	memcpy(p, ptr, m->msgsiz);
 	//__barrier();
-	__sync_fetch_and_add(&(m->head), 1);
+    if (m->head == m->num-1) {
+        m->head = 0;
+    } else {
+        __sync_fetch_and_add(&(m->head), 1);
+    }
 	//AtomicInc(p->head);
 	return 0;
 }
@@ -43,9 +49,13 @@ int mqf_write(mqf_t *m, void *ptr)
 int mqf_read(mqf_t *m, void *ptr)
 {
 	if (!mqf_len(m)) return -1;
-	void *p = &(m->msgbuf[m->tail*m->msgsiz]);
-	memcpy(ptr, p, m->msgsiz);
-	//__barrier();
-	__sync_fetch_and_add(&(m->tail), 1);
-	return 0;
+    void *p = &(m->msgbuf[m->tail*m->msgsiz]);
+    memcpy(ptr, p, m->msgsiz);
+    //__barrier();
+    if (m->tail == m->num-1) {
+        m->tail = 0;
+    } else {
+        __sync_fetch_and_add(&(m->tail), 1);
+    }
+    return 0;
 }

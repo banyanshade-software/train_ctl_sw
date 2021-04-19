@@ -34,6 +34,13 @@
 
 extern int num_train_periodic_control;
 
+
+void StartUiTask(void *argument)
+{
+	MX_USB_DEVICE_Init();
+	taskdisp();
+}
+
 static void i2c_ready(int a)
 {
 

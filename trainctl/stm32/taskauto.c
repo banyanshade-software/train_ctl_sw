@@ -29,7 +29,7 @@ extern void StartTaskAuto(void *argument)
 		  uint32_t notif;
 		  xTaskNotifyWait(0, 0xFFFFFFFF, &notif, portMAX_DELAY);
 		  uint32_t t = HAL_GetTick() - t0;
-		  auto1_run(notif, t);
+		  //auto1_run(notif, t);
 	 }
 }
 

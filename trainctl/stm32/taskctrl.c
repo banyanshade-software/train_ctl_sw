@@ -13,6 +13,20 @@
  *
  */
 
+
+
+#include "cmsis_os.h"
+#include "main.h"
+#include "task.h"
+#include "taskctrl.h"
+
+#include "../msg/trainmsg.h"
+#include "../low/canton.h"
+#include "../low/canton_bemf.h"
+#include "../low/turnout.h"
+#include "../spdctl/traincontrol.h"
+
+#if 0
 #include "cmsis_os.h"
 #include "../misc.h"
 #include "../trainctl_iface.h"
@@ -25,10 +39,35 @@
 #endif
 #include "misc.h"
 //#include "../traincontrol.h"
+#endif
 
 
 
+static void run_task_ctrl(void);
 
+void StartCtrlTask(void *argument)
+{
+	  set_pwm_freq(350);
+	  CantonTimerHandles[1]=&htim1;
+	  CantonTimerHandles[2]=&htim2;
+	  CantonTimerHandles[3]=&htim3;
+	  //CantonTimerHandles[3]=&htim3;
+	  //XXX railconfig_setup_default();
+
+
+
+	  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
+	  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2);
+	  HAL_TIM_PWM_Stop(&htim1, TIM_CHANNEL_2);
+	  // XX
+
+	  HAL_TIM_Base_Start_IT(&htim8);
+
+
+	  HAL_ADC_Start_DMA(&hadc1,(uint32_t *)train_adc_buffer, NUM_ADC_SAMPLES);
+
+	  run_task_ctrl();
+}
 
 int cur_freqhz = 350;
 extern TIM_HandleTypeDef htim1;
@@ -49,10 +88,10 @@ void set_pwm_freq(int freqhz)
 
 
 
-void run_task_ctrl(void)
+static void run_task_ctrl(void)
 {
 
-	if ((0))   calibrate_bemf(); //XXXX
+	//if ((0))   calibrate_bemf(); //XXXX
 	for (;;) {
 		uint32_t notif;
 		xTaskNotifyWait(0, 0xFFFFFFFF, &notif, portMAX_DELAY);
@@ -65,15 +104,21 @@ void run_task_ctrl(void)
 		int32_t dt = (oldt) ? (t-oldt) : 1;
 		oldt = t;
 
-		train_run_tick(notif, t, dt);
-		if ((0)) { // XXX
-			static int s=0;
-			if (!s && (t-t0>5000)) {
-				train_set_target_speed(0, 50);
-				s = 1;
-			}
-		}
-		task_auto_tick();
+		/*
+		void bemf_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt);
+		void canton_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt);
+		void turnout_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt);
+		ina3221
+		void spdctl_run_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt);
+		void msgsrv_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt);
+		*/
+
+		bemf_tick(notif, t, dt);
+		msgsrv_tick(notif, t, dt);
+		spdctl_run_tick(notif, t, dt);
+		//msgsrv_tick(notif, t, dt);
+		canton_tick(notif, t, dt);
+		turnout_tick(notif, t, dt);
 	}
 
 }

@@ -17,9 +17,11 @@
  * 			target_speed -> inertia -> BEMF feedback -> volt + pwm
  */
 
+#include <stdint.h>
+#include <memory.h>
 
 #include "misc.h"
-#include "msg/trainmsg.h"
+#include "../msg/trainmsg.h"
 
 #include "../low/canton.h"
 #include "inertia.h"
@@ -28,7 +30,7 @@
 #include "../low/turnout.h"
 #include "traincontrol.h"
 #include "railconfig.h"
-#include "auto1.h"
+//#include "auto1.h"
 #include "txrxcmd.h"
 
 //#ifdef USE_INA3221
@@ -110,6 +112,22 @@ void spdctl_run_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
 	if (first) {
 		first = 0;
 		spdctl_reset();
+        if ((1)) { // TODO remove
+            msg_64_t m;
+            m.to = MA_TRAIN_SC(0);
+            m.cmd = CMD_SET_C1_C2;
+            m.vbytes[0] = MA_CANTON(0, 0);
+            m.vbytes[1] = 1;
+            m.vbytes[2] = 0xFF;
+            m.vbytes[3] = 0;
+            //mqf_write_from_spdctl(&m);
+            mqf_write_from_forward(&m); //
+            m.cmd = CMD_SET_TARGET_SPEED;
+            m.v1 = 50;
+            mqf_write_from_forward(&m); //
+
+        }
+        
 	}
 	/* process messages */
 	for (;;) {
@@ -135,6 +153,8 @@ void spdctl_run_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
 			case CMD_SET_C1_C2:
 				set_c1_c2(tidx, tvars, m.vbytes[0], m.vbytes[1], m.vbytes[2], m.vbytes[3]);
 				break;
+            default:
+                break;
 			}
 
 		} else if (IS_BROADCAST(m.to)) {
@@ -213,9 +233,9 @@ void spdctl_run_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
 	for (int i=0; i<NUM_TRAINS; i++) {
 		if (stop_all) break;
 		train_periodic_control(i, dt);
-		if (trainctl_test_mode) break;
+		//if (trainctl_test_mode) break;
 	}
-	txframe_send_stat();
+	txframe_send_stat(); //TODO move
 }
 /*
 static void process_adc(volatile adc_buffer_t *buf, int32_t ticks)
@@ -248,7 +268,10 @@ static void train_periodic_control(int numtrain, int32_t dt)
 	//num_train_periodic_control++;
 
 	USE_TRAIN(numtrain)	// tconf tvars
-
+    if (!tconf) {
+        itm_debug1("unconfigured train", numtrain);
+        return;
+    }
 	int16_t v = tvars->target_speed;
 
 	itm_debug2("target", numtrain, v);
@@ -279,7 +302,7 @@ static void train_periodic_control(int numtrain, int32_t dt)
         // 100% = 1.5V
         int32_t tbemf = 150*v/100;
         pidctl_set_target(&tconf->pidcnf, &tvars->pidvars, tbemf);
-        notif_target_bemf(tconf, tvars, tbemf);
+        // XXXX notif_target_bemf(tconf, tvars, tbemf);
     }
     /*
     canton_vars_t *cv = get_canton_vars(tvars->current_canton);
@@ -380,12 +403,12 @@ static void set_c1_c2(int tidx, train_vars_t *tvars, uint8_t c1, int8_t dir1, ui
 		mqf_write_from_spdctl(&m);
 	}
 	if ((c1 != 0xFF) && (c1 != tvars->C1) && (c1 != tvars->C2)) {
-		m.to = tvars->C1;
+		m.to = c1;
 		m.cmd = CMD_BEMF_ON;
 		mqf_write_from_spdctl(&m);
 	}
 	if ((c2 != 0xFF) && (c2 != tvars->C1) && (c2 != tvars->C2)) {
-		m.to = tvars->C2;
+		m.to = c2;
 		m.cmd = CMD_BEMF_ON;
 		mqf_write_from_spdctl(&m);
 	}

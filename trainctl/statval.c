@@ -18,7 +18,8 @@
 #include <memory.h>
 
 #include "statval.h"
-#include "train.h"
+//#include "train.h"
+#include "spdctl/traincontrol.h"
 #include "low/canton_config.h"
 #include "railconfig.h"
 

@@ -23,10 +23,10 @@
 #ifndef TRAIN_H_
 #define TRAIN_H_
 
+#include "param.h"
 #include "spdctl/inertia.h"
 #include "spdctl/pidctl.h"
 #include "low/canton.h"
-#include "param.h"
 
 
 
@@ -52,7 +52,7 @@ typedef struct train_config {
 int train_reset_pos_estimate(int tidx);
 
 
-extern const param_t train_params[];
+//extern const param_t train_params[];
 
 /*
  * Units :

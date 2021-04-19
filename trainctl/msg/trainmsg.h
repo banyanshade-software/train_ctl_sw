@@ -62,7 +62,7 @@ typedef union {
 		msg_addr_t to;
 		msg_addr_t from;
 		union {
-			uint8_t vbytes[6];
+			uint8_t rbytes[6];
 			struct {
 				uint8_t cmd;
 				uint8_t sub;
@@ -77,6 +77,7 @@ typedef union {
 						int16_t v1;
 						int16_t v2;
 					};
+                    uint8_t vbytes[4];
 				};
 			};
 		};

@@ -35,8 +35,8 @@
     c0 = 0;
     c1 = 0xFF;
     position = 0;
-    const block_canton_config_t *bcnf = get_block_canton_cnf(c0);
-    len = bcnf->len;
+    //const block_canton_config_t *bcnf = get_block_canton_cnf(c0);
+    //len = bcnf->len;
     return self;
 }
 
@@ -110,8 +110,8 @@
             position = 0;
             len = 0;
             if (c0 != 0xFF) {
-                const block_canton_config_t *bcnf = get_block_canton_cnf(c0);
-                len = bcnf->len;
+                //const block_canton_config_t *bcnf = get_block_canton_cnf(c0);
+                len = 0;//bcnf->len;
                 position = (d>=0) ? 0 : len;
             }
         }

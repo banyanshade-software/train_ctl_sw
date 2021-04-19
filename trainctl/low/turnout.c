@@ -110,7 +110,9 @@ static void process_turnout_cmd(msg_64_t *m, uint32_t tick, uint32_t dt)
 		return;
 	}
 	debug_info('A', 0, "CMD", tidx, m->cmd, avars->value);
+#ifndef TRAIN_SIMU
 	if (!aconf->cmd_port) return;
+#endif
 	switch (m->cmd) {
 	case CMD_TURNOUT_A:
 		avars->value = -1;
@@ -139,9 +141,9 @@ static void turnout_reset(void)
 		memset(avars, 0, sizeof(*avars));
 		avars->value = 0;
 		avars->st = ST_IDLE;
+#ifndef TRAIN_SIMU
 		if (!aconf->cmd_port) return;
 
-#ifndef TRAIN_SIMU
 		HAL_GPIO_WritePin(aconf->cmd_port, aconf->pinA, GPIO_PIN_RESET);
 		HAL_GPIO_WritePin(aconf->cmd_port, aconf->pinB, GPIO_PIN_RESET);
 #endif
@@ -166,7 +168,9 @@ static void process_turnout_timers(uint32_t tick, uint32_t dt)
 {
 	for (int i=0; i<NUM_TURNOUTS; i++) {
 		USE_TURNOUT(i)		// aconf , avars
-					if (!aconf->cmd_port) continue;
+#ifndef TRAIN_SIMU
+        if (!aconf->cmd_port) continue;
+#endif
 		switch (avars->st) {
 		case ST_IDLE:
 			break;

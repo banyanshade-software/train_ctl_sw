@@ -9,7 +9,12 @@
 #include <stdint.h>
 #include "canton_bemf.h"
 #include "canton_config.h"
-#include "msg/trainmsg.h"
+#include "../msg/trainmsg.h"
+#include "railconfig.h"
+
+
+volatile adc_buffer_t train_adc_buffer[2*NUM_LOCAL_CANTONS];
+
 
 static uint8_t bemf_to[NUM_LOCAL_CANTONS] = {0xFF, 0xFF, 0xFF, 0xFF,  0xFF, 0xFF, 0xFF, 0xFF};
 static void process_adc(volatile adc_buffer_t *buf, int32_t ticks);
@@ -137,7 +142,7 @@ static void process_adc(volatile adc_buffer_t *buf, int32_t ticks)
 #endif
 		if (0xFF == bemf_to[i]) continue;
 
-		canton_config_t *c = get_canton_config(i);
+		const canton_config_t *c = get_canton_cnf(i);
 		int32_t voffa = bemf_convert_to_centivolt(c, buf[i].voffA);
 		int32_t voffb = bemf_convert_to_centivolt(c, buf[i].voffB);
 		int32_t vona = bemf_convert_to_centivolt(c, buf[i].vonA);
@@ -151,7 +156,7 @@ static void process_adc(volatile adc_buffer_t *buf, int32_t ticks)
 		m.cmd = CMD_BEMF_NOTIF;
 		m.v1 = voff;
 		m.v2 = von;
-		mqf_write(&to_canton, &m);
+		mqf_write(&from_canton, &m);
 
 	}
 }

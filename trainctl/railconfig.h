@@ -25,9 +25,10 @@
 #include "trainctl_iface.h"
 #include "low/canton_config.h"
 //#include "block_canton.h"
+#include "param.h"
+
 #include "train.h"
 #include "low/turnout_config.h"
-#include "param.h"
 
 
 // ---------------------------------------------------------

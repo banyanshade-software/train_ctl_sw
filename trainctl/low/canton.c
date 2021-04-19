@@ -66,15 +66,15 @@ static canton_vars_t canton_vars[NUM_LOCAL_CANTONS];
 
 
 
-static void canton_set_pwm(const canton_config_t *c, canton_vars_t *v,  int dir, int duty);
-void canton_set_volt(const canton_config_t *c, canton_vars_t *v, int voltidx);
+static void canton_set_pwm(int cn, const canton_config_t *c, canton_vars_t *v,  int dir, int duty);
+void canton_set_volt(int cn, const canton_config_t *c, canton_vars_t *v, int voltidx);
 
 static void canton_reset(void)
 {
 	for (int i = 0; i<NUM_LOCAL_CANTONS; i++) {
 		USE_CANTON(i)
-		canton_set_pwm(cconf, cvars, 0, 0);
-		canton_set_volt(cconf, cvars,  7);
+		canton_set_pwm(i, cconf, cvars, 0, 0);
+		canton_set_volt(i, cconf, cvars,  7);
 	}
 }
 
@@ -99,12 +99,13 @@ void canton_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
 			USE_CANTON(cidx)
 			switch (m.cmd) {
 			case CMD_STOP:
-				canton_set_pwm(cconf, cvars, 0, 0);
-				canton_set_volt(cconf, cvars,  7);
+				canton_set_pwm(cidx, cconf, cvars, 0, 0);
+				canton_set_volt(cidx, cconf, cvars,  7);
 				break;
 			case CMD_SETVPWM:
-				canton_set_pwm(cconf, cvars, SIGNOF(m.v2), abs(m.v2));
-				canton_set_volt(cconf, cvars,  m.v1);
+                itm_debug3("SETPWM", cidx, m.v1u, m.v2);
+				canton_set_pwm(cidx, cconf, cvars, SIGNOF(m.v2), abs(m.v2));
+				canton_set_volt(cidx, cconf, cvars,  m.v1u);
 				break;
 			}
 		} else {
@@ -163,7 +164,7 @@ int canton_release(int numcanton, int trainidx)
 
 #ifndef TRAIN_SIMU
 
-static void canton_set_pwm(const canton_config_t *c, canton_vars_t *v,  int dir, int duty)
+static void canton_set_pwm(int cidx, const canton_config_t *c, canton_vars_t *v,  int dir, int duty)
 {
 	int t = 2*duty; // with centered pwm (or normal)
 
@@ -208,7 +209,7 @@ static void canton_set_pwm(const canton_config_t *c, canton_vars_t *v,  int dir,
 		break;
 	}
 }
-void canton_set_volt(const canton_config_t *c, canton_vars_t *v, int voltidx)
+void canton_set_volt(int cidx, const canton_config_t *c, canton_vars_t *v, int voltidx)
 {
 	v->cur_voltidx = voltidx;
     v->selected_centivolt =  (c->volts_cv[v->cur_voltidx]);
@@ -237,17 +238,17 @@ void canton_set_volt(const canton_config_t *c, canton_vars_t *v, int voltidx)
 }
 
 #else  // TRAIN_SIMU
-void canton_set_volt(const canton_config_t *c, canton_vars_t *v, int voltidx)
+void canton_set_volt(int n, const canton_config_t *c, canton_vars_t *v, int voltidx)
 {
     int vlt = c->volts_cv[voltidx];
-    int n = canton_idx(v);
+    // int n = canton_idx(v);
     v->cur_voltidx = voltidx;
     v->selected_centivolt =  (c->volts_cv[v->cur_voltidx]);
     train_simu_canton_volt(n, voltidx, vlt);
 }
-void canton_set_pwm(const canton_config_t *c, canton_vars_t *v,  int dir, int duty)
+void canton_set_pwm(int n, const canton_config_t *c, canton_vars_t *v,  int dir, int duty)
 {
-    int n = canton_idx(v);
+    //int n = canton_idx(v);
     v->cur_pwm_duty = duty;
     v->cur_dir = dir;
     train_simu_canton_set_pwm(n, dir, duty);

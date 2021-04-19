@@ -49,6 +49,7 @@
 extern TIM_HandleTypeDef *CantonTimerHandles[8];
 #endif
 
+void canton_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt);
 
 /*
 typedef enum canton_occupency {

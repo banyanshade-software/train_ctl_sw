@@ -41,6 +41,8 @@ static void _send_bytes(uint8_t *b, int len);
 
 void StartTxRxFrameTask(void *argument)
 {
+	  MX_USB_DEVICE_Init();			// TODO move away
+
 	if ((0)) {
 		frame_msg_t tx;
 		tx.t = RXFRAME_CHARS;

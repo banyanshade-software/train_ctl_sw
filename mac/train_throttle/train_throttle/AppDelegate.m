@@ -13,7 +13,7 @@
 #import "SimTrain.h"
 #include "statval.h"
 #include "txrxcmd.h"
-
+//#include "low/canton.h"
 #include "StringExtension.h"
 
 
@@ -225,7 +225,7 @@ typedef void (^respblk_t)(void);
     [timSendThrottle invalidate];
     timSendThrottle = nil;
     if (_linkok == LINK_SIMUHI) {
-        train_stop_all();
+        //train_stop_all();
     } else {
         uint8_t spdfrm[] = "|zG\0S|....";
         int l = 2+4+0;
@@ -331,7 +331,7 @@ typedef void (^respblk_t)(void);
 {
     if (_linkok != LINK_DISC) return;
     theDelegate = self;
-    railconfig_setup_default();
+    //railconfig_setup_default();
 #if HIGHLEVEL_SIMU_CNX
     self.linkok = LINK_SIMU;
 #else
@@ -1038,6 +1038,7 @@ static int frm_unescape(uint8_t *buf, int len)
 
 - (void) processStatFrame
 {
+    if (frm.pidx<8) return; // TODO
     NSAssert(frm.pidx>8, @"short stat frame");
     //if ((1)) return;
     
@@ -1283,19 +1284,29 @@ void task_auto_stop_auto(void)
     if (n1>=0) {
         train_adc_buffer[n1].voffA=(bemfi>0) ? 0 : -bemfi;
         train_adc_buffer[n1].voffB=(bemfi>0) ? bemfi : 0;
-        train_adc_buffer[n1].intOn=1500;
+        //train_adc_buffer[n1].intOn=1500;
     }
     int n2 = [_simTrain0 simuNextCanton];
     if (n2>=0) {
         train_adc_buffer[n2].voffA=(bemfi>0) ? 0 : -bemfi;
         train_adc_buffer[n2].voffB=(bemfi>0) ? bemfi : 0;
-        train_adc_buffer[n2].intOn=1500;
+        //train_adc_buffer[n2].intOn=1500;
     }
 
+    int notif = NOTIF_NEW_ADC_1;
+    bemf_tick(notif, t, dt);
+    msgsrv_tick(notif, t, dt);
+    spdctl_run_tick(notif, t, dt);
+    //msgsrv_tick(notif, t, dt);
+    canton_tick(notif, t, dt);
+    turnout_tick(notif, t, dt);
+
+    /*
     train_run_tick(NOTIF_NEW_ADC_1, (t-t0)*1000, ticks);
     task_auto_notif |= AUTO1_NOTIF_TICK;
-    auto1_run(task_auto_notif, (t-t0)*1000);
+    //auto1_run(task_auto_notif, (t-t0)*1000);
     task_auto_notif = 0;
+     */
 }
 
 void train_simu_canton_volt(int numcanton, int voltidx, int vlt100)

@@ -19,7 +19,7 @@
 #ifndef TRAINCONTROL_H_
 #define TRAINCONTROL_H_
 
-#include "railconfig.h"
+//#include "railconfig.h"
 #include "trainctl_iface.h"
 
 
@@ -39,9 +39,9 @@ extern volatile uint8_t trainctl_test_mode;
 
 
 int train_set_target_speed(int numtrain, int16_t target);
-void train_stop_all(void);
+//void train_stop_all(void);
 
-void calibrate_bemf(void);
+//void calibrate_bemf(void);
 
 
 

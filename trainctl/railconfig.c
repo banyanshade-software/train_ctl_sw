@@ -292,7 +292,7 @@ static const turnout_config_t Turnouts[NUM_TURNOUTS] = {
         //static train_vars_t   TrainsVars[NUM_TRAINS];
         //static turnout_vars_t TurnoutVars[NUM_TURNOUTS];
 
-static int setup_done = 0;
+static int setup_done = 1;
 
 const canton_config_t *get_canton_cnf(int idx)
 {

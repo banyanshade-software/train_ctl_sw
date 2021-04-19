@@ -31,8 +31,8 @@
 
 
 #include "trainctl_iface.h"
-#include "traincontrol.h"
-#include "canton.h"
+//#include "traincontrol.h"
+//#include "canton.h"
 #include "stm32/txrxtask.h"
 #include "stm32/taskauto.h"
 #include "stm32/taskctrl.h"
@@ -77,29 +77,17 @@ UART_HandleTypeDef huart4;
 DMA_HandleTypeDef hdma_uart4_rx;
 DMA_HandleTypeDef hdma_uart4_tx;
 
-/* Definitions for defaultTask */
-osThreadId_t defaultTaskHandle;
+/* Definitions for uiTask */
+osThreadId_t uiTaskHandle;
 uint32_t defaultTaskBuffer[ 128 ];
 osStaticThreadDef_t defaultTaskControlBlock;
-const osThreadAttr_t defaultTask_attributes = {
-  .name = "defaultTask",
+const osThreadAttr_t uiTask_attributes = {
+  .name = "uiTask",
   .stack_mem = &defaultTaskBuffer[0],
   .stack_size = sizeof(defaultTaskBuffer),
   .cb_mem = &defaultTaskControlBlock,
   .cb_size = sizeof(defaultTaskControlBlock),
-  .priority = (osPriority_t) osPriorityNormal,
-};
-/* Definitions for taskBLE */
-osThreadId_t taskBLEHandle;
-uint32_t taskBLEBuffer[ 256 ];
-osStaticThreadDef_t taskBLEControlBlock;
-const osThreadAttr_t taskBLE_attributes = {
-  .name = "taskBLE",
-  .stack_mem = &taskBLEBuffer[0],
-  .stack_size = sizeof(taskBLEBuffer),
-  .cb_mem = &taskBLEControlBlock,
-  .cb_size = sizeof(taskBLEControlBlock),
-  .priority = (osPriority_t) osPriorityLow,
+  .priority = (osPriority_t) osPriorityLow7,
 };
 /* Definitions for ctrlTask */
 osThreadId_t ctrlTaskHandle;
@@ -137,17 +125,6 @@ const osThreadAttr_t taskAuto_attributes = {
   .cb_size = sizeof(taskAutoControlBlock),
   .priority = (osPriority_t) osPriorityLow,
 };
-/* Definitions for bleRespQueue */
-osMessageQueueId_t bleRespQueueHandle;
-uint8_t bleRespQueueBuffer[ 16 * sizeof( at_msg_t ) ];
-osStaticMessageQDef_t bleRespQueueControlBlock;
-const osMessageQueueAttr_t bleRespQueue_attributes = {
-  .name = "bleRespQueue",
-  .cb_mem = &bleRespQueueControlBlock,
-  .cb_size = sizeof(bleRespQueueControlBlock),
-  .mq_mem = &bleRespQueueBuffer,
-  .mq_size = sizeof(bleRespQueueBuffer)
-};
 /* Definitions for frameQueue */
 osMessageQueueId_t frameQueueHandle;
 uint8_t frameQueueBuffer[ 48 * sizeof( frame_msg_t ) ];
@@ -178,9 +155,8 @@ static void MX_TIM4_Init(void);
 static void MX_TIM8_Init(void);
 static void MX_I2C3_Init(void);
 static void MX_TIM12_Init(void);
-void StartDefaultTask(void *argument);
-void StartTaskBLE(void *argument);
-void StartCtrlTask(void *argument);
+void StartUiTask(void *argument);
+extern void StartCtrlTask(void *argument);
 extern void StartTxRxFrameTask(void *argument);
 extern void StartTaskAuto(void *argument);
 
@@ -268,9 +244,6 @@ int main(void)
   /* USER CODE END RTOS_TIMERS */
 
   /* Create the queue(s) */
-  /* creation of bleRespQueue */
-  bleRespQueueHandle = osMessageQueueNew (16, sizeof(at_msg_t), &bleRespQueue_attributes);
-
   /* creation of frameQueue */
   frameQueueHandle = osMessageQueueNew (48, sizeof(frame_msg_t), &frameQueue_attributes);
 
@@ -279,11 +252,8 @@ int main(void)
   /* USER CODE END RTOS_QUEUES */
 
   /* Create the thread(s) */
-  /* creation of defaultTask */
-  defaultTaskHandle = osThreadNew(StartDefaultTask, NULL, &defaultTask_attributes);
-
-  /* creation of taskBLE */
-  taskBLEHandle = osThreadNew(StartTaskBLE, NULL, &taskBLE_attributes);
+  /* creation of uiTask */
+  uiTaskHandle = osThreadNew(StartUiTask, NULL, &uiTask_attributes);
 
   /* creation of ctrlTask */
   ctrlTaskHandle = osThreadNew(StartCtrlTask, NULL, &ctrlTask_attributes);
@@ -1174,14 +1144,14 @@ static void MX_GPIO_Init(void)
 
 /* USER CODE END 4 */
 
-/* USER CODE BEGIN Header_StartDefaultTask */
+/* USER CODE BEGIN Header_StartUiTask */
 /**
-  * @brief  Function implementing the defaultTask thread.
+  * @brief  Function implementing the uiTask thread.
   * @param  argument: Not used
   * @retval None
   */
-/* USER CODE END Header_StartDefaultTask */
-void StartDefaultTask(void *argument)
+/* USER CODE END Header_StartUiTask */
+__weak void StartUiTask(void *argument)
 {
   /* init code for USB_DEVICE */
   MX_USB_DEVICE_Init();
@@ -1232,60 +1202,6 @@ void StartDefaultTask(void *argument)
   }
 #endif
   /* USER CODE END 5 */
-}
-
-/* USER CODE BEGIN Header_StartTaskBLE */
-/**
-* @brief Function implementing the taskBLE thread.
-* @param argument: Not used
-* @retval None
-*/
-/* USER CODE END Header_StartTaskBLE */
-void StartTaskBLE(void *argument)
-{
-  /* USER CODE BEGIN StartTaskBLE */
-  /* Infinite loop */
-  if (0) RunBleTask(&huart4, &hdma_uart4_rx, &hdma_uart4_tx, bleRespQueueHandle);
-  for(;;)
-  {
-    osDelay(1);
-  }
-  /* USER CODE END StartTaskBLE */
-}
-
-/* USER CODE BEGIN Header_StartCtrlTask */
-/**
-* @brief Function implementing the ctrlTask thread.
-* @param argument: Not used
-* @retval None
-*/
-/* USER CODE END Header_StartCtrlTask */
-void StartCtrlTask(void *argument)
-{
-  /* USER CODE BEGIN StartCtrlTask */
-	  MX_USB_DEVICE_Init();
-
-	  CantonTimerHandles[1]=&htim1;
-	  CantonTimerHandles[2]=&htim2;
-	  CantonTimerHandles[3]=&htim3;
-	  //CantonTimerHandles[3]=&htim3;
-	  railconfig_setup_default();
-
-
-
-	  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
-	  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2);
-	  HAL_TIM_PWM_Stop(&htim1, TIM_CHANNEL_2);
-	  // XX
-
-	  HAL_TIM_Base_Start_IT(&htim8);
-
-
-	  HAL_ADC_Start_DMA(&hadc1,(uint32_t *)train_adc_buffer, NUM_ADC_SAMPLES);
-
-	  run_task_ctrl();
-
-  /* USER CODE END StartCtrlTask */
 }
 
 /**

@@ -8,6 +8,7 @@
 
 #include "trainmsg.h"
 
+uint8_t localBoardNum = 0; // TODO move to config
 
 
 

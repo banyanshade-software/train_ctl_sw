@@ -263,11 +263,11 @@ static uint8_t process_frame_cmd(uint8_t sel, uint8_t num,  uint8_t cmd, uint8_t
 			return 0;
 			break;
 		case 'S':
-			train_stop_all();
+			// TODO train_stop_all();
 			return 0;
 			break;
 		case 'K':
-			calibrate_bemf();
+			// TODO calibrate_bemf();
 			return 0;
 			break;
 		case 'p':
@@ -305,7 +305,7 @@ static uint8_t process_frame_cmd(uint8_t sel, uint8_t num,  uint8_t cmd, uint8_t
 			task_auto_stop_auto();
 			break;
 		case 'z':
-			rc = train_reset_pos_estimate(num);
+			rc = 0; // TODO train_reset_pos_estimate(num);
 			return rc;
 			break;
 		case 'p': {

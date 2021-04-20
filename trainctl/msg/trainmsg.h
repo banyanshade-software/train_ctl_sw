@@ -43,7 +43,7 @@ typedef uint8_t  msg_addr_t;
 
 // UI up to 32 components
 // 1 0 0  c c c c c c
-#define MA_UI(_c) (0x80 | ((_c) & 0x1F)))
+#define MA_UI(_c) (0x80 | ((_c) & 0x1F))
 #define MA_ADDR_3_UI 	0x80
 #define IS_UI(_addr) (MA_ADDR_3_UI == ((_addr) & MA_ADDR_MASK_3))
 
@@ -121,6 +121,11 @@ LFMQUEUE_DEF_H(from_spdctl, msg_64_t)
 LFMQUEUE_DEF_H(to_forward, msg_64_t)
 LFMQUEUE_DEF_H(from_forward, msg_64_t)
 
+LFMQUEUE_DEF_H(to_forward_usb, msg_64_t)
+LFMQUEUE_DEF_H(from_forward_usb, msg_64_t)
+
+/* to UI */
+#define CMD_NOTIF_SPEED     0x12
 
 void msgsrv_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt);
 

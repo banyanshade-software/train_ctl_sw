@@ -32,6 +32,7 @@ typedef struct {
     uint8_t escape;
     uint8_t seqnum;
     uint8_t notif;
+    uint8_t msg64;
     uint8_t retcode;
     uint8_t sel;
     uint8_t num;
@@ -870,6 +871,8 @@ static int frm_unescape(uint8_t *buf, int len)
                 // process frame
                 if (frm.notif) {
                     [self frameNotif];
+                } else if (frm.msg64) {
+                    [self frameMsg64];
                 } else {
                     [self frameResponse];
                 }
@@ -903,6 +906,12 @@ static int frm_unescape(uint8_t *buf, int len)
                 } else if ('N'==c) {
                     frm.notif = 1;
                     frm.state = 3;
+                } else if ('6'==c) {
+                    frm.msg64 = 1;
+                    frm.state = 6;
+                    NSLog(@"msg6");
+                } else {
+                    NSLog(@"unknown msg");
                 }
                 break;
             case 3:
@@ -939,6 +948,30 @@ static int frm_unescape(uint8_t *buf, int len)
     }
 }
 
+
+- (void) frameMsg64
+{
+    if (frm.pidx != 8) {
+        NSLog(@"frameMsg64 bad len");
+        return;
+    }
+    if (!IS_UI(frm.param[0])) {
+        NSLog(@"only handle UI");
+    }
+    int nt=0;
+    int16_t v;
+    switch (frm.param[2]) {
+        case CMD_NOTIF_SPEED:
+            nt = frm.param[1] & 0x07;
+            v = (frm.param[3]<<8) | frm.param[2];
+            NSLog(@"train %d spd %d\n", nt, v);
+            self.curspeed = v;
+            break;
+        default:
+            NSLog(@"frameMsg64 UI msg not handled");
+            break;
+    }
+}
 - (void) frameNotif
 {
     int16_t v,v2;
@@ -1300,6 +1333,7 @@ void task_auto_stop_auto(void)
     //msgsrv_tick(notif, t, dt);
     canton_tick(notif, t, dt);
     turnout_tick(notif, t, dt);
+    usbPollQueues();
 
     /*
     train_run_tick(NOTIF_NEW_ADC_1, (t-t0)*1000, ticks);

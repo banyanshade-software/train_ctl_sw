@@ -45,7 +45,7 @@
 
 //#include "stm32/txframe.h"
 //#include "stm32/taskauto.h"
-
+#include "msg/trainmsg.h"
 
 static uint8_t cli_frame_mode=1;  // XXX to be removed
 
@@ -117,6 +117,17 @@ static frame_state_t frm = {0};
 static  uint8_t process_frame_cmd(uint8_t sel, uint8_t num,  uint8_t cmd,
 		uint8_t *param, int plen, uint8_t *rbuf, int rbuflen, int *prlen);
 
+static void txframe_send_msg64(msg_64_t *msg);
+
+void usbPollQueues(void)
+{
+    for (;;) {
+        msg_64_t m;
+        int rc = mqf_read_to_forward_usb(&m);
+        if (rc) break;
+        txframe_send_msg64(&m);
+    }
+}
 
 void txrx_process_char(uint8_t c, uint8_t *respbuf, int *replen)
 {
@@ -417,6 +428,30 @@ void frame_send_notif(uint8_t sel, uint8_t num, uint8_t cmd, uint8_t *dta, int d
 	int l = frm_escape(m.frm, i, FRM_MAX_LEN);
 	if (l>0) txframe_send_notif(&m, l);
 }
+
+static void txframe_send_msg64(msg_64_t *msg)
+{
+    static frame_msg_t m;
+    //int dtalen = 8;
+    int i=0;
+    m.frm[i++] = '|';
+    m.frm[i++] = '_';
+    m.frm[i++] = '6';
+    m.frm[i++] = msg->to;
+    m.frm[i++] = msg->from;
+    m.frm[i++] = msg->rbytes[0];
+    m.frm[i++] = msg->rbytes[1];
+    m.frm[i++] = msg->rbytes[2];
+    m.frm[i++] = msg->rbytes[3];
+    m.frm[i++] = msg->rbytes[4];
+    m.frm[i++] = msg->rbytes[5];
+    //memcpy(m.frm+i, dta, dtalen);
+    //i += dtalen;
+    m.frm[i++] = '|';
+    int l = frm_escape(m.frm, i, FRM_MAX_LEN);
+    if (l>0) txframe_send_notif(&m, l);
+}
+
 
 
 // buf should be long enough to store a int32_t with escape, so 8 bytes

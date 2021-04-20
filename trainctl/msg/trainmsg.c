@@ -26,30 +26,35 @@ LFMQUEUE_DEF_C(from_spdctl, msg_64_t, 8)
 LFMQUEUE_DEF_C(to_forward, msg_64_t, 8)
 LFMQUEUE_DEF_C(from_forward, msg_64_t, 8)
 
+LFMQUEUE_DEF_C(to_forward_usb, msg_64_t, 8)
+LFMQUEUE_DEF_C(from_forward_usb, msg_64_t, 8)
+
 typedef struct {
 	mqf_t *to;
 	mqf_t *from;
 } qdef_t;
 
-#define NQDEF 4
+#define NQDEF 5
 static const qdef_t qdef[NQDEF] = {
 		/* 0*/ { &to_turnout, &from_turnout },
 		/* 1*/ { &to_canton,  &from_canton},
 		/* 2*/ { &to_spdctl,  &from_spdctl},
-		/* 3*/ { &to_forward, &from_forward}
+        /* 3*/ { &to_forward, &from_forward},
+        /* 4*/ { &to_forward_usb, &from_forward_usb}
 };
 
 typedef struct {
 	uint8_t mask; uint8_t value; uint8_t destq;
 } qroute_t;
 
-#define NROUTES 5
+#define NROUTES 6
 static const qroute_t routes[NROUTES] = {
 		{MA_ADDR_MASK_2|MA_ADDR_MASK_BOARD,		MA_ADDR_2_TURNOUT|0,	0},
 		{MA_ADDR_MASK_2|MA_ADDR_MASK_BOARD,		MA_ADDR_2_CANTON|0,		1},
 		{MA_ADDR_MASK_2,						MA_ADDR_2_TURNOUT,		3},
 		{MA_ADDR_MASK_2,						MA_ADDR_2_CANTON,		3},
-		{MA_ADDR_5_TRSC,						MA_ADDR_5_TRSC,			2},
+        {MA_ADDR_MASK_3,                        MA_ADDR_3_UI,           4},
+		{MA_ADDR_5_TRSC,						MA_ADDR_5_TRSC,			2}
 
 };
 

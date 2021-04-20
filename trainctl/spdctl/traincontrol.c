@@ -125,9 +125,7 @@ void spdctl_run_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
             m.cmd = CMD_SET_TARGET_SPEED;
             m.v1 = 50;
             mqf_write_from_forward(&m); //
-
         }
-        
 	}
 	/* process messages */
 	for (;;) {
@@ -358,6 +356,18 @@ static void train_periodic_control(int numtrain, int32_t dt)
 
     if (changed) {
     	_set_speed(numtrain, tconf, tvars);
+        if ((1)) { // TODO remove
+            msg_64_t m;
+            m.from = MA_TRAIN_SC(numtrain);
+            m.to = MA_UI(0);
+            m.cmd = CMD_NOTIF_SPEED;
+            m.v1 = v;
+            //mqf_write_from_spdctl(&m);
+            mqf_write_from_spdctl(&m);
+            m.cmd = CMD_SET_TARGET_SPEED;
+            m.v1 = 50;
+            mqf_write_from_forward(&m); //
+        }
     }
     if (tconf->notify_speed) {
     	struct spd_notif n;

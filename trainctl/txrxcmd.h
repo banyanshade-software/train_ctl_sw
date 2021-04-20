@@ -26,9 +26,12 @@
 
 #include "trainctl_iface.h"
 
+void usbPollQueues(void);
+
 void txrx_process_char(uint8_t c, uint8_t *respbuf, int *replen);
 
 void frame_send_notif(uint8_t sel, uint8_t num, uint8_t cmd, uint8_t *dta, int dtalen);
+
 
 
 static inline void txframe_send_response(frame_msg_t *m, int len)

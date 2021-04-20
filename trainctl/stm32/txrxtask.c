@@ -56,6 +56,8 @@ void StartTxRxFrameTask(void *argument)
 		osStatus_t rc = osMessageQueueGet(frameQueueHandle, &m, &msg_prio, portMAX_DELAY);
 		num_msg_get++;
 		if ((0)) flash_led();
+        usbPollQueues();
+        if (rc == osErrorTimeout) continue;
 		if (rc != osOK) {
 			num_msg_get_err++;
 			continue;

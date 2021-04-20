@@ -79,9 +79,9 @@ typedef union {
 					};
                     uint8_t vbytes[4];
 				};
-			};
+			}  __attribute__((packed));
 		};
-	};
+	} __attribute__((packed));
 	uint64_t raw;
 } msg_64_t;
 

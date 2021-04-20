@@ -254,6 +254,14 @@ static uint8_t process_frame_cmd(uint8_t sel, uint8_t num,  uint8_t cmd, uint8_t
 	int rc=-1;
 
 	switch(sel) {
+    case '6': {
+        msg_64_t m;
+        m.to = num;
+        m.from = cmd;
+        memcpy(m.rbytes, param, 6);
+        mqf_write_from_forward_usb(&m);
+        }
+        break;
 	case 'A':
 		switch (cmd) {
 		case 'S':

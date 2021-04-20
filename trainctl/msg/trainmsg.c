@@ -85,6 +85,10 @@ static void dispatch_m64(msg_64_t *m, int f)
 
 void msgsrv_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
 {
+    static int first = 1;
+    if (first) {
+        if (sizeof(msg_64_t) != 8) abort();
+    }
 	for (int i=0; i<NQDEF; i++) {
 		mqf_t *q = qdef[i].from;
 		for (;;) {

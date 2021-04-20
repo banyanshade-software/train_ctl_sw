@@ -200,10 +200,25 @@ typedef void (^respblk_t)(void);
     [timSendThrottle invalidate];
     [self sendTargetSpeed];
 }
+
+static int useMsg64 = 0;
+
 - (void) sendTargetSpeed
 {
     if (_linkok < LINK_OK) return;
-    
+    if (useMsg64) {
+        uint8_t spdfrm[] = "|x612345678|.........";
+        int l = 2+8+2;
+        int16_t v16 = (uint16_t) (_polarity * _targetspeed);
+        spdfrm[3] = MA_TRAIN_SC(0);
+        spdfrm[4] = MA_UI(0);
+        spdfrm[5] = CMD_SET_TARGET_SPEED;
+        spdfrm[6] = 0; // sub
+        spdfrm[7] = v16 & 0xFF;
+        spdfrm[8] = (v16 >> 8) & 0xFF;
+        [self sendFrame:spdfrm len:l blen:sizeof(spdfrm) then:nil];
+        return;
+    }
     NSLog(@"targetspeed sendFrame");
     lastThrottle = [NSDate timeIntervalSinceReferenceDate];
     uint8_t spdfrm[] = "|xT\0V__|.........";
@@ -958,6 +973,7 @@ static int frm_unescape(uint8_t *buf, int len)
     if (!IS_UI(frm.param[0])) {
         NSLog(@"only handle UI");
     }
+    useMsg64 = 1;
     int nt=0;
     int16_t v;
     switch (frm.param[2]) {

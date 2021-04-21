@@ -39,6 +39,7 @@ typedef uint8_t  msg_addr_t;
 #define MA_TURNOUT(_board, _c) (MA_ADDR_2_CANTON | (((_board) & 0x7)<<3 | ((_c) & 0x07)))
 #define IS_TURNOUT(_addr) (MA_ADDR_2_CANTON==((_addr) & MA_ADDR_MASK_2))
 
+#define MA_2_BOARD(_addr) (((_addr) & 0x38) >> 3)
 
 
 // UI up to 32 components
@@ -128,6 +129,8 @@ LFMQUEUE_DEF_H(from_spdctl, msg_64_t)
 LFMQUEUE_DEF_H(to_ctrl, msg_64_t)
 LFMQUEUE_DEF_H(from_ctrl, msg_64_t)
 
+/* to ctrl */
+#define CMD_PRESENCE_CHANGE	0x12
 
 LFMQUEUE_DEF_H(to_forward, msg_64_t)
 LFMQUEUE_DEF_H(from_forward, msg_64_t)
@@ -136,7 +139,7 @@ LFMQUEUE_DEF_H(to_forward_usb, msg_64_t)
 LFMQUEUE_DEF_H(from_forward_usb, msg_64_t)
 
 /* to UI */
-#define CMD_NOTIF_SPEED     0x12
+#define CMD_NOTIF_SPEED     0xA0
 
 void msgsrv_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt);
 

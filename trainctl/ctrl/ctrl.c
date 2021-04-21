@@ -12,6 +12,7 @@
 #include "ctrl.h"
 
 static void ctrl_reset(void);
+static void presence_changed(int segboard, int segnum, int v);
 
 void ctrl_run_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
 {
@@ -27,7 +28,26 @@ void ctrl_run_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
 		if (rc) break;
 		if (IS_CONTROL_T(m.to)) {
 			int tidx = m.to & 0x7;
+			switch (m.cmd) {
+			case CMD_PRESENCE_CHANGE: {
+				int segboard = MA_2_BOARD(m.from);
+				int segnum = m.sub;
+				int v = m.v1;
+				presence_changed(segboard, segnum, v);
+				break;
+			}
+			default:
+				break;
 
+			}
+/*
+ * msg_64_t m;
+    	m.from = MA_CANTON(localBoardNum, 0);
+    	m.to = MA_CONTROL();
+    	m.cmd = CMD_PRESENCE_CHANGE;
+    	m.sub = i;
+    	m.v1u = p;
+ */
 
 		} else if (IS_BROADCAST(m.to)) {
 			switch (m.cmd) {
@@ -36,6 +56,8 @@ void ctrl_run_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
 				ctrl_reset();
 				break;
 			}
+		} else {
+			itm_debug1("bad msg", m.to);
 		}
 	}
 	// xxx
@@ -43,6 +65,11 @@ void ctrl_run_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
 
 // ---------------------------------------------------------------
 static void ctrl_reset(void)
+{
+
+}
+
+static void presence_changed(int segboard, int segnum, int v)
 {
 
 }

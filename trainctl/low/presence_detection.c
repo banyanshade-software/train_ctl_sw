@@ -71,6 +71,7 @@ void presdect_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
     	msg_64_t m;
     	m.from = MA_CANTON(localBoardNum, 0);
     	m.to = MA_CONTROL();
+    	m.cmd = CMD_PRESENCE_CHANGE;
     	m.sub = i;
     	m.v1u = p;
     	mqf_write_from_canton(&m);

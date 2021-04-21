@@ -1185,7 +1185,7 @@ __weak void StartUiTask(void *argument)
 #endif
 
 #if 1
-	ina3221_init();
+	//ina3221_init();
 
 	taskdisp();
 

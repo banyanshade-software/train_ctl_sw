@@ -12,11 +12,13 @@
 #include "ina3221.h"
 #include "ina3221_def.h"
 #include "ina3221_config.h"
-
+//#include "utils/microsec.h"
 
 #include "railconfig.h" // for ugly hack
 
 uint16_t ina3221_errors = 0;
+extern uint32_t GetCurrentMicro(void);
+
 
 static uint16_t ina3221_read16(int a, int reg)
 {
@@ -43,15 +45,10 @@ static void ina3221_write16(int a, int reg, uint16_t v)
     }
 }
 
-int16_t ch1vs;
-int16_t ch2vs;
-int16_t ch3vs;
+// ----------------------------------------------------------------------------
 
-static uint16_t addr = 0;
-
-static void i2c_ready(int a)
+static void ina3221_configure(int a)
 {
-	addr = a;
 	//HAL_StatusTypeDef status;
 	uint16_t w16;
 
@@ -72,32 +69,129 @@ static void i2c_ready(int a)
 			| INA3221_CONF_MODE_CONTINUOUS | INA3221_CONF_MODE_SHUNT;
 	ina3221_write16(a, INA3221_REG_CONFIG, w16);
 
-    osDelay(100*1);
-    //int16_t i1 = ina3221_read16(a, INA3221_REG_CH1_BUSVOLT);
-    //int16_t i2 = ina3221_read16(a, INA3221_REG_CH2_BUSVOLT);
-    //int16_t i3 = ina3221_read16(a, INA3221_REG_CH3_BUSVOLT);
+    if ((0)) osDelay(100*1);
 
-    ina3221_start_read();
+    //if ((0)) ina3221_start_read();
 
     return;
-    //uint8_t buf[4];
-    //status = HAL_I2C_Mem_Read(&INA3221_I2C_PORT, a<<1, INA3221_REG_CH1_BUSVOLT, I2C_MEMADD_SIZE_8BIT, buf, 4, HAL_MAX_DELAY);
-    //int16_t it = i1+i2+i3;
-    HAL_StatusTypeDef s1,s2, s3;
-    //HAL_StatusTypeDef HAL_I2C_Mem_Read_IT(I2C_HandleTypeDef *hi2c, uint16_t DevAddress,
-    //uint16_t MemAddress, uint16_t MemAddSize, uint8_t *pData, uint16_t Size);
-    s1 = HAL_I2C_Mem_Read_IT(&INA3221_I2C_PORT, a<<1, INA3221_REG_CH1_SHUNTVOLT, I2C_MEMADD_SIZE_8BIT,
-    		(uint8_t *)&ch1vs, 2);
-    s2 = HAL_I2C_Mem_Read_IT(&INA3221_I2C_PORT, a<<1, INA3221_REG_CH2_SHUNTVOLT, I2C_MEMADD_SIZE_8BIT,
-    		(uint8_t *)&ch1vs, 2);
-    s3 = HAL_I2C_Mem_Read_IT(&INA3221_I2C_PORT, a<<1, INA3221_REG_CH3_SHUNTVOLT, I2C_MEMADD_SIZE_8BIT,
-    		(uint8_t *)&ch1vs, 2);
-
-    //int16_t it = i1+i2+i3;
 }
 
-int16_t ina3221_values[3];
-int16_t ina3221_prev[3];
+// ----------------------------------------------------------------------------
+
+
+static uint8_t ina3221_devices[4] = {0, 0, 0, 0};  // 1 if device is present
+
+
+void ina3221_init(void)
+{
+	//I2C_Scan();
+	for (int dev = 0; dev<3; dev++) {
+		int addr = 0x40 + dev;
+	    HAL_StatusTypeDef res;
+        res = HAL_I2C_IsDeviceReady(&INA3221_I2C_PORT, addr << 1, 1, 10);
+        if (res == HAL_OK) {
+        	ina3221_configure(addr);
+        	ina3221_devices[dev]=1;
+        	itm_debug1("INA@", addr);
+        } else {
+        	ina3221_devices[dev]=0;
+        }
+	}
+}
+// ----------------------------------------------------------------------------
+
+
+static int16_t *pvalues = NULL;
+static uint8_t *pflagdone = NULL;
+
+static int get_reg_step = -1;
+static void _get_next_reg(void);
+
+
+static uint32_t t0;
+static uint32_t t1;
+uint32_t ina3221_scan_dur = 0;
+uint32_t ina3221_inter_dur = 0;
+
+
+
+void ina3221_start_read(int16_t *vals, uint8_t *flagdone)
+{
+	if (get_reg_step != -1) {
+		itm_debug1("ina rd ko", get_reg_step);
+		return;
+	}
+	pflagdone = flagdone;
+	if (pflagdone) *pflagdone = 0;
+
+	pvalues = vals;
+
+	itm_debug1("ina rd", ina3221_errors);
+	//t0 = HAL_GetTick();
+	t0 = GetCurrentMicro();
+	ina3221_inter_dur = t0 - t1;
+	get_reg_step = 0;
+	_get_next_reg();
+}
+
+static void _get_next_reg(void)
+{
+	for (;;) {
+		if (get_reg_step<0) {
+			itm_debug1("bad get_reg_step", get_reg_step);
+		}
+		if (get_reg_step == INA3221_NUM_VALS) {
+			if (pflagdone) *pflagdone = 1;
+			uint32_t tm = GetCurrentMicro();
+			ina3221_scan_dur = tm - t0;
+			t1 = tm;
+			get_reg_step = -1;
+			return;
+		}
+		int numdev = get_reg_step/3;
+		if (!ina3221_devices[numdev]) {
+			pvalues[get_reg_step] = 0;
+			get_reg_step++;
+			continue;
+		}
+		int reg;
+		switch (get_reg_step % 3) {
+		case 0: reg = INA3221_REG_CH1_SHUNTVOLT; break;
+		case 1: reg = INA3221_REG_CH2_SHUNTVOLT; break;
+		case 2: reg = INA3221_REG_CH3_SHUNTVOLT; break;
+		}
+		HAL_StatusTypeDef status;
+		int addr = 0x40 + numdev;
+		status = HAL_I2C_Mem_Read_IT(&INA3221_I2C_PORT, addr<<1, reg, I2C_MEMADD_SIZE_8BIT,
+	    		(uint8_t *)&pvalues[get_reg_step], 2);
+		if (status != HAL_OK) {
+			itm_debug1("readit", status);
+		}
+		get_reg_step++;
+		break;
+	}
+}
+
+
+void HAL_I2C_MemRxCpltCallback(I2C_HandleTypeDef *hi2c)
+{
+	_get_next_reg();
+
+}
+
+
+
+void HAL_I2C_ErrorCallback(I2C_HandleTypeDef *hi2c)
+{
+	ina3221_errors++;
+	itm_debug2("i2c err", hi2c->ErrorCode, get_reg_step);
+	get_reg_step = -1;
+}
+
+
+#if 0
+//int16_t ina3221_values[3];
+//int16_t ina3221_prev[3];
 uint32_t ina3221_nscan = 0;
 uint32_t ina3221_scan_dur = 0;
 uint32_t ina3221_inter_dur = 0;
@@ -105,9 +199,8 @@ uint32_t ina3221_errcnt = 0;
 static uint32_t t0;
 static uint32_t t1;
 
-uint32_t GetCurrentMicro(void);
 
-#if 1
+
 static int get_reg_step = -1;
 static void _get_next_reg(void)
 {
@@ -168,66 +261,5 @@ static void _get_next_reg(void)
 	get_reg_step++;
 }
 
-void ina3221_start_read(void)
-{
-	if (get_reg_step != -1) {
-		itm_debug1("ina rd ko", get_reg_step);
-		return;
-	}
-	itm_debug1("ina rd", ina3221_errcnt);
-	//t0 = HAL_GetTick();
-	t0 = GetCurrentMicro();
-	ina3221_inter_dur = t0 - t1;
-	get_reg_step = 0;
-	_get_next_reg();
-}
-
-void HAL_I2C_MemRxCpltCallback(I2C_HandleTypeDef *hi2c)
-{
-	_get_next_reg();
-
-}
-#else
-// polling version for test
-void ina3221_start_read(void)
-{
-	ina3221_values[0] = ina3221_read16(addr, INA3221_REG_CH1_SHUNTVOLT);
-	ina3221_values[1] = ina3221_read16(addr, INA3221_REG_CH2_SHUNTVOLT);
-	ina3221_values[2] = ina3221_read16(addr, INA3221_REG_CH3_SHUNTVOLT);
-	return;
-	uint16_t  w16 = INA3221_CONF_CH1_EN | INA3221_CONF_CH2_EN | INA3221_CONF_CH3_EN
-	    		| INA3221_CONF_VS_CT_1m | INA3221_CONF_AVG1
-				|INA3221_CONF_MODE_SINGLE /*| INA3221_CONF_MODE_CONTINUOUS*/ | INA3221_CONF_MODE_SHUNT;
-	ina3221_write16(addr, INA3221_REG_CONFIG, w16);
-
-}
-
-void HAL_I2C_MemRxCpltCallback(I2C_HandleTypeDef *hi2c)
-{
-
-}
 #endif
 
-
-void HAL_I2C_ErrorCallback(I2C_HandleTypeDef *hi2c)
-{
-	ina3221_errcnt++;
-    itm_debug2("i2c err", hi2c->ErrorCode, get_reg_step);
-    get_reg_step = -1;
-}
-static void I2C_Scan(void)
-{
-    HAL_StatusTypeDef res;
-    for(uint16_t i = 1; i < 128; i++) {
-        res = HAL_I2C_IsDeviceReady(&INA3221_I2C_PORT, i << 1, 1, 10);
-        if(res == HAL_OK) {
-        	i2c_ready(i);
-        } else {
-        }
-    }
-}
-
-void ina3221_init(void)
-{
-	I2C_Scan();
-}

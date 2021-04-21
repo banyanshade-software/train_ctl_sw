@@ -58,7 +58,7 @@ typedef uint8_t  msg_addr_t;
 #define MA_ADDR_5_CTRL	0xD0
 #define MA_CONTROL_T(_t) (MA_ADDR_5_CTRL  | (((_t)& 0x07)))
 #define MA_CONTROL() MA_CONTROL_T(7);
-#define IS_CONTROL_T  (MA_ADDR_5_CTRL == ((_addr) & MA_ADDR_MASK_5))
+#define IS_CONTROL_T(_addr)  (MA_ADDR_5_CTRL == ((_addr) & MA_ADDR_MASK_5))
 
 #define IS_BROADCAST(_addr) (0xFF == (_addr))
 

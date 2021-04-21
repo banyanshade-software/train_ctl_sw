@@ -25,6 +25,7 @@
 #include "../low/canton_bemf.h"
 #include "../low/turnout.h"
 #include "../spdctl/traincontrol.h"
+#include "../ctrl/ctrl.h"
 
 #if 0
 #include "cmsis_os.h"
@@ -120,6 +121,7 @@ static void run_task_ctrl(void)
 		//msgsrv_tick(notif, t, dt);
 		canton_tick(notif, t, dt);
 		turnout_tick(notif, t, dt);
+		ctrl_run_tick(notif, t, dt);
 	}
 
 }

@@ -37,7 +37,7 @@
 #include "stm32/taskauto.h"
 #include "stm32/taskctrl.h"
 #include "stm32/taskdisp.h"
-#include "../../../ina3221/ina3221.h"
+//#include "../../../stm32dev/ina3221/ina3221.h"
 
 /* USER CODE END Includes */
 

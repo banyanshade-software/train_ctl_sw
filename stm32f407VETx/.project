@@ -37,14 +37,9 @@
 			<locationURI>PARENT-1-PROJECT_LOC/BLE</locationURI>
 		</link>
 		<link>
-			<name>disp_tft</name>
+			<name>stm32dev</name>
 			<type>2</type>
-			<locationURI>PARENT-1-PROJECT_LOC/disp_tft</locationURI>
-		</link>
-		<link>
-			<name>ina3221</name>
-			<type>2</type>
-			<locationURI>PARENT-1-PROJECT_LOC/ina3221</locationURI>
+			<locationURI>PARENT-1-PROJECT_LOC/stm32dev</locationURI>
 		</link>
 		<link>
 			<name>trainctl</name>

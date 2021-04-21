@@ -28,8 +28,8 @@
 #include "cmsis_os.h"
 #include "main.h"
 
-#include "../../disp_tft/ssd1306_tests.h"
-#include "../../disp_tft/ssd1306.h"
+#include "../../stm32dev/disp_tft/ssd1306_tests.h"
+#include "../../stm32dev/disp_tft/ssd1306.h"
 #include "../BLE/bletask.h"
 
 extern int num_train_periodic_control;
@@ -37,7 +37,7 @@ extern int num_train_periodic_control;
 
 void StartUiTask(void *argument)
 {
-	MX_USB_DEVICE_Init();
+	//MX_USB_DEVICE_Init();
 	taskdisp();
 }
 

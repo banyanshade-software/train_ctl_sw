@@ -41,7 +41,7 @@ static void _send_bytes(uint8_t *b, int len);
 
 void StartTxRxFrameTask(void *argument)
 {
-	  MX_USB_DEVICE_Init();			// TODO move away
+	  MX_USB_DEVICE_Init();
 
 	if ((0)) {
 		frame_msg_t tx;

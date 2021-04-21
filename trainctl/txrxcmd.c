@@ -38,7 +38,7 @@
 #include "train.h"
 //#include "turnout.h"
 //#include "traincontrol.h"
-#include "auto1.h"
+//#include "auto1.h"
 #include "misc.h"
 #include "param.h"
 #include "statval.h"
@@ -318,10 +318,10 @@ static uint8_t process_frame_cmd(uint8_t sel, uint8_t num,  uint8_t cmd, uint8_t
 		    train_set_target_speed(num, s);
 			return 0;
 		case 'A':
-			task_auto_start_auto();
+			//task_auto_start_auto();
 			break;
 		case 'a':
-			task_auto_stop_auto();
+			//task_auto_stop_auto();
 			break;
 		case 'z':
 			rc = 0; // TODO train_reset_pos_estimate(num);

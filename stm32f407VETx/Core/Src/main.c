@@ -34,7 +34,7 @@
 //#include "traincontrol.h"
 //#include "canton.h"
 #include "stm32/txrxtask.h"
-#include "stm32/taskauto.h"
+//#include "stm32/taskauto.h"
 #include "stm32/taskctrl.h"
 #include "stm32/taskdisp.h"
 //#include "../../../stm32dev/ina3221/ina3221.h"
@@ -113,18 +113,6 @@ const osThreadAttr_t txrxFrameTask_attributes = {
   .cb_size = sizeof(txrxFrameTaskControlBlock),
   .priority = (osPriority_t) osPriorityLow3,
 };
-/* Definitions for taskAuto */
-osThreadId_t taskAutoHandle;
-uint32_t taskAutoBuffer[ 256 ];
-osStaticThreadDef_t taskAutoControlBlock;
-const osThreadAttr_t taskAuto_attributes = {
-  .name = "taskAuto",
-  .stack_mem = &taskAutoBuffer[0],
-  .stack_size = sizeof(taskAutoBuffer),
-  .cb_mem = &taskAutoControlBlock,
-  .cb_size = sizeof(taskAutoControlBlock),
-  .priority = (osPriority_t) osPriorityLow,
-};
 /* Definitions for frameQueue */
 osMessageQueueId_t frameQueueHandle;
 uint8_t frameQueueBuffer[ 48 * sizeof( frame_msg_t ) ];
@@ -158,7 +146,6 @@ static void MX_TIM12_Init(void);
 void StartUiTask(void *argument);
 extern void StartCtrlTask(void *argument);
 extern void StartTxRxFrameTask(void *argument);
-extern void StartTaskAuto(void *argument);
 
 /* USER CODE BEGIN PFP */
 
@@ -260,9 +247,6 @@ int main(void)
 
   /* creation of txrxFrameTask */
   txrxFrameTaskHandle = osThreadNew(StartTxRxFrameTask, NULL, &txrxFrameTask_attributes);
-
-  /* creation of taskAuto */
-  taskAutoHandle = osThreadNew(StartTaskAuto, NULL, &taskAuto_attributes);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */

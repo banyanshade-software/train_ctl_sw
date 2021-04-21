@@ -13,6 +13,8 @@
  *
  */
 
+#error obsolete
+
 #ifndef STM32_TASKAUTO_H_
 #define STM32_TASKAUTO_H_
 

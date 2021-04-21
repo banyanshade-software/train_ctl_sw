@@ -15,6 +15,7 @@
 #ifndef AUTO1_H_
 #define AUTO1_H_
 
+#error obsolete
 #include "trainctl_iface.h"
 
 void auto1_run(uint32_t notif, uint32_t tick);

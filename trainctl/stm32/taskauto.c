@@ -13,6 +13,8 @@
  */
 
 
+#error obsolete
+
 #include "cmsis_os.h"
 #include "main.h"
 #include "task.h"
@@ -20,6 +22,7 @@
 #include "../misc.h"
 #include "taskauto.h"
 #include "../auto1.h"
+
 
 extern void StartTaskAuto(void *argument)
 {

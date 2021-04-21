@@ -18,6 +18,8 @@
  *           this is really intended to be removed and replaced by something more useful
  */
 
+#error obsolete
+
 #if 0
 #include "misc.h"
 #include "auto1.h"

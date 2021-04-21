@@ -23,7 +23,7 @@ void ctrl_run_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
 	/* process messages */
 	for (;;) {
 		msg_64_t m;
-		int rc = mqf_read_to_(&m);
+		int rc = mqf_read_to_ctrl(&m);
 		if (rc) break;
 		if (IS_CONTROL_T(m.to)) {
 			int tidx = m.to & 0x7;
@@ -39,4 +39,10 @@ void ctrl_run_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
 		}
 	}
 	// xxx
+}
+
+// ---------------------------------------------------------------
+static void ctrl_reset(void)
+{
+
 }

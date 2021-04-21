@@ -1,5 +1,5 @@
 /*
- * traincontrol.h
+ * spdctl.h
  *
  *  Created on: Oct 3, 2020
  *      Author: danielbraun
@@ -16,8 +16,8 @@
  * 			target_speed -> inertia -> BEMF feedback -> volt + pwm
  */
 
-#ifndef TRAINCONTROL_H_
-#define TRAINCONTROL_H_
+#ifndef SPDCONTROL_H_
+#define SPDCONTROL_H_
 
 //#include "railconfig.h"
 #include "trainctl_iface.h"

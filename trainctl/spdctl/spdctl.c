@@ -1,5 +1,5 @@
 /*
- * traincontrol.c
+ * spdctl.c
  *
  *  Created on: Oct 3, 2020
  *      Author: danielbraun
@@ -28,7 +28,7 @@
 #include "pidctl.h"
 #include "train.h"
 #include "../low/turnout.h"
-#include "traincontrol.h"
+#include "spdctl.h"
 #include "railconfig.h"
 //#include "auto1.h"
 #include "txrxcmd.h"

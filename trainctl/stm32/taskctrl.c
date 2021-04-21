@@ -24,7 +24,7 @@
 #include "../low/canton.h"
 #include "../low/canton_bemf.h"
 #include "../low/turnout.h"
-#include "../spdctl/traincontrol.h"
+#include "../spdctl/spdctl.h"
 #include "../ctrl/ctrl.h"
 
 #if 0

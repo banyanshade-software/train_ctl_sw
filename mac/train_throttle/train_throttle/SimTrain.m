@@ -21,7 +21,7 @@
     
     double position;
     double len;
-    double c1_len;
+    //double c1_len;
     int c0;
     int c1;
 }
@@ -36,7 +36,7 @@
     c1 = 0xFF;
     position = 0;
     //const block_canton_config_t *bcnf = get_block_canton_cnf(c0);
-    //len = bcnf->len;
+    len = 100; //bcnf->len;
     return self;
 }
 

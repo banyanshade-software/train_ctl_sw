@@ -15,7 +15,7 @@
 #include "txrxcmd.h"
 //#include "low/canton.h"
 #include "StringExtension.h"
-
+//#include "ctrl/ctrl.h"
 
 
 #define HIGHLEVEL_SIMU_CNX 0
@@ -1350,6 +1350,7 @@ void task_auto_stop_auto(void)
     canton_tick(notif, t, dt);
     turnout_tick(notif, t, dt);
     usbPollQueues();
+    ctrl_run_tick(notif, t, dt);
 
     /*
     train_run_tick(NOTIF_NEW_ADC_1, (t-t0)*1000, ticks);

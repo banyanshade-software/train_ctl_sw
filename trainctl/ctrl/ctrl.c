@@ -11,6 +11,8 @@
 #include "../msg/trainmsg.h"
 #include "ctrl.h"
 
+#include "topology.h"
+
 static void ctrl_reset(void);
 static void presence_changed(int segboard, int segnum, int v);
 
@@ -20,7 +22,21 @@ void ctrl_run_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
 	if (first) {
 		first = 0;
 		ctrl_reset();
-	}
+        if ((1)) { // TODO remove
+            msg_64_t m;
+            m.to = MA_TRAIN_SC(0);
+            m.cmd = CMD_SET_C1_C2;
+            m.vbytes[0] = MA_CANTON(0, 0);
+            m.vbytes[1] = 1;
+            m.vbytes[2] = 0xFF;
+            m.vbytes[3] = 0;
+            //mqf_write_from_spdctl(&m);
+            mqf_write_from_forward(&m); //
+            m.cmd = CMD_SET_TARGET_SPEED;
+            m.v1 = 50;
+            mqf_write_from_ctrl(&m); //
+        }
+    }
 	/* process messages */
 	for (;;) {
 		msg_64_t m;

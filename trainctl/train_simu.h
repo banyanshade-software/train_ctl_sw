@@ -21,6 +21,6 @@ void train_simu_canton_set_pwm(int numcanton, int dir, int duty);
 #include "low/canton_bemf.h"
 #include "low/canton.h"
 #include "low/turnout.h"
-#include "spdctl/traincontrol.h"
+#include "spdctl/spdctl.h"
 #include "msg/trainmsg.h"
 #endif

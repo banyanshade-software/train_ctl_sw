@@ -23,6 +23,7 @@
 #include "../msg/trainmsg.h"
 #include "../low/canton.h"
 #include "../low/canton_bemf.h"
+#include "../low/presence_detection.h"
 #include "../low/turnout.h"
 #include "../spdctl/spdctl.h"
 #include "../ctrl/ctrl.h"
@@ -120,6 +121,7 @@ static void run_task_ctrl(void)
 		spdctl_run_tick(notif, t, dt);
 		//msgsrv_tick(notif, t, dt);
 		canton_tick(notif, t, dt);
+		presdect_tick(notif, t, dt);
 		turnout_tick(notif, t, dt);
 		ctrl_run_tick(notif, t, dt);
 	}

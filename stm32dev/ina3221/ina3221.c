@@ -113,12 +113,16 @@ static uint32_t t1;
 uint32_t ina3221_scan_dur = 0;
 uint32_t ina3221_inter_dur = 0;
 
+static void _err(void)
+{
 
+}
 
 void ina3221_start_read(int16_t *vals, uint8_t *flagdone)
 {
 	if (get_reg_step != -1) {
 		itm_debug1("ina rd ko", get_reg_step);
+		_err();
 		return;
 	}
 	pflagdone = flagdone;
@@ -166,6 +170,7 @@ static void _get_next_reg(void)
 	    		(uint8_t *)&pvalues[get_reg_step], 2);
 		if (status != HAL_OK) {
 			itm_debug1("readit", status);
+			_err();
 		}
 		get_reg_step++;
 		break;
@@ -186,6 +191,7 @@ void HAL_I2C_ErrorCallback(I2C_HandleTypeDef *hi2c)
 	ina3221_errors++;
 	itm_debug2("i2c err", hi2c->ErrorCode, get_reg_step);
 	get_reg_step = -1;
+	_err();
 }
 
 

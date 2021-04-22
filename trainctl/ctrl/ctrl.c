@@ -11,7 +11,7 @@
 #include "../msg/trainmsg.h"
 #include "ctrl.h"
 
-#include "topology.h"
+#include "./topology/topology.h"
 
 static void ctrl_reset(void);
 static void presence_changed(int segboard, int segnum, int v);
@@ -49,6 +49,7 @@ void ctrl_run_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
 				int segboard = MA_2_BOARD(m.from);
 				int segnum = m.sub;
 				int v = m.v1;
+				// 0.0
 				presence_changed(segboard, segnum, v);
 				break;
 			}

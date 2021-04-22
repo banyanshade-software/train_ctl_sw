@@ -254,7 +254,7 @@ static void train_periodic_control(int numtrain, int32_t dt)
 
 	USE_TRAIN(numtrain)	// tconf tvars
     if (!tconf) {
-        itm_debug1("unconfigured train", numtrain);
+        if ((0)) itm_debug1("unconf tr", numtrain);
         return;
     }
 	int16_t v = tvars->target_speed;

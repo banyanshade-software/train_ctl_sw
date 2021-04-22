@@ -141,6 +141,10 @@ static void turnout_reset(void)
 		memset(avars, 0, sizeof(*avars));
 		avars->value = 0;
 		avars->st = ST_IDLE;
+		if (!aconf) {
+			itm_debug1("tn skip", tidx);
+			continue;
+		}
 #ifndef TRAIN_SIMU
 		if (!aconf->cmd_port) return;
 

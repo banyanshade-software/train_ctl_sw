@@ -53,10 +53,12 @@ void presdect_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
 		values = val1;
 		future = val2;
 		step = 1;
+		break;
 	case 1:
 		values = val2;
 		future = val1;
 		step = 0;
+		break;
 	}
     ina3221_start_read(future, &fdone);
 
@@ -64,6 +66,7 @@ void presdect_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
     if (!values) return;
 
     for (int i = 0; i<INA3221_NUM_VALS; i++) {
+    	itm_debug2("ina", i, values[i]);
     	int p = (abs(values[i])>7000) ? 1 : 0;
     	if (p == presence[i]) continue;
     	presence[i] = p;

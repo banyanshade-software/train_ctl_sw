@@ -126,7 +126,7 @@ int get_val_info(int step, off_t *poffset, int *plen, int *ptridx, int *pcntidx,
         // canton
         step -= NUM_TRAINS*numvaltrain;
         int nc = step / numvalcanton;
-        if (nc >= NUM_CANTONS) {
+        if (nc >= NUM_LOCAL_CANTONS_SW) {
             // done
             return -1;
         }

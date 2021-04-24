@@ -58,7 +58,7 @@ typedef struct canton_vars {
 	int32_t selected_centivolt;
 } canton_vars_t;
 
-static canton_vars_t canton_vars[NUM_LOCAL_CANTONS];
+static canton_vars_t canton_vars[NUM_LOCAL_CANTONS_SW];
 
 #define USE_CANTON(_idx) \
 		const canton_config_t *cconf = get_canton_cnf(_idx); \
@@ -71,7 +71,7 @@ void canton_set_volt(int cn, const canton_config_t *c, canton_vars_t *v, int vol
 
 static void canton_reset(void)
 {
-	for (int i = 0; i<NUM_LOCAL_CANTONS; i++) {
+	for (int i = 0; i<NUM_LOCAL_CANTONS_SW; i++) {
 		USE_CANTON(i)
 		canton_set_pwm(i, cconf, cvars, 0, 0);
 		canton_set_volt(i, cconf, cvars,  7);

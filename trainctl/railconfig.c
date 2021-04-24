@@ -147,7 +147,7 @@ static  canton_config_t Cantons[NUM_CANTONS] = {
 				1, TIM_CHANNEL_1, TIM_CHANNEL_2,  // TIM_HandleTypeDef
 				0, /*notif BEMF */
 		},
-#if NUM_LOCAL_CANTONS == 8
+#if NUM_LOCAL_CANTONS_SW == 8
 		{//CANTON_TYPE_PROTO1,
 				//  0    1    2    3    4    5    6    7    8    9    10   11  12    13   14   15
 				//{ 1000, 874, 770, 699, 621, 578, 538, 507, 451, 432, 413, 398, 379, 367, 355, 345}, // volts[16]

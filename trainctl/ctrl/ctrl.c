@@ -33,7 +33,7 @@ void ctrl_run_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
             //mqf_write_from_spdctl(&m);
             mqf_write_from_forward(&m); //
             m.cmd = CMD_SET_TARGET_SPEED;
-            m.v1 = 50;
+            m.v1 = 30;
             mqf_write_from_ctrl(&m); //
         }
     }
@@ -81,6 +81,8 @@ void ctrl_run_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
 }
 
 // ---------------------------------------------------------------
+static int spd0 = 30;
+
 static void ctrl_reset(void)
 {
 
@@ -88,5 +90,9 @@ static void ctrl_reset(void)
 
 static void presence_changed(int segboard, int segnum, int v)
 {
-
+	static int t[3]={0};
+	itm_debug3("PRC", segboard, segnum, v);
+	if ((segnum<0) || (segnum>2)) return;
+	t[segnum]=v;
+	itm_debug3("PRS", t[0], t[1], t[2]);
 }

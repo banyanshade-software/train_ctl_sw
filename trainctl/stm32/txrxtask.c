@@ -19,6 +19,7 @@
 //#include "usb_device.h"
 //#include "usbd_cdc.h"
 #include "usbd_cdc_if.h"
+#include "usb_device.h"
 
 #include "../trainctl_iface.h"
 #include "../txrxcmd.h"
@@ -52,6 +53,10 @@ void StartTxRxFrameTask(void *argument)
 	}
 	static frame_msg_t m;
 	for (;;) {
+		if ((0)) {
+			osDelay(10000);
+			continue;
+		}
 		uint8_t msg_prio;
 		osStatus_t rc = osMessageQueueGet(frameQueueHandle, &m, &msg_prio, portMAX_DELAY);
 		num_msg_get++;

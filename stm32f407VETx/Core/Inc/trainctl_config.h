@@ -11,7 +11,13 @@
 //#define TRAINCTL_NEW 1
 #define STM32_F4
 
-#define NUM_LOCAL_CANTONS 8
+/*
+ * number of local block per board
+ * NUM_LOCAL_CANTONS_HW : really configured blocked (used for ADC)
+ * NUM_LOCAL_CANTONS_SW : max available in software
+ */
+#define NUM_LOCAL_CANTONS_HW 5
+#define NUM_LOCAL_CANTONS_SW 8
 
 #define TFT_DISP 1
 

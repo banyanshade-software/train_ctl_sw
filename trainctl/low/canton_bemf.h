@@ -53,7 +53,7 @@ typedef struct {
 } adc_buffer_t;
 #endif
 
-extern volatile adc_buffer_t train_adc_buffer[2*NUM_LOCAL_CANTONS];
+extern volatile adc_buffer_t train_adc_buffer[2*NUM_LOCAL_CANTONS_HW];
 
 
 #endif /* LOW_CANTON_BEMF_H_ */

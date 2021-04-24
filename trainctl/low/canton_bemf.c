@@ -13,15 +13,15 @@
 #include "railconfig.h"
 
 
-volatile adc_buffer_t train_adc_buffer[2*NUM_LOCAL_CANTONS];
+volatile adc_buffer_t train_adc_buffer[2*NUM_LOCAL_CANTONS_HW];
 
 
-static uint8_t bemf_to[NUM_LOCAL_CANTONS] = {0xFF, 0xFF, 0xFF, 0xFF,  0xFF, 0xFF, 0xFF, 0xFF};
+static uint8_t bemf_to[NUM_LOCAL_CANTONS_SW] = {0xFF, 0xFF, 0xFF, 0xFF,  0xFF, 0xFF, 0xFF, 0xFF};
 static void process_adc(volatile adc_buffer_t *buf, int32_t ticks);
 
 void bemf_reset(void)
 {
-	for (int i=0; i<NUM_LOCAL_CANTONS; i++) {
+	for (int i=0; i<NUM_LOCAL_CANTONS_SW; i++) {
 		bemf_to[i]=0xFF;
 	}
 }
@@ -53,7 +53,7 @@ void bemf_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
 		process_adc(train_adc_buffer, dt);
 	}
 	if (notif_flags & NOTIF_NEW_ADC_2) {
-		process_adc(train_adc_buffer+NUM_LOCAL_CANTONS, dt);
+		process_adc(train_adc_buffer+NUM_LOCAL_CANTONS_HW, dt);
 	}
 }
 
@@ -133,7 +133,7 @@ static inline int32_t bemf_convert_to_centivolt(const canton_config_t *c, int32_
 
 static void process_adc(volatile adc_buffer_t *buf, int32_t ticks)
 {
-	for (int i=0; i<NUM_LOCAL_CANTONS; i++) {
+	for (int i=0; i<NUM_LOCAL_CANTONS_HW; i++) {
 		// process intensity / presence
 		// process BEMF
 #ifndef USE_INA3221

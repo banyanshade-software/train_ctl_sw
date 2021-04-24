@@ -65,8 +65,12 @@ void presdect_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
     // process values
     if (!values) return;
 
+    if ((1)) {
+    	if (step) itm_debug3("prs0", values[0], values[1], values[2]);
+    	else itm_debug3("prs1", values[0], values[1], values[2]);
+    }
     for (int i = 0; i<INA3221_NUM_VALS; i++) {
-    	itm_debug2("ina", i, values[i]);
+    	//itm_debug2("ina", i, values[i]);
     	int p = (abs(values[i])>7000) ? 1 : 0;
     	if (p == presence[i]) continue;
     	presence[i] = p;

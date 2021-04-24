@@ -33,20 +33,23 @@
 
 // ---------------------------------------------------------
 
-#ifndef NUM_LOCAL_CANTONS
-#define NUM_LOCAL_CANTONS 1
+#ifndef NUM_LOCAL_CANTONS_SW
+#define NUM_LOCAL_CANTONS_SW 1
 #error ops
 #endif
 
 
 //#define ADD_DUMMY_CANTON
 
-
+/*
 #ifdef ADD_DUMMY_CANTON
 #define NUM_CANTONS (NUM_LOCAL_CANTONS+1)
 #else
 #define NUM_CANTONS (NUM_LOCAL_CANTONS)
 #endif
+*/
+
+#define NUM_CANTONS (NUM_LOCAL_CANTONS_SW)
 
 #define NUM_TRAINS  1
 

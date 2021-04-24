@@ -98,6 +98,10 @@ void taskdisp(void)
 	I2C_Scan();
 	ssd1306_Init();
 	for (;;) {
+		if ((0)) {
+			osDelay(10000);
+			continue;
+		}
 		ssd1306_Fill(Black);
 		ssd1306_SetCursor(0,0);
 		if (numdisp>4) numdisp=0;

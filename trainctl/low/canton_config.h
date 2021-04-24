@@ -18,7 +18,6 @@
 #endif
 #endif
 
-#define NUM_CANTON 8
 
 
 #define VOLT_SEL_3BITS 1	// otherwise, legacy on 4 bits

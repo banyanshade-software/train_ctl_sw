@@ -43,6 +43,13 @@
 //#include "../traincontrol.h"
 #endif
 //#include "../../../stm32dev/ina3221/ina3221.h"
+#include "trainctl_config.h"
+#include "low/canton_bemf.h"
+
+
+#define NUM_VAL_PER_CANTON (sizeof(adc_buffer_t)/sizeof(uint16_t))
+#define ADC_HALF_BUFFER (NUM_LOCAL_CANTONS_HW * NUM_VAL_PER_CANTON)
+#define NUM_ADC_SAMPLES (2*ADC_HALF_BUFFER)
 
 
 
@@ -50,7 +57,10 @@ static void run_task_ctrl(void);
 
 void StartCtrlTask(void *argument)
 {
-	  set_pwm_freq(350);
+	if (NUM_VAL_PER_CANTON != 2) Error_Handler();
+	if (ADC_HALF_BUFFER != 10) Error_Handler();
+
+	  set_pwm_freq(400);
 	  CantonTimerHandles[1]=&htim1;
 	  CantonTimerHandles[2]=&htim2;
 	  CantonTimerHandles[3]=&htim3;
@@ -85,7 +95,7 @@ void set_pwm_freq(int freqhz)
 	ps = ps-1;
 	cur_freqhz = 60000/(ps+1);
 	__HAL_TIM_SET_PRESCALER(&htim1, ps);
-
+	__HAL_TIM_SET_PRESCALER(&htim8, ps);
 }
 
 
@@ -107,6 +117,16 @@ static void run_task_ctrl(void)
 		int32_t dt = (oldt) ? (t-oldt) : 1;
 		oldt = t;
 
+		if ((1)) {
+			itm_debug2("ctick", notif, dt);
+			//continue;
+		}
+		/*
+		if (dt>67) {
+			itm_debug2("ctick", notif, dt);
+		}
+		continue;
+		*/
 		/*
 		void bemf_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt);
 		void canton_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt);
@@ -143,6 +163,7 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* AdcHandle)
 {
 	nfull++;
 	BaseType_t higher=0;
+	if ((0)) itm_debug1("conv/f", HAL_GetTick());
 	xTaskNotifyFromISR(ctrlTaskHandle, NOTIF_NEW_ADC_2, eSetBits, &higher);
 	portYIELD_FROM_ISR(higher);
 }
@@ -151,6 +172,7 @@ void HAL_ADC_ConvHalfCpltCallback(ADC_HandleTypeDef* hadc)
 {
 	nhalf++;
 	BaseType_t higher=0;
+	if ((0)) itm_debug1("conv/h", HAL_GetTick());
 	xTaskNotifyFromISR(ctrlTaskHandle, NOTIF_NEW_ADC_1, eSetBits, &higher);
 	portYIELD_FROM_ISR(higher);
 }

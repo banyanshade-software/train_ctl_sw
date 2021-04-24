@@ -61,7 +61,7 @@ void StartCtrlTask(void *argument)
 	if (NUM_VAL_PER_CANTON != 4) Error_Handler();
 	if (ADC_HALF_BUFFER != 10*2) Error_Handler();
 
-	  set_pwm_freq(400);
+	  set_pwm_freq(100);
 	  CantonTimerHandles[1]=&htim1;
 	  CantonTimerHandles[2]=&htim2;
 	  CantonTimerHandles[3]=&htim3;

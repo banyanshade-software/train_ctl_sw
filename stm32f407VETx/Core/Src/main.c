@@ -434,7 +434,7 @@ static void MX_ADC1_Init(void)
     Error_Handler();
   }
   /* USER CODE BEGIN ADC1_Init 2 */
-  if (hadc1.Init.NbrOfConversion != NUM_LOCAL_CANTONS_HW) {
+  if (hadc1.Init.NbrOfConversion != NUM_LOCAL_CANTONS_HW*2) {
 	    Error_Handler();
   }
   /* USER CODE END ADC1_Init 2 */

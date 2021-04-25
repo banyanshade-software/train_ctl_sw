@@ -20,7 +20,7 @@ static int init_done = 0;
 static void presdect_init(void)
 {
 	init_done = 1;
-	ina3221_init();
+	ina3221_init(0);
 }
 
 void presdect_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)

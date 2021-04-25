@@ -47,7 +47,10 @@ static void ina3221_write16(int a, int reg, uint16_t v)
 
 // ----------------------------------------------------------------------------
 
-static void ina3221_configure(int a)
+static uint8_t ina3221_devices[4] = {0, 0, 0, 0};  // 1 if device is present
+static uint16_t ina_conf_val = 0;
+
+static void ina3221_configure(int a, int continuous)
 {
 	//HAL_StatusTypeDef status;
 	uint16_t w16;
@@ -64,11 +67,13 @@ static void ina3221_configure(int a)
     	osDelay(100*5);
     	//if ((1)) return;
     }
+
     w16 = INA3221_CONF_CH1_EN | INA3221_CONF_CH2_EN | INA3221_CONF_CH3_EN
     		| INA3221_CONF_VS_CT_140u | INA3221_CONF_AVG1
-			| INA3221_CONF_MODE_CONTINUOUS | INA3221_CONF_MODE_SHUNT;
+			| INA3221_CONF_MODE_SHUNT;
+    if (continuous) w16 |= INA3221_CONF_MODE_CONTINUOUS;
 	ina3221_write16(a, INA3221_REG_CONFIG, w16);
-
+	ina_conf_val = w16;
     if ((0)) osDelay(100*1);
 
     //if ((0)) ina3221_start_read();
@@ -79,10 +84,21 @@ static void ina3221_configure(int a)
 // ----------------------------------------------------------------------------
 
 
-static uint8_t ina3221_devices[4] = {0, 0, 0, 0};  // 1 if device is present
 
+void ina3221_trigger_conversion(void)
+{
+	uint32_t t0 = GetCurrentMicro();
+	for (int dev = 0; dev<3; dev++) {
+		if (!ina3221_devices[dev]) continue;
+		int addr = 0x40 + dev;
+		ina3221_write16(addr, INA3221_REG_CONFIG, ina_conf_val);
+		itm_debug1("ina/Tr", addr);
+	}
+	t0 = GetCurrentMicro() - t0;
+	itm_debug2("ina trg", t0, ina3221_errors);
+}
 
-void ina3221_init(void)
+void ina3221_init(int continuous)
 {
 	//I2C_Scan();
 	for (int dev = 0; dev<3; dev++) {
@@ -90,7 +106,7 @@ void ina3221_init(void)
 	    HAL_StatusTypeDef res;
         res = HAL_I2C_IsDeviceReady(&INA3221_I2C_PORT, addr << 1, 1, 10);
         if (res == HAL_OK) {
-        	ina3221_configure(addr);
+        	ina3221_configure(addr, continuous);
         	ina3221_devices[dev]=1;
         	itm_debug1("INA@", addr);
         } else {
@@ -113,6 +129,8 @@ static uint32_t t1;
 uint32_t ina3221_scan_dur = 0;
 uint32_t ina3221_inter_dur = 0;
 
+extern void Error_Handler(void);
+
 static void _err(void)
 {
 	Error_Handler();
@@ -128,6 +146,11 @@ void ina3221_start_read(int16_t *vals, uint8_t *flagdone)
 	pflagdone = flagdone;
 	if (pflagdone) *pflagdone = 0;
 
+	if ((1)) {
+		uint16_t t = ina3221_read16(0x40, INA3221_REG_MASK_ENABLE);
+		int cvr = t & 0x1;
+		itm_debug2("msk/en", t, cvr);
+	}
 	pvalues = vals;
 
 	itm_debug1("ina rd", ina3221_errors);

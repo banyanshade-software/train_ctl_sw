@@ -79,7 +79,8 @@ void StartCtrlTask(void *argument)
 	HAL_TIM_PWM_Stop(&htim1, TIM_CHANNEL_2);
 	// XX
 
-	HAL_TIM_Base_Start_IT(&htim8);
+	//HAL_TIM_Base_Start_IT(&htim8);
+	HAL_TIM_Base_Start_IT(&htim1);
 
 
 	HAL_ADC_Start_DMA(&hadc1,(uint32_t *)train_adc_buf, nsmpl);
@@ -105,6 +106,7 @@ void set_pwm_freq(int freqhz)
 }
 
 
+#define USE_NOTIF_TIM 0
 
 
 static void run_task_ctrl(void)
@@ -120,10 +122,12 @@ static void run_task_ctrl(void)
 			if (notif & NOTIF_NEW_ADC_2)  n |= 2;
 			itm_debug2("-----", (notif & NOTIF_TIM8) ? 1 : 0, n);
 		}
+#if USE_NOTIF_TIM
 		if (notif & NOTIF_TIM8) {
 			presdect_tick(notif, 0, 0);
 		}
 		if (0==(notif & (NOTIF_NEW_ADC_1|NOTIF_NEW_ADC_2))) continue;
+#endif
 		//debug_info('G', 0, "HOP", 0, 0, 0);
 		static uint32_t oldt = 0;
 		static uint32_t t0 = 0;
@@ -155,9 +159,11 @@ static void run_task_ctrl(void)
 		bemf_tick(notif, t, dt);
 		msgsrv_tick(notif, t, dt);
 		spdctl_run_tick(notif, t, dt);
-		//msgsrv_tick(notif, t, dt);
 		canton_tick(notif, t, dt);
-		//presdect_tick(notif, t, dt);
+#if USE_NOTIF_TIM
+#else
+		presdect_tick(notif, t, dt);
+#endif
 		turnout_tick(notif, t, dt);
 		ctrl_run_tick(notif, t, dt);
 	}

@@ -159,6 +159,7 @@ static void process_adc(volatile adc_buf_t *buf, int32_t ticks)
 		if (i==0) {
 			itm_debug2("C0", voff, von);
 			itm_debug2("C0/Voff", voffa, voffb);
+			itm_debug2("C0/Von", vona, vonb);
 
 
 		}

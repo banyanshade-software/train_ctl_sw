@@ -349,11 +349,7 @@ static void train_periodic_control(int numtrain, int32_t dt)
             m.to = MA_UI(0);
             m.cmd = CMD_NOTIF_SPEED;
             m.v1 = v;
-            //mqf_write_from_spdctl(&m);
             mqf_write_from_spdctl(&m);
-            m.cmd = CMD_SET_TARGET_SPEED;
-            m.v1 = 50;
-            mqf_write_from_forward(&m); //
         }
     }
     if (tconf->notify_speed) {

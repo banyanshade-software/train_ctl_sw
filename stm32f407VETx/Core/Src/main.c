@@ -1205,19 +1205,29 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
   }
   /* USER CODE BEGIN Callback 1 */
   if (htim->Instance == TIM8) {
-	  if ((1)) {
+	  if ((0)) {
 		  uint32_t t1 = __HAL_TIM_GET_COUNTER(&htim1);
 		  static uint32_t cnt = 0;
 		  itm_debug2("tim8",cnt, t1);
 		  cnt++;
-		  BaseType_t higher=0;
-		  xTaskNotifyFromISR(ctrlTaskHandle, NOTIF_TIM8, eSetBits, &higher);
-		  portYIELD_FROM_ISR(higher);
+		  void ina3221_trigger_conversion(void);
+		  ina3221_trigger_conversion();
+		  //BaseType_t higher=0;
+		  //xTaskNotifyFromISR(ctrlTaskHandle, NOTIF_TIM8, eSetBits, &higher);
+		  //portYIELD_FROM_ISR(higher);
+	  } else {
+		  itm_debug1("tim8",0);
 	  }
   }
   if (htim->Instance == TIM1) {
 	  uint32_t t1 = __HAL_TIM_GET_COUNTER(&htim1);
-	  itm_debug2("tim1",0, t1);
+	  if (/*1||*/ (t1<50)) {
+		  static uint32_t cnt = 0;
+		  itm_debug2("tim1",cnt, t1);
+		  cnt++;
+		  void ina3221_trigger_conversion(void);
+		  ina3221_trigger_conversion();
+	  }
   }
   /* USER CODE END Callback 1 */
 }

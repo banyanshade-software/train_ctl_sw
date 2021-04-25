@@ -30,10 +30,9 @@ void ctrl_run_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
             m.vbytes[1] = 1;
             m.vbytes[2] = 0xFF;
             m.vbytes[3] = 0;
-            //mqf_write_from_spdctl(&m);
-            mqf_write_from_forward(&m); //
+            mqf_write_from_ctrl(&m);
             m.cmd = CMD_SET_TARGET_SPEED;
-            m.v1 = 30;
+            m.v1 = 20;
             mqf_write_from_ctrl(&m); //
         }
     }

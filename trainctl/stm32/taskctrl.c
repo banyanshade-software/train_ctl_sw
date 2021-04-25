@@ -46,41 +46,46 @@
 #include "trainctl_config.h"
 #include "low/canton_bemf.h"
 
-
+/*
 #define NUM_VAL_PER_CANTON (sizeof(adc_buffer_t)/sizeof(uint16_t))
 #define ADC_HALF_BUFFER (NUM_LOCAL_CANTONS_HW * NUM_VAL_PER_CANTON)
 #define NUM_ADC_SAMPLES (2*ADC_HALF_BUFFER)
-
+*/
 
 
 static void run_task_ctrl(void);
 
 void StartCtrlTask(void *argument)
 {
+	int nsmpl = sizeof(train_adc_buf)/sizeof(uint16_t);
 
-	if (NUM_VAL_PER_CANTON != 4) Error_Handler();
-	if (ADC_HALF_BUFFER != 10*2) Error_Handler();
+	if (sizeof(train_adc_buf) != sizeof(uint16_t)*NUM_LOCAL_CANTONS_HW*8) Error_Handler();
+	if (nsmpl != 5*2*4) Error_Handler();
 
-	  set_pwm_freq(100);
-	  CantonTimerHandles[1]=&htim1;
-	  CantonTimerHandles[2]=&htim2;
-	  CantonTimerHandles[3]=&htim3;
-	  //CantonTimerHandles[3]=&htim3;
-	  //XXX railconfig_setup_default();
+	//if (NUM_VAL_PER_CANTON != 4) Error_Handler();
+	//if (ADC_HALF_BUFFER != 10*2) Error_Handler();
 
-
-
-	  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
-	  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2);
-	  HAL_TIM_PWM_Stop(&htim1, TIM_CHANNEL_2);
-	  // XX
-
-	  HAL_TIM_Base_Start_IT(&htim8);
+	if ((0)) set_pwm_freq(100);
+	CantonTimerHandles[1]=&htim1;
+	CantonTimerHandles[2]=&htim2;
+	CantonTimerHandles[3]=&htim3;
+	//CantonTimerHandles[3]=&htim3;
+	//XXX railconfig_setup_default();
 
 
-	  HAL_ADC_Start_DMA(&hadc1,(uint32_t *)train_adc_buffer, NUM_ADC_SAMPLES);
 
-	  run_task_ctrl();
+	HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
+	HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2);
+	HAL_TIM_PWM_Stop(&htim1, TIM_CHANNEL_2);
+	// XX
+
+	HAL_TIM_Base_Start_IT(&htim8);
+
+
+	HAL_ADC_Start_DMA(&hadc1,(uint32_t *)train_adc_buf, nsmpl);
+	//HAL_ADC_Start_DMA(&hadc1,(uint32_t *)train_adc_buffer, NUM_ADC_SAMPLES);
+
+	run_task_ctrl();
 }
 
 int cur_freqhz = 350;
@@ -109,6 +114,16 @@ static void run_task_ctrl(void)
 	for (;;) {
 		uint32_t notif;
 		xTaskNotifyWait(0, 0xFFFFFFFF, &notif, portMAX_DELAY);
+		if ((1)) {
+			int n = 0;
+			if (notif & NOTIF_NEW_ADC_1)  n = 1;
+			if (notif & NOTIF_NEW_ADC_2)  n |= 2;
+			itm_debug2("-----", (notif & NOTIF_TIM8) ? 1 : 0, n);
+		}
+		if (notif & NOTIF_TIM8) {
+			presdect_tick(notif, 0, 0);
+		}
+		if (0==(notif & (NOTIF_NEW_ADC_1|NOTIF_NEW_ADC_2))) continue;
 		//debug_info('G', 0, "HOP", 0, 0, 0);
 		static uint32_t oldt = 0;
 		static uint32_t t0 = 0;
@@ -142,7 +157,7 @@ static void run_task_ctrl(void)
 		spdctl_run_tick(notif, t, dt);
 		//msgsrv_tick(notif, t, dt);
 		canton_tick(notif, t, dt);
-		presdect_tick(notif, t, dt);
+		//presdect_tick(notif, t, dt);
 		turnout_tick(notif, t, dt);
 		ctrl_run_tick(notif, t, dt);
 	}
@@ -184,6 +199,6 @@ void HAL_ADC_LevelOutOfWindowCallback(ADC_HandleTypeDef* hadc)
 }
 void  HAL_ADC_ErrorCallback(ADC_HandleTypeDef *hadc)
 {
-
+	itm_debug1("ADC ERR", 0);
 }
 

@@ -13,11 +13,11 @@
 #include "railconfig.h"
 
 
-volatile adc_buffer_t train_adc_buffer[2*NUM_LOCAL_CANTONS_HW];
+volatile adc_buf_t train_adc_buf[2]; // double buffer
 
 
 static uint8_t bemf_to[NUM_LOCAL_CANTONS_SW] = {0xFF, 0xFF, 0xFF, 0xFF,  0xFF, 0xFF, 0xFF, 0xFF};
-static void process_adc(volatile adc_buffer_t *buf, int32_t ticks);
+static void process_adc(volatile adc_buf_t *buf, int32_t ticks);
 
 void bemf_reset(void)
 {
@@ -50,10 +50,10 @@ void bemf_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
 		if (notif_flags & NOTIF_NEW_ADC_2) {
 			runtime_error(ERR_DMA, "both NEW_ADC1 and NEW_ADC2");
 		}
-		process_adc(train_adc_buffer, dt);
+		process_adc(&train_adc_buf[0], dt);
 	}
 	if (notif_flags & NOTIF_NEW_ADC_2) {
-		process_adc(train_adc_buffer+NUM_LOCAL_CANTONS_HW, dt);
+		process_adc(&train_adc_buf[1], dt);
 	}
 }
 
@@ -131,7 +131,7 @@ static inline int32_t bemf_convert_to_centivolt(const canton_config_t *c, int32_
 
 /// ---------------------------------------------------------------------------------------
 
-static void process_adc(volatile adc_buffer_t *buf, int32_t ticks)
+static void process_adc(volatile adc_buf_t *buf, int32_t ticks)
 {
 	for (int i=0; i<NUM_LOCAL_CANTONS_HW; i++) {
 		// process intensity / presence
@@ -143,13 +143,25 @@ static void process_adc(volatile adc_buffer_t *buf, int32_t ticks)
 		if (0xFF == bemf_to[i]) continue;
 
 		const canton_config_t *c = get_canton_cnf(i);
+		/*
 		int32_t voffa = bemf_convert_to_centivolt(c, buf[i].voffA);
 		int32_t voffb = bemf_convert_to_centivolt(c, buf[i].voffB);
 		int32_t vona = bemf_convert_to_centivolt(c, buf[i].vonA);
 		int32_t vonb = bemf_convert_to_centivolt(c, buf[i].vonB);
+		 */
+		int32_t voffa = bemf_convert_to_centivolt(c, buf->off[i].vA);
+		int32_t voffb = bemf_convert_to_centivolt(c, buf->off[i].vB);
+		int32_t vona =  bemf_convert_to_centivolt(c, buf->on[i].vA);
+		int32_t vonb =  bemf_convert_to_centivolt(c, buf->on[i].vB);
 
 		int16_t voff = (int16_t)(voffb-voffa);
 		int16_t von  = (int16_t)(vonb-vona);
+		if (i==0) {
+			itm_debug2("C0", voff, von);
+			itm_debug2("C0/Voff", voffa, voffb);
+
+
+		}
 		msg_64_t m;
 		m.from = MA_CANTON(localBoardNum, i);
 		m.to = bemf_to[i];

@@ -115,7 +115,7 @@ uint32_t ina3221_inter_dur = 0;
 
 static void _err(void)
 {
-
+	Error_Handler();
 }
 
 void ina3221_start_read(int16_t *vals, uint8_t *flagdone)
@@ -150,11 +150,12 @@ static void _get_next_reg(void)
 			ina3221_scan_dur = tm - t0;
 			t1 = tm;
 			get_reg_step = -1;
+			itm_debug2("ina done", ina3221_scan_dur, tm);
 			return;
 		}
 		int numdev = get_reg_step/3;
 		if (!ina3221_devices[numdev]) {
-			pvalues[get_reg_step] = 0;
+			pvalues[get_reg_step] = 0xFF;
 			get_reg_step++;
 			continue;
 		}

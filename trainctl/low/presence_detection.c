@@ -70,6 +70,7 @@ void presdect_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
     	else itm_debug3("prs1", values[0], values[1], values[2]);
     }
     for (int i = 0; i<INA3221_NUM_VALS; i++) {
+    	values[i] = __builtin_bswap16(values[i]);
     	//itm_debug2("ina", i, values[i]);
     	int p = (abs(values[i])>7000) ? 1 : 0;
     	if (p == presence[i]) continue;

@@ -491,7 +491,7 @@ static void MX_I2C3_Init(void)
 
   /* USER CODE END I2C3_Init 1 */
   hi2c3.Instance = I2C3;
-  hi2c3.Init.ClockSpeed = 100000;
+  hi2c3.Init.ClockSpeed = 400000;
   hi2c3.Init.DutyCycle = I2C_DUTYCYCLE_2;
   hi2c3.Init.OwnAddress1 = 0;
   hi2c3.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
@@ -1205,7 +1205,19 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
   }
   /* USER CODE BEGIN Callback 1 */
   if (htim->Instance == TIM8) {
-	  itm_debug1("tim8",0);
+	  if ((1)) {
+		  uint32_t t1 = __HAL_TIM_GET_COUNTER(&htim1);
+		  static uint32_t cnt = 0;
+		  itm_debug2("tim8",cnt, t1);
+		  cnt++;
+		  BaseType_t higher=0;
+		  xTaskNotifyFromISR(ctrlTaskHandle, NOTIF_TIM8, eSetBits, &higher);
+		  portYIELD_FROM_ISR(higher);
+	  }
+  }
+  if (htim->Instance == TIM1) {
+	  uint32_t t1 = __HAL_TIM_GET_COUNTER(&htim1);
+	  itm_debug2("tim1",0, t1);
   }
   /* USER CODE END Callback 1 */
 }
@@ -1235,6 +1247,7 @@ void Error_Handler(void)
 void assert_failed(uint8_t *file, uint32_t line)
 {
   /* USER CODE BEGIN 6 */
+	Error_Handler();
   /* User can add his own implementation to report the file name and line number,
      tex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
   /* USER CODE END 6 */

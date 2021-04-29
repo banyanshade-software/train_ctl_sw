@@ -125,17 +125,23 @@ void spdctl_run_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
 			switch (m.cmd) {
 			case CMD_BEMF_NOTIF:
 				if (m.from == tvars->C1) {
+					itm_debug2(DBG_PID, "st bemf", m.v1, m.from);
 					tvars->bemf_cv = m.v1;
 					break;
 				} else if (m.from == tvars->C2) {
+					itm_debug2(DBG_PID, "c2 bemf", m.v1, m.from);
 					// check it ?
 				} else {
+					itm_debug2(DBG_ERR|DBG_PID, "unk bemf", m.v1, m.from);
 					// error
 				}
+				break;
 			case CMD_SET_TARGET_SPEED:
+				itm_debug1(DBG_SPDCTL, "set_t_spd", m.v1);
 				tvars->target_speed = m.v1;
 				break;
 			case CMD_SET_C1_C2:
+				itm_debug1(DBG_SPDCTL, "set_c1_c2", 0);
 				set_c1_c2(tidx, tvars, m.vbytes[0], m.vbytes[1], m.vbytes[2], m.vbytes[3]);
 				break;
             default:
@@ -254,12 +260,12 @@ static void train_periodic_control(int numtrain, int32_t dt)
 
 	USE_TRAIN(numtrain)	// tconf tvars
     if (!tconf) {
-        if ((0)) itm_debug1("unconf tr", numtrain);
+        if ((0)) itm_debug1(DBG_SPDCTL, "unconf tr", numtrain);
         return;
     }
 	int16_t v = tvars->target_speed;
 
-	itm_debug2("target", numtrain, v);
+	itm_debug2(DBG_SPDCTL, "target", numtrain, v);
 
 	/*if (trainctl_test_mode) {
 		static int16_t lastspeed = 9999;
@@ -274,7 +280,7 @@ static void train_periodic_control(int numtrain, int32_t dt)
 		int changed;
 		tvars->inertiavars.target = tvars->target_speed;
 		v = inertia_value(&tconf->inertiacnf, &tvars->inertiavars, dt, &changed);
-		itm_debug3("inertia", numtrain, tvars->target_speed, v);
+		itm_debug3(DBG_INERTIA, "inertia", numtrain, tvars->target_speed, v);
 	}
     
 	if ((1)) {
@@ -299,25 +305,31 @@ static void train_periodic_control(int numtrain, int32_t dt)
     	bemf = tvars->bemfiir;
     }
     if (tconf->enable_pid) {
-    	if (tvars->target_speed) tvars->pidvars.stopped = 0;
+    	if (tvars->target_speed) {
+    		tvars->pidvars.stopped = 0;
+    	}
         if (!tvars->pidvars.stopped && (tvars->target_speed == 0) && (abs(tvars->bemf_cv)<10)) {
+    		itm_debug1(DBG_PID, "stop", 0);
         	//debug_info('T', 0, "ZERO", cv->bemf_centivolt,0, 0);
 			pidctl_reset(&tconf->pidcnf, &tvars->pidvars);
 			debug_info('T', numtrain, "STOP_PID", 0,0, 0);
 			tvars->pidvars.stopped = 1;
         	v = 0;
         } else if (tvars->pidvars.stopped) {
+    		itm_debug1(DBG_PID, "stopped", v);
         	v = 0;
         } else {
+        	itm_debug2(DBG_PID, "pid", bemf, v);
         	//const canton_config_t *cc = get_canton_cnf(vars->current_canton);
         	if (bemf>MAX_PID_VALUE)  bemf=MAX_PID_VALUE; // XXX
         	if (bemf<-MAX_PID_VALUE) bemf=-MAX_PID_VALUE;
 
         	int32_t v2 = pidctl_value(&tconf->pidcnf, &tvars->pidvars, bemf, dt);
-
-        	v2 = (v2>100) ? 100 : v2;
-        	v2 = (v2<-100) ? -100: v2;
-        	v = (int16_t)v2;
+        	uint32_t v3;
+        	v3 = (v2>100) ? 100 : v2;
+        	v3 = (v3<-100) ? -100: v3;
+        	itm_debug2(DBG_PID, "pid/r", v3, v2);
+        	v = (int16_t)v3;
         }
     }
     if (tconf->postIIR) {
@@ -340,6 +352,8 @@ static void train_periodic_control(int numtrain, int32_t dt)
 
     int changed = (tvars->last_speed != v);
     tvars->last_speed = v;
+
+    itm_debug2(DBG_PID|DBG_SPDCTL, "spd", v, changed);
 
     if (changed) {
     	_set_speed(numtrain, tconf, tvars);
@@ -450,6 +464,7 @@ static void _set_speed(int tidx, const train_config_t *cnf, train_vars_t *vars)
     c2 =  get_canton_cnf(vars->C2);
     
     if (!c1) {
+    	itm_debug1(DBG_ERR|DBG_SPDCTL, "no canton", sv100);
         train_error(ERR_CANTON_NONE, "no canton");
         return;
     }
@@ -464,15 +479,18 @@ static void _set_speed(int tidx, const train_config_t *cnf, train_vars_t *vars)
 	int dir1 = sig * vars->current_canton_dir;
 	int dir2 = sig * vars->next_canton_dir;
 
+
     msg_64_t m;
     m.from = MA_TRAIN_SC(tidx);
     m.cmd = CMD_SETVPWM;
     m.v1u = pvi1;
     m.v2 = dir1*pwm_duty;
     m.to = vars->C1;
+	itm_debug3(DBG_SPDCTL, "setvpwm", m.v1u, m.v2, m.to);
     mqf_write_from_spdctl(&m);
 
     if (c2) {
+    	itm_debug3(DBG_SPDCTL, "setvpwm/c2", m.v1u, m.v2, m.to);
     	m.v1u = pvi2;
     	m.v2 = dir2*pwm_duty;
     	m.to = vars->C2;

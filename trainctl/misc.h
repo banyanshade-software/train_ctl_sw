@@ -32,6 +32,8 @@ void flash_led(void);
 
 
 #define SIGNOF(_v) (((_v)<0) ? -1 : 1)
+#define SIGNOF0(_v) (((_v)<0) ? -1 : (((_v)>0) ? 1 : 0))
+
 static inline int signof0(int v)
 {
     if (v>0) return 1;
@@ -93,14 +95,14 @@ static inline int turnout_error(int code, const char *msg)
 
 static inline void *config_error(int code, const char *msg)
 {
-	itm_debug1(msg, code);
+	itm_debug1(DBG_CONFIG, msg, code);
 	trainctl_error('G', code, msg);
 	return NULL;
 }
 
 static inline void *runtime_error(int code, const char *msg)
 {
-	itm_debug1(msg, code);
+	itm_debug1(DBG_CONFIG, msg, code);
 	trainctl_error('G', code, msg);
 	return NULL;
 }

@@ -65,7 +65,7 @@ void StartCtrlTask(void *argument)
 	//if (NUM_VAL_PER_CANTON != 4) Error_Handler();
 	//if (ADC_HALF_BUFFER != 10*2) Error_Handler();
 
-	if ((0)) set_pwm_freq(100);
+	if ((1)) set_pwm_freq(100);
 	CantonTimerHandles[1]=&htim1;
 	CantonTimerHandles[2]=&htim2;
 	CantonTimerHandles[3]=&htim3;
@@ -74,9 +74,12 @@ void StartCtrlTask(void *argument)
 
 
 
-	HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
-	HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2);
+	//HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
+	//HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2);
+	HAL_TIM_PWM_Stop(&htim1, TIM_CHANNEL_1);
 	HAL_TIM_PWM_Stop(&htim1, TIM_CHANNEL_2);
+	HAL_TIM_PWM_Stop(&htim1, TIM_CHANNEL_3);
+	HAL_TIM_PWM_Stop(&htim1, TIM_CHANNEL_4);
 	// XX
 
 	//HAL_TIM_Base_Start_IT(&htim8);
@@ -120,7 +123,7 @@ static void run_task_ctrl(void)
 			int n = 0;
 			if (notif & NOTIF_NEW_ADC_1)  n = 1;
 			if (notif & NOTIF_NEW_ADC_2)  n |= 2;
-			itm_debug2("-----", (notif & NOTIF_TIM8) ? 1 : 0, n);
+			itm_debug2(DBG_LOWCTRL, "-----", (notif & NOTIF_TIM8) ? 1 : 0, n);
 		}
 #if USE_NOTIF_TIM
 		if (notif & NOTIF_TIM8) {
@@ -138,7 +141,7 @@ static void run_task_ctrl(void)
 		oldt = t;
 
 		if ((1)) {
-			itm_debug2("ctick", notif, dt);
+			itm_debug2(DBG_LOWCTRL, "ctick", notif, dt);
 			//continue;
 		}
 		/*
@@ -185,7 +188,7 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* AdcHandle)
 {
 	nfull++;
 	BaseType_t higher=0;
-	if ((0)) itm_debug1("conv/f", HAL_GetTick());
+	if ((0)) itm_debug1(DBG_TIM, "conv/f", HAL_GetTick());
 	xTaskNotifyFromISR(ctrlTaskHandle, NOTIF_NEW_ADC_2, eSetBits, &higher);
 	portYIELD_FROM_ISR(higher);
 }
@@ -194,17 +197,17 @@ void HAL_ADC_ConvHalfCpltCallback(ADC_HandleTypeDef* hadc)
 {
 	nhalf++;
 	BaseType_t higher=0;
-	if ((0)) itm_debug1("conv/h", HAL_GetTick());
+	if ((0)) itm_debug1(DBG_TIM, "conv/h", HAL_GetTick());
 	xTaskNotifyFromISR(ctrlTaskHandle, NOTIF_NEW_ADC_1, eSetBits, &higher);
 	portYIELD_FROM_ISR(higher);
 }
 
 void HAL_ADC_LevelOutOfWindowCallback(ADC_HandleTypeDef* hadc)
 {
-
+	itm_debug1(DBG_ERR|DBG_TIM, "ADC ERR", 1);
 }
 void  HAL_ADC_ErrorCallback(ADC_HandleTypeDef *hadc)
 {
-	itm_debug1("ADC ERR", 0);
+	itm_debug1(DBG_ERR|DBG_TIM, "ADC ERR", 0);
 }
 

@@ -7,6 +7,7 @@
 
 
 #include "trainmsg.h"
+#include "../utils/itm_debug.h"
 
 uint8_t localBoardNum = 0; // TODO move to config
 
@@ -77,6 +78,7 @@ static void dispatch_m64(msg_64_t *m, int f)
 		if ((m->to & routes[i].mask) == routes[i].value) {
 			if (f==routes[i].destq) {
 				// loop
+				itm_debug1(DBG_ERR|DBG_MSG, "loop", f);
 				return;
 			}
 			mqf_t *q = qdef[routes[i].destq].to;
@@ -84,6 +86,7 @@ static void dispatch_m64(msg_64_t *m, int f)
 			return;
 		}
 	}
+	itm_debug1(DBG_ERR|DBG_MSG, "no route", m->to);
 	msg_error("no route");
 }
 

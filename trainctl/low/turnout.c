@@ -142,7 +142,7 @@ static void turnout_reset(void)
 		avars->value = 0;
 		avars->st = ST_IDLE;
 		if (!aconf) {
-			itm_debug1("tn skip", tidx);
+			itm_debug1(DBG_TURNOUT, "tn skip", tidx);
 			continue;
 		}
 #ifndef TRAIN_SIMU
@@ -151,6 +151,7 @@ static void turnout_reset(void)
 		HAL_GPIO_WritePin(aconf->cmd_port, aconf->pinA, GPIO_PIN_RESET);
 		HAL_GPIO_WritePin(aconf->cmd_port, aconf->pinB, GPIO_PIN_RESET);
 #endif
+		itm_debug1(DBG_TURNOUT, "A/RESET", tidx);
 		debug_info('A', 0, "RESET", 0, 0,0);
 		(void)aconf; // unused
 	}
@@ -185,6 +186,7 @@ static void process_turnout_timers(uint32_t tick, uint32_t dt)
 			(void)aconf; // unused in SIMU
 #endif
 			avars->st = ST_RESETA;
+			itm_debug1(DBG_TURNOUT, "A/SETA", i);
 			debug_info('A', 0, "A0/SETA", 0, 0,0);
 			break;
 		case ST_SETB:
@@ -192,6 +194,7 @@ static void process_turnout_timers(uint32_t tick, uint32_t dt)
 			HAL_GPIO_WritePin(aconf->cmd_port, aconf->pinB, GPIO_PIN_SET);
 #endif
 			avars->st = ST_RESETB;
+			itm_debug1(DBG_TURNOUT, "A/SETB", i);
 			debug_info('A', 0, "A0/SETB", 0, 0,0);
 			break;
 		case ST_RESETA:
@@ -199,6 +202,7 @@ static void process_turnout_timers(uint32_t tick, uint32_t dt)
 			HAL_GPIO_WritePin(aconf->cmd_port, aconf->pinA, GPIO_PIN_RESET);
 #endif
 			avars->st = ST_IDLE;
+			itm_debug1(DBG_TURNOUT, "A/RESETA", i);
 			debug_info('A', 0, "A0/RESETA", 0, 0,0);
 			break;
 		case ST_RESETB:
@@ -206,6 +210,7 @@ static void process_turnout_timers(uint32_t tick, uint32_t dt)
 			HAL_GPIO_WritePin(aconf->cmd_port, aconf->pinB, GPIO_PIN_RESET);
 #endif
 			avars->st = ST_IDLE;
+			itm_debug1(DBG_TURNOUT, "A/RESETB", i);
 			debug_info('A', 0, "A0/RESETB", 0, 0,0);
 			break;
 			/*
@@ -217,6 +222,7 @@ static void process_turnout_timers(uint32_t tick, uint32_t dt)
 			break;
 			 */
 		default:
+			itm_debug1(DBG_TURNOUT|DBG_ERR, "bad state", avars->st);
 			turnout_error(ERR_BAD_STATE, "bad state");
 			break;
 		}

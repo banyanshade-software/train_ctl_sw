@@ -73,6 +73,7 @@ static void canton_reset(void)
 {
 	for (int i = 0; i<NUM_LOCAL_CANTONS_SW; i++) {
 		USE_CANTON(i)
+		cvars->cur_dir = 99;
 		canton_set_pwm(i, cconf, cvars, 0, 0);
 		canton_set_volt(i, cconf, cvars,  7);
 	}
@@ -92,19 +93,25 @@ void canton_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
 		if (rc) break;
 		if (IS_CANTON(m.to)) {
 			if (m.cmd & 0x40) {
+				itm_debug1(DBG_LOWCTRL, "msg-bemf", m.to);
 				bemf_msg(&m);
 				continue;
 			}
 			int cidx = m.to & 0x07;
 			USE_CANTON(cidx)
+			if (!cvars) {
+				itm_debug1(DBG_LOWCTRL|DBG_ERR, "no cvars", cidx);
+				continue;
+			}
 			switch (m.cmd) {
 			case CMD_STOP:
+				itm_debug1(DBG_LOWCTRL, "CMD STOP", 0);
 				canton_set_pwm(cidx, cconf, cvars, 0, 0);
 				canton_set_volt(cidx, cconf, cvars,  7);
 				break;
 			case CMD_SETVPWM:
-                itm_debug3("SETPWM", cidx, m.v1u, m.v2);
-				canton_set_pwm(cidx, cconf, cvars, SIGNOF(m.v2), abs(m.v2));
+                itm_debug3(DBG_LOWCTRL, "SETPWM", cidx, m.v1u, m.v2);
+				canton_set_pwm(cidx, cconf, cvars, SIGNOF0(m.v2), abs(m.v2));
 				canton_set_volt(cidx, cconf, cvars,  m.v1u);
 				break;
 			}
@@ -164,53 +171,137 @@ int canton_release(int numcanton, int trainidx)
 
 #ifndef TRAIN_SIMU
 
+HAL_StatusTypeDef my_HAL_TIM_PWM_Stop(TIM_HandleTypeDef *htim, uint32_t Channel)
+{
+  /* Check the parameters */
+  assert_param(IS_TIM_CCX_INSTANCE(htim->Instance, Channel));
+
+  /* Disable the Capture compare channel */
+  TIM_CCxChannelCmd(htim->Instance, Channel, TIM_CCx_DISABLE);
+
+  if (IS_TIM_BREAK_INSTANCE(htim->Instance) != RESET)
+  {
+    /* Disable the Main Output */
+    __HAL_TIM_MOE_DISABLE(htim);
+  }
+
+  /* Disable the Peripheral */
+  //__HAL_TIM_DISABLE(htim);
+
+  /* Change the htim state */
+  htim->State = HAL_TIM_STATE_READY;
+
+  /* Return function status */
+  return HAL_OK;
+}
+
+
+#define USE_PWM_STOP 0
+/*
+ * it seems that output goes to high impedence when we stop pwm ????
+ */
 static void canton_set_pwm(int cidx, const canton_config_t *c, canton_vars_t *v,  int dir, int duty)
 {
+	itm_debug3(DBG_LOWCTRL, "c/set_pwm", cidx, dir, duty);
 	int t = 2*duty; // with centered pwm (or normal)
 
-	if ((v->cur_dir == dir) && (v->cur_pwm_duty==duty)) return;
+	if ((v->cur_dir == dir) && (v->cur_pwm_duty==duty)) {
+		itm_debug1(DBG_LOWCTRL, "c/same", duty);
+		return;
+	}
 
 	TIM_HandleTypeDef *pwm_timer = CantonTimerHandles[c->pwm_timer_num];
-	if (!pwm_timer) return;
+	if (!pwm_timer) {
+		itm_debug1(DBG_LOWCTRL|DBG_ERR, "c/notim", c->pwm_timer_num);
+		return;
+	}
 	if (v->cur_dir != dir) {
 		v->cur_dir = dir;
+		itm_debug3(DBG_LOWCTRL, "set dir", dir, c->ch0, c->ch1);
 		if (dir>0) {
-			HAL_TIM_PWM_Stop(pwm_timer, c->ch1);
+			if (USE_PWM_STOP) my_HAL_TIM_PWM_Stop(pwm_timer, c->ch1);
+			else HAL_TIM_PWM_Start(pwm_timer, c->ch1);
 			HAL_TIM_PWM_Start(pwm_timer, c->ch0);
-		} else {
-			HAL_TIM_PWM_Stop(pwm_timer, c->ch0);
+		} else if (dir<0) {
+			if (USE_PWM_STOP) my_HAL_TIM_PWM_Stop(pwm_timer, c->ch0);
+			else HAL_TIM_PWM_Start(pwm_timer, c->ch0);
 			HAL_TIM_PWM_Start(pwm_timer, c->ch1);
+		} else {
+			if (USE_PWM_STOP) {
+				my_HAL_TIM_PWM_Stop(pwm_timer, c->ch0);
+				my_HAL_TIM_PWM_Stop(pwm_timer, c->ch1);
+			} else {
+				HAL_TIM_PWM_Start(pwm_timer, c->ch0);
+				HAL_TIM_PWM_Start(pwm_timer, c->ch1);
+			}
+		}
+	}
+	if (!dir) {
+		duty = 0;
+		if (USE_PWM_STOP) {
+			v->cur_pwm_duty = 0;
+			return;
 		}
 	}
 	v->cur_pwm_duty = duty;
-	uint32_t ch;
+	uint32_t chon;
+	uint32_t choff;
 	if (dir>0) {
-		ch = c->ch0;
-		//TIM1->CCR1 = t;
+		chon = c->ch0;
+		choff = c->ch1;
 	} else {
-		ch = c->ch1;
-		//TIM1->CCR2 = t;
+		chon = c->ch1;
+		choff = c->ch0;
 	}
-	switch (ch) {
+	if (!USE_PWM_STOP) {
+		switch (choff) {
+		case TIM_CHANNEL_1:
+			itm_debug1(DBG_LOWCTRL|DBG_TIM, "CH1/CCR1", 0);
+			pwm_timer->Instance->CCR1 = 0;
+			break;
+		case TIM_CHANNEL_2:
+			itm_debug1(DBG_LOWCTRL|DBG_TIM, "CH2/CCR1", 0);
+			pwm_timer->Instance->CCR2 = 0;
+			break;
+		case TIM_CHANNEL_3:
+			itm_debug1(DBG_LOWCTRL|DBG_TIM, "CH3/CCR1", 0);
+			pwm_timer->Instance->CCR3 = 0;
+			break;
+		case TIM_CHANNEL_4:
+			itm_debug1(DBG_LOWCTRL|DBG_TIM, "CH4/CCR1", 0);
+			pwm_timer->Instance->CCR4 = 0;
+			break;
+		default:
+			canton_error(ERR_BAD_PARAM_TIM, "bad timer channel");
+			break;
+		}
+	}
+	switch (chon) {
 	case TIM_CHANNEL_1:
+		itm_debug1(DBG_LOWCTRL|DBG_TIM, "CH1/CCR1", t);
 		pwm_timer->Instance->CCR1 = t;
 		break;
 	case TIM_CHANNEL_2:
+		itm_debug1(DBG_LOWCTRL|DBG_TIM, "CH2/CCR1", t);
 		pwm_timer->Instance->CCR2 = t;
 		break;
 	case TIM_CHANNEL_3:
+		itm_debug1(DBG_LOWCTRL|DBG_TIM, "CH3/CCR1", t);
 		pwm_timer->Instance->CCR3 = t;
 		break;
 	case TIM_CHANNEL_4:
+		itm_debug1(DBG_LOWCTRL|DBG_TIM, "CH4/CCR1", t);
 		pwm_timer->Instance->CCR4 = t;
 		break;
 	default:
 		canton_error(ERR_BAD_PARAM_TIM, "bad timer channel");
 		break;
 	}
+
 }
 void canton_set_volt(int cidx, const canton_config_t *c, canton_vars_t *v, int voltidx)
 {
+	itm_debug2(DBG_LOWCTRL, "c/set_volt", cidx, voltidx);
 	v->cur_voltidx = voltidx;
     v->selected_centivolt =  (c->volts_cv[v->cur_voltidx]);
 

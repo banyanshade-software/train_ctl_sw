@@ -48,6 +48,7 @@ void bemf_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
 {
 	if (notif_flags & NOTIF_NEW_ADC_1) {
 		if (notif_flags & NOTIF_NEW_ADC_2) {
+			itm_debug1(DBG_ERR|DBG_LOWCTRL|DBG_TIM, "both", notif_flags);
 			runtime_error(ERR_DMA, "both NEW_ADC1 and NEW_ADC2");
 		}
 		process_adc(&train_adc_buf[0], dt);
@@ -157,9 +158,9 @@ static void process_adc(volatile adc_buf_t *buf, int32_t ticks)
 		int16_t voff = (int16_t)(voffb-voffa);
 		int16_t von  = (int16_t)(vonb-vona);
 		if (i==0) {
-			itm_debug2("C0", voff, von);
-			itm_debug2("C0/Voff", voffa, voffb);
-			itm_debug2("C0/Von", vona, vonb);
+			itm_debug2(DBG_PID|DBG_LOWCTRL, "C0", voff, von);
+			itm_debug2(DBG_PID|DBG_LOWCTRL, "C0/Voff", voffa, voffb);
+			itm_debug2(DBG_PID|DBG_LOWCTRL, "C0/Von", vona, vonb);
 
 
 		}

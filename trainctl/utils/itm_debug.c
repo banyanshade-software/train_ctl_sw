@@ -33,6 +33,10 @@
 #endif
 
 
+/* debug flags */
+ uint32_t debug_flags = DBG_PID|DBG_PRES|DBG_SPDCTL|DBG_LOWCTRL |DBG_ERR;
+
+#define DBG_
 #ifdef TRAIN_SIMU
 char* itoa (unsigned long long  value,  char str[],  int radix)
 {
@@ -124,23 +128,8 @@ int _write(int32_t file, uint8_t *ptr, int32_t len)
 }
 #endif
 
-static void _itm_debug3(const char *msg, int v1, int v2, int v3, int n);
 
-void itm_debug1(const char *msg, int v)
-{
-	_itm_debug3(msg, v, 0, 0, 1);
-}
-
-void itm_debug2(const char *msg, int v1, int v2)
-{
-	_itm_debug3(msg, v1, v2, 0, 2);
-}
-void itm_debug3(const char *msg, int v1, int v2, int v3)
-{
-	_itm_debug3(msg, v1, v2, v3, 3);
-}
-
-static void _itm_debug3(const char *msg, int v1, int v2, int v3, int n)
+void _itm_debug3(const char *msg, int v1, int v2, int v3, int n)
 {
 	uint8_t buf[64];
 	memset(buf, 0, sizeof(buf));

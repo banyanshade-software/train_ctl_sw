@@ -9,6 +9,7 @@
 #include <stdint.h>
 #include <memory.h>
 #include "lf_mqueue.h"
+#include "itm_debug.h"
 //#include <iot_atomic.h>
 
 // https://electronics.stackexchange.com/questions/13100/replacement-for-queues-in-rtos#13102
@@ -32,6 +33,7 @@ int mqf_len (mqf_t *m)
 int mqf_write(mqf_t *m, void *ptr)
 {
     if (m->num == mqf_len(m)) {
+		itm_debug1(DBG_ERR|DBG_MSG, "w/full", 0);
         return -1;
     }
 	void *p = &(m->msgbuf[m->head*m->msgsiz]);

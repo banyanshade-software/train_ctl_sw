@@ -36,7 +36,7 @@ void presdect_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
 	static uint8_t presence[INA3221_NUM_VALS] = {0};
 
 	if (!fdone) {
-		itm_debug1("prd/ko", fdone);
+		itm_debug1(DBG_PRES|DBG_INA3221, "prd/ko", fdone);
 		return;
 	}
 	int16_t *values;
@@ -66,8 +66,8 @@ void presdect_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
     if (!values) return;
 
     if ((1)) {
-    	if (step) itm_debug3("prs0", values[0], values[1], values[2]);
-    	else itm_debug3("prs1", values[0], values[1], values[2]);
+    	if (step) itm_debug3(DBG_PRES|DBG_INA3221, "prs0", values[0], values[1], values[2]);
+    	else itm_debug3(DBG_PRES|DBG_INA3221, "prs1", values[0], values[1], values[2]);
     }
     for (int i = 0; i<INA3221_NUM_VALS; i++) {
     	values[i] = __builtin_bswap16(values[i]);

@@ -99,7 +99,12 @@
 @property (nonatomic) int plotNum;
 - (IBAction) plotRecord:(id)sender;
 
+// test mode window
 
+@property (nonatomic) NSUInteger testMode;
+@property (nonatomic) NSUInteger testCanton;
+@property (nonatomic) NSUInteger testVoltIdx;
+@property (nonatomic) NSInteger testPWM;
 
 - (IBAction) startBLE:(id)sender;
 

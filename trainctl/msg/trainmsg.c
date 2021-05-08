@@ -35,31 +35,36 @@ LFMQUEUE_DEF_C(to_ctrl, msg_64_t, 8)
 LFMQUEUE_DEF_C(from_ctrl, msg_64_t, 8)
 
 
+LFMQUEUE_DEF_C(to_ui, msg_64_t, 8)
+LFMQUEUE_DEF_C(from_ui, msg_64_t, 2)
+
 typedef struct {
 	mqf_t *to;
 	mqf_t *from;
 } qdef_t;
 
-#define NQDEF 6
+#define NQDEF 7
 static const qdef_t qdef[NQDEF] = {
 		/* 0*/ { &to_turnout, &from_turnout },
 		/* 1*/ { &to_canton,  &from_canton},
 		/* 2*/ { &to_spdctl,  &from_spdctl},
         /* 3*/ { &to_forward, &from_forward},
         /* 4*/ { &to_forward_usb, &from_forward_usb},
-        /* 5*/ { &to_ctrl, &from_ctrl}
+        /* 5*/ { &to_ctrl, &from_ctrl},
+		/* 6*/ { &to_ui, &from_ui}
 };
 
 typedef struct {
 	uint8_t mask; uint8_t value; uint8_t destq;
 } qroute_t;
 
-#define NROUTES 7
+#define NROUTES 8
 static const qroute_t routes[NROUTES] = {
 		{MA_ADDR_MASK_2|MA_ADDR_MASK_BOARD,		MA_ADDR_2_TURNOUT|0,	0},
 		{MA_ADDR_MASK_2|MA_ADDR_MASK_BOARD,		MA_ADDR_2_CANTON|0,		1},
 		{MA_ADDR_MASK_2,						MA_ADDR_2_TURNOUT,		3},
 		{MA_ADDR_MASK_2,						MA_ADDR_2_CANTON,		3},
+        {MA_ADDR_MASK_3|0x1F,                   MA_ADDR_3_UI|1,         6},
         {MA_ADDR_MASK_3,                        MA_ADDR_3_UI,           4},
 		{MA_ADDR_MASK_5,						MA_ADDR_5_TRSC,			2},
 		{MA_ADDR_MASK_5,						MA_ADDR_5_CTRL,			5}
@@ -74,6 +79,16 @@ static void msg_error(const char *msg)
 
 static void dispatch_m64(msg_64_t *m, int f)
 {
+    if (m->to == MA_BROADCAST) {
+        for (int i=0; i<NQDEF; i++) {
+            if (i == f) {
+                continue;
+            }
+            mqf_t *q = qdef[i].to;
+            mqf_write(q, m);
+        }
+        return;
+    }
 	for (int i=0; i<NROUTES; i++) {
 		if ((m->to & routes[i].mask) == routes[i].value) {
 			if (f==routes[i].destq) {

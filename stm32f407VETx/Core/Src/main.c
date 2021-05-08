@@ -1051,8 +1051,8 @@ static void MX_GPIO_Init(void)
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOE, VOLT_4_SEL0_Pin|VOLT_4_SEL1_Pin|VOLT_4_SEL2_Pin|TURN3A_Pin
-                          |GPIO_PIN_8|GPIO_PIN_10|GPIO_PIN_12|GPIO_PIN_15
-                          |TURN2A_Pin|TURN2B_Pin, GPIO_PIN_RESET);
+                          |GPIO_PIN_8|GPIO_PIN_12|GPIO_PIN_15|TURN2A_Pin
+                          |TURN2B_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOC, TURN3B_Pin|GPIO_PIN_12, GPIO_PIN_RESET);
@@ -1070,11 +1070,11 @@ static void MX_GPIO_Init(void)
                           |VOLT_1_SEL1_Pin|VOLT_1_SEL2_Pin|VOLT_2_SEL0_Pin|VOLT_2_SEL1_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pins : VOLT_4_SEL0_Pin VOLT_4_SEL1_Pin VOLT_4_SEL2_Pin TURN3A_Pin
-                           PE8 PE10 PE12 PE15
-                           TURN2A_Pin TURN2B_Pin */
+                           PE8 PE12 PE15 TURN2A_Pin
+                           TURN2B_Pin */
   GPIO_InitStruct.Pin = VOLT_4_SEL0_Pin|VOLT_4_SEL1_Pin|VOLT_4_SEL2_Pin|TURN3A_Pin
-                          |GPIO_PIN_8|GPIO_PIN_10|GPIO_PIN_12|GPIO_PIN_15
-                          |TURN2A_Pin|TURN2B_Pin;
+                          |GPIO_PIN_8|GPIO_PIN_12|GPIO_PIN_15|TURN2A_Pin
+                          |TURN2B_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;

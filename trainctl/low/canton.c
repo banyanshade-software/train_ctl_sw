@@ -79,6 +79,41 @@ static void canton_reset(void)
 	}
 }
 
+static uint8_t test_mode = 0;
+static uint8_t testerAddr = 0;
+
+static void handle_canton_cmd(int cidx, msg_64_t *m)
+{
+	if (m->cmd & 0x40) {
+		itm_debug1(DBG_LOWCTRL, "msg-bemf", m->to);
+		bemf_msg(m);
+		return;
+	}
+
+
+	USE_CANTON(cidx)
+	if (!cvars) {
+		itm_debug1(DBG_LOWCTRL|DBG_ERR, "no cvars", cidx);
+		return;
+	}
+	switch (m->cmd) {
+	case CMD_STOP:
+		itm_debug1(DBG_LOWCTRL, "CMD STOP", 0);
+		canton_set_pwm(cidx, cconf, cvars, 0, 0);
+		canton_set_volt(cidx, cconf, cvars,  7);
+		break;
+	case CMD_SETVPWM:
+		itm_debug3(DBG_LOWCTRL, "SETPWM", cidx, m->v1u, m->v2);
+		canton_set_pwm(cidx, cconf, cvars, SIGNOF0(m->v2), abs(m->v2));
+		canton_set_volt(cidx, cconf, cvars,  m->v1u);
+		break;
+	default:
+		itm_debug1(DBG_LOWCTRL, "not handled msg", m->cmd);
+		break;
+	}
+}
+
+
 void canton_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
 {
 	static int first=1;
@@ -91,39 +126,37 @@ void canton_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
 		msg_64_t m;
 		int rc = mqf_read_to_canton(&m);
 		if (rc) break;
-		if (IS_CANTON(m.to)) {
-			if (m.cmd & 0x40) {
-				itm_debug1(DBG_LOWCTRL, "msg-bemf", m.to);
-				bemf_msg(&m);
-				continue;
-			}
-			int cidx = m.to & 0x07;
-			USE_CANTON(cidx)
-			if (!cvars) {
-				itm_debug1(DBG_LOWCTRL|DBG_ERR, "no cvars", cidx);
-				continue;
-			}
-			switch (m.cmd) {
-			case CMD_STOP:
-				itm_debug1(DBG_LOWCTRL, "CMD STOP", 0);
-				canton_set_pwm(cidx, cconf, cvars, 0, 0);
-				canton_set_volt(cidx, cconf, cvars,  7);
-				break;
-			case CMD_SETVPWM:
-                itm_debug3(DBG_LOWCTRL, "SETPWM", cidx, m.v1u, m.v2);
-				canton_set_pwm(cidx, cconf, cvars, SIGNOF0(m.v2), abs(m.v2));
-				canton_set_volt(cidx, cconf, cvars,  m.v1u);
-				break;
-			}
-		} else {
-			switch (m.cmd) {
-			case CMD_RESET: // FALLTHRU
-			case CMD_EMERGENCY_STOP:
-				canton_reset();
-				bemf_reset();
-				break;
-			}
-		}
+        switch (m.cmd) {
+        case CMD_RESET: // FALLTHRU
+        case CMD_EMERGENCY_STOP:
+            canton_reset();
+            bemf_reset();
+            break;
+        case CMD_TEST_MODE:
+            test_mode = m.v1u;
+            testerAddr = m.from;
+            break;
+        }
+        if (test_mode && (testerAddr != m.from)) {
+            continue;
+        }
+
+        int cidx = -1;
+        if (IS_BROADCAST(m.to)) {
+        	cidx = -1;
+        } else if (IS_CANTON(m.to)) {
+        	cidx = m.to & 0x07;
+        } else {
+			itm_debug1(DBG_LOWCTRL, "not handled msg", m.cmd);
+			continue;
+        }
+        if (cidx>=0) handle_canton_cmd(cidx, &m);
+        else {
+        	// broadcast
+        	for (int i=0; i<NUM_LOCAL_CANTONS_HW; i++) {
+        		handle_canton_cmd(i, &m);
+        	}
+        }
 	}
 }
 

@@ -11,12 +11,15 @@
 #include "../msg/trainmsg.h"
 #include "ctrl.h"
 
-#include "./topology/topology.h"
+#include "../topology/topology.h"
 
 static void ctrl_reset(void);
 static void presence_changed(int segboard, int segnum, int v);
 
 // "ERR "  -101
+
+static uint8_t test_mode = 0;
+static uint8_t testerAddr;
 
 void ctrl_run_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
 {
@@ -24,6 +27,11 @@ void ctrl_run_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
 	if (first) {
 		first = 0;
 		ctrl_reset();
+
+		msg_64_t m;
+		ui_msg(1, "Train", &m, MA_CONTROL());
+		mqf_write_from_ctrl(&m);
+
         if ((0)) { // TODO remove
             msg_64_t m;
             m.to = MA_TRAIN_SC(0);
@@ -38,6 +46,14 @@ void ctrl_run_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
             m.v1 = 90;
             itm_debug1(DBG_SPDCTL|DBG_CTRL, "init/spd", m.v1);
             mqf_write_from_ctrl(&m); //
+        }
+        if ((1)) { // test
+            msg_64_t m;
+        	m.from = MA_CONTROL();
+        	m.to = MA_BROADCAST;
+        	m.cmd = CMD_TEST_MODE;
+        	m.v1u = 1;
+            mqf_write_from_ctrl(&m);
         }
 
     }
@@ -54,11 +70,22 @@ void ctrl_run_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
 		//md = 0; // XXX
 		if (md != cd) {
 			cd = md;
+
 			msg_64_t m;
+			char *txt = "??";
+			switch (md) {
+			case 0: txt = "Stop"; break;
+			case 1: txt = "Fwd"; break;
+			case -1: txt = "Rev"; break;
+			}
+			ui_msg(1, txt, &m, MA_CONTROL());
+			mqf_write_from_ctrl(&m);
+
+			m.from = MA_CONTROL();
 			m.to = MA_CANTON(0, 0);
 			m.cmd = CMD_SETVPWM;
 			m.v1u = 0;
-			m.v2 = md*30;
+			m.v2 = md*70;
 			itm_debug3(DBG_SPDCTL|DBG_CTRL, "init/c0", md, m.v2, t);
 			mqf_write_from_ctrl(&m);
 			m.to = MA_CANTON(0, 1);
@@ -70,7 +97,22 @@ void ctrl_run_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
 		msg_64_t m;
 		int rc = mqf_read_to_ctrl(&m);
 		if (rc) break;
+        switch (m.cmd) {
+            case CMD_RESET:
+                test_mode = 0; // FALLTHRU
+            case CMD_EMERGENCY_STOP:
+                ctrl_reset();
+                break;
+            case CMD_TEST_MODE:
+                test_mode = m.v1u;
+                testerAddr = m.from;
+                break;
+        }
+        if (test_mode & (m.from != testerAddr)) {
+            continue;
+        }
 		if (IS_CONTROL_T(m.to)) {
+			if (test_mode) continue;
 			int tidx = m.to & 0x7;
 			switch (m.cmd) {
 			case CMD_PRESENCE_CHANGE: {
@@ -93,14 +135,6 @@ void ctrl_run_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
     	m.sub = i;
     	m.v1u = p;
  */
-
-		} else if (IS_BROADCAST(m.to)) {
-			switch (m.cmd) {
-			case CMD_RESET: // FALLTHRU
-			case CMD_EMERGENCY_STOP:
-				ctrl_reset();
-				break;
-			}
 		} else {
 			itm_debug1(DBG_MSG|DBG_CTRL, "bad msg", m.to);
 		}

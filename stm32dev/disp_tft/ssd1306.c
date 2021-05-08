@@ -259,6 +259,23 @@ char ssd1306_WriteChar(char ch, FontDef Font, SSD1306_COLOR color) {
 }
 
 // Write full string to screenbuffer
+char ssd1306_WriteNString(char* str, int max, FontDef Font, SSD1306_COLOR color) {
+    // Write until null-byte
+    while (*str) {
+    	if (!max) break;
+    	max--;
+        if (ssd1306_WriteChar(*str, Font, color) != *str) {
+            // Char could not be written
+            return *str;
+        }
+
+        // Next char
+        str++;
+    }
+
+    // Everything ok
+    return *str;
+}
 char ssd1306_WriteString(char* str, FontDef Font, SSD1306_COLOR color) {
     // Write until null-byte
     while (*str) {

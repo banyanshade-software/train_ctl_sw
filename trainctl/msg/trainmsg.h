@@ -8,6 +8,8 @@
 #ifndef MSG_TRAINMSG_H_
 #define MSG_TRAINMSG_H_
 
+#include <memory.h>
+#include <string.h>
 #include "../utils/lf_mqueue.h"
 #include "notif.h"
 
@@ -58,11 +60,11 @@ typedef uint8_t  msg_addr_t;
 // train hilevel control
 #define MA_ADDR_5_CTRL	0xD0
 #define MA_CONTROL_T(_t) (MA_ADDR_5_CTRL  | (((_t)& 0x07)))
-#define MA_CONTROL() MA_CONTROL_T(7);
+#define MA_CONTROL() MA_CONTROL_T(7)
 #define IS_CONTROL_T(_addr)  (MA_ADDR_5_CTRL == ((_addr) & MA_ADDR_MASK_5))
 
 #define IS_BROADCAST(_addr) (0xFF == (_addr))
-
+#define MA_BROADCAST 0xFF
 
 typedef union {
 	struct {
@@ -96,6 +98,7 @@ typedef union {
 /* general command */
 #define CMD_RESET 			0xFF
 #define CMD_EMERGENCY_STOP 	0xFE
+#define CMD_TEST_MODE	 	0xFC
 
 
 LFMQUEUE_DEF_H(to_turnout, msg_64_t)
@@ -139,7 +142,22 @@ LFMQUEUE_DEF_H(to_forward_usb, msg_64_t)
 LFMQUEUE_DEF_H(from_forward_usb, msg_64_t)
 
 /* to UI */
+
+LFMQUEUE_DEF_H(to_ui, msg_64_t)
+LFMQUEUE_DEF_H(from_ui, msg_64_t)
+
 #define CMD_NOTIF_SPEED     0xA0
+#define CMD_UI_MSG5			0xA1	// 5 char msg
+
+static inline void ui_msg(int dispnum, char *txt, msg_64_t *m, uint8_t from)
+{
+	m->to = MA_UI(dispnum);
+	m->from = from;
+	m->cmd = CMD_UI_MSG5;
+	int n = strlen(txt);
+	n = (n>5) ? 5 : n;
+	memcpy(m->rbytes+1, txt, n);
+}
 
 void msgsrv_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt);
 

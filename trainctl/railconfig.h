@@ -23,6 +23,11 @@
 #define RAILCONFIG_H_
 
 #include "trainctl_iface.h"
+
+#ifdef TRAIN_SIMU
+#include "train_simu.h"
+#endif
+
 #include "low/canton_config.h"
 //#include "block_canton.h"
 #include "param.h"

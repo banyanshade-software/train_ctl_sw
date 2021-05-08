@@ -7,6 +7,8 @@
 
 #include <memory.h>
 #include "../misc.h"
+#include "../msg/trainmsg.h"
+
 #include "../trainctl_iface.h"
 
 
@@ -34,12 +36,13 @@
 
 extern int num_train_periodic_control;
 
+#define MAX_DISP 1 // for now
+static uint8_t display_addr[MAX_DISP] = {0}; // unused for now
+static uint8_t needsrefresh_mask;
 
-void StartUiTask(void *argument)
-{
-	//MX_USB_DEVICE_Init();
-	taskdisp();
-}
+#define SET_NEEDSREFRESH(_i) do { needsrefresh_mask = (needsrefresh_mask | (1<<(_i)));} while(0)
+#define NEEDSREFRESH(_i) ((needsrefresh_mask & (1<<(_i))) ? 1 : 0)
+/// ----------------------------------
 
 static void i2c_ready(int a)
 {
@@ -92,11 +95,65 @@ static void disp_ble2(void);
 static void disp_ticks(void);
 static void disp_c0(void);
 
+static void ui_msg5(int disp, char *m6);
+
+
+void StartUiTask(void *argument)
+{
+	// init
+	display_addr[0] = 0; //XXX
+	needsrefresh_mask = 0;
+	for (int i=0; i<MAX_DISP; i++) {
+		I2C_Scan();
+		ssd1306_Init();
+		ui_msg5(1, ">w?");
+		SET_NEEDSREFRESH(i);
+	}
+	taskdisp();
+}
+static void ui_process_msg(void)
+{
+	for (;;) {
+		msg_64_t m;
+		int rc = mqf_read_to_ui(&m);
+		if (rc) break;
+		if (IS_UI(m.to)) {
+			int dn = m.to & 0x1F;
+			if (dn != 1) {
+				itm_debug1(DBG_UI, "?dn", dn);
+				continue;
+			}
+			switch (m.cmd) {
+			case CMD_UI_MSG5:
+				ui_msg5(dn, (char *) m.rbytes+1);
+				break;
+			default:
+				itm_debug1(DBG_UI, "cmd?", m.cmd);
+				break;
+			}
+		} else {
+			itm_debug1(DBG_UI, "non ui msg", 0);
+		}
+	}
+}
+
 void taskdisp(void)
 {
 	int numdisp=0;
-	I2C_Scan();
-	ssd1306_Init();
+
+	ui_msg5(1, "w?");
+
+	for (;;) {
+		ui_process_msg();
+		for (int i=0; i<MAX_DISP; i++) {
+			if (NEEDSREFRESH(i)) {
+				ssd1306_UpdateScreen();
+			}
+		}
+		needsrefresh_mask = 0;
+		osDelay(200);
+	}
+
 	for (;;) {
 		if ((0)) {
 			osDelay(10000);
@@ -131,6 +188,24 @@ void taskdisp(void)
 	}
 }
 
+static void ui_msg5(int n, char *txt)
+{
+	ssd1306_Fill(Black);
+	ssd1306_SetCursor(0,0);
+	ssd1306_WriteNString(txt, 5, Font_11x18, White);
+	//ssd1306_UpdateScreen();
+	ssd1306_SetCursor(0,22);
+	ssd1306_WriteString("qTroll", Font_7x10, White);
+	ssd1306_SetCursor(64,0);
+	ssd1306_WriteString("Test Mode", Font_7x10, White);
+	ssd1306_SetCursor(64,11);
+	ssd1306_WriteString("Hop Hop Hop", Font_7x10, White);
+	ssd1306_SetCursor(64,22);
+	ssd1306_WriteString(__DATE__, Font_7x10, White);
+	SET_NEEDSREFRESH(0);
+}
+
+/// --------
 static void disp_c0(void)
 {
 	static char str[] = "C0 V xxx p yyy";

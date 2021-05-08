@@ -92,6 +92,10 @@ void Error_Handler(void);
 #define ADC_3_V0_GPIO_Port GPIOA
 #define ADC_3_V1_Pin GPIO_PIN_0
 #define ADC_3_V1_GPIO_Port GPIOB
+#define PWM_1_0_Pin GPIO_PIN_13
+#define PWM_1_0_GPIO_Port GPIOE
+#define PWM_1_1_Pin GPIO_PIN_14
+#define PWM_1_1_GPIO_Port GPIOE
 #define PWM_3_0_Pin GPIO_PIN_10
 #define PWM_3_0_GPIO_Port GPIOB
 #define PWM_3_1_Pin GPIO_PIN_11

@@ -103,6 +103,9 @@ static void spdctl_reset(void)
 	}
 }
 
+static uint8_t test_mode = 0;
+static uint8_t testerAddr;
+
 void spdctl_run_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
 {
 	train_tick_last_dt = dt;
@@ -119,48 +122,58 @@ void spdctl_run_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
 		msg_64_t m;
 		int rc = mqf_read_to_spdctl(&m);
 		if (rc) break;
-		if (IS_TRAIN_SC(m.to)) {
-			int tidx = m.to & 0x7;
-			USE_TRAIN(tidx)
-			switch (m.cmd) {
-			case CMD_BEMF_NOTIF:
-				if (m.from == tvars->C1) {
-					itm_debug2(DBG_PID, "st bemf", m.v1, m.from);
-					tvars->bemf_cv = m.v1;
-					break;
-				} else if (m.from == tvars->C2) {
-					itm_debug2(DBG_PID, "c2 bemf", m.v1, m.from);
-					// check it ?
-				} else {
-					itm_debug2(DBG_ERR|DBG_PID, "unk bemf", m.v1, m.from);
-					// error
-				}
-				break;
-			case CMD_SET_TARGET_SPEED:
-				itm_debug1(DBG_SPDCTL, "set_t_spd", m.v1);
-				tvars->target_speed = m.v1;
-				break;
-			case CMD_SET_C1_C2:
-				itm_debug1(DBG_SPDCTL, "set_c1_c2", 0);
-				set_c1_c2(tidx, tvars, m.vbytes[0], m.vbytes[1], m.vbytes[2], m.vbytes[3]);
-				break;
-            default:
-                break;
-			}
-
-		} else if (IS_BROADCAST(m.to)) {
-			switch (m.cmd) {
-			case CMD_RESET: // FALLTHRU
-			case CMD_EMERGENCY_STOP:
-				spdctl_reset();
-				break;
-			}
-		}
-	}
-	/* process trains */
-	for (int i=0; i<7; i++) {
-		train_periodic_control(i, dt);
-	}
+        
+        switch (m.cmd) {
+        case CMD_RESET:
+            test_mode = 0; // FALLTHRU
+        case CMD_EMERGENCY_STOP:
+            spdctl_reset();
+            break;
+        case CMD_TEST_MODE:
+            test_mode = m.v1u;
+            testerAddr = m.from;
+            break;
+        }
+        if (test_mode & (m.from != testerAddr)) {
+            continue;
+        }
+        if (IS_TRAIN_SC(m.to)) {
+            //if (test_mode) continue;
+            int tidx = m.to & 0x7;
+            USE_TRAIN(tidx)
+            switch (m.cmd) {
+                case CMD_BEMF_NOTIF:
+                    if (m.from == tvars->C1) {
+                        itm_debug2(DBG_PID, "st bemf", m.v1, m.from);
+                        tvars->bemf_cv = m.v1;
+                        break;
+                    } else if (m.from == tvars->C2) {
+                        itm_debug2(DBG_PID, "c2 bemf", m.v1, m.from);
+                        // check it ?
+                    } else {
+                        itm_debug2(DBG_ERR|DBG_PID, "unk bemf", m.v1, m.from);
+                        // error
+                    }
+                    break;
+                case CMD_SET_TARGET_SPEED:
+                    itm_debug1(DBG_SPDCTL, "set_t_spd", m.v1);
+                    tvars->target_speed = m.v1;
+                    break;
+                case CMD_SET_C1_C2:
+                    itm_debug1(DBG_SPDCTL, "set_c1_c2", 0);
+                    set_c1_c2(tidx, tvars, m.vbytes[0], m.vbytes[1], m.vbytes[2], m.vbytes[3]);
+                    break;
+                default:
+                    break;
+            }
+        }
+        if (test_mode) return;
+        /* process trains */
+        for (int i=0; i<7; i++) {
+            train_periodic_control(i, dt);
+        }
+    }
+    
 /*
 	if (notif_flags & NOTIF_STARTUP) {
 		static int n=0;

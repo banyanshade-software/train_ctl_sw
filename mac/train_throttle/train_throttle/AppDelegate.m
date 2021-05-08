@@ -15,7 +15,7 @@
 #include "txrxcmd.h"
 //#include "low/canton.h"
 #include "StringExtension.h"
-//#include "ctrl/ctrl.h"
+//#include "../ctrl/ctrl.h"
 
 
 #define HIGHLEVEL_SIMU_CNX 0
@@ -1326,20 +1326,18 @@ void task_auto_stop_auto(void)
     int bemfi = -(bemf/4.545) * 3.3 *4096;
     //NSLog(@"bemf %f -> %d\n", bemf, bemfi);
     
-    for (int i =0; i<NUM_LOCAL_CANTONS; i++) {
-        memset((void*)&(train_adc_buffer[i]), 0, sizeof(adc_buffer_t));
+    for (int i =0; i<2; i++) {
+        memset((void*)&(train_adc_buf[i]), 0, sizeof(adc_buf_t));
     }
     int n1 = [_simTrain0 simuCurCanton];
     if (n1>=0) {
-        train_adc_buffer[n1].voffA=(bemfi>0) ? 0 : -bemfi;
-        train_adc_buffer[n1].voffB=(bemfi>0) ? bemfi : 0;
-        //train_adc_buffer[n1].intOn=1500;
+        train_adc_buf[0].off[n1].vA = (bemfi>0) ? 0 : -bemfi;
+        train_adc_buf[0].off[n1].vB = (bemfi>0) ? bemfi : 0;
     }
     int n2 = [_simTrain0 simuNextCanton];
     if (n2>=0) {
-        train_adc_buffer[n2].voffA=(bemfi>0) ? 0 : -bemfi;
-        train_adc_buffer[n2].voffB=(bemfi>0) ? bemfi : 0;
-        //train_adc_buffer[n2].intOn=1500;
+        train_adc_buf[0].off[n2].vA = (bemfi>0) ? 0 : -bemfi;
+        train_adc_buf[0].off[n2].vB = (bemfi>0) ? bemfi : 0;
     }
 
     int notif = NOTIF_NEW_ADC_1;
@@ -1803,5 +1801,94 @@ didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic
     NSLog(@"notif characteristic  %@ val %@ %@\n",  characteristic, data,  [[NSString alloc]initWithData:data encoding:NSUTF8StringEncoding]);
 }
 
+#pragma mark -
+
+- (void) sendMsg64:(msg_64_t)m
+{
+    uint8_t spdfrm[] = "|x612345678|.........";
+    int l = 2+8+2;
+    NSAssert(sizeof(m)==8, @"bad size");
+    memcpy(spdfrm+3, &m, sizeof(m));
+#if 0
+    spdfrm[3] = m.
+    spdfrm[4] = MA_UI(0);
+    spdfrm[5] = CMD_SET_TARGET_SPEED;
+    spdfrm[6] = 0; // sub
+    spdfrm[7] = v16 & 0xFF;
+    spdfrm[8] = (v16 >> 8) & 0xFF;
+#endif
+    [self sendFrame:spdfrm len:l blen:sizeof(spdfrm) then:nil];
+    return;
+}
+
+#pragma mark - canton test
+
+- (void) setTestMode:(NSUInteger)testMode
+{
+    if (testMode == _testMode) return;
+    _testMode = testMode;
+    
+    int tm = 0;
+    switch (testMode) {
+        case 0: tm = 0; break;
+        case 1: tm = 1; break;
+        case 2: tm = 1; break;
+        default:
+            break;
+    }
+    msg_64_t m;
+    m.to = MA_BROADCAST;
+    m.from = MA_UI(0);
+    m.cmd = CMD_TEST_MODE;
+    m.v1u = tm;
+    [self sendMsg64:m];
+}
+
+- (void) setTestCanton:(NSUInteger)testCanton
+{
+    if (_testMode != 1) return;
+    if (testCanton == _testCanton) return;
+    _testCanton = testCanton;
+    if (_testMode == 1) {
+        for (int i = 0; i<NUM_LOCAL_CANTONS_HW; i++) {
+            if (i==testCanton) continue;
+            msg_64_t m;
+            m.to = MA_CANTON(0, i);
+            m.from = MA_UI(0);
+            m.cmd = CMD_SETVPWM;
+            m.v1u = 7;
+            m.v2 = 0;
+            [self sendMsg64:m];
+        }
+    }
+    NSInteger p = _testPWM;
+    _testPWM = -9999;
+    self.testPWM = p;
+}
+- (void) setTestVoltIdx:(NSUInteger)testVoltIdx
+{
+    if (!_testMode) return;
+    if (testVoltIdx == _testVoltIdx) return;
+    _testVoltIdx = testVoltIdx;
+    [self sendVPWM];
+}
+
+- (void) setTestPWM:(NSInteger)testPWM
+{
+    if (!_testMode) return;
+    if (testPWM == _testPWM) return;
+    _testPWM = testPWM;
+    [self sendVPWM];
+}
+- (void) sendVPWM
+{
+    msg_64_t m;
+    m.to = (_testMode == 1) ? MA_CANTON(0, _testCanton) : MA_BROADCAST;
+    m.from = MA_UI(0);
+    m.cmd = CMD_SETVPWM;
+    m.v1u = _testVoltIdx;
+    m.v2 = _testPWM;
+    [self sendMsg64:m];
+}
 
 @end

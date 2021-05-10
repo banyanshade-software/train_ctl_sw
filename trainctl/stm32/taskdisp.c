@@ -10,7 +10,7 @@
 #include "../msg/trainmsg.h"
 
 #include "../trainctl_iface.h"
-
+#include "../IHM/disp.h"
 
 #ifndef TFT_DISP
 #error TFT_DISP not defined
@@ -331,6 +331,10 @@ void taskdisp(void)
 		//lasttick = HAL_GetTick();
 
 #endif
+		if ((1)) {
+			_test_new_disp();
+			continue;
+		}
 		ui_scan_inputs();
 		ui_process_msg();
 		for (int i=0; i<MAX_DISP; i++) {
@@ -376,6 +380,8 @@ void taskdisp(void)
 	}
 	*/
 }
+
+#if 0
 
 /// --------
 static void disp_c0(void)
@@ -517,6 +523,7 @@ static void disp_clock(void)
 	}
 }
 
+#endif
 #endif
 
 

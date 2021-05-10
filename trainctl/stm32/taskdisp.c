@@ -326,11 +326,10 @@ void taskdisp(void)
 		}
 		if (!(notif & NOTIF_TICKUI)) continue;
 #else
-		static int lasttick = 0;
-		if (lasttick) {
-			vTaskDelayUntil(lasttick, 100);
-			lasttick = HAL_GetTick();
-		}
+		static TickType_t lasttick = 0;
+		vTaskDelayUntil(&lasttick, 100);
+		//lasttick = HAL_GetTick();
+
 #endif
 		ui_scan_inputs();
 		ui_process_msg();

@@ -80,12 +80,18 @@ static disp_op_codes_t disp[MAX_DISPLAY];
 
 static const char *ui_strings[] = {
 /*0*/		"(c) Braun",
-/*1*/		"Trn ",
+/*1*/		"Train ",
 /*2*/		"Hello",
-/*3*/		"Vi=",
+/*3*/		"Ready",
 /*4*/		"P=",
 /*5*/		__DATE__,
-/*6*/		"Z scale"
+/*6*/		"Z-v0.1.01",
+/*7*/		"...",
+/*8*/		"...",
+/*9*/		"...",
+/*10*/		"Fwd",
+/*11*/		"Rev",
+/*12*/		"Stop",
 };
 
 static void sample_display(int numdisp)

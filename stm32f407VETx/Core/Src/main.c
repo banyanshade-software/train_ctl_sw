@@ -1204,6 +1204,19 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
     HAL_IncTick();
   }
   /* USER CODE BEGIN Callback 1 */
+  /*
+  if (htim->Instance == TIM7) {
+	  static uint32_t lastuitick = 0;
+	  uint32_t t = HAL_GetTick();
+	  if (t >= lastuitick+100) {
+		  // 10Hz UI tick
+		  lastuitick = t;
+		  BaseType_t higher=0;
+		  xTaskNotifyFromISR(uiTaskHandle, NOTIF_TICKUI, eSetBits, &higher);
+		  portYIELD_FROM_ISR(higher);
+	  }
+  }
+  */
   if (htim->Instance == TIM8) {
 	  if ((0)) {
 		  uint32_t t1 = __HAL_TIM_GET_COUNTER(&htim1);

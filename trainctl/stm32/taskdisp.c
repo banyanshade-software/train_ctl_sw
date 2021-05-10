@@ -95,7 +95,7 @@ static void disp_ble2(void);
 static void disp_ticks(void);
 static void disp_c0(void);
 
-static void ui_msg5(int disp, char *m6);
+static void ui_msg5(uint8_t disp, char *m6);
 static void ui_canton_pwm(uint8_t, uint8_t, int8_t);
 
 static int test_mode = 0;
@@ -125,30 +125,30 @@ void StartUiTask(void *argument)
 #define TEXT_Y 14
 #define RIGHT_X 64
 
-static inline void _clear_status(void)
+static inline void _clear_status(uint8_t dispnum)
 {
 	ssd1306_FillZone(0, 0, RIGHT_X, TEXT_Y, Black);
 }
 
-static inline void _clear_mode(void)
+static inline void _clear_mode(uint8_t dispnum)
 {
 	ssd1306_FillZone(RIGHT_X, 0, RIGHT_X, TEXT_Y, Black);
 }
 
 
-static inline void _clear_text(void)
+static inline void _clear_text(uint8_t dispnum)
 {
 	ssd1306_FillZone(0, TEXT_Y, 128, 32-TEXT_Y, Black);
 }
 
 
-static inline void _clear_text1(void)
+static inline void _clear_text1(uint8_t dispnum)
 {
 	ssd1306_FillZone(0, TEXT_Y, RIGHT_X, 32-TEXT_Y, Black);
 }
 
 
-static inline void _clear_text2(void)
+static inline void _clear_text2(uint8_t dispnum)
 {
 	ssd1306_FillZone(RIGHT_X, TEXT_Y, RIGHT_X, 32-TEXT_Y, Black);
 }
@@ -156,48 +156,48 @@ static inline void _clear_text2(void)
 // -----------------------------------------------------------------------
 
 
-static void _write_mode(char *mode)
+static void _write_mode(uint8_t dispnum, char *mode)
 {
-	_clear_mode();
+	_clear_mode(dispnum);
 	ssd1306_SetCursor(RIGHT_X, 0);
 	ssd1306_WriteString(mode, Font_7x10, White);
 }
 
-static void _write_status(char *str)
+static void _write_status(uint8_t dispnum, char *str)
 {
-	_clear_status();
+	_clear_status(dispnum);
 	ssd1306_SetCursor(0, 0);
 	ssd1306_WriteString(str, Font_7x10, White);
 }
 
-static void ui_write_mode(void)
+static void ui_write_mode(uint8_t dispnum)
 {
 	ssd1306_SetCursor(64,0);
 	switch (test_mode) {
 	case 0:
-		_write_mode("    Ready");
+		_write_mode(dispnum, "    Ready");
 		break;
 	case 1:
 	default:
-		_write_mode("Test Blk");
+		_write_mode(dispnum, "Test Blk");
 		break;
 	}
-	SET_NEEDSREFRESH(0);
+	SET_NEEDSREFRESH(dispnum);
 }
 
-static void ui_write_status(char *st)
+static void ui_write_status(uint8_t dispnum, char *st)
 {
-	_write_status(st);
-	SET_NEEDSREFRESH(0);
+	_write_status(dispnum, st);
+	SET_NEEDSREFRESH(dispnum);
 }
 
 
-static void ui_msg5(int n, char *txt)
+static void ui_msg5(uint8_t dispnum, char *txt)
 {
-	_clear_text1();
+	_clear_text1(dispnum);
 	ssd1306_SetCursor(0, TEXT_Y);
 	ssd1306_WriteNString(txt, 5, Font_11x18, White);
-	SET_NEEDSREFRESH(0);
+	SET_NEEDSREFRESH(dispnum);
 	/*
 	//ssd1306_UpdateScreen();
 	ui_write_status();
@@ -237,7 +237,7 @@ static void ui_canton_pwm(uint8_t from, uint8_t v1u, int8_t v2)
 	i+=3;
 	msg[i++]='\0';
 
-	_clear_text();
+	_clear_text(0);
 	ssd1306_SetCursor(0,TEXT_Y);
 	ssd1306_WriteString(msg, Font_11x18, White);
 	SET_NEEDSREFRESH(0);
@@ -256,25 +256,25 @@ static void ui_process_msg(void)
 		if (IS_CONTROL_T(m.from) || IS_TRAIN_SC(m.from)) {
 			static char t[3] = "Tx";
 			t[1] = (m.from & 0x7) + '0';
-			ui_write_status(t);
+			ui_write_status(0, t);
 		} else if (IS_CANTON(m.from)) {
 			static char t[] = "Blk--";
 			t[4] = (m.from & 0x7) + '0';
 			t[3] = (MA_2_BOARD(m.from))+'0';
-			ui_write_status(t);
+			ui_write_status(0, t);
 		} else if (IS_TURNOUT(m.from)) {
 			static char t[] = "Trn--";
 			t[4] = (m.from & 0x7) + '0';
 			t[3] = (MA_2_BOARD(m.from))+'0';
-			ui_write_status(t);
+			ui_write_status(0, t);
 		} else {
-			ui_write_status("...");
+			ui_write_status(0, "...");
 		}
 		switch(m.cmd) {
         case CMD_TEST_MODE:
             test_mode = m.v1u;
-            ui_write_mode();
-    		ui_msg5(1, "T");
+            ui_write_mode(0);
+    		ui_msg5(0, "T");
             break;
         case CMD_SETVPWM:
         	if (test_mode) ui_canton_pwm(m.from, m.v1u, m.v2);
@@ -300,18 +300,39 @@ static void ui_process_msg(void)
 	}
 }
 
+static void ui_scan_inputs(void)
+{
+}
+
+// ---------------------------------------------------------------------------------------------
+
 void taskdisp(void)
 {
 	int numdisp=0;
 
 	ssd1306_Fill(Black);
-	ui_write_mode();
-	ui_write_status("DBN-Z");
+	ui_write_mode(0);
+	ui_write_status(0, "DBN-Z");
 	ssd1306_SetCursor(RIGHT_X, 32-10);
 	ssd1306_WriteString(__DATE__, Font_7x10, White);
-	ui_msg5(1, "INIT");
+	ui_msg5(0, "INIT");
 
 	for (;;) {
+#if 0
+		uint32_t notif;
+		xTaskNotifyWait(0, 0xFFFFFFFF, &notif, portMAX_DELAY);
+		if (notif != NOTIF_TICKUI) {
+			itm_debug1(DBG_ERR|DBG_UI, "notif?", notif);
+		}
+		if (!(notif & NOTIF_TICKUI)) continue;
+#else
+		static int lasttick = 0;
+		if (lasttick) {
+			vTaskDelayUntil(lasttick, 100);
+			lasttick = HAL_GetTick();
+		}
+#endif
+		ui_scan_inputs();
 		ui_process_msg();
 		for (int i=0; i<MAX_DISP; i++) {
 			if (NEEDSREFRESH(i)) {

@@ -181,6 +181,36 @@ void ssd1306_Fill(SSD1306_COLOR color) {
     }
 }
 
+
+void ssd1306_FillZone(uint8_t x, uint8_t y, uint8_t wx, uint8_t wy, SSD1306_COLOR color)
+{
+    uint32_t xi;
+    uint32_t yi;
+
+    int by = y/8;
+    int bly = (y+wy+7)/8;
+
+    for (yi = by; yi < bly; yi++) {
+    	uint8_t b = 0xFF;
+    	if (yi == by) {
+    		b = b << (y & 0x7);
+    	}
+    	if (yi == bly) {
+    		b &= (0xFFU << ((y+wy) & 0x7));
+    	}
+    	for (xi = x; xi <x+wx; xi++) {
+    		int i = yi*SSD1306_WIDTH+xi;
+    		if (i>=SSD1306_BUFFER_SIZE) break;
+    		if (color == Black) {
+    			SSD1306_Buffer[i] &= ~b;
+    		} else {
+    			SSD1306_Buffer[i] |= b;
+    		}
+    	}
+    }
+
+}
+
 // Write the screenbuffer with changed to the screen
 void ssd1306_UpdateScreen(void) {
     // Write data to each page of RAM. Number of pages

@@ -106,6 +106,7 @@ static void handle_canton_cmd(int cidx, msg_64_t *m)
 		itm_debug3(DBG_LOWCTRL, "SETPWM", cidx, m->v1u, m->v2);
 		canton_set_pwm(cidx, cconf, cvars, SIGNOF0(m->v2), abs(m->v2));
 		canton_set_volt(cidx, cconf, cvars,  m->v1u);
+
 		break;
 	default:
 		itm_debug1(DBG_LOWCTRL, "not handled msg", m->cmd);
@@ -150,6 +151,13 @@ void canton_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
 			itm_debug1(DBG_LOWCTRL, "not handled msg", m.cmd);
 			continue;
         }
+        if ((test_mode==1) && (CMD_SETVPWM == m.cmd)) {
+        	// in test mode, forward CMD_SETVPWM to UI for display
+        	msg_64_t m2 = m;
+        	m2.from = m2.to;
+        	m2.to = MA_UI(1);
+     		mqf_write_from_canton(&m2);
+       	}
         if (cidx>=0) handle_canton_cmd(cidx, &m);
         else {
         	// broadcast

@@ -167,6 +167,11 @@ void ssd1306_WriteCommand(uint8_t byte);
 void ssd1306_WriteData(uint8_t* buffer, size_t buff_size);
 SSD1306_Error_t ssd1306_FillBuffer(uint8_t* buf, uint32_t len);
 
+/* ---------- DBN addon -------- */
+
+// fill a zone. y and wy are supposed to be multiple of 8
+void ssd1306_FillZone(uint8_t x, uint8_t y, uint8_t wx, uint8_t wy, SSD1306_COLOR color);
+
 _END_STD_C
 
 #endif // __SSD1306_H__

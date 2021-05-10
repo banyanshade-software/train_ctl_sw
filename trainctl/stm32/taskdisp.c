@@ -96,7 +96,9 @@ static void disp_ticks(void);
 static void disp_c0(void);
 
 static void ui_msg5(int disp, char *m6);
+static void ui_canton_pwm(uint8_t, uint8_t, int8_t);
 
+static int test_mode = 0;
 
 void StartUiTask(void *argument)
 {
@@ -107,16 +109,177 @@ void StartUiTask(void *argument)
 		I2C_Scan();
 		ssd1306_Init();
 		ui_msg5(1, ">w?");
-		SET_NEEDSREFRESH(i);
+		//SET_NEEDSREFRESH(i);
 	}
 	taskdisp();
 }
+
+
+// -----------------------------------------------------------------------
+
+/* screen is devided in 4 zones
+ * [status]    [mode ]
+ * [TEXT1 ]    [TEXT2]
+ */
+
+#define TEXT_Y 14
+#define RIGHT_X 64
+
+static inline void _clear_status(void)
+{
+	ssd1306_FillZone(0, 0, RIGHT_X, TEXT_Y, Black);
+}
+
+static inline void _clear_mode(void)
+{
+	ssd1306_FillZone(RIGHT_X, 0, RIGHT_X, TEXT_Y, Black);
+}
+
+
+static inline void _clear_text(void)
+{
+	ssd1306_FillZone(0, TEXT_Y, 128, 32-TEXT_Y, Black);
+}
+
+
+static inline void _clear_text1(void)
+{
+	ssd1306_FillZone(0, TEXT_Y, RIGHT_X, 32-TEXT_Y, Black);
+}
+
+
+static inline void _clear_text2(void)
+{
+	ssd1306_FillZone(RIGHT_X, TEXT_Y, RIGHT_X, 32-TEXT_Y, Black);
+}
+
+// -----------------------------------------------------------------------
+
+
+static void _write_mode(char *mode)
+{
+	_clear_mode();
+	ssd1306_SetCursor(RIGHT_X, 0);
+	ssd1306_WriteString(mode, Font_7x10, White);
+}
+
+static void _write_status(char *str)
+{
+	_clear_status();
+	ssd1306_SetCursor(0, 0);
+	ssd1306_WriteString(str, Font_7x10, White);
+}
+
+static void ui_write_mode(void)
+{
+	ssd1306_SetCursor(64,0);
+	switch (test_mode) {
+	case 0:
+		_write_mode("    Ready");
+		break;
+	case 1:
+	default:
+		_write_mode("Test Blk");
+		break;
+	}
+	SET_NEEDSREFRESH(0);
+}
+
+static void ui_write_status(char *st)
+{
+	_write_status(st);
+	SET_NEEDSREFRESH(0);
+}
+
+
+static void ui_msg5(int n, char *txt)
+{
+	_clear_text1();
+	ssd1306_SetCursor(0, TEXT_Y);
+	ssd1306_WriteNString(txt, 5, Font_11x18, White);
+	SET_NEEDSREFRESH(0);
+	/*
+	//ssd1306_UpdateScreen();
+	ui_write_status();
+	ui_write_mode();
+	ssd1306_SetCursor(64,11);
+	ssd1306_WriteString("Hop Hop Hop", Font_7x10, White);
+	ssd1306_SetCursor(64,22);
+	ssd1306_WriteString(__DATE__, Font_7x10, White);
+
+	if ((0)) {
+		static int cnt = 0;
+		cnt ++;
+		if (cnt%7) ssd1306_FillZone(35, 13, 47, 11, White);
+		else ssd1306_DrawRectangle(35, 13, 35+47, 13+11, White);
+	}
+	*/
+
+}
+
+
+static void ui_canton_pwm(uint8_t from, uint8_t v1u, int8_t v2)
+{
+	char msg[16];
+	int i = 0;
+	if (MA_BROADCAST == from) {
+		msg[i++] = 'A';
+	} else {
+		msg[i++] = (from & 0x07) + '0';
+	}
+	msg[i++] = ' ';
+	msg[i++] = 'V';
+	msg[i++] = v1u + '0';
+	msg[i++] = ' ';
+	msg[i++] = 'P';
+	msg[i++] = (v2 > 0) ? '+' : '-';
+	write_num(msg+i, abs(v2), 3);
+	i+=3;
+	msg[i++]='\0';
+
+	_clear_text();
+	ssd1306_SetCursor(0,TEXT_Y);
+	ssd1306_WriteString(msg, Font_11x18, White);
+	SET_NEEDSREFRESH(0);
+}
+
+// ------------------------------------------------------------------
+
+
+
 static void ui_process_msg(void)
 {
 	for (;;) {
 		msg_64_t m;
 		int rc = mqf_read_to_ui(&m);
 		if (rc) break;
+		if (IS_CONTROL_T(m.from) || IS_TRAIN_SC(m.from)) {
+			static char t[3] = "Tx";
+			t[1] = (m.from & 0x7) + '0';
+			ui_write_status(t);
+		} else if (IS_CANTON(m.from)) {
+			static char t[] = "Blk--";
+			t[4] = (m.from & 0x7) + '0';
+			t[3] = (MA_2_BOARD(m.from))+'0';
+			ui_write_status(t);
+		} else if (IS_TURNOUT(m.from)) {
+			static char t[] = "Trn--";
+			t[4] = (m.from & 0x7) + '0';
+			t[3] = (MA_2_BOARD(m.from))+'0';
+			ui_write_status(t);
+		} else {
+			ui_write_status("...");
+		}
+		switch(m.cmd) {
+        case CMD_TEST_MODE:
+            test_mode = m.v1u;
+            ui_write_mode();
+    		ui_msg5(1, "T");
+            break;
+        case CMD_SETVPWM:
+        	if (test_mode) ui_canton_pwm(m.from, m.v1u, m.v2);
+        	break;
+        }
 		if (IS_UI(m.to)) {
 			int dn = m.to & 0x1F;
 			if (dn != 1) {
@@ -141,7 +304,12 @@ void taskdisp(void)
 {
 	int numdisp=0;
 
-	ui_msg5(1, "w?");
+	ssd1306_Fill(Black);
+	ui_write_mode();
+	ui_write_status("DBN-Z");
+	ssd1306_SetCursor(RIGHT_X, 32-10);
+	ssd1306_WriteString(__DATE__, Font_7x10, White);
+	ui_msg5(1, "INIT");
 
 	for (;;) {
 		ui_process_msg();
@@ -153,7 +321,7 @@ void taskdisp(void)
 		needsrefresh_mask = 0;
 		osDelay(200);
 	}
-
+/*
 	for (;;) {
 		if ((0)) {
 			osDelay(10000);
@@ -186,23 +354,7 @@ void taskdisp(void)
 		osDelay(1000);
 		numdisp++;
 	}
-}
-
-static void ui_msg5(int n, char *txt)
-{
-	ssd1306_Fill(Black);
-	ssd1306_SetCursor(0,0);
-	ssd1306_WriteNString(txt, 5, Font_11x18, White);
-	//ssd1306_UpdateScreen();
-	ssd1306_SetCursor(0,22);
-	ssd1306_WriteString("qTroll", Font_7x10, White);
-	ssd1306_SetCursor(64,0);
-	ssd1306_WriteString("Test Mode", Font_7x10, White);
-	ssd1306_SetCursor(64,11);
-	ssd1306_WriteString("Hop Hop Hop", Font_7x10, White);
-	ssd1306_SetCursor(64,22);
-	ssd1306_WriteString(__DATE__, Font_7x10, White);
-	SET_NEEDSREFRESH(0);
+	*/
 }
 
 /// --------

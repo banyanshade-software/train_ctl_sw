@@ -47,7 +47,7 @@ void ctrl_run_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
             itm_debug1(DBG_SPDCTL|DBG_CTRL, "init/spd", m.v1);
             mqf_write_from_ctrl(&m); //
         }
-        if ((1)) { // test
+        if ((0)) { // test
             msg_64_t m;
         	m.from = MA_CONTROL();
         	m.to = MA_BROADCAST;
@@ -57,7 +57,7 @@ void ctrl_run_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
         }
 
     }
-	if ((1)) { // test
+	if ((1) && !test_mode) { // test
 		static int cd = 0;
 		int t = (tick / 3000);
 		int tt = t % 3;
@@ -78,10 +78,10 @@ void ctrl_run_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
 			case 1: txt = "Fwd"; break;
 			case -1: txt = "Rev"; break;
 			}
-			ui_msg(1, txt, &m, MA_CONTROL());
+			ui_msg(1, txt, &m, MA_CONTROL_T(0));
 			mqf_write_from_ctrl(&m);
 
-			m.from = MA_CONTROL();
+			m.from = MA_CONTROL_T(0);
 			m.to = MA_CANTON(0, 0);
 			m.cmd = CMD_SETVPWM;
 			m.v1u = 0;

@@ -58,6 +58,13 @@ static void ui_process_msg(void);
 void ihm_runtick(void)
 {
 	static int cnt=0;
+	static int first = 0;
+	if (!first) {
+		first = 1;
+		ihm_setlayout(0, 1);
+		ihm_setvar(0, 0, 0);
+	}
+
 	needsrefresh_mask = 0;
 	// scan rotary encoder -----------
 	uint16_t p = get_rotary(&htim4);
@@ -65,8 +72,8 @@ void ihm_runtick(void)
 		// pos changed
 		rot0_position = p;
 		if (1/*rot0 is displayed*/) {
-			ihm_setvar(0, 0, rot0_position);
-			ihm_setvar(0, 1, ((int)rot0_position - 50));
+			ihm_setvar(0, 1, rot0_position);
+			//ihm_setvar(0, 1, ((int)rot0_position - 50));
 			SET_NEEDSREFRESH(0);
 		}
 	}

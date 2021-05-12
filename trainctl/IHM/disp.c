@@ -128,19 +128,33 @@ static const uint8_t *disp[MAX_DISP] = {NULL};
 
 
 static const uint8_t default_layout[] = {
-#if 0
-		CODE_ZONE_MODE, CODE_STR|15,
-		CODE_ZONE_TEXT2s, CODE_STR|6,
-		CODE_ZONE_TEXT4s, CODE_STR|5,
-		CODE_ZONE_STATUS, CODE_STR|16,CODE_SVAL, 1,
-		CODE_ZONE_TEXT1, CODE_STR|17,CODE_UVAL, 0,
-#else
 		CODE_ZONE_STATUS, CODE_STR|13,CODE_SVAL, 1,
 		CODE_ZONE_TEXT1s, CODE_STR|13,CODE_UVAL, 0,
 		CODE_ZONE_TEXT2s, CODE_GRAPH_LEVEL, 0,
-#endif
 		CODE_END
 };
+
+static const uint8_t manual_layout[] = {
+		CODE_ZONE_STATUS, 	CODE_STR|18, CODE_DIGIT, 0,
+		CODE_ZONE_MODE,     CODE_STR|19,
+		CODE_ZONE_TEXT1,  	CODE_STR|13, CODE_UVAL, 1,
+		CODE_ZONE_TEXT2s, 	CODE_GRAPH_LEVEL, 1,
+		//CODE_ZONE_TEXT3s, 	CODE_STR|4,
+		CODE_END
+};
+
+void ihm_setlayout(int numdisp, int numlayout)
+{
+	const uint8_t *p = NULL;
+	switch (numlayout) {
+	case 0: // default
+		break;
+	case 1: // speed mode
+		p = manual_layout;
+		break;
+	}
+	disp[numdisp] = p;
+}
 /*
  *
 
@@ -153,7 +167,7 @@ static const char *ui_strings[] = {
 /*2*/		"Rev",			// IHMMSG_TRAINCTL_REV
 /*3*/		"Stop",			// IHMMSG_TRAINCTL_STOP
 
-/*4*/		"P=",
+/*4*/		"OK",
 /*5*/		__DATE__,
 /*6*/		"Z-v0.1.01",
 /*7*/		"...",
@@ -162,68 +176,16 @@ static const char *ui_strings[] = {
 /*10*/		"Fwd",
 /*11*/		"Rev",
 /*12*/		"Stop",
-/*13*/		"V=",
+/*13*/		"V",
 /*14*/		"t=",
 
 /*15*/		"Braun",
 /*16*/		"Z-ATC",		//Automatic train contr
 /*17*/		"Init",
+
+/*18*/		"Trn ",
+/*19*/		"Manual Ctl",
 };
-
-#if 0
-static void sample_display(int numdisp)
-{
-	static int cnt=0;
-	uint8_t *d = &disp[numdisp][0];
-	memset(d, CODE_NOP, MAX_OPCODE_PER_DISPLAY);
-	int i = 0;
-	if ((0)) {
-		d[i++] = CODE_ZONE_TEXTBIG;
-		d[i++] = CODE_STR | 2;
-		d[i++] = CODE_ZONE_TEXT3s;
-		d[i++] = CODE_STR | 6;
-		return;
-	}
-	// implicit CODE_ZONE_STATUS
-	d[i++] = CODE_STR | 1;
-	d[i++] = CODE_DIGIT;
-	d[i++] = (cnt %10); cnt++;
-	d[i++] = CODE_NOP;
-
-	d[i++] = CODE_ZONE_MODE;
-	d[i++] = CODE_STR | 14; /// 0;
-	d[i++] = CODE_PROFILE; //d[i++] = CODE_NOP;
-	d[i++] = CODE_NOP;
-
-	d[i++] = CODE_ZONE_TEXT1;
-	d[i++] = CODE_STR | 13;
-	d[i++] = CODE_TIM4_CNT;
-	//d[i++] = CODE_UVAL;
-	//uint16_t v = 56223;
-	//memcpy(d+i, &v, 2); i+=2;
-	d[i++] = CODE_NOP;
-	d[i++] = CODE_NOP;
-	d[i++] = CODE_NOP;
-
-#if 0
-	d[i++] = CODE_ZONE_TEXT2;
-	d[i++] = CODE_STR | 4;
-	d[i++] = CODE_SVAL;
-	int16_t v = 23;
-	memcpy(d+i, &v, 2); i+=2;
-#else
-	d[i++] = CODE_ZONE_TEXT2s;
-	d[i++] = CODE_STR | 5;
-	d[i++] = CODE_ZONE_TEXT4s;
-	d[i++] = CODE_STR | 6;
-	d[i++] = CODE_NOP;
-#endif
-	d[i++] = CODE_NOP;
-	d[i++] = CODE_NOP;
-	d[i++] = CODE_END;
-}
-
-#endif
 
 
 // ----------------------------------------------------------------
@@ -451,5 +413,7 @@ static void write_bargraph(int16_t v, int16_t min, int16_t max)
 		/// TODO
 	}
 }
+
+
 
 #endif // TFT_DISP

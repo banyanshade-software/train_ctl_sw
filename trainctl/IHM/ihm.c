@@ -66,7 +66,7 @@ void ihm_runtick(void)
 		rot0_position = p;
 		if (1/*rot0 is displayed*/) {
 			ihm_setvar(0, 0, rot0_position);
-			ihm_setvar(0, 1, rot0_position - 50);
+			ihm_setvar(0, 1, ((int)rot0_position - 50));
 			SET_NEEDSREFRESH(0);
 		}
 	}

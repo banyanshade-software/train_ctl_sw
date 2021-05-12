@@ -327,7 +327,7 @@ void disp_layout(int numdisp)
 		case CODE_SVAL:
 			i++;
 			v16s = (int16_t) _GET_REG(numdisp, d[i]);
-			write_snum(v16u, curfont);
+			write_snum(v16s, curfont);
 			break;
 		case CODE_UVAL:
 			i++;
@@ -423,6 +423,9 @@ static void write_unum(uint16_t v, FontDef *curfont)
 
 static void write_snum(int16_t v, FontDef *curfont)
 {
+	if ((v<-5000)||(v>5000)) {
+		itm_debug1(DBG_UI|DBG_ERR, "strange here", v);
+	}
 	if (v < 0) {
 		ssd1306_WriteChar('-', *curfont, White);
 	} else {

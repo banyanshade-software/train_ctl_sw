@@ -51,7 +51,7 @@
 #include "ihm_messages.h"
 
 
-static uint8_t display_addr[MAX_DISP] = {0}; // unused for now
+//static uint8_t display_addr[MAX_DISP] = {0}; // unused for now
 
 /*
  * for multiple display, we cannot store buffer for each display
@@ -104,28 +104,43 @@ static uint8_t display_addr[MAX_DISP] = {0}; // unused for now
 #define 	CODE_TIM4_CNT		0x88
 #define 	CODE_PROFILE		0x8F
 
-// followed by 1 byte
+// followed by 1 byte, index to reg table, where a 8 or 16bit value is read
+
 #define		CODE_DIGIT			0xC0
 #define		CODE_DIR			0xC1	// direction indicatior (< o >)
-// followed by 2 bytes
-#define		CODE_UVAL			0xB0
-#define		CODE_UVAL100        0xB2	// centivolt display (fixed point)
-#define		CODE_SVAL			0xB3
-#define		CODE_GRAPH_LEVEL	0xB4
+#define		CODE_UVAL			0xC2
+#define		CODE_UVAL100        0xC3	// centivolt display (fixed point)
+#define		CODE_SVAL			0xC4
+#define		CODE_GRAPH_LEVEL	0xC5
 
-// followed by ptr (4 bytes)
-#define 	CODE_PSVAL			0xD0
-#define		CODE_PUVAL			0xD1
 
 #define		CODE_END			0xFE
 #define		CODE_NOP			0xFF
 
 #define MAX_OPCODE_PER_DISPLAY	24
-typedef uint8_t disp_op_codes_t[MAX_OPCODE_PER_DISPLAY];
-#define MAX_DISPLAY 4
-static disp_op_codes_t disp[MAX_DISPLAY];
+
+//typedef uint8_t disp_op_codes_t[MAX_OPCODE_PER_DISPLAY];
+//static disp_op_codes_t disp[MAX_DISPLAY];
 
 
+
+static const uint8_t *disp[MAX_DISP] = {NULL};
+
+
+static const uint8_t default_layout[] = {
+#if 0
+		CODE_ZONE_MODE, CODE_STR|15,
+		CODE_ZONE_TEXT2s, CODE_STR|6,
+		CODE_ZONE_TEXT4s, CODE_STR|5,
+		CODE_ZONE_STATUS, CODE_STR|16,CODE_SVAL, 1,
+		CODE_ZONE_TEXT1, CODE_STR|17,CODE_UVAL, 0,
+#else
+		CODE_ZONE_STATUS, CODE_STR|13,CODE_SVAL, 1,
+		CODE_ZONE_TEXT1s, CODE_STR|13,CODE_UVAL, 0,
+		CODE_ZONE_TEXT2s, CODE_GRAPH_LEVEL, 0,
+#endif
+		CODE_END
+};
 /*
  *
 
@@ -147,10 +162,15 @@ static const char *ui_strings[] = {
 /*10*/		"Fwd",
 /*11*/		"Rev",
 /*12*/		"Stop",
-/*13*/		"V",
+/*13*/		"V=",
 /*14*/		"t=",
+
+/*15*/		"Braun",
+/*16*/		"Z-ATC",		//Automatic train contr
+/*17*/		"Init",
 };
 
+#if 0
 static void sample_display(int numdisp)
 {
 	static int cnt=0;
@@ -203,6 +223,31 @@ static void sample_display(int numdisp)
 	d[i++] = CODE_END;
 }
 
+#endif
+
+
+// ----------------------------------------------------------------
+
+#define MAX_REGS 16
+static uint16_t regs[MAX_REGS][MAX_DISP];
+
+void ihm_setvar(int numdisp, int varnum, uint16_t val)
+{
+	if (varnum>MAX_REGS) return;
+	if (numdisp>MAX_DISP) return;
+	regs[varnum][numdisp] = val;
+}
+uint16_t ihm_getvar(int numdisp, int varnum)
+{
+	if (varnum>MAX_REGS) return 0;
+	if (numdisp>MAX_DISP) return 0;
+	return regs[varnum][numdisp];
+}
+
+#define _GET_REG(_disp, _reg) (ihm_getvar(_disp, _reg))
+
+// ----------------------------------------------------------------
+
 
 
 #define TEXT_Y 12
@@ -210,11 +255,14 @@ static void sample_display(int numdisp)
 
 //static void write_num(char *buf, uint32_t v, int ndigit);
 static void write_unum(uint16_t v, FontDef *curfont);
+static void write_snum(int16_t v, FontDef *curfont);
+static void write_bargraph(int16_t v, int16_t min, int16_t max);
 
 void disp_layout(int numdisp)
 {
 	uint32_t t0 = HAL_GetTick();
-	uint8_t *d = &disp[numdisp][0];
+	const uint8_t *d = disp[numdisp];
+	if (!d) d = default_layout;
 	ssd1306_Fill(Black);
 	ssd1306_SetCursor(0, 0);
 	FontDef *curfont = &Font_7x10;
@@ -273,20 +321,23 @@ void disp_layout(int numdisp)
 #endif
 		case CODE_DIGIT:
 			i++;
-			ssd1306_WriteChar('0'+d[i], *curfont, White);
+			v16u = (int16_t) _GET_REG(numdisp, d[i]);
+			ssd1306_WriteChar('0'+(v16u & 0xF) , *curfont, White);
 			break;
 		case CODE_SVAL:
-			i+=2;
+			i++;
+			v16s = (int16_t) _GET_REG(numdisp, d[i]);
+			write_snum(v16u, curfont);
 			break;
 		case CODE_UVAL:
-			memcpy(&v16u, d+i+1, 2);
-			i+=2;
+			i++;
+			v16u = _GET_REG(numdisp, d[i]);
 			write_unum(v16u, curfont);
 			break;
-		case CODE_PUVAL:
-			memcpy(&puval, d+i+1, 4);
-			i+=2;
-			write_unum(*puval, curfont);
+		case CODE_GRAPH_LEVEL:
+			i++;
+			v16u = _GET_REG(numdisp, d[i]);
+			write_bargraph(v16u, 0, 100);
 			break;
 		case CODE_TIM4_CNT: {
 			extern TIM_HandleTypeDef htim4;
@@ -302,17 +353,15 @@ void disp_layout(int numdisp)
 		case CODE_DIR:
 			i+=1;
 			break;
-		case CODE_GRAPH_LEVEL:
-			i+=2;
-			break;
-			break;
+
+
 		default:
-			switch (d[i] & 0xF0) {
+			switch (d[i] & 0xC0) {
 			default:
 			case 0x80: break;
 			case 0xC0: i++; break;
-			case 0xB0: i+=2; break;
-			case 0xD0: i+=4; break;
+			//case 0xB0: i+=2; break;
+			//case 0xD0: i+=4; break;
 			}
 		}
 	}
@@ -350,6 +399,7 @@ static char hexchr(int v)
 	return '0'+v;
 }
 
+/*
 static void write_num(char *buf, uint32_t v, int ndigit)
 {
 	for (;ndigit>0; ndigit--) {
@@ -357,6 +407,7 @@ static void write_num(char *buf, uint32_t v, int ndigit)
 		v = v/10;
 	}
 }
+*/
 
 static void write_unum(uint16_t v, FontDef *curfont)
 {
@@ -367,6 +418,34 @@ static void write_unum(uint16_t v, FontDef *curfont)
 		f = 1;
 		ssd1306_WriteChar(n+'0', *curfont, White);
 		v = v - i*n;
+	}
+}
+
+static void write_snum(int16_t v, FontDef *curfont)
+{
+	if (v < 0) {
+		ssd1306_WriteChar('-', *curfont, White);
+	} else {
+		ssd1306_WriteChar('+', *curfont, White);
+	}
+	write_unum(abs(v), curfont);
+}
+
+static void write_bargraph(int16_t v, int16_t min, int16_t max)
+{
+	uint8_t x0 = ssd1306_GetCursorX();
+	uint8_t y0 = ssd1306_GetCursorY();
+	const uint8_t w = 50;
+	const uint8_t h = 10; y0+=3;
+	ssd1306_DrawRectangle(x0, y0, x0+w, y0+h, White);
+
+	if (v>max) v=max;
+	if (v<min) v=min;
+	int l = ((int)w*(v-min))/(max-min);
+	if (l>0) ssd1306_FillZone(x0, y0, l, h, White);
+	if ((min<0) && (max>0)) {
+		l = ((int)w*(0-min))/(max-min);
+		/// TODO
 	}
 }
 

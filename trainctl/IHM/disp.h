@@ -14,6 +14,7 @@ void _test_new_disp(void);
 void disp_layout(int numdisp);
 
 void setlayout(int numdisp, int numlayout);
-void setvar(int numdisp, int varnum, uint16_t val);
+void ihm_setvar(int numdisp, int varnum, uint16_t val);
+uint16_t ihm_getvar(int numdisp, int varnum);
 
 #endif /* IHM_DISP_H_ */

@@ -57,6 +57,7 @@ static void ui_process_msg(void);
 
 void ihm_runtick(void)
 {
+	static int cnt=0;
 	needsrefresh_mask = 0;
 	// scan rotary encoder -----------
 	uint16_t p = get_rotary(&htim4);
@@ -72,6 +73,12 @@ void ihm_runtick(void)
 	// process messages --------------
 	ui_process_msg();
 
+	if ((1)) {
+		ihm_setvar(0, 0, cnt);
+		ihm_setvar(0, 1, -cnt);
+		SET_NEEDSREFRESH(0);
+		cnt++;
+	}
 	// update displays ---------------
 	for (int i=0; i<MAX_DISP; i++) {
 		if (NEEDSREFRESH(i)) {
@@ -91,28 +98,28 @@ static void ui_process_msg(void)
 		if (IS_CONTROL_T(m.from) || IS_TRAIN_SC(m.from)) {
 			static char t[3] = "Tx";
 			t[1] = (m.from & 0x7) + '0';
-			ui_write_status(0, t);
+			//ui_write_status(0, t);
 		} else if (IS_CANTON(m.from)) {
 			static char t[] = "Blk--";
 			t[4] = (m.from & 0x7) + '0';
 			t[3] = (MA_2_BOARD(m.from))+'0';
-			ui_write_status(0, t);
+			//ui_write_status(0, t);
 		} else if (IS_TURNOUT(m.from)) {
 			static char t[] = "Trn--";
 			t[4] = (m.from & 0x7) + '0';
 			t[3] = (MA_2_BOARD(m.from))+'0';
-			ui_write_status(0, t);
+			//ui_write_status(0, t);
 		} else {
-			ui_write_status(0, "...");
+			//ui_write_status(0, "...");
 		}
 		switch(m.cmd) {
         case CMD_TEST_MODE:
             test_mode = m.v1u;
-            ui_write_mode(0);
+            //ui_write_mode(0);
     		//ui_msg5(0, "T");
             break;
         case CMD_SETVPWM:
-        	if (test_mode) ui_canton_pwm(m.from, m.v1u, m.v2);
+        	//if (test_mode) ui_canton_pwm(m.from, m.v1u, m.v2);
         	break;
         }
 		if (IS_UI(m.to)) {

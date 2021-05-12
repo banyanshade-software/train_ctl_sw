@@ -171,6 +171,9 @@ SSD1306_Error_t ssd1306_FillBuffer(uint8_t* buf, uint32_t len);
 
 // fill a zone. y and wy are supposed to be multiple of 8
 void ssd1306_FillZone(uint8_t x, uint8_t y, uint8_t wx, uint8_t wy, SSD1306_COLOR color);
+uint8_t ssd1306_GetCursorX(void);
+uint8_t ssd1306_GetCursorY(void);
+
 
 _END_STD_C
 

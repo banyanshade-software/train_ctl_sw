@@ -195,8 +195,9 @@ void ssd1306_FillZone(uint8_t x, uint8_t y, uint8_t wx, uint8_t wy, SSD1306_COLO
     	if (yi == by) {
     		b = b << (y & 0x7);
     	}
-    	if (yi == bly) {
-    		b &= (0xFFU << ((y+wy) & 0x7));
+    	if (yi == bly-1) {
+    		int s = (y+wy) & 0x7;
+    		if (s) b &= ~(0xFFU << s);
     	}
     	for (xi = x; xi <x+wx; xi++) {
     		int i = yi*SSD1306_WIDTH+xi;
@@ -326,6 +327,15 @@ char ssd1306_WriteString(const char* str, FontDef Font, SSD1306_COLOR color) {
 void ssd1306_SetCursor(uint8_t x, uint8_t y) {
     SSD1306.CurrentX = x;
     SSD1306.CurrentY = y;
+}
+
+uint8_t ssd1306_GetCursorX(void)
+{
+	return SSD1306.CurrentX;
+}
+uint8_t ssd1306_GetCursorY(void)
+{
+	return SSD1306.CurrentY;
 }
 
 // Draw line by Bresenhem's algorithm

@@ -11,6 +11,7 @@
 
 #include "../trainctl_iface.h"
 #include "../IHM/disp.h"
+#include "../IHM/ihm.h"
 
 #ifndef TFT_DISP
 #error TFT_DISP not defined
@@ -36,12 +37,15 @@
 
 extern int num_train_periodic_control;
 
+#if 0
 #define MAX_DISP 1 // for now
 static uint8_t display_addr[MAX_DISP] = {0}; // unused for now
 static uint8_t needsrefresh_mask;
 
 #define SET_NEEDSREFRESH(_i) do { needsrefresh_mask = (needsrefresh_mask | (1<<(_i)));} while(0)
 #define NEEDSREFRESH(_i) ((needsrefresh_mask & (1<<(_i))) ? 1 : 0)
+
+#endif
 /// ----------------------------------
 
 static void i2c_ready(int a)
@@ -61,6 +65,7 @@ static void I2C_Scan(void)
 }
 
 
+/*
 static void bcd_2_char(char *buf, int v, int nch)
 {
 	while (nch>0) {
@@ -100,19 +105,43 @@ static void ui_canton_pwm(uint8_t, uint8_t, int8_t);
 
 static int test_mode = 0;
 
+*/
+
 void StartUiTask(void *argument)
 {
 	// init
-	display_addr[0] = 0; //XXX
-	needsrefresh_mask = 0;
+	extern TIM_HandleTypeDef htim4;
+
+	HAL_TIM_Encoder_Start(&htim4, TIM_CHANNEL_ALL);
+
+	//display_addr[0] = 0; //XXX
+	//needsrefresh_mask = 0;
 	for (int i=0; i<MAX_DISP; i++) {
 		I2C_Scan();
 		ssd1306_Init();
-		ui_msg5(1, ">w?");
+		//ui_msg5(1, ">w?");
 		//SET_NEEDSREFRESH(i);
 	}
-	taskdisp();
+	for (;;) {
+#if 0
+		uint32_t notif;
+		xTaskNotifyWait(0, 0xFFFFFFFF, &notif, portMAX_DELAY);
+		if (notif != NOTIF_TICKUI) {
+			itm_debug1(DBG_ERR|DBG_UI, "notif?", notif);
+		}
+		if (!(notif & NOTIF_TICKUI)) continue;
+#else
+		static TickType_t lasttick = 0;
+		vTaskDelayUntil(&lasttick, 100);
+		//lasttick = HAL_GetTick();
+
+#endif
+		ihm_runtick();
+	}
 }
+
+#if 0
+
 
 
 // -----------------------------------------------------------------------
@@ -527,7 +556,7 @@ static void disp_clock(void)
 #endif
 
 
-
+#endif
 
 
 #endif 	// TFT_DISP

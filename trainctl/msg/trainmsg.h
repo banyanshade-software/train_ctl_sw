@@ -147,16 +147,19 @@ LFMQUEUE_DEF_H(to_ui, msg_64_t)
 LFMQUEUE_DEF_H(from_ui, msg_64_t)
 
 #define CMD_NOTIF_SPEED     0xA0
-#define CMD_UI_MSG5			0xA1	// 5 char msg
+#define CMD_UI_MSG			0xA1
 
-static inline void ui_msg(int dispnum, char *txt, msg_64_t *m, uint8_t from)
+#include "../IHM/ihm_messages.h"
+
+static inline void ui_msg(int dispnum,uint8_t msgnum, msg_64_t *m, uint8_t from)
 {
 	m->to = MA_UI(dispnum);
 	m->from = from;
-	m->cmd = CMD_UI_MSG5;
-	int n = strlen(txt);
-	n = (n>5) ? 5 : n;
-	memcpy(m->rbytes+1, txt, n);
+	m->cmd = CMD_UI_MSG;
+	m->v1u = msgnum;
+	//int n = strlen(txt);
+	//n = (n>5) ? 5 : n;
+	//memcpy(m->rbytes+1, txt, n);
 }
 
 void msgsrv_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt);

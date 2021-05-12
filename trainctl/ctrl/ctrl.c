@@ -29,7 +29,7 @@ void ctrl_run_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
 		ctrl_reset();
 
 		msg_64_t m;
-		ui_msg(1, "Train", &m, MA_CONTROL());
+		ui_msg(1, IHMMSG_TRAINCTL_INIT, &m, MA_CONTROL());
 		mqf_write_from_ctrl(&m);
 
         if ((0)) { // TODO remove
@@ -72,13 +72,13 @@ void ctrl_run_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
 			cd = md;
 
 			msg_64_t m;
-			char *txt = "??";
+			uint8_t t = 0;
 			switch (md) {
-			case 0: txt = "Stop"; break;
-			case 1: txt = "Fwd"; break;
-			case -1: txt = "Rev"; break;
+			case 0: t = IHMMSG_TRAINCTL_STOP; break;
+			case 1: t = IHMMSG_TRAINCTL_FWD; break;
+			case -1: t = IHMMSG_TRAINCTL_REV; break;
 			}
-			ui_msg(1, txt, &m, MA_CONTROL_T(0));
+			ui_msg(1, t, &m, MA_CONTROL_T(0));
 			mqf_write_from_ctrl(&m);
 
 			m.from = MA_CONTROL_T(0);

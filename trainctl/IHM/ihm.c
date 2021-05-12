@@ -65,6 +65,8 @@ void ihm_runtick(void)
 		// pos changed
 		rot0_position = p;
 		if (1/*rot0 is displayed*/) {
+			ihm_setvar(0, 0, rot0_position);
+			ihm_setvar(0, 1, rot0_position - 50);
 			SET_NEEDSREFRESH(0);
 		}
 	}
@@ -73,7 +75,7 @@ void ihm_runtick(void)
 	// process messages --------------
 	ui_process_msg();
 
-	if ((1)) {
+	if ((0)) {
 		ihm_setvar(0, 0, cnt);
 		ihm_setvar(0, 1, -cnt);
 		SET_NEEDSREFRESH(0);

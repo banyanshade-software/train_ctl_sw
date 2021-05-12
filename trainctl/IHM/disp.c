@@ -436,7 +436,7 @@ static void write_bargraph(int16_t v, int16_t min, int16_t max)
 	uint8_t x0 = ssd1306_GetCursorX();
 	uint8_t y0 = ssd1306_GetCursorY();
 	const uint8_t w = 50;
-	const uint8_t h = 10; y0+=3;
+	const uint8_t h = 11; //y0+=3;
 	ssd1306_DrawRectangle(x0, y0, x0+w, y0+h, White);
 
 	if (v>max) v=max;

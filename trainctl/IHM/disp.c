@@ -88,7 +88,9 @@
 #define		CODE_STR			0x00		// 7lsb index to ui_string
 
 #define		CODE_ZONE_STATUS	0x80
+#define 	CODE_ZONE_TEXT0Ls	CODE_ZONE_STATUS
 #define 	CODE_ZONE_MODE		0x81
+#define		CODE_ZONE_TEXT0Rs	CODE_ZONE_MODE
 #define		CODE_ZONE_TEXT1		0x82
 #define		CODE_ZONE_TEXT2		0x83
 #define		CODE_ZONE_TEXT1s	0x84
@@ -111,7 +113,8 @@
 #define		CODE_UVAL			0xC2
 #define		CODE_UVAL100        0xC3	// centivolt display (fixed point)
 #define		CODE_SVAL			0xC4
-#define		CODE_GRAPH_LEVEL	0xC5
+#define		CODE_SVAL4			0xC5
+#define		CODE_GRAPH_LEVEL	0xC6
 
 
 #define		CODE_END			0xFE
@@ -134,7 +137,7 @@ static const uint8_t default_layout[] = {
 		CODE_END
 };
 
-static const uint8_t manual_layout[] = {
+static const uint8_t layout_manual[] = {
 		CODE_ZONE_STATUS, 	CODE_STR|18, CODE_DIGIT, 0,
 		CODE_ZONE_MODE,     CODE_STR|19,
 		CODE_ZONE_TEXT1,  	/*CODE_STR|13*/ CODE_UVAL, 1, CODE_STR|20,
@@ -143,14 +146,39 @@ static const uint8_t manual_layout[] = {
 		CODE_END
 };
 
+static const uint8_t layout_ina3221_i2c[] = {
+		CODE_ZONE_TEXT0Ls, CODE_STR|21, CODE_DIGIT, 0,
+		CODE_ZONE_TEXT0Rs, CODE_STR|22, CODE_DIGIT, 1,
+		CODE_ZONE_TEXT1s,  CODE_STR|23, CODE_DIGIT, 2,
+		CODE_ZONE_TEXT2s,  CODE_STR|24, CODE_DIGIT, 3,
+		CODE_ZONE_TEXT3s,   CODE_STR|25,
+		CODE_ZONE_TEXT4s,	CODE_STR|26,
+		CODE_END
+};
+
+
+static const uint8_t layout_ina3221_val[] = {
+		CODE_ZONE_TEXT0Ls, CODE_SVAL4,  0, /*CODE_STR|7,*/ CODE_SVAL4,  1, /*CODE_STR|7,*/ CODE_SVAL4,  2,
+		CODE_ZONE_TEXT1s,  CODE_SVAL4,  3, /*CODE_STR|7,*/ CODE_SVAL4,  4, /*CODE_STR|7,*/ CODE_SVAL4,  5,
+		CODE_ZONE_TEXT3s,  CODE_SVAL4,  6, /*CODE_STR|7,*/ CODE_SVAL4,  7, /*CODE_STR|7,*/ CODE_SVAL4,  8,
+		CODE_END
+};
+
 void ihm_setlayout(int numdisp, int numlayout)
 {
 	const uint8_t *p = NULL;
 	switch (numlayout) {
-	case 0: // default
+	case LAYOUT_DEFAULT: // default
 		break;
-	case 1: // speed mode
-		p = manual_layout;
+	case LAYOUT_MANUAL: // speed mode
+		p = layout_manual;
+		break;
+
+	case LAYOUT_INA3221_DETECT: // ina3221 I2C detection
+		p = layout_ina3221_i2c;
+		break;
+	case LAYOUT_INA3221_VAL:
+		p = layout_ina3221_val;
 		break;
 	}
 	disp[numdisp] = p;
@@ -170,7 +198,7 @@ static const char *ui_strings[] = {
 /*4*/		"OK",
 /*5*/		__DATE__,
 /*6*/		"Z-v0.1.01",
-/*7*/		"...",
+/*7*/		" ",
 /*8*/		"...",
 /*9*/		"...",
 /*10*/		"Fwd",
@@ -186,23 +214,29 @@ static const char *ui_strings[] = {
 /*18*/		"Train ",
 /*19*/		"  Manual",
 /*20*/		"%",
+
+/*21*/		"0x70:",			//ina3221 addr
+/*22*/		"0x71:",
+/*23*/		"0x72:",
+/*24*/		"0x73:",
+/*25*/		"ina3221",
+/*26*/		"i2c",
 };
 
 
 // ----------------------------------------------------------------
 
-#define MAX_REGS 16
-static uint16_t regs[MAX_REGS][MAX_DISP];
+static uint16_t regs[DISP_MAX_REGS][MAX_DISP];
 
 void ihm_setvar(int numdisp, int varnum, uint16_t val)
 {
-	if (varnum>MAX_REGS) return;
+	if (varnum>DISP_MAX_REGS) return;
 	if (numdisp>MAX_DISP) return;
 	regs[varnum][numdisp] = val;
 }
 uint16_t ihm_getvar(int numdisp, int varnum)
 {
-	if (varnum>MAX_REGS) return 0;
+	if (varnum>DISP_MAX_REGS) return 0;
 	if (numdisp>MAX_DISP) return 0;
 	return regs[varnum][numdisp];
 }
@@ -219,6 +253,7 @@ uint16_t ihm_getvar(int numdisp, int varnum)
 //static void write_num(char *buf, uint32_t v, int ndigit);
 static void write_unum(uint16_t v, FontDef *curfont);
 static void write_snum(int16_t v, FontDef *curfont);
+static void write_snum4(int16_t v, FontDef *curfont);
 static void write_bargraph(int16_t v, int16_t min, int16_t max);
 
 void disp_layout(int numdisp)
@@ -291,6 +326,11 @@ void disp_layout(int numdisp)
 			i++;
 			v16s = (int16_t) _GET_REG(numdisp, d[i]);
 			write_snum(v16s, curfont);
+			break;
+		case CODE_SVAL4:
+			i++;
+			v16s = (int16_t) _GET_REG(numdisp, d[i]);
+			write_snum4(v16s, curfont);
 			break;
 		case CODE_UVAL:
 			i++;
@@ -372,18 +412,27 @@ static void write_num(char *buf, uint32_t v, int ndigit)
 }
 */
 
-static void write_unum(uint16_t v, FontDef *curfont)
+static void _write_unum(uint16_t v, FontDef *curfont, uint8_t hzero)
 {
 	int f = 0;
 	for (int i=10000;i>0; i = i /10) {
 		int n = v/i;
-		if (!n && !f && (i>1)) continue;
+		if (!n && !f && (i>1)) {
+			if (!hzero) continue;
+			if (hzero == ' ') {
+				ssd1306_WriteChar(' ', *curfont, White);
+				continue;
+			}
+		}
 		f = 1;
 		ssd1306_WriteChar(n+'0', *curfont, White);
 		v = v - i*n;
 	}
 }
-
+static void write_unum(uint16_t v, FontDef *curfont)
+{
+	_write_unum(v, curfont, 0);
+}
 static void write_snum(int16_t v, FontDef *curfont)
 {
 	if ((v<-5000)||(v>5000)) {
@@ -395,6 +444,18 @@ static void write_snum(int16_t v, FontDef *curfont)
 		ssd1306_WriteChar('+', *curfont, White);
 	}
 	write_unum(abs(v), curfont);
+}
+
+static void write_snum4(int16_t v, FontDef *curfont)
+{
+	if (v<-9999) v=-9999;
+	if (v>9999) v=9999;
+	if (v < 0) {
+		ssd1306_WriteChar('-', *curfont, White);
+	} else {
+		ssd1306_WriteChar('+', *curfont, White);
+	}
+	_write_unum(abs(v), curfont,1);
 }
 
 static void write_bargraph(int16_t v, int16_t min, int16_t max)

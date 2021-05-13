@@ -27,6 +27,8 @@
 #include "train_simu.h"
 #endif
 
+#include "../stm32dev/ina3221/ina3221.h"
+
 static uint16_t rot0_position=0xFFFF;
 extern TIM_HandleTypeDef htim4;
 
@@ -59,14 +61,28 @@ static uint16_t get_rotary(TIM_HandleTypeDef *ptdef)
 
 static void ui_process_msg(void);
 
+static int ihm_mode = 0;
+
 void ihm_runtick(void)
 {
 	static int cnt=0;
 	static int first = 0;
 	if (!first) {
 		first = 1;
-		ihm_setlayout(0, 1);
-		ihm_setvar(0, 0, 0);
+		switch(ihm_mode) {
+		case 0:
+			ihm_setlayout(0, LAYOUT_MANUAL);
+			break;
+		case 1:
+			ihm_setlayout(0, LAYOUT_INA3221_DETECT);
+			break;
+		case 2:
+			ihm_setlayout(0, LAYOUT_INA3221_VAL);
+			break;
+		}
+		for (int i = 0; i<DISP_MAX_REGS; i++) {
+			ihm_setvar(0, i, 0);
+		}
 	}
 
 	needsrefresh_mask = 0;
@@ -75,7 +91,7 @@ void ihm_runtick(void)
 	if (p != rot0_position) {
 		// pos changed
 		rot0_position = p;
-		if (1/*rot0 is displayed*/) {
+		if (ihm_mode==0) {
 			ihm_setvar(0, 1, rot0_position);
 			//ihm_setvar(0, 1, ((int)rot0_position - 50));
 			SET_NEEDSREFRESH(0);
@@ -83,6 +99,16 @@ void ihm_runtick(void)
 	}
 	// scan buttons ------------------
 
+	// mode test hook
+	if (ihm_mode==1) {
+		// ina3221 detection
+		for (int i=0; i<4; i++) {
+			ihm_setvar(0, i, ina3221_devices[i]);
+		}
+		SET_NEEDSREFRESH(0);
+	} else if (ihm_mode==2) {
+
+	}
 	// process messages --------------
 	ui_process_msg();
 
@@ -144,6 +170,15 @@ static void ui_process_msg(void)
 			switch (m.cmd) {
 			case CMD_UI_MSG:
 				//ui_msg5(dn, (char *) m.rbytes+1);
+				break;
+			case CMD_INA3221_REPORT:
+				if (ihm_mode == 2) {
+					int16_t *values = (int16_t *) m.v32u;
+					for (int i =0; i<12; i++) {
+						ihm_setvar(0, i, values[i]);
+					}
+					SET_NEEDSREFRESH(0);
+				}
 				break;
 			default:
 				itm_debug1(DBG_UI, "cmd?", m.cmd);

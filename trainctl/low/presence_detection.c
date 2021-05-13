@@ -66,12 +66,14 @@ void presdect_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
     if (!values) return;
 
     if ((1)) {
-    	if (step) itm_debug3(DBG_PRES|DBG_INA3221, "prs0", values[0], values[1], values[2]);
-    	else itm_debug3(DBG_PRES|DBG_INA3221, "prs1", values[0], values[1], values[2]);
+    	itm_debug1(DBG_INA3221, "prs stp", step);
+    	itm_debug3(DBG_PRES|DBG_INA3221, "prs0", values[0], values[1], values[2]);
+    	itm_debug3(DBG_PRES|DBG_INA3221, "prs1", values[3], values[4], values[5]);
+    	itm_debug3(DBG_PRES|DBG_INA3221, "prs2", values[6], values[7], values[8]);
     }
     for (int i = 0; i<INA3221_NUM_VALS; i++) {
     	values[i] = __builtin_bswap16(values[i]);
-    	//itm_debug2("ina", i, values[i]);
+    	itm_debug2(DBG_INA3221, "ina val", i, values[i]);
     	int p = (abs(values[i])>7000) ? 1 : 0;
     	if (p == presence[i]) continue;
     	presence[i] = p;
@@ -82,6 +84,21 @@ void presdect_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
     	m.cmd = CMD_PRESENCE_CHANGE;
     	m.sub = i;
     	m.v1u = p;
+    	mqf_write_from_canton(&m);
+    }
+    if ((1)) {
+    	msg_64_t m;
+    	static int16_t v[12];
+    	memcpy(v, values, 12*2);
+    	for (int i=0; i<12; i++) {
+    		if (abs(v[i]) > 400) {
+    			itm_debug2(DBG_INA3221, "ina big", i, v[i]);
+    		}
+    	}
+    	m.from = MA_CANTON(localBoardNum, 0);
+    	m.to = MA_UI(1);
+    	m.cmd = CMD_INA3221_REPORT;
+    	m.v32u = (uint32_t) v;
     	mqf_write_from_canton(&m);
     }
 }

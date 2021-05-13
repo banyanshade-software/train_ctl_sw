@@ -135,6 +135,10 @@ LFMQUEUE_DEF_H(from_ctrl, msg_64_t)
 /* to ctrl */
 #define CMD_PRESENCE_CHANGE	0x12
 
+/* to UI */
+#define CMD_INA3221_REPORT  0x13
+
+
 LFMQUEUE_DEF_H(to_forward, msg_64_t)
 LFMQUEUE_DEF_H(from_forward, msg_64_t)
 

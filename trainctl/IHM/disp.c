@@ -137,7 +137,7 @@ static const uint8_t default_layout[] = {
 static const uint8_t manual_layout[] = {
 		CODE_ZONE_STATUS, 	CODE_STR|18, CODE_DIGIT, 0,
 		CODE_ZONE_MODE,     CODE_STR|19,
-		CODE_ZONE_TEXT1,  	CODE_STR|13, CODE_UVAL, 1,
+		CODE_ZONE_TEXT1,  	/*CODE_STR|13*/ CODE_UVAL, 1, CODE_STR|20,
 		CODE_ZONE_TEXT2s, 	CODE_GRAPH_LEVEL, 1,
 		//CODE_ZONE_TEXT3s, 	CODE_STR|4,
 		CODE_END
@@ -176,15 +176,16 @@ static const char *ui_strings[] = {
 /*10*/		"Fwd",
 /*11*/		"Rev",
 /*12*/		"Stop",
-/*13*/		"V",
+/*13*/		"v",
 /*14*/		"t=",
 
 /*15*/		"Braun",
 /*16*/		"Z-ATC",		//Automatic train contr
 /*17*/		"Init",
 
-/*18*/		"Trn ",
-/*19*/		"Manual Ctl",
+/*18*/		"Train ",
+/*19*/		"  Manual",
+/*20*/		"%",
 };
 
 

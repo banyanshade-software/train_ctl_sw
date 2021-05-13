@@ -37,17 +37,21 @@ static uint8_t needsrefresh_mask;
 
 // ----------------------------------------------------------------
 
+#define ENC_MUL2  		1
+#define ENC_DIV2	 	0
+#define ENC_MAX ((100<<ENC_DIV2)>>ENC_MUL2)
+
 static uint16_t get_rotary(TIM_HandleTypeDef *ptdef)
 {
 	uint16_t p = __HAL_TIM_GET_COUNTER(ptdef);
 	if (p>0x7FFF) {
 		p = 0;
 		__HAL_TIM_SET_COUNTER(ptdef, p);
-	} else if (p>=200) {
-		p=200;
+	} else if (p>=ENC_MAX) {
+		p=ENC_MAX;
 		__HAL_TIM_SET_COUNTER(ptdef, p);
 	}
-	return p>>1;
+	return ((p<<ENC_MUL2)>>ENC_DIV2);//>>1;
 }
 
 

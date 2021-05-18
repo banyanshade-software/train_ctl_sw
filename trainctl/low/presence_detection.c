@@ -25,6 +25,8 @@ static void presdect_init(void)
 
 void presdect_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
 {
+	extern int disable_ina3221;
+	if (disable_ina3221) return;
 	if (!init_done) {
 		presdect_init();
 	}
@@ -86,7 +88,7 @@ void presdect_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
     	m.v1u = p;
     	mqf_write_from_canton(&m);
     }
-    if ((1)) {
+    if ((0)) {
     	msg_64_t m;
     	static int16_t v[12];
     	memcpy(v, values, 12*2);

@@ -19,6 +19,8 @@
 #define NUM_LOCAL_CANTONS_HW 5
 #define NUM_LOCAL_CANTONS_SW 8
 
+#define NUM_TRAINS	8
+
 #define TFT_DISP 1
 
 #define USE_INA3221 1

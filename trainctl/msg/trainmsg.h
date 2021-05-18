@@ -135,8 +135,15 @@ LFMQUEUE_DEF_H(from_ctrl, msg_64_t)
 /* to ctrl */
 #define CMD_PRESENCE_CHANGE	0x12
 
+#define CMD_MDRIVE_SPEED 	0x13
+#define	CMD_MDRIVE_DIR		0x14
+
 /* to UI */
-#define CMD_INA3221_REPORT  0x13
+#define CMD_INA3221_REPORT  0x15
+#define CMD_TRMODE_NOTIF	0x16
+#define CMD_TRSTATUS_NOTIF	0x17
+#define CMD_TRDIR_NOTIF		0x18
+#define CMD_TRTSPD_NOTIF	0x19
 
 
 LFMQUEUE_DEF_H(to_forward, msg_64_t)

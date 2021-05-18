@@ -16,16 +16,109 @@
 static void ctrl_reset(void);
 static void presence_changed(int segboard, int segnum, int v);
 
+//per train stucture
+
+typedef struct {
+	train_mode_t   _mode;
+	train_status_t _status;
+
+	uint8_t  canton1_addr;
+	uint8_t  canton2_addr;
+	int8_t   _dir;
+	uint16_t _target_speed;
+
+} train_ctrl_t;
+
+
+static train_ctrl_t trctl[NUM_TRAINS];
+
 // "ERR "  -101
 
 static uint8_t test_mode = 0;
 static uint8_t testerAddr;
+
+
+static void ctrl_set_mode(int trnum, train_mode_t mode)
+{
+	if (trctl[trnum]._mode == mode) return;
+	trctl[trnum]._mode = mode;
+	// notif UI
+	msg_64_t m;
+	m.from = MA_CONTROL_T(trnum);
+	m.to = MA_UI(1); // fix me
+	m.cmd = CMD_TRMODE_NOTIF;
+	m.v1u = mode;
+	mqf_write_from_ctrl(&m);
+}
+
+static void ctrl_set_status(int trnum, train_status_t status)
+{
+	if (trctl[trnum]._status == status) return;
+	trctl[trnum]._status = status;
+	// notif UI
+	msg_64_t m;
+	m.from = MA_CONTROL_T(trnum);
+	m.to = MA_UI(1); // fix me
+	m.cmd = CMD_TRSTATUS_NOTIF;
+	m.v1u = status;
+	mqf_write_from_ctrl(&m);
+}
+
+static int8_t ctrl_set_dir(int trnum, int dir)
+{
+	if (trctl[trnum]._dir == dir) return 0;
+	if (trctl[trnum]._target_speed) return 0;
+	trctl[trnum]._dir = dir;
+	// notif UI
+	msg_64_t m;
+	m.from = MA_CONTROL_T(trnum);
+	m.to = MA_UI(1); // fix me
+	m.cmd = CMD_TRDIR_NOTIF;
+	m.v1 = dir;
+	mqf_write_from_ctrl(&m);
+
+	// TODO : change C2
+	return 1;
+}
+
+static int8_t ctrl_set_tspeed(int trnum, uint16_t tspd)
+{
+	if (trctl[trnum]._target_speed == tspd) return 0;
+	trctl[trnum]._target_speed = tspd;
+	// notif UI
+	itm_debug2(DBG_UI|DBG_CTRL, "tx tspd notif", trnum, tspd);
+	msg_64_t m;
+	m.from = MA_CONTROL_T(trnum);
+	m.to = MA_UI(1); // TODO : fix me
+	m.cmd = CMD_TRTSPD_NOTIF;
+	m.v1u = tspd;
+	mqf_write_from_ctrl(&m);
+
+	m.to = MA_TRAIN_SC(trnum);
+	m.v1 = trctl[trnum]._dir*trctl[trnum]._target_speed;
+	mqf_write_from_ctrl(&m);
+
+	return 1;
+}
+
+
+static void ctrl_init(void)
+{
+	memset(trctl, 0, sizeof(train_ctrl_t)*NUM_TRAINS);
+	ctrl_set_mode(0, train_fullmanual);
+	ctrl_set_tspeed(0, 0);
+	ctrl_set_dir(0, 1);
+}
+
+
+// ----------------------------------------------------------------------------
 
 void ctrl_run_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
 {
 	static int first=1;
 	if (first) {
 		first = 0;
+		ctrl_init();
 		ctrl_reset();
 
 		msg_64_t m;
@@ -78,7 +171,7 @@ void ctrl_run_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
 			case 1: t = IHMMSG_TRAINCTL_FWD; break;
 			case -1: t = IHMMSG_TRAINCTL_REV; break;
 			}
-			ui_msg(1, t, &m, MA_CONTROL_T(0));
+			//ui_msg(1, t, &m, MA_CONTROL_T(0));
 			mqf_write_from_ctrl(&m);
 
 			m.from = MA_CONTROL_T(0);
@@ -114,6 +207,8 @@ void ctrl_run_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
 		if (IS_CONTROL_T(m.to)) {
 			if (test_mode) continue;
 			int tidx = m.to & 0x7;
+			train_ctrl_t *tvar = &trctl[tidx];
+
 			switch (m.cmd) {
 			case CMD_PRESENCE_CHANGE: {
 				int segboard = MA_2_BOARD(m.from);
@@ -123,6 +218,36 @@ void ctrl_run_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
 				presence_changed(segboard, segnum, v);
 				break;
 			}
+			case CMD_MDRIVE_SPEED:
+				itm_debug2(DBG_CTRL, "M/spd", tidx, m.v1u);
+				int16_t tspd = m.v1u;
+				// check speed is allowed
+				// transmit to speedctl
+				int spdchanged = 0;
+				if ((tvar->_mode == train_fullmanual) || (tvar->_mode == train_manual)) {
+					if (tvar->_mode != train_fullmanual) {
+						// check validity
+					}
+					ctrl_set_status(tidx, tspd ? train_running : train_station);
+					spdchanged = ctrl_set_tspeed(tidx, tspd);
+
+				}
+				break;
+			case CMD_MDRIVE_DIR:
+				itm_debug2(DBG_CTRL, "M/dir", tidx, m.v1);
+				// TODO
+				// check speed is 0, dir changed not allowed otherwised
+				// check dir is allowed
+				// store dir
+				if (0==tvar->_target_speed) {
+					if ((tvar->_mode == train_fullmanual) || (tvar->_mode == train_manual)) {
+						if (tvar->_mode != train_fullmanual) {
+							// check validity
+						}
+						ctrl_set_dir(tidx, m.v1);
+					}
+				}
+				break;
 			default:
 				break;
 

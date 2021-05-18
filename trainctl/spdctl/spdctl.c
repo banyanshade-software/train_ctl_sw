@@ -80,7 +80,7 @@ typedef struct train_vars {
     int16_t v_iir;
 } train_vars_t;
 
-static train_vars_t trspc_vars[8];
+static train_vars_t trspc_vars[NUM_TRAINS];
 
 
 #define USE_TRAIN(_idx) \

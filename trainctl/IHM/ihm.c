@@ -29,7 +29,10 @@
 
 #include "../stm32dev/ina3221/ina3221.h"
 
-static uint16_t rot0_position=0xFFFF;
+#define MAX_ROTARY MAX_DISP
+
+static uint16_t rot_position[MAX_ROTARY]={0xFFFF};
+static uint8_t  drive_mode[MAX_ROTARY]={1};
 extern TIM_HandleTypeDef htim4;
 
 static uint8_t needsrefresh_mask;
@@ -69,6 +72,7 @@ void ihm_runtick(void)
 	static int first = 0;
 	if (!first) {
 		first = 1;
+		itm_debug1(DBG_UI, "UI init", 0);
 		switch(ihm_mode) {
 		case 0:
 			ihm_setlayout(0, LAYOUT_MANUAL);
@@ -84,19 +88,31 @@ void ihm_runtick(void)
 			ihm_setvar(0, i, 0);
 		}
 	}
+	itm_debug1(DBG_UI, "UI tick", 0);
 
 	needsrefresh_mask = 0;
 	// scan rotary encoder -----------
-	uint16_t p = get_rotary(&htim4);
-	if (p != rot0_position) {
-		// pos changed
-		rot0_position = p;
-		if (ihm_mode==0) {
-			ihm_setvar(0, 1, rot0_position);
-			//ihm_setvar(0, 1, ((int)rot0_position - 50));
-			SET_NEEDSREFRESH(0);
+	for (int i=0; i<MAX_ROTARY; i++) {
+		uint16_t p = get_rotary(&htim4);
+		if (p != rot_position[i]) {
+			// pos changed
+			rot_position[i] = p;
+			if (ihm_mode==0) {
+				ihm_setvar(0, 1, rot_position[0]);
+				//ihm_setvar(0, 1, ((int)rot0_position - 50));
+				SET_NEEDSREFRESH(0);
+			}
+			if (drive_mode[i]) {
+				msg_64_t m;
+				m.from = MA_UI(i);
+				m.to = MA_CONTROL_T(i);
+				m.cmd = CMD_MDRIVE_SPEED;
+				m.v1u = rot_position[i];
+				mqf_write_from_ui(&m);
+			}
 		}
 	}
+
 	// scan buttons ------------------
 
 	// mode test hook
@@ -134,6 +150,11 @@ static void ui_process_msg(void)
 		msg_64_t m;
 		int rc = mqf_read_to_ui(&m);
 		if (rc) break;
+
+		if (m.cmd == CMD_TRTSPD_NOTIF) {
+			itm_debug1(DBG_UI, "hop", 0);
+		}
+#if 0
 		if (IS_CONTROL_T(m.from) || IS_TRAIN_SC(m.from)) {
 			static char t[3] = "Tx";
 			t[1] = (m.from & 0x7) + '0';
@@ -151,16 +172,56 @@ static void ui_process_msg(void)
 		} else {
 			//ui_write_status(0, "...");
 		}
+#endif
 		switch(m.cmd) {
         case CMD_TEST_MODE:
             test_mode = m.v1u;
             //ui_write_mode(0);
     		//ui_msg5(0, "T");
+            return;
             break;
-        case CMD_SETVPWM:
+        case CMD_SETVPWM:	// TODO remove
         	//if (test_mode) ui_canton_pwm(m.from, m.v1u, m.v2);
+        	return;
         	break;
         }
+		if (IS_CONTROL_T(m.from)) {
+			int trnum = m.from & 0x07;
+			switch (m.cmd) {
+			case CMD_TRSTATUS_NOTIF:
+				// TODO trnum -> display num
+				if (ihm_mode == 0) {
+					//TODO
+					//ihm_setvar(0, 2, m.v1u);
+					SET_NEEDSREFRESH(0);
+				}
+				return;
+				break;
+			case CMD_TRTSPD_NOTIF:
+				itm_debug2(DBG_UI|DBG_CTRL, "rx tspd notif", trnum, m.v1u);
+				// TODO trnum -> display num
+				if (ihm_mode == 0) {
+					ihm_setvar(0, 2, m.v1u);
+					SET_NEEDSREFRESH(0);
+				}
+				return;
+				break;
+			case CMD_TRDIR_NOTIF:
+				//TODO
+				return;
+				break;
+			case CMD_TRMODE_NOTIF:
+				// TODO
+				return;
+				break;
+			case CMD_UI_MSG:
+				break; // see below
+			default:
+				itm_debug1(DBG_UI, "unk ctl", m.cmd);
+				return;
+				break;
+			}
+		}
 		if (IS_UI(m.to)) {
 			int dn = m.to & 0x1F;
 			if (dn != 1) {
@@ -180,6 +241,7 @@ static void ui_process_msg(void)
 					SET_NEEDSREFRESH(0);
 				}
 				break;
+
 			default:
 				itm_debug1(DBG_UI, "cmd?", m.cmd);
 				break;

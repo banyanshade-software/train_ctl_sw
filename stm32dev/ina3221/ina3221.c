@@ -16,6 +16,8 @@
 
 #include "railconfig.h" // for ugly hack
 
+ int disable_ina3221 = 0; // global disable (when debugging something else)
+
 uint16_t ina3221_errors = 0;
 extern uint32_t GetCurrentMicro(void);
 
@@ -87,6 +89,7 @@ static void ina3221_configure(int a, int continuous)
 
 void ina3221_trigger_conversion(void)
 {
+	if (disable_ina3221) return;
 	uint32_t t0trig = GetCurrentMicro();
 	for (int dev = 0; dev<3; dev++) {
 		if (!ina3221_devices[dev]) continue;
@@ -100,6 +103,7 @@ void ina3221_trigger_conversion(void)
 
 void ina3221_init(int continuous)
 {
+	if (disable_ina3221) return;
 	//I2C_Scan();
 	for (int dev = 0; dev<4; dev++) {
 		int addr = 0x40 + dev;
@@ -133,7 +137,7 @@ extern void Error_Handler(void);
 
 static void _err(void)
 {
-	Error_Handler();
+	if ((1)) Error_Handler();
 }
 
 void ina3221_start_read(int16_t *vals, uint8_t *flagdone)
@@ -216,6 +220,7 @@ void HAL_I2C_ErrorCallback(I2C_HandleTypeDef *hi2c)
 	ina3221_errors++;
 	itm_debug2(DBG_INA3221|DBG_ERR, "i2c err", hi2c->ErrorCode, get_reg_step);
 	get_reg_step = -1;
-	_err();
+	if ((1)) disable_ina3221 = 1;
+	if ((0)) _err();
 }
 

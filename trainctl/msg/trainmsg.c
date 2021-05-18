@@ -13,30 +13,30 @@ uint8_t localBoardNum = 0; // TODO move to config
 
 
 
-LFMQUEUE_DEF_C(to_turnout, msg_64_t, 8)
-LFMQUEUE_DEF_C(from_turnout, msg_64_t, 1)
+LFMQUEUE_DEF_C(to_turnout, msg_64_t, 	8, 0)
+LFMQUEUE_DEF_C(from_turnout, msg_64_t, 	1, 0)
 
 
-LFMQUEUE_DEF_C(to_canton, msg_64_t, 8)
-LFMQUEUE_DEF_C(from_canton, msg_64_t, 8)
+LFMQUEUE_DEF_C(to_canton, msg_64_t, 	8, 0)
+LFMQUEUE_DEF_C(from_canton, msg_64_t, 	8, 0)
 
 
-LFMQUEUE_DEF_C(to_spdctl, msg_64_t, 8)
-LFMQUEUE_DEF_C(from_spdctl, msg_64_t, 8)
+LFMQUEUE_DEF_C(to_spdctl, msg_64_t, 	8, 0)
+LFMQUEUE_DEF_C(from_spdctl, msg_64_t, 	8, 0)
 
-LFMQUEUE_DEF_C(to_forward, msg_64_t, 8)
-LFMQUEUE_DEF_C(from_forward, msg_64_t, 8)
+LFMQUEUE_DEF_C(to_forward, msg_64_t, 	8, 1) // XXX should not have silent drop
+LFMQUEUE_DEF_C(from_forward, msg_64_t, 	8, 0)
 
-LFMQUEUE_DEF_C(to_forward_usb, msg_64_t, 8)
-LFMQUEUE_DEF_C(from_forward_usb, msg_64_t, 8)
-
-
-LFMQUEUE_DEF_C(to_ctrl, msg_64_t, 8)
-LFMQUEUE_DEF_C(from_ctrl, msg_64_t, 8)
+LFMQUEUE_DEF_C(to_forward_usb, msg_64_t,	8, 1)
+LFMQUEUE_DEF_C(from_forward_usb, msg_64_t,  8, 0)
 
 
-LFMQUEUE_DEF_C(to_ui, msg_64_t, 8)
-LFMQUEUE_DEF_C(from_ui, msg_64_t, 2)
+LFMQUEUE_DEF_C(to_ctrl, msg_64_t, 		12, 0)
+LFMQUEUE_DEF_C(from_ctrl, msg_64_t, 	12, 0)
+
+
+LFMQUEUE_DEF_C(to_ui, msg_64_t, 		14, 0)
+LFMQUEUE_DEF_C(from_ui, msg_64_t, 		4, 1)
 
 typedef struct {
 	mqf_t *to;
@@ -106,7 +106,11 @@ static void dispatch_m64(msg_64_t *m, int f)
 }
 
 
-
+static void dump_qusage(int i, int d, mqf_t *q)
+{
+	itm_debug3(DBG_ERR, "qu", d*100+i, q->maxuse, mqf_len(q));
+	q->maxuse = 0;
+}
 
 void msgsrv_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
 {
@@ -116,12 +120,30 @@ void msgsrv_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
     }
 	for (int i=0; i<NQDEF; i++) {
 		mqf_t *q = qdef[i].from;
+
+		itm_debug2(DBG_MSG, "mlen1",i, mqf_len(q));
+		itm_debug3(DBG_MSG, "mth1 ", i, q->head, q->tail);
 		for (;;) {
 				msg_64_t m;
 				int rc = mqf_read(q, &m);
 				if (rc) break;
+				if (i==5) {
+					itm_debug1(DBG_MSG, "from ctrl", m.cmd);
+				}
 				dispatch_m64(&m, i);
 			}
+		itm_debug2(DBG_MSG, "mlen2",i, mqf_len(q));
+		itm_debug3(DBG_MSG, "mth2 ", i, q->head, q->tail);
+	}
+	if ((1)) {
+		static uint32_t last=0;
+		if (tick>=last+10000) {
+			for (int i=0; i<NQDEF; i++) {
+				dump_qusage(i, 0, qdef[i].from);
+				dump_qusage(i, 1, qdef[i].to);
+			}
+			last = tick;
+		}
 	}
 }
 

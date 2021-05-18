@@ -15,8 +15,10 @@
 typedef struct {
 	volatile uint16_t head;
 	volatile uint16_t tail;
-	uint16_t msgsiz;
-	uint16_t num;
+	uint8_t msgsiz;
+	uint8_t num;
+	uint8_t maxuse;	// TODO remove, max used len
+	uint8_t silentdrop; // drop silently if full
 	uint8_t *msgbuf;
 } mqf_t;
 
@@ -33,9 +35,9 @@ typedef struct {
 	}
 
 
-#define LFMQUEUE_DEF_C(_name, _type,_num) 					\
+#define LFMQUEUE_DEF_C(_name, _type,_num, _sil) 					\
 	_type buf##_name[_num];									\
-    mqf_t _name = {0, 0, sizeof(_type), _num, (uint8_t *) buf##_name};
+    mqf_t _name = {.head=0, .tail=0, .msgsiz=sizeof(_type), .num=_num, .maxuse=0, .msgbuf=(uint8_t *) buf##_name, .silentdrop=_sil};
 
 
 void mqf_clear(mqf_t *);
@@ -43,5 +45,7 @@ void mqf_clear(mqf_t *);
 int mqf_read(mqf_t *, void *);
 
 int mqf_write(mqf_t *, void *);
+
+int mqf_len(mqf_t *m);
 
 #endif /* UTILS_LF_MQUEUE_H_ */

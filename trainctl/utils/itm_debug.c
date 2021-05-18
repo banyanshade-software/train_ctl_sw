@@ -34,8 +34,8 @@
 
 
 /* debug flags */
- uint32_t debug_flags = DBG_INA3221 | DBG_PRES \
- 	 	 	 	 	 | DBG_ERR;
+ uint32_t debug_flags = DBG_ERR | DBG_CTRL | DBG_UI;// |DBG_MSG; // | DBG_PRES | DBG_SPDCTL
+
 
 #define DBG_
 #ifdef TRAIN_SIMU

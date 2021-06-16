@@ -1,0 +1,15 @@
+itm_debug.h:33:20:itm_debug1	32	static
+itm_debug.h:37:20:itm_debug2	32	static
+itm_debug.h:41:20:itm_debug3	32	static
+trainmsg.h:132:1:mqf_read_to_ctrl	16	static
+trainmsg.h:133:1:mqf_write_from_ctrl	16	static
+trainmsg.h:165:20:ui_msg	24	static
+topology.h:34:16:_blk_num_to_blk_addr	24	static
+ctrl.c:41:13:ctrl_set_mode	24	static
+ctrl.c:54:13:ctrl_set_status	24	static
+ctrl.c:67:15:ctrl_set_dir	24	static
+ctrl.c:84:15:ctrl_set_tspeed	24	static
+ctrl.c:105:13:ctrl_init	8	static
+ctrl.c:116:6:ctrl_run_tick	120	static
+ctrl.c:273:13:ctrl_reset	4	static
+ctrl.c:278:13:presence_changed	32	static

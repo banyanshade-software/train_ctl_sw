@@ -1,0 +1,12 @@
+bletask.c:61:6:RunBleTask	96	static
+bletask.c:173:6:bh	4	static
+bletask.c:178:13:bh2	4	static
+bletask.c:188:13:process_lofi	24	static
+bletask.c:228:6:HAL_UART_TxCpltCallback	16	static
+bletask.c:234:6:HAL_UART_TxHalfCpltCallback	16	static
+bletask.c:242:6:HAL_UART_RxCpltCallback	32	static
+bletask.c:262:6:HAL_UART_RxHalfCpltCallback	16	static
+bletask.c:267:6:HAL_UART_ErrorCallback	16	static
+bletask.c:271:6:HAL_UART_AbortCpltCallback	16	static
+bletask.c:276:6:HAL_UART_AbortTransmitCpltCallback	16	static
+bletask.c:280:6:HAL_UART_AbortReceiveCpltCallback	16	static

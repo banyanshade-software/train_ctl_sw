@@ -1,0 +1,7 @@
+itm_debug.h:33:20:itm_debug1	32	static
+itm_debug.h:37:20:itm_debug2	32	static
+itm_debug.h:41:20:itm_debug3	32	static
+trainmsg.c:74:13:msg_error	16	static
+trainmsg.c:80:13:dispatch_m64	32	static
+trainmsg.c:109:13:dump_qusage	40	static
+trainmsg.c:115:6:msgsrv_tick	56	static

@@ -3242,7 +3242,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "93"
             endingLineNumber = "93"
-            landmarkName = "canton_tick(notif_flags, tick, dt)"
+            landmarkName = "handle_canton_cmd(cidx, m)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -3514,7 +3514,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "45"
             endingLineNumber = "45"
-            landmarkName = "ctrl_run_tick(notif_flags, tick, dt)"
+            landmarkName = "ctrl_set_mode(trnum, mode)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -3530,7 +3530,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "44"
             endingLineNumber = "44"
-            landmarkName = "ctrl_run_tick(notif_flags, tick, dt)"
+            landmarkName = "ctrl_set_mode(trnum, mode)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -3642,7 +3642,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "111"
             endingLineNumber = "111"
-            landmarkName = "canton_tick(notif_flags, tick, dt)"
+            landmarkName = "handle_canton_cmd(cidx, m)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>

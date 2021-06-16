@@ -1,0 +1,14 @@
+itm_debug.h:33:20:itm_debug1	32	static
+itm_debug.h:37:20:itm_debug2	32	static
+itm_debug.h:41:20:itm_debug3	32	static
+misc.h:74:19:canton_error	16	static
+misc.h:78:19:canton_error_rc	24	static
+trainmsg.h:112:1:mqf_read_to_canton	16	static
+trainmsg.h:113:1:mqf_write_from_canton	16	static
+canton.c:72:13:canton_reset	32	static
+canton.c:85:13:handle_canton_cmd	32	static
+canton.c:118:6:canton_tick	56	static
+canton.c:215:19:my_HAL_TIM_PWM_Stop	16	static
+canton.c:244:13:canton_set_pwm	48	static
+canton.c:343:6:canton_set_volt	24	static
+canton.c:404:5:volt_index	48	static

@@ -1892,3 +1892,9 @@ didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic
 }
 
 @end
+
+void Error_Handler(void)
+{
+    //NSAssert(0, "Error handler");
+    abort();
+}

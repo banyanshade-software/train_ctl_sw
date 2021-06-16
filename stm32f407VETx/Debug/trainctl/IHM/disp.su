@@ -1,0 +1,13 @@
+itm_debug.h:33:20:itm_debug1	32	static
+disp.c:167:6:ihm_setlayout	24	static
+disp.c:231:6:ihm_setvar	24	static
+disp.c:237:10:ihm_getvar	16	static
+disp.c:259:6:disp_layout	48	static
+disp.c:378:6:_test_new_disp	8	static
+disp.c:387:13:bcd_2_char	24	static
+disp.c:396:13:hexchr	16	static
+disp.c:415:13:_write_unum	32	static
+disp.c:432:13:write_unum	16	static
+disp.c:436:13:write_snum	16	static
+disp.c:449:13:write_snum4	16	static
+disp.c:461:13:write_bargraph	40	static

@@ -8,6 +8,19 @@
 #ifndef TOPOLOGY_TOPOLOGY_H_
 #define TOPOLOGY_TOPOLOGY_H_
 
+/*
+                       /--5.1---- --5.2--
+ -1.1-- -1.2--\--2----/-4---/--6.1- -6.2--
+               \----3------/
+ 
+ ('1.1 '1.2 (switchr ('2 '3))
+ ('2 (switchr '4 ('5.1 5.2)))
+ ('6.1 (switchl '4 '3))
+ 
+ l2r : (blk 1.1 ...) (blk 1.2 ...) (sw s 1) (blk 2) (sw_s 2) (blk 4) (sw is 3) (blk 6.1) (blk 6.2)
+ l2r : (sw t 1) (3) (sw it 3)
+ l2r : (sw t 2) (blk 5.1) (blk 5.2)
+ */
 #include "../msg/trainmsg.h"
 
 static inline int _sub_addr_to_sub_num(uint8_t addr, uint8_t sub)

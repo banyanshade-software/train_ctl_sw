@@ -1,0 +1,8 @@
+itm_debug.h:33:20:itm_debug1	32	static
+misc.h:91:19:turnout_error	16	static
+misc.h:131:20:debug_info	40	static
+trainmsg.h:104:1:mqf_read_to_turnout	16	static
+turnout.c:54:6:turnout_tick	40	static
+turnout.c:104:13:process_turnout_cmd	48	static
+turnout.c:137:13:turnout_reset	32	static
+turnout.c:172:13:process_turnout_timers	40	static

@@ -115,6 +115,7 @@
 #define		CODE_SVAL			0xC4
 #define		CODE_SVAL4			0xC5
 #define		CODE_GRAPH_LEVEL	0xC6
+#define		CODE_GRAPH_SLEVEL	0xC7
 
 
 #define		CODE_END			0xFE
@@ -140,8 +141,8 @@ static const uint8_t default_layout[] = {
 static const uint8_t layout_manual[] = {
 		CODE_ZONE_STATUS, 	CODE_STR|18, CODE_DIGIT, 0,
 		CODE_ZONE_MODE,     CODE_STR|19,
-		CODE_ZONE_TEXT1,  	/*CODE_STR|13*/ CODE_UVAL, 1, CODE_STR|20,
-		CODE_ZONE_TEXT2s, 	CODE_GRAPH_LEVEL, 2,
+		CODE_ZONE_TEXT1,  	/*CODE_STR|13*/ CODE_SVAL, 1, CODE_STR|20,
+		CODE_ZONE_TEXT2s, 	CODE_GRAPH_SLEVEL, 2,
 		//CODE_ZONE_TEXT3s, 	CODE_STR|4,
 		CODE_END
 };
@@ -255,6 +256,7 @@ static void write_unum(uint16_t v, FontDef *curfont);
 static void write_snum(int16_t v, FontDef *curfont);
 static void write_snum4(int16_t v, FontDef *curfont);
 static void write_bargraph(int16_t v, int16_t min, int16_t max);
+static void write_sbargraph(int16_t v, int16_t min, int16_t max);
 
 void disp_layout(int numdisp)
 {
@@ -266,7 +268,7 @@ void disp_layout(int numdisp)
 	FontDef *curfont = &Font_7x10;
 	uint16_t v16u;
 	int16_t v16s;
-	uint16_t *puval;
+	//uint16_t *puval;
 	static uint16_t last_dur1=0;
 	static uint16_t last_dur2=0;
 
@@ -342,6 +344,11 @@ void disp_layout(int numdisp)
 			v16u = _GET_REG(numdisp, d[i]);
 			write_bargraph(v16u, 0, 100);
 			break;
+		case CODE_GRAPH_SLEVEL:
+			i++;
+			v16s = _GET_REG(numdisp, d[i]);
+			write_sbargraph(v16s, -100, 100);
+			break;
 		case CODE_TIM4_CNT: {
 			extern TIM_HandleTypeDef htim4;
 			v16u = htim4.Instance->CNT;
@@ -375,16 +382,17 @@ void disp_layout(int numdisp)
 	last_dur2 = t2-t1;
 }
 
+/*
 void _test_new_disp(void)
 {
 	sample_display(0);
 	dolayout(0);
 }
-
+*/
 
 //
 
-static void bcd_2_char(char *buf, int v, int nch)
+_UNUSED_ static void bcd_2_char(char *buf, int v, int nch)
 {
 	while (nch>0) {
 		nch--;
@@ -393,7 +401,7 @@ static void bcd_2_char(char *buf, int v, int nch)
 	}
 }
 
-static char hexchr(int v)
+_UNUSED_ static char hexchr(int v)
 {
 	v = v & 0xF;
 	if (v>9) {
@@ -472,10 +480,32 @@ static void write_bargraph(int16_t v, int16_t min, int16_t max)
 	if (l>0) ssd1306_FillZone(x0, y0, l, h, White);
 	if ((min<0) && (max>0)) {
 		l = ((int)w*(0-min))/(max-min);
-		/// TODO
+		/// TODO ?
 	}
 }
 
+
+
+static void write_sbargraph(int16_t v, int16_t min, int16_t max)
+{
+	uint8_t x0 = ssd1306_GetCursorX();
+	uint8_t y0 = ssd1306_GetCursorY();
+	const uint8_t w = 50;
+	const uint8_t h = 11; //y0+=3;
+	ssd1306_DrawRectangle(x0, y0, x0+w, y0+h, White);
+
+	if (v>max) v=max;
+	if (v<min) v=min;
+	int m = ((int)w*(0-min))/(max-min);
+	int l = ((int)w*(v-min))/(max-min);
+	if (l>m) ssd1306_FillZone(x0+m, y0, l-m, h, White);
+	else ssd1306_FillZone(x0+l, y0, m-l, h, White);
+	ssd1306_Line(x0+m, y0-1, x0+m, y0+h+2, White);
+	if ((min<0) && (max>0)) {
+		l = ((int)w*(0-min))/(max-min);
+		/// TODO
+	}
+}
 
 
 #endif // TFT_DISP

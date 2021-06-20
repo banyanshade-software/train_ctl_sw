@@ -9,6 +9,10 @@
 
 #include "trainctl_config.h"
 
+
+#include <stddef.h>
+#include "misc.h"
+
 #include "ihm.h"
 #include "disp.h"
 #include "../utils/itm_debug.h"
@@ -29,9 +33,16 @@
 
 #include "../stm32dev/ina3221/ina3221.h"
 
-#define MAX_ROTARY MAX_DISP
+#include "railconfig.h"
 
+#define MAX_ROTARY MAX_DISP
+#define UNSIGNED_ROT 0
+
+#if UNSIGNED_ROT
 static uint16_t rot_position[MAX_ROTARY]={0xFFFF};
+#else
+static int16_t rot_position[MAX_ROTARY]={0x7FFF};
+#endif
 static uint8_t  drive_mode[MAX_ROTARY]={1};
 extern TIM_HandleTypeDef htim4;
 
@@ -45,8 +56,9 @@ static uint8_t needsrefresh_mask;
 #define ENC_MUL2  		1
 #define ENC_DIV2	 	0
 #define ENC_MAX ((100<<ENC_DIV2)>>ENC_MUL2)
+#define MIDDLE_ZERO 4
 
-static uint16_t get_rotary(TIM_HandleTypeDef *ptdef)
+_UNUSED_ static uint16_t get_rotary(TIM_HandleTypeDef *ptdef)
 {
 	uint16_t p = __HAL_TIM_GET_COUNTER(ptdef);
 	if (p>0x7FFF) {
@@ -59,6 +71,22 @@ static uint16_t get_rotary(TIM_HandleTypeDef *ptdef)
 	return ((p<<ENC_MUL2)>>ENC_DIV2);//>>1;
 }
 
+
+static int16_t get_srotary(TIM_HandleTypeDef *ptdef)
+{
+	int16_t p = __HAL_TIM_GET_COUNTER(ptdef);
+	if (p<-ENC_MAX-MIDDLE_ZERO) {
+		p = -ENC_MAX-MIDDLE_ZERO;
+		__HAL_TIM_SET_COUNTER(ptdef, p);
+	} else if (p>=ENC_MAX+MIDDLE_ZERO) {
+		p=ENC_MAX+MIDDLE_ZERO;
+		__HAL_TIM_SET_COUNTER(ptdef, p);
+	}
+	if (abs(p)<MIDDLE_ZERO) p=0;
+	else if (p>0) p=p-MIDDLE_ZERO;
+	else p=p+MIDDLE_ZERO;
+	return ((p<<ENC_MUL2)>>ENC_DIV2);//>>1;
+}
 
 // -----------------------------------------------------------------------
 
@@ -93,6 +121,7 @@ void ihm_runtick(void)
 	needsrefresh_mask = 0;
 	// scan rotary encoder -----------
 	for (int i=0; i<MAX_ROTARY; i++) {
+#if UNSIGNED_ROT
 		uint16_t p = get_rotary(&htim4);
 		if (p != rot_position[i]) {
 			// pos changed
@@ -111,6 +140,29 @@ void ihm_runtick(void)
 				mqf_write_from_ui(&m);
 			}
 		}
+#else
+		int16_t p = get_srotary(&htim4);
+		if (p != rot_position[i]) {
+			// pos changed
+			rot_position[i] = p;
+			if (ihm_mode==0) {
+				ihm_setvar(0, 1, (uint16_t) rot_position[0]);
+				//ihm_setvar(0, 1, ((int)rot0_position - 50));
+				SET_NEEDSREFRESH(0);
+			}
+			if (drive_mode[i]) {
+				msg_64_t m;
+				m.from = MA_UI(i);
+				m.to = MA_CONTROL_T(i);
+				m.cmd = CMD_MDRIVE_SPEED_DIR;
+				m.v1u = abs(rot_position[i]);
+				m.v2 = SIGNOF0(rot_position[i]);
+				// TODO handle dir
+				mqf_write_from_ui(&m);
+			}
+		}
+#endif
+
 	}
 
 	// scan buttons ------------------
@@ -154,25 +206,7 @@ static void ui_process_msg(void)
 		if (m.cmd == CMD_TRTSPD_NOTIF) {
 			itm_debug1(DBG_UI, "hop", 0);
 		}
-#if 0
-		if (IS_CONTROL_T(m.from) || IS_TRAIN_SC(m.from)) {
-			static char t[3] = "Tx";
-			t[1] = (m.from & 0x7) + '0';
-			//ui_write_status(0, t);
-		} else if (IS_CANTON(m.from)) {
-			static char t[] = "Blk--";
-			t[4] = (m.from & 0x7) + '0';
-			t[3] = (MA_2_BOARD(m.from))+'0';
-			//ui_write_status(0, t);
-		} else if (IS_TURNOUT(m.from)) {
-			static char t[] = "Trn--";
-			t[4] = (m.from & 0x7) + '0';
-			t[3] = (MA_2_BOARD(m.from))+'0';
-			//ui_write_status(0, t);
-		} else {
-			//ui_write_status(0, "...");
-		}
-#endif
+
 		switch(m.cmd) {
         case CMD_TEST_MODE:
             test_mode = m.v1u;
@@ -182,6 +216,13 @@ static void ui_process_msg(void)
             break;
         case CMD_SETVPWM:	// TODO remove
         	//if (test_mode) ui_canton_pwm(m.from, m.v1u, m.v2);
+        	return;
+        	break;
+        case CMD_VOFF_NOTIF:
+        	if (NOTIF_VOFF && (ihm_mode == 0)) {
+        		ihm_setvar(0, 2, m.v1/2);
+        		SET_NEEDSREFRESH(0);
+        	}
         	return;
         	break;
         }
@@ -200,12 +241,13 @@ static void ui_process_msg(void)
 			case CMD_TRTSPD_NOTIF:
 				itm_debug2(DBG_UI|DBG_CTRL, "rx tspd notif", trnum, m.v1u);
 				// TODO trnum -> display num
-				if (ihm_mode == 0) {
-					ihm_setvar(0, 2, m.v1u);
+				if (!NOTIF_VOFF && (ihm_mode == 0)) {
+					ihm_setvar(0, 2, m.v2 * m.v1u);
 					SET_NEEDSREFRESH(0);
 				}
 				return;
 				break;
+
 			case CMD_TRDIR_NOTIF:
 				//TODO
 				return;

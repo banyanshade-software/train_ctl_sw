@@ -46,6 +46,7 @@ void mqf_qfull(mqf_t *m, int t)
 int mqf_write(mqf_t *m, void *ptr)
 {
 	int l = mqf_len(m);
+	void Error_Handler(void);
 	if (l<0) Error_Handler();
 	if (l > m->maxuse) m->maxuse = l;
 

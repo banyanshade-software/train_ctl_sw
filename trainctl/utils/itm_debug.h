@@ -23,6 +23,7 @@ extern uint32_t debug_flags;
 #define DBG_TURNOUT	(1<<9)
 #define DBG_CTRL	(1<<10)
 #define DBG_UI		(1<<11)
+#define DBG_ADC 	(1<<12)
 
 #define DBG_ERR		(1<<31)
 

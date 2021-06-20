@@ -30,6 +30,8 @@ void flash_led(void);
 
 #define INCLUDE_CALIB 0
 
+#define _UNUSED_ __attribute__((unused))
+
 
 #define SIGNOF(_v) (((_v)<0) ? -1 : 1)
 #define SIGNOF0(_v) (((_v)<0) ? -1 : (((_v)>0) ? 1 : 0))

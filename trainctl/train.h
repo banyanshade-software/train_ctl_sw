@@ -38,6 +38,7 @@ typedef struct train_config {
 	uint8_t enable_inertia; // 0=none 1=before PID 2=after PID
 
     // not as bitfield due to param.h
+	uint8_t enabled;
 	uint8_t enable_pid;
 	uint8_t notify_speed;
 	uint8_t notify_pose;

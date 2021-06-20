@@ -19,6 +19,11 @@ volatile adc_buf_t train_adc_buf[2]; // double buffer
 static uint8_t bemf_to[NUM_LOCAL_CANTONS_SW] = {0xFF, 0xFF, 0xFF, 0xFF,  0xFF, 0xFF, 0xFF, 0xFF};
 static void process_adc(volatile adc_buf_t *buf, int32_t ticks);
 
+
+#define USE_CANTON(_idx) \
+		const canton_config_t *cconf = get_canton_cnf(_idx); \
+		//canton_vars_t         *cvars = &canton_vars[_idx];
+
 void bemf_reset(void)
 {
 	for (int i=0; i<NUM_LOCAL_CANTONS_SW; i++) {
@@ -46,6 +51,7 @@ void bemf_msg(msg_64_t *m)
 
 void bemf_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
 {
+	itm_debug1(DBG_ADC, "------- btk", notif_flags);
 	if (notif_flags & NOTIF_NEW_ADC_1) {
 		if (notif_flags & NOTIF_NEW_ADC_2) {
 			itm_debug1(DBG_ERR|DBG_LOWCTRL|DBG_TIM, "both", notif_flags);
@@ -135,6 +141,8 @@ static inline int32_t bemf_convert_to_centivolt(const canton_config_t *c, int32_
 static void process_adc(volatile adc_buf_t *buf, int32_t ticks)
 {
 	for (int i=0; i<NUM_LOCAL_CANTONS_HW; i++) {
+		USE_CANTON(i)
+
 		// process intensity / presence
 		// process BEMF
 #ifndef USE_INA3221
@@ -157,12 +165,28 @@ static void process_adc(volatile adc_buf_t *buf, int32_t ticks)
 
 		int16_t voff = (int16_t)(voffb-voffa);
 		int16_t von  = (int16_t)(vonb-vona);
-		if (i==0) {
-			itm_debug2(DBG_PID|DBG_LOWCTRL, "C0", voff, von);
-			itm_debug2(DBG_PID|DBG_LOWCTRL, "C0/Voff", voffa, voffb);
-			itm_debug2(DBG_PID|DBG_LOWCTRL, "C0/Von", vona, vonb);
 
-
+		if (cconf->reverse_bemf) {
+			voff = -voff;
+			von = -von;
+		}
+		if ((1)) {
+			itm_debug3(DBG_ADC|DBG_LOWCTRL, "ADC/Voff", i, voffa, voffb);
+			itm_debug3(DBG_ADC|DBG_LOWCTRL, "ADC/Von",  i, vona, vonb);
+			itm_debug3(DBG_ADC|DBG_LOWCTRL, "ADCoi", i,  voff, von);
+		}
+		if ((i==0) && NOTIF_VOFF) {
+			static int cnt = 0;
+			cnt++;
+			if ((cnt%32)==0) {
+				msg_64_t m;
+				m.from = MA_CANTON(localBoardNum, i);
+				m.to = MA_UI(1);
+				m.cmd = CMD_VOFF_NOTIF;
+				m.v1 = voff;
+				m.v2 = von;
+				mqf_write(&from_canton, &m);
+			}
 		}
 		msg_64_t m;
 		m.from = MA_CANTON(localBoardNum, i);

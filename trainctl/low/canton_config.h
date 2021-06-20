@@ -61,6 +61,7 @@ typedef struct canton_config {
 	uint32_t ch1;
 
 	uint8_t notif_bemf:1;
+	uint8_t reverse_bemf:1;
 } canton_config_t;
 
 #endif /* LOW_CANTON_CONFIG_H_ */

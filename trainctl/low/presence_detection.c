@@ -14,6 +14,7 @@
 
 #include "msg/trainmsg.h"
 #include "../../stm32dev/ina3221/ina3221.h"
+#include "railconfig.h"
 
 static int init_done = 0;
 
@@ -25,6 +26,7 @@ static void presdect_init(void)
 
 void presdect_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
 {
+	if (DISABLE_INA3221) return;
 	extern int disable_ina3221;
 	if (disable_ina3221) return;
 	if (!init_done) {

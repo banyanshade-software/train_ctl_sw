@@ -92,9 +92,11 @@ static int8_t ctrl_set_tspeed(int trnum, uint16_t tspd)
 	m.to = MA_UI(1); // TODO : fix me
 	m.cmd = CMD_TRTSPD_NOTIF;
 	m.v1u = tspd;
+	m.v2 = trctl[trnum]._dir;
 	mqf_write_from_ctrl(&m);
 
 	m.to = MA_TRAIN_SC(trnum);
+	m.cmd = CMD_SET_TARGET_SPEED;
 	m.v1 = trctl[trnum]._dir*trctl[trnum]._target_speed;
 	mqf_write_from_ctrl(&m);
 
@@ -125,7 +127,7 @@ void ctrl_run_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
 		ui_msg(1, IHMMSG_TRAINCTL_INIT, &m, MA_CONTROL());
 		mqf_write_from_ctrl(&m);
 
-        if ((0)) { // TODO remove
+        if ((1)) { // TODO remove
             msg_64_t m;
             m.to = MA_TRAIN_SC(0);
             m.cmd = CMD_SET_C1_C2;
@@ -136,9 +138,9 @@ void ctrl_run_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
             itm_debug1(DBG_SPDCTL|DBG_CTRL, "init/c1c2", 0);
             mqf_write_from_ctrl(&m);
             m.cmd = CMD_SET_TARGET_SPEED;
-            m.v1 = 90;
-            itm_debug1(DBG_SPDCTL|DBG_CTRL, "init/spd", m.v1);
-            mqf_write_from_ctrl(&m); //
+            //m.v1 = 90;
+            //itm_debug1(DBG_SPDCTL|DBG_CTRL, "init/spd", m.v1);
+            //mqf_write_from_ctrl(&m); //
         }
         if ((0)) { // test
             msg_64_t m;
@@ -150,7 +152,7 @@ void ctrl_run_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
         }
 
     }
-	if ((1) && !test_mode) { // test
+	if ((0) && !test_mode) { // test
 		static int cd = 0;
 		int t = (tick / 3000);
 		int tt = t % 3;
@@ -218,12 +220,15 @@ void ctrl_run_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
 				presence_changed(segboard, segnum, v);
 				break;
 			}
+			case CMD_MDRIVE_SPEED_DIR:
+				ctrl_set_dir(tidx, m.v2);
+				//FALLTHRU
 			case CMD_MDRIVE_SPEED:
-				itm_debug2(DBG_CTRL, "M/spd", tidx, m.v1u);
+				itm_debug3(DBG_CTRL, "M/spd", tidx, m.v1u, m.v2);
 				int16_t tspd = m.v1u;
 				// check speed is allowed
 				// transmit to speedctl
-				int spdchanged = 0;
+				_UNUSED_ int spdchanged = 0;
 				if ((tvar->_mode == train_fullmanual) || (tvar->_mode == train_manual)) {
 					if (tvar->_mode != train_fullmanual) {
 						// check validity

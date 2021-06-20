@@ -60,7 +60,7 @@ static const stat_val_t statvalcanton[] = {
         { offsetof(canton_vars_t, i_off) , 2            _P("canton_%d_ioff")},
 */};
 
-static int32_t _getval(void *ptr, off_t offset, int l)
+_UNUSED_ static int32_t _getval(void *ptr, off_t offset, int l)
 {
 	uint8_t *p8 = (uint8_t*)ptr;
 	int32_t v32=0;

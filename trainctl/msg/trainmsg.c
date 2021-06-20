@@ -22,7 +22,7 @@ LFMQUEUE_DEF_C(from_canton, msg_64_t, 	8, 0)
 
 
 LFMQUEUE_DEF_C(to_spdctl, msg_64_t, 	8, 0)
-LFMQUEUE_DEF_C(from_spdctl, msg_64_t, 	8, 0)
+LFMQUEUE_DEF_C(from_spdctl, msg_64_t, 	16, 0)
 
 LFMQUEUE_DEF_C(to_forward, msg_64_t, 	8, 1) // XXX should not have silent drop
 LFMQUEUE_DEF_C(from_forward, msg_64_t, 	8, 0)
@@ -35,7 +35,7 @@ LFMQUEUE_DEF_C(to_ctrl, msg_64_t, 		12, 0)
 LFMQUEUE_DEF_C(from_ctrl, msg_64_t, 	12, 0)
 
 
-LFMQUEUE_DEF_C(to_ui, msg_64_t, 		14, 0)
+LFMQUEUE_DEF_C(to_ui, msg_64_t, 		32, 0)
 LFMQUEUE_DEF_C(from_ui, msg_64_t, 		4, 1)
 
 typedef struct {
@@ -116,7 +116,14 @@ void msgsrv_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
 {
     static int first = 1;
     if (first) {
-        if (sizeof(msg_64_t) != 8) abort();
+        if (sizeof(msg_64_t) != 8) {
+#ifdef TRAIN_SIMU
+        	abort();
+#else
+        	itm_debug1(DBG_ERR|DBG_MSG, "bad size", sizeof(msg_64_t));
+        	for (;;);
+#endif
+        }
     }
 	for (int i=0; i<NQDEF; i++) {
 		mqf_t *q = qdef[i].from;

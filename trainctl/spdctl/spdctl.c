@@ -84,7 +84,7 @@ static train_vars_t trspc_vars[NUM_TRAINS];
 
 
 #define USE_TRAIN(_idx) \
-		const train_config_t *tconf = get_train_cnf(_idx); \
+		_UNUSED_ const train_config_t *tconf = get_train_cnf(_idx); \
 		train_vars_t         *tvars = &trspc_vars[_idx];
 
 
@@ -111,6 +111,7 @@ void spdctl_run_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
 	train_tick_last_dt = dt;
 	train_ntick++;
 
+	itm_debug1(DBG_SPDCTL ,"------- tk", notif_flags);
 	static int first=1;
 	if (first) {
 		first = 0;
@@ -167,12 +168,14 @@ void spdctl_run_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
                     break;
             }
         }
-        if (test_mode) return;
-        /* process trains */
-        for (int i=0; i<7; i++) {
-            train_periodic_control(i, dt);
-        }
-    }
+	}
+	if (test_mode) return;
+	/* process trains */
+	for (int i=0; i<7; i++) {
+		itm_debug1(DBG_SPDCTL, "------ pc", i);
+		train_periodic_control(i, dt);
+	}
+}
     
 /*
 	if (notif_flags & NOTIF_STARTUP) {
@@ -233,6 +236,7 @@ void spdctl_run_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
 */
 
 	/* per train proces */
+/*
     //debug_info(0, "TRAIN", tick, dt);
 	for (int i=0; i<NUM_TRAINS; i++) {
 		if (stop_all) break;
@@ -241,6 +245,8 @@ void spdctl_run_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
 	}
 	txframe_send_stat(); //TODO move
 }
+*/
+
 /*
 static void process_adc(volatile adc_buffer_t *buf, int32_t ticks)
 {
@@ -276,6 +282,10 @@ static void train_periodic_control(int numtrain, int32_t dt)
         if ((0)) itm_debug1(DBG_SPDCTL, "unconf tr", numtrain);
         return;
     }
+	if (!tconf->enabled) {
+		itm_debug1(DBG_SPDCTL, "disabled", numtrain);
+		return;
+	}
 	int16_t v = tvars->target_speed;
 
 	itm_debug2(DBG_SPDCTL, "target", numtrain, v);
@@ -338,7 +348,7 @@ static void train_periodic_control(int numtrain, int32_t dt)
         	if (bemf<-MAX_PID_VALUE) bemf=-MAX_PID_VALUE;
 
         	int32_t v2 = pidctl_value(&tconf->pidcnf, &tvars->pidvars, bemf, dt);
-        	uint32_t v3;
+        	int32_t v3;
         	v3 = (v2>100) ? 100 : v2;
         	v3 = (v3<-100) ? -100: v3;
         	itm_debug2(DBG_PID, "pid/r", v3, v2);
@@ -669,7 +679,8 @@ static void highlevel_tick(void)
 	// check for next
 	for (int i=0; i<NUM_TRAINS; i++) {
 		USE_TRAIN(i);
-        (void) tconf; // unused
+		if (!tconf->enabled) continue;
+        //(void) tconf; // unused
         if ((signof0(tvars->prev_last_speed) != signof0(tvars->last_speed)) && signof0(tvars->last_speed)) {
             // change dir
             int oldc = tvars->next_canton;

@@ -36,6 +36,7 @@
 #include "low/turnout_config.h"
 
 
+#define NOTIF_VOFF 1
 // ---------------------------------------------------------
 
 #ifndef NUM_LOCAL_CANTONS_SW
@@ -56,7 +57,7 @@
 
 #define NUM_CANTONS (NUM_LOCAL_CANTONS_SW)
 
-#define NUM_TRAINS  1
+// xxx #define NUM_TRAINS  1
 
 #define NUM_TURNOUTS 1
 

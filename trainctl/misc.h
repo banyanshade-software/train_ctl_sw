@@ -18,7 +18,11 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <stdlib.h>
+
+
 #ifndef TRAIN_SIMU
+#include "cmsis_os.h"
+#include "main.h"
 #include "trainctl_config.h"
 #else
 #include "train_simu.h"
@@ -135,5 +139,58 @@ static inline void debug_info(uint32_t sel, uint32_t num, char *msg, int v1, int
 	trainctl_notif2(sel, num, 'D', msg, v1, v2, v3);
 }
 /* ================================================================= */
+
+#ifndef TRAIN_SIMU
+uint32_t HAL_GetTick(void);
+
+static inline uint32_t GetCurrentMicro(void)
+{
+  uint32_t m0 = HAL_GetTick();
+  uint32_t u0 = SysTick->LOAD - SysTick->VAL;
+  uint32_t m1 = HAL_GetTick();
+  uint32_t u1 = SysTick->LOAD - SysTick->VAL;
+
+  if (!SysTick->LOAD) return m0*1000;
+
+  if (m1 > m0) {
+    return ( m1 * 1000 + (u1 * 1000) / SysTick->LOAD);
+  } else {
+    return ( m0 * 1000 + (u0 * 1000) / SysTick->LOAD);
+  }
+}
+#endif
+
+void long_isr(uint32_t dur);
+
+
+//
+// https://electronics.stackexchange.com/questions/76098/high-resolution-system-timer-in-stm32
+//
+uint64_t GetCycleCount64(void);
+void startCycleCounter(void);
+
+
+#if 0
+#define BEGIN_ISR \
+	volatile uint32_t isr_tm0 = GetCurrentMicro();
+
+#define END_ISR do { \
+	uint32_t isr_tm1 = GetCurrentMicro(); \
+	if (isr_tm1 - isr_tm0 > 1000) { long_isr(isr_tm1-isr_tm0); } \
+} while (0)
+#else
+
+#define BEGIN_ISR \
+	volatile uint64_t isr_tm0 = GetCycleCount64();
+
+#define END_ISR do { \
+		uint64_t isr_tm1 = GetCycleCount64(); \
+	if (isr_tm1 - isr_tm0 > 48000) { long_isr(isr_tm1-isr_tm0); } \
+} while (0)
+
+/* 96MHz : 1ms = 96000 cycles
+ * long = 500us 48000 cycles */
+#endif
+
 
 #endif /* TRAINCTL_MISC_H_ */

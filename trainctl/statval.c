@@ -121,6 +121,8 @@ int get_val_info(int step, off_t *poffset, int *plen, int *ptridx, int *pcntidx,
     *pcntidx = -1;
     *pzName = NULL;
     
+    if (!numvaltrain) return 0;
+    
     int nt = step / numvaltrain;
     if (nt>=NUM_TRAINS) {
         // canton

@@ -20,11 +20,14 @@ void train_simu_canton_set_pwm(int numcanton, int dir, int duty);
 
 #define USE_INA3221
 
-#define NUM_TRAINS 1
+#define NUM_TRAINS 8
+
+#define NOTIF_VOFF 0
 
 #include "low/canton_bemf.h"
 #include "low/canton.h"
 #include "low/turnout.h"
 #include "spdctl/spdctl.h"
 #include "msg/trainmsg.h"
+#include "ctrl/ctrl.h"
 #endif

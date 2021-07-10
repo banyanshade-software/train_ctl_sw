@@ -24,14 +24,14 @@
 // ---------------------------------------------- traincontrol
 #include "misc.h"
 
-
-
+/*
 #define NOTIF_NEW_ADC_1		0x00000001
 #define NOTIF_NEW_ADC_2		0x00000002
 #define NOTIF_TIM8   		0x00000004
 #define NOTIF_TICKUI		0x00000008
 #define NOTIF_STARTUP		0x80000000
 
+*/
 
 
 void train_run_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt);

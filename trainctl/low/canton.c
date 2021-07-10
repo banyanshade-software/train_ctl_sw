@@ -103,10 +103,9 @@ static void handle_canton_cmd(int cidx, msg_64_t *m)
 		canton_set_volt(cidx, cconf, cvars,  7);
 		break;
 	case CMD_SETVPWM:
-		itm_debug3(DBG_LOWCTRL, "SETPWM", cidx, m->v1u, m->v2);
+		itm_debug3(DBG_LOWCTRL, "SETVPWM", cidx, m->v1u, m->v2);
 		canton_set_pwm(cidx, cconf, cvars, SIGNOF0(m->v2), abs(m->v2));
 		canton_set_volt(cidx, cconf, cvars,  m->v1u);
-
 		break;
 	default:
 		itm_debug1(DBG_LOWCTRL, "not handled msg", m->cmd);
@@ -136,6 +135,8 @@ void canton_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
         case CMD_TEST_MODE:
             test_mode = m.v1u;
             testerAddr = m.from;
+            bemf_test_all = (m.to == MA_BROADCAST) ? 1 : 0;
+            bemf_test_mode = test_mode;
             break;
         }
         if (test_mode && (testerAddr != m.from)) {
@@ -342,9 +343,9 @@ static void canton_set_pwm(int cidx, const canton_config_t *c, canton_vars_t *v,
 }
 void canton_set_volt(int cidx, const canton_config_t *c, canton_vars_t *v, int voltidx)
 {
-	itm_debug2(DBG_LOWCTRL, "c/set_volt", cidx, voltidx);
 	v->cur_voltidx = voltidx;
     v->selected_centivolt =  (c->volts_cv[v->cur_voltidx]);
+	itm_debug3(DBG_LOWCTRL, "c/set_volt", cidx, voltidx, v->selected_centivolt);
 
     if ((0)) debug_info('C', 0, "SET VLT ", voltidx,  v->selected_centivolt,0);
     if ((0)) debug_info('C', 0, "VLT BIT ", (voltidx & 0x03) ? 1 : 0,

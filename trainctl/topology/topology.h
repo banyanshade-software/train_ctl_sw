@@ -59,7 +59,7 @@ int _next_sub_num_for_sub_num(int subnum, uint8_t left);
 
 // ---------------------------------------------------------------------
 
-static inline int blk_addr_for_sub_addr(uint8_t addr, uint8_t sub)
+static inline uint8_t blk_addr_for_sub_addr(uint8_t addr, uint8_t sub)
 {
     int n = _sub_addr_to_sub_num(addr, sub);
     n = _blk_num_for_sub_num(n);

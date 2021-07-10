@@ -12,9 +12,10 @@
 #include "ctrl.h"
 
 #include "../topology/topology.h"
+#include "railconfig.h"
 
 static void ctrl_reset(void);
-static void presence_changed(int segboard, int segnum, int v);
+static void presence_changed(uint8_t from_addr, uint8_t segnum, uint16_t v, int16_t ival);
 
 //per train stucture
 
@@ -22,10 +23,13 @@ typedef struct {
 	train_mode_t   _mode;
 	train_status_t _status;
 
+	uint16_t _target_speed;
+	int8_t   _dir;
+
 	uint8_t  canton1_addr;
 	uint8_t  canton2_addr;
-	int8_t   _dir;
-	uint16_t _target_speed;
+
+	uint8_t c1toc2transition:1;
 
 } train_ctrl_t;
 
@@ -85,6 +89,7 @@ static int8_t ctrl_set_tspeed(int trnum, uint16_t tspd)
 {
 	if (trctl[trnum]._target_speed == tspd) return 0;
 	trctl[trnum]._target_speed = tspd;
+
 	// notif UI
 	itm_debug2(DBG_UI|DBG_CTRL, "tx tspd notif", trnum, tspd);
 	msg_64_t m;
@@ -197,10 +202,12 @@ void ctrl_run_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
                 test_mode = 0; // FALLTHRU
             case CMD_EMERGENCY_STOP:
                 ctrl_reset();
+                continue;
                 break;
             case CMD_TEST_MODE:
                 test_mode = m.v1u;
                 testerAddr = m.from;
+                continue;
                 break;
         }
         if (test_mode & (m.from != testerAddr)) {
@@ -213,11 +220,7 @@ void ctrl_run_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
 
 			switch (m.cmd) {
 			case CMD_PRESENCE_CHANGE: {
-				int segboard = MA_2_BOARD(m.from);
-				int segnum = m.sub;
-				int v = m.v1;
-				// 0.0
-				presence_changed(segboard, segnum, v);
+				presence_changed(m.from, m.sub, m.v1u, m.v2);
 				break;
 			}
 			case CMD_MDRIVE_SPEED_DIR:
@@ -279,12 +282,71 @@ static void ctrl_reset(void)
 {
 
 }
+static void train_switched_to_c2(int tn, const train_config_t *tconf, train_ctrl_t *tvar);
 
-static void presence_changed(int segboard, int segnum, int v)
+static void presence_changed(uint8_t from_addr, uint8_t lsegnum, uint16_t p, int16_t ival)
 {
-	static int t[3]={0};
-	itm_debug3(DBG_PRES|DBG_CTRL, "PRC", segboard, segnum, v);
-	if ((segnum<0) || (segnum>2)) return;
-	t[segnum]=v;
+	static int t[12]={0};
+	int segnum = _sub_addr_to_sub_num(from_addr, lsegnum);
+	itm_debug3(DBG_PRES|DBG_CTRL, "PRC", lsegnum, p, ival);
+	if ((segnum<0) || (segnum>11)) return;
+	t[segnum]=p;
 	itm_debug3(DBG_PRES|DBG_CTRL, "PRS", t[0], t[1], t[2]);
+
+	uint8_t canton = blk_addr_for_sub_addr(from_addr, segnum);
+	if (0xFF == canton) {
+		itm_debug2(DBG_ERR|DBG_CTRL, "blk??", from_addr, segnum);
+		return;
+	}
+	int f = 0;
+
+	for (int tn = 0; tn < NUM_TRAINS; tn++) {
+		train_ctrl_t *tvar = &trctl[tn];
+		const train_config_t *tconf = get_train_cnf(tn); \
+		// check enabled
+		if (!tconf->enabled) continue;
+		if (tvar->canton1_addr == canton) {
+			if (p) {
+				itm_debug2(DBG_PRES, "?enter c1", tn, segnum);
+			} else {
+				if (tvar->c1toc2transition) {
+					itm_debug2(DBG_PRES, "leave c1", tn, segnum);
+					train_switched_to_c2(tn, tconf, tvar);
+				} else {
+					itm_debug2(DBG_PRES, "?lv c1 no tr", tn, segnum);
+				}
+
+			}
+			f = 1;
+		} else if (tvar->canton2_addr == canton) {
+			if (p) {
+				itm_debug2(DBG_PRES, "enter c2", tn, segnum);
+				tvar->c1toc2transition = 1;
+			} else {
+				itm_debug2(DBG_PRES, "?leave c2", tn, segnum);
+			}
+			f = 1;
+		}
+	}
+	if (!f) {
+		// presence on unexpected canton
+		itm_debug2(DBG_ERR|DBG_PRES, "?unexp", segnum, canton);
+	}
 }
+
+static void train_switched_to_c2(int tn, const train_config_t *tconf, train_ctrl_t *tvar)
+{
+	tvar->canton1_addr = tvar->canton2_addr;
+	tvar->canton2_addr = next_block_addr(tvar->canton2_addr, (tvar->_dir<0));
+	tvar->c1toc2transition = 0;
+	msg_64_t m;
+	m.from = MA_CONTROL_T(tn);
+	m.to = MA_TRAIN_SC(tn);
+	m.cmd = CMD_SET_C1_C2;
+	m.vbytes[0] = tvar->canton1_addr;
+	m.vbytes[1] = tvar->_dir;
+	m.vbytes[2] = tvar->canton2_addr;
+	m.vbytes[3] = tvar->_dir; // XXX
+    mqf_write_from_ctrl(&m);
+}
+

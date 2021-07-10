@@ -70,6 +70,8 @@ typedef struct {
 
 extern volatile adc_buf_t train_adc_buf[2]; // double buffer
 
+extern uint8_t bemf_test_mode;
+extern uint8_t bemf_test_all;
 
 /*
 #define NUM_VAL_PER_CANTON (sizeof(adc_buffer_t)/sizeof(uint16_t))

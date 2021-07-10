@@ -145,11 +145,14 @@ void spdctl_run_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
             switch (m.cmd) {
                 case CMD_BEMF_NOTIF:
                     if (m.from == tvars->C1) {
-                        itm_debug2(DBG_PID, "st bemf", m.v1, m.from);
+                        itm_debug3(DBG_PID, "st bemf", tidx, m.v1, m.from);
                         tvars->bemf_cv = m.v1;
                         break;
                     } else if (m.from == tvars->C2) {
-                        itm_debug2(DBG_PID, "c2 bemf", m.v1, m.from);
+                        itm_debug3(DBG_PID, "c2 bemf", tidx, m.v1, m.from);
+                        if (abs(m.v1) > abs(tvars->bemf_cv)+50) {
+                        	itm_debug3(DBG_SPDCTL, "c2_hi", tidx, m.v1, tvars->bemf_cv);
+                        }
                         // check it ?
                     } else {
                         itm_debug2(DBG_ERR|DBG_PID, "unk bemf", m.v1, m.from);
@@ -162,6 +165,7 @@ void spdctl_run_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
                     break;
                 case CMD_SET_C1_C2:
                     itm_debug1(DBG_SPDCTL, "set_c1_c2", 0);
+                    //static void set_c1_c2(int tidx, train_vars_t *tvars, uint8_t c1, int8_t dir1, uint8_t c2, int8_t dir2)
                     set_c1_c2(tidx, tvars, m.vbytes[0], m.vbytes[1], m.vbytes[2], m.vbytes[3]);
                     break;
                 default:
@@ -172,105 +176,13 @@ void spdctl_run_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
 	if (test_mode) return;
 	/* process trains */
 	for (int i=0; i<7; i++) {
-		itm_debug1(DBG_SPDCTL, "------ pc", i);
+		//itm_debug1(DBG_SPDCTL, "------ pc", i);
 		train_periodic_control(i, dt);
 	}
 }
     
-/*
-	if (notif_flags & NOTIF_STARTUP) {
-		static int n=0;
-		if (n) {
-			runtime_error(ERR_STRANGE, "notif startup twice");
-		}
-		n++;
-	}
-
-	if (notif_flags & NOTIF_NEW_ADC_1) {
-		if (notif_flags & NOTIF_NEW_ADC_2) {
-			runtime_error(ERR_DMA, "both NEW_ADC1 and NEW_ADC2");
-		}
-		process_adc(train_adc_buffer, dt);
-	}
-	if (notif_flags & NOTIF_NEW_ADC_2) {
-		process_adc(train_adc_buffer+NUM_LOCAL_CANTONS, dt);
-	}
-#ifdef USE_INA3221
-	if (0 || (train_ntick%3)==1) {
-	    if (0 &&(notif_flags & NOTIF_NEW_ADC_1)) debug_info('T', 0, "INA3221/1 ", ina3221_values[0], ina3221_values[1], ina3221_values[2]);
-	    if (0 &&(notif_flags & NOTIF_NEW_ADC_2)) debug_info('T', 0, "INA3221/2 ", ina3221_values[0], ina3221_values[1], ina3221_values[2]);
-		ina3221_start_read();
-	}
-#endif
-	// write(1, "train tick\r\n", 8);
-	if ((1)) {
-		switch (train_ntick%1000) {
-		case 0:
-			debug_info('T', 0, "INA NS", ina3221_nscan, train_ntick, HAL_GetTick());
-			break;
-		case 100:
-			debug_info('T', 0, "INA SD", ina3221_scan_dur, ina3221_inter_dur, 0);
-			break;
-		case 200: {
-			USE_TRAIN(0);
-			debug_info('C', 0, "SUME", tvars->pidvars.sume, 0, 0);
-			break;
-		}
-
-		default:
-			break;
-		}
-	}
-    itm_debug1("tick", train_ntick);
 
 
-	turnout_tick();
-	highlevel_tick();
-*/
-	/*
-	if (calibrating) {
-		calibrate_periodic(tick, dt, notif_flags);
-		txframe_send_stat();
-		return;
-	}
-*/
-
-	/* per train proces */
-/*
-    //debug_info(0, "TRAIN", tick, dt);
-	for (int i=0; i<NUM_TRAINS; i++) {
-		if (stop_all) break;
-		train_periodic_control(i, dt);
-		//if (trainctl_test_mode) break;
-	}
-	txframe_send_stat(); //TODO move
-}
-*/
-
-/*
-static void process_adc(volatile adc_buffer_t *buf, int32_t ticks)
-{
-	for (int i=0; i<NUM_LOCAL_CANTONS; i++) {
-		if (stop_all) break;
-		// process intensity / presence
-		// process BEMF
-		USE_CANTON(i)  // cconf cvars
-#ifndef USE_INA3221
-	    canton_intensity(cconf, cvars, buf[i].intOff, buf[i].intOn);
-#endif
-		if ((cvars->curtrainidx != 0xFF) || calibrating) {
-			canton_bemf(cconf, cvars, buf[i].voffB , buf[i].voffA, buf[i].vonB , buf[i].vonA);
-		}
-	}
-}
-
-int num_train_periodic_control = 0;
-static int num_set_speed = 0;
-void __attribute__((weak))  notif_target_bemf(const train_config_t *cnf, train_vars_t *vars, int32_t val)
-{
-    
-}
-*/
 static void train_periodic_control(int numtrain, int32_t dt)
 {
 	if (stop_all) return;
@@ -283,7 +195,7 @@ static void train_periodic_control(int numtrain, int32_t dt)
         return;
     }
 	if (!tconf->enabled) {
-		itm_debug1(DBG_SPDCTL, "disabled", numtrain);
+		//itm_debug1(DBG_SPDCTL, "disabled", numtrain);
 		return;
 	}
 	int16_t v = tvars->target_speed;

@@ -15,6 +15,8 @@
 
 volatile adc_buf_t train_adc_buf[2]; // double buffer
 
+uint8_t bemf_test_mode = 0;
+uint8_t bemf_test_all = 0;
 
 static uint8_t bemf_to[NUM_LOCAL_CANTONS_SW] = {0xFF, 0xFF, 0xFF, 0xFF,  0xFF, 0xFF, 0xFF, 0xFF};
 static void process_adc(volatile adc_buf_t *buf, int32_t ticks);
@@ -45,7 +47,6 @@ void bemf_msg(msg_64_t *m)
 	case CMD_BEMF_ON:
 		bemf_to[idx] = m->from;
 		break;
-
 	}
 }
 
@@ -85,7 +86,7 @@ static const int32_t bemf_zero_values[MAX_PWM*2+1] = {-92, -72, -49, -41, -31, -
 #endif
 
 
-static inline int32_t bemf_convert_to_centivolt_for_display(const canton_config_t *c,  int32_t m) // unit 0.01v
+static _UNUSED_ inline int32_t bemf_convert_to_centivolt_for_display(const canton_config_t *c,  int32_t m) // unit 0.01v
 {
 #if INCLUDE_FIXBEMF
 	if (v->fix_bemf && (v->curtrainidx!=0xFF)) {
@@ -149,7 +150,12 @@ static void process_adc(volatile adc_buf_t *buf, int32_t ticks)
 	    canton_intensity(cconf, cvars, buf[i].intOff, buf[i].intOn);
 #error ohla
 #endif
-		if (0xFF == bemf_to[i]) continue;
+		int skp = 0;
+		if (bemf_test_mode && (bemf_test_all)&& (i<3)) {
+			skp = 1;
+		} else if (0xFF == bemf_to[i]) {
+			continue;
+		}
 
 		const canton_config_t *c = get_canton_cnf(i);
 		/*
@@ -175,6 +181,7 @@ static void process_adc(volatile adc_buf_t *buf, int32_t ticks)
 			itm_debug3(DBG_ADC|DBG_LOWCTRL, "ADC/Von",  i, vona, vonb);
 			itm_debug3(DBG_ADC|DBG_LOWCTRL, "ADCoi", i,  voff, von);
 		}
+		if (skp) continue;
 		if ((i==0) && NOTIF_VOFF) {
 			static int cnt = 0;
 			cnt++;

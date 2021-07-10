@@ -105,8 +105,8 @@ LFMQUEUE_DEF_H(to_turnout, msg_64_t)
 LFMQUEUE_DEF_H(from_turnout, msg_64_t)
 
 /* turnout command */
-#define CMD_TURNOUT_A		0x01
-#define CMD_TURNOUT_B		0x02
+#define CMD_TURNOUT_A		0x31
+#define CMD_TURNOUT_B		0x32
 
 
 LFMQUEUE_DEF_H(to_canton, msg_64_t)
@@ -176,6 +176,8 @@ static inline void ui_msg(int dispnum,uint8_t msgnum, msg_64_t *m, uint8_t from)
 
 void msgsrv_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt);
 
+// TODO
+void purge_all_queue(void);
 
 
 

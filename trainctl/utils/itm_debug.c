@@ -34,7 +34,8 @@
 
 
 /* debug flags */
- uint32_t debug_flags = DBG_ERR | DBG_ADC; //| DBG_CTRL | DBG_SPDCTL|DBG_PID;//| DBG_UI;// |DBG_MSG; // | DBG_PRES | DBG_SPDCTL
+ uint32_t debug_flags = DBG_ERR | DBG_PRES|DBG_CTRL|DBG_SPDCTL|DBG_PID; //| DBG_PRES | DBG_INA3221;// | DBG_INA3221 | DBG_PRES | DBG_UI; //| DBG_ADC; //| DBG_CTRL | DBG_SPDCTL|DBG_PID;//| DBG_UI;// |DBG_MSG;
+ // | DBG_PRES | DBG_SPDCTL
 
 
 #define DBG_

@@ -33,7 +33,7 @@
 
 #include "../stm32dev/ina3221/ina3221.h"
 
-#include "railconfig.h"
+//#include "railconfig.h"
 
 #define MAX_ROTARY MAX_DISP
 #define UNSIGNED_ROT 0

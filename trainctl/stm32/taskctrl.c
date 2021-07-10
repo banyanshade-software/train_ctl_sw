@@ -54,6 +54,8 @@
 
 
 static void run_task_ctrl(void);
+extern DMA_HandleTypeDef hdma_i2c3_rx;
+extern DMA_HandleTypeDef hdma_i2c3_tx;
 
 void StartCtrlTask(void *argument)
 {
@@ -62,6 +64,9 @@ void StartCtrlTask(void *argument)
 	if (sizeof(train_adc_buf) != sizeof(uint16_t)*NUM_LOCAL_CANTONS_HW*8) Error_Handler();
 	if (nsmpl != 5*2*4) Error_Handler();
 
+	//__HAL_DMA_ENABLE_IT(&hdma_i2c3_rx, DMA_IT_TC);
+	//__HAL_DMA_ENABLE_IT(&hdma_i2c3_tx, DMA_IT_TC);
+
 	//if (NUM_VAL_PER_CANTON != 4) Error_Handler();
 	//if (ADC_HALF_BUFFER != 10*2) Error_Handler();
 
@@ -69,6 +74,7 @@ void StartCtrlTask(void *argument)
 	CantonTimerHandles[1]=&htim1;
 	CantonTimerHandles[2]=&htim2;
 	CantonTimerHandles[3]=&htim3;
+	CantonTimerHandles[4]=&htim12;
 	//CantonTimerHandles[3]=&htim3;
 	//XXX railconfig_setup_default();
 
@@ -80,15 +86,39 @@ void StartCtrlTask(void *argument)
 	HAL_TIM_PWM_Stop(&htim1, TIM_CHANNEL_2);
 	HAL_TIM_PWM_Stop(&htim1, TIM_CHANNEL_3);
 	HAL_TIM_PWM_Stop(&htim1, TIM_CHANNEL_4);
-	// XX
+
+	HAL_TIM_PWM_Stop(&htim2, TIM_CHANNEL_3);
+	HAL_TIM_PWM_Stop(&htim2, TIM_CHANNEL_4);
+
+	HAL_TIM_PWM_Stop(&htim3, TIM_CHANNEL_1);
+	HAL_TIM_PWM_Stop(&htim3, TIM_CHANNEL_2);
+	HAL_TIM_PWM_Stop(&htim3, TIM_CHANNEL_3);
+	HAL_TIM_PWM_Stop(&htim3, TIM_CHANNEL_4);
+
+	HAL_TIM_PWM_Stop(&htim12, TIM_CHANNEL_1);
+	HAL_TIM_PWM_Stop(&htim12, TIM_CHANNEL_2);
 
 	//HAL_TIM_Base_Start_IT(&htim8);
 	HAL_TIM_Base_Start_IT(&htim1);
-
+	HAL_TIM_Base_Start(&htim2);
+	HAL_TIM_Base_Start(&htim3);
+	HAL_TIM_Base_Start(&htim12);
 
 	HAL_ADC_Start_DMA(&hadc1,(uint32_t *)train_adc_buf, nsmpl);
 	//HAL_ADC_Start_DMA(&hadc1,(uint32_t *)train_adc_buffer, NUM_ADC_SAMPLES);
 
+	startCycleCounter();
+	/*
+	uint64_t p = GetCycleCount64();
+	uint64_t k = p;
+	for (int i=0; i<50; i++) {
+		uint64_t t = GetCycleCount64();
+		uint32_t d = (uint32_t)(t - p);
+		p = t;
+		//itm_debug1(DBG_ERR, "cycl", d);
+	}
+	itm_debug1(DBG_ERR, "tcycl", GetCycleCount64()-k);
+	*/
 	run_task_ctrl();
 }
 
@@ -111,10 +141,10 @@ void set_pwm_freq(int freqhz)
 
 #define USE_NOTIF_TIM 0
 
-
+volatile uint32_t t0ctrl;
 static void run_task_ctrl(void)
 {
-
+	int cnt = 0;
 	//if ((0))   calibrate_bemf(); //XXXX
 	for (;;) {
 		uint32_t notif;
@@ -123,11 +153,17 @@ static void run_task_ctrl(void)
 			int n = 0;
 			if (notif & NOTIF_NEW_ADC_1)  n = 1;
 			if (notif & NOTIF_NEW_ADC_2)  n |= 2;
-			itm_debug2(DBG_LOWCTRL, "-----", (notif & NOTIF_TIM8) ? 1 : 0, n);
+			itm_debug2(DBG_LOWCTRL, "-----", 0 /*(notif & NOTIF_TIM8) ? 1 : 0*/, n);
+			if (n==3) {
+				itm_debug1(DBG_LOWCTRL|DBG_ERR, "both", n);
+				if ((1)) continue; // skip this tick
+			}
 		}
+		cnt++;
+		t0ctrl = HAL_GetTick();
 #if USE_NOTIF_TIM
 		if (notif & NOTIF_TIM8) {
-			presdect_tick(notif, 0, 0);
+			if (cnt>20) presdect_tick(notif, 0, 0);
 		}
 		if (0==(notif & (NOTIF_NEW_ADC_1|NOTIF_NEW_ADC_2))) continue;
 #endif
@@ -140,7 +176,7 @@ static void run_task_ctrl(void)
 		int32_t dt = (oldt) ? (t-oldt) : 1;
 		oldt = t;
 
-		if ((1)) {
+		if ((0)) {
 			itm_debug2(DBG_LOWCTRL, "ctick", notif, dt);
 			//continue;
 		}
@@ -160,15 +196,32 @@ static void run_task_ctrl(void)
 		*/
 
 		bemf_tick(notif, t, dt);
+		itm_debug1(DBG_LOWCTRL, "--msg", dt);
 		msgsrv_tick(notif, t, dt);
+		itm_debug1(DBG_LOWCTRL, "--spdctl", dt);
 		spdctl_run_tick(notif, t, dt);
+		itm_debug1(DBG_LOWCTRL, "--canton", dt);
 		canton_tick(notif, t, dt);
+		itm_debug1(DBG_LOWCTRL, "--trnout", dt);
+		turnout_tick(notif, t, dt);
+		itm_debug1(DBG_LOWCTRL, "--ctrl", dt);
+		ctrl_run_tick(notif, t, dt);
+		uint32_t e1 = HAL_GetTick() - t;
 #if USE_NOTIF_TIM
 #else
+		//if (cnt>20) {
+		itm_debug1(DBG_LOWCTRL, "--pres", dt);
 		presdect_tick(notif, t, dt);
+		//}
 #endif
-		turnout_tick(notif, t, dt);
-		ctrl_run_tick(notif, t, dt);
+		itm_debug1(DBG_LOWCTRL, "--done", dt);
+		uint32_t et = HAL_GetTick() - t;
+		if ((1)) {
+			itm_debug2(DBG_ERR, "ctrl tick", e1, et);
+			if (et>9) {
+				itm_debug1(DBG_ERR, "long proc", et);
+			}
+		}
 	}
 
 }

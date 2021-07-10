@@ -36,7 +36,6 @@
 #include "low/turnout_config.h"
 
 
-#define NOTIF_VOFF 1
 // ---------------------------------------------------------
 
 #ifndef NUM_LOCAL_CANTONS_SW

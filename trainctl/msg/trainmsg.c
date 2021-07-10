@@ -35,7 +35,7 @@ LFMQUEUE_DEF_C(to_ctrl, msg_64_t, 		12, 0)
 LFMQUEUE_DEF_C(from_ctrl, msg_64_t, 	12, 0)
 
 
-LFMQUEUE_DEF_C(to_ui, msg_64_t, 		32, 0)
+LFMQUEUE_DEF_C(to_ui, msg_64_t, 		64, 0)
 LFMQUEUE_DEF_C(from_ui, msg_64_t, 		4, 1)
 
 typedef struct {
@@ -118,6 +118,7 @@ void msgsrv_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
     if (first) {
         if (sizeof(msg_64_t) != 8) {
 #ifdef TRAIN_SIMU
+            void abort(void);
         	abort();
 #else
         	itm_debug1(DBG_ERR|DBG_MSG, "bad size", sizeof(msg_64_t));
@@ -155,4 +156,10 @@ void msgsrv_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
 }
 
 
+void dump_msg(mqf_t *mq, int n)
+{
+	int i = ( n + mq->tail ) % mq->num;
+	msg_64_t *msg = (msg_64_t *) &(mq->msgbuf[i*mq->msgsiz]);
+	itm_debug3(DBG_ERR, "q", i, msg->cmd, msg->from);
+}
 

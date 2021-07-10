@@ -15,7 +15,6 @@
 #include "txrxcmd.h"
 //#include "low/canton.h"
 #include "StringExtension.h"
-//#include "../ctrl/ctrl.h"
 
 
 #define HIGHLEVEL_SIMU_CNX 0
@@ -1341,6 +1340,19 @@ void task_auto_stop_auto(void)
     }
 
     int notif = NOTIF_NEW_ADC_1;
+    /*
+     bemf_tick(notif, t, dt);
+     itm_debug1(DBG_LOWCTRL, "--msg", dt);
+     msgsrv_tick(notif, t, dt);
+     itm_debug1(DBG_LOWCTRL, "--spdctl", dt);
+     spdctl_run_tick(notif, t, dt);
+     itm_debug1(DBG_LOWCTRL, "--canton", dt);
+     canton_tick(notif, t, dt);
+     itm_debug1(DBG_LOWCTRL, "--trnout", dt);
+     turnout_tick(notif, t, dt);
+     itm_debug1(DBG_LOWCTRL, "--ctrl", dt);
+     ctrl_run_tick(notif, t, dt);
+     */
     bemf_tick(notif, t, dt);
     msgsrv_tick(notif, t, dt);
     spdctl_run_tick(notif, t, dt);

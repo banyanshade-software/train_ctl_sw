@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1B46EE552692684F00FAC813 /* topology.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B46EE542692684E00FAC813 /* topology.c */; };
 		1B4BCB022549ADC90062961D /* statval.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B4BCB002549ADC70062961D /* statval.c */; };
 		1B61090D256AAE1A00F1AC45 /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B61090C256AAE1900F1AC45 /* CoreBluetooth.framework */; };
 		1B67360F2531E4450063EA9A /* SimTrain.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B67360E2531E4450063EA9A /* SimTrain.m */; };
@@ -36,6 +37,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		1B46EE542692684E00FAC813 /* topology.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = topology.c; sourceTree = "<group>"; };
 		1B4BCB002549ADC70062961D /* statval.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = statval.c; sourceTree = "<group>"; };
 		1B4BCB012549ADC80062961D /* statval.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = statval.h; sourceTree = "<group>"; };
 		1B61090C256AAE1900F1AC45 /* CoreBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreBluetooth.framework; path = System/Library/Frameworks/CoreBluetooth.framework; sourceTree = SDKROOT; };
@@ -175,6 +177,7 @@
 		1B92EA312631A0CC00558716 /* topology */ = {
 			isa = PBXGroup;
 			children = (
+				1B46EE542692684E00FAC813 /* topology.c */,
 				1B92EA322631A0CC00558716 /* topology.h */,
 				1B92EA332631C9CD00558716 /* occupency.h */,
 			);
@@ -336,6 +339,7 @@
 				1BA4B4A22551DE820043D763 /* NSCalendar+Gmt.m in Sources */,
 				1B7A29F7262D5904004E0481 /* trainmsg.c in Sources */,
 				1B7A2A0B262D595F004E0481 /* inertia.c in Sources */,
+				1B46EE552692684F00FAC813 /* topology.c in Sources */,
 				1B7A2A02262D5948004E0481 /* turnout.c in Sources */,
 				1B7A2A03262D5948004E0481 /* canton.c in Sources */,
 				1B4BCB022549ADC90062961D /* statval.c in Sources */,

@@ -69,7 +69,7 @@
 /*!
  @method
  @abstract   true if string starts with number
- @discussion
+ @discussion ...
  */
 
 - (BOOL) startsWithNumber;
@@ -78,14 +78,14 @@
 /*!
     @method     
     @abstract   return substrig up to latest non numeric digit
-    @discussion 
+    @discussion ...
 */
 - (NSString *) nonNumPrefix;
 
 /*!
     @method     
     @abstract  return substring after latest digit
-    @discussion
+    @discussion ...
 */
 - (NSString *) nonNumPostfix;
 
@@ -110,7 +110,7 @@
 /*!
  @method
  @abstract   check for longest substring without number
- @discussion
+ @discussion ...
  */
 
 - (NSRange) longestSubstringWithoutNumber;
@@ -121,7 +121,7 @@
 /*!
     @method
     @abstract   returns number of digit (0-9) in string
-    @discussion 
+    @discussion ...
  */
 
 - (NSUInteger) numberOfDigits;
@@ -156,7 +156,7 @@ and returns a score based on this distance : 1.0 for identical words, 0.0 for ve
 /*!
  @method
  @abstract   Levenshtein distance of 2 strings
- @discussion
+ @discussion ...
  */
 
 - (float) nearString:(NSString *)s;
@@ -200,7 +200,7 @@ and returns a score based on this distance : 1.0 for identical words, 0.0 for ve
 /*!
     @method     
     @abstract  search and replace
-    @discussion 
+    @discussion ...
  */
 
 - (NSString *) stringByReplacing:(NSString *)s by:(NSString *)s2;

@@ -12,6 +12,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface Reader : NSObject
 
+- (BOOL) readLayoutFile:(NSString *)path;
+
 @end
 
 NS_ASSUME_NONNULL_END

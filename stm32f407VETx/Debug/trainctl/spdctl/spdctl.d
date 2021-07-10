@@ -1,13 +1,18 @@
 trainctl/spdctl/spdctl.o: \
  /Users/danielbraun/devel/train/sw/trainctl/spdctl/spdctl.c \
- ../../trainctl/misc.h ../Core/Inc/trainctl_config.h \
- ../../trainctl/utils/itm_debug.h \
- /Users/danielbraun/devel/train/sw/trainctl/spdctl/../msg/trainmsg.h \
- /Users/danielbraun/devel/train/sw/trainctl/spdctl/../msg/../utils/lf_mqueue.h \
- /Users/danielbraun/devel/train/sw/trainctl/spdctl/../msg/notif.h \
- /Users/danielbraun/devel/train/sw/trainctl/spdctl/../msg/../IHM/ihm_messages.h \
- /Users/danielbraun/devel/train/sw/trainctl/spdctl/../low/canton.h \
- ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h \
+ ../../trainctl/misc.h \
+ ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os.h \
+ ../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h \
+ ../Core/Inc/FreeRTOSConfig.h \
+ ../Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h \
+ ../Middlewares/Third_Party/FreeRTOS/Source/include/portable.h \
+ ../Middlewares/Third_Party/FreeRTOS/Source/include/deprecated_definitions.h \
+ ../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F/portmacro.h \
+ ../Middlewares/Third_Party/FreeRTOS/Source/include/mpu_wrappers.h \
+ ../Middlewares/Third_Party/FreeRTOS/Source/include/task.h \
+ ../Middlewares/Third_Party/FreeRTOS/Source/include/list.h \
+ ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h \
+ ../Core/Inc/main.h ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h \
  ../Core/Inc/stm32f4xx_hal_conf.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h \
@@ -44,6 +49,12 @@ trainctl/spdctl/spdctl.o: \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pcd.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_usb.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pcd_ex.h \
+ ../Core/Inc/trainctl_config.h ../../trainctl/utils/itm_debug.h \
+ /Users/danielbraun/devel/train/sw/trainctl/spdctl/../msg/trainmsg.h \
+ /Users/danielbraun/devel/train/sw/trainctl/spdctl/../msg/../utils/lf_mqueue.h \
+ /Users/danielbraun/devel/train/sw/trainctl/spdctl/../msg/notif.h \
+ /Users/danielbraun/devel/train/sw/trainctl/spdctl/../msg/../IHM/ihm_messages.h \
+ /Users/danielbraun/devel/train/sw/trainctl/spdctl/../low/canton.h \
  /Users/danielbraun/devel/train/sw/trainctl/spdctl/../low/canton_config.h \
  /Users/danielbraun/devel/train/sw/trainctl/spdctl/inertia.h \
  /Users/danielbraun/devel/train/sw/trainctl/spdctl/pidctl.h \
@@ -52,7 +63,6 @@ trainctl/spdctl/spdctl.o: \
  ../../trainctl/spdctl/inertia.h ../../trainctl/spdctl/pidctl.h \
  ../../trainctl/low/canton.h \
  /Users/danielbraun/devel/train/sw/trainctl/spdctl/../low/turnout.h \
- ../Core/Inc/main.h \
  /Users/danielbraun/devel/train/sw/trainctl/spdctl/spdctl.h \
  ../../trainctl/trainctl_iface.h ../../trainctl/railconfig.h \
  ../../trainctl/low/canton_config.h ../../trainctl/train.h \
@@ -60,19 +70,29 @@ trainctl/spdctl/spdctl.o: \
 
 ../../trainctl/misc.h:
 
-../Core/Inc/trainctl_config.h:
+../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os.h:
 
-../../trainctl/utils/itm_debug.h:
+../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h:
 
-/Users/danielbraun/devel/train/sw/trainctl/spdctl/../msg/trainmsg.h:
+../Core/Inc/FreeRTOSConfig.h:
 
-/Users/danielbraun/devel/train/sw/trainctl/spdctl/../msg/../utils/lf_mqueue.h:
+../Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h:
 
-/Users/danielbraun/devel/train/sw/trainctl/spdctl/../msg/notif.h:
+../Middlewares/Third_Party/FreeRTOS/Source/include/portable.h:
 
-/Users/danielbraun/devel/train/sw/trainctl/spdctl/../msg/../IHM/ihm_messages.h:
+../Middlewares/Third_Party/FreeRTOS/Source/include/deprecated_definitions.h:
 
-/Users/danielbraun/devel/train/sw/trainctl/spdctl/../low/canton.h:
+../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F/portmacro.h:
+
+../Middlewares/Third_Party/FreeRTOS/Source/include/mpu_wrappers.h:
+
+../Middlewares/Third_Party/FreeRTOS/Source/include/task.h:
+
+../Middlewares/Third_Party/FreeRTOS/Source/include/list.h:
+
+../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h:
+
+../Core/Inc/main.h:
 
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:
 
@@ -148,6 +168,20 @@ trainctl/spdctl/spdctl.o: \
 
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pcd_ex.h:
 
+../Core/Inc/trainctl_config.h:
+
+../../trainctl/utils/itm_debug.h:
+
+/Users/danielbraun/devel/train/sw/trainctl/spdctl/../msg/trainmsg.h:
+
+/Users/danielbraun/devel/train/sw/trainctl/spdctl/../msg/../utils/lf_mqueue.h:
+
+/Users/danielbraun/devel/train/sw/trainctl/spdctl/../msg/notif.h:
+
+/Users/danielbraun/devel/train/sw/trainctl/spdctl/../msg/../IHM/ihm_messages.h:
+
+/Users/danielbraun/devel/train/sw/trainctl/spdctl/../low/canton.h:
+
 /Users/danielbraun/devel/train/sw/trainctl/spdctl/../low/canton_config.h:
 
 /Users/danielbraun/devel/train/sw/trainctl/spdctl/inertia.h:
@@ -169,8 +203,6 @@ trainctl/spdctl/spdctl.o: \
 ../../trainctl/low/canton.h:
 
 /Users/danielbraun/devel/train/sw/trainctl/spdctl/../low/turnout.h:
-
-../Core/Inc/main.h:
 
 /Users/danielbraun/devel/train/sw/trainctl/spdctl/spdctl.h:
 

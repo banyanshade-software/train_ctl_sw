@@ -1,15 +1,17 @@
 trainctl/train.o: /Users/danielbraun/devel/train/sw/trainctl/train.c \
  /Users/danielbraun/devel/train/sw/trainctl/misc.h \
- ../Core/Inc/trainctl_config.h \
- /Users/danielbraun/devel/train/sw/trainctl/utils/itm_debug.h \
- /Users/danielbraun/devel/train/sw/trainctl/train.h \
- /Users/danielbraun/devel/train/sw/trainctl/param.h \
- /Users/danielbraun/devel/train/sw/trainctl/trainctl_iface.h \
- /Users/danielbraun/devel/train/sw/trainctl/spdctl/inertia.h \
- /Users/danielbraun/devel/train/sw/trainctl/spdctl/pidctl.h \
- /Users/danielbraun/devel/train/sw/trainctl/low/canton.h \
- ../../trainctl/misc.h \
- ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h \
+ ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os.h \
+ ../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h \
+ ../Core/Inc/FreeRTOSConfig.h \
+ ../Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h \
+ ../Middlewares/Third_Party/FreeRTOS/Source/include/portable.h \
+ ../Middlewares/Third_Party/FreeRTOS/Source/include/deprecated_definitions.h \
+ ../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F/portmacro.h \
+ ../Middlewares/Third_Party/FreeRTOS/Source/include/mpu_wrappers.h \
+ ../Middlewares/Third_Party/FreeRTOS/Source/include/task.h \
+ ../Middlewares/Third_Party/FreeRTOS/Source/include/list.h \
+ ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h \
+ ../Core/Inc/main.h ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h \
  ../Core/Inc/stm32f4xx_hal_conf.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h \
@@ -46,6 +48,15 @@ trainctl/train.o: /Users/danielbraun/devel/train/sw/trainctl/train.c \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pcd.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_usb.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pcd_ex.h \
+ ../Core/Inc/trainctl_config.h \
+ /Users/danielbraun/devel/train/sw/trainctl/utils/itm_debug.h \
+ /Users/danielbraun/devel/train/sw/trainctl/train.h \
+ /Users/danielbraun/devel/train/sw/trainctl/param.h \
+ /Users/danielbraun/devel/train/sw/trainctl/trainctl_iface.h \
+ /Users/danielbraun/devel/train/sw/trainctl/spdctl/inertia.h \
+ /Users/danielbraun/devel/train/sw/trainctl/spdctl/pidctl.h \
+ /Users/danielbraun/devel/train/sw/trainctl/low/canton.h \
+ ../../trainctl/misc.h \
  /Users/danielbraun/devel/train/sw/trainctl/low/canton_config.h \
  /Users/danielbraun/devel/train/sw/trainctl/railconfig.h \
  /Users/danielbraun/devel/train/sw/trainctl/low/canton_config.h \
@@ -53,23 +64,29 @@ trainctl/train.o: /Users/danielbraun/devel/train/sw/trainctl/train.c \
 
 /Users/danielbraun/devel/train/sw/trainctl/misc.h:
 
-../Core/Inc/trainctl_config.h:
+../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os.h:
 
-/Users/danielbraun/devel/train/sw/trainctl/utils/itm_debug.h:
+../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h:
 
-/Users/danielbraun/devel/train/sw/trainctl/train.h:
+../Core/Inc/FreeRTOSConfig.h:
 
-/Users/danielbraun/devel/train/sw/trainctl/param.h:
+../Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h:
 
-/Users/danielbraun/devel/train/sw/trainctl/trainctl_iface.h:
+../Middlewares/Third_Party/FreeRTOS/Source/include/portable.h:
 
-/Users/danielbraun/devel/train/sw/trainctl/spdctl/inertia.h:
+../Middlewares/Third_Party/FreeRTOS/Source/include/deprecated_definitions.h:
 
-/Users/danielbraun/devel/train/sw/trainctl/spdctl/pidctl.h:
+../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F/portmacro.h:
 
-/Users/danielbraun/devel/train/sw/trainctl/low/canton.h:
+../Middlewares/Third_Party/FreeRTOS/Source/include/mpu_wrappers.h:
 
-../../trainctl/misc.h:
+../Middlewares/Third_Party/FreeRTOS/Source/include/task.h:
+
+../Middlewares/Third_Party/FreeRTOS/Source/include/list.h:
+
+../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h:
+
+../Core/Inc/main.h:
 
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:
 
@@ -144,6 +161,24 @@ trainctl/train.o: /Users/danielbraun/devel/train/sw/trainctl/train.c \
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_usb.h:
 
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pcd_ex.h:
+
+../Core/Inc/trainctl_config.h:
+
+/Users/danielbraun/devel/train/sw/trainctl/utils/itm_debug.h:
+
+/Users/danielbraun/devel/train/sw/trainctl/train.h:
+
+/Users/danielbraun/devel/train/sw/trainctl/param.h:
+
+/Users/danielbraun/devel/train/sw/trainctl/trainctl_iface.h:
+
+/Users/danielbraun/devel/train/sw/trainctl/spdctl/inertia.h:
+
+/Users/danielbraun/devel/train/sw/trainctl/spdctl/pidctl.h:
+
+/Users/danielbraun/devel/train/sw/trainctl/low/canton.h:
+
+../../trainctl/misc.h:
 
 /Users/danielbraun/devel/train/sw/trainctl/low/canton_config.h:
 

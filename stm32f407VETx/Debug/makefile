@@ -9,6 +9,7 @@ RM := rm -rf
 # All of the sources participating in the build are defined here
 -include sources.mk
 -include trainctl/utils/subdir.mk
+-include trainctl/topology/subdir.mk
 -include trainctl/stm32/subdir.mk
 -include trainctl/spdctl/subdir.mk
 -include trainctl/msg/subdir.mk

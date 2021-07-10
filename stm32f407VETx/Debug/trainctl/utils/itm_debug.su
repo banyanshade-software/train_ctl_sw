@@ -1,4 +1,4 @@
 core_cm4.h:2064:26:ITM_SendChar	16	static,ignoring_inline_asm
-itm_debug.c:113:13:write_num	24	static
-itm_debug.c:122:5:_write	32	static
-itm_debug.c:133:6:_itm_debug3	96	static
+itm_debug.c:114:13:write_num	24	static
+itm_debug.c:123:5:_write	32	static
+itm_debug.c:134:6:_itm_debug3	96	static

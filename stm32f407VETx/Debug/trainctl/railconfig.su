@@ -1,5 +1,5 @@
-itm_debug.h:33:20:itm_debug1	32	static
-misc.h:96:21:config_error	16	static
-railconfig.c:297:24:get_canton_cnf	16	static
-railconfig.c:326:23:get_train_cnf	16	static
-railconfig.c:342:26:get_turnout_cnf	16	static
+itm_debug.h:34:20:itm_debug1	32	static
+misc.h:102:21:config_error	16	static
+railconfig.c:317:24:get_canton_cnf	16	static
+railconfig.c:346:23:get_train_cnf	16	static
+railconfig.c:362:26:get_turnout_cnf	16	static

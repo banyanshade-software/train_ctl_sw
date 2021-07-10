@@ -53,7 +53,7 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
  ../../trainctl/misc.h ../Core/Inc/trainctl_config.h \
  ../../trainctl/utils/itm_debug.h ../../trainctl/stm32/txrxtask.h \
  ../../trainctl/stm32/../trainctl_iface.h ../../trainctl/stm32/taskctrl.h \
- ../../trainctl/stm32/taskdisp.h
+ ../../trainctl/stm32/taskdisp.h ../../trainctl/msg/notif.h
 
 ../Core/Inc/main.h:
 
@@ -174,3 +174,5 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
 ../../trainctl/stm32/taskctrl.h:
 
 ../../trainctl/stm32/taskdisp.h:
+
+../../trainctl/msg/notif.h:

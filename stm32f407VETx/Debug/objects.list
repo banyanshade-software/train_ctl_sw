@@ -75,5 +75,6 @@
 "trainctl/stm32/taskctrl.o"
 "trainctl/stm32/taskdisp.o"
 "trainctl/stm32/txrxtask.o"
+"trainctl/topology/topology.o"
 "trainctl/utils/itm_debug.o"
 "trainctl/utils/lf_mqueue.o"

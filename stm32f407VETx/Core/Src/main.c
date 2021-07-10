@@ -38,6 +38,7 @@
 #include "stm32/taskctrl.h"
 #include "stm32/taskdisp.h"
 //#include "../../../stm32dev/ina3221/ina3221.h"
+#include "msg/notif.h"
 
 /* USER CODE END Includes */
 
@@ -74,12 +75,10 @@ TIM_HandleTypeDef htim8;
 TIM_HandleTypeDef htim12;
 
 UART_HandleTypeDef huart4;
-DMA_HandleTypeDef hdma_uart4_rx;
-DMA_HandleTypeDef hdma_uart4_tx;
 
 /* Definitions for uiTask */
 osThreadId_t uiTaskHandle;
-uint32_t defaultTaskBuffer[ 128 ];
+uint32_t defaultTaskBuffer[ 256 ];
 osStaticThreadDef_t defaultTaskControlBlock;
 const osThreadAttr_t uiTask_attributes = {
   .name = "uiTask",
@@ -99,7 +98,7 @@ const osThreadAttr_t ctrlTask_attributes = {
   .stack_size = sizeof(ctrlTaskBuffer),
   .cb_mem = &ctrlTaskControlBlock,
   .cb_size = sizeof(ctrlTaskControlBlock),
-  .priority = (osPriority_t) osPriorityNormal,
+  .priority = (osPriority_t) osPriorityRealtime1,
 };
 /* Definitions for txrxFrameTask */
 osThreadId_t txrxFrameTaskHandle;
@@ -112,6 +111,18 @@ const osThreadAttr_t txrxFrameTask_attributes = {
   .cb_mem = &txrxFrameTaskControlBlock,
   .cb_size = sizeof(txrxFrameTaskControlBlock),
   .priority = (osPriority_t) osPriorityLow3,
+};
+/* Definitions for ina3221_task */
+osThreadId_t ina3221_taskHandle;
+uint32_t ina3221_taskBuffer[ 128 ];
+osStaticThreadDef_t ina3221_taskControlBlock;
+const osThreadAttr_t ina3221_task_attributes = {
+  .name = "ina3221_task",
+  .stack_mem = &ina3221_taskBuffer[0],
+  .stack_size = sizeof(ina3221_taskBuffer),
+  .cb_mem = &ina3221_taskControlBlock,
+  .cb_size = sizeof(ina3221_taskControlBlock),
+  .priority = (osPriority_t) osPriorityRealtime3,
 };
 /* Definitions for frameQueue */
 osMessageQueueId_t frameQueueHandle;
@@ -146,6 +157,7 @@ static void MX_TIM12_Init(void);
 void StartUiTask(void *argument);
 extern void StartCtrlTask(void *argument);
 extern void StartTxRxFrameTask(void *argument);
+void ina3221_task_start(void *argument);
 
 /* USER CODE BEGIN PFP */
 
@@ -153,6 +165,7 @@ extern void StartTxRxFrameTask(void *argument);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+/*
 uint32_t GetCurrentMicro(void)
 {
   uint32_t m0 = HAL_GetTick();
@@ -166,7 +179,7 @@ uint32_t GetCurrentMicro(void)
     return ( m0 * 1000 + (u0 * 1000) / SysTick->LOAD);
   }
 }
-
+*/
 
 
 /* USER CODE END 0 */
@@ -248,6 +261,9 @@ int main(void)
   /* creation of txrxFrameTask */
   txrxFrameTaskHandle = osThreadNew(StartTxRxFrameTask, NULL, &txrxFrameTask_attributes);
 
+  /* creation of ina3221_task */
+  ina3221_taskHandle = osThreadNew(ina3221_task_start, NULL, &ina3221_task_attributes);
+
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
   /* USER CODE END RTOS_THREADS */
@@ -303,7 +319,7 @@ void SystemClock_Config(void)
                               |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
   RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
-  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV4;
+  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV8;
   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV8;
 
   if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_3) != HAL_OK)
@@ -403,7 +419,7 @@ static void MX_ADC1_Init(void)
   }
   /** Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time.
   */
-  sConfig.Channel = ADC_CHANNEL_7;
+  sConfig.Channel = ADC_CHANNEL_12;
   sConfig.Rank = 7;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
@@ -492,7 +508,7 @@ static void MX_I2C3_Init(void)
   /* USER CODE END I2C3_Init 1 */
   hi2c3.Instance = I2C3;
   hi2c3.Init.ClockSpeed = 400000;
-  hi2c3.Init.DutyCycle = I2C_DUTYCYCLE_2;
+  hi2c3.Init.DutyCycle = I2C_DUTYCYCLE_16_9;
   hi2c3.Init.OwnAddress1 = 0;
   hi2c3.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
   hi2c3.Init.DualAddressMode = I2C_DUALADDRESS_DISABLE;
@@ -697,7 +713,7 @@ static void MX_TIM2_Init(void)
   {
     Error_Handler();
   }
-  sSlaveConfig.SlaveMode = TIM_SLAVEMODE_RESET;
+  sSlaveConfig.SlaveMode = TIM_SLAVEMODE_TRIGGER;
   sSlaveConfig.InputTrigger = TIM_TS_ITR0;
   if (HAL_TIM_SlaveConfigSynchro(&htim2, &sSlaveConfig) != HAL_OK)
   {
@@ -767,7 +783,7 @@ static void MX_TIM3_Init(void)
   {
     Error_Handler();
   }
-  sSlaveConfig.SlaveMode = TIM_SLAVEMODE_RESET;
+  sSlaveConfig.SlaveMode = TIM_SLAVEMODE_TRIGGER;
   sSlaveConfig.InputTrigger = TIM_TS_ITR0;
   if (HAL_TIM_SlaveConfigSynchro(&htim3, &sSlaveConfig) != HAL_OK)
   {
@@ -920,6 +936,7 @@ static void MX_TIM12_Init(void)
 
   /* USER CODE END TIM12_Init 0 */
 
+  TIM_SlaveConfigTypeDef sSlaveConfig = {0};
   TIM_OC_InitTypeDef sConfigOC = {0};
 
   /* USER CODE BEGIN TIM12_Init 1 */
@@ -931,7 +948,17 @@ static void MX_TIM12_Init(void)
   htim12.Init.Period = 65535;
   htim12.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim12.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  if (HAL_TIM_Base_Init(&htim12) != HAL_OK)
+  {
+    Error_Handler();
+  }
   if (HAL_TIM_PWM_Init(&htim12) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sSlaveConfig.SlaveMode = TIM_SLAVEMODE_DISABLE;
+  sSlaveConfig.InputTrigger = TIM_TS_ITR0;
+  if (HAL_TIM_SlaveConfigSynchro(&htim12, &sSlaveConfig) != HAL_OK)
   {
     Error_Handler();
   }
@@ -994,16 +1021,9 @@ static void MX_DMA_Init(void)
 {
 
   /* DMA controller clock enable */
-  __HAL_RCC_DMA1_CLK_ENABLE();
   __HAL_RCC_DMA2_CLK_ENABLE();
 
   /* DMA interrupt init */
-  /* DMA1_Stream2_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(DMA1_Stream2_IRQn, 6, 0);
-  HAL_NVIC_EnableIRQ(DMA1_Stream2_IRQn);
-  /* DMA1_Stream4_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(DMA1_Stream4_IRQn, 6, 0);
-  HAL_NVIC_EnableIRQ(DMA1_Stream4_IRQn);
   /* DMA2_Stream0_IRQn interrupt configuration */
   HAL_NVIC_SetPriority(DMA2_Stream0_IRQn, 7, 0);
   HAL_NVIC_EnableIRQ(DMA2_Stream0_IRQn);
@@ -1164,6 +1184,24 @@ __weak void StartUiTask(void *argument)
   /* USER CODE END 5 */
 }
 
+/* USER CODE BEGIN Header_ina3221_task_start */
+/**
+* @brief Function implementing the ina3221_task thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_ina3221_task_start */
+__weak void ina3221_task_start(void *argument)
+{
+  /* USER CODE BEGIN ina3221_task_start */
+  /* Infinite loop */
+  for(;;)
+  {
+    osDelay(1);
+  }
+  /* USER CODE END ina3221_task_start */
+}
+
 /**
   * @brief  Period elapsed callback in non blocking mode
   * @note   This function is called  when TIM7 interrupt took place, inside
@@ -1215,8 +1253,14 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 		  static uint32_t cnt = 0;
 		  itm_debug2(DBG_TIM|DBG_INA3221, "tim1",cnt, t1);
 		  cnt++;
+#if INA3221_TASK
+		  BaseType_t higher=0;
+		  xTaskNotifyFromISR(ina3221_taskHandle, (cnt%2) ? NOTIF_INA_READ : NOTIF_INA_TRIG, eSetBits, &higher);
+		  portYIELD_FROM_ISR(higher);
+#else
 		  void ina3221_trigger_conversion(void);
 		  ina3221_trigger_conversion();
+#endif
 	  }
   }
   /* USER CODE END Callback 1 */

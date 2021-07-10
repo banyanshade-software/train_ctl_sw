@@ -14,14 +14,7 @@ trainctl/stm32/txrxtask.o: \
  ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h \
  /Users/danielbraun/devel/train/sw/trainctl/stm32/../trainctl_iface.h \
  /Users/danielbraun/devel/train/sw/trainctl/stm32/../misc.h \
- ../Core/Inc/trainctl_config.h \
- /Users/danielbraun/devel/train/sw/trainctl/stm32/../utils/itm_debug.h \
- ../USB_DEVICE/App/usbd_cdc_if.h \
- ../Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc/usbd_cdc.h \
- ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ioreq.h \
- ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_def.h \
- ../USB_DEVICE/Target/usbd_conf.h ../Core/Inc/main.h \
- ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h \
+ ../Core/Inc/main.h ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h \
  ../Core/Inc/stm32f4xx_hal_conf.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h \
@@ -58,6 +51,13 @@ trainctl/stm32/txrxtask.o: \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pcd.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_usb.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pcd_ex.h \
+ ../Core/Inc/trainctl_config.h \
+ /Users/danielbraun/devel/train/sw/trainctl/stm32/../utils/itm_debug.h \
+ ../USB_DEVICE/App/usbd_cdc_if.h \
+ ../Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc/usbd_cdc.h \
+ ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ioreq.h \
+ ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_def.h \
+ ../USB_DEVICE/Target/usbd_conf.h \
  ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_core.h \
  ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ioreq.h \
  ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ctlreq.h \
@@ -94,20 +94,6 @@ trainctl/stm32/txrxtask.o: \
 /Users/danielbraun/devel/train/sw/trainctl/stm32/../trainctl_iface.h:
 
 /Users/danielbraun/devel/train/sw/trainctl/stm32/../misc.h:
-
-../Core/Inc/trainctl_config.h:
-
-/Users/danielbraun/devel/train/sw/trainctl/stm32/../utils/itm_debug.h:
-
-../USB_DEVICE/App/usbd_cdc_if.h:
-
-../Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc/usbd_cdc.h:
-
-../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ioreq.h:
-
-../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_def.h:
-
-../USB_DEVICE/Target/usbd_conf.h:
 
 ../Core/Inc/main.h:
 
@@ -184,6 +170,20 @@ trainctl/stm32/txrxtask.o: \
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_usb.h:
 
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pcd_ex.h:
+
+../Core/Inc/trainctl_config.h:
+
+/Users/danielbraun/devel/train/sw/trainctl/stm32/../utils/itm_debug.h:
+
+../USB_DEVICE/App/usbd_cdc_if.h:
+
+../Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc/usbd_cdc.h:
+
+../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ioreq.h:
+
+../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_def.h:
+
+../USB_DEVICE/Target/usbd_conf.h:
 
 ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_core.h:
 

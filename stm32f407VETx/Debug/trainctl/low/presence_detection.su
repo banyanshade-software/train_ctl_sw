@@ -1,6 +1,1 @@
-itm_debug.h:33:20:itm_debug1	32	static
-itm_debug.h:37:20:itm_debug2	32	static
-itm_debug.h:41:20:itm_debug3	32	static
-trainmsg.h:113:1:mqf_write_from_canton	16	static
-presence_detection.c:20:13:presdect_init	8	static
-presence_detection.c:26:6:presdect_tick	64	static
+presence_detection.c:21:6:presdect_tick	24	static

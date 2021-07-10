@@ -1,17 +1,18 @@
 trainctl/stm32/taskdisp.o: \
  /Users/danielbraun/devel/train/sw/trainctl/stm32/taskdisp.c \
  /Users/danielbraun/devel/train/sw/trainctl/stm32/../misc.h \
- ../Core/Inc/trainctl_config.h \
- /Users/danielbraun/devel/train/sw/trainctl/stm32/../utils/itm_debug.h \
- /Users/danielbraun/devel/train/sw/trainctl/stm32/../msg/trainmsg.h \
- /Users/danielbraun/devel/train/sw/trainctl/stm32/../msg/../utils/lf_mqueue.h \
- /Users/danielbraun/devel/train/sw/trainctl/stm32/../msg/notif.h \
- /Users/danielbraun/devel/train/sw/trainctl/stm32/../msg/../IHM/ihm_messages.h \
- /Users/danielbraun/devel/train/sw/trainctl/stm32/../trainctl_iface.h \
- /Users/danielbraun/devel/train/sw/trainctl/stm32/../misc.h \
- /Users/danielbraun/devel/train/sw/trainctl/stm32/../IHM/disp.h \
- /Users/danielbraun/devel/train/sw/trainctl/stm32/../IHM/ihm.h \
- ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h \
+ ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os.h \
+ ../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h \
+ ../Core/Inc/FreeRTOSConfig.h \
+ ../Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h \
+ ../Middlewares/Third_Party/FreeRTOS/Source/include/portable.h \
+ ../Middlewares/Third_Party/FreeRTOS/Source/include/deprecated_definitions.h \
+ ../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F/portmacro.h \
+ ../Middlewares/Third_Party/FreeRTOS/Source/include/mpu_wrappers.h \
+ ../Middlewares/Third_Party/FreeRTOS/Source/include/task.h \
+ ../Middlewares/Third_Party/FreeRTOS/Source/include/list.h \
+ ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h \
+ ../Core/Inc/main.h ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h \
  ../Core/Inc/stm32f4xx_hal_conf.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h \
@@ -48,19 +49,17 @@ trainctl/stm32/taskdisp.o: \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pcd.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_usb.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pcd_ex.h \
+ ../Core/Inc/trainctl_config.h \
+ /Users/danielbraun/devel/train/sw/trainctl/stm32/../utils/itm_debug.h \
+ /Users/danielbraun/devel/train/sw/trainctl/stm32/../msg/trainmsg.h \
+ /Users/danielbraun/devel/train/sw/trainctl/stm32/../msg/../utils/lf_mqueue.h \
+ /Users/danielbraun/devel/train/sw/trainctl/stm32/../msg/notif.h \
+ /Users/danielbraun/devel/train/sw/trainctl/stm32/../msg/../IHM/ihm_messages.h \
+ /Users/danielbraun/devel/train/sw/trainctl/stm32/../trainctl_iface.h \
+ /Users/danielbraun/devel/train/sw/trainctl/stm32/../misc.h \
+ /Users/danielbraun/devel/train/sw/trainctl/stm32/../IHM/disp.h \
+ /Users/danielbraun/devel/train/sw/trainctl/stm32/../IHM/ihm.h \
  /Users/danielbraun/devel/train/sw/trainctl/stm32/taskdisp.h \
- ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os.h \
- ../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h \
- ../Core/Inc/FreeRTOSConfig.h \
- ../Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h \
- ../Middlewares/Third_Party/FreeRTOS/Source/include/portable.h \
- ../Middlewares/Third_Party/FreeRTOS/Source/include/deprecated_definitions.h \
- ../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F/portmacro.h \
- ../Middlewares/Third_Party/FreeRTOS/Source/include/mpu_wrappers.h \
- ../Middlewares/Third_Party/FreeRTOS/Source/include/task.h \
- ../Middlewares/Third_Party/FreeRTOS/Source/include/list.h \
- ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h \
- ../Core/Inc/main.h \
  /Users/danielbraun/devel/train/sw/trainctl/stm32/../../stm32dev/disp_tft/ssd1306_tests.h \
  /Users/danielbraun/devel/train/sw/trainctl/stm32/../../stm32dev/disp_tft/ssd1306.h \
  /Users/danielbraun/devel/train/sw/trainctl/stm32/../../stm32dev/disp_tft/ssd1306_conf.h \
@@ -69,25 +68,29 @@ trainctl/stm32/taskdisp.o: \
 
 /Users/danielbraun/devel/train/sw/trainctl/stm32/../misc.h:
 
-../Core/Inc/trainctl_config.h:
+../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os.h:
 
-/Users/danielbraun/devel/train/sw/trainctl/stm32/../utils/itm_debug.h:
+../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h:
 
-/Users/danielbraun/devel/train/sw/trainctl/stm32/../msg/trainmsg.h:
+../Core/Inc/FreeRTOSConfig.h:
 
-/Users/danielbraun/devel/train/sw/trainctl/stm32/../msg/../utils/lf_mqueue.h:
+../Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h:
 
-/Users/danielbraun/devel/train/sw/trainctl/stm32/../msg/notif.h:
+../Middlewares/Third_Party/FreeRTOS/Source/include/portable.h:
 
-/Users/danielbraun/devel/train/sw/trainctl/stm32/../msg/../IHM/ihm_messages.h:
+../Middlewares/Third_Party/FreeRTOS/Source/include/deprecated_definitions.h:
 
-/Users/danielbraun/devel/train/sw/trainctl/stm32/../trainctl_iface.h:
+../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F/portmacro.h:
 
-/Users/danielbraun/devel/train/sw/trainctl/stm32/../misc.h:
+../Middlewares/Third_Party/FreeRTOS/Source/include/mpu_wrappers.h:
 
-/Users/danielbraun/devel/train/sw/trainctl/stm32/../IHM/disp.h:
+../Middlewares/Third_Party/FreeRTOS/Source/include/task.h:
 
-/Users/danielbraun/devel/train/sw/trainctl/stm32/../IHM/ihm.h:
+../Middlewares/Third_Party/FreeRTOS/Source/include/list.h:
+
+../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h:
+
+../Core/Inc/main.h:
 
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:
 
@@ -163,31 +166,27 @@ trainctl/stm32/taskdisp.o: \
 
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pcd_ex.h:
 
+../Core/Inc/trainctl_config.h:
+
+/Users/danielbraun/devel/train/sw/trainctl/stm32/../utils/itm_debug.h:
+
+/Users/danielbraun/devel/train/sw/trainctl/stm32/../msg/trainmsg.h:
+
+/Users/danielbraun/devel/train/sw/trainctl/stm32/../msg/../utils/lf_mqueue.h:
+
+/Users/danielbraun/devel/train/sw/trainctl/stm32/../msg/notif.h:
+
+/Users/danielbraun/devel/train/sw/trainctl/stm32/../msg/../IHM/ihm_messages.h:
+
+/Users/danielbraun/devel/train/sw/trainctl/stm32/../trainctl_iface.h:
+
+/Users/danielbraun/devel/train/sw/trainctl/stm32/../misc.h:
+
+/Users/danielbraun/devel/train/sw/trainctl/stm32/../IHM/disp.h:
+
+/Users/danielbraun/devel/train/sw/trainctl/stm32/../IHM/ihm.h:
+
 /Users/danielbraun/devel/train/sw/trainctl/stm32/taskdisp.h:
-
-../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os.h:
-
-../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h:
-
-../Core/Inc/FreeRTOSConfig.h:
-
-../Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h:
-
-../Middlewares/Third_Party/FreeRTOS/Source/include/portable.h:
-
-../Middlewares/Third_Party/FreeRTOS/Source/include/deprecated_definitions.h:
-
-../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F/portmacro.h:
-
-../Middlewares/Third_Party/FreeRTOS/Source/include/mpu_wrappers.h:
-
-../Middlewares/Third_Party/FreeRTOS/Source/include/task.h:
-
-../Middlewares/Third_Party/FreeRTOS/Source/include/list.h:
-
-../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h:
-
-../Core/Inc/main.h:
 
 /Users/danielbraun/devel/train/sw/trainctl/stm32/../../stm32dev/disp_tft/ssd1306_tests.h:
 

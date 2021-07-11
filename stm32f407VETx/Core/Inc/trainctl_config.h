@@ -24,7 +24,7 @@
 #define TFT_DISP 1
 
 #define USE_INA3221 1
-#define DISABLE_INA3221 0
+#define DISABLE_INA3221 1
 #define INA3221_TASK 1
 #define NOTIF_VOFF 0
 

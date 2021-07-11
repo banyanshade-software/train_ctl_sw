@@ -39,6 +39,10 @@ static inline int _blk_addr_to_blk_num(uint8_t addr)
 
 static inline uint8_t _sub_num_to_sub_addr(int subnum, uint8_t *sub)
 {
+	if (subnum == -1) {
+		*sub = 0;
+		return 0xFF;
+	}
     *sub = subnum % 12;
     int brd = subnum/12;
     return MA_CANTON(brd, 0);
@@ -46,6 +50,7 @@ static inline uint8_t _sub_num_to_sub_addr(int subnum, uint8_t *sub)
 
 static uint8_t _blk_num_to_blk_addr(int blknum)
 {
+	if (blknum == -1) return 0xFF;
     int nc = blknum % 6;
     int brd = blknum/6;
     return MA_CANTON(brd, nc);

@@ -23,10 +23,20 @@ int _blk_num_for_sub_num(int subnum)
 	if (subnum == 0) return 2;
 	return -1;
 }
+
+static int sw1 = 0;
+
 int _next_block_num(int blknum, uint8_t left)
 {
-	if (blknum == 0) {
-		return 1;
+	if ((0)) return -1; // XXX
+	switch (blknum) {
+	case 0:
+		return left ? 	-1 : 1;
+	case 1:
+		return left ?	(sw1 ? 2 : 0)  : -1;
+	case 2:
+		return left ?   -1 : 1;
+	default:
+		return -1;
 	}
-	return 0xFF;
 }

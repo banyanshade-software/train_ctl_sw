@@ -14,9 +14,6 @@
 #include "../topology/topology.h"
 #include "railconfig.h"
 
-static void ctrl_reset(void);
-static void presence_changed(uint8_t from_addr, uint8_t segnum, uint16_t v, int16_t ival);
-
 //per train stucture
 
 typedef struct {
@@ -40,6 +37,11 @@ static train_ctrl_t trctl[NUM_TRAINS];
 
 static uint8_t test_mode = 0;
 static uint8_t testerAddr;
+
+
+static void ctrl_reset(void);
+static void presence_changed(uint8_t from_addr, uint8_t segnum, uint16_t v, int16_t ival);
+static void train_switched_to_c2(int tn, const train_config_t *tconf, train_ctrl_t *tvar, uint8_t fromBemf);
 
 
 static void ctrl_set_mode(int trnum, train_mode_t mode)
@@ -68,14 +70,45 @@ static void ctrl_set_status(int trnum, train_status_t status)
 	mqf_write_from_ctrl(&m);
 }
 
-static int8_t ctrl_set_dir(int trnum, int dir)
+static void update_c2(int trnum)
 {
-	if (trctl[trnum]._dir == dir) return 0;
-	if (trctl[trnum]._target_speed) return 0;
-	trctl[trnum]._dir = dir;
-	// notif UI
+	train_ctrl_t *tvar = &trctl[trnum];
+	if (tvar->canton1_addr == 0xFF) {
+		itm_debug1(DBG_ERR|DBG_CTRL, "no c1", trnum);
+		return;
+	}
+	int dir = trctl[trnum]._dir;
+	if (!dir) {
+		tvar->canton2_addr = 0;
+	} else {
+		tvar->canton2_addr = next_block_addr(trctl[trnum].canton1_addr, (tvar->_dir<0));
+	}
+	itm_debug3(DBG_CTRL, "updt_c2", trnum, tvar->canton1_addr, tvar->canton2_addr);
 	msg_64_t m;
 	m.from = MA_CONTROL_T(trnum);
+	m.to =  MA_TRAIN_SC(0);
+	m.cmd = CMD_SET_C1_C2;
+	m.vbytes[0] = trctl[trnum].canton1_addr;
+	m.vbytes[1] = dir;
+	m.vbytes[2] = trctl[trnum].canton2_addr;
+	m.vbytes[3] = dir; // 0;
+	mqf_write_from_ctrl(&m);
+}
+
+static int8_t ctrl_set_dir(int trnum, int dir)
+{
+	itm_debug2(DBG_CTRL, "setdir", trnum, dir);
+	if (trctl[trnum]._dir == dir) return 0;
+	//if (trctl[trnum]._target_speed) return 0;
+
+	msg_64_t m;
+	m.from = MA_CONTROL_T(trnum);
+	trctl[trnum]._dir = dir;
+
+	update_c2(trnum);
+
+
+	// notif UI
 	m.to = MA_UI(1); // fix me
 	m.cmd = CMD_TRDIR_NOTIF;
 	m.v1 = dir;
@@ -102,7 +135,9 @@ static int8_t ctrl_set_tspeed(int trnum, uint16_t tspd)
 
 	m.to = MA_TRAIN_SC(trnum);
 	m.cmd = CMD_SET_TARGET_SPEED;
-	m.v1 = trctl[trnum]._dir*trctl[trnum]._target_speed;
+	// direction already given by SET_C1_C2
+	//m.v1 = trctl[trnum]._dir*trctl[trnum]._target_speed;
+	m.v1u = trctl[trnum]._target_speed;
 	mqf_write_from_ctrl(&m);
 
 	return 1;
@@ -114,7 +149,6 @@ static void ctrl_init(void)
 	memset(trctl, 0, sizeof(train_ctrl_t)*NUM_TRAINS);
 	ctrl_set_mode(0, train_fullmanual);
 	ctrl_set_tspeed(0, 0);
-	ctrl_set_dir(0, 1);
 }
 
 
@@ -131,8 +165,12 @@ void ctrl_run_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
 		msg_64_t m;
 		ui_msg(1, IHMMSG_TRAINCTL_INIT, &m, MA_CONTROL());
 		mqf_write_from_ctrl(&m);
-
-        if ((1)) { // TODO remove
+		if ((1)) {
+			trctl[0].canton1_addr = MA_CANTON(0, 1); // initial blk
+			trctl[0].canton2_addr = 0xFF;
+			ctrl_set_dir(0, 0);
+		}
+        if ((0)) { // TODO remove
             msg_64_t m;
             m.to = MA_TRAIN_SC(0);
             m.cmd = CMD_SET_C1_C2;
@@ -223,6 +261,18 @@ void ctrl_run_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
 				presence_changed(m.from, m.sub, m.v1u, m.v2);
 				break;
 			}
+			case CMD_BEMF_DETECT_ON_C2: {
+				itm_debug2(DBG_CTRL,"BEMF/C2", tidx,  m.v1u);
+				train_ctrl_t *tvar = &trctl[tidx];
+				if (m.v1u != tvar->canton2_addr) {
+					// typ. because we already switch to c2 (msg SET_C1_C2 and CMD_BEMF_DETECT_ON_C2 cross over
+					itm_debug3(DBG_CTRL, "not c2", tidx, m.v1u, tvar->canton2_addr);
+					break;
+				}
+				const train_config_t *tconf = get_train_cnf(tidx);
+				train_switched_to_c2(tidx, tconf, tvar, 1);
+				break;
+			}
 			case CMD_MDRIVE_SPEED_DIR:
 				ctrl_set_dir(tidx, m.v2);
 				//FALLTHRU
@@ -260,14 +310,6 @@ void ctrl_run_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
 				break;
 
 			}
-/*
- * msg_64_t m;
-    	m.from = MA_CANTON(localBoardNum, 0);
-    	m.to = MA_CONTROL();
-    	m.cmd = CMD_PRESENCE_CHANGE;
-    	m.sub = i;
-    	m.v1u = p;
- */
 		} else {
 			itm_debug1(DBG_MSG|DBG_CTRL, "bad msg", m.to);
 		}
@@ -280,9 +322,8 @@ void ctrl_run_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
 
 static void ctrl_reset(void)
 {
-
+	//TODO
 }
-static void train_switched_to_c2(int tn, const train_config_t *tconf, train_ctrl_t *tvar);
 
 static void presence_changed(uint8_t from_addr, uint8_t lsegnum, uint16_t p, int16_t ival)
 {
@@ -302,7 +343,7 @@ static void presence_changed(uint8_t from_addr, uint8_t lsegnum, uint16_t p, int
 
 	for (int tn = 0; tn < NUM_TRAINS; tn++) {
 		train_ctrl_t *tvar = &trctl[tn];
-		const train_config_t *tconf = get_train_cnf(tn); \
+		const train_config_t *tconf = get_train_cnf(tn);
 		// check enabled
 		if (!tconf->enabled) continue;
 		if (tvar->canton1_addr == canton) {
@@ -311,7 +352,7 @@ static void presence_changed(uint8_t from_addr, uint8_t lsegnum, uint16_t p, int
 			} else {
 				if (tvar->c1toc2transition) {
 					itm_debug2(DBG_PRES, "leave c1", tn, segnum);
-					train_switched_to_c2(tn, tconf, tvar);
+					train_switched_to_c2(tn, tconf, tvar, 0);
 				} else {
 					itm_debug2(DBG_PRES, "?lv c1 no tr", tn, segnum);
 				}
@@ -334,9 +375,12 @@ static void presence_changed(uint8_t from_addr, uint8_t lsegnum, uint16_t p, int
 	}
 }
 
-static void train_switched_to_c2(int tn, const train_config_t *tconf, train_ctrl_t *tvar)
+static void train_switched_to_c2(int tn, const train_config_t *tconf, train_ctrl_t *tvar, uint8_t fromBemf)
 {
+	itm_debug2(DBG_CTRL, "switch c2", tn, tvar->canton2_addr);
 	tvar->canton1_addr = tvar->canton2_addr;
+	update_c2(tn);
+	/*
 	tvar->canton2_addr = next_block_addr(tvar->canton2_addr, (tvar->_dir<0));
 	tvar->c1toc2transition = 0;
 	msg_64_t m;
@@ -348,5 +392,6 @@ static void train_switched_to_c2(int tn, const train_config_t *tconf, train_ctrl
 	m.vbytes[2] = tvar->canton2_addr;
 	m.vbytes[3] = tvar->_dir; // XXX
     mqf_write_from_ctrl(&m);
+    */
 }
 

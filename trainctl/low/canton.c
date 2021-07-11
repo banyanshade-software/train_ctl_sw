@@ -135,7 +135,7 @@ void canton_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
         case CMD_TEST_MODE:
             test_mode = m.v1u;
             testerAddr = m.from;
-            bemf_test_all = (m.to == MA_BROADCAST) ? 1 : 0;
+            bemf_test_all = 1; //(m.to == MA_BROADCAST) ? 1 : 0;
             bemf_test_mode = test_mode;
             break;
         }

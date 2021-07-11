@@ -159,7 +159,7 @@ static  canton_config_t Cantons[NUM_CANTONS] = {
 				VOLT_1_SEL0_Pin, VOLT_1_SEL1_Pin, VOLT_1_SEL2_Pin, //0/*VOLT_1_SEL3_Pin*/,
 				1, TIM_CHANNEL_3, TIM_CHANNEL_4,  // TIM_HandleTypeDef
 				0, /*notif BEMF */
-				0, /* reverse BEMF*/
+				1, /* reverse BEMF*/
 		},
 		{//CANTON_TYPE_PROTO1,
 				//  0    1    2    3    4    5    6    7    8    9    10   11  12    13   14   15

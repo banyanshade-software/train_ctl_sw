@@ -56,7 +56,7 @@ uint32_t train_ntick = 0;
 
 
 typedef struct train_vars {
-	int16_t target_speed;
+	int16_t target_speed;	// always >= 0
 
 	int32_t bemf_cv;
 	pidctl_vars_t pidvars;
@@ -64,16 +64,17 @@ typedef struct train_vars {
 
     uint8_t C1;	// current canton adress
 	uint8_t C2; // next canton address
+	// TODO add C2alt, alternative next canton (manual turnout / detect defect in turnout)
 
-	int8_t  current_canton_dir; // -1 or +1
-	int8_t  next_canton_dir;
+	int8_t  C1_dir; // -1 or +1
+	int8_t  C2_dir;
 
 
 	int16_t last_speed;
 	int16_t prev_last_speed;
 
-	uint16_t cur_c1_volt_idx;
-	uint16_t cur_c2_volt_idx;
+	uint16_t C1_cur_volt_idx;
+	uint16_t C2_cur_volt_idx;
 
 	int32_t position_estimate;
 	int32_t bemfiir;
@@ -97,7 +98,7 @@ static void set_c1_c2(int num, train_vars_t *tvars, uint8_t c1, int8_t dir1, uin
 static void spdctl_reset(void)
 {
 	memset(trspc_vars, 0, sizeof(trspc_vars));
-	for (int  i = 0; i<8; i++) {
+	for (int  i = 0; i<NUM_TRAINS; i++) {
 		trspc_vars[i].C1 = 0xFF;
 		trspc_vars[i].C2 = 0xFF;
 	}
@@ -151,7 +152,13 @@ void spdctl_run_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
                     } else if (m.from == tvars->C2) {
                         itm_debug3(DBG_PID, "c2 bemf", tidx, m.v1, m.from);
                         if (abs(m.v1) > abs(tvars->bemf_cv)+50) {
-                        	itm_debug3(DBG_SPDCTL, "c2_hi", tidx, m.v1, tvars->bemf_cv);
+                        	itm_debug3(DBG_SPDCTL|DBG_CTRL, "c2_hi", tidx, m.v1, tvars->bemf_cv);
+                        	msg_64_t m;
+                        	m.from = MA_TRAIN_SC(tidx);
+                        	m.to = MA_CONTROL_T(tidx);
+                        	m.cmd = CMD_BEMF_DETECT_ON_C2;
+                        	m.v1u = tvars->C2;
+                            mqf_write_from_spdctl(&m);
                         }
                         // check it ?
                     } else {
@@ -160,11 +167,11 @@ void spdctl_run_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
                     }
                     break;
                 case CMD_SET_TARGET_SPEED:
-                    itm_debug1(DBG_SPDCTL, "set_t_spd", m.v1);
-                    tvars->target_speed = m.v1;
+                    itm_debug1(DBG_SPDCTL, "set_t_spd", m.v1u);
+                    tvars->target_speed = m.v1u;
                     break;
                 case CMD_SET_C1_C2:
-                    itm_debug1(DBG_SPDCTL, "set_c1_c2", 0);
+                    itm_debug3(DBG_SPDCTL|DBG_CTRL, "set_c1_c2", tidx, m.vbytes[0], m.vbytes[2]);
                     //static void set_c1_c2(int tidx, train_vars_t *tvars, uint8_t c1, int8_t dir1, uint8_t c2, int8_t dir2)
                     set_c1_c2(tidx, tvars, m.vbytes[0], m.vbytes[1], m.vbytes[2], m.vbytes[3]);
                     break;
@@ -199,6 +206,7 @@ static void train_periodic_control(int numtrain, int32_t dt)
 		return;
 	}
 	int16_t v = tvars->target_speed;
+	//int16_t v = tvars->target_speed * tvars->C1_dir;
 
 	itm_debug2(DBG_SPDCTL, "target", numtrain, v);
 
@@ -226,7 +234,8 @@ static void train_periodic_control(int numtrain, int32_t dt)
     if (tconf->enable_pid) {
         // corresponding BEMF target
         // 100% = 1.5V
-        int32_t tbemf = 150*v/100;
+        int32_t tbemf = 150*v/10 * tvars->C1_dir;
+        tbemf = tbemf / 8; //XXX
         pidctl_set_target(&tconf->pidcnf, &tvars->pidvars, tbemf);
         // XXXX notif_target_bemf(tconf, tvars, tbemf);
     }
@@ -264,7 +273,7 @@ static void train_periodic_control(int numtrain, int32_t dt)
         	v3 = (v2>100) ? 100 : v2;
         	v3 = (v3<-100) ? -100: v3;
         	itm_debug2(DBG_PID, "pid/r", v3, v2);
-        	v = (int16_t)v3;
+        	v = (int16_t)v3 * tvars->C1_dir; // because it will be multiplied again when setting pwm
         }
     }
     if (tconf->postIIR) {
@@ -355,9 +364,9 @@ static void set_c1_c2(int tidx, train_vars_t *tvars, uint8_t c1, int8_t dir1, ui
 		mqf_write_from_spdctl(&m);
 	}
 	tvars->C1 = c1;
-	tvars->current_canton_dir = dir1;
+	tvars->C1_dir = dir1;
 	tvars->C2 = c2;
-	tvars->next_canton_dir = dir2;
+	tvars->C2_dir = dir2;
 	tvars->last_speed = 9000; // make sure cmd is sent
 }
 
@@ -411,8 +420,8 @@ static void _set_speed(int tidx, const train_config_t *cnf, train_vars_t *vars)
                                    c1, c2,
                                    &pvi1, &pvi2, cnf->volt_policy);
 
-	int dir1 = sig * vars->current_canton_dir;
-	int dir2 = sig * vars->next_canton_dir;
+	int dir1 = sig * vars->C1_dir;
+	int dir2 = sig * vars->C2_dir;
 
 
     msg_64_t m;
@@ -431,8 +440,6 @@ static void _set_speed(int tidx, const train_config_t *cnf, train_vars_t *vars)
     	m.to = vars->C2;
     	mqf_write_from_spdctl(&m);
     }
-
-
 }
 
 
@@ -596,7 +603,7 @@ static void highlevel_tick(void)
         if ((signof0(tvars->prev_last_speed) != signof0(tvars->last_speed)) && signof0(tvars->last_speed)) {
             // change dir
             int oldc = tvars->next_canton;
-            block_canton_get_next(tvars->current_canton, tvars->current_canton_dir*signof0(tvars->last_speed), &tvars->next_canton, &tvars->next_canton_dir);
+            block_canton_get_next(tvars->current_canton, tvars->C1_dir*signof0(tvars->last_speed), &tvars->next_canton, &tvars->C2_dir);
             //printf("dir change");
             if (oldc != tvars->next_canton) {
                 if (oldc != 0xFF) {
@@ -664,7 +671,7 @@ static void train_did_switch_canton(uint8_t numtrain)
 {
 	USE_TRAIN(numtrain);
     (void) tconf; // unused
-    debug_info('T', numtrain, "SWT DONE", tvars->current_canton, tvars->next_canton, tvars->next_canton_dir);
+    debug_info('T', numtrain, "SWT DONE", tvars->current_canton, tvars->next_canton, tvars->C2_dir);
 	const canton_config_t *c_old = get_canton_cnf(tvars->current_canton);
 	canton_vars_t *v_old = get_canton_vars(tvars->current_canton);
 	canton_set_pwm(c_old, v_old, 0, 0);
@@ -672,13 +679,13 @@ static void train_did_switch_canton(uint8_t numtrain)
 	block_canton_exit(numtrain, tvars->current_canton);
 
 	tvars->current_canton = tvars->next_canton;
-	tvars->current_canton_dir = tvars->next_canton_dir;
+	tvars->C1_dir = tvars->C2_dir;
 
 	block_canton_enter(numtrain, tvars->current_canton);
 
 	// find next canton and next canton dir
-	block_canton_get_next(tvars->current_canton, tvars->current_canton_dir, &(tvars->next_canton), &(tvars->next_canton_dir));
-    debug_info('T', numtrain, "NEXT", tvars->next_canton, tvars->next_canton_dir,0);
+	block_canton_get_next(tvars->current_canton, tvars->C1_dir, &(tvars->next_canton), &(tvars->C2_dir));
+    debug_info('T', numtrain, "NEXT", tvars->next_canton, tvars->C2_dir,0);
 
 }
 #endif

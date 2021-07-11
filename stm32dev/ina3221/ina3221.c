@@ -1025,6 +1025,11 @@ static void ina3221_init_and_configure(void)
 void ina3221_task_start(void *argument)
 {
 #if INA3221_TASK
+	if (DISABLE_INA3221) {
+		for(;;) {
+			osDelay(1);
+		}
+	}
 	run_ina_task();
 #else
 	for(;;) {

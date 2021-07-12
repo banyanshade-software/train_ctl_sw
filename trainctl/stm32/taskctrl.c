@@ -217,7 +217,7 @@ static void run_task_ctrl(void)
 		itm_debug1(DBG_LOWCTRL, "--done", dt);
 		uint32_t et = HAL_GetTick() - t;
 		if ((1)) {
-			itm_debug2(DBG_ERR, "ctrl tick", e1, et);
+			//itm_debug2(DBG_ERR, "ctrl tick", e1, et);
 			if (et>9) {
 				itm_debug1(DBG_ERR, "long proc", et);
 			}

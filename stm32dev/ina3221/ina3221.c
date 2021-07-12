@@ -28,11 +28,14 @@ static uint8_t disable_ina3221 = 0;
 static int ina3221_init_done = 0;
 static int ina_conf_val = 0;
 
+#ifndef INA3221_TASKRD
+#error hu?
+#endif
+
 static void bkpoint(int loc, int err)
 {
 	itm_debug2(DBG_ERR|DBG_INA3221, "INA ERR", loc, err);
 }
-
 
 _UNUSED_ static int ina3221_write16it(int a, int reg, uint16_t v);
 
@@ -47,9 +50,18 @@ static void ina3221_init_and_configure(void);
 
 #if INA3221_TASK
 
+#if INA3221_CONTIUNOUS
+#if INA3221_TASKRD == 0
+#error INA3221_TASKRD should be set
+#endif
+#if INA3221_CHECKCONV
+#error INA3221_CHECKCONV shoud be zero
+#endif
+#endif
+
 static uint16_t values[INA3221_NUM_VALS*2] = {0};
-volatile uint16_t *cur_values = values;
-volatile uint16_t *prev_values = values+12;
+uint16_t *cur_values = values;
+uint16_t *prev_values = values+12; // TODO : double buffer unused
 
 extern osThreadId_t ina3221_taskHandle;
 static int lastErr = 0;
@@ -63,7 +75,9 @@ typedef enum {
 	state_trig_2,
 	state_trig_3,
 
+#if INA3221_CHECKCONV
 	state_chk_cvrf,
+#endif
 
 	state_rd_0,
 	state_rd_1,
@@ -84,7 +98,9 @@ static int _trig(int dev);
 static void _reg_read(int dev, int reg);
 static void _read_complete(int err);
 static int _next_dev(int d);
+#if INA3221_CHECKCONV
 static int _read_cvrf(void);
+#endif
 
 static volatile uint16_t mask_en_val = 0;
 
@@ -98,6 +114,9 @@ static void run_ina_task(void)
 		uint32_t notif = 0;
 		xTaskNotifyWait(0, 0xFFFFFFFF, &notif, portMAX_DELAY);
 		if (notif & NOTIF_INA_TRIG) {
+#if INA3221_CONTIUNOUS
+			// just ignore
+#else
 			if (state_idle == state) {
 				nstuck = 0;
 				itm_debug1(DBG_INA3221, "-TRG", 0);
@@ -135,6 +154,7 @@ static void run_ina_task(void)
 					continue;
 				}
 			}
+#endif // INA3221_CONTIUNOUS
 		}
 		if (notif & NOTIF_INA_WRCOMPL) {
 			itm_debug1(DBG_INA3221, "WRcpl", state);
@@ -152,8 +172,19 @@ static void run_ina_task(void)
 #if INA3221_TASKRD
                 	state = state_idle;
 #else
+#if INA3221_CHECKCONV
                 	state = state_chk_cvrf;
                 	_read_cvrf();
+#else
+                	dev = _next_dev(-1);
+                	if (dev >= 0) {
+                		state = state_rd_0 + dev * 3;
+                		_reg_read(dev, 0);
+                	} else {
+                		_read_complete(0);
+                		state = state_idle;
+                	}
+#endif
 #endif
                 }
                 /*} else {
@@ -172,12 +203,25 @@ static void run_ina_task(void)
 		}
 		if (notif & NOTIF_INA_READ) {
 #if INA3221_TASKRD
+#if INA3221_CHECKCONV
 			state = state_chk_cvrf;
 			_read_cvrf();
+#else
+			int dev = _next_dev(-1);
+			if (dev >= 0) {
+				state = state_rd_0 + dev * 3;
+				_reg_read(dev, 0);
+			} else {
+				_read_complete(0);
+				state = state_idle;
+			}
+
+#endif
 #endif
 		}
 		if (notif & NOTIF_INA_RDCOMPL) {
 			itm_debug1(DBG_INA3221, "RDcpl", state);
+#if INA3221_CHECKCONV
 			if (state == state_chk_cvrf) {
 				mask_en_val = __builtin_bswap16(mask_en_val);
 				if (mask_en_val & 0x0001) {
@@ -194,6 +238,9 @@ static void run_ina_task(void)
 					itm_debug2(DBG_INA3221, "again", state, mask_en_val);
                 	_read_cvrf();
 				}
+#else
+			if (0) {
+#endif
 			} else if ((state >= state_rd_0) && (state <= state_rd_11)) {
                 int reg = (state - state_rd_0) % 3;
                 int dev = (state - state_rd_0) / 3;
@@ -283,6 +330,7 @@ static void _reg_read(int dev, int nreg)
 	}
 }
 
+#if INA3221_CHECKCONV
 static int _read_cvrf(void)
 {
 	int addr = 0x40 + cvrf_dev; // dev 0
@@ -295,17 +343,18 @@ static int _read_cvrf(void)
 	}
 	return 0;
 }
+#endif
 
 static void _read_complete(int err)
 {
 	uint16_t *valu = (uint16_t *) cur_values;
-	int16_t  *vals = cur_values;
-	static int8_t presence[INA3221_NUM_VALS];
+	int16_t  *vals = (int16_t *) cur_values;
+	static int8_t presence[INA3221_NUM_VALS] = {0};
 	for (int i = 0; i<INA3221_NUM_VALS; i++) {
 		valu[i] = __builtin_bswap16(valu[i]);
 		itm_debug2(DBG_INA3221, "ina val", i, vals[i]);
 
-		int p = (abs(vals[i])>3000) ? 1 : 0;
+		int p = (abs(vals[i])>1000) ? 1 : 0;
 		if (p == presence[i]) continue;
 		presence[i] = p;
 		itm_debug3(DBG_INA3221|DBG_PRES, "PRSCH", i,p, vals[i]);
@@ -1017,7 +1066,7 @@ void _ina3221_init(int continuous)
 
 static void ina3221_init_and_configure(void)
 {
-	_ina3221_init(0);
+	_ina3221_init(INA3221_CONTIUNOUS);
 }
 
 // ----------------------------------------------------------------------------------

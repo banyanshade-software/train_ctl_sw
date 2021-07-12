@@ -23,16 +23,16 @@
 
 #define TFT_DISP 1
 
-#define USE_INA3221 	1		// must be 1, was used when switching from ADC reading
+/*#define USE_INA3221 	1		// must be 1, was used when switching from ADC reading
 #define DISABLE_INA3221 0		// disable INA3221
 
 #define INA3221_USE_DMA 0		// do not use DMA, untested
 #define INA3221_USE_IT  1
 
 #define INA3221_TASK	1		// use high prio task instead of IT processing
-#define INA3221_TASKRD	1		// separate tick for reading
+//#define INA3221_TASKRD	1		// separate tick for reading
 
 #define NOTIF_VOFF 1
-
+*/
 
 #endif /* INC_TRAINCTL_CONFIG_H_ */

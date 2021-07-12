@@ -86,7 +86,7 @@ const osThreadAttr_t uiTask_attributes = {
   .stack_size = sizeof(defaultTaskBuffer),
   .cb_mem = &defaultTaskControlBlock,
   .cb_size = sizeof(defaultTaskControlBlock),
-  .priority = (osPriority_t) osPriorityLow7,
+  .priority = (osPriority_t) osPriorityLow6,
 };
 /* Definitions for ctrlTask */
 osThreadId_t ctrlTaskHandle;
@@ -122,7 +122,7 @@ const osThreadAttr_t ina3221_task_attributes = {
   .stack_size = sizeof(ina3221_taskBuffer),
   .cb_mem = &ina3221_taskControlBlock,
   .cb_size = sizeof(ina3221_taskControlBlock),
-  .priority = (osPriority_t) osPriorityRealtime3,
+  .priority = (osPriority_t) osPriorityRealtime,
 };
 /* Definitions for frameQueue */
 osMessageQueueId_t frameQueueHandle;

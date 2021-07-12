@@ -155,7 +155,7 @@ void spdctl_run_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
                     } else if (m.from == tvars->C2) {
                         itm_debug3(DBG_PID, "c2 bemf", tidx, m.v1, m.from);
                         if (abs(m.v1) > abs(tvars->bemf_cv)+50) {
-                        	itm_debug3(DBG_SPDCTL|DBG_CTRL, "c2_hi", tidx, m.v1, tvars->bemf_cv);
+                        	itm_debug3(DBG_SPDCTL|DBG_PRES, "c2_hi", tidx, m.v1, tvars->bemf_cv);
                         	msg_64_t m;
                         	m.from = MA_TRAIN_SC(tidx);
                         	m.to = MA_CONTROL_T(tidx);
@@ -244,7 +244,7 @@ static void train_periodic_control(int numtrain, int32_t dt)
         // corresponding BEMF target
         // 100% = 1.5V
         int32_t tbemf = 150*v/10 * tvars->C1_dir;
-        tbemf = tbemf / 8; //XXX why ?? new cables (more capacitance ?)
+        tbemf = tbemf / 4; //XXX why ?? new cables (more capacitance ?)
         // TODO make this divisor a parameter
         pidctl_set_target(&tconf->pidcnf, &tvars->pidvars, tbemf);
         // XXXX notif_target_bemf(tconf, tvars, tbemf);

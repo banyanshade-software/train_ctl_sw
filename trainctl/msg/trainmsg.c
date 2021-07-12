@@ -143,7 +143,7 @@ void msgsrv_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
 		itm_debug2(DBG_MSG, "mlen2",i, mqf_len(q));
 		itm_debug3(DBG_MSG, "mth2 ", i, q->head, q->tail);
 	}
-	if ((1)) {
+	if ((0)) {
 		static uint32_t last=0;
 		if (tick>=last+10000) {
 			for (int i=0; i<NQDEF; i++) {

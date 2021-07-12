@@ -14,6 +14,10 @@
 #include "../topology/topology.h"
 #include "railconfig.h"
 
+// for test/debug
+static uint8_t ignore_bemf_presence = 1;
+static uint8_t ignore_ina_presence = 0;
+
 //per train stucture
 
 typedef struct {
@@ -27,6 +31,7 @@ typedef struct {
 	uint8_t  canton2_addr;
 
 	uint8_t c1toc2transition:1;
+	uint32_t c1toc2transition_inv;
 
 } train_ctrl_t;
 
@@ -40,7 +45,7 @@ static uint8_t testerAddr;
 
 
 static void ctrl_reset(void);
-static void presence_changed(uint8_t from_addr, uint8_t segnum, uint16_t v, int16_t ival);
+static void presence_changed(uint32_t tick, uint8_t from_addr, uint8_t segnum, uint16_t v, int16_t ival);
 static void train_switched_to_c2(int tn, const train_config_t *tconf, train_ctrl_t *tvar, uint8_t fromBemf);
 static void pose_triggered(int tidx, train_ctrl_t *tvar, uint8_t blkaddr);
 
@@ -75,7 +80,7 @@ static void update_c2(int trnum)
 {
 	train_ctrl_t *tvar = &trctl[trnum];
 	if (tvar->canton1_addr == 0xFF) {
-		itm_debug1(DBG_ERR|DBG_CTRL, "no c1", trnum);
+		itm_debug1(DBG_ERR|DBG_CTRL, "*** NO C1", trnum);
 		return;
 	}
 	int dir = trctl[trnum]._dir;
@@ -98,9 +103,10 @@ static void update_c2(int trnum)
 
 static int8_t ctrl_set_dir(int trnum, int dir)
 {
-	itm_debug2(DBG_CTRL, "setdir", trnum, dir);
 	if (trctl[trnum]._dir == dir) return 0;
 	//if (trctl[trnum]._target_speed) return 0;
+
+	itm_debug2(DBG_CTRL, "setdir", trnum, dir);
 
 	msg_64_t m;
 	m.from = MA_CONTROL_T(trnum);
@@ -258,8 +264,9 @@ void ctrl_run_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
 			train_ctrl_t *tvar = &trctl[tidx];
 
 			switch (m.cmd) {
-			case CMD_PRESENCE_CHANGE: {
-				presence_changed(m.from, m.sub, m.v1u, m.v2);
+			case CMD_PRESENCE_CHANGE:{
+				if (ignore_ina_presence) break;
+				presence_changed(tick, m.from, m.sub, m.v1u, m.v2);
 				break;
 			}
 			case CMD_BEMF_DETECT_ON_C2: {
@@ -270,6 +277,8 @@ void ctrl_run_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
 					itm_debug3(DBG_CTRL, "not c2", tidx, m.v1u, tvar->canton2_addr);
 					break;
 				}
+				if (ignore_bemf_presence) break;
+
 				const train_config_t *tconf = get_train_cnf(tidx);
 				train_switched_to_c2(tidx, tconf, tvar, 1);
 				break;
@@ -330,11 +339,11 @@ static void ctrl_reset(void)
 	//TODO
 }
 
-static void presence_changed(uint8_t from_addr, uint8_t lsegnum, uint16_t p, int16_t ival)
+static void presence_changed(uint32_t tick, uint8_t from_addr, uint8_t lsegnum, uint16_t p, int16_t ival)
 {
 	static int t[12]={0};
 	int segnum = _sub_addr_to_sub_num(from_addr, lsegnum);
-	itm_debug3(DBG_PRES|DBG_CTRL, "PRC", lsegnum, p, ival);
+	itm_debug3(DBG_PRES|DBG_CTRL, "PRC",  p, lsegnum, ival);
 	if ((segnum<0) || (segnum>11)) return;
 	t[segnum]=p;
 	itm_debug3(DBG_PRES|DBG_CTRL, "PRS", t[0], t[1], t[2]);
@@ -344,6 +353,8 @@ static void presence_changed(uint8_t from_addr, uint8_t lsegnum, uint16_t p, int
 		itm_debug2(DBG_ERR|DBG_CTRL, "blk??", from_addr, segnum);
 		return;
 	}
+	itm_debug3(DBG_PRES|DBG_CTRL, "PRBLK", p, segnum, canton);
+
 	int f = 0;
 
 	for (int tn = 0; tn < NUM_TRAINS; tn++) {
@@ -351,14 +362,17 @@ static void presence_changed(uint8_t from_addr, uint8_t lsegnum, uint16_t p, int
 		const train_config_t *tconf = get_train_cnf(tn);
 		// check enabled
 		if (!tconf->enabled) continue;
+		itm_debug3(DBG_PRES|DBG_CTRL, "prblk?", tn, tvar->canton1_addr, tvar->canton2_addr);
 		if (tvar->canton1_addr == canton) {
 			if (p) {
 				itm_debug2(DBG_PRES, "?enter c1", tn, segnum);
+				tvar->c1toc2transition = 0;
 			} else {
 				if (tvar->c1toc2transition) {
 					itm_debug2(DBG_PRES, "leave c1", tn, segnum);
 					train_switched_to_c2(tn, tconf, tvar, 0);
 				} else {
+					tvar->c1toc2transition_inv = tick;
 					itm_debug2(DBG_PRES, "?lv c1 no tr", tn, segnum);
 				}
 
@@ -366,8 +380,13 @@ static void presence_changed(uint8_t from_addr, uint8_t lsegnum, uint16_t p, int
 			f = 1;
 		} else if (tvar->canton2_addr == canton) {
 			if (p) {
-				itm_debug2(DBG_PRES, "enter c2", tn, segnum);
-				tvar->c1toc2transition = 1;
+				if (tick - tvar->c1toc2transition_inv < 20) {
+					itm_debug2(DBG_PRES, "enter c2b", tn, segnum);
+					train_switched_to_c2(tn, tconf, tvar, 0);
+				} else {
+					itm_debug2(DBG_PRES, "enter c2", tn, segnum);
+					tvar->c1toc2transition = 1;
+				}
 			} else {
 				itm_debug2(DBG_PRES, "?leave c2", tn, segnum);
 			}
@@ -387,8 +406,14 @@ static void train_switched_to_c2(int tn, const train_config_t *tconf, train_ctrl
 	uint8_t c1 = tvar->canton1_addr;
 	uint8_t c2 = tvar->canton2_addr;
 
-	itm_debug2(DBG_CTRL, "switch c2", tn, tvar->canton2_addr);
+	tvar->c1toc2transition_inv = 0;
+	tvar->c1toc2transition = 0;
 
+	itm_debug2(DBG_CTRL, "switch c2", tn, tvar->canton2_addr);
+	if (c2 == 0xFF) {
+		itm_debug2(DBG_ERR|DBG_CTRL, "swt no c2", tn, c1);
+		return;
+	}
 	tvar->canton1_addr = tvar->canton2_addr;
 	update_c2(tn);
 
@@ -416,12 +441,12 @@ static void train_switched_to_c2(int tn, const train_config_t *tconf, train_ctrl
 				(c2 == MA_CANTON(0,0))) {
 			// 1->0
 			itm_debug1(DBG_CTRL|DBG_POSE, "HI 1-0", 0);
-			set_pose_trig(tn, -9000);
+			set_pose_trig(tn, -17000);
 		} else if  ((c2 == MA_CANTON(0,1)) &&
 				(c1 == MA_CANTON(0,0))) {
 			// 0->1
 			itm_debug1(DBG_CTRL|DBG_POSE, "HI °-1", 0);
-			set_pose_trig(tn, 6000);
+			set_pose_trig(tn, 9000);
 		}
 	}
 }

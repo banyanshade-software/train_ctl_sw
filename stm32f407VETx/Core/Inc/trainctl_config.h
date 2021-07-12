@@ -21,11 +21,19 @@
 
 #define NUM_TRAINS	8
 
+// -----------------------------------------
+
 #define TFT_DISP 1
 
-#define USE_INA3221 1
-#define DISABLE_INA3221 1
-#define INA3221_TASK 1
+// -----------------------------------------
+
+#define USE_INA3221 		1
+#define DISABLE_INA3221 	0
+#define INA3221_TASK		1
+// only valid with INA3221_TASK
+#define INA3221_TASKRD 		1
+#define INA3221_CHECKCONV 	0
+#define INA3221_CONTIUNOUS	1
 #define NOTIF_VOFF 0
 
 #endif /* INC_TRAINCTL_CONFIG_H_ */

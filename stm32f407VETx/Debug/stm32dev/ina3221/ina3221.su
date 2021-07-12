@@ -1,6 +1,6 @@
-itm_debug.h:34:20:itm_debug1	32	static
-itm_debug.h:38:20:itm_debug2	32	static
-itm_debug.h:42:20:itm_debug3	32	static
+itm_debug.h:35:20:itm_debug1	32	static
+itm_debug.h:39:20:itm_debug2	32	static
+itm_debug.h:43:20:itm_debug3	32	static
 trainmsg.h:113:1:mqf_write_from_canton	16	static
 ina3221.c:31:13:bkpoint	16	static
 ina3221.c:91:13:run_ina_task	48	static

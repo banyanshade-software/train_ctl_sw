@@ -42,6 +42,7 @@ static uint8_t testerAddr;
 static void ctrl_reset(void);
 static void presence_changed(uint8_t from_addr, uint8_t segnum, uint16_t v, int16_t ival);
 static void train_switched_to_c2(int tn, const train_config_t *tconf, train_ctrl_t *tvar, uint8_t fromBemf);
+static void pose_triggered(int tidx, train_ctrl_t *tvar, uint8_t blkaddr);
 
 
 static void ctrl_set_mode(int trnum, train_mode_t mode)
@@ -306,6 +307,10 @@ void ctrl_run_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
 					}
 				}
 				break;
+			case CMD_POSE_TRIGGERED:
+				itm_debug2(DBG_POSE, "Trig", m.v1u, m.v2u);
+				pose_triggered(tidx, tvar, m.v1u);
+				break;
 			default:
 				break;
 
@@ -375,23 +380,67 @@ static void presence_changed(uint8_t from_addr, uint8_t lsegnum, uint16_t p, int
 	}
 }
 
+static void set_pose_trig(int numtrain, int32_t pose);
+
 static void train_switched_to_c2(int tn, const train_config_t *tconf, train_ctrl_t *tvar, uint8_t fromBemf)
 {
+	uint8_t c1 = tvar->canton1_addr;
+	uint8_t c2 = tvar->canton2_addr;
+
 	itm_debug2(DBG_CTRL, "switch c2", tn, tvar->canton2_addr);
+
 	tvar->canton1_addr = tvar->canton2_addr;
 	update_c2(tn);
-	/*
-	tvar->canton2_addr = next_block_addr(tvar->canton2_addr, (tvar->_dir<0));
-	tvar->c1toc2transition = 0;
-	msg_64_t m;
-	m.from = MA_CONTROL_T(tn);
-	m.to = MA_TRAIN_SC(tn);
-	m.cmd = CMD_SET_C1_C2;
-	m.vbytes[0] = tvar->canton1_addr;
-	m.vbytes[1] = tvar->_dir;
-	m.vbytes[2] = tvar->canton2_addr;
-	m.vbytes[3] = tvar->_dir; // XXX
-    mqf_write_from_ctrl(&m);
-    */
+
+	if ((0)) {
+		if ((c1 == MA_CANTON(0,1)) &&
+				(c2 == MA_CANTON(0,0))) {
+			// 1->0
+			itm_debug1(DBG_CTRL|DBG_POSE, "HI 1-0", 0);
+			int nd = 0;
+			if (tvar->_dir>0) nd = -1;
+			else if (tvar->_dir<0) nd = 1;
+			ctrl_set_dir(tn, nd);
+		} else if  ((c2 == MA_CANTON(0,1)) &&
+				(c1 == MA_CANTON(0,0))) {
+			// 1<-0
+			itm_debug1(DBG_CTRL|DBG_POSE, "HI °-1", 0);
+			int nd = 0;
+			if (tvar->_dir>0) nd = -1;
+			else if (tvar->_dir<0) nd = 1;
+			ctrl_set_dir(tn, nd);
+		}
+	}
+	if ((1)) {
+		if ((c1 == MA_CANTON(0,1)) &&
+				(c2 == MA_CANTON(0,0))) {
+			// 1->0
+			itm_debug1(DBG_CTRL|DBG_POSE, "HI 1-0", 0);
+			set_pose_trig(tn, -9000);
+		} else if  ((c2 == MA_CANTON(0,1)) &&
+				(c1 == MA_CANTON(0,0))) {
+			// 0->1
+			itm_debug1(DBG_CTRL|DBG_POSE, "HI °-1", 0);
+			set_pose_trig(tn, 6000);
+		}
+	}
 }
 
+static void set_pose_trig(int numtrain, int32_t pose)
+{
+	msg_64_t m;
+	m.from = MA_CONTROL_T(numtrain);
+	m.from = MA_CONTROL_T(numtrain);
+	m.to =  MA_TRAIN_SC(0);
+	m.cmd = CMD_POSE_SET_TRIG;
+	m.v32 = pose;
+	mqf_write_from_ctrl(&m);
+}
+
+static void pose_triggered(int tidx, train_ctrl_t *tvar, uint8_t blkaddr)
+{
+	int nd = 0;
+	if (tvar->_dir>0) nd = -1;
+	else if (tvar->_dir<0) nd = 1;
+	ctrl_set_dir(tidx, nd);
+}

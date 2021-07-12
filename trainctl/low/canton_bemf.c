@@ -179,7 +179,7 @@ static void process_adc(volatile adc_buf_t *buf, int32_t ticks)
 		if ((1)) {
 			itm_debug3(DBG_ADC|DBG_LOWCTRL, "ADC/Voff", i, voffa, voffb);
 			itm_debug3(DBG_ADC|DBG_LOWCTRL, "ADC/Von",  i, vona, vonb);
-			itm_debug3(DBG_ADC|DBG_LOWCTRL|DBG_CTRL, "ADCoi", i,  voff, von);
+			itm_debug3(DBG_ADC|DBG_LOWCTRL, "ADCoi", i,  voff, von);
 		}
 		if (skp) continue;
 		if ((i==0) && NOTIF_VOFF) {

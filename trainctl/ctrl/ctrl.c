@@ -90,6 +90,9 @@ static void update_c2(int trnum)
 		tvar->canton2_addr = next_block_addr(trctl[trnum].canton1_addr, (tvar->_dir<0));
 	}
 	itm_debug3(DBG_CTRL, "updt_c2", trnum, tvar->canton1_addr, tvar->canton2_addr);
+	const train_config_t *tconf = get_train_cnf(trnum);
+	if (tconf->reversed) dir = -dir;
+
 	msg_64_t m;
 	m.from = MA_CONTROL_T(trnum);
 	m.to =  MA_TRAIN_SC(0);
@@ -107,6 +110,7 @@ static int8_t ctrl_set_dir(int trnum, int dir)
 	//if (trctl[trnum]._target_speed) return 0;
 
 	itm_debug2(DBG_CTRL, "setdir", trnum, dir);
+
 
 	msg_64_t m;
 	m.from = MA_CONTROL_T(trnum);
@@ -177,21 +181,7 @@ void ctrl_run_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
 			trctl[0].canton2_addr = 0xFF;
 			ctrl_set_dir(0, 0);
 		}
-        if ((0)) { // TODO remove
-            msg_64_t m;
-            m.to = MA_TRAIN_SC(0);
-            m.cmd = CMD_SET_C1_C2;
-            m.vbytes[0] = MA_CANTON(0, 0);
-            m.vbytes[1] = 1;
-            m.vbytes[2] = MA_CANTON(0, 1); // 0xFF;
-            m.vbytes[3] = 1; // 0;
-            itm_debug1(DBG_SPDCTL|DBG_CTRL, "init/c1c2", 0);
-            mqf_write_from_ctrl(&m);
-            m.cmd = CMD_SET_TARGET_SPEED;
-            //m.v1 = 90;
-            //itm_debug1(DBG_SPDCTL|DBG_CTRL, "init/spd", m.v1);
-            //mqf_write_from_ctrl(&m); //
-        }
+
         if ((0)) { // test
             msg_64_t m;
         	m.from = MA_CONTROL();
@@ -202,41 +192,7 @@ void ctrl_run_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
         }
 
     }
-	if ((0) && !test_mode) { // test
-		static int cd = 0;
-		int t = (tick / 3000);
-		int tt = t % 3;
-		int md = 0;
-		switch (tt) {
-		case 0: md = 1; break;
-		case 1: md = 0; break;
-		case 2: md = -1; break;
-		}
-		//md = 0; // XXX
-		if (md != cd) {
-			cd = md;
 
-			msg_64_t m;
-			uint8_t t = 0;
-			switch (md) {
-			case 0: t = IHMMSG_TRAINCTL_STOP; break;
-			case 1: t = IHMMSG_TRAINCTL_FWD; break;
-			case -1: t = IHMMSG_TRAINCTL_REV; break;
-			}
-			//ui_msg(1, t, &m, MA_CONTROL_T(0));
-			mqf_write_from_ctrl(&m);
-
-			m.from = MA_CONTROL_T(0);
-			m.to = MA_CANTON(0, 0);
-			m.cmd = CMD_SETVPWM;
-			m.v1u = 0;
-			m.v2 = md*70;
-			itm_debug3(DBG_SPDCTL|DBG_CTRL, "init/c0", md, m.v2, t);
-			mqf_write_from_ctrl(&m);
-			m.to = MA_CANTON(0, 1);
-			mqf_write_from_ctrl(&m);
-		}
-	}
 	/* process messages */
 	for (;;) {
 		msg_64_t m;
@@ -458,7 +414,9 @@ static void set_pose_trig(int numtrain, int32_t pose)
 	m.from = MA_CONTROL_T(numtrain);
 	m.to =  MA_TRAIN_SC(0);
 	m.cmd = CMD_POSE_SET_TRIG;
-	m.v32 = pose;
+	const train_config_t *tconf = get_train_cnf(numtrain);
+	if (tconf->reversed)  m.v32 = -pose;
+	else m.v32 = pose;
 	mqf_write_from_ctrl(&m);
 }
 

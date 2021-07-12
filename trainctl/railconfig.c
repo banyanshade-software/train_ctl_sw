@@ -271,7 +271,7 @@ static  block_canton_config_t BlockCantons[NUM_CANTONS] = {
 };
 #endif
 
-#define DEFAULT_TRAIN_CFG(_EN)  { \
+#define DEFAULT_TRAIN_CFG(_EN, _R)  { \
 						{ /* pidctl_config_t*/ \
 								600, 500, 750,  /* kP, kI, kD */ \
 						}, \
@@ -289,11 +289,12 @@ static  block_canton_config_t BlockCantons[NUM_CANTONS] = {
 						0, /* fix_bemf; */			\
 						0,  /*	uint8_t en_spd2pow; */\
 						20, /*	uint8_t min_power; */ \
+						_R, /* reversed */			\
 				}
 
 static  train_config_t Trains[NUM_TRAINS] = {
-		DEFAULT_TRAIN_CFG(1), DEFAULT_TRAIN_CFG(0), DEFAULT_TRAIN_CFG(0), DEFAULT_TRAIN_CFG(0),
-		DEFAULT_TRAIN_CFG(0), DEFAULT_TRAIN_CFG(0), DEFAULT_TRAIN_CFG(0), DEFAULT_TRAIN_CFG(0),
+		DEFAULT_TRAIN_CFG(1,1), DEFAULT_TRAIN_CFG(0,0), DEFAULT_TRAIN_CFG(0,0), DEFAULT_TRAIN_CFG(0,0),
+		DEFAULT_TRAIN_CFG(0,0), DEFAULT_TRAIN_CFG(0,0), DEFAULT_TRAIN_CFG(0,0), DEFAULT_TRAIN_CFG(0,0),
 };
 
 

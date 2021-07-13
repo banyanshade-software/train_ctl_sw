@@ -49,6 +49,7 @@ typedef struct train_config {
 	uint8_t min_power;
 
 	uint8_t reversed; // if train motor is mounted in the wrong way
+	uint16_t pose_per_cm;
 } train_config_t;
 
 //void train_reset(const train_config_t *c, train_vars_t *v);

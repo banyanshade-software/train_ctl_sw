@@ -290,10 +290,11 @@ static  block_canton_config_t BlockCantons[NUM_CANTONS] = {
 						0,  /*	uint8_t en_spd2pow; */\
 						20, /*	uint8_t min_power; */ \
 						_R, /* reversed */			\
+						500, /* pose_per_cm */ \
 				}
 
 static  train_config_t Trains[NUM_TRAINS] = {
-		DEFAULT_TRAIN_CFG(1,1), DEFAULT_TRAIN_CFG(0,0), DEFAULT_TRAIN_CFG(0,0), DEFAULT_TRAIN_CFG(0,0),
+		DEFAULT_TRAIN_CFG(1,0), DEFAULT_TRAIN_CFG(0,0), DEFAULT_TRAIN_CFG(0,0), DEFAULT_TRAIN_CFG(0,0),
 		DEFAULT_TRAIN_CFG(0,0), DEFAULT_TRAIN_CFG(0,0), DEFAULT_TRAIN_CFG(0,0), DEFAULT_TRAIN_CFG(0,0),
 };
 

@@ -1,5 +1,5 @@
-itm_debug.h:35:20:itm_debug1	32	static
-itm_debug.h:39:20:itm_debug2	32	static
+itm_debug.h:36:20:itm_debug1	32	static
+itm_debug.h:40:20:itm_debug2	32	static
 taskctrl.c:60:6:StartCtrlTask	24	static
 taskctrl.c:129:6:set_pwm_freq	24	static
 taskctrl.c:145:13:run_task_ctrl	40	static

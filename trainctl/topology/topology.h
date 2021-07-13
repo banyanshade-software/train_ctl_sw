@@ -84,4 +84,9 @@ static inline int next_sub_block_addr(uint8_t subaddr, uint8_t sub, int left, ui
     snum = _next_sub_num_for_sub_num(snum, left);
     return _sub_num_to_sub_addr(snum, rsub);
 }
+
+// ---------------------------------------------------------------------
+
+int get_blk_len(int blknum);
+
 #endif /* TOPOLOGY_TOPOLOGY_H_ */

@@ -9,6 +9,7 @@
 #ifndef TOPOLOGY_OCCUPENCY_H_
 #define TOPOLOGY_OCCUPENCY_H_
 
+#error obsolete
 /* 5bits block and subblock clearance/occupency
  occupency can be OR'ed between block and subblock
  on block only, train num is in 3 lsb

@@ -1,6 +1,6 @@
-itm_debug.h:35:20:itm_debug1	32	static
-itm_debug.h:39:20:itm_debug2	32	static
-itm_debug.h:43:20:itm_debug3	32	static
+itm_debug.h:36:20:itm_debug1	32	static
+itm_debug.h:40:20:itm_debug2	32	static
+itm_debug.h:44:20:itm_debug3	32	static
 pidctl.c:34:6:pidctl_reset	16	static
 pidctl.c:44:6:pidctl_set_target	24	static
 pidctl.c:54:9:pidctl_value	48	static

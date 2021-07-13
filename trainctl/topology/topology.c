@@ -40,3 +40,17 @@ int _next_block_num(int blknum, uint8_t left)
 		return -1;
 	}
 }
+
+int get_blk_len(int blknum)
+{
+	switch (blknum) {
+	case 0:
+		return 70;
+	case 1:
+		return 40;
+	case 2:
+		return 60;
+	default:
+		return 10;
+	}
+}

@@ -38,7 +38,7 @@ int mqf_len(mqf_t *m)
 
 void dump_msg(mqf_t *mq, int n);
 
-void mqf_qfull(mqf_t *m, int t)
+void mqf_qfull(mqf_t *m,  int t)
 {
 	itm_debug1(DBG_ERR|DBG_MSG, "w/full", 0);
 	for (;;) {
@@ -56,7 +56,7 @@ int mqf_write(mqf_t *m, void *ptr)
 	int l = mqf_len(m);
 	void Error_Handler(void);
 	if (l<0) Error_Handler();
-	if (l > m->maxuse) m->maxuse = l;
+	if (l > m->maxuse) m->maxuse = (int8_t) l;
 
     if (m->num == l) {
 		itm_debug1(DBG_ERR|DBG_MSG, "w/full", 0);

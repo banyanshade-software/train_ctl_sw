@@ -17,11 +17,11 @@ LFMQUEUE_DEF_C(to_turnout, msg_64_t, 	8, 0)
 LFMQUEUE_DEF_C(from_turnout, msg_64_t, 	1, 0)
 
 
-LFMQUEUE_DEF_C(to_canton, msg_64_t, 	8, 0)
+LFMQUEUE_DEF_C(to_canton, msg_64_t, 	16, 0)
 LFMQUEUE_DEF_C(from_canton, msg_64_t, 	8, 0)
 
 
-LFMQUEUE_DEF_C(to_spdctl, msg_64_t, 	8, 0)
+LFMQUEUE_DEF_C(to_spdctl, msg_64_t, 	16, 0)
 LFMQUEUE_DEF_C(from_spdctl, msg_64_t, 	16, 0)
 
 LFMQUEUE_DEF_C(to_forward, msg_64_t, 	8, 1) // XXX should not have silent drop

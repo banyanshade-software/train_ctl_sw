@@ -58,7 +58,7 @@ typedef struct canton_vars {
 	int32_t selected_centivolt;
 } canton_vars_t;
 
-static canton_vars_t canton_vars[NUM_LOCAL_CANTONS_SW];
+static canton_vars_t canton_vars[NUM_LOCAL_CANTONS_SW]={0};
 
 #define USE_CANTON(_idx) \
 		const canton_config_t *cconf = get_canton_cnf(_idx); \
@@ -66,7 +66,7 @@ static canton_vars_t canton_vars[NUM_LOCAL_CANTONS_SW];
 
 
 
-static void canton_set_pwm(int cn, const canton_config_t *c, canton_vars_t *v,  int dir, int duty);
+static void canton_set_pwm(int cn, const canton_config_t *c, canton_vars_t *v,  int8_t dir, int duty);
 void canton_set_volt(int cn, const canton_config_t *c, canton_vars_t *v, int voltidx);
 
 static void canton_reset(void)
@@ -114,7 +114,7 @@ static void handle_canton_cmd(int cidx, msg_64_t *m)
 }
 
 
-void canton_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
+void canton_tick(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_ uint32_t dt)
 {
 	static int first=1;
 	if (first) {
@@ -138,6 +138,8 @@ void canton_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
             bemf_test_all = 1; //(m.to == MA_BROADCAST) ? 1 : 0;
             bemf_test_mode = test_mode;
             break;
+        default:
+        	break;
         }
         if (test_mode && (testerAddr != m.from)) {
             continue;
@@ -242,7 +244,7 @@ HAL_StatusTypeDef my_HAL_TIM_PWM_Stop(TIM_HandleTypeDef *htim, uint32_t Channel)
 /*
  * it seems that output goes to high impedence when we stop pwm ????
  */
-static void canton_set_pwm(int cidx, const canton_config_t *c, canton_vars_t *v,  int dir, int duty)
+static void canton_set_pwm(int cidx, const canton_config_t *c, canton_vars_t *v,  int8_t dir, int duty)
 {
 	itm_debug3(DBG_LOWCTRL, "c/set_pwm", cidx, dir, duty);
 	int t = 2*duty; // with centered pwm (or normal)
@@ -379,7 +381,7 @@ void canton_set_volt(int n, const canton_config_t *c, canton_vars_t *v, int volt
     v->selected_centivolt =  (c->volts_cv[v->cur_voltidx]);
     train_simu_canton_volt(n, voltidx, vlt);
 }
-void canton_set_pwm(int n, const canton_config_t *c, canton_vars_t *v,  int dir, int duty)
+void canton_set_pwm(int n, const canton_config_t *c, canton_vars_t *v,  int8_t dir, int duty)
 {
     //int n = canton_idx(v);
     v->cur_pwm_duty = duty;
@@ -392,7 +394,7 @@ void canton_set_pwm(int n, const canton_config_t *c, canton_vars_t *v,  int dir,
     
 }
 
-void __attribute__((weak)) train_simu_canton_set_pwm(int numcanton, int dir, int duty)
+void __attribute__((weak)) train_simu_canton_set_pwm(int numcanton, int8_t dir, int duty)
 {
 }
 
@@ -404,7 +406,7 @@ void __attribute__((weak)) train_simu_canton_set_pwm(int numcanton, int dir, int
 
 int volt_index(uint16_t mili_power,
 		const canton_config_t *c1, //canton_vars_t *v1,
-		const canton_config_t *c2, //canton_vars_t *v2,
+		_UNUSED_ const canton_config_t *c2, //canton_vars_t *v2,
 		int *pvi1, int *pvi2,
 		train_volt_policy_t pol)
 {
@@ -412,7 +414,7 @@ int volt_index(uint16_t mili_power,
 	*pvi1 = MAX_PVI;
 	*pvi2 = MAX_PVI;
 
-	if (mili_power <0)    return canton_error_rc(0, ERR_BAD_PARAM_MPOW, "negative milipower");
+	//if (mili_power <0)    return canton_error_rc(0, ERR_BAD_PARAM_MPOW, "negative milipower");
 	if (mili_power >1000) return canton_error_rc(0, ERR_BAD_PARAM_MPOW, "milipower should be 0-999");
 	switch (pol) {
 	default :

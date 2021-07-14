@@ -27,13 +27,13 @@
 #include "misc.h"
 #include "inertia.h"
 
-void    inertia_reset(const inertia_config_t *cnf, inertia_vars_t *vars)
+void    inertia_reset(_UNUSED_ const inertia_config_t *cnf, inertia_vars_t *vars)
 {
 	vars->target = 0;
 	vars->cur = 0;
 
 }
-void    inertia_set_target(const inertia_config_t *cnf, inertia_vars_t *vars, int16_t v)
+void    inertia_set_target(_UNUSED_ const inertia_config_t *cnf, inertia_vars_t *vars, int16_t v)
 {
 	vars->target = v;
 }
@@ -70,7 +70,7 @@ int16_t inertia_value(const inertia_config_t *config, inertia_vars_t *vars, uint
 	}
 	int vold = vars->cur/10;
 	vars->cur += inc;
-	int vnew = vars->cur/10;
+	int16_t vnew = vars->cur/10;
     if (pchanged) *pchanged = (vnew==vold) ? 0 : 1;
     //debug_info(0, "INC/c", inc, vars->cur);
 	return vnew;

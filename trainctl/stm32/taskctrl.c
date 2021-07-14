@@ -57,7 +57,7 @@ static void run_task_ctrl(void);
 extern DMA_HandleTypeDef hdma_i2c3_rx;
 extern DMA_HandleTypeDef hdma_i2c3_tx;
 
-void StartCtrlTask(void *argument)
+void StartCtrlTask(_UNUSED_ void *argument)
 {
 	int nsmpl = sizeof(train_adc_buf)/sizeof(uint16_t);
 
@@ -206,7 +206,7 @@ static void run_task_ctrl(void)
 		turnout_tick(notif, t, dt);
 		itm_debug1(DBG_LOWCTRL, "--ctrl", dt);
 		ctrl_run_tick(notif, t, dt);
-		uint32_t e1 = HAL_GetTick() - t;
+		_UNUSED_ uint32_t e1 = HAL_GetTick() - t;
 #if USE_NOTIF_TIM
 #else
 		//if (cnt>20) {
@@ -237,7 +237,7 @@ static int nhalf=0;
 static int nfull=0;
 
 
-void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* AdcHandle)
+void HAL_ADC_ConvCpltCallback(_UNUSED_ ADC_HandleTypeDef* AdcHandle)
 {
 	nfull++;
 	BaseType_t higher=0;
@@ -246,7 +246,7 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* AdcHandle)
 	portYIELD_FROM_ISR(higher);
 }
 
-void HAL_ADC_ConvHalfCpltCallback(ADC_HandleTypeDef* hadc)
+void HAL_ADC_ConvHalfCpltCallback(_UNUSED_ ADC_HandleTypeDef* hadc)
 {
 	nhalf++;
 	BaseType_t higher=0;
@@ -255,11 +255,11 @@ void HAL_ADC_ConvHalfCpltCallback(ADC_HandleTypeDef* hadc)
 	portYIELD_FROM_ISR(higher);
 }
 
-void HAL_ADC_LevelOutOfWindowCallback(ADC_HandleTypeDef* hadc)
+void HAL_ADC_LevelOutOfWindowCallback(_UNUSED_ ADC_HandleTypeDef* hadc)
 {
 	itm_debug1(DBG_ERR|DBG_TIM, "ADC ERR", 1);
 }
-void  HAL_ADC_ErrorCallback(ADC_HandleTypeDef *hadc)
+void  HAL_ADC_ErrorCallback(_UNUSED_ ADC_HandleTypeDef *hadc)
 {
 	itm_debug1(DBG_ERR|DBG_TIM, "ADC ERR", 0);
 }

@@ -11,23 +11,23 @@
 
 extern uint32_t debug_flags;
 
-#define DBG_TIM  	(1<<0)
-#define DBG_MSG		(1<<1)
-#define DBG_PID		(1<<2)
-#define DBG_INERTIA	(1<<3)
-#define DBG_SPDCTL	(1<<4)
-#define DBG_INA3221 (1<<5)
-#define DBG_PRES	(1<<6)
-#define DBG_CONFIG	(1<<7)
-#define DBG_LOWCTRL	(1<<8)
-#define DBG_TURNOUT	(1<<9)
-#define DBG_CTRL	(1<<10)
-#define DBG_UI		(1<<11)
-#define DBG_ADC 	(1<<12)
-#define DBG_POSE	(1<<13)
-#define DBG_CTRLHI	(1<<14)
+#define DBG_TIM  	(1UL<<0)
+#define DBG_MSG		(1UL<<1)
+#define DBG_PID		(1UL<<2)
+#define DBG_INERTIA	(1UL<<3)
+#define DBG_SPDCTL	(1UL<<4)
+#define DBG_INA3221 (1UL<<5)
+#define DBG_PRES	(1UL<<6)
+#define DBG_CONFIG	(1UL<<7)
+#define DBG_LOWCTRL	(1UL<<8)
+#define DBG_TURNOUT	(1UL<<9)
+#define DBG_CTRL	(1UL<<10)
+#define DBG_UI		(1UL<<11)
+#define DBG_ADC 	(1UL<<12)
+#define DBG_POSE	(1UL<<13)
+#define DBG_CTRLHI	(1UL<<14)
 
-#define DBG_ERR		(1<<31)
+#define DBG_ERR		(1UL<<31)
 
 //void _itm_debug1(const char *msg, int v);
 //void _itm_debug2(const char *msg, int v1, int v2);

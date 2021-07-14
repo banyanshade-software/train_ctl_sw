@@ -18,7 +18,7 @@
 
 
 #if INA3221_TASK
-void presdect_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
+void presdect_tick(_UNUSED_ uint32_t notif_flags, uint32_t tick, uint32_t dt)
 {
 }
 #else

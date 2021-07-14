@@ -51,7 +51,7 @@ static void process_turnout_timers(uint32_t tick, uint32_t dt);
 static void process_turnout_cmd(msg_64_t *m, uint32_t tick, uint32_t dt);
 
 
-void turnout_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
+void turnout_tick(_UNUSED_ uint32_t notif_flags, uint32_t tick, uint32_t dt)
 {
 	static int first=1;
 	if (first) {

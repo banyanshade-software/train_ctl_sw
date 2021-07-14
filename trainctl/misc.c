@@ -37,7 +37,7 @@ void flash_led(void)
 
 
 
-int trainctl_error(char l, int code, const char *msg)
+int trainctl_error(char l, int code, _UNUSED_ const char *msg)
 {
 	int16_t c = code;
 	// add debug msg or notification here

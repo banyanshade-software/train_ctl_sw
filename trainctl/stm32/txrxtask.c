@@ -40,7 +40,7 @@ uint32_t num_msg_get_err = 0;
 static void handleRxChars(frame_msg_t *m);
 static void _send_bytes(uint8_t *b, int len);
 
-void StartTxRxFrameTask(void *argument)
+void StartTxRxFrameTask(_UNUSED_ void *argument)
 {
 	  MX_USB_DEVICE_Init();
 

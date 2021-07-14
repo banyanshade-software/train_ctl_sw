@@ -37,6 +37,7 @@ typedef struct {
 
 	uint16_t spd_limit;
 	uint16_t desired_speed;
+	uint8_t limited:1;
 } train_ctrl_t;
 
 
@@ -59,6 +60,8 @@ static void hi_entered_block_num(int tn, int blknum, int dir, int prevblk, int n
 static void hi_pose_triggered(int tidx, train_ctrl_t *tvar, int blknum);
 static uint16_t check_speed_limit(int tn, uint16_t tspd, train_ctrl_t *tvar);
 static void set_speed_limit(int tn, uint16_t tspd);
+static void hi_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt);
+
 #endif
 
 
@@ -96,18 +99,22 @@ static void update_c2(int trnum)
 		return;
 	}
 	int dir = trctl[trnum]._dir;
+	if (0 == trctl[trnum]._target_speed) dir = 0;
 	if (!dir) {
-		tvar->canton2_addr = 0;
+		tvar->canton2_addr = 0xFF;
 	} else {
 		tvar->canton2_addr = next_block_addr(trctl[trnum].canton1_addr, (tvar->_dir<0));
 	}
 	itm_debug3(DBG_CTRL, "updt_c2", trnum, tvar->canton1_addr, tvar->canton2_addr);
+	if ((trnum==0) && (tvar->canton1_addr==1) && (tvar->canton2_addr==0)) {
+		itm_debug1(DBG_CTRLHI, "bhi", 0);
+	}
 	const train_config_t *tconf = get_train_cnf(trnum);
 	if (tconf->reversed) dir = -dir;
 
 	msg_64_t m;
 	m.from = MA_CONTROL_T(trnum);
-	m.to =  MA_TRAIN_SC(0);
+	m.to =  MA_TRAIN_SC(trnum);
 	m.cmd = CMD_SET_C1_C2;
 	m.vbytes[0] = trctl[trnum].canton1_addr;
 	m.vbytes[1] = dir;
@@ -116,9 +123,9 @@ static void update_c2(int trnum)
 	mqf_write_from_ctrl(&m);
 }
 
-static int8_t ctrl_set_dir(int trnum, int dir)
+static int8_t ctrl_set_dir(int trnum, int dir, int force)
 {
-	if (trctl[trnum]._dir == dir) return 0;
+	if (!force && (trctl[trnum]._dir == dir)) return 0;
 	//if (trctl[trnum]._target_speed) return 0;
 
 	itm_debug2(DBG_CTRL, "setdir", trnum, dir);
@@ -144,6 +151,7 @@ static int8_t ctrl_set_dir(int trnum, int dir)
 static int8_t ctrl_set_tspeed(int trnum, uint16_t tspd)
 {
 	if (trctl[trnum]._target_speed == tspd) return 0;
+	uint16_t oldspd = trctl[trnum]._target_speed ;
 	trctl[trnum]._target_speed = tspd;
 
 	// notif UI
@@ -163,6 +171,10 @@ static int8_t ctrl_set_tspeed(int trnum, uint16_t tspd)
 	m.v1u = trctl[trnum]._target_speed;
 	mqf_write_from_ctrl(&m);
 
+	if ((tspd || oldspd) && (!tspd || !oldspd)) {
+		// update c2 if speed got to 0 or from 0 to non-zero
+		update_c2(trnum);
+	}
 	return 1;
 }
 
@@ -170,7 +182,10 @@ static uint16_t check_speed_limit(int tn, uint16_t tspd, train_ctrl_t *tvar)
 {
 	if (tspd > tvar->spd_limit) {
 		itm_debug3(DBG_CTRLHI, "spd lim", tn, tvar->spd_limit, tspd);
+		tvar->limited = 1;
 		return tvar->spd_limit;
+	} else {
+		tvar->limited = 0;
 	}
 	return tspd;
 }
@@ -180,12 +195,19 @@ static void set_speed_limit(int tn, uint16_t lim)
 	train_ctrl_t *tvar = &trctl[tn];
 	uint16_t oldlim = tvar->spd_limit;
 	tvar->spd_limit = lim;
-
 	if (lim < tvar->_target_speed) {
 		ctrl_set_tspeed(tn, lim);
+		tvar->limited = 1;
 	} else if ((lim > oldlim) && (tvar->_target_speed < tvar->desired_speed)) {
 		uint16_t ns = MIN(lim, tvar->desired_speed);
 		ctrl_set_tspeed(tn, ns);
+		tvar->limited = (tvar->desired_speed > ns);
+	} else {
+		if (tvar->desired_speed > lim) {
+			tvar->limited = 1;
+		} else {
+			tvar->limited = 0;
+		}
 	}
 }
 
@@ -193,6 +215,7 @@ static void ctrl_init(void)
 {
 	memset(trctl, 0, sizeof(train_ctrl_t)*NUM_TRAINS);
 	ctrl_set_mode(0, train_manual);
+	ctrl_set_mode(1, train_auto);
 	ctrl_set_tspeed(0, 0);
 }
 
@@ -213,8 +236,15 @@ void ctrl_run_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
 		if ((1)) {
 			trctl[0].canton1_addr = MA_CANTON(0, 1); // initial blk
 			trctl[0].canton2_addr = 0xFF;
-			ctrl_set_dir(0, 0);
+			ctrl_set_dir(0, 0, 1);
 			hi_entered_block_num(0, 1, 0, -1, -1);
+
+			trctl[1].canton1_addr = MA_CANTON(0, 2); // initial blk
+			trctl[1].canton2_addr = 0xFF;
+			ctrl_set_dir(1, 1, 1);
+			hi_entered_block_num(1, 2, 0, -1, -1);
+			trctl[1].desired_speed = 14;
+			trctl[1].limited = 1;
 		}
 
         if ((0)) { // test
@@ -275,7 +305,7 @@ void ctrl_run_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
 				break;
 			}
 			case CMD_MDRIVE_SPEED_DIR:
-				if (ctrl_set_dir(tidx, m.v2)) {
+				if (ctrl_set_dir(tidx, m.v2, 0)) {
 					hi_entered_block_num(tidx, -1, m.v2, -1, -1);
 				}
 				//FALLTHRU
@@ -305,7 +335,7 @@ void ctrl_run_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
 						if (tvar->_mode != train_fullmanual) {
 							// check validity
 						}
-						ctrl_set_dir(tidx, m.v1);
+						ctrl_set_dir(tidx, m.v1, 0);
 					}
 				}
 				break;
@@ -321,7 +351,7 @@ void ctrl_run_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
 			itm_debug1(DBG_MSG|DBG_CTRL, "bad msg", m.to);
 		}
 	}
-	// xxx
+	hi_tick(notif_flags, tick, dt);
 }
 
 // ---------------------------------------------------------------
@@ -434,7 +464,7 @@ static void set_pose_trig(int numtrain, int32_t pose)
 	msg_64_t m;
 	m.from = MA_CONTROL_T(numtrain);
 	m.from = MA_CONTROL_T(numtrain);
-	m.to =  MA_TRAIN_SC(0);
+	m.to =  MA_TRAIN_SC(numtrain);
 	m.cmd = CMD_POSE_SET_TRIG;
 	const train_config_t *tconf = get_train_cnf(numtrain);
 	if (tconf->reversed)  m.v32 = -pose;
@@ -448,7 +478,7 @@ static void pose_triggered(int tidx, train_ctrl_t *tvar, uint8_t blkaddr)
 	int nd = 0;
 	if (tvar->_dir>0) nd = -1;
 	else if (tvar->_dir<0) nd = 1;
-	ctrl_set_dir(tidx, nd);
+	ctrl_set_dir(tidx, nd, 0);
 #else
 	hi_pose_triggered(tidx, tvar, _blk_addr_to_blk_num(blkaddr));
 #endif
@@ -549,7 +579,7 @@ static int hi_update_speed_limit(int tn,  train_ctrl_t *tvar, int blknum)
 		set_speed_limit(tn, 100);
 		return 0;
 	case BLK_OCC_LEFT:
-		if (tvar->_dir<0) {
+		if ((1) || tvar->_dir<0) {
 			itm_debug1(DBG_CTRLHI, "occ lft", tn);
 			set_speed_limit(tn, 0);
 			return 2;
@@ -561,7 +591,7 @@ static int hi_update_speed_limit(int tn,  train_ctrl_t *tvar, int blknum)
 		}
 		break;
 	case BLK_OCC_RIGHT:
-		if (tvar->_dir>0) {
+		if ((1) || tvar->_dir>0) {
 			itm_debug1(DBG_CTRLHI, "occ right", tn);
 			set_speed_limit(tn, 0);
 			return 2;
@@ -572,6 +602,9 @@ static int hi_update_speed_limit(int tn,  train_ctrl_t *tvar, int blknum)
 			return 1;
 		}
 		break;
+	case BLK_OCC_STOP:
+		set_speed_limit(tn, 0);
+		return 2;
 	}
 	// not reached
 	set_speed_limit(tn, 100);
@@ -579,4 +612,24 @@ static int hi_update_speed_limit(int tn,  train_ctrl_t *tvar, int blknum)
 }
 
 
+static void hi_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
+{
+	if (!occupency_changed) return;
+	itm_debug1(DBG_CTRLHI, "hi_tick", occupency_changed);
+	occupency_changed = 0;
+
+	for (int tidx = 0; tidx<NUM_TRAINS; tidx ++) {
+		train_ctrl_t *tvar = &trctl[tidx];
+		const train_config_t *tconf = get_train_cnf(tidx);
+		if (1==tidx) {
+			itm_debug2(DBG_CTRLHI, "hi1", tconf->enabled, tvar->limited);
+		}
+		if (!tconf->enabled) continue;
+		if (tvar->limited) {
+			itm_debug3(DBG_CTRLHI, "chklim", tidx, tvar->spd_limit, tvar->desired_speed);
+			int blknum = _blk_addr_to_blk_num(trctl[tidx].canton1_addr);
+			hi_update_speed_limit(tidx, tvar, blknum);
+		}
+	}
+}
 

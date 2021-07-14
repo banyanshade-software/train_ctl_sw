@@ -1,8 +1,9 @@
 itm_debug.h:36:20:itm_debug1	32	static
+itm_debug.h:40:20:itm_debug2	32	static
 itm_debug.h:44:20:itm_debug3	32	static
 misc.h:109:21:runtime_error	16	static
 canton_bemf.c:29:6:bemf_reset	16	static
 canton_bemf.c:36:6:bemf_msg	24	static
-canton_bemf.c:53:6:bemf_tick	24	static
-canton_bemf.c:117:23:bemf_convert_to_centivolt	16	static
-canton_bemf.c:142:13:process_adc	80	static
+canton_bemf.c:57:6:bemf_tick	24	static
+canton_bemf.c:121:23:bemf_convert_to_centivolt	16	static
+canton_bemf.c:146:13:process_adc	80	static

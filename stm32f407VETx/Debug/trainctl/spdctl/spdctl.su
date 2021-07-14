@@ -8,8 +8,8 @@ trainmsg.h:121:1:mqf_read_to_spdctl	16	static
 trainmsg.h:122:1:mqf_write_from_spdctl	16	static
 spdctl.c:101:13:spdctl_reset	16	static
 spdctl.c:113:6:spdctl_run_tick	72	static
-spdctl.c:202:13:train_periodic_control	96	static
-spdctl.c:349:13:set_c1_c2	32	static
-spdctl.c:410:13:_set_speed	80	static
-spdctl.c:463:5:train_set_target_speed	24	static
-spdctl.c:483:13:pose_check_trig	40	static
+spdctl.c:204:13:train_periodic_control	96	static
+spdctl.c:351:13:set_c1_c2	40	static
+spdctl.c:415:13:_set_speed	80	static
+spdctl.c:468:5:train_set_target_speed	24	static
+spdctl.c:488:13:pose_check_trig	48	static

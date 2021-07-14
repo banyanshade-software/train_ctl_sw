@@ -48,7 +48,7 @@ static uint8_t needsrefresh_mask;
 #endif
 /// ----------------------------------
 
-static void i2c_ready(int a)
+static void i2c_ready(_UNUSED_ int a)
 {
 
 }
@@ -107,7 +107,7 @@ static int test_mode = 0;
 
 */
 
-void StartUiTask(void *argument)
+void StartUiTask(_UNUSED_ void *argument)
 {
 	// init
 	extern TIM_HandleTypeDef htim4;

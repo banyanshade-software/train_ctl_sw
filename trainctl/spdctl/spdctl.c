@@ -43,7 +43,7 @@
 
 
 //static void process_adc(volatile adc_buffer_t *buf, int32_t ticks);
-static void train_periodic_control(int numtrain, int32_t dt);
+static void train_periodic_control(int numtrain, uint32_t dt);
 
 static volatile int stop_all = 0;
 static int calibrating=0;
@@ -82,7 +82,7 @@ typedef struct train_vars {
     int16_t v_iir;
 } train_vars_t;
 
-static train_vars_t trspc_vars[NUM_TRAINS];
+static train_vars_t trspc_vars[NUM_TRAINS]={0};
 
 
 #define USE_TRAIN(_idx) \
@@ -90,12 +90,12 @@ static train_vars_t trspc_vars[NUM_TRAINS];
 		train_vars_t         *tvars = &trspc_vars[_idx];
 
 
-static void train_periodic_control(int numtrain, int32_t dt);
+static void train_periodic_control(int numtrain, uint32_t dt);
 static void _set_speed(int tidx, const train_config_t *cnf, train_vars_t *vars);
 static void spdctl_reset(void);
 static void set_c1_c2(int num, train_vars_t *tvars, uint8_t c1, int8_t dir1, uint8_t c2, int8_t dir2);
 
-static void pose_check_trig(int numtrain, train_vars_t *tvars);
+static void pose_check_trig(int numtrain, train_vars_t *tvars, int32_t lastincr);
 
 
 static void spdctl_reset(void)
@@ -110,12 +110,12 @@ static void spdctl_reset(void)
 static uint8_t test_mode = 0;
 static uint8_t testerAddr;
 
-void spdctl_run_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
+void spdctl_run_tick(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, uint32_t dt)
 {
 	train_tick_last_dt = dt;
 	train_ntick++;
 
-	itm_debug1(DBG_SPDCTL ,"------- tk", notif_flags);
+	itm_debug1(DBG_SPDCTL ,"------- tk", (int) notif_flags);
 	static int first=1;
 	if (first) {
 		first = 0;
@@ -135,9 +135,11 @@ void spdctl_run_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
             spdctl_reset();
             break;
         case CMD_TEST_MODE:
-            test_mode = m.v1u;
+            test_mode = (uint8_t) m.v1u;
             testerAddr = m.from;
             break;
+        default:
+        	break;
         }
         if (test_mode & (m.from != testerAddr)) {
             continue;
@@ -171,7 +173,7 @@ void spdctl_run_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
                     break;
                 case CMD_SET_TARGET_SPEED:
                     itm_debug1(DBG_SPDCTL, "set_t_spd", m.v1u);
-                    tvars->target_speed = m.v1u;
+                    tvars->target_speed = (int16_t) m.v1u;
                     break;
                 case CMD_SET_C1_C2:
                     itm_debug3(DBG_SPDCTL|DBG_CTRL, "set_c1_c2", tidx, m.vbytes[0], m.vbytes[2]);
@@ -182,7 +184,7 @@ void spdctl_run_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
                 	itm_debug2(DBG_POSE, "POSE set", tidx, m.v32);
                 	tvars->pose_trig = m.v32;
                 	// check if already trigg
-                	pose_check_trig(tidx, tvars);
+                	pose_check_trig(tidx, tvars, 0);
                 	break;
                 default:
                     break;
@@ -191,7 +193,7 @@ void spdctl_run_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
 	}
 	if (test_mode) return;
 	/* process trains */
-	for (int i=0; i<7; i++) {
+	for (int i=0; i<NUM_TRAINS; i++) {
 		//itm_debug1(DBG_SPDCTL, "------ pc", i);
 		train_periodic_control(i, dt);
 	}
@@ -199,7 +201,7 @@ void spdctl_run_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
     
 
 
-static void train_periodic_control(int numtrain, int32_t dt)
+static void train_periodic_control(int numtrain, uint32_t dt)
 {
 	if (stop_all) return;
 
@@ -270,10 +272,10 @@ static void train_periodic_control(int numtrain, int32_t dt)
 			tvars->pidvars.stopped = 1;
         	v = 0;
         } else if (tvars->pidvars.stopped) {
-    		itm_debug1(DBG_PID, "stopped", v);
+    		itm_debug2(DBG_PID, "stopped", numtrain, v);
         	v = 0;
         } else {
-        	itm_debug2(DBG_PID, "pid", bemf, v);
+        	itm_debug3(DBG_PID, "pid", numtrain, bemf, v);
         	//const canton_config_t *cc = get_canton_cnf(vars->current_canton);
         	if (bemf>MAX_PID_VALUE)  bemf=MAX_PID_VALUE; // XXX
         	if (bemf<-MAX_PID_VALUE) bemf=-MAX_PID_VALUE;
@@ -282,7 +284,7 @@ static void train_periodic_control(int numtrain, int32_t dt)
         	int32_t v3;
         	v3 = (v2>100) ? 100 : v2;
         	v3 = (v3<-100) ? -100: v3;
-        	itm_debug2(DBG_PID, "pid/r", v3, v2);
+        	itm_debug3(DBG_PID, "pid/r", numtrain, v3, v2);
         	v = (int16_t)v3 * tvars->C1_dir; // because it will be multiplied again when setting pwm
         }
     }
@@ -307,7 +309,7 @@ static void train_periodic_control(int numtrain, int32_t dt)
     int changed = (tvars->last_speed != v);
     tvars->last_speed = v;
 
-    itm_debug2(DBG_PID|DBG_SPDCTL, "spd", v, changed);
+    itm_debug3(DBG_PID|DBG_SPDCTL, "spd", numtrain, v, changed);
 
     if (changed) {
     	_set_speed(numtrain, tconf, tvars);
@@ -337,8 +339,8 @@ static void train_periodic_control(int numtrain, int32_t dt)
         // TODO: BEMF to speed. currently part of it is done in convert_to_centivolt
         //       but we assume speed is really proportional to BEMF
         tvars->position_estimate += b;
-        itm_debug2(DBG_POSE, "pose", tvars->position_estimate, b);
-        pose_check_trig(numtrain, tvars);
+        itm_debug3(DBG_POSE, "pose", numtrain, tvars->position_estimate, b);
+        pose_check_trig(numtrain, tvars, b);
         if (tconf->notify_pose) {
     		train_notif(numtrain, 'i', (void *)&tvars->position_estimate, sizeof(int32_t));
         }
@@ -350,6 +352,9 @@ static void set_c1_c2(int tidx, train_vars_t *tvars, uint8_t c1, int8_t dir1, ui
 {
 	msg_64_t m;
 	m.from = MA_TRAIN_SC(tidx);
+
+	itm_debug3(DBG_SPDCTL, "s-c1", tidx, c1, dir1);
+	itm_debug3(DBG_SPDCTL, "s-c2", tidx, c2, dir2);
 
 	if ((tvars->C1 != 0xFF) && (tvars->C1 != c1)  && (tvars->C1 != c2)) {
 		m.to = tvars->C1;
@@ -380,7 +385,7 @@ static void set_c1_c2(int tidx, train_vars_t *tvars, uint8_t c1, int8_t dir1, ui
 	tvars->C2 = c2;
 	tvars->C2_dir = dir2;
 	tvars->last_speed = 9000; // make sure cmd is sent
-	itm_debug1(DBG_POSE, "POS reset", tvars->position_estimate);
+	itm_debug2(DBG_POSE, "POS reset", tidx, tvars->position_estimate);
 	tvars->position_estimate = 0; // reset POSE
 }
 
@@ -480,15 +485,17 @@ int train_set_target_speed(int numtrain, int16_t target)
 }
 
 
-static void pose_check_trig(int numtrain, train_vars_t *tvars)
+static void pose_check_trig(int numtrain, train_vars_t *tvars, int32_t lastincr)
 {
 	if (!tvars->pose_trig) return;
 	int tr = 0;
 	if (tvars->pose_trig > 0) {
+		if (lastincr<0) itm_debug3(DBG_ERR|DBG_POSE, "wrong incr", numtrain, lastincr, tvars->pose_trig);
 		if (tvars->position_estimate >= tvars->pose_trig) {
 			tr = 1;
 		}
 	} else { // pose_trig < 0
+		if (lastincr>0) itm_debug3(DBG_ERR|DBG_POSE, "wrong incr", numtrain, lastincr, tvars->pose_trig);
 		if (tvars->position_estimate <= tvars->pose_trig) {
 			tr = 1;
 		}
@@ -500,7 +507,7 @@ static void pose_check_trig(int numtrain, train_vars_t *tvars)
 	m.to = MA_CONTROL_T(numtrain);
 	m.cmd = CMD_POSE_TRIGGERED;
 	m.v1u = tvars->C1;
-	m.v2 = tvars->position_estimate;
+	m.v2 = (int16_t) tvars->position_estimate; // XXX TODO: problem here pose is > 16bits
 	mqf_write_from_spdctl(&m);
 
 	// trig only once

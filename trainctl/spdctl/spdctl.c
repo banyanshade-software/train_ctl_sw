@@ -396,27 +396,6 @@ static void set_c1_c2(int tidx, train_vars_t *tvars, uint8_t c1, int8_t dir1, ui
 	tvars->position_estimate = 0; // reset POSE
 }
 
-#if 0
-static void _set_speed_test_mode(int16_t sv100)
-{
-	USE_TRAIN(0)
-	(void) tvars; // unused
-	for (int i=0; i<NUM_LOCAL_CANTONS; i++) {
-		const canton_config_t *c1;
-		canton_vars_t *cv1;
-		c1 =  get_canton_cnf(i);
-		cv1 = get_canton_vars(i);
-		int pvi1, pvi2;
-		int sig = SIGNOF(sv100);
-		uint16_t v = abs(sv100);
-		uint16_t pwm_duty = volt_index(v*10 /* mili*/,
-				c1, cv1, NULL, NULL,
-				&pvi1, &pvi2, tconf->volt_policy);
-		canton_set_volt(c1, cv1, pvi1);
-		canton_set_pwm(c1, cv1, sig, pwm_duty);
-	}
-}
-#endif
 
 
 static void _set_speed(int tidx, const train_config_t *cnf, train_vars_t *vars)

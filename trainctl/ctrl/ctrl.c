@@ -17,7 +17,7 @@
 //#define DUMMY_BEHAVIOUR 0	// simple/hardcoded behaviour for test
 
 // for test/debug
-static uint8_t ignore_bemf_presence = 1;
+static uint8_t ignore_bemf_presence = 0;
 static uint8_t ignore_ina_presence = 1;
 
 //per train stucture
@@ -217,7 +217,7 @@ static void ctrl_init(void)
 	ctrl_set_mode(0, train_manual);
 	ctrl_set_mode(1, train_auto);
 	if ((1)) {
-		trctl[0].canton1_addr = MA_CANTON(0, 1); // initial blk
+		trctl[0].canton1_addr = MA_CANTON(0, 1);//MA_CANTON(0, 1); // initial blk
 		trctl[0].canton2_addr = 0xFF;
 		trctl[0]._dir = 0;
 		trctl[0].desired_speed = 0;
@@ -225,12 +225,12 @@ static void ctrl_init(void)
 		set_state(0, &trctl[0], train_station);
 		set_block_addr_occupency(trctl[0].canton1_addr, BLK_OCC_STOP);
 
-		if ((0)) {
+		if ((1)) {
 			trctl[1].canton1_addr = MA_CANTON(0, 2); // initial blk
 			trctl[1].canton2_addr = 0xFF;
 			trctl[1]._dir = 1;
 			trctl[1]._target_speed = 0;
-			trctl[1].desired_speed = 28;
+			trctl[1].desired_speed = 12;
 			set_state(1, &trctl[1], train_station);
 			set_block_addr_occupency(trctl[1].canton1_addr, BLK_OCC_STOP);
 
@@ -245,6 +245,8 @@ static void ctrl_init(void)
 			trctl[1].canton2_addr = 0xFF;
 			set_state(1, &trctl[1], train_off);
 			//trctl[1].enabled = 0;
+			update_c2_state_limits(0, &trctl[0], upd_init);
+
 		}
 	}
 }
@@ -683,6 +685,16 @@ static void update_c2_state_limits(int tidx, train_ctrl_t *tvars, update_reason_
 			case BLK_OCC_FREE:
 				itm_debug2(DBG_CTRL, "free", tidx, c2num);
 				tvars->spd_limit = 100; //set_speed_limit(tidx, 100);
+				switch (tvars->_state) {
+				case train_running_c1:
+					break;
+				case train_blk_wait:
+					set_state(tidx, tvars, train_running_c1);
+					break;
+				default:
+					itm_debug2(DBG_ERR|DBG_CTRL, "bad st/4", tidx, tvars->_state);
+					break;
+				}
 				break;
 			case BLK_OCC_RIGHT:
 			case BLK_OCC_LEFT:
@@ -728,14 +740,19 @@ sendlow:
 	if ((c2addr != tvars->canton2_addr) || (updreason == upd_c1c2) || (updreason == upd_change_dir) ||(updreason==upd_init)) {
 		itm_debug3(DBG_CTRL, "C1C2", tidx, tvars->canton1_addr, tvars->canton2_addr);
 		tvars->canton2_addr = c2addr;
+
+		int dir = tvars->_dir;
+		const train_config_t *tconf = get_train_cnf(tidx);
+		if (tconf->reversed) dir = -dir;
+
 		msg_64_t m;
 		m.from = MA_CONTROL_T(tidx);
 		m.to =  MA_TRAIN_SC(tidx);
 		m.cmd = CMD_SET_C1_C2;
 		m.vbytes[0] = tvars->canton1_addr;
-		m.vbytes[1] = tvars->_dir;
+		m.vbytes[1] = dir;
 		m.vbytes[2] = tvars->canton2_addr;
-		m.vbytes[3] = tvars->_dir; // 0;
+		m.vbytes[3] = dir; // 0;
 		mqf_write_from_ctrl(&m);
 	}
 	if ((tvars->_mode != train_fullmanual) && (olim != tvars->spd_limit)) {
@@ -837,7 +854,7 @@ static int32_t pose_middle(int blknum, const train_config_t *tconf, int dir)
 
 static void check_blk_tick(_UNUSED_ uint32_t tick)
 {
-	if ((1)) return;
+	if ((0)) return;
 	if (occupency_changed) {
 		occupency_changed = 0;
 		for (int tidx=0; tidx<NUM_TRAINS; tidx++) {

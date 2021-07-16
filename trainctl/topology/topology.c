@@ -24,7 +24,7 @@ int _blk_num_for_sub_num(int subnum)
 	return -1;
 }
 
-static int sw1 = 1;
+static int sw1 = 0;
 
 int _next_block_num(int blknum, uint8_t left)
 {

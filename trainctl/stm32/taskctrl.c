@@ -135,6 +135,7 @@ void set_pwm_freq(int freqhz)
 	ps = ps-1;
 	cur_freqhz = 60000/(ps+1);
 	__HAL_TIM_SET_PRESCALER(&htim1, ps);
+	__HAL_TIM_SET_PRESCALER(&htim2, ps);
 	__HAL_TIM_SET_PRESCALER(&htim8, ps);
 }
 

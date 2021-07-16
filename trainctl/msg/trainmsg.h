@@ -137,8 +137,8 @@ LFMQUEUE_DEF_H(from_ctrl, msg_64_t)
 #define CMD_BEMF_DETECT_ON_C2		0x13
 #define CMD_BEMF_DETECT_ON_C2ALT 	0x14
 
-#define CMD_MDRIVE_SPEED 			0x15
-#define	CMD_MDRIVE_DIR				0x16
+//#define CMD_MDRIVE_SPEED 			0x15
+//#define	CMD_MDRIVE_DIR			0x16
 #define CMD_MDRIVE_SPEED_DIR 		0x17
 
 /* to UI */

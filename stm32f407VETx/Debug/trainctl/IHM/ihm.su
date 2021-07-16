@@ -1,5 +1,5 @@
-itm_debug.h:36:20:itm_debug1	32	static
-itm_debug.h:40:20:itm_debug2	32	static
+itm_debug.h:37:20:itm_debug1	32	static
+itm_debug.h:41:20:itm_debug2	32	static
 trainmsg.h:163:1:mqf_read_to_ui	16	static
 trainmsg.h:164:1:mqf_write_from_ui	16	static
 ihm.c:61:26:get_rotary	24	static

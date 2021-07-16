@@ -25,7 +25,8 @@ extern uint32_t debug_flags;
 #define DBG_UI		(1UL<<11)
 #define DBG_ADC 	(1UL<<12)
 #define DBG_POSE	(1UL<<13)
-#define DBG_CTRLHI	(1UL<<14)
+#define DBG_POSEC	(1UL<<14)
+#define DBG_CTRLHI	(1UL<<15)
 
 #define DBG_ERR		(1UL<<31)
 

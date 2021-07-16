@@ -17,13 +17,5 @@ typedef enum {
 	train_auto,			//	auto mode
 } train_mode_t;
 
-typedef enum {
-	train_off=0,
-	train_running,		// running (auto or manual)
-	train_station,		// waiting at station
-	train_limited,		// speed limited (block control)
-	train_bad_direction,// direction not allowed (e.g. end of track)
-	train_blk_wait,		// stopped (block control)
-} train_status_t;
 
 #endif /* CTRL_CTRL_H_ */

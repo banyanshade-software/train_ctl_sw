@@ -181,7 +181,7 @@ void spdctl_run_tick(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, uint
                     set_c1_c2(tidx, tvars, m.vbytes[0], m.vbytes[1], m.vbytes[2], m.vbytes[3]);
                     break;
                 case CMD_POSE_SET_TRIG:
-                	itm_debug2(DBG_POSE, "POSE set", tidx, m.v32);
+                	itm_debug2(DBG_POSEC, "POSE set", tidx, m.v32);
                 	tvars->pose_trig = m.v32;
                 	// check if already trigg
                 	pose_check_trig(tidx, tvars, 0);
@@ -385,7 +385,7 @@ static void set_c1_c2(int tidx, train_vars_t *tvars, uint8_t c1, int8_t dir1, ui
 	tvars->C2 = c2;
 	tvars->C2_dir = dir2;
 	tvars->last_speed = 9000; // make sure cmd is sent
-	itm_debug2(DBG_POSE, "POS reset", tidx, tvars->position_estimate);
+	itm_debug2(DBG_POSEC, "POS reset", tidx, tvars->position_estimate);
 	tvars->position_estimate = 0; // reset POSE
 }
 
@@ -490,18 +490,18 @@ static void pose_check_trig(int numtrain, train_vars_t *tvars, int32_t lastincr)
 	if (!tvars->pose_trig) return;
 	int tr = 0;
 	if (tvars->pose_trig > 0) {
-		if (lastincr<0) itm_debug3(DBG_ERR|DBG_POSE, "wrong incr", numtrain, lastincr, tvars->pose_trig);
+		if (lastincr<0) itm_debug3(DBG_ERR|DBG_POSEC, "wrong incr", numtrain, lastincr, tvars->pose_trig);
 		if (tvars->position_estimate >= tvars->pose_trig) {
 			tr = 1;
 		}
 	} else { // pose_trig < 0
-		if (lastincr>0) itm_debug3(DBG_ERR|DBG_POSE, "wrong incr", numtrain, lastincr, tvars->pose_trig);
+		if (lastincr>0) itm_debug3(DBG_ERR|DBG_POSEC, "wrong incr", numtrain, lastincr, tvars->pose_trig);
 		if (tvars->position_estimate <= tvars->pose_trig) {
 			tr = 1;
 		}
 	}
 	if (!tr) return;
-	itm_debug3(DBG_POSE, "POSE trig", numtrain, tvars->position_estimate, tvars->pose_trig);
+	itm_debug3(DBG_POSEC, "POSE trig", numtrain, tvars->position_estimate, tvars->pose_trig);
 	msg_64_t m;
 	m.from = MA_TRAIN_SC(numtrain);
 	m.to = MA_CONTROL_T(numtrain);

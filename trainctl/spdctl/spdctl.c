@@ -80,6 +80,9 @@ typedef struct train_vars {
 	int32_t pose_trig;
 	int32_t bemfiir;
     int16_t v_iir;
+
+    uint8_t c2bemf:1;
+
 } train_vars_t;
 
 static train_vars_t trspc_vars[NUM_TRAINS]={0};
@@ -152,11 +155,12 @@ void spdctl_run_tick(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, uint
                 case CMD_BEMF_NOTIF:
                     if (m.from == tvars->C1) {
                         itm_debug3(DBG_PID, "st bemf", tidx, m.v1, m.from);
-                        tvars->bemf_cv = m.v1;
+                        if (!tvars->c2bemf) tvars->bemf_cv = m.v1;
                         break;
                     } else if (m.from == tvars->C2) {
                         itm_debug3(DBG_PID, "c2 bemf", tidx, m.v1, m.from);
-                        if (abs(m.v1) > abs(tvars->bemf_cv)+50) {
+                        if (tvars->c2bemf) tvars->bemf_cv = m.v1;
+                        else if (abs(m.v1) > abs(tvars->bemf_cv)+50) {
                         	itm_debug3(DBG_SPDCTL|DBG_PRES, "c2_hi", tidx, m.v1, tvars->bemf_cv);
                         	msg_64_t m;
                         	m.from = MA_TRAIN_SC(tidx);
@@ -164,6 +168,7 @@ void spdctl_run_tick(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, uint
                         	m.cmd = CMD_BEMF_DETECT_ON_C2;
                         	m.v1u = tvars->C2;
                             mqf_write_from_spdctl(&m);
+                            tvars->c2bemf = 1;
                         }
                         // check it ?
                     } else {
@@ -355,6 +360,8 @@ static void set_c1_c2(int tidx, train_vars_t *tvars, uint8_t c1, int8_t dir1, ui
 
 	itm_debug3(DBG_SPDCTL, "s-c1", tidx, c1, dir1);
 	itm_debug3(DBG_SPDCTL, "s-c2", tidx, c2, dir2);
+
+	tvars->c2bemf = 0;
 
 	if ((tvars->C1 != 0xFF) && (tvars->C1 != c1)  && (tvars->C1 != c2)) {
 		m.to = tvars->C1;

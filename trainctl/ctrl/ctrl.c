@@ -129,9 +129,15 @@ static void sub_presence_changed(uint32_t tick, uint8_t from_addr, uint8_t segnu
 #define BLK_OCC_RIGHT	0x03
 #define BLK_OCC_C2		0x04
 
+#define BLK_OCC_DELAY1	0x10
+#define BLK_OCC_DELAYM	0x16
+
+#define USE_BLOCK_DELAY_FREE 1
+
 static void set_block_num_occupency(int blknum, uint8_t v);
 static void set_block_addr_occupency(uint8_t blkaddr, uint8_t v);
 static uint8_t get_block_num_occupency(int blknum);
+static void check_block_delayed(uint32_t tick);
 
 
 // ----------------------------------------------------------------------------
@@ -149,13 +155,13 @@ static void ctrl_reset(void)
 static inline void set_state(int tidx, train_ctrl_t *tvar, train_state_t ns)
 {
 	switch (ns) {
-	case train_off: 		itm_debug1(DBG_CTRL, "ST->OFF", tidx); break;
-	case train_running_c1: 	itm_debug1(DBG_CTRL, "ST->RC1", tidx); break;
-	case train_running_c1c2: itm_debug1(DBG_CTRL, "ST->C1C2", tidx); break;
-	case train_station:		itm_debug1(DBG_CTRL, "ST->STA", tidx); break;
-	case train_blk_wait:	 itm_debug1(DBG_CTRL, "ST->BLKW", tidx); break;
+	case train_off: 			itm_debug1(DBG_CTRL, "ST->OFF", tidx); break;
+	case train_running_c1: 		itm_debug1(DBG_CTRL, "ST->RC1", tidx); break;
+	case train_running_c1c2: 	itm_debug1(DBG_CTRL, "ST->C1C2", tidx); break;
+	case train_station:			itm_debug1(DBG_CTRL, "ST->STA", tidx); break;
+	case train_blk_wait:	 	itm_debug1(DBG_CTRL, "ST->BLKW", tidx); break;
 	case train_end_of_track:	itm_debug1(DBG_CTRL, "ST->EOT", tidx); break;
-	default: itm_debug2(DBG_CTRL, "ST->?", tidx, ns); break;
+	default: 					itm_debug2(DBG_CTRL, "ST->?", tidx, ns); break;
 	}
 	tvar->_state = ns;
 }
@@ -323,6 +329,8 @@ void ctrl_run_tick(_UNUSED_ uint32_t notif_flags, uint32_t tick, _UNUSED_ uint32
 		ctrl_reset();
     }
 
+	check_block_delayed(tick);
+
 	/* process messages */
 	for (;;) {
 		msg_64_t m;
@@ -407,8 +415,13 @@ static void set_block_num_occupency(int blknum, uint8_t v)
 {
 	if (-1 == blknum) fatal();
 	if (blk_occup[blknum] != v) {
-		blk_occup[blknum] = v;
-		occupency_changed = 1;
+		if (USE_BLOCK_DELAY_FREE && (v==BLK_OCC_FREE)) {
+			if (blk_occup[blknum] >= BLK_OCC_DELAY1) fatal();
+			blk_occup[blknum] = BLK_OCC_DELAYM;
+		} else {
+			blk_occup[blknum] = v;
+			occupency_changed = 1;
+		}
 	}
 	if ((1)) {
 		itm_debug3(DBG_CTRL, "BO123:", blk_occup[0], blk_occup[1], blk_occup[2]);
@@ -435,6 +448,28 @@ static uint8_t occupied(int dir)
 	if (dir<0) return BLK_OCC_LEFT;
 	if (dir>0) return BLK_OCC_RIGHT;
 	return BLK_OCC_STOP;
+}
+
+static void check_block_delayed(_UNUSED_ uint32_t tick)
+{
+	if (!USE_BLOCK_DELAY_FREE) return;
+#if 0
+	static int cnt = 0;
+	cnt++;
+	if (cnt % 10) return;
+#else
+	static uint32_t lastcheck = 0;
+	if (tick<lastcheck+100) return;
+	lastcheck = tick;
+#endif
+	for (int i=0; i<32; i++) {
+		if (blk_occup[i] == BLK_OCC_DELAY1) {
+			blk_occup[i] = BLK_OCC_FREE;
+			occupency_changed = 1;
+		} else if (blk_occup[i] > BLK_OCC_DELAY1) {
+			blk_occup[i]--;
+		}
+	}
 }
 
 // ---------------------------------------------------------------
@@ -673,6 +708,7 @@ static void update_c2_state_limits(int tidx, train_ctrl_t *tvars, update_reason_
 					break;
 				}
 				break;
+			default:
 			case BLK_OCC_RIGHT:
 			case BLK_OCC_LEFT:
 			case BLK_OCC_STOP:
@@ -700,9 +736,6 @@ static void update_c2_state_limits(int tidx, train_ctrl_t *tvars, update_reason_
 				tvars->spd_limit = 0;
 				break;
 			}
-			default:
-				fatal();
-				break;
 		}
 	}
 	if (c2num>=0) {

@@ -19,6 +19,9 @@ void train_simu_canton_set_pwm(int numcanton, int8_t dir, int duty);
 #define NUM_LOCAL_CANTONS_HW 5
 #define NUM_LOCAL_CANTONS_SW 8
 
+#define NUM_LOCAL_TURNOUTS 8
+
+
 #define USE_INA3221
 
 #define NUM_TRAINS 8

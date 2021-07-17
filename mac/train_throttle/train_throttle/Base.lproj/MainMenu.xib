@@ -1435,11 +1435,11 @@
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <button verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="s7Q-dZ-wXX">
-                                                        <rect key="frame" x="2" y="83" width="105" height="32"/>
+                                                        <rect key="frame" x="10" y="83" width="90" height="32"/>
                                                         <constraints>
                                                             <constraint firstAttribute="width" constant="69" id="SNb-ko-Z6e"/>
                                                         </constraints>
-                                                        <buttonCell key="cell" type="push" title="A (courbe)" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="GTE-oj-qB4">
+                                                        <buttonCell key="cell" type="push" title="A (droit)" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="GTE-oj-qB4">
                                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                             <font key="font" metaFont="system"/>
                                                         </buttonCell>
@@ -1449,7 +1449,7 @@
                                                     </button>
                                                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="pph-Qv-3es">
                                                         <rect key="frame" x="14" y="46" width="81" height="32"/>
-                                                        <buttonCell key="cell" type="push" title="B (droit)" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="2Fh-cQ-W4k">
+                                                        <buttonCell key="cell" type="push" title="B (turn)" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="2Fh-cQ-W4k">
                                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                             <font key="font" metaFont="system"/>
                                                         </buttonCell>
@@ -1926,10 +1926,10 @@
             <rect key="contentRect" x="109" y="138" width="708" height="600"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1280" height="800"/>
             <view key="contentView" identifier="par_G0_test_mode" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="eW8-Bh-GGe">
-                <rect key="frame" x="0.0" y="185" width="665" height="415"/>
+                <rect key="frame" x="0.0" y="0.0" width="665" height="415"/>
                 <subviews>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Cnw-SD-Jxt">
-                        <rect key="frame" x="18" y="715" width="56" height="14"/>
+                        <rect key="frame" x="18" y="900" width="56" height="14"/>
                         <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" title="PWM freq" id="ZSs-mL-lqQ">
                             <font key="font" metaFont="smallSystem"/>
                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -1937,7 +1937,7 @@
                         </textFieldCell>
                     </textField>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="bPL-58-xHf">
-                        <rect key="frame" x="18" y="643" width="75" height="14"/>
+                        <rect key="frame" x="18" y="828" width="75" height="14"/>
                         <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" title="Num Cantons" id="Qgd-gB-GsB">
                             <font key="font" metaFont="smallSystem"/>
                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -1945,7 +1945,7 @@
                         </textFieldCell>
                     </textField>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="uoV-Qm-X87">
-                        <rect key="frame" x="18" y="578" width="62" height="14"/>
+                        <rect key="frame" x="18" y="763" width="62" height="14"/>
                         <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" title="Num trains" id="wDa-gK-ynD">
                             <font key="font" metaFont="smallSystem"/>
                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -1953,13 +1953,13 @@
                         </textFieldCell>
                     </textField>
                     <box horizontalHuggingPriority="750" ambiguous="YES" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="trk-Sf-2CR">
-                        <rect key="frame" x="134" y="205" width="16" height="560"/>
+                        <rect key="frame" x="134" y="390" width="16" height="560"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="12" id="MVz-ss-pbU"/>
                         </constraints>
                     </box>
                     <box ambiguous="YES" title="Notif" translatesAutoresizingMaskIntoConstraints="NO" id="UsH-T6-g9C">
-                        <rect key="frame" x="165" y="814" width="123" height="100"/>
+                        <rect key="frame" x="165" y="999" width="123" height="100"/>
                         <view key="contentView" id="nGc-lB-NOm">
                             <rect key="frame" x="3" y="3" width="117" height="82"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -2000,7 +2000,7 @@
                         </constraints>
                     </box>
                     <box ambiguous="YES" title="Speed" translatesAutoresizingMaskIntoConstraints="NO" id="gKI-pI-aNn">
-                        <rect key="frame" x="290" y="629" width="358" height="100"/>
+                        <rect key="frame" x="290" y="814" width="358" height="100"/>
                         <view key="contentView" id="1eU-q3-RAX">
                             <rect key="frame" x="3" y="3" width="352" height="82"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -2114,7 +2114,7 @@
                         </view>
                     </box>
                     <box ambiguous="YES" borderType="line" title="Inertia param" translatesAutoresizingMaskIntoConstraints="NO" id="04R-jp-k8h">
-                        <rect key="frame" x="165" y="382" width="157" height="231"/>
+                        <rect key="frame" x="165" y="567" width="157" height="231"/>
                         <view key="contentView" id="M9K-Fj-EHU">
                             <rect key="frame" x="3" y="3" width="151" height="213"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -2398,7 +2398,7 @@
                         </view>
                     </box>
                     <textField identifier="par_G0_pwmfreq" verticalHuggingPriority="750" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="23m-14-Hyr">
-                        <rect key="frame" x="20" y="686" width="96" height="21"/>
+                        <rect key="frame" x="20" y="871" width="96" height="21"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="96" id="2Pc-2p-wvq"/>
                         </constraints>
@@ -2416,7 +2416,7 @@
                         </connections>
                     </textField>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="GDB-7Z-9UV">
-                        <rect key="frame" x="18" y="934" width="84" height="16"/>
+                        <rect key="frame" x="18" y="1119" width="84" height="16"/>
                         <constraints>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="80" id="qiK-0Q-59m"/>
                         </constraints>
@@ -2435,7 +2435,7 @@
                         </textFieldCell>
                     </textField>
                     <textField identifier="par_G0_numcantons" verticalHuggingPriority="750" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="PqE-6N-tyk">
-                        <rect key="frame" x="20" y="614" width="96" height="21"/>
+                        <rect key="frame" x="20" y="799" width="96" height="21"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" drawsBackground="YES" id="BgV-Fs-IYW">
                             <font key="font" usesAppearanceFont="YES"/>
                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -2451,7 +2451,7 @@
                         </textFieldCell>
                     </textField>
                     <button identifier="par_G0_test_mode" verticalHuggingPriority="750" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Zj0-BG-zBp">
-                        <rect key="frame" x="18" y="501" width="83" height="18"/>
+                        <rect key="frame" x="18" y="686" width="83" height="18"/>
                         <buttonCell key="cell" type="check" title="test mode" bezelStyle="regularSquare" imagePosition="left" inset="2" id="ggf-pg-m1r">
                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                             <font key="font" metaFont="system"/>

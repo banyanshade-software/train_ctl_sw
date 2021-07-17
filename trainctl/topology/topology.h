@@ -89,4 +89,14 @@ static inline int next_sub_block_addr(uint8_t subaddr, uint8_t sub, int left, ui
 
 int get_blk_len(int blknum);
 
+// ---------------------------------------------------------------------
+
+// turnouts NUM_TURNOUTS
+// this only set internal topology variables, and does not actually change
+// the turnout. ctrl.c does this
+// 0=straight (TURNOUT_A), 1=turn (TURNOUT_B)
+
+void topolgy_set_turnout(int tn, int v);
+int topology_get_turnout(int tn);
+
 #endif /* TOPOLOGY_TOPOLOGY_H_ */

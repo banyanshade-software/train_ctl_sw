@@ -13,6 +13,8 @@
  */
 
 #include <stddef.h>
+#include <memory.h>
+#include "railconfig.h"
 #include "topology.h"
 
 
@@ -24,7 +26,6 @@ int _blk_num_for_sub_num(int subnum)
 	return -1;
 }
 
-static int sw1 = 0;
 
 int _next_block_num(int blknum, uint8_t left)
 {
@@ -33,7 +34,7 @@ int _next_block_num(int blknum, uint8_t left)
 	case 0:
 		return left ? 	-1 : 1;
 	case 1:
-		return left ?	(sw1 ? 2 : 0)  : -1;
+		return left ?	(topology_get_turnout(0) ? 0 : 2)  : -1;
 	case 2:
 		return left ?   -1 : 1;
 	default:
@@ -54,3 +55,32 @@ int get_blk_len(int blknum)
 		return 10;
 	}
 }
+
+
+// --------------------------------------------------------------------------------------
+
+static volatile uint32_t turnoutvals = 0; // bit field
+
+void topolgy_set_turnout(int tn, int v)
+{
+	if (tn >= NUM_TURNOUTS) return;
+	if (tn<0) return;
+	if (tn>31) return;
+
+	if (v) {
+		__sync_fetch_and_or(&turnoutvals, (1<<tn));
+	} else {
+		__sync_fetch_and_nand(&turnoutvals, (1<<tn));
+	}
+}
+int topology_get_turnout(int tn)
+{
+	if (tn >= NUM_TURNOUTS) return 0;
+	if (tn<0) return 0;
+	if (tn>31) return 0;
+
+	uint32_t b = turnoutvals;
+	return (b & (1<<tn)) ? 1 : 0;
+}
+
+

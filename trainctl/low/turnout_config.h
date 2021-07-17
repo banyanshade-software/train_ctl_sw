@@ -8,7 +8,7 @@
 #ifndef LOW_TURNOUT_CONFIG_H_
 #define LOW_TURNOUT_CONFIG_H_
 
-#define NUM_TURNOUT 8
+//#define NUM_TURNOUT 8
 
 typedef struct turnout_config {
 #ifndef TRAIN_SIMU

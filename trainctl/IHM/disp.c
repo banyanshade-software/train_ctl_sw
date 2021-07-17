@@ -181,6 +181,9 @@ void ihm_setlayout(int numdisp, int numlayout)
 	case LAYOUT_INA3221_VAL:
 		p = layout_ina3221_val;
 		break;
+	default:
+		itm_debug1(DBG_ERR|DBG_UI, "bad layout", numlayout);
+		break;
 	}
 	disp[numdisp] = p;
 }

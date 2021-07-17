@@ -108,7 +108,7 @@ static void run_ina_task(void)
 {
 	ina3221_init_and_configure();
 	ina_state_t state = state_idle;
-	int nstuck = 0;
+	_UNUSED_ int nstuck = 0;
 	int rc;
 	for (;;) {
 		uint32_t notif = 0;
@@ -345,7 +345,7 @@ static int _read_cvrf(void)
 }
 #endif
 
-static void _read_complete(int err)
+static void _read_complete(_UNUSED_ int err)
 {
 	uint16_t *valu = (uint16_t *) cur_values;
 	int16_t  *vals = (int16_t *) cur_values;
@@ -389,7 +389,7 @@ static void _read_complete(int err)
 	}
 }
 
-void HAL_I2C_MemTxCpltCallback(I2C_HandleTypeDef *hi2c)
+void HAL_I2C_MemTxCpltCallback(_UNUSED_ I2C_HandleTypeDef *hi2c)
 {
 	BEGIN_ISR
 	BaseType_t higher=0;
@@ -398,7 +398,7 @@ void HAL_I2C_MemTxCpltCallback(I2C_HandleTypeDef *hi2c)
 	END_ISR;
 }
 
-void HAL_I2C_MemRxCpltCallback(I2C_HandleTypeDef *hi2c)
+void HAL_I2C_MemRxCpltCallback(_UNUSED_ I2C_HandleTypeDef *hi2c)
 {
 	BEGIN_ISR
 	BaseType_t higher=0;
@@ -409,7 +409,7 @@ void HAL_I2C_MemRxCpltCallback(I2C_HandleTypeDef *hi2c)
 
 
 
-void HAL_I2C_ErrorCallback(I2C_HandleTypeDef *hi2c)
+void HAL_I2C_ErrorCallback(_UNUSED_ I2C_HandleTypeDef *hi2c)
 {
 	BEGIN_ISR
 	lastErr = hi2c->ErrorCode;
@@ -1071,7 +1071,7 @@ static void ina3221_init_and_configure(void)
 
 // ----------------------------------------------------------------------------------
 
-void ina3221_task_start(void *argument)
+void ina3221_task_start(_UNUSED_ void *argument)
 {
 #if INA3221_TASK
 	if (DISABLE_INA3221) {

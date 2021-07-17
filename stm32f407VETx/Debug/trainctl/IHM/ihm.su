@@ -5,4 +5,4 @@ trainmsg.h:164:1:mqf_write_from_ui	16	static
 ihm.c:61:26:get_rotary	24	static
 ihm.c:75:16:get_srotary	24	static
 ihm.c:97:6:ihm_runtick	40	static
-ihm.c:199:13:ui_process_msg	40	static
+ihm.c:202:13:ui_process_msg	40	static

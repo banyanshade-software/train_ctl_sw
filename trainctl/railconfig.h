@@ -58,7 +58,12 @@
 
 // xxx #define NUM_TRAINS  1
 
-#define NUM_TURNOUTS 1
+#ifndef NUM_LOCAL_TURNOUTS
+#define NUM_LOCAL_TURNOUTS 1
+#error oops
+#endif
+
+#define NUM_TURNOUTS (NUM_LOCAL_TURNOUTS)
 
 // ---------------------------------------------------------
 

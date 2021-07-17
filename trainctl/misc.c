@@ -37,7 +37,7 @@ void flash_led(void)
 
 
 
-int trainctl_error(char l, int code, _UNUSED_ const char *msg)
+int trainctl_error(_UNUSED_ char l, int code, _UNUSED_ const char *msg)
 {
 	int16_t c = code;
 	// add debug msg or notification here
@@ -50,11 +50,11 @@ int trainctl_error(char l, int code, _UNUSED_ const char *msg)
 
 // -------------------------------------------------------------------------
 
-void __attribute__((weak)) trainctl_notif(uint8_t sel, uint8_t num, uint8_t cmd, uint8_t *dta, int dtalen) 
+void __attribute__((weak)) trainctl_notif(_UNUSED_ uint8_t sel, _UNUSED_ uint8_t num, _UNUSED_ uint8_t cmd, _UNUSED_ uint8_t *dta, _UNUSED_ int dtalen)
 {
 
 }
-void __attribute__((weak)) trainctl_notif2(uint8_t sel, uint8_t num, uint8_t cmd, char *msg, int32_t v1, int32_t v2, int32_t v3)
+void __attribute__((weak)) trainctl_notif2(_UNUSED_ uint8_t sel, _UNUSED_ uint8_t num, _UNUSED_ uint8_t cmd, _UNUSED_ char *msg, _UNUSED_ int32_t v1, _UNUSED_ int32_t v2, _UNUSED_ int32_t v3)
 {
 
 }

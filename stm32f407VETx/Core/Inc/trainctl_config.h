@@ -21,6 +21,8 @@
 
 #define NUM_TRAINS	8
 
+#define NUM_LOCAL_TURNOUTS 8
+
 // -----------------------------------------
 
 #define TFT_DISP 1

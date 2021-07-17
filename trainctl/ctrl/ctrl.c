@@ -145,6 +145,8 @@ static void check_block_delayed(uint32_t tick);
 
 
 // ----------------------------------------------------------------------------
+// turnouts
+static void set_turnout(int tn, int v);
 
 // ----------------------------------------------------------------------------
 
@@ -203,6 +205,7 @@ static void ctrl_init(void)
 	memset(trctl, 0, sizeof(train_ctrl_t)*NUM_TRAINS);
 	ctrl_set_mode(0, train_manual);
 	ctrl_set_mode(1, train_auto);
+	set_turnout(0, 0);
 	if ((1)) {
 		trctl[0].canton1_addr = MA_CANTON(0, 1);//MA_CANTON(0, 1); // initial blk
 		trctl[0].canton2_addr = 0xFF;
@@ -411,7 +414,7 @@ void ctrl_run_tick(_UNUSED_ uint32_t notif_flags, uint32_t tick, _UNUSED_ uint32
 // ---------------------------------------------------------------
 
 
-static uint8_t blk_occup[32] = {0}; // TODO 32
+static uint8_t blk_occup[NUM_CANTONS] = {0}; // TODO 32
 static uint8_t occupency_changed = 0;
 
 
@@ -466,7 +469,7 @@ static void check_block_delayed(_UNUSED_ uint32_t tick)
 	if (tick<lastcheck+100) return;
 	lastcheck = tick;
 #endif
-	for (int i=0; i<32; i++) {
+	for (int i=0; i<NUM_CANTONS; i++) {
 		if (blk_occup[i] == BLK_OCC_DELAY1) {
 			blk_occup[i] = BLK_OCC_FREE;
 			occupency_changed = 1;
@@ -863,6 +866,7 @@ static int32_t pose_middle(int blknum, const train_config_t *tconf, int dir)
 	if (dir<0) pm = -pm;
 	return pm;
 }
+
 // ---------------------------------------------------------------
 
 
@@ -882,4 +886,21 @@ static void check_blk_tick(_UNUSED_ uint32_t tick)
 			}
 		}
 	}
+}
+
+
+// ---------------------------------------------------------------
+
+static void set_turnout(int tn, int v)
+{
+	if (tn<0) fatal();
+	if (tn>=NUM_TURNOUTS) fatal;
+	if (tn>=NUM_LOCAL_TURNOUTS) fatal; // TODO
+	msg_64_t m;
+	m.from = MA_CONTROL();
+	m.to = MA_TURNOUT(0, tn); // TODO board num
+	m.cmd = v ? CMD_TURNOUT_B : CMD_TURNOUT_A;
+
+	mqf_write_from_ctrl(&m);
+	topolgy_set_turnout(tn, v);
 }

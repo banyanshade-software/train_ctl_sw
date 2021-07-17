@@ -111,6 +111,9 @@ void ihm_runtick(void)
 		case 2:
 			ihm_setlayout(0, LAYOUT_INA3221_VAL);
 			break;
+		default:
+			itm_debug1(DBG_ERR|DBG_UI, "bad ihm_mod", ihm_mode);
+			break;
 		}
 		for (int i = 0; i<DISP_MAX_REGS; i++) {
 			ihm_setvar(0, i, 0);
@@ -208,6 +211,8 @@ static void ui_process_msg(void)
 		}
 
 		switch(m.cmd) {
+		default:
+			break;
         case CMD_TEST_MODE:
             test_mode = m.v1u;
             //ui_write_mode(0);

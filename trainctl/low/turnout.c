@@ -67,6 +67,8 @@ void turnout_tick(_UNUSED_ uint32_t notif_flags, uint32_t tick, uint32_t dt)
 			process_turnout_cmd(&m, tick, dt);
 		} else if (IS_BROADCAST(m.to)) {
 			switch (m.cmd) {
+			default:
+				break;
 			case CMD_RESET: // FALLTHRU
 			case CMD_EMERGENCY_STOP:
 				turnout_reset();
@@ -85,7 +87,7 @@ typedef struct turnout_vars {
 	uint8_t st;
 } turnout_vars_t;
 
-static turnout_vars_t tvars[NUM_TURNOUT];
+static turnout_vars_t tvars[NUM_LOCAL_TURNOUTS];
 
 
 #define ST_IDLE		0
@@ -101,7 +103,7 @@ static turnout_vars_t tvars[NUM_TURNOUT];
 		turnout_vars_t         *avars = &tvars[_idx];
 
 
-static void process_turnout_cmd(msg_64_t *m, uint32_t tick, uint32_t dt)
+static void process_turnout_cmd(msg_64_t *m, _UNUSED_ uint32_t tick, _UNUSED_ uint32_t dt)
 {
 	uint8_t tidx = m->to & 0x07;
 	USE_TURNOUT(tidx)
@@ -130,13 +132,16 @@ static void process_turnout_cmd(msg_64_t *m, uint32_t tick, uint32_t dt)
 #endif
 		avars->st = ST_SETB;
 		break;
+	default:
+		itm_debug1(DBG_ERR|DBG_TURNOUT, "inv cmd", m->cmd);
+		break;
 	}
 }
 
 
 static void turnout_reset(void)
 {
-	for (int tidx=0; tidx<NUM_TURNOUT; tidx++) {
+	for (int tidx=0; tidx<NUM_LOCAL_TURNOUTS; tidx++) {
 		USE_TURNOUT(tidx) 	// aconf avars
 		memset(avars, 0, sizeof(*avars));
 		avars->value = 0;
@@ -169,9 +174,9 @@ int turnout_state(int tidx)
 
 
 
-static void process_turnout_timers(uint32_t tick, uint32_t dt)
+static void process_turnout_timers(_UNUSED_ uint32_t tick, _UNUSED_ uint32_t dt)
 {
-	for (int i=0; i<NUM_TURNOUTS; i++) {
+	for (int i=0; i<NUM_LOCAL_TURNOUTS; i++) {
 		USE_TURNOUT(i)		// aconf , avars
 #ifndef TRAIN_SIMU
         if (!aconf->cmd_port) continue;

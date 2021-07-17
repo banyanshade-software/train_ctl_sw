@@ -10,4 +10,4 @@ canton.c:117:6:canton_tick	56	static
 canton.c:218:19:my_HAL_TIM_PWM_Stop	16	static
 canton.c:247:13:canton_set_pwm	48	static
 canton.c:346:6:canton_set_volt	32	static
-canton.c:407:5:volt_index	48	static
+canton.c:409:5:volt_index	48	static

@@ -274,6 +274,14 @@ static int useMsg64 = 0;
 
 - (IBAction) turnoutA:(id)sender
 {
+#if 1
+    msg_64_t m;
+    m.to = MA_TURNOUT(0, 0);
+    m.from = MA_UI(0);
+    m.cmd = CMD_TURNOUT_A;
+    //m.v1u = tm;
+    [self sendMsg64:m];
+#else
     uint8_t spdfrm[] = "|zA\0S|....";
     NSInteger t = [sender tag];
     spdfrm[3] = (uint8_t)t;
@@ -281,17 +289,17 @@ static int useMsg64 = 0;
     [self sendFrame:spdfrm len:l blen:sizeof(spdfrm) then:^{
         NSLog(@"turnout done");
     }];
+#endif
 }
 
 - (IBAction) turnoutB:(id)sender
 {
-    uint8_t spdfrm[] = "|zA\0s|....";
-    NSInteger t = [sender tag];
-    spdfrm[3] = (uint8_t)t;
-    int l = 2+4+0;
-    [self sendFrame:spdfrm len:l blen:sizeof(spdfrm) then:^{
-        NSLog(@"turnout done");
-    }];
+    msg_64_t m;
+    m.to = MA_TURNOUT(0, 0);
+    m.from = MA_UI(0);
+    m.cmd = CMD_TURNOUT_B;
+    //m.v1u = tm;
+    [self sendMsg64:m];
 }
 
 
@@ -1393,7 +1401,8 @@ void train_simu_canton_volt(int numcanton, int voltidx, int vlt100)
             break;
     }
 }
-void train_simu_canton_set_pwm(int numcanton, int dir, int duty)
+
+void train_simu_canton_set_pwm(int numcanton, int8_t dir, int duty)
 {
     [theDelegate simuSetPwmCanton:numcanton dir:dir duty:duty];
 }

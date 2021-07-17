@@ -6,10 +6,10 @@ misc.h:132:20:train_notif	32	static
 misc.h:137:20:debug_info	40	static
 trainmsg.h:121:1:mqf_read_to_spdctl	16	static
 trainmsg.h:122:1:mqf_write_from_spdctl	16	static
-spdctl.c:101:13:spdctl_reset	16	static
-spdctl.c:113:6:spdctl_run_tick	72	static
-spdctl.c:204:13:train_periodic_control	96	static
-spdctl.c:351:13:set_c1_c2	40	static
-spdctl.c:415:13:_set_speed	80	static
-spdctl.c:468:5:train_set_target_speed	24	static
-spdctl.c:488:13:pose_check_trig	48	static
+spdctl.c:104:13:spdctl_reset	16	static
+spdctl.c:116:6:spdctl_run_tick	72	static
+spdctl.c:209:13:train_periodic_control	96	static
+spdctl.c:356:13:set_c1_c2	40	static
+spdctl.c:401:13:_set_speed	80	static
+spdctl.c:454:5:train_set_target_speed	24	static
+spdctl.c:474:13:pose_check_trig	48	static

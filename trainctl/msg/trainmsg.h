@@ -38,8 +38,8 @@ typedef uint8_t  msg_addr_t;
 // turnouts : up to 8 board with 8 turnouts (may be changed to 4 boards with 16 turnouts)
 // 0 1  b b b t t t
 #define MA_ADDR_2_TURNOUT	0x40
-#define MA_TURNOUT(_board, _c) (MA_ADDR_2_CANTON | (((_board) & 0x7)<<3 | ((_c) & 0x07)))
-#define IS_TURNOUT(_addr) (MA_ADDR_2_CANTON==((_addr) & MA_ADDR_MASK_2))
+#define MA_TURNOUT(_board, _c) (MA_ADDR_2_TURNOUT | (((_board) & 0x7)<<3 | ((_c) & 0x07)))
+#define IS_TURNOUT(_addr) (MA_ADDR_2_TURNOUT==((_addr) & MA_ADDR_MASK_2))
 
 #define MA_2_BOARD(_addr) (((_addr) & 0x38) >> 3)
 

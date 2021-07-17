@@ -18,7 +18,7 @@
 
 // for test/debug
 static uint8_t ignore_bemf_presence = 0;
-static uint8_t ignore_ina_presence = 1;
+static uint8_t ignore_ina_presence = 0	;
 
 //per train stucture
 
@@ -76,7 +76,11 @@ static void ctrl_reset(void);
 static void fatal(void)
 {
 	itm_debug1(DBG_ERR, "fatal", 0);
-	for (;;) osDelay(1000);
+#ifdef TRAIN_SIMU
+    abort();
+#else
+    for (;;) osDelay(1000);
+#endif
 }
 
 // ----------------------------------------------------------------------------

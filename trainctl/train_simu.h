@@ -9,8 +9,9 @@
  *
  */
 
+
 void train_simu_canton_volt(int numcanton, int voltidx, int vlt100);
-void train_simu_canton_set_pwm(int numcanton, int dir, int duty);
+void train_simu_canton_set_pwm(int numcanton, int8_t dir, int duty);
 
 #define HAL_GetTick() (0)
 

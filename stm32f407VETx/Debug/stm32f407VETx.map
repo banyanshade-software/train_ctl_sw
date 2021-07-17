@@ -11742,7 +11742,7 @@ LOAD /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.id
                 0x0000000008000000                g_pfnVectors
                 0x0000000008000188                . = ALIGN (0x4)
 
-.text           0x0000000008000190    0x18394
+.text           0x0000000008000190    0x1847c
                 0x0000000008000190                . = ALIGN (0x4)
  *(.text)
  .text          0x0000000008000190       0x40 /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.macos64_1.4.0.202007081208/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/thumb/v7e-m/fpv4-sp/hard/crtbegin.o
@@ -13113,538 +13113,540 @@ LOAD /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.id
  .text.sub_presence_changed
                 0x0000000008012fd8      0x170 trainctl/ctrl/ctrl.o
  .text.ctrl_run_tick
-                0x0000000008013148      0x1ac trainctl/ctrl/ctrl.o
+                0x0000000008013148      0x1b4 trainctl/ctrl/ctrl.o
                 0x0000000008013148                ctrl_run_tick
  .text.set_block_num_occupency
-                0x00000000080132f4       0x68 trainctl/ctrl/ctrl.o
+                0x00000000080132fc       0x8c trainctl/ctrl/ctrl.o
  .text.set_block_addr_occupency
-                0x000000000801335c       0x2c trainctl/ctrl/ctrl.o
+                0x0000000008013388       0x2c trainctl/ctrl/ctrl.o
  .text.get_block_num_occupency
-                0x0000000008013388       0x28 trainctl/ctrl/ctrl.o
+                0x00000000080133b4       0x28 trainctl/ctrl/ctrl.o
  .text.occupied
-                0x00000000080133b0       0x2a trainctl/ctrl/ctrl.o
- *fill*         0x00000000080133da        0x2 
+                0x00000000080133dc       0x2a trainctl/ctrl/ctrl.o
+ *fill*         0x0000000008013406        0x2 
+ .text.check_block_delayed
+                0x0000000008013408       0x88 trainctl/ctrl/ctrl.o
  .text.evt_entered_c2
-                0x00000000080133dc       0xa8 trainctl/ctrl/ctrl.o
+                0x0000000008013490       0xa8 trainctl/ctrl/ctrl.o
  .text.evt_leaved_c1
-                0x0000000008013484       0x80 trainctl/ctrl/ctrl.o
+                0x0000000008013538       0x80 trainctl/ctrl/ctrl.o
  .text.evt_entered_c1
-                0x0000000008013504       0x2c trainctl/ctrl/ctrl.o
+                0x00000000080135b8       0x2c trainctl/ctrl/ctrl.o
  .text.evt_leaved_c2
-                0x0000000008013530       0x28 trainctl/ctrl/ctrl.o
+                0x00000000080135e4       0x28 trainctl/ctrl/ctrl.o
  .text.evt_tleave
-                0x0000000008013558       0x74 trainctl/ctrl/ctrl.o
+                0x000000000801360c       0x74 trainctl/ctrl/ctrl.o
  .text.evt_cmd_set_setdirspeed
-                0x00000000080135cc      0x1f4 trainctl/ctrl/ctrl.o
+                0x0000000008013680      0x1f4 trainctl/ctrl/ctrl.o
  .text.evt_pose_triggered
-                0x00000000080137c0       0x7c trainctl/ctrl/ctrl.o
+                0x0000000008013874       0x7c trainctl/ctrl/ctrl.o
  .text.evt_timer
-                0x000000000801383c       0x50 trainctl/ctrl/ctrl.o
+                0x00000000080138f0       0x50 trainctl/ctrl/ctrl.o
  .text.update_c2_state_limits
-                0x000000000801388c      0x438 trainctl/ctrl/ctrl.o
+                0x0000000008013940      0x41c trainctl/ctrl/ctrl.o
  .text.ctrl_set_tspeed
-                0x0000000008013cc4       0xa4 trainctl/ctrl/ctrl.o
+                0x0000000008013d5c       0xa4 trainctl/ctrl/ctrl.o
  .text.ctrl_set_dir
-                0x0000000008013d68       0x74 trainctl/ctrl/ctrl.o
+                0x0000000008013e00       0x74 trainctl/ctrl/ctrl.o
  .text.set_pose_trig
-                0x0000000008013ddc       0x8c trainctl/ctrl/ctrl.o
+                0x0000000008013e74       0x8c trainctl/ctrl/ctrl.o
  .text.pose_middle
-                0x0000000008013e68       0x3e trainctl/ctrl/ctrl.o
- *fill*         0x0000000008013ea6        0x2 
+                0x0000000008013f00       0x3e trainctl/ctrl/ctrl.o
+ *fill*         0x0000000008013f3e        0x2 
  .text.check_blk_tick
-                0x0000000008013ea8       0x8c trainctl/ctrl/ctrl.o
+                0x0000000008013f40       0x8c trainctl/ctrl/ctrl.o
  .text.itm_debug1
-                0x0000000008013f34       0x34 trainctl/low/canton.o
+                0x0000000008013fcc       0x34 trainctl/low/canton.o
  .text.itm_debug3
-                0x0000000008013f68       0x38 trainctl/low/canton.o
+                0x0000000008014000       0x38 trainctl/low/canton.o
  .text.canton_error
-                0x0000000008013fa0       0x1e trainctl/low/canton.o
+                0x0000000008014038       0x1e trainctl/low/canton.o
  .text.canton_error_rc
-                0x0000000008013fbe       0x20 trainctl/low/canton.o
- *fill*         0x0000000008013fde        0x2 
+                0x0000000008014056       0x20 trainctl/low/canton.o
+ *fill*         0x0000000008014076        0x2 
  .text.mqf_read_to_canton
-                0x0000000008013fe0       0x20 trainctl/low/canton.o
+                0x0000000008014078       0x20 trainctl/low/canton.o
  .text.mqf_write_from_canton
-                0x0000000008014000       0x20 trainctl/low/canton.o
+                0x0000000008014098       0x20 trainctl/low/canton.o
  .text.canton_reset
-                0x0000000008014020       0x58 trainctl/low/canton.o
+                0x00000000080140b8       0x58 trainctl/low/canton.o
  .text.handle_canton_cmd
-                0x0000000008014078      0x124 trainctl/low/canton.o
+                0x0000000008014110      0x124 trainctl/low/canton.o
  .text.canton_tick
-                0x000000000801419c      0x140 trainctl/low/canton.o
-                0x000000000801419c                canton_tick
+                0x0000000008014234      0x140 trainctl/low/canton.o
+                0x0000000008014234                canton_tick
  .text.canton_set_pwm
-                0x00000000080142dc      0x2b8 trainctl/low/canton.o
+                0x0000000008014374      0x2b8 trainctl/low/canton.o
  .text.canton_set_volt
-                0x0000000008014594       0x94 trainctl/low/canton.o
-                0x0000000008014594                canton_set_volt
+                0x000000000801462c       0x94 trainctl/low/canton.o
+                0x000000000801462c                canton_set_volt
  .text.volt_index
-                0x0000000008014628      0x18c trainctl/low/canton.o
-                0x0000000008014628                volt_index
+                0x00000000080146c0      0x18c trainctl/low/canton.o
+                0x00000000080146c0                volt_index
  .text.itm_debug1
-                0x00000000080147b4       0x34 trainctl/low/canton_bemf.o
+                0x000000000801484c       0x34 trainctl/low/canton_bemf.o
  .text.itm_debug2
-                0x00000000080147e8       0x38 trainctl/low/canton_bemf.o
+                0x0000000008014880       0x38 trainctl/low/canton_bemf.o
  .text.itm_debug3
-                0x0000000008014820       0x38 trainctl/low/canton_bemf.o
+                0x00000000080148b8       0x38 trainctl/low/canton_bemf.o
  .text.runtime_error
-                0x0000000008014858       0x28 trainctl/low/canton_bemf.o
+                0x00000000080148f0       0x28 trainctl/low/canton_bemf.o
  .text.bemf_reset
-                0x0000000008014880       0x34 trainctl/low/canton_bemf.o
-                0x0000000008014880                bemf_reset
+                0x0000000008014918       0x34 trainctl/low/canton_bemf.o
+                0x0000000008014918                bemf_reset
  .text.bemf_msg
-                0x00000000080148b4       0x78 trainctl/low/canton_bemf.o
-                0x00000000080148b4                bemf_msg
+                0x000000000801494c       0x78 trainctl/low/canton_bemf.o
+                0x000000000801494c                bemf_msg
  .text.bemf_tick
-                0x000000000801492c       0x80 trainctl/low/canton_bemf.o
-                0x000000000801492c                bemf_tick
+                0x00000000080149c4       0x80 trainctl/low/canton_bemf.o
+                0x00000000080149c4                bemf_tick
  .text.bemf_convert_to_centivolt
-                0x00000000080149ac       0x34 trainctl/low/canton_bemf.o
+                0x0000000008014a44       0x34 trainctl/low/canton_bemf.o
  .text.process_adc
-                0x00000000080149e0      0x1a8 trainctl/low/canton_bemf.o
+                0x0000000008014a78      0x1a8 trainctl/low/canton_bemf.o
  .text.presdect_tick
-                0x0000000008014b88       0x18 trainctl/low/presence_detection.o
-                0x0000000008014b88                presdect_tick
+                0x0000000008014c20       0x18 trainctl/low/presence_detection.o
+                0x0000000008014c20                presdect_tick
  .text.itm_debug1
-                0x0000000008014ba0       0x34 trainctl/low/turnout.o
+                0x0000000008014c38       0x34 trainctl/low/turnout.o
  .text.turnout_error
-                0x0000000008014bd4       0x1e trainctl/low/turnout.o
+                0x0000000008014c6c       0x1e trainctl/low/turnout.o
  .text.debug_info
-                0x0000000008014bf2       0x32 trainctl/low/turnout.o
+                0x0000000008014c8a       0x32 trainctl/low/turnout.o
  .text.mqf_read_to_turnout
-                0x0000000008014c24       0x20 trainctl/low/turnout.o
+                0x0000000008014cbc       0x20 trainctl/low/turnout.o
  .text.turnout_tick
-                0x0000000008014c44       0x74 trainctl/low/turnout.o
-                0x0000000008014c44                turnout_tick
+                0x0000000008014cdc       0x74 trainctl/low/turnout.o
+                0x0000000008014cdc                turnout_tick
  .text.process_turnout_cmd
-                0x0000000008014cb8       0xe8 trainctl/low/turnout.o
+                0x0000000008014d50       0xe8 trainctl/low/turnout.o
  .text.turnout_reset
-                0x0000000008014da0       0xb8 trainctl/low/turnout.o
+                0x0000000008014e38       0xb8 trainctl/low/turnout.o
  .text.process_turnout_timers
-                0x0000000008014e58      0x194 trainctl/low/turnout.o
+                0x0000000008014ef0      0x194 trainctl/low/turnout.o
  .text.itm_debug1
-                0x0000000008014fec       0x34 trainctl/misc.o
+                0x0000000008015084       0x34 trainctl/misc.o
  .text.trainctl_error
-                0x0000000008015020       0x40 trainctl/misc.o
-                0x0000000008015020                trainctl_error
+                0x00000000080150b8       0x40 trainctl/misc.o
+                0x00000000080150b8                trainctl_error
  .text.long_isr
-                0x0000000008015060       0x24 trainctl/misc.o
-                0x0000000008015060                long_isr
+                0x00000000080150f8       0x24 trainctl/misc.o
+                0x00000000080150f8                long_isr
  .text.GetCycleCount64
-                0x0000000008015084       0x64 trainctl/misc.o
-                0x0000000008015084                GetCycleCount64
+                0x000000000801511c       0x64 trainctl/misc.o
+                0x000000000801511c                GetCycleCount64
  .text.startCycleCounter
-                0x00000000080150e8       0x20 trainctl/misc.o
-                0x00000000080150e8                startCycleCounter
+                0x0000000008015180       0x20 trainctl/misc.o
+                0x0000000008015180                startCycleCounter
  .text.get_param_def
-                0x0000000008015108       0x3e trainctl/param.o
+                0x00000000080151a0       0x3e trainctl/param.o
  .text.param_get_value
-                0x0000000008015146       0xe4 trainctl/param.o
-                0x0000000008015146                param_get_value
+                0x00000000080151de       0xe4 trainctl/param.o
+                0x00000000080151de                param_get_value
  .text.param_set_value
-                0x000000000801522a       0xaa trainctl/param.o
-                0x000000000801522a                param_set_value
+                0x00000000080152c2       0xaa trainctl/param.o
+                0x00000000080152c2                param_set_value
  .text.itm_debug1
-                0x00000000080152d4       0x34 trainctl/railconfig.o
+                0x000000000801536c       0x34 trainctl/railconfig.o
  .text.config_error
-                0x0000000008015308       0x28 trainctl/railconfig.o
+                0x00000000080153a0       0x28 trainctl/railconfig.o
  .text.get_canton_cnf
-                0x0000000008015330       0x50 trainctl/railconfig.o
-                0x0000000008015330                get_canton_cnf
+                0x00000000080153c8       0x50 trainctl/railconfig.o
+                0x00000000080153c8                get_canton_cnf
  .text.get_train_cnf
-                0x0000000008015380       0x4c trainctl/railconfig.o
-                0x0000000008015380                get_train_cnf
+                0x0000000008015418       0x4c trainctl/railconfig.o
+                0x0000000008015418                get_train_cnf
  .text.get_turnout_cnf
-                0x00000000080153cc       0x4c trainctl/railconfig.o
-                0x00000000080153cc                get_turnout_cnf
+                0x0000000008015464       0x4c trainctl/railconfig.o
+                0x0000000008015464                get_turnout_cnf
  .text.stat_val_get
-                0x0000000008015418       0x1e trainctl/statval.o
-                0x0000000008015418                stat_val_get
+                0x00000000080154b0       0x1e trainctl/statval.o
+                0x00000000080154b0                stat_val_get
  .text.txframe_send_notif
-                0x0000000008015436       0x2e trainctl/txrxcmd.o
+                0x00000000080154ce       0x2e trainctl/txrxcmd.o
  .text.mqf_read_to_forward_usb
-                0x0000000008015464       0x20 trainctl/txrxcmd.o
+                0x00000000080154fc       0x20 trainctl/txrxcmd.o
  .text.mqf_write_from_forward_usb
-                0x0000000008015484       0x20 trainctl/txrxcmd.o
+                0x000000000801551c       0x20 trainctl/txrxcmd.o
  .text._frm_escape
-                0x00000000080154a4       0xc4 trainctl/txrxcmd.o
+                0x000000000801553c       0xc4 trainctl/txrxcmd.o
  .text._frm_escape2
-                0x0000000008015568       0x8e trainctl/txrxcmd.o
+                0x0000000008015600       0x8e trainctl/txrxcmd.o
  .text.frm_escape
-                0x00000000080155f6       0x42 trainctl/txrxcmd.o
+                0x000000000801568e       0x42 trainctl/txrxcmd.o
  .text.usbPollQueues
-                0x0000000008015638       0x28 trainctl/txrxcmd.o
-                0x0000000008015638                usbPollQueues
+                0x00000000080156d0       0x28 trainctl/txrxcmd.o
+                0x00000000080156d0                usbPollQueues
  .text.txrx_process_char
-                0x0000000008015660      0x24c trainctl/txrxcmd.o
-                0x0000000008015660                txrx_process_char
+                0x00000000080156f8      0x24c trainctl/txrxcmd.o
+                0x00000000080156f8                txrx_process_char
  .text.param_set_pwm
-                0x00000000080158ac       0x18 trainctl/txrxcmd.o
+                0x0000000008015944       0x18 trainctl/txrxcmd.o
  .text.param_get_numtrains
-                0x00000000080158c4       0x16 trainctl/txrxcmd.o
+                0x000000000801595c       0x16 trainctl/txrxcmd.o
  .text.param_get_numcantons
-                0x00000000080158da       0x16 trainctl/txrxcmd.o
+                0x0000000008015972       0x16 trainctl/txrxcmd.o
  .text.process_frame_cmd
-                0x00000000080158f0      0x460 trainctl/txrxcmd.o
+                0x0000000008015988      0x460 trainctl/txrxcmd.o
  .text.trainctl_notif
-                0x0000000008015d50       0x48 trainctl/txrxcmd.o
-                0x0000000008015d50                trainctl_notif
+                0x0000000008015de8       0x48 trainctl/txrxcmd.o
+                0x0000000008015de8                trainctl_notif
  .text.trainctl_notif2
-                0x0000000008015d98      0x110 trainctl/txrxcmd.o
-                0x0000000008015d98                trainctl_notif2
+                0x0000000008015e30      0x110 trainctl/txrxcmd.o
+                0x0000000008015e30                trainctl_notif2
  .text.frame_send_notif
-                0x0000000008015ea8       0xc8 trainctl/txrxcmd.o
-                0x0000000008015ea8                frame_send_notif
+                0x0000000008015f40       0xc8 trainctl/txrxcmd.o
+                0x0000000008015f40                frame_send_notif
  .text.txframe_send_msg64
-                0x0000000008015f70      0x100 trainctl/txrxcmd.o
+                0x0000000008016008      0x100 trainctl/txrxcmd.o
  .text.frame_gather_stat
-                0x0000000008016070       0x4a trainctl/txrxcmd.o
-                0x0000000008016070                frame_gather_stat
+                0x0000000008016108       0x4a trainctl/txrxcmd.o
+                0x0000000008016108                frame_gather_stat
  .text.frame_send_stat
-                0x00000000080160ba       0x5a trainctl/txrxcmd.o
-                0x00000000080160ba                frame_send_stat
+                0x0000000008016152       0x5a trainctl/txrxcmd.o
+                0x0000000008016152                frame_send_stat
  .text.itm_debug1
-                0x0000000008016114       0x34 trainctl/msg/trainmsg.o
+                0x00000000080161ac       0x34 trainctl/msg/trainmsg.o
  .text.itm_debug2
-                0x0000000008016148       0x38 trainctl/msg/trainmsg.o
+                0x00000000080161e0       0x38 trainctl/msg/trainmsg.o
  .text.itm_debug3
-                0x0000000008016180       0x38 trainctl/msg/trainmsg.o
+                0x0000000008016218       0x38 trainctl/msg/trainmsg.o
  .text.msg_error
-                0x00000000080161b8       0x14 trainctl/msg/trainmsg.o
+                0x0000000008016250       0x14 trainctl/msg/trainmsg.o
  .text.dispatch_m64
-                0x00000000080161cc       0xf8 trainctl/msg/trainmsg.o
+                0x0000000008016264       0xf8 trainctl/msg/trainmsg.o
  .text.msgsrv_tick
-                0x00000000080162c4       0xdc trainctl/msg/trainmsg.o
-                0x00000000080162c4                msgsrv_tick
+                0x000000000801635c       0xdc trainctl/msg/trainmsg.o
+                0x000000000801635c                msgsrv_tick
  .text.dump_msg
-                0x00000000080163a0       0x60 trainctl/msg/trainmsg.o
-                0x00000000080163a0                dump_msg
+                0x0000000008016438       0x60 trainctl/msg/trainmsg.o
+                0x0000000008016438                dump_msg
  .text.inertia_value
-                0x0000000008016400      0x218 trainctl/spdctl/inertia.o
-                0x0000000008016400                inertia_value
+                0x0000000008016498      0x218 trainctl/spdctl/inertia.o
+                0x0000000008016498                inertia_value
  .text.itm_debug1
-                0x0000000008016618       0x34 trainctl/spdctl/pidctl.o
+                0x00000000080166b0       0x34 trainctl/spdctl/pidctl.o
  .text.itm_debug2
-                0x000000000801664c       0x38 trainctl/spdctl/pidctl.o
+                0x00000000080166e4       0x38 trainctl/spdctl/pidctl.o
  .text.itm_debug3
-                0x0000000008016684       0x38 trainctl/spdctl/pidctl.o
+                0x000000000801671c       0x38 trainctl/spdctl/pidctl.o
  .text.pidctl_reset
-                0x00000000080166bc       0x46 trainctl/spdctl/pidctl.o
-                0x00000000080166bc                pidctl_reset
- *fill*         0x0000000008016702        0x2 
+                0x0000000008016754       0x46 trainctl/spdctl/pidctl.o
+                0x0000000008016754                pidctl_reset
+ *fill*         0x000000000801679a        0x2 
  .text.pidctl_set_target
-                0x0000000008016704       0x28 trainctl/spdctl/pidctl.o
-                0x0000000008016704                pidctl_set_target
+                0x000000000801679c       0x28 trainctl/spdctl/pidctl.o
+                0x000000000801679c                pidctl_set_target
  .text.pidctl_value
-                0x000000000801672c      0x14c trainctl/spdctl/pidctl.o
-                0x000000000801672c                pidctl_value
+                0x00000000080167c4      0x14c trainctl/spdctl/pidctl.o
+                0x00000000080167c4                pidctl_value
  .text.itm_debug1
-                0x0000000008016878       0x34 trainctl/spdctl/spdctl.o
+                0x0000000008016910       0x34 trainctl/spdctl/spdctl.o
  .text.itm_debug2
-                0x00000000080168ac       0x38 trainctl/spdctl/spdctl.o
+                0x0000000008016944       0x38 trainctl/spdctl/spdctl.o
  .text.itm_debug3
-                0x00000000080168e4       0x38 trainctl/spdctl/spdctl.o
+                0x000000000801697c       0x38 trainctl/spdctl/spdctl.o
  .text.train_error
-                0x000000000801691c       0x1e trainctl/spdctl/spdctl.o
+                0x00000000080169b4       0x1e trainctl/spdctl/spdctl.o
  .text.train_notif
-                0x000000000801693a       0x2a trainctl/spdctl/spdctl.o
+                0x00000000080169d2       0x2a trainctl/spdctl/spdctl.o
  .text.debug_info
-                0x0000000008016964       0x32 trainctl/spdctl/spdctl.o
- *fill*         0x0000000008016996        0x2 
+                0x00000000080169fc       0x32 trainctl/spdctl/spdctl.o
+ *fill*         0x0000000008016a2e        0x2 
  .text.mqf_read_to_spdctl
-                0x0000000008016998       0x20 trainctl/spdctl/spdctl.o
+                0x0000000008016a30       0x20 trainctl/spdctl/spdctl.o
  .text.mqf_write_from_spdctl
-                0x00000000080169b8       0x20 trainctl/spdctl/spdctl.o
+                0x0000000008016a50       0x20 trainctl/spdctl/spdctl.o
  .text.spdctl_reset
-                0x00000000080169d8       0x58 trainctl/spdctl/spdctl.o
+                0x0000000008016a70       0x58 trainctl/spdctl/spdctl.o
  .text.spdctl_run_tick
-                0x0000000008016a30      0x294 trainctl/spdctl/spdctl.o
-                0x0000000008016a30                spdctl_run_tick
+                0x0000000008016ac8      0x2d8 trainctl/spdctl/spdctl.o
+                0x0000000008016ac8                spdctl_run_tick
  .text.train_periodic_control
-                0x0000000008016cc4      0x494 trainctl/spdctl/spdctl.o
+                0x0000000008016da0      0x494 trainctl/spdctl/spdctl.o
  .text.set_c1_c2
-                0x0000000008017158      0x184 trainctl/spdctl/spdctl.o
+                0x0000000008017234      0x190 trainctl/spdctl/spdctl.o
  .text._set_speed
-                0x00000000080172dc      0x164 trainctl/spdctl/spdctl.o
+                0x00000000080173c4      0x164 trainctl/spdctl/spdctl.o
  .text.train_set_target_speed
-                0x0000000008017440       0x54 trainctl/spdctl/spdctl.o
-                0x0000000008017440                train_set_target_speed
+                0x0000000008017528       0x54 trainctl/spdctl/spdctl.o
+                0x0000000008017528                train_set_target_speed
  .text.pose_check_trig
-                0x0000000008017494       0xf8 trainctl/spdctl/spdctl.o
+                0x000000000801757c       0xf8 trainctl/spdctl/spdctl.o
  .text.itm_debug1
-                0x000000000801758c       0x34 trainctl/stm32/taskctrl.o
+                0x0000000008017674       0x34 trainctl/stm32/taskctrl.o
  .text.itm_debug2
-                0x00000000080175c0       0x38 trainctl/stm32/taskctrl.o
+                0x00000000080176a8       0x38 trainctl/stm32/taskctrl.o
  .text.StartCtrlTask
-                0x00000000080175f8       0xe4 trainctl/stm32/taskctrl.o
-                0x00000000080175f8                StartCtrlTask
+                0x00000000080176e0       0xe4 trainctl/stm32/taskctrl.o
+                0x00000000080176e0                StartCtrlTask
  .text.set_pwm_freq
-                0x00000000080176dc       0x74 trainctl/stm32/taskctrl.o
-                0x00000000080176dc                set_pwm_freq
+                0x00000000080177c4       0x74 trainctl/stm32/taskctrl.o
+                0x00000000080177c4                set_pwm_freq
  .text.run_task_ctrl
-                0x0000000008017750      0x1b0 trainctl/stm32/taskctrl.o
+                0x0000000008017838      0x1b0 trainctl/stm32/taskctrl.o
  .text.HAL_ADC_ConvCpltCallback
-                0x0000000008017900       0x54 trainctl/stm32/taskctrl.o
-                0x0000000008017900                HAL_ADC_ConvCpltCallback
+                0x00000000080179e8       0x54 trainctl/stm32/taskctrl.o
+                0x00000000080179e8                HAL_ADC_ConvCpltCallback
  .text.HAL_ADC_ConvHalfCpltCallback
-                0x0000000008017954       0x54 trainctl/stm32/taskctrl.o
-                0x0000000008017954                HAL_ADC_ConvHalfCpltCallback
+                0x0000000008017a3c       0x54 trainctl/stm32/taskctrl.o
+                0x0000000008017a3c                HAL_ADC_ConvHalfCpltCallback
  .text.HAL_ADC_ErrorCallback
-                0x00000000080179a8       0x24 trainctl/stm32/taskctrl.o
-                0x00000000080179a8                HAL_ADC_ErrorCallback
+                0x0000000008017a90       0x24 trainctl/stm32/taskctrl.o
+                0x0000000008017a90                HAL_ADC_ErrorCallback
  .text.i2c_ready
-                0x00000000080179cc       0x14 trainctl/stm32/taskdisp.o
+                0x0000000008017ab4       0x14 trainctl/stm32/taskdisp.o
  .text.I2C_Scan
-                0x00000000080179e0       0x48 trainctl/stm32/taskdisp.o
+                0x0000000008017ac8       0x48 trainctl/stm32/taskdisp.o
  .text.StartUiTask
-                0x0000000008017a28       0x40 trainctl/stm32/taskdisp.o
-                0x0000000008017a28                StartUiTask
+                0x0000000008017b10       0x40 trainctl/stm32/taskdisp.o
+                0x0000000008017b10                StartUiTask
  .text.StartTxRxFrameTask
-                0x0000000008017a68       0xcc trainctl/stm32/txrxtask.o
-                0x0000000008017a68                StartTxRxFrameTask
+                0x0000000008017b50       0xcc trainctl/stm32/txrxtask.o
+                0x0000000008017b50                StartTxRxFrameTask
  .text._send_bytes
-                0x0000000008017b34       0x32 trainctl/stm32/txrxtask.o
- *fill*         0x0000000008017b66        0x2 
+                0x0000000008017c1c       0x32 trainctl/stm32/txrxtask.o
+ *fill*         0x0000000008017c4e        0x2 
  .text.txframe_send
-                0x0000000008017b68       0x94 trainctl/stm32/txrxtask.o
-                0x0000000008017b68                txframe_send
+                0x0000000008017c50       0x94 trainctl/stm32/txrxtask.o
+                0x0000000008017c50                txframe_send
  .text.handleRxChars
-                0x0000000008017bfc       0x60 trainctl/stm32/txrxtask.o
+                0x0000000008017ce4       0x60 trainctl/stm32/txrxtask.o
  .text.impl_CDC_Receive_FS
-                0x0000000008017c5c       0x88 trainctl/stm32/txrxtask.o
-                0x0000000008017c5c                impl_CDC_Receive_FS
+                0x0000000008017d44       0x88 trainctl/stm32/txrxtask.o
+                0x0000000008017d44                impl_CDC_Receive_FS
  .text._blk_num_for_sub_num
-                0x0000000008017ce4       0x36 trainctl/topology/topology.o
-                0x0000000008017ce4                _blk_num_for_sub_num
- *fill*         0x0000000008017d1a        0x2 
+                0x0000000008017dcc       0x36 trainctl/topology/topology.o
+                0x0000000008017dcc                _blk_num_for_sub_num
+ *fill*         0x0000000008017e02        0x2 
  .text._next_block_num
-                0x0000000008017d1c       0x6c trainctl/topology/topology.o
-                0x0000000008017d1c                _next_block_num
+                0x0000000008017e04       0x6c trainctl/topology/topology.o
+                0x0000000008017e04                _next_block_num
  .text.get_blk_len
-                0x0000000008017d88       0x30 trainctl/topology/topology.o
-                0x0000000008017d88                get_blk_len
+                0x0000000008017e70       0x30 trainctl/topology/topology.o
+                0x0000000008017e70                get_blk_len
  .text.ITM_SendChar
-                0x0000000008017db8       0x4e trainctl/utils/itm_debug.o
- *fill*         0x0000000008017e06        0x2 
+                0x0000000008017ea0       0x4e trainctl/utils/itm_debug.o
+ *fill*         0x0000000008017eee        0x2 
  .text.write_num
-                0x0000000008017e08       0x5c trainctl/utils/itm_debug.o
- .text._write   0x0000000008017e64       0x38 trainctl/utils/itm_debug.o
-                0x0000000008017e64                _write
+                0x0000000008017ef0       0x5c trainctl/utils/itm_debug.o
+ .text._write   0x0000000008017f4c       0x38 trainctl/utils/itm_debug.o
+                0x0000000008017f4c                _write
  .text._itm_debug3
-                0x0000000008017e9c      0x120 trainctl/utils/itm_debug.o
-                0x0000000008017e9c                _itm_debug3
+                0x0000000008017f84      0x120 trainctl/utils/itm_debug.o
+                0x0000000008017f84                _itm_debug3
  .text.itm_debug1
-                0x0000000008017fbc       0x34 trainctl/utils/lf_mqueue.o
- .text.mqf_len  0x0000000008017ff0       0x64 trainctl/utils/lf_mqueue.o
-                0x0000000008017ff0                mqf_len
+                0x00000000080180a4       0x34 trainctl/utils/lf_mqueue.o
+ .text.mqf_len  0x00000000080180d8       0x64 trainctl/utils/lf_mqueue.o
+                0x00000000080180d8                mqf_len
  .text.mqf_qfull
-                0x0000000008018054       0x54 trainctl/utils/lf_mqueue.o
-                0x0000000008018054                mqf_qfull
+                0x000000000801813c       0x54 trainctl/utils/lf_mqueue.o
+                0x000000000801813c                mqf_qfull
  .text.mqf_write
-                0x00000000080180a8       0xf4 trainctl/utils/lf_mqueue.o
-                0x00000000080180a8                mqf_write
+                0x0000000008018190       0xf4 trainctl/utils/lf_mqueue.o
+                0x0000000008018190                mqf_write
  .text.mqf_read
-                0x000000000801819c       0x82 trainctl/utils/lf_mqueue.o
-                0x000000000801819c                mqf_read
- *fill*         0x000000000801821e        0x2 
- .text.__errno  0x0000000008018220        0xc /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.macos64_1.4.0.202007081208/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard/libc_nano.a(lib_a-errno.o)
-                0x0000000008018220                __errno
+                0x0000000008018284       0x82 trainctl/utils/lf_mqueue.o
+                0x0000000008018284                mqf_read
+ *fill*         0x0000000008018306        0x2 
+ .text.__errno  0x0000000008018308        0xc /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.macos64_1.4.0.202007081208/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard/libc_nano.a(lib_a-errno.o)
+                0x0000000008018308                __errno
  .text.__libc_init_array
-                0x000000000801822c       0x48 /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.macos64_1.4.0.202007081208/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard/libc_nano.a(lib_a-init.o)
-                0x000000000801822c                __libc_init_array
- .text.__itoa   0x0000000008018274       0x30 /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.macos64_1.4.0.202007081208/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard/libc_nano.a(lib_a-itoa.o)
-                0x0000000008018274                __itoa
- .text.itoa     0x00000000080182a4        0x4 /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.macos64_1.4.0.202007081208/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard/libc_nano.a(lib_a-itoa.o)
-                0x00000000080182a4                itoa
- .text.malloc   0x00000000080182a8       0x10 /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.macos64_1.4.0.202007081208/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard/libc_nano.a(lib_a-malloc.o)
-                0x00000000080182a8                malloc
- .text.free     0x00000000080182b8       0x10 /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.macos64_1.4.0.202007081208/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard/libc_nano.a(lib_a-malloc.o)
-                0x00000000080182b8                free
- .text.memcpy   0x00000000080182c8       0x16 /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.macos64_1.4.0.202007081208/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard/libc_nano.a(lib_a-memcpy-stub.o)
-                0x00000000080182c8                memcpy
- .text.memset   0x00000000080182de       0x10 /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.macos64_1.4.0.202007081208/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard/libc_nano.a(lib_a-memset.o)
-                0x00000000080182de                memset
- *fill*         0x00000000080182ee        0x2 
- .text._free_r  0x00000000080182f0       0x9c /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.macos64_1.4.0.202007081208/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard/libc_nano.a(lib_a-nano-freer.o)
-                0x00000000080182f0                _free_r
+                0x0000000008018314       0x48 /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.macos64_1.4.0.202007081208/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard/libc_nano.a(lib_a-init.o)
+                0x0000000008018314                __libc_init_array
+ .text.__itoa   0x000000000801835c       0x30 /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.macos64_1.4.0.202007081208/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard/libc_nano.a(lib_a-itoa.o)
+                0x000000000801835c                __itoa
+ .text.itoa     0x000000000801838c        0x4 /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.macos64_1.4.0.202007081208/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard/libc_nano.a(lib_a-itoa.o)
+                0x000000000801838c                itoa
+ .text.malloc   0x0000000008018390       0x10 /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.macos64_1.4.0.202007081208/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard/libc_nano.a(lib_a-malloc.o)
+                0x0000000008018390                malloc
+ .text.free     0x00000000080183a0       0x10 /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.macos64_1.4.0.202007081208/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard/libc_nano.a(lib_a-malloc.o)
+                0x00000000080183a0                free
+ .text.memcpy   0x00000000080183b0       0x16 /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.macos64_1.4.0.202007081208/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard/libc_nano.a(lib_a-memcpy-stub.o)
+                0x00000000080183b0                memcpy
+ .text.memset   0x00000000080183c6       0x10 /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.macos64_1.4.0.202007081208/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard/libc_nano.a(lib_a-memset.o)
+                0x00000000080183c6                memset
+ *fill*         0x00000000080183d6        0x2 
+ .text._free_r  0x00000000080183d8       0x9c /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.macos64_1.4.0.202007081208/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard/libc_nano.a(lib_a-nano-freer.o)
+                0x00000000080183d8                _free_r
  .text._malloc_r
-                0x000000000801838c       0xb4 /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.macos64_1.4.0.202007081208/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard/libc_nano.a(lib_a-nano-mallocr.o)
-                0x000000000801838c                _malloc_r
- .text._sbrk_r  0x0000000008018440       0x20 /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.macos64_1.4.0.202007081208/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard/libc_nano.a(lib_a-sbrkr.o)
-                0x0000000008018440                _sbrk_r
- .text.strncpy  0x0000000008018460       0x2a /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.macos64_1.4.0.202007081208/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard/libc_nano.a(lib_a-strncpy.o)
-                0x0000000008018460                strncpy
- *fill*         0x000000000801848a        0x2 
- .text.__utoa   0x000000000801848c       0x7c /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.macos64_1.4.0.202007081208/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard/libc_nano.a(lib_a-utoa.o)
-                0x000000000801848c                __utoa
+                0x0000000008018474       0xb4 /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.macos64_1.4.0.202007081208/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard/libc_nano.a(lib_a-nano-mallocr.o)
+                0x0000000008018474                _malloc_r
+ .text._sbrk_r  0x0000000008018528       0x20 /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.macos64_1.4.0.202007081208/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard/libc_nano.a(lib_a-sbrkr.o)
+                0x0000000008018528                _sbrk_r
+ .text.strncpy  0x0000000008018548       0x2a /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.macos64_1.4.0.202007081208/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard/libc_nano.a(lib_a-strncpy.o)
+                0x0000000008018548                strncpy
+ *fill*         0x0000000008018572        0x2 
+ .text.__utoa   0x0000000008018574       0x7c /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.macos64_1.4.0.202007081208/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard/libc_nano.a(lib_a-utoa.o)
+                0x0000000008018574                __utoa
  .text.__malloc_lock
-                0x0000000008018508        0x2 /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.macos64_1.4.0.202007081208/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard/libc_nano.a(lib_a-mlock.o)
-                0x0000000008018508                __malloc_lock
+                0x00000000080185f0        0x2 /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.macos64_1.4.0.202007081208/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard/libc_nano.a(lib_a-mlock.o)
+                0x00000000080185f0                __malloc_lock
  .text.__malloc_unlock
-                0x000000000801850a        0x2 /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.macos64_1.4.0.202007081208/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard/libc_nano.a(lib_a-mlock.o)
-                0x000000000801850a                __malloc_unlock
+                0x00000000080185f2        0x2 /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.macos64_1.4.0.202007081208/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard/libc_nano.a(lib_a-mlock.o)
+                0x00000000080185f2                __malloc_unlock
  *(.glue_7)
- .glue_7        0x000000000801850c        0x0 linker stubs
+ .glue_7        0x00000000080185f4        0x0 linker stubs
  *(.glue_7t)
- .glue_7t       0x000000000801850c        0x0 linker stubs
+ .glue_7t       0x00000000080185f4        0x0 linker stubs
  *(.eh_frame)
- .eh_frame      0x000000000801850c        0x0 /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.macos64_1.4.0.202007081208/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/thumb/v7e-m/fpv4-sp/hard/crtbegin.o
+ .eh_frame      0x00000000080185f4        0x0 /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.macos64_1.4.0.202007081208/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/thumb/v7e-m/fpv4-sp/hard/crtbegin.o
  *(.init)
- .init          0x000000000801850c        0x4 /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.macos64_1.4.0.202007081208/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/thumb/v7e-m/fpv4-sp/hard/crti.o
-                0x000000000801850c                _init
- .init          0x0000000008018510        0x8 /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.macos64_1.4.0.202007081208/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/thumb/v7e-m/fpv4-sp/hard/crtn.o
+ .init          0x00000000080185f4        0x4 /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.macos64_1.4.0.202007081208/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/thumb/v7e-m/fpv4-sp/hard/crti.o
+                0x00000000080185f4                _init
+ .init          0x00000000080185f8        0x8 /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.macos64_1.4.0.202007081208/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/thumb/v7e-m/fpv4-sp/hard/crtn.o
  *(.fini)
- .fini          0x0000000008018518        0x4 /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.macos64_1.4.0.202007081208/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/thumb/v7e-m/fpv4-sp/hard/crti.o
-                0x0000000008018518                _fini
- .fini          0x000000000801851c        0x8 /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.macos64_1.4.0.202007081208/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/thumb/v7e-m/fpv4-sp/hard/crtn.o
-                0x0000000008018524                . = ALIGN (0x4)
-                0x0000000008018524                _etext = .
+ .fini          0x0000000008018600        0x4 /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.macos64_1.4.0.202007081208/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/thumb/v7e-m/fpv4-sp/hard/crti.o
+                0x0000000008018600                _fini
+ .fini          0x0000000008018604        0x8 /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.macos64_1.4.0.202007081208/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/thumb/v7e-m/fpv4-sp/hard/crtn.o
+                0x000000000801860c                . = ALIGN (0x4)
+                0x000000000801860c                _etext = .
 
-.vfp11_veneer   0x0000000008018524        0x0
- .vfp11_veneer  0x0000000008018524        0x0 linker stubs
+.vfp11_veneer   0x000000000801860c        0x0
+ .vfp11_veneer  0x000000000801860c        0x0 linker stubs
 
-.v4_bx          0x0000000008018524        0x0
- .v4_bx         0x0000000008018524        0x0 linker stubs
+.v4_bx          0x000000000801860c        0x0
+ .v4_bx         0x000000000801860c        0x0 linker stubs
 
-.iplt           0x0000000008018524        0x0
- .iplt          0x0000000008018524        0x0 /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.macos64_1.4.0.202007081208/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/thumb/v7e-m/fpv4-sp/hard/crtbegin.o
+.iplt           0x000000000801860c        0x0
+ .iplt          0x000000000801860c        0x0 /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.macos64_1.4.0.202007081208/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/thumb/v7e-m/fpv4-sp/hard/crtbegin.o
 
-.rodata         0x0000000008018524     0x2204
-                0x0000000008018524                . = ALIGN (0x4)
+.rodata         0x000000000801860c     0x2204
+                0x000000000801860c                . = ALIGN (0x4)
  *(.rodata)
- .rodata        0x0000000008018524       0x4d Core/Src/main.o
- *fill*         0x0000000008018571        0x3 
- .rodata        0x0000000008018574        0x5 Middlewares/Third_Party/FreeRTOS/Source/tasks.o
- *fill*         0x0000000008018579        0x3 
- .rodata        0x000000000801857c        0xd Middlewares/Third_Party/FreeRTOS/Source/timers.o
- *fill*         0x0000000008018589        0x3 
- .rodata        0x000000000801858c       0x46 USB_DEVICE/App/usbd_desc.o
- *fill*         0x00000000080185d2        0x2 
- .rodata        0x00000000080185d4       0x75 stm32dev/ina3221/ina3221.o
- *fill*         0x0000000008018649        0x3 
- .rodata        0x000000000801864c       0xb5 trainctl/IHM/disp.o
- *fill*         0x0000000008018701        0x3 
- .rodata        0x0000000008018704       0x43 trainctl/IHM/ihm.o
- *fill*         0x0000000008018747        0x1 
- .rodata        0x0000000008018748      0x248 trainctl/ctrl/ctrl.o
- .rodata        0x0000000008018990       0xdc trainctl/low/canton.o
- .rodata        0x0000000008018a6c       0x5e trainctl/low/canton_bemf.o
- *fill*         0x0000000008018aca        0x2 
- .rodata        0x0000000008018acc       0x7e trainctl/low/turnout.o
- *fill*         0x0000000008018b4a        0x2 
- .rodata        0x0000000008018b4c        0x9 trainctl/misc.o
- *fill*         0x0000000008018b55        0x3 
- .rodata        0x0000000008018b58       0x24 trainctl/railconfig.o
- .rodata        0x0000000008018b7c       0x7e trainctl/train.o
- *fill*         0x0000000008018bfa        0x2 
- .rodata        0x0000000008018bfc       0x1f trainctl/txrxcmd.o
- *fill*         0x0000000008018c1b        0x1 
- .rodata        0x0000000008018c1c       0x46 trainctl/msg/trainmsg.o
- *fill*         0x0000000008018c62        0x2 
- .rodata        0x0000000008018c64       0x18 trainctl/spdctl/pidctl.o
- .rodata        0x0000000008018c7c       0xf2 trainctl/spdctl/spdctl.o
- *fill*         0x0000000008018d6e        0x2 
- .rodata        0x0000000008018d70       0x68 trainctl/stm32/taskctrl.o
- .rodata        0x0000000008018dd8        0xb trainctl/stm32/txrxtask.o
- *fill*         0x0000000008018de3        0x1 
- .rodata        0x0000000008018de4       0x18 trainctl/utils/lf_mqueue.o
+ .rodata        0x000000000801860c       0x4d Core/Src/main.o
+ *fill*         0x0000000008018659        0x3 
+ .rodata        0x000000000801865c        0x5 Middlewares/Third_Party/FreeRTOS/Source/tasks.o
+ *fill*         0x0000000008018661        0x3 
+ .rodata        0x0000000008018664        0xd Middlewares/Third_Party/FreeRTOS/Source/timers.o
+ *fill*         0x0000000008018671        0x3 
+ .rodata        0x0000000008018674       0x46 USB_DEVICE/App/usbd_desc.o
+ *fill*         0x00000000080186ba        0x2 
+ .rodata        0x00000000080186bc       0x75 stm32dev/ina3221/ina3221.o
+ *fill*         0x0000000008018731        0x3 
+ .rodata        0x0000000008018734       0xb5 trainctl/IHM/disp.o
+ *fill*         0x00000000080187e9        0x3 
+ .rodata        0x00000000080187ec       0x43 trainctl/IHM/ihm.o
+ *fill*         0x000000000801882f        0x1 
+ .rodata        0x0000000008018830      0x248 trainctl/ctrl/ctrl.o
+ .rodata        0x0000000008018a78       0xdc trainctl/low/canton.o
+ .rodata        0x0000000008018b54       0x5e trainctl/low/canton_bemf.o
+ *fill*         0x0000000008018bb2        0x2 
+ .rodata        0x0000000008018bb4       0x7e trainctl/low/turnout.o
+ *fill*         0x0000000008018c32        0x2 
+ .rodata        0x0000000008018c34        0x9 trainctl/misc.o
+ *fill*         0x0000000008018c3d        0x3 
+ .rodata        0x0000000008018c40       0x24 trainctl/railconfig.o
+ .rodata        0x0000000008018c64       0x7e trainctl/train.o
+ *fill*         0x0000000008018ce2        0x2 
+ .rodata        0x0000000008018ce4       0x1f trainctl/txrxcmd.o
+ *fill*         0x0000000008018d03        0x1 
+ .rodata        0x0000000008018d04       0x46 trainctl/msg/trainmsg.o
+ *fill*         0x0000000008018d4a        0x2 
+ .rodata        0x0000000008018d4c       0x18 trainctl/spdctl/pidctl.o
+ .rodata        0x0000000008018d64       0xf2 trainctl/spdctl/spdctl.o
+ *fill*         0x0000000008018e56        0x2 
+ .rodata        0x0000000008018e58       0x68 trainctl/stm32/taskctrl.o
+ .rodata        0x0000000008018ec0        0xb trainctl/stm32/txrxtask.o
+ *fill*         0x0000000008018ecb        0x1 
+ .rodata        0x0000000008018ecc       0x18 trainctl/utils/lf_mqueue.o
  *(.rodata*)
  .rodata.uiTask_attributes
-                0x0000000008018dfc       0x24 Core/Src/main.o
-                0x0000000008018dfc                uiTask_attributes
+                0x0000000008018ee4       0x24 Core/Src/main.o
+                0x0000000008018ee4                uiTask_attributes
  .rodata.ctrlTask_attributes
-                0x0000000008018e20       0x24 Core/Src/main.o
-                0x0000000008018e20                ctrlTask_attributes
+                0x0000000008018f08       0x24 Core/Src/main.o
+                0x0000000008018f08                ctrlTask_attributes
  .rodata.txrxFrameTask_attributes
-                0x0000000008018e44       0x24 Core/Src/main.o
-                0x0000000008018e44                txrxFrameTask_attributes
+                0x0000000008018f2c       0x24 Core/Src/main.o
+                0x0000000008018f2c                txrxFrameTask_attributes
  .rodata.ina3221_task_attributes
-                0x0000000008018e68       0x24 Core/Src/main.o
-                0x0000000008018e68                ina3221_task_attributes
+                0x0000000008018f50       0x24 Core/Src/main.o
+                0x0000000008018f50                ina3221_task_attributes
  .rodata.frameQueue_attributes
-                0x0000000008018e8c       0x18 Core/Src/main.o
-                0x0000000008018e8c                frameQueue_attributes
+                0x0000000008018f74       0x18 Core/Src/main.o
+                0x0000000008018f74                frameQueue_attributes
  .rodata.AHBPrescTable
-                0x0000000008018ea4       0x10 Core/Src/system_stm32f4xx.o
-                0x0000000008018ea4                AHBPrescTable
+                0x0000000008018f8c       0x10 Core/Src/system_stm32f4xx.o
+                0x0000000008018f8c                AHBPrescTable
  .rodata.APBPrescTable
-                0x0000000008018eb4        0x8 Core/Src/system_stm32f4xx.o
-                0x0000000008018eb4                APBPrescTable
+                0x0000000008018f9c        0x8 Core/Src/system_stm32f4xx.o
+                0x0000000008018f9c                APBPrescTable
  .rodata.flagBitshiftOffset.9063
-                0x0000000008018ebc        0x8 Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dma.o
+                0x0000000008018fa4        0x8 Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dma.o
  .rodata.Font7x10
-                0x0000000008018ec4      0x76c stm32dev/disp_tft/ssd1306_fonts.o
+                0x0000000008018fac      0x76c stm32dev/disp_tft/ssd1306_fonts.o
  .rodata.Font11x18
-                0x0000000008019630      0xd5c stm32dev/disp_tft/ssd1306_fonts.o
+                0x0000000008019718      0xd5c stm32dev/disp_tft/ssd1306_fonts.o
  .rodata.default_layout
-                0x000000000801a38c        0xc trainctl/IHM/disp.o
+                0x000000000801a474        0xc trainctl/IHM/disp.o
  .rodata.layout_manual
-                0x000000000801a398        0xe trainctl/IHM/disp.o
- *fill*         0x000000000801a3a6        0x2 
+                0x000000000801a480        0xe trainctl/IHM/disp.o
+ *fill*         0x000000000801a48e        0x2 
  .rodata.layout_ina3221_i2c
-                0x000000000801a3a8       0x15 trainctl/IHM/disp.o
- *fill*         0x000000000801a3bd        0x3 
+                0x000000000801a490       0x15 trainctl/IHM/disp.o
+ *fill*         0x000000000801a4a5        0x3 
  .rodata.layout_ina3221_val
-                0x000000000801a3c0       0x16 trainctl/IHM/disp.o
- *fill*         0x000000000801a3d6        0x2 
+                0x000000000801a4a8       0x16 trainctl/IHM/disp.o
+ *fill*         0x000000000801a4be        0x2 
  .rodata.Turnouts
-                0x000000000801a3d8        0x8 trainctl/railconfig.o
+                0x000000000801a4c0        0x8 trainctl/railconfig.o
  .rodata.train_params
-                0x000000000801a3e0      0x240 trainctl/train.o
-                0x000000000801a3e0                train_params
+                0x000000000801a4c8      0x240 trainctl/train.o
+                0x000000000801a4c8                train_params
  .rodata.glob_params
-                0x000000000801a620       0x90 trainctl/txrxcmd.o
- .rodata.qdef   0x000000000801a6b0       0x38 trainctl/msg/trainmsg.o
+                0x000000000801a708       0x90 trainctl/txrxcmd.o
+ .rodata.qdef   0x000000000801a798       0x38 trainctl/msg/trainmsg.o
  .rodata.routes
-                0x000000000801a6e8       0x18 trainctl/msg/trainmsg.o
+                0x000000000801a7d0       0x18 trainctl/msg/trainmsg.o
  .rodata.__utoa.str1.1
-                0x000000000801a700       0x25 /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.macos64_1.4.0.202007081208/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard/libc_nano.a(lib_a-utoa.o)
-                0x000000000801a728                . = ALIGN (0x4)
- *fill*         0x000000000801a725        0x3 
+                0x000000000801a7e8       0x25 /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.macos64_1.4.0.202007081208/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard/libc_nano.a(lib_a-utoa.o)
+                0x000000000801a810                . = ALIGN (0x4)
+ *fill*         0x000000000801a80d        0x3 
 
-.ARM.extab      0x000000000801a728        0x0
-                0x000000000801a728                . = ALIGN (0x4)
+.ARM.extab      0x000000000801a810        0x0
+                0x000000000801a810                . = ALIGN (0x4)
  *(.ARM.extab* .gnu.linkonce.armextab.*)
-                0x000000000801a728                . = ALIGN (0x4)
+                0x000000000801a810                . = ALIGN (0x4)
 
-.ARM            0x000000000801a728        0x8
-                0x000000000801a728                . = ALIGN (0x4)
-                0x000000000801a728                __exidx_start = .
+.ARM            0x000000000801a810        0x8
+                0x000000000801a810                . = ALIGN (0x4)
+                0x000000000801a810                __exidx_start = .
  *(.ARM.exidx*)
- .ARM.exidx     0x000000000801a728        0x8 /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.macos64_1.4.0.202007081208/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/thumb/v7e-m/fpv4-sp/hard/libgcc.a(_udivmoddi4.o)
-                0x000000000801a730                __exidx_end = .
-                0x000000000801a730                . = ALIGN (0x4)
+ .ARM.exidx     0x000000000801a810        0x8 /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.macos64_1.4.0.202007081208/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/thumb/v7e-m/fpv4-sp/hard/libgcc.a(_udivmoddi4.o)
+                0x000000000801a818                __exidx_end = .
+                0x000000000801a818                . = ALIGN (0x4)
 
-.rel.dyn        0x000000000801a730        0x0
- .rel.iplt      0x000000000801a730        0x0 /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.macos64_1.4.0.202007081208/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/thumb/v7e-m/fpv4-sp/hard/crtbegin.o
+.rel.dyn        0x000000000801a818        0x0
+ .rel.iplt      0x000000000801a818        0x0 /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.macos64_1.4.0.202007081208/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/thumb/v7e-m/fpv4-sp/hard/crtbegin.o
 
-.preinit_array  0x000000000801a730        0x0
-                0x000000000801a730                . = ALIGN (0x4)
-                0x000000000801a730                PROVIDE (__preinit_array_start = .)
+.preinit_array  0x000000000801a818        0x0
+                0x000000000801a818                . = ALIGN (0x4)
+                0x000000000801a818                PROVIDE (__preinit_array_start = .)
  *(.preinit_array*)
-                0x000000000801a730                PROVIDE (__preinit_array_end = .)
-                0x000000000801a730                . = ALIGN (0x4)
+                0x000000000801a818                PROVIDE (__preinit_array_end = .)
+                0x000000000801a818                . = ALIGN (0x4)
 
-.init_array     0x000000000801a730        0x4
-                0x000000000801a730                . = ALIGN (0x4)
-                0x000000000801a730                PROVIDE (__init_array_start = .)
+.init_array     0x000000000801a818        0x4
+                0x000000000801a818                . = ALIGN (0x4)
+                0x000000000801a818                PROVIDE (__init_array_start = .)
  *(SORT_BY_NAME(.init_array.*))
  *(.init_array*)
- .init_array    0x000000000801a730        0x4 /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.macos64_1.4.0.202007081208/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/thumb/v7e-m/fpv4-sp/hard/crtbegin.o
-                0x000000000801a734                PROVIDE (__init_array_end = .)
-                0x000000000801a734                . = ALIGN (0x4)
+ .init_array    0x000000000801a818        0x4 /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.macos64_1.4.0.202007081208/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/thumb/v7e-m/fpv4-sp/hard/crtbegin.o
+                0x000000000801a81c                PROVIDE (__init_array_end = .)
+                0x000000000801a81c                . = ALIGN (0x4)
 
-.fini_array     0x000000000801a734        0x4
-                0x000000000801a734                . = ALIGN (0x4)
+.fini_array     0x000000000801a81c        0x4
+                0x000000000801a81c                . = ALIGN (0x4)
                 [!provide]                        PROVIDE (__fini_array_start = .)
  *(SORT_BY_NAME(.fini_array.*))
  *(.fini_array*)
- .fini_array    0x000000000801a734        0x4 /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.macos64_1.4.0.202007081208/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/thumb/v7e-m/fpv4-sp/hard/crtbegin.o
+ .fini_array    0x000000000801a81c        0x4 /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.macos64_1.4.0.202007081208/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/thumb/v7e-m/fpv4-sp/hard/crtbegin.o
                 [!provide]                        PROVIDE (__fini_array_end = .)
-                0x000000000801a738                . = ALIGN (0x4)
-                0x000000000801a738                _sidata = LOADADDR (.data)
+                0x000000000801a820                . = ALIGN (0x4)
+                0x000000000801a820                _sidata = LOADADDR (.data)
 
-.data           0x0000000020000000      0x5c4 load address 0x000000000801a738
+.data           0x0000000020000000      0x5c4 load address 0x000000000801a820
                 0x0000000020000000                . = ALIGN (0x4)
                 0x0000000020000000                _sdata = .
  *(.data)
@@ -13708,10 +13710,8 @@ LOAD /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.id
  *fill*         0x0000000020000206        0x2 
  .data.drive_mode
                 0x0000000020000208        0x1 trainctl/IHM/ihm.o
- .data.ignore_ina_presence
-                0x0000000020000209        0x1 trainctl/ctrl/ctrl.o
- *fill*         0x000000002000020a        0x2 
- .data.first.11344
+ *fill*         0x0000000020000209        0x3 
+ .data.first.11346
                 0x000000002000020c        0x4 trainctl/ctrl/ctrl.o
  .data.first.11166
                 0x0000000020000210        0x4 trainctl/low/canton.o
@@ -13764,9 +13764,9 @@ LOAD /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.id
                 0x0000000020000538                to_ui
  .data.from_ui  0x0000000020000544        0xc trainctl/msg/trainmsg.o
                 0x0000000020000544                from_ui
- .data.first.11214
+ .data.first.11216
                 0x0000000020000550        0x4 trainctl/spdctl/spdctl.o
- .data.lastspeed.11247
+ .data.lastspeed.11249
                 0x0000000020000554        0x2 trainctl/spdctl/spdctl.o
  *fill*         0x0000000020000556        0x2 
  .data.cur_freqhz
@@ -13783,11 +13783,11 @@ LOAD /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.id
                 0x00000000200005c4                . = ALIGN (0x4)
                 0x00000000200005c4                _edata = .
 
-.igot.plt       0x00000000200005c4        0x0 load address 0x000000000801acfc
+.igot.plt       0x00000000200005c4        0x0 load address 0x000000000801ade4
  .igot.plt      0x00000000200005c4        0x0 /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.macos64_1.4.0.202007081208/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/thumb/v7e-m/fpv4-sp/hard/crtbegin.o
                 0x00000000200005c4                . = ALIGN (0x4)
 
-.bss            0x00000000200005c8     0x88e0 load address 0x000000000801acfc
+.bss            0x00000000200005c8     0x88e8 load address 0x000000000801ade4
                 0x00000000200005c8                _sbss = .
                 0x00000000200005c8                __bss_start__ = _sbss
  *(.bss)
@@ -13927,7 +13927,9 @@ LOAD /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.id
                 0x00000000200051a4        0x4 trainctl/IHM/ihm.o
  .bss.ignore_bemf_presence
                 0x00000000200051a8        0x1 trainctl/ctrl/ctrl.o
- *fill*         0x00000000200051a9        0x3 
+ .bss.ignore_ina_presence
+                0x00000000200051a9        0x1 trainctl/ctrl/ctrl.o
+ *fill*         0x00000000200051aa        0x2 
  .bss.trctl     0x00000000200051ac       0x80 trainctl/ctrl/ctrl.o
  .bss.test_mode
                 0x000000002000522c        0x1 trainctl/ctrl/ctrl.o
@@ -13939,166 +13941,169 @@ LOAD /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.id
  .bss.occupency_changed
                 0x0000000020005250        0x1 trainctl/ctrl/ctrl.o
  *fill*         0x0000000020005251        0x3 
+ .bss.lastcheck.11388
+                0x0000000020005254        0x4 trainctl/ctrl/ctrl.o
  .bss.CantonTimerHandles
-                0x0000000020005254       0x20 trainctl/low/canton.o
-                0x0000000020005254                CantonTimerHandles
+                0x0000000020005258       0x20 trainctl/low/canton.o
+                0x0000000020005258                CantonTimerHandles
  .bss.canton_vars
-                0x0000000020005274       0x40 trainctl/low/canton.o
+                0x0000000020005278       0x40 trainctl/low/canton.o
  .bss.test_mode
-                0x00000000200052b4        0x1 trainctl/low/canton.o
+                0x00000000200052b8        0x1 trainctl/low/canton.o
  .bss.testerAddr
-                0x00000000200052b5        0x1 trainctl/low/canton.o
+                0x00000000200052b9        0x1 trainctl/low/canton.o
  .bss.bemf_test_mode
-                0x00000000200052b6        0x1 trainctl/low/canton_bemf.o
-                0x00000000200052b6                bemf_test_mode
+                0x00000000200052ba        0x1 trainctl/low/canton_bemf.o
+                0x00000000200052ba                bemf_test_mode
  .bss.bemf_test_all
-                0x00000000200052b7        0x1 trainctl/low/canton_bemf.o
-                0x00000000200052b7                bemf_test_all
- .bss.tvars     0x00000000200052b8       0x10 trainctl/low/turnout.o
+                0x00000000200052bb        0x1 trainctl/low/canton_bemf.o
+                0x00000000200052bb                bemf_test_all
+ .bss.tvars     0x00000000200052bc       0x10 trainctl/low/turnout.o
+ *fill*         0x00000000200052cc        0x4 
  .bss.last_cycle_count_64
-                0x00000000200052c8        0x8 trainctl/misc.o
-                0x00000000200052c8                last_cycle_count_64
- .bss.frm       0x00000000200052d0       0x26 trainctl/txrxcmd.o
- *fill*         0x00000000200052f6        0x2 
+                0x00000000200052d0        0x8 trainctl/misc.o
+                0x00000000200052d0                last_cycle_count_64
+ .bss.frm       0x00000000200052d8       0x26 trainctl/txrxcmd.o
+ *fill*         0x00000000200052fe        0x2 
  .bss.num_trainctl_notif
-                0x00000000200052f8        0x4 trainctl/txrxcmd.o
- .bss.m.11304   0x00000000200052fc       0x21 trainctl/txrxcmd.o
- *fill*         0x000000002000531d        0x3 
- .bss.m.11315   0x0000000020005320       0x21 trainctl/txrxcmd.o
- *fill*         0x0000000020005341        0x3 
- .bss.m.11321   0x0000000020005344       0x21 trainctl/txrxcmd.o
+                0x0000000020005300        0x4 trainctl/txrxcmd.o
+ .bss.m.11304   0x0000000020005304       0x21 trainctl/txrxcmd.o
+ *fill*         0x0000000020005325        0x3 
+ .bss.m.11315   0x0000000020005328       0x21 trainctl/txrxcmd.o
+ *fill*         0x0000000020005349        0x3 
+ .bss.m.11321   0x000000002000534c       0x21 trainctl/txrxcmd.o
  .bss.localBoardNum
-                0x0000000020005365        0x1 trainctl/msg/trainmsg.o
-                0x0000000020005365                localBoardNum
- *fill*         0x0000000020005366        0x2 
- .bss.stop_all  0x0000000020005368        0x4 trainctl/spdctl/spdctl.o
+                0x000000002000536d        0x1 trainctl/msg/trainmsg.o
+                0x000000002000536d                localBoardNum
+ *fill*         0x000000002000536e        0x2 
+ .bss.stop_all  0x0000000020005370        0x4 trainctl/spdctl/spdctl.o
  .bss.calibrating
-                0x000000002000536c        0x4 trainctl/spdctl/spdctl.o
- .bss.train_tick_last_dt
-                0x0000000020005370        0x4 trainctl/spdctl/spdctl.o
-                0x0000000020005370                train_tick_last_dt
- .bss.train_ntick
                 0x0000000020005374        0x4 trainctl/spdctl/spdctl.o
-                0x0000000020005374                train_ntick
+ .bss.train_tick_last_dt
+                0x0000000020005378        0x4 trainctl/spdctl/spdctl.o
+                0x0000000020005378                train_tick_last_dt
+ .bss.train_ntick
+                0x000000002000537c        0x4 trainctl/spdctl/spdctl.o
+                0x000000002000537c                train_ntick
  .bss.trspc_vars
-                0x0000000020005378      0x1c0 trainctl/spdctl/spdctl.o
+                0x0000000020005380      0x1c0 trainctl/spdctl/spdctl.o
  .bss.test_mode
-                0x0000000020005538        0x1 trainctl/spdctl/spdctl.o
+                0x0000000020005540        0x1 trainctl/spdctl/spdctl.o
  .bss.testerAddr
-                0x0000000020005539        0x1 trainctl/spdctl/spdctl.o
- *fill*         0x000000002000553a        0x2 
- .bss.nhalf     0x000000002000553c        0x4 trainctl/stm32/taskctrl.o
- .bss.nfull     0x0000000020005540        0x4 trainctl/stm32/taskctrl.o
- .bss.t0.10985  0x0000000020005544        0x4 trainctl/stm32/taskctrl.o
+                0x0000000020005541        0x1 trainctl/spdctl/spdctl.o
+ *fill*         0x0000000020005542        0x2 
+ .bss.nhalf     0x0000000020005544        0x4 trainctl/stm32/taskctrl.o
+ .bss.nfull     0x0000000020005548        0x4 trainctl/stm32/taskctrl.o
+ .bss.t0.10985  0x000000002000554c        0x4 trainctl/stm32/taskctrl.o
  .bss.oldt.10984
-                0x0000000020005548        0x4 trainctl/stm32/taskctrl.o
+                0x0000000020005550        0x4 trainctl/stm32/taskctrl.o
  .bss.lasttick.11048
-                0x000000002000554c        0x4 trainctl/stm32/taskdisp.o
+                0x0000000020005554        0x4 trainctl/stm32/taskdisp.o
  .bss.num_msg_get
-                0x0000000020005550        0x4 trainctl/stm32/txrxtask.o
-                0x0000000020005550                num_msg_get
- .bss.num_msg_put
-                0x0000000020005554        0x4 trainctl/stm32/txrxtask.o
-                0x0000000020005554                num_msg_put
- .bss.num_msg_get_err
                 0x0000000020005558        0x4 trainctl/stm32/txrxtask.o
-                0x0000000020005558                num_msg_get_err
- .bss.txframe_queue_full
+                0x0000000020005558                num_msg_get
+ .bss.num_msg_put
                 0x000000002000555c        0x4 trainctl/stm32/txrxtask.o
-                0x000000002000555c                txframe_queue_full
- .bss.m.11919   0x0000000020005560       0x21 trainctl/stm32/txrxtask.o
- *fill*         0x0000000020005581        0x3 
+                0x000000002000555c                num_msg_put
+ .bss.num_msg_get_err
+                0x0000000020005560        0x4 trainctl/stm32/txrxtask.o
+                0x0000000020005560                num_msg_get_err
+ .bss.txframe_queue_full
+                0x0000000020005564        0x4 trainctl/stm32/txrxtask.o
+                0x0000000020005564                txframe_queue_full
+ .bss.m.11919   0x0000000020005568       0x21 trainctl/stm32/txrxtask.o
+ *fill*         0x0000000020005589        0x3 
  .bss.frrx.11954
-                0x0000000020005584       0x21 trainctl/stm32/txrxtask.o
- *fill*         0x00000000200055a5        0x3 
- .bss.sw1       0x00000000200055a8        0x4 trainctl/topology/topology.o
- .bss.dmp.5875  0x00000000200055ac        0x1 trainctl/utils/lf_mqueue.o
+                0x000000002000558c       0x21 trainctl/stm32/txrxtask.o
  *fill*         0x00000000200055ad        0x3 
+ .bss.sw1       0x00000000200055b0        0x4 trainctl/topology/topology.o
+ .bss.dmp.5875  0x00000000200055b4        0x1 trainctl/utils/lf_mqueue.o
+ *fill*         0x00000000200055b5        0x3 
  .bss.__malloc_free_list
-                0x00000000200055b0        0x4 /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.macos64_1.4.0.202007081208/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard/libc_nano.a(lib_a-nano-mallocr.o)
-                0x00000000200055b0                __malloc_free_list
+                0x00000000200055b8        0x4 /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.macos64_1.4.0.202007081208/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard/libc_nano.a(lib_a-nano-mallocr.o)
+                0x00000000200055b8                __malloc_free_list
  .bss.__malloc_sbrk_start
-                0x00000000200055b4        0x4 /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.macos64_1.4.0.202007081208/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard/libc_nano.a(lib_a-nano-mallocr.o)
-                0x00000000200055b4                __malloc_sbrk_start
+                0x00000000200055bc        0x4 /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.macos64_1.4.0.202007081208/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard/libc_nano.a(lib_a-nano-mallocr.o)
+                0x00000000200055bc                __malloc_sbrk_start
  *(COMMON)
- COMMON         0x00000000200055b8     0x1954 Core/Src/main.o
-                0x00000000200055b8                hi2c3
-                0x000000002000560c                frameQueueBuffer
-                0x0000000020005c3c                htim8
-                0x0000000020005c7c                txrxFrameTaskControlBlock
-                0x0000000020005ce0                htim4
-                0x0000000020005d20                frameQueueHandle
-                0x0000000020005d24                hi2c1
-                0x0000000020005d78                ina3221_taskControlBlock
-                0x0000000020005ddc                txrxFrameTaskBuffer
-                0x00000000200061dc                frameQueueControlBlock
-                0x000000002000622c                uiTaskHandle
-                0x0000000020006230                htim3
-                0x0000000020006270                ctrlTaskHandle
-                0x0000000020006274                hadc1
-                0x00000000200062bc                hdma_adc1
-                0x000000002000631c                hrtc
-                0x000000002000633c                ctrlTaskBuffer
-                0x000000002000673c                htim1
-                0x000000002000677c                defaultTaskBuffer
-                0x0000000020006b7c                txrxFrameTaskHandle
-                0x0000000020006b80                ctrlTaskControlBlock
-                0x0000000020006be4                huart4
-                0x0000000020006c24                defaultTaskControlBlock
-                0x0000000020006c88                htim2
-                0x0000000020006cc8                ina3221_taskHandle
-                0x0000000020006ccc                htim12
-                0x0000000020006d0c                ina3221_taskBuffer
- COMMON         0x0000000020006f0c       0x40 Core/Src/stm32f4xx_hal_timebase_tim.o
-                0x0000000020006f0c                htim7
- COMMON         0x0000000020006f4c        0x4 Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.o
-                0x0000000020006f4c                uwTick
- COMMON         0x0000000020006f50       0x40 Middlewares/Third_Party/FreeRTOS/Source/queue.o
-                0x0000000020006f50                xQueueRegistry
- COMMON         0x0000000020006f90      0x2d0 USB_DEVICE/App/usb_device.o
-                0x0000000020006f90                hUsbDeviceFS
- COMMON         0x0000000020007260     0x1000 USB_DEVICE/App/usbd_cdc_if.o
-                0x0000000020007260                UserRxBufferFS
-                0x0000000020007a60                UserTxBufferFS
- COMMON         0x0000000020008260      0x200 USB_DEVICE/App/usbd_desc.o
-                0x0000000020008260                USBD_StrDesc
- COMMON         0x0000000020008460      0x408 USB_DEVICE/Target/usbd_conf.o
-                0x0000000020008460                hpcd_USB_OTG_FS
- COMMON         0x0000000020008868       0x50 trainctl/low/canton_bemf.o
-                0x0000000020008868                train_adc_buf
- COMMON         0x00000000200088b8      0x5e8 trainctl/msg/trainmsg.o
-                0x00000000200088b8                buffrom_spdctl
-                0x0000000020008938                buffrom_forward_usb
-                0x0000000020008978                buffrom_turnout
-                0x0000000020008980                bufto_forward_usb
-                0x00000000200089c0                bufto_ctrl
-                0x0000000020008a20                buffrom_forward
-                0x0000000020008a60                bufto_forward
-                0x0000000020008aa0                bufto_ui
-                0x0000000020008ca0                buffrom_ctrl
-                0x0000000020008d00                bufto_canton
-                0x0000000020008d80                bufto_turnout
-                0x0000000020008dc0                buffrom_ui
-                0x0000000020008de0                buffrom_canton
-                0x0000000020008e20                bufto_spdctl
- COMMON         0x0000000020008ea0        0x4 trainctl/stm32/taskctrl.o
-                0x0000000020008ea0                t0ctrl
- COMMON         0x0000000020008ea4        0x4 /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.macos64_1.4.0.202007081208/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard/libc_nano.a(lib_a-reent.o)
-                0x0000000020008ea4                errno
-                0x0000000020008ea8                . = ALIGN (0x4)
-                0x0000000020008ea8                _ebss = .
-                0x0000000020008ea8                __bss_end__ = _ebss
+ COMMON         0x00000000200055c0     0x1954 Core/Src/main.o
+                0x00000000200055c0                hi2c3
+                0x0000000020005614                frameQueueBuffer
+                0x0000000020005c44                htim8
+                0x0000000020005c84                txrxFrameTaskControlBlock
+                0x0000000020005ce8                htim4
+                0x0000000020005d28                frameQueueHandle
+                0x0000000020005d2c                hi2c1
+                0x0000000020005d80                ina3221_taskControlBlock
+                0x0000000020005de4                txrxFrameTaskBuffer
+                0x00000000200061e4                frameQueueControlBlock
+                0x0000000020006234                uiTaskHandle
+                0x0000000020006238                htim3
+                0x0000000020006278                ctrlTaskHandle
+                0x000000002000627c                hadc1
+                0x00000000200062c4                hdma_adc1
+                0x0000000020006324                hrtc
+                0x0000000020006344                ctrlTaskBuffer
+                0x0000000020006744                htim1
+                0x0000000020006784                defaultTaskBuffer
+                0x0000000020006b84                txrxFrameTaskHandle
+                0x0000000020006b88                ctrlTaskControlBlock
+                0x0000000020006bec                huart4
+                0x0000000020006c2c                defaultTaskControlBlock
+                0x0000000020006c90                htim2
+                0x0000000020006cd0                ina3221_taskHandle
+                0x0000000020006cd4                htim12
+                0x0000000020006d14                ina3221_taskBuffer
+ COMMON         0x0000000020006f14       0x40 Core/Src/stm32f4xx_hal_timebase_tim.o
+                0x0000000020006f14                htim7
+ COMMON         0x0000000020006f54        0x4 Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.o
+                0x0000000020006f54                uwTick
+ COMMON         0x0000000020006f58       0x40 Middlewares/Third_Party/FreeRTOS/Source/queue.o
+                0x0000000020006f58                xQueueRegistry
+ COMMON         0x0000000020006f98      0x2d0 USB_DEVICE/App/usb_device.o
+                0x0000000020006f98                hUsbDeviceFS
+ COMMON         0x0000000020007268     0x1000 USB_DEVICE/App/usbd_cdc_if.o
+                0x0000000020007268                UserRxBufferFS
+                0x0000000020007a68                UserTxBufferFS
+ COMMON         0x0000000020008268      0x200 USB_DEVICE/App/usbd_desc.o
+                0x0000000020008268                USBD_StrDesc
+ COMMON         0x0000000020008468      0x408 USB_DEVICE/Target/usbd_conf.o
+                0x0000000020008468                hpcd_USB_OTG_FS
+ COMMON         0x0000000020008870       0x50 trainctl/low/canton_bemf.o
+                0x0000000020008870                train_adc_buf
+ COMMON         0x00000000200088c0      0x5e8 trainctl/msg/trainmsg.o
+                0x00000000200088c0                buffrom_spdctl
+                0x0000000020008940                buffrom_forward_usb
+                0x0000000020008980                buffrom_turnout
+                0x0000000020008988                bufto_forward_usb
+                0x00000000200089c8                bufto_ctrl
+                0x0000000020008a28                buffrom_forward
+                0x0000000020008a68                bufto_forward
+                0x0000000020008aa8                bufto_ui
+                0x0000000020008ca8                buffrom_ctrl
+                0x0000000020008d08                bufto_canton
+                0x0000000020008d88                bufto_turnout
+                0x0000000020008dc8                buffrom_ui
+                0x0000000020008de8                buffrom_canton
+                0x0000000020008e28                bufto_spdctl
+ COMMON         0x0000000020008ea8        0x4 trainctl/stm32/taskctrl.o
+                0x0000000020008ea8                t0ctrl
+ COMMON         0x0000000020008eac        0x4 /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.macos64_1.4.0.202007081208/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard/libc_nano.a(lib_a-reent.o)
+                0x0000000020008eac                errno
+                0x0000000020008eb0                . = ALIGN (0x4)
+                0x0000000020008eb0                _ebss = .
+                0x0000000020008eb0                __bss_end__ = _ebss
 
 ._user_heap_stack
-                0x0000000020008ea8      0x600 load address 0x000000000801acfc
-                0x0000000020008ea8                . = ALIGN (0x8)
+                0x0000000020008eb0      0x600 load address 0x000000000801ade4
+                0x0000000020008eb0                . = ALIGN (0x8)
                 [!provide]                        PROVIDE (end = .)
-                0x0000000020008ea8                PROVIDE (_end = .)
-                0x00000000200090a8                . = (. + _Min_Heap_Size)
- *fill*         0x0000000020008ea8      0x200 
-                0x00000000200094a8                . = (. + _Min_Stack_Size)
- *fill*         0x00000000200090a8      0x400 
-                0x00000000200094a8                . = ALIGN (0x8)
+                0x0000000020008eb0                PROVIDE (_end = .)
+                0x00000000200090b0                . = (. + _Min_Heap_Size)
+ *fill*         0x0000000020008eb0      0x200 
+                0x00000000200094b0                . = (. + _Min_Stack_Size)
+ *fill*         0x00000000200090b0      0x400 
+                0x00000000200094b0                . = ALIGN (0x8)
 
 /DISCARD/
  libc.a(*)
@@ -14282,7 +14287,7 @@ LOAD /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.id
                 0x0000000000001209       0x22 /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.macos64_1.4.0.202007081208/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/thumb/v7e-m/fpv4-sp/hard/crtn.o
 OUTPUT(stm32f407VETx.elf elf32-littlearm)
 
-.debug_info     0x0000000000000000    0x4afc0
+.debug_info     0x0000000000000000    0x4b019
  .debug_info    0x0000000000000000      0x19e Core/Src/freertos.o
  .debug_info    0x000000000000019e     0x2f4b Core/Src/main.o
  .debug_info    0x00000000000030e9     0x19f2 Core/Src/stm32f4xx_hal_msp.o
@@ -14326,29 +14331,29 @@ OUTPUT(stm32f407VETx.elf elf32-littlearm)
  .debug_info    0x000000000002daa9     0x1b3b stm32dev/ina3221/ina3221.o
  .debug_info    0x000000000002f5e4     0x1820 trainctl/IHM/disp.o
  .debug_info    0x0000000000030e04     0x1426 trainctl/IHM/ihm.o
- .debug_info    0x000000000003222a     0x2105 trainctl/ctrl/ctrl.o
- .debug_info    0x000000000003432f     0x1a22 trainctl/low/canton.o
- .debug_info    0x0000000000035d51     0x1745 trainctl/low/canton_bemf.o
- .debug_info    0x0000000000037496     0x1129 trainctl/low/presence_detection.o
- .debug_info    0x00000000000385bf     0x1619 trainctl/low/turnout.o
- .debug_info    0x0000000000039bd8      0xdd4 trainctl/misc.o
- .debug_info    0x000000000003a9ac      0xc97 trainctl/param.o
- .debug_info    0x000000000003b643     0x143e trainctl/railconfig.o
- .debug_info    0x000000000003ca81     0x1213 trainctl/statval.o
- .debug_info    0x000000000003dc94      0xf8e trainctl/train.o
- .debug_info    0x000000000003ec22     0x1c0b trainctl/txrxcmd.o
- .debug_info    0x000000000004082d     0x10f2 trainctl/msg/trainmsg.o
- .debug_info    0x000000000004191f      0xb36 trainctl/spdctl/inertia.o
- .debug_info    0x0000000000042455      0xc01 trainctl/spdctl/pidctl.o
- .debug_info    0x0000000000043056     0x1dcd trainctl/spdctl/spdctl.o
- .debug_info    0x0000000000044e23     0x15fc trainctl/stm32/taskctrl.o
- .debug_info    0x000000000004641f     0x16e0 trainctl/stm32/taskdisp.o
- .debug_info    0x0000000000047aff     0x11f5 trainctl/stm32/txrxtask.o
- .debug_info    0x0000000000048cf4      0xaa3 trainctl/topology/topology.o
- .debug_info    0x0000000000049797      0xd46 trainctl/utils/itm_debug.o
- .debug_info    0x000000000004a4dd      0xae3 trainctl/utils/lf_mqueue.o
+ .debug_info    0x000000000003222a     0x214f trainctl/ctrl/ctrl.o
+ .debug_info    0x0000000000034379     0x1a22 trainctl/low/canton.o
+ .debug_info    0x0000000000035d9b     0x1745 trainctl/low/canton_bemf.o
+ .debug_info    0x00000000000374e0     0x1129 trainctl/low/presence_detection.o
+ .debug_info    0x0000000000038609     0x1619 trainctl/low/turnout.o
+ .debug_info    0x0000000000039c22      0xdd4 trainctl/misc.o
+ .debug_info    0x000000000003a9f6      0xc97 trainctl/param.o
+ .debug_info    0x000000000003b68d     0x143e trainctl/railconfig.o
+ .debug_info    0x000000000003cacb     0x1213 trainctl/statval.o
+ .debug_info    0x000000000003dcde      0xf8e trainctl/train.o
+ .debug_info    0x000000000003ec6c     0x1c0b trainctl/txrxcmd.o
+ .debug_info    0x0000000000040877     0x10f2 trainctl/msg/trainmsg.o
+ .debug_info    0x0000000000041969      0xb36 trainctl/spdctl/inertia.o
+ .debug_info    0x000000000004249f      0xc01 trainctl/spdctl/pidctl.o
+ .debug_info    0x00000000000430a0     0x1ddc trainctl/spdctl/spdctl.o
+ .debug_info    0x0000000000044e7c     0x15fc trainctl/stm32/taskctrl.o
+ .debug_info    0x0000000000046478     0x16e0 trainctl/stm32/taskdisp.o
+ .debug_info    0x0000000000047b58     0x11f5 trainctl/stm32/txrxtask.o
+ .debug_info    0x0000000000048d4d      0xaa3 trainctl/topology/topology.o
+ .debug_info    0x00000000000497f0      0xd46 trainctl/utils/itm_debug.o
+ .debug_info    0x000000000004a536      0xae3 trainctl/utils/lf_mqueue.o
 
-.debug_abbrev   0x0000000000000000     0x92cc
+.debug_abbrev   0x0000000000000000     0x92db
  .debug_abbrev  0x0000000000000000       0xc8 Core/Src/freertos.o
  .debug_abbrev  0x00000000000000c8      0x30b Core/Src/main.o
  .debug_abbrev  0x00000000000003d3      0x1f8 Core/Src/stm32f4xx_hal_msp.o
@@ -14392,29 +14397,29 @@ OUTPUT(stm32f407VETx.elf elf32-littlearm)
  .debug_abbrev  0x000000000000570b      0x344 stm32dev/ina3221/ina3221.o
  .debug_abbrev  0x0000000000005a4f      0x2d7 trainctl/IHM/disp.o
  .debug_abbrev  0x0000000000005d26      0x2c1 trainctl/IHM/ihm.o
- .debug_abbrev  0x0000000000005fe7      0x36d trainctl/ctrl/ctrl.o
- .debug_abbrev  0x0000000000006354      0x342 trainctl/low/canton.o
- .debug_abbrev  0x0000000000006696      0x2cc trainctl/low/canton_bemf.o
- .debug_abbrev  0x0000000000006962      0x1d6 trainctl/low/presence_detection.o
- .debug_abbrev  0x0000000000006b38      0x26b trainctl/low/turnout.o
- .debug_abbrev  0x0000000000006da3      0x289 trainctl/misc.o
- .debug_abbrev  0x000000000000702c      0x1ec trainctl/param.o
- .debug_abbrev  0x0000000000007218      0x25f trainctl/railconfig.o
- .debug_abbrev  0x0000000000007477      0x22d trainctl/statval.o
- .debug_abbrev  0x00000000000076a4      0x1a9 trainctl/train.o
- .debug_abbrev  0x000000000000784d      0x325 trainctl/txrxcmd.o
- .debug_abbrev  0x0000000000007b72      0x267 trainctl/msg/trainmsg.o
- .debug_abbrev  0x0000000000007dd9      0x207 trainctl/spdctl/inertia.o
- .debug_abbrev  0x0000000000007fe0      0x23d trainctl/spdctl/pidctl.o
- .debug_abbrev  0x000000000000821d      0x324 trainctl/spdctl/spdctl.o
- .debug_abbrev  0x0000000000008541      0x289 trainctl/stm32/taskctrl.o
- .debug_abbrev  0x00000000000087ca      0x233 trainctl/stm32/taskdisp.o
- .debug_abbrev  0x00000000000089fd      0x289 trainctl/stm32/txrxtask.o
- .debug_abbrev  0x0000000000008c86      0x1b5 trainctl/topology/topology.o
- .debug_abbrev  0x0000000000008e3b      0x290 trainctl/utils/itm_debug.o
- .debug_abbrev  0x00000000000090cb      0x201 trainctl/utils/lf_mqueue.o
+ .debug_abbrev  0x0000000000005fe7      0x37c trainctl/ctrl/ctrl.o
+ .debug_abbrev  0x0000000000006363      0x342 trainctl/low/canton.o
+ .debug_abbrev  0x00000000000066a5      0x2cc trainctl/low/canton_bemf.o
+ .debug_abbrev  0x0000000000006971      0x1d6 trainctl/low/presence_detection.o
+ .debug_abbrev  0x0000000000006b47      0x26b trainctl/low/turnout.o
+ .debug_abbrev  0x0000000000006db2      0x289 trainctl/misc.o
+ .debug_abbrev  0x000000000000703b      0x1ec trainctl/param.o
+ .debug_abbrev  0x0000000000007227      0x25f trainctl/railconfig.o
+ .debug_abbrev  0x0000000000007486      0x22d trainctl/statval.o
+ .debug_abbrev  0x00000000000076b3      0x1a9 trainctl/train.o
+ .debug_abbrev  0x000000000000785c      0x325 trainctl/txrxcmd.o
+ .debug_abbrev  0x0000000000007b81      0x267 trainctl/msg/trainmsg.o
+ .debug_abbrev  0x0000000000007de8      0x207 trainctl/spdctl/inertia.o
+ .debug_abbrev  0x0000000000007fef      0x23d trainctl/spdctl/pidctl.o
+ .debug_abbrev  0x000000000000822c      0x324 trainctl/spdctl/spdctl.o
+ .debug_abbrev  0x0000000000008550      0x289 trainctl/stm32/taskctrl.o
+ .debug_abbrev  0x00000000000087d9      0x233 trainctl/stm32/taskdisp.o
+ .debug_abbrev  0x0000000000008a0c      0x289 trainctl/stm32/txrxtask.o
+ .debug_abbrev  0x0000000000008c95      0x1b5 trainctl/topology/topology.o
+ .debug_abbrev  0x0000000000008e4a      0x290 trainctl/utils/itm_debug.o
+ .debug_abbrev  0x00000000000090da      0x201 trainctl/utils/lf_mqueue.o
 
-.debug_aranges  0x0000000000000000     0x29a8
+.debug_aranges  0x0000000000000000     0x29b0
  .debug_aranges
                 0x0000000000000000       0x28 Core/Src/freertos.o
  .debug_aranges
@@ -14502,49 +14507,49 @@ OUTPUT(stm32f407VETx.elf elf32-littlearm)
  .debug_aranges
                 0x0000000000002210       0x58 trainctl/IHM/ihm.o
  .debug_aranges
-                0x0000000000002268      0x148 trainctl/ctrl/ctrl.o
+                0x0000000000002268      0x150 trainctl/ctrl/ctrl.o
  .debug_aranges
-                0x00000000000023b0       0x80 trainctl/low/canton.o
+                0x00000000000023b8       0x80 trainctl/low/canton.o
  .debug_aranges
-                0x0000000000002430       0x60 trainctl/low/canton_bemf.o
+                0x0000000000002438       0x60 trainctl/low/canton_bemf.o
  .debug_aranges
-                0x0000000000002490       0x20 trainctl/low/presence_detection.o
+                0x0000000000002498       0x20 trainctl/low/presence_detection.o
  .debug_aranges
-                0x00000000000024b0       0x58 trainctl/low/turnout.o
+                0x00000000000024b8       0x58 trainctl/low/turnout.o
  .debug_aranges
-                0x0000000000002508       0x58 trainctl/misc.o
+                0x0000000000002510       0x58 trainctl/misc.o
  .debug_aranges
-                0x0000000000002560       0x30 trainctl/param.o
+                0x0000000000002568       0x30 trainctl/param.o
  .debug_aranges
-                0x0000000000002590       0x40 trainctl/railconfig.o
+                0x0000000000002598       0x40 trainctl/railconfig.o
  .debug_aranges
-                0x00000000000025d0       0x30 trainctl/statval.o
+                0x00000000000025d8       0x30 trainctl/statval.o
  .debug_aranges
-                0x0000000000002600       0x18 trainctl/train.o
+                0x0000000000002608       0x18 trainctl/train.o
  .debug_aranges
-                0x0000000000002618       0xa8 trainctl/txrxcmd.o
+                0x0000000000002620       0xa8 trainctl/txrxcmd.o
  .debug_aranges
-                0x00000000000026c0       0x58 trainctl/msg/trainmsg.o
+                0x00000000000026c8       0x58 trainctl/msg/trainmsg.o
  .debug_aranges
-                0x0000000000002718       0x30 trainctl/spdctl/inertia.o
+                0x0000000000002720       0x30 trainctl/spdctl/inertia.o
  .debug_aranges
-                0x0000000000002748       0x48 trainctl/spdctl/pidctl.o
+                0x0000000000002750       0x48 trainctl/spdctl/pidctl.o
  .debug_aranges
-                0x0000000000002790       0x90 trainctl/spdctl/spdctl.o
+                0x0000000000002798       0x90 trainctl/spdctl/spdctl.o
  .debug_aranges
-                0x0000000000002820       0x60 trainctl/stm32/taskctrl.o
+                0x0000000000002828       0x60 trainctl/stm32/taskctrl.o
  .debug_aranges
-                0x0000000000002880       0x30 trainctl/stm32/taskdisp.o
+                0x0000000000002888       0x30 trainctl/stm32/taskdisp.o
  .debug_aranges
-                0x00000000000028b0       0x40 trainctl/stm32/txrxtask.o
+                0x00000000000028b8       0x40 trainctl/stm32/txrxtask.o
  .debug_aranges
-                0x00000000000028f0       0x38 trainctl/topology/topology.o
+                0x00000000000028f8       0x38 trainctl/topology/topology.o
  .debug_aranges
-                0x0000000000002928       0x38 trainctl/utils/itm_debug.o
+                0x0000000000002930       0x38 trainctl/utils/itm_debug.o
  .debug_aranges
-                0x0000000000002960       0x48 trainctl/utils/lf_mqueue.o
+                0x0000000000002968       0x48 trainctl/utils/lf_mqueue.o
 
-.debug_ranges   0x0000000000000000     0x2750
+.debug_ranges   0x0000000000000000     0x2740
  .debug_ranges  0x0000000000000000       0x18 Core/Src/freertos.o
  .debug_ranges  0x0000000000000018       0xb0 Core/Src/main.o
  .debug_ranges  0x00000000000000c8       0x78 Core/Src/stm32f4xx_hal_msp.o
@@ -14587,28 +14592,28 @@ OUTPUT(stm32f407VETx.elf elf32-littlearm)
  .debug_ranges  0x0000000000001e88       0xd8 stm32dev/ina3221/ina3221.o
  .debug_ranges  0x0000000000001f60       0x70 trainctl/IHM/disp.o
  .debug_ranges  0x0000000000001fd0       0x90 trainctl/IHM/ihm.o
- .debug_ranges  0x0000000000002060      0x180 trainctl/ctrl/ctrl.o
- .debug_ranges  0x00000000000021e0       0x88 trainctl/low/canton.o
- .debug_ranges  0x0000000000002268       0x50 trainctl/low/canton_bemf.o
- .debug_ranges  0x00000000000022b8       0x10 trainctl/low/presence_detection.o
- .debug_ranges  0x00000000000022c8       0x60 trainctl/low/turnout.o
- .debug_ranges  0x0000000000002328       0x48 trainctl/misc.o
- .debug_ranges  0x0000000000002370       0x20 trainctl/param.o
- .debug_ranges  0x0000000000002390       0x30 trainctl/railconfig.o
- .debug_ranges  0x00000000000023c0       0x20 trainctl/statval.o
- .debug_ranges  0x00000000000023e0       0x98 trainctl/txrxcmd.o
- .debug_ranges  0x0000000000002478       0x78 trainctl/msg/trainmsg.o
- .debug_ranges  0x00000000000024f0       0x20 trainctl/spdctl/inertia.o
- .debug_ranges  0x0000000000002510       0x38 trainctl/spdctl/pidctl.o
- .debug_ranges  0x0000000000002548       0xb0 trainctl/spdctl/spdctl.o
- .debug_ranges  0x00000000000025f8       0x50 trainctl/stm32/taskctrl.o
- .debug_ranges  0x0000000000002648       0x20 trainctl/stm32/taskdisp.o
- .debug_ranges  0x0000000000002668       0x60 trainctl/stm32/txrxtask.o
- .debug_ranges  0x00000000000026c8       0x28 trainctl/topology/topology.o
- .debug_ranges  0x00000000000026f0       0x28 trainctl/utils/itm_debug.o
- .debug_ranges  0x0000000000002718       0x38 trainctl/utils/lf_mqueue.o
+ .debug_ranges  0x0000000000002060      0x170 trainctl/ctrl/ctrl.o
+ .debug_ranges  0x00000000000021d0       0x88 trainctl/low/canton.o
+ .debug_ranges  0x0000000000002258       0x50 trainctl/low/canton_bemf.o
+ .debug_ranges  0x00000000000022a8       0x10 trainctl/low/presence_detection.o
+ .debug_ranges  0x00000000000022b8       0x60 trainctl/low/turnout.o
+ .debug_ranges  0x0000000000002318       0x48 trainctl/misc.o
+ .debug_ranges  0x0000000000002360       0x20 trainctl/param.o
+ .debug_ranges  0x0000000000002380       0x30 trainctl/railconfig.o
+ .debug_ranges  0x00000000000023b0       0x20 trainctl/statval.o
+ .debug_ranges  0x00000000000023d0       0x98 trainctl/txrxcmd.o
+ .debug_ranges  0x0000000000002468       0x78 trainctl/msg/trainmsg.o
+ .debug_ranges  0x00000000000024e0       0x20 trainctl/spdctl/inertia.o
+ .debug_ranges  0x0000000000002500       0x38 trainctl/spdctl/pidctl.o
+ .debug_ranges  0x0000000000002538       0xb0 trainctl/spdctl/spdctl.o
+ .debug_ranges  0x00000000000025e8       0x50 trainctl/stm32/taskctrl.o
+ .debug_ranges  0x0000000000002638       0x20 trainctl/stm32/taskdisp.o
+ .debug_ranges  0x0000000000002658       0x60 trainctl/stm32/txrxtask.o
+ .debug_ranges  0x00000000000026b8       0x28 trainctl/topology/topology.o
+ .debug_ranges  0x00000000000026e0       0x28 trainctl/utils/itm_debug.o
+ .debug_ranges  0x0000000000002708       0x38 trainctl/utils/lf_mqueue.o
 
-.debug_macro    0x0000000000000000    0x301ff
+.debug_macro    0x0000000000000000    0x30216
  .debug_macro   0x0000000000000000      0x2b5 Core/Src/freertos.o
  .debug_macro   0x00000000000002b5      0xa5a Core/Src/freertos.o
  .debug_macro   0x0000000000000d0f      0x174 Core/Src/freertos.o
@@ -14782,37 +14787,37 @@ OUTPUT(stm32f407VETx.elf elf32-littlearm)
  .debug_macro   0x0000000000029b60      0x504 trainctl/IHM/disp.o
  .debug_macro   0x000000000002a064       0x2e trainctl/IHM/disp.o
  .debug_macro   0x000000000002a092      0x479 trainctl/IHM/ihm.o
- .debug_macro   0x000000000002a50b      0x573 trainctl/ctrl/ctrl.o
- .debug_macro   0x000000000002aa7e       0x16 trainctl/ctrl/ctrl.o
- .debug_macro   0x000000000002aa94       0x10 trainctl/ctrl/ctrl.o
- .debug_macro   0x000000000002aaa4       0x10 trainctl/ctrl/ctrl.o
- .debug_macro   0x000000000002aab4       0x10 trainctl/ctrl/ctrl.o
- .debug_macro   0x000000000002aac4      0x550 trainctl/low/canton.o
- .debug_macro   0x000000000002b014      0x546 trainctl/low/canton_bemf.o
- .debug_macro   0x000000000002b55a      0x539 trainctl/low/presence_detection.o
- .debug_macro   0x000000000002ba93      0x562 trainctl/low/turnout.o
- .debug_macro   0x000000000002bff5      0x3fe trainctl/misc.o
- .debug_macro   0x000000000002c3f3      0x49b trainctl/param.o
- .debug_macro   0x000000000002c88e      0x4c4 trainctl/railconfig.o
- .debug_macro   0x000000000002cd52       0x46 trainctl/railconfig.o
- .debug_macro   0x000000000002cd98       0x10 trainctl/railconfig.o
- .debug_macro   0x000000000002cda8      0x525 trainctl/statval.o
- .debug_macro   0x000000000002d2cd      0x4fb trainctl/train.o
- .debug_macro   0x000000000002d7c8      0x554 trainctl/txrxcmd.o
- .debug_macro   0x000000000002dd1c      0x173 trainctl/msg/trainmsg.o
- .debug_macro   0x000000000002de8f       0x10 trainctl/msg/trainmsg.o
- .debug_macro   0x000000000002de9f      0x3ce trainctl/spdctl/inertia.o
- .debug_macro   0x000000000002e26d      0x413 trainctl/spdctl/pidctl.o
- .debug_macro   0x000000000002e680      0x560 trainctl/spdctl/spdctl.o
- .debug_macro   0x000000000002ebe0      0x4a6 trainctl/stm32/taskctrl.o
- .debug_macro   0x000000000002f086       0xd9 trainctl/stm32/taskctrl.o
- .debug_macro   0x000000000002f15f      0x48f trainctl/stm32/taskdisp.o
- .debug_macro   0x000000000002f5ee      0x552 trainctl/stm32/txrxtask.o
- .debug_macro   0x000000000002fb40      0x16c trainctl/topology/topology.o
- .debug_macro   0x000000000002fcac      0x40e trainctl/utils/itm_debug.o
- .debug_macro   0x00000000000300ba      0x145 trainctl/utils/lf_mqueue.o
+ .debug_macro   0x000000000002a50b      0x58a trainctl/ctrl/ctrl.o
+ .debug_macro   0x000000000002aa95       0x16 trainctl/ctrl/ctrl.o
+ .debug_macro   0x000000000002aaab       0x10 trainctl/ctrl/ctrl.o
+ .debug_macro   0x000000000002aabb       0x10 trainctl/ctrl/ctrl.o
+ .debug_macro   0x000000000002aacb       0x10 trainctl/ctrl/ctrl.o
+ .debug_macro   0x000000000002aadb      0x550 trainctl/low/canton.o
+ .debug_macro   0x000000000002b02b      0x546 trainctl/low/canton_bemf.o
+ .debug_macro   0x000000000002b571      0x539 trainctl/low/presence_detection.o
+ .debug_macro   0x000000000002baaa      0x562 trainctl/low/turnout.o
+ .debug_macro   0x000000000002c00c      0x3fe trainctl/misc.o
+ .debug_macro   0x000000000002c40a      0x49b trainctl/param.o
+ .debug_macro   0x000000000002c8a5      0x4c4 trainctl/railconfig.o
+ .debug_macro   0x000000000002cd69       0x46 trainctl/railconfig.o
+ .debug_macro   0x000000000002cdaf       0x10 trainctl/railconfig.o
+ .debug_macro   0x000000000002cdbf      0x525 trainctl/statval.o
+ .debug_macro   0x000000000002d2e4      0x4fb trainctl/train.o
+ .debug_macro   0x000000000002d7df      0x554 trainctl/txrxcmd.o
+ .debug_macro   0x000000000002dd33      0x173 trainctl/msg/trainmsg.o
+ .debug_macro   0x000000000002dea6       0x10 trainctl/msg/trainmsg.o
+ .debug_macro   0x000000000002deb6      0x3ce trainctl/spdctl/inertia.o
+ .debug_macro   0x000000000002e284      0x413 trainctl/spdctl/pidctl.o
+ .debug_macro   0x000000000002e697      0x560 trainctl/spdctl/spdctl.o
+ .debug_macro   0x000000000002ebf7      0x4a6 trainctl/stm32/taskctrl.o
+ .debug_macro   0x000000000002f09d       0xd9 trainctl/stm32/taskctrl.o
+ .debug_macro   0x000000000002f176      0x48f trainctl/stm32/taskdisp.o
+ .debug_macro   0x000000000002f605      0x552 trainctl/stm32/txrxtask.o
+ .debug_macro   0x000000000002fb57      0x16c trainctl/topology/topology.o
+ .debug_macro   0x000000000002fcc3      0x40e trainctl/utils/itm_debug.o
+ .debug_macro   0x00000000000300d1      0x145 trainctl/utils/lf_mqueue.o
 
-.debug_line     0x0000000000000000    0x32290
+.debug_line     0x0000000000000000    0x322e4
  .debug_line    0x0000000000000000      0x8d4 Core/Src/freertos.o
  .debug_line    0x00000000000008d4     0x101f Core/Src/main.o
  .debug_line    0x00000000000018f3      0x9a0 Core/Src/stm32f4xx_hal_msp.o
@@ -14856,29 +14861,29 @@ OUTPUT(stm32f407VETx.elf elf32-littlearm)
  .debug_line    0x000000000001e459      0xfe1 stm32dev/ina3221/ina3221.o
  .debug_line    0x000000000001f43a      0xebc trainctl/IHM/disp.o
  .debug_line    0x00000000000202f6      0xe1a trainctl/IHM/ihm.o
- .debug_line    0x0000000000021110     0x13d2 trainctl/ctrl/ctrl.o
- .debug_line    0x00000000000224e2      0xfd7 trainctl/low/canton.o
- .debug_line    0x00000000000234b9      0xe9f trainctl/low/canton_bemf.o
- .debug_line    0x0000000000024358      0xd55 trainctl/low/presence_detection.o
- .debug_line    0x00000000000250ad      0xe78 trainctl/low/turnout.o
- .debug_line    0x0000000000025f25      0xbc0 trainctl/misc.o
- .debug_line    0x0000000000026ae5      0xc6d trainctl/param.o
- .debug_line    0x0000000000027752      0xd14 trainctl/railconfig.o
- .debug_line    0x0000000000028466      0xd0b trainctl/statval.o
- .debug_line    0x0000000000029171      0xca4 trainctl/train.o
- .debug_line    0x0000000000029e15     0x1081 trainctl/txrxcmd.o
- .debug_line    0x000000000002ae96      0x6ef trainctl/msg/trainmsg.o
- .debug_line    0x000000000002b585      0xb68 trainctl/spdctl/inertia.o
- .debug_line    0x000000000002c0ed      0xbfc trainctl/spdctl/pidctl.o
- .debug_line    0x000000000002cce9     0x1129 trainctl/spdctl/spdctl.o
- .debug_line    0x000000000002de12      0xfa6 trainctl/stm32/taskctrl.o
- .debug_line    0x000000000002edb8      0xdd4 trainctl/stm32/taskdisp.o
- .debug_line    0x000000000002fb8c      0xe2b trainctl/stm32/txrxtask.o
- .debug_line    0x00000000000309b7      0x6f1 trainctl/topology/topology.o
- .debug_line    0x00000000000310a8      0xbbc trainctl/utils/itm_debug.o
- .debug_line    0x0000000000031c64      0x62c trainctl/utils/lf_mqueue.o
+ .debug_line    0x0000000000021110     0x1404 trainctl/ctrl/ctrl.o
+ .debug_line    0x0000000000022514      0xfd7 trainctl/low/canton.o
+ .debug_line    0x00000000000234eb      0xe9f trainctl/low/canton_bemf.o
+ .debug_line    0x000000000002438a      0xd55 trainctl/low/presence_detection.o
+ .debug_line    0x00000000000250df      0xe78 trainctl/low/turnout.o
+ .debug_line    0x0000000000025f57      0xbc0 trainctl/misc.o
+ .debug_line    0x0000000000026b17      0xc6d trainctl/param.o
+ .debug_line    0x0000000000027784      0xd14 trainctl/railconfig.o
+ .debug_line    0x0000000000028498      0xd0b trainctl/statval.o
+ .debug_line    0x00000000000291a3      0xca4 trainctl/train.o
+ .debug_line    0x0000000000029e47     0x1081 trainctl/txrxcmd.o
+ .debug_line    0x000000000002aec8      0x6ef trainctl/msg/trainmsg.o
+ .debug_line    0x000000000002b5b7      0xb68 trainctl/spdctl/inertia.o
+ .debug_line    0x000000000002c11f      0xbfc trainctl/spdctl/pidctl.o
+ .debug_line    0x000000000002cd1b     0x114b trainctl/spdctl/spdctl.o
+ .debug_line    0x000000000002de66      0xfa6 trainctl/stm32/taskctrl.o
+ .debug_line    0x000000000002ee0c      0xdd4 trainctl/stm32/taskdisp.o
+ .debug_line    0x000000000002fbe0      0xe2b trainctl/stm32/txrxtask.o
+ .debug_line    0x0000000000030a0b      0x6f1 trainctl/topology/topology.o
+ .debug_line    0x00000000000310fc      0xbbc trainctl/utils/itm_debug.o
+ .debug_line    0x0000000000031cb8      0x62c trainctl/utils/lf_mqueue.o
 
-.debug_str      0x0000000000000000    0xe9f0e
+.debug_str      0x0000000000000000    0xe9f74
  .debug_str     0x0000000000000000    0xd2b57 Core/Src/freertos.o
                                       0xd2e13 (size before relaxing)
  .debug_str     0x00000000000d2b57     0x7c3a Core/Src/main.o
@@ -14959,53 +14964,53 @@ OUTPUT(stm32f407VETx.elf elf32-littlearm)
                                       0xd2c79 (size before relaxing)
  .debug_str     0x00000000000e67e3       0x57 stm32dev/disp_tft/ssd1306_fonts.o
                                        0x3d5e (size before relaxing)
- .debug_str     0x00000000000e683a     0x141c stm32dev/ina3221/ina3221.o
-                                      0xd8de5 (size before relaxing)
- .debug_str     0x00000000000e7c56      0x417 trainctl/IHM/disp.o
-                                      0xd8547 (size before relaxing)
- .debug_str     0x00000000000e806d      0x1d8 trainctl/IHM/ihm.o
-                                      0xd7fb1 (size before relaxing)
- .debug_str     0x00000000000e8245      0x7da trainctl/ctrl/ctrl.o
-                                      0xd921d (size before relaxing)
- .debug_str     0x00000000000e8a1f      0x2d7 trainctl/low/canton.o
-                                      0xd8f02 (size before relaxing)
- .debug_str     0x00000000000e8cf6      0x115 trainctl/low/canton_bemf.o
-                                      0xd8d2f (size before relaxing)
- .debug_str     0x00000000000e8e0b       0x6d trainctl/low/presence_detection.o
-                                      0xd8b70 (size before relaxing)
- .debug_str     0x00000000000e8e78      0x1b2 trainctl/low/turnout.o
-                                      0xd8d16 (size before relaxing)
- .debug_str     0x00000000000e902a      0x134 trainctl/misc.o
+ .debug_str     0x00000000000e683a     0x141e stm32dev/ina3221/ina3221.o
+                                      0xd8de7 (size before relaxing)
+ .debug_str     0x00000000000e7c58      0x417 trainctl/IHM/disp.o
+                                      0xd8549 (size before relaxing)
+ .debug_str     0x00000000000e806f      0x1d8 trainctl/IHM/ihm.o
+                                      0xd7fb3 (size before relaxing)
+ .debug_str     0x00000000000e8247      0x837 trainctl/ctrl/ctrl.o
+                                      0xd927c (size before relaxing)
+ .debug_str     0x00000000000e8a7e      0x2d7 trainctl/low/canton.o
+                                      0xd8f04 (size before relaxing)
+ .debug_str     0x00000000000e8d55      0x115 trainctl/low/canton_bemf.o
+                                      0xd8d31 (size before relaxing)
+ .debug_str     0x00000000000e8e6a       0x6d trainctl/low/presence_detection.o
+                                      0xd8b72 (size before relaxing)
+ .debug_str     0x00000000000e8ed7      0x1b2 trainctl/low/turnout.o
+                                      0xd8d18 (size before relaxing)
+ .debug_str     0x00000000000e9089      0x134 trainctl/misc.o
                                       0xd7076 (size before relaxing)
- .debug_str     0x00000000000e915e       0x7d trainctl/param.o
+ .debug_str     0x00000000000e91bd       0x7d trainctl/param.o
                                       0xd7c35 (size before relaxing)
- .debug_str     0x00000000000e91db      0x10f trainctl/railconfig.o
+ .debug_str     0x00000000000e923a      0x10f trainctl/railconfig.o
                                       0xd83a1 (size before relaxing)
- .debug_str     0x00000000000e92ea      0x109 trainctl/statval.o
+ .debug_str     0x00000000000e9349      0x109 trainctl/statval.o
                                       0xd81e5 (size before relaxing)
- .debug_str     0x00000000000e93f3       0x33 trainctl/train.o
+ .debug_str     0x00000000000e9452       0x33 trainctl/train.o
                                       0xd80df (size before relaxing)
- .debug_str     0x00000000000e9426      0x1ef trainctl/txrxcmd.o
-                                      0xd8e6c (size before relaxing)
- .debug_str     0x00000000000e9615      0x16c trainctl/msg/trainmsg.o
-                                       0x7c1b (size before relaxing)
- .debug_str     0x00000000000e9781       0x9b trainctl/spdctl/inertia.o
+ .debug_str     0x00000000000e9485      0x1ef trainctl/txrxcmd.o
+                                      0xd8e6e (size before relaxing)
+ .debug_str     0x00000000000e9674      0x16c trainctl/msg/trainmsg.o
+                                       0x7c1d (size before relaxing)
+ .debug_str     0x00000000000e97e0       0x9b trainctl/spdctl/inertia.o
                                       0xd6eeb (size before relaxing)
- .debug_str     0x00000000000e981c       0xb8 trainctl/spdctl/pidctl.o
+ .debug_str     0x00000000000e987b       0xb8 trainctl/spdctl/pidctl.o
                                       0xd6f93 (size before relaxing)
- .debug_str     0x00000000000e98d4      0x253 trainctl/spdctl/spdctl.o
-                                      0xd9096 (size before relaxing)
- .debug_str     0x00000000000e9b27       0xb7 trainctl/stm32/taskctrl.o
-                                      0xd8242 (size before relaxing)
- .debug_str     0x00000000000e9bde       0xb4 trainctl/stm32/taskdisp.o
-                                      0xd8588 (size before relaxing)
- .debug_str     0x00000000000e9c92       0xdd trainctl/stm32/txrxtask.o
+ .debug_str     0x00000000000e9933      0x25a trainctl/spdctl/spdctl.o
+                                      0xd909f (size before relaxing)
+ .debug_str     0x00000000000e9b8d       0xb7 trainctl/stm32/taskctrl.o
+                                      0xd8244 (size before relaxing)
+ .debug_str     0x00000000000e9c44       0xb4 trainctl/stm32/taskdisp.o
+                                      0xd858a (size before relaxing)
+ .debug_str     0x00000000000e9cf8       0xdd trainctl/stm32/txrxtask.o
                                       0xd93c9 (size before relaxing)
- .debug_str     0x00000000000e9d6f       0x7c trainctl/topology/topology.o
-                                       0x7938 (size before relaxing)
- .debug_str     0x00000000000e9deb       0xb7 trainctl/utils/itm_debug.o
+ .debug_str     0x00000000000e9dd5       0x7c trainctl/topology/topology.o
+                                       0x793a (size before relaxing)
+ .debug_str     0x00000000000e9e51       0xb7 trainctl/utils/itm_debug.o
                                       0xd6f90 (size before relaxing)
- .debug_str     0x00000000000e9ea2       0x6c trainctl/utils/lf_mqueue.o
+ .debug_str     0x00000000000e9f08       0x6c trainctl/utils/lf_mqueue.o
                                        0x72c7 (size before relaxing)
 
 .comment        0x0000000000000000       0x7b
@@ -15074,7 +15079,7 @@ OUTPUT(stm32f407VETx.elf elf32-littlearm)
  .comment       0x000000000000007b       0x7c trainctl/utils/itm_debug.o
  .comment       0x000000000000007b       0x7c trainctl/utils/lf_mqueue.o
 
-.debug_frame    0x0000000000000000     0xac0c
+.debug_frame    0x0000000000000000     0xac34
  .debug_frame   0x0000000000000000       0x50 Core/Src/freertos.o
  .debug_frame   0x0000000000000050      0x2d8 Core/Src/main.o
  .debug_frame   0x0000000000000328      0x214 Core/Src/stm32f4xx_hal_msp.o
@@ -15116,39 +15121,39 @@ OUTPUT(stm32f407VETx.elf elf32-littlearm)
  .debug_frame   0x00000000000088c8      0x344 stm32dev/ina3221/ina3221.o
  .debug_frame   0x0000000000008c0c      0x204 trainctl/IHM/disp.o
  .debug_frame   0x0000000000008e10      0x138 trainctl/IHM/ihm.o
- .debug_frame   0x0000000000008f48      0x580 trainctl/ctrl/ctrl.o
- .debug_frame   0x00000000000094c8      0x1f0 trainctl/low/canton.o
- .debug_frame   0x00000000000096b8      0x160 trainctl/low/canton_bemf.o
- .debug_frame   0x0000000000009818       0x38 trainctl/low/presence_detection.o
- .debug_frame   0x0000000000009850      0x13c trainctl/low/turnout.o
- .debug_frame   0x000000000000998c      0x134 trainctl/misc.o
- .debug_frame   0x0000000000009ac0       0x7c trainctl/param.o
- .debug_frame   0x0000000000009b3c       0xc4 trainctl/railconfig.o
- .debug_frame   0x0000000000009c00       0x88 trainctl/statval.o
- .debug_frame   0x0000000000009c88      0x2b4 trainctl/txrxcmd.o
- .debug_frame   0x0000000000009f3c      0x13c trainctl/msg/trainmsg.o
- .debug_frame   0x000000000000a078       0x88 trainctl/spdctl/inertia.o
- .debug_frame   0x000000000000a100       0xf0 trainctl/spdctl/pidctl.o
- .debug_frame   0x000000000000a1f0      0x240 trainctl/spdctl/spdctl.o
- .debug_frame   0x000000000000a430      0x154 trainctl/stm32/taskctrl.o
- .debug_frame   0x000000000000a584       0x7c trainctl/stm32/taskdisp.o
- .debug_frame   0x000000000000a600       0xc0 trainctl/stm32/txrxtask.o
- .debug_frame   0x000000000000a6c0       0xb0 trainctl/topology/topology.o
- .debug_frame   0x000000000000a770       0xa8 trainctl/utils/itm_debug.o
- .debug_frame   0x000000000000a818       0xe8 trainctl/utils/lf_mqueue.o
- .debug_frame   0x000000000000a900       0x20 /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.macos64_1.4.0.202007081208/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard/libc_nano.a(lib_a-errno.o)
- .debug_frame   0x000000000000a920       0x2c /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.macos64_1.4.0.202007081208/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard/libc_nano.a(lib_a-init.o)
- .debug_frame   0x000000000000a94c       0x38 /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.macos64_1.4.0.202007081208/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard/libc_nano.a(lib_a-itoa.o)
- .debug_frame   0x000000000000a984       0x30 /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.macos64_1.4.0.202007081208/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard/libc_nano.a(lib_a-malloc.o)
- .debug_frame   0x000000000000a9b4       0x28 /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.macos64_1.4.0.202007081208/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard/libc_nano.a(lib_a-memcpy-stub.o)
- .debug_frame   0x000000000000a9dc       0x20 /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.macos64_1.4.0.202007081208/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard/libc_nano.a(lib_a-memset.o)
- .debug_frame   0x000000000000a9fc       0x38 /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.macos64_1.4.0.202007081208/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard/libc_nano.a(lib_a-nano-freer.o)
- .debug_frame   0x000000000000aa34       0x2c /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.macos64_1.4.0.202007081208/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard/libc_nano.a(lib_a-nano-mallocr.o)
- .debug_frame   0x000000000000aa60       0x2c /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.macos64_1.4.0.202007081208/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard/libc_nano.a(lib_a-sbrkr.o)
- .debug_frame   0x000000000000aa8c       0x20 /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.macos64_1.4.0.202007081208/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard/libc_nano.a(lib_a-strcmp.o)
- .debug_frame   0x000000000000aaac       0x2c /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.macos64_1.4.0.202007081208/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard/libc_nano.a(lib_a-strncpy.o)
- .debug_frame   0x000000000000aad8       0x48 /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.macos64_1.4.0.202007081208/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard/libc_nano.a(lib_a-utoa.o)
- .debug_frame   0x000000000000ab20       0x30 /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.macos64_1.4.0.202007081208/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard/libc_nano.a(lib_a-mlock.o)
- .debug_frame   0x000000000000ab50       0x5c /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.macos64_1.4.0.202007081208/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard/libc_nano.a(lib_a-reent.o)
- .debug_frame   0x000000000000abac       0x2c /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.macos64_1.4.0.202007081208/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/thumb/v7e-m/fpv4-sp/hard/libgcc.a(_aeabi_uldivmod.o)
- .debug_frame   0x000000000000abd8       0x34 /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.macos64_1.4.0.202007081208/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/thumb/v7e-m/fpv4-sp/hard/libgcc.a(_udivmoddi4.o)
+ .debug_frame   0x0000000000008f48      0x5a8 trainctl/ctrl/ctrl.o
+ .debug_frame   0x00000000000094f0      0x1f0 trainctl/low/canton.o
+ .debug_frame   0x00000000000096e0      0x160 trainctl/low/canton_bemf.o
+ .debug_frame   0x0000000000009840       0x38 trainctl/low/presence_detection.o
+ .debug_frame   0x0000000000009878      0x13c trainctl/low/turnout.o
+ .debug_frame   0x00000000000099b4      0x134 trainctl/misc.o
+ .debug_frame   0x0000000000009ae8       0x7c trainctl/param.o
+ .debug_frame   0x0000000000009b64       0xc4 trainctl/railconfig.o
+ .debug_frame   0x0000000000009c28       0x88 trainctl/statval.o
+ .debug_frame   0x0000000000009cb0      0x2b4 trainctl/txrxcmd.o
+ .debug_frame   0x0000000000009f64      0x13c trainctl/msg/trainmsg.o
+ .debug_frame   0x000000000000a0a0       0x88 trainctl/spdctl/inertia.o
+ .debug_frame   0x000000000000a128       0xf0 trainctl/spdctl/pidctl.o
+ .debug_frame   0x000000000000a218      0x240 trainctl/spdctl/spdctl.o
+ .debug_frame   0x000000000000a458      0x154 trainctl/stm32/taskctrl.o
+ .debug_frame   0x000000000000a5ac       0x7c trainctl/stm32/taskdisp.o
+ .debug_frame   0x000000000000a628       0xc0 trainctl/stm32/txrxtask.o
+ .debug_frame   0x000000000000a6e8       0xb0 trainctl/topology/topology.o
+ .debug_frame   0x000000000000a798       0xa8 trainctl/utils/itm_debug.o
+ .debug_frame   0x000000000000a840       0xe8 trainctl/utils/lf_mqueue.o
+ .debug_frame   0x000000000000a928       0x20 /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.macos64_1.4.0.202007081208/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard/libc_nano.a(lib_a-errno.o)
+ .debug_frame   0x000000000000a948       0x2c /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.macos64_1.4.0.202007081208/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard/libc_nano.a(lib_a-init.o)
+ .debug_frame   0x000000000000a974       0x38 /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.macos64_1.4.0.202007081208/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard/libc_nano.a(lib_a-itoa.o)
+ .debug_frame   0x000000000000a9ac       0x30 /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.macos64_1.4.0.202007081208/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard/libc_nano.a(lib_a-malloc.o)
+ .debug_frame   0x000000000000a9dc       0x28 /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.macos64_1.4.0.202007081208/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard/libc_nano.a(lib_a-memcpy-stub.o)
+ .debug_frame   0x000000000000aa04       0x20 /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.macos64_1.4.0.202007081208/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard/libc_nano.a(lib_a-memset.o)
+ .debug_frame   0x000000000000aa24       0x38 /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.macos64_1.4.0.202007081208/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard/libc_nano.a(lib_a-nano-freer.o)
+ .debug_frame   0x000000000000aa5c       0x2c /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.macos64_1.4.0.202007081208/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard/libc_nano.a(lib_a-nano-mallocr.o)
+ .debug_frame   0x000000000000aa88       0x2c /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.macos64_1.4.0.202007081208/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard/libc_nano.a(lib_a-sbrkr.o)
+ .debug_frame   0x000000000000aab4       0x20 /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.macos64_1.4.0.202007081208/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard/libc_nano.a(lib_a-strcmp.o)
+ .debug_frame   0x000000000000aad4       0x2c /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.macos64_1.4.0.202007081208/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard/libc_nano.a(lib_a-strncpy.o)
+ .debug_frame   0x000000000000ab00       0x48 /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.macos64_1.4.0.202007081208/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard/libc_nano.a(lib_a-utoa.o)
+ .debug_frame   0x000000000000ab48       0x30 /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.macos64_1.4.0.202007081208/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard/libc_nano.a(lib_a-mlock.o)
+ .debug_frame   0x000000000000ab78       0x5c /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.macos64_1.4.0.202007081208/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard/libc_nano.a(lib_a-reent.o)
+ .debug_frame   0x000000000000abd4       0x2c /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.macos64_1.4.0.202007081208/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/thumb/v7e-m/fpv4-sp/hard/libgcc.a(_aeabi_uldivmod.o)
+ .debug_frame   0x000000000000ac00       0x34 /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.macos64_1.4.0.202007081208/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/thumb/v7e-m/fpv4-sp/hard/libgcc.a(_udivmoddi4.o)

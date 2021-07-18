@@ -50,7 +50,7 @@ int get_blk_len(int blknum)
 	case 1:
 		return 40;
 	case 2:
-		return 60;
+		return 50;
 	default:
 		return 10;
 	}

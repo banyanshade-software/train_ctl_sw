@@ -20,9 +20,8 @@
 static uint8_t ignore_bemf_presence = 0;
 static uint8_t ignore_ina_presence = 1;
 
-//per train stucture
 
-
+#define SCEN_TWOTRAIN 	0
 
 
 // timers number
@@ -34,6 +33,7 @@ static uint8_t ignore_ina_presence = 1;
 #define TLEAVE_C1_VALUE 20
 #define TGUARD_C1_VALUE 100
 
+//per train stucture
 
 
 typedef struct {
@@ -230,7 +230,7 @@ static void ctrl_init(void)
 		set_state(0, &trctl[0], train_station);
 		set_block_addr_occupency(trctl[0].canton1_addr, BLK_OCC_STOP);
 
-		if ((1)) {
+		if ((SCEN_TWOTRAIN)) {
 			trctl[1].canton1_addr = MA_CANTON(0, 2); // initial blk
 			trctl[1].canton2_addr = 0xFF;
 			trctl[1]._dir = 1;
@@ -248,6 +248,7 @@ static void ctrl_init(void)
 		} else {
 			trctl[1].canton1_addr = 0xFF;
 			trctl[1].canton2_addr = 0xFF;
+			ctrl_set_mode(1, train_notrunning);
 			set_state(1, &trctl[1], train_off);
 			//trctl[1].enabled = 0;
 			update_c2_state_limits(0, &trctl[0], upd_init);
@@ -949,6 +950,9 @@ static void check_behaviour(_UNUSED_ uint32_t tick)
 	for (int tidx = 0; tidx<NUM_TRAINS; tidx++) {
 		const train_config_t *tconf = get_train_cnf(tidx);
 		if (!tconf->enabled) continue;
+
+		if (!SCEN_TWOTRAIN) return; // XXX
+
 		train_ctrl_t *tvars = &trctl[tidx];
 
 		uint16_t flags = tvars->behaviour_flags;

@@ -1,6 +1,6 @@
 txrxcmd.h:45:20:txframe_send_notif	16	static
-trainmsg.h:159:1:mqf_read_to_forward_usb	16	static
-trainmsg.h:160:1:mqf_write_from_forward_usb	16	static
+trainmsg.h:160:1:mqf_read_to_forward_usb	16	static
+trainmsg.h:161:1:mqf_write_from_forward_usb	16	static
 txrxcmd.c:56:12:_frm_escape	40	static
 txrxcmd.c:77:12:_frm_escape2	32	static
 txrxcmd.c:90:12:frm_escape	32	static

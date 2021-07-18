@@ -171,7 +171,7 @@ static  canton_config_t Cantons[NUM_CANTONS] = {
 				VOLT_2_SEL0_Pin, VOLT_2_SEL1_Pin, VOLT_2_SEL2_Pin, // 0/*VOLT_2_SEL3_Pin*/,
 				2, TIM_CHANNEL_3, TIM_CHANNEL_4,  // TIM_HandleTypeDef
 				0, /*notif BEMF */
-				0, /* reverse BEMF*/
+				1, /* reverse BEMF*/
 		},
 		{//CANTON_TYPE_PROTO1,
 				//  0    1    2    3    4    5    6    7    8    9    10   11  12    13   14   15
@@ -271,7 +271,7 @@ static  block_canton_config_t BlockCantons[NUM_CANTONS] = {
 };
 #endif
 
-#define DEFAULT_TRAIN_CFG(_EN, _R)  { \
+#define DEFAULT_TRAIN_CFG(_EN, _R, _P)  { \
 						{ /* pidctl_config_t*/ \
 								600, 500, 750,  /* kP, kI, kD */ \
 						}, \
@@ -290,12 +290,12 @@ static  block_canton_config_t BlockCantons[NUM_CANTONS] = {
 						0,  /*	uint8_t en_spd2pow; */\
 						20, /*	uint8_t min_power; */ \
 						_R, /* reversed */			\
-						500, /* pose_per_cm */ \
+						_P, /* pose_per_cm */ \
 				}
 
 static  train_config_t Trains[NUM_TRAINS] = {
-		DEFAULT_TRAIN_CFG(1,0), DEFAULT_TRAIN_CFG(1,1), DEFAULT_TRAIN_CFG(0,0), DEFAULT_TRAIN_CFG(0,0),
-		DEFAULT_TRAIN_CFG(0,0), DEFAULT_TRAIN_CFG(0,0), DEFAULT_TRAIN_CFG(0,0), DEFAULT_TRAIN_CFG(0,0),
+		DEFAULT_TRAIN_CFG(1,0, 700), DEFAULT_TRAIN_CFG(1,0, 500), DEFAULT_TRAIN_CFG(0,0,500), DEFAULT_TRAIN_CFG(0,0,500),
+		DEFAULT_TRAIN_CFG(0,0,500), DEFAULT_TRAIN_CFG(0,0,500), DEFAULT_TRAIN_CFG(0,0,500), DEFAULT_TRAIN_CFG(0,0,500),
 };
 
 

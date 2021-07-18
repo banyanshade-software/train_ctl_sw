@@ -18,25 +18,17 @@
 
 // for test/debug
 static uint8_t ignore_bemf_presence = 0;
-static uint8_t ignore_ina_presence = 0	;
+static uint8_t ignore_ina_presence = 1;
 
 //per train stucture
 
 
-typedef enum {
-	train_off=0,
-	train_running_c1,	// running (auto or manual)
-	train_running_c1c2, // transition c1/c2 on progress
-	train_station,		// waiting at station
-	train_blk_wait,		// stopped (block control)
-	train_end_of_track,	// idem but can only be changed by a direction change
-} train_state_t;
 
 
 // timers number
-#define TLEAVE_C1  0
-
-#define NUM_TIMERS 1
+#define TLEAVE_C1  	0
+#define TBEHAVE		1
+#define NUM_TIMERS 	2
 
 // timers values in tick (ms)
 #define TLEAVE_C1_VALUE 20
@@ -58,6 +50,8 @@ typedef struct {
 	uint16_t spd_limit;
 	uint16_t desired_speed;
 	//uint8_t limited:1;
+
+	uint16_t behaviour_flags;
 	uint32_t timertick[NUM_TIMERS];
 } train_ctrl_t;
 
@@ -149,6 +143,19 @@ static void check_block_delayed(uint32_t tick);
 static void set_turnout(int tn, int v);
 
 // ----------------------------------------------------------------------------
+// behaviour
+
+// behaviour_flags
+#define BEHAVE_STOPPED		(1<<1)		// 2
+#define BEHAVE_EOT1			(1<<2)		// 4
+#define BEHAVE_EOT2			(1<<3)		// 8
+#define BEHAVE_BLKW			(1<<4)		// 16
+#define BEHAVE_PTRIG		(1<<5)		// 32
+#define BEHAVE_RESTARTBLK 	(1<<6)		// 64
+#define BEHAVE_TBEHAVE		(1<<7)		// 128
+#define BEHAVE_CHBKLK		(1<<8)		// 256
+
+static void check_behaviour(uint32_t tick);
 
 
 static void ctrl_reset(void)
@@ -170,9 +177,17 @@ static inline void set_state(int tidx, train_ctrl_t *tvar, train_state_t ns)
 	default: 					itm_debug2(DBG_CTRL, "ST->?", tidx, ns); break;
 	}
 	tvar->_state = ns;
+	// notif UI
+	msg_64_t m;
+	m.from = MA_CONTROL_T(tidx);
+	m.to = MA_UI(1); // fix me
+	m.cmd = CMD_TRSTATE_NOTIF;
+	m.v1u = ns;
+	mqf_write_from_ctrl(&m);
 }
 static void ctrl_set_mode(int trnum, train_mode_t mode)
 {
+	itm_debug2(DBG_CTRL, "set mode", trnum, mode);
 	if (trctl[trnum]._mode == mode) return;
 	trctl[trnum]._mode = mode;
 	// notif UI
@@ -407,7 +422,7 @@ void ctrl_run_tick(_UNUSED_ uint32_t notif_flags, uint32_t tick, _UNUSED_ uint32
 	}
 	check_timers(tick);
 	check_blk_tick(tick);
-
+	check_behaviour(tick);
 	//hi_tick(notif_flags, tick, dt);
 }
 
@@ -425,6 +440,7 @@ static void set_block_num_occupency(int blknum, uint8_t v)
 		if (USE_BLOCK_DELAY_FREE && (v==BLK_OCC_FREE)) {
 			if (blk_occup[blknum] >= BLK_OCC_DELAY1) fatal();
 			blk_occup[blknum] = BLK_OCC_DELAYM;
+			itm_debug1(DBG_CTRL, "delay free", blknum);
 		} else {
 			blk_occup[blknum] = v;
 			occupency_changed = 1;
@@ -471,6 +487,7 @@ static void check_block_delayed(_UNUSED_ uint32_t tick)
 #endif
 	for (int i=0; i<NUM_CANTONS; i++) {
 		if (blk_occup[i] == BLK_OCC_DELAY1) {
+			itm_debug1(DBG_CTRL, "FREE(d)", i);
 			blk_occup[i] = BLK_OCC_FREE;
 			occupency_changed = 1;
 		} else if (blk_occup[i] > BLK_OCC_DELAY1) {
@@ -516,6 +533,7 @@ static void evt_leaved_c1(int tidx, train_ctrl_t *tvars)
 		tvars->canton2_addr = 0xFF;
 		set_state(tidx, tvars, train_running_c1);
 		update_c2_state_limits(tidx, tvars, upd_c1c2);
+		tvars->behaviour_flags |= BEHAVE_CHBKLK;
 		break;
 	default:
 		itm_debug2(DBG_ERR|DBG_CTRL, "bad st/2",tidx, tvars->_state);
@@ -575,6 +593,7 @@ static void evt_cmd_set_setdirspeed(int tidx, train_ctrl_t *tvars, int8_t dir, u
 	}
 	if ((tvars->_target_speed != 0) && (tvars->_dir != dir)) {
 		itm_debug3(DBG_ERR|DBG_CTRL, "dir ch mov", tidx, dir, tvars->_target_speed);
+		set_state(tidx, tvars, train_station); // say it did stopped
 		// change dir while not stopped... what do we do here ?
 	}
 	if ((tvars->_state == train_station) && dir && tspd) {
@@ -594,6 +613,8 @@ static void evt_cmd_set_setdirspeed(int tidx, train_ctrl_t *tvars, int8_t dir, u
 		if (!dir) {
 			itm_debug1(DBG_CTRL, "stopping", tidx);
 			set_block_addr_occupency(tvars->canton1_addr, BLK_OCC_STOP);
+		} else {
+			set_block_addr_occupency(tvars->canton1_addr, (dir>0)? BLK_OCC_RIGHT:BLK_OCC_LEFT);
 		}
 		update_c2_state_limits(tidx, tvars, upd_change_dir);
 	}
@@ -610,7 +631,10 @@ static void evt_cmd_set_setdirspeed(int tidx, train_ctrl_t *tvars, int8_t dir, u
 
 static void evt_pose_triggered(int tidx, train_ctrl_t *tvar, uint8_t c_addr)
 {
-	itm_debug2(DBG_CTRL, "pose trg", tidx, c_addr);
+	itm_debug3(DBG_CTRL, "pose trgd", tidx, c_addr, tvar->_state);
+	if (0==tidx) {
+		itm_debug2(DBG_CTRL, "----trg0", c_addr, tvar->_state);
+	}
 	switch (tvar->_state) {
 	case train_running_c1:
 		if (c_addr == tvar->canton1_addr) {
@@ -636,6 +660,9 @@ static void evt_timer(int tidx, train_ctrl_t *tvar, int tnum)
 	case TLEAVE_C1:
 		evt_tleave(tidx, tvar);
 		break;
+	case TBEHAVE:
+		tvar->behaviour_flags |= BEHAVE_TBEHAVE;
+		break;
 	default:
 		itm_debug2(DBG_ERR|DBG_CTRL, "?TIM", tidx, tnum);
 		fatal();
@@ -655,6 +682,8 @@ static void update_c2_state_limits(int tidx, train_ctrl_t *tvars, update_reason_
 	uint8_t c2addr = 0xFF;
 	uint16_t olim = tvars->spd_limit;
 	uint32_t posetval = 0;
+
+	if (updreason == upd_pose_trig) tvars->behaviour_flags |= BEHAVE_PTRIG;
 
 	if ((tidx==1) && (tvars->canton1_addr==0x02) && (tvars->canton2_addr==0x01)) {
 		itm_debug1(DBG_CTRL, "hop", tidx);
@@ -676,6 +705,7 @@ static void update_c2_state_limits(int tidx, train_ctrl_t *tvars, update_reason_
 	}
 	if (!tvars->_dir) {
 		set_state(tidx, tvars, train_station);
+		tvars->behaviour_flags |= BEHAVE_STOPPED;
 		tvars->_target_speed = 0;
 		if (tvars->canton2_addr != 0xFF) set_block_addr_occupency(tvars->canton2_addr, BLK_OCC_FREE);
 		tvars->canton2_addr = 0xFF;
@@ -694,10 +724,12 @@ static void update_c2_state_limits(int tidx, train_ctrl_t *tvars, update_reason_
 			tvars->spd_limit = 20;//			set_speed_limit(tn, 20);
 			const train_config_t *tconf = get_train_cnf(tidx);
 			posetval = pose_middle(_blk_addr_to_blk_num(tvars->canton1_addr), tconf, tvars->_dir);
+			tvars->behaviour_flags |= BEHAVE_EOT1;
 		} else if (updreason == upd_pose_trig) {
 			itm_debug1(DBG_CTRL, "eot2", tidx);
 			set_state(tidx, tvars, train_end_of_track);
 			tvars->spd_limit = 0;
+			tvars->behaviour_flags |= BEHAVE_EOT2;
 		}
 	} else {
 		switch (blk_occup[c2num]) {
@@ -709,6 +741,7 @@ static void update_c2_state_limits(int tidx, train_ctrl_t *tvars, update_reason_
 					break;
 				case train_blk_wait:
 					set_state(tidx, tvars, train_running_c1);
+					tvars->behaviour_flags |= BEHAVE_RESTARTBLK;
 					break;
 				default:
 					itm_debug2(DBG_ERR|DBG_CTRL, "bad st/4", tidx, tvars->_state);
@@ -719,8 +752,9 @@ static void update_c2_state_limits(int tidx, train_ctrl_t *tvars, update_reason_
 			case BLK_OCC_RIGHT:
 			case BLK_OCC_LEFT:
 			case BLK_OCC_STOP:
-				itm_debug2(DBG_CTRL, "occ", tidx, c2num);
+				itm_debug3(DBG_CTRL, "occ", tidx, c2num, blk_occup[c2num]);
 				set_state(tidx, tvars, train_blk_wait);
+				tvars->behaviour_flags |= BEHAVE_BLKW;
 				c2num = -1;
 				tvars->spd_limit = 0;
 				break;
@@ -893,9 +927,10 @@ static void check_blk_tick(_UNUSED_ uint32_t tick)
 
 static void set_turnout(int tn, int v)
 {
+	itm_debug2(DBG_CTRL, "TURN", tn, v);
 	if (tn<0) fatal();
-	if (tn>=NUM_TURNOUTS) fatal;
-	if (tn>=NUM_LOCAL_TURNOUTS) fatal; // TODO
+	if (tn>=NUM_TURNOUTS) fatal();
+	if (tn>=NUM_LOCAL_TURNOUTS) fatal(); // TODO
 	msg_64_t m;
 	m.from = MA_CONTROL();
 	m.to = MA_TURNOUT(0, tn); // TODO board num
@@ -903,4 +938,91 @@ static void set_turnout(int tn, int v)
 
 	mqf_write_from_ctrl(&m);
 	topolgy_set_turnout(tn, v);
+
+	occupency_changed = 1;
 }
+
+// ---------------------------------------------------------------
+
+static void check_behaviour(_UNUSED_ uint32_t tick)
+{
+	for (int tidx = 0; tidx<NUM_TRAINS; tidx++) {
+		const train_config_t *tconf = get_train_cnf(tidx);
+		if (!tconf->enabled) continue;
+		train_ctrl_t *tvars = &trctl[tidx];
+
+		uint16_t flags = tvars->behaviour_flags;
+
+		//itm_debug3(DBG_CTRL, "(hi f)", tidx, flags, tvars->canton1_addr);
+
+		if (tvars->_mode != train_auto) {
+			if ((tidx == 0) && (flags & BEHAVE_EOT2) && (tvars->_dir<0)) {
+				ctrl_set_mode(tidx, train_auto);
+				set_timer(tidx, tvars, TBEHAVE, 500);
+			}
+			continue;
+		}
+		if (!flags) continue;
+
+		tvars->behaviour_flags = 0;
+		// ---- behave
+		itm_debug3(DBG_CTRL, "hi f=", tidx, flags, tvars->canton1_addr);
+		if (tidx == 1) {
+			if ((flags & BEHAVE_RESTARTBLK) && (tvars->canton1_addr == MA_CANTON(0,2))) {
+				set_turnout(0, 1);
+				continue;
+			}
+			if ((flags & BEHAVE_EOT2) && (tvars->_dir > 0)) {
+				set_timer(tidx, tvars, TBEHAVE, 300);
+				evt_cmd_set_setdirspeed(tidx, tvars, 0, 0, 1);
+				return;
+			}
+			if ((flags & BEHAVE_EOT2) && (tvars->_dir < 0)) {
+				set_timer(tidx, tvars, TBEHAVE, 300);
+				evt_cmd_set_setdirspeed(tidx, tvars, 0, 0, 1);
+				set_turnout(0, 0);
+				continue;
+			}
+			if (flags & BEHAVE_EOT2) {
+				itm_debug3(DBG_CTRL, "unex EOT2", tidx, tvars->_dir, tvars->canton1_addr);
+				set_timer(tidx, tvars, TBEHAVE, 300);
+				continue;
+			}
+			if (flags & BEHAVE_TBEHAVE) {
+				if (tvars->canton1_addr == MA_CANTON(0,1)) {
+					evt_cmd_set_setdirspeed(tidx, tvars, -1, 15, 1);
+				} else if (tvars->canton1_addr == MA_CANTON(0,2)) {
+					evt_cmd_set_setdirspeed(tidx, tvars, 1, 15, 1);
+				} else {
+					itm_debug3(DBG_CTRL, "unex TB", tidx, tvars->_dir, tvars->canton1_addr);
+				}
+				continue;
+			}
+		}
+		if (tidx == 0) {
+			if (flags & BEHAVE_TBEHAVE) {
+				itm_debug2(DBG_CTRL, "TBehave", tidx, tvars->canton1_addr);
+				if (tvars->canton1_addr == MA_CANTON(0,0)) {
+					evt_cmd_set_setdirspeed(tidx, tvars, 1, 25, 1);
+				} else if (tvars->canton1_addr == MA_CANTON(0,1)) {
+					evt_cmd_set_setdirspeed(tidx, tvars, -1, 25, 1);
+				} else {
+					// should not happen
+					ctrl_set_mode(tidx, train_manual);
+				}
+				continue;
+			}
+			if (flags & BEHAVE_EOT2)  {
+				set_timer(tidx, tvars, TBEHAVE, 700);
+				evt_cmd_set_setdirspeed(tidx, tvars, 0, 0, 1);
+				continue;
+			}
+		}
+	}
+}
+
+
+
+
+
+

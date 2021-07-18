@@ -56,6 +56,7 @@ trainctl/IHM/ihm.o: /Users/danielbraun/devel/train/sw/trainctl/IHM/ihm.c \
  /Users/danielbraun/devel/train/sw/trainctl/IHM/../msg/../utils/lf_mqueue.h \
  /Users/danielbraun/devel/train/sw/trainctl/IHM/../msg/notif.h \
  /Users/danielbraun/devel/train/sw/trainctl/IHM/../msg/../IHM/ihm_messages.h \
+ /Users/danielbraun/devel/train/sw/trainctl/IHM/../ctrl/ctrl.h \
  ../../trainctl/../stm32dev/ina3221/ina3221.h
 
 ../Core/Inc/trainctl_config.h:
@@ -175,5 +176,7 @@ trainctl/IHM/ihm.o: /Users/danielbraun/devel/train/sw/trainctl/IHM/ihm.c \
 /Users/danielbraun/devel/train/sw/trainctl/IHM/../msg/notif.h:
 
 /Users/danielbraun/devel/train/sw/trainctl/IHM/../msg/../IHM/ihm_messages.h:
+
+/Users/danielbraun/devel/train/sw/trainctl/IHM/../ctrl/ctrl.h:
 
 ../../trainctl/../stm32dev/ina3221/ina3221.h:

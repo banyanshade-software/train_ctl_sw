@@ -1,8 +1,11 @@
 itm_debug.h:37:20:itm_debug1	32	static
 itm_debug.h:41:20:itm_debug2	32	static
-trainmsg.h:163:1:mqf_read_to_ui	16	static
-trainmsg.h:164:1:mqf_write_from_ui	16	static
-ihm.c:61:26:get_rotary	24	static
-ihm.c:75:16:get_srotary	24	static
-ihm.c:97:6:ihm_runtick	40	static
-ihm.c:202:13:ui_process_msg	40	static
+trainmsg.h:164:1:mqf_read_to_ui	16	static
+trainmsg.h:165:1:mqf_write_from_ui	16	static
+ihm.c:62:26:get_rotary	24	static
+ihm.c:76:16:get_srotary	24	static
+ihm.c:108:13:set_displayout	8	static
+ihm.c:122:12:is_special_dispmode	4	static
+ihm.c:135:13:set_dispmode	16	static
+ihm.c:142:6:ihm_runtick	40	static
+ihm.c:226:13:ui_process_msg	40	static

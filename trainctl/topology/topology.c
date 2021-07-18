@@ -34,7 +34,7 @@ int _next_block_num(int blknum, uint8_t left)
 	case 0:
 		return left ? 	-1 : 1;
 	case 1:
-		return left ?	(topology_get_turnout(0) ? 0 : 2)  : -1;
+		return left ?	(topology_get_turnout(0) ? 2 : 0)  : -1;
 	case 2:
 		return left ?   -1 : 1;
 	default:
@@ -70,8 +70,9 @@ void topolgy_set_turnout(int tn, int v)
 	if (v) {
 		__sync_fetch_and_or(&turnoutvals, (1<<tn));
 	} else {
-		__sync_fetch_and_nand(&turnoutvals, (1<<tn));
+		__sync_fetch_and_and(&turnoutvals, ~(1<<tn));
 	}
+	itm_debug3(DBG_TURNOUT, "tt",tn,v, topology_get_turnout(tn));
 }
 int topology_get_turnout(int tn)
 {

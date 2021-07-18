@@ -148,6 +148,7 @@ LFMQUEUE_DEF_H(from_ctrl, msg_64_t)
 #define CMD_TRDIR_NOTIF				0x23
 #define CMD_TRTSPD_NOTIF			0x24
 #define CMD_VOFF_NOTIF				0x25
+#define CMD_TRSTATE_NOTIF			0x26
 
 /* other */
 #define CMD_POSE_SET_TRIG			0x50

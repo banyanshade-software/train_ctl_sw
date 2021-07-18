@@ -31,6 +31,7 @@
 #include "train_simu.h"
 #endif
 
+#include "../ctrl/ctrl.h"
 #include "../stm32dev/ina3221/ina3221.h"
 
 //#include "railconfig.h"
@@ -92,29 +93,60 @@ static int16_t get_srotary(TIM_HandleTypeDef *ptdef)
 
 static void ui_process_msg(void);
 
-static int ihm_mode = 0;
+typedef enum {
+	mode_init = 0,
+	mode_ina_detect,
+	mode_ina_val,
+	mode_manual,
+	mode_auto
+} ihm_mode_t;
+
+// TODO : change this for per display struct
+static ihm_mode_t ihm_dispmode = mode_init;
+static int ihm_train = 0;
+
+static void set_displayout(void)
+{
+	switch (ihm_dispmode) {
+	default:
+	case mode_init: 	  	ihm_setlayout(0, LAYOUT_INIT); break;
+	case mode_ina_detect:	ihm_setlayout(0, LAYOUT_INA3221_DETECT); break;
+	case mode_ina_val:		ihm_setlayout(0, LAYOUT_INA3221_VAL); break;
+
+	case mode_manual:		ihm_setlayout(0, LAYOUT_MANUAL); break;
+	case mode_auto: 		ihm_setlayout(0, LAYOUT_AUTO); break;
+	}
+	SET_NEEDSREFRESH(0);
+}
+
+static int is_special_dispmode(void)
+{
+	switch (ihm_dispmode) {
+	default:
+	case mode_init: 	  	return 0;
+	case mode_ina_detect:	return 1;
+	case mode_ina_val:		return 1;
+
+	case mode_manual:		return 0;
+	case mode_auto: 		return 0;
+	}
+}
+
+static void set_dispmode(ihm_mode_t m)
+{
+	if (ihm_dispmode == m) return;
+	ihm_dispmode = m;
+	set_displayout();
+}
 
 void ihm_runtick(void)
 {
-	static int cnt=0;
+	//static int cnt=0;
 	static int first = 0;
 	if (!first) {
 		first = 1;
 		itm_debug1(DBG_UI, "UI init", 0);
-		switch(ihm_mode) {
-		case 0:
-			ihm_setlayout(0, LAYOUT_MANUAL);
-			break;
-		case 1:
-			ihm_setlayout(0, LAYOUT_INA3221_DETECT);
-			break;
-		case 2:
-			ihm_setlayout(0, LAYOUT_INA3221_VAL);
-			break;
-		default:
-			itm_debug1(DBG_ERR|DBG_UI, "bad ihm_mod", ihm_mode);
-			break;
-		}
+		set_dispmode(mode_init);
 		for (int i = 0; i<DISP_MAX_REGS; i++) {
 			ihm_setvar(0, i, 0);
 		}
@@ -148,7 +180,7 @@ void ihm_runtick(void)
 		if (p != rot_position[i]) {
 			// pos changed
 			rot_position[i] = p;
-			if (ihm_mode==0) {
+			if (ihm_dispmode==mode_manual) {
 				ihm_setvar(0, 1, (uint16_t) rot_position[0]);
 				//ihm_setvar(0, 1, ((int)rot0_position - 50));
 				SET_NEEDSREFRESH(0);
@@ -171,24 +203,16 @@ void ihm_runtick(void)
 	// scan buttons ------------------
 
 	// mode test hook
-	if (ihm_mode==1) {
+	if (ihm_dispmode==mode_ina_detect) {
 		// ina3221 detection
 		for (int i=0; i<4; i++) {
 			ihm_setvar(0, i, ina3221_devices[i]);
 		}
 		SET_NEEDSREFRESH(0);
-	} else if (ihm_mode==2) {
-
 	}
 	// process messages --------------
 	ui_process_msg();
 
-	if ((0)) {
-		ihm_setvar(0, 0, cnt);
-		ihm_setvar(0, 1, -cnt);
-		SET_NEEDSREFRESH(0);
-		cnt++;
-	}
 	// update displays ---------------
 	for (int i=0; i<MAX_DISP; i++) {
 		if (NEEDSREFRESH(i)) {
@@ -215,8 +239,6 @@ static void ui_process_msg(void)
 			break;
         case CMD_TEST_MODE:
             test_mode = m.v1u;
-            //ui_write_mode(0);
-    		//ui_msg5(0, "T");
             return;
             break;
         case CMD_SETVPWM:	// TODO remove
@@ -224,7 +246,7 @@ static void ui_process_msg(void)
         	return;
         	break;
         case CMD_VOFF_NOTIF:
-        	if (NOTIF_VOFF && (ihm_mode == 0)) {
+        	if (NOTIF_VOFF && (!is_special_dispmode())) {
         		ihm_setvar(0, 2, m.v1/2);
         		SET_NEEDSREFRESH(0);
         	}
@@ -233,10 +255,12 @@ static void ui_process_msg(void)
         }
 		if (IS_CONTROL_T(m.from)) {
 			int trnum = m.from & 0x07;
+			if (trnum != 0) break; // TODO
 			switch (m.cmd) {
 			case CMD_TRSTATUS_NOTIF:
+				// unused
 				// TODO trnum -> display num
-				if (ihm_mode == 0) {
+				if (ihm_dispmode == mode_auto) {
 					//TODO
 					//ihm_setvar(0, 2, m.v1u);
 					SET_NEEDSREFRESH(0);
@@ -246,7 +270,7 @@ static void ui_process_msg(void)
 			case CMD_TRTSPD_NOTIF:
 				itm_debug2(DBG_UI|DBG_CTRL, "rx tspd notif", trnum, m.v1u);
 				// TODO trnum -> display num
-				if (!NOTIF_VOFF && (ihm_mode == 0)) {
+				if (!NOTIF_VOFF && ((ihm_dispmode == mode_manual) || (ihm_dispmode == mode_auto))) {
 					ihm_setvar(0, 2, m.v2 * m.v1u);
 					SET_NEEDSREFRESH(0);
 				}
@@ -254,11 +278,37 @@ static void ui_process_msg(void)
 				break;
 
 			case CMD_TRDIR_NOTIF:
-				//TODO
+				if (!is_special_dispmode()) {
+					ihm_setvar(0, 4, m.v1);
+					SET_NEEDSREFRESH(0);
+				}
 				return;
 				break;
 			case CMD_TRMODE_NOTIF:
 				// TODO
+				if (!is_special_dispmode()) {
+					train_mode_t cm = (train_mode_t) m.v1u;
+					switch (cm) {
+					default:
+					case train_notrunning:
+						set_dispmode(mode_init);
+						break;
+					case train_manual:
+					case train_fullmanual:
+						set_dispmode(mode_manual);
+						break;
+					case train_auto:
+						set_dispmode(mode_auto);
+						break;
+					}
+				}
+				return;
+				break;
+			case CMD_TRSTATE_NOTIF:
+				if (!is_special_dispmode()) {
+					ihm_setvar(0, 3, 10+m.v1u);
+					SET_NEEDSREFRESH(0);
+				}
 				return;
 				break;
 			case CMD_UI_MSG:
@@ -280,7 +330,7 @@ static void ui_process_msg(void)
 				//ui_msg5(dn, (char *) m.rbytes+1);
 				break;
 			case CMD_INA3221_REPORT:
-				if (ihm_mode == 2) {
+				if (ihm_dispmode == mode_ina_val) {
 					int16_t *values = (int16_t *) m.v32u;
 					for (int i =0; i<12; i++) {
 						ihm_setvar(0, i, values[i]);

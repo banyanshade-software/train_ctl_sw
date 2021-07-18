@@ -244,7 +244,7 @@ static void train_periodic_control(int numtrain, uint32_t dt)
     
 	if ((1)) {
 		static int16_t lastspeed = 9999;
-		if (v != lastspeed) debug_info('T', 0, "trg.v= ", v,0,0);
+		//if (v != lastspeed) debug_info('T', 0, "trg.v= ", v,0,0);
 		lastspeed = v;
 	}
     if (tconf->enable_pid) {

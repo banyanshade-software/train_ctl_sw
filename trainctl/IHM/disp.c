@@ -116,6 +116,7 @@
 #define		CODE_SVAL4			0xC5
 #define		CODE_GRAPH_LEVEL	0xC6
 #define		CODE_GRAPH_SLEVEL	0xC7
+#define		CODE_SPTR			0xC8	// strnum in register
 
 
 #define		CODE_END			0xFE
@@ -132,18 +133,33 @@ static const uint8_t *disp[MAX_DISP] = {NULL};
 
 
 static const uint8_t default_layout[] = {
-		CODE_ZONE_STATUS, CODE_STR|13,CODE_SVAL, 1,
-		CODE_ZONE_TEXT1s, CODE_STR|13,CODE_UVAL, 0,
-		CODE_ZONE_TEXT2s, CODE_GRAPH_LEVEL, 0,
+		CODE_ZONE_STATUS, 	CODE_STR|0,
+		CODE_ZONE_TEXT1s,	CODE_STR|1,
+		CODE_ZONE_TEXT2s,	CODE_STR|2,
+		CODE_END
+};
+
+static const uint8_t layout_init[] = {
+		CODE_ZONE_STATUS, 	CODE_STR|0,
+		CODE_ZONE_TEXT1s,	CODE_STR|1,
+		CODE_ZONE_TEXT2s,	CODE_STR|2,
 		CODE_END
 };
 
 static const uint8_t layout_manual[] = {
-		CODE_ZONE_STATUS, 	CODE_STR|18, CODE_DIGIT, 0,
-		CODE_ZONE_MODE,     CODE_STR|19,
-		CODE_ZONE_TEXT1,  	/*CODE_STR|13*/ CODE_SVAL, 1, CODE_STR|20,
+		CODE_ZONE_STATUS, 	CODE_STR|4, CODE_DIGIT, 0,
+		CODE_ZONE_MODE,     CODE_STR|5, CODE_DIR, 4, CODE_STR|20, CODE_SPTR,3,
+		CODE_ZONE_TEXT1,  	CODE_STR|9, CODE_SVAL, 1, CODE_STR|6,
 		CODE_ZONE_TEXT2s, 	CODE_GRAPH_SLEVEL, 2,
-		//CODE_ZONE_TEXT3s, 	CODE_STR|4,
+		CODE_ZONE_TEXT4s,	CODE_STR|2,
+		CODE_END
+};
+
+static const uint8_t layout_auto[] = {
+		CODE_ZONE_STATUS, 	CODE_STR|4, CODE_DIGIT, 0,
+		CODE_ZONE_MODE,     CODE_STR|7, CODE_DIR, 4, CODE_STR|20, CODE_SPTR,3,
+		CODE_ZONE_TEXT1,  	CODE_STR|8,
+		CODE_ZONE_TEXT2s, 	CODE_GRAPH_SLEVEL, 2,
 		CODE_END
 };
 
@@ -171,10 +187,15 @@ void ihm_setlayout(int numdisp, int numlayout)
 	switch (numlayout) {
 	case LAYOUT_DEFAULT: // default
 		break;
+	case LAYOUT_INIT:
+		p = layout_init;
+		break;
 	case LAYOUT_MANUAL: // speed mode
 		p = layout_manual;
 		break;
-
+	case LAYOUT_AUTO:
+		p = layout_auto;
+		break;
 	case LAYOUT_INA3221_DETECT: // ina3221 I2C detection
 		p = layout_ina3221_i2c;
 		break;
@@ -194,30 +215,28 @@ void ihm_setlayout(int numdisp, int numlayout)
  *
  */
 static const char *ui_strings[] = {
-/*0*/		"TrCtl",		// IHMMSG_TRAINCTL_INIT
-/*1*/		"Fwd ",			// IHMMSG_TRAINCTL_FWD
-/*2*/		"Rev",			// IHMMSG_TRAINCTL_REV
-/*3*/		"Stop",			// IHMMSG_TRAINCTL_STOP
+/*0*/		"Automatic Train Ctrl",
+/*1*/		__DATE__,
+/*2*/		"(c) Daniel Braun",
+/*3*/		"Stop",
 
-/*4*/		"OK",
-/*5*/		__DATE__,
-/*6*/		"Z-v0.1.01",
-/*7*/		" ",
-/*8*/		"...",
-/*9*/		"...",
-/*10*/		"Fwd",
-/*11*/		"Rev",
-/*12*/		"Stop",
-/*13*/		"v",
-/*14*/		"t=",
-
-/*15*/		"Braun",
-/*16*/		"Z-ATC",		//Automatic train contr
-/*17*/		"Init",
-
-/*18*/		"Train ",
-/*19*/		"  Manual",
-/*20*/		"%",
+/*4*/		"Train ",
+/*5*/		"M ",
+/*6*/		"%",
+/*7*/		"A ",
+/*8*/		"AUTO",
+/*9*/		"V",
+/*10*/		"off",			// train_state
+/*11*/		"c1",
+/*12*/		"c12",
+/*13*/		"sta",
+/*14*/		"blk",
+/*15*/		"eot",
+/*16*/		"...",
+/*17*/		"...",
+/*18*/		"...",
+/*19*/		"...",
+/*20*/		" ",	// space
 
 /*21*/		"0x70:",			//ina3221 addr
 /*22*/		"0x71:",
@@ -277,7 +296,7 @@ void disp_layout(int numdisp)
 
 	for (int i=0; i<MAX_OPCODE_PER_DISPLAY; i++) {
 		if (CODE_END == d[i]) break;
-		if ((d[i] & 0x80)==0) {
+		if ((d[i] & 0x80)==0) { // CODE_STR
 			const char * stri = ui_strings[d[i]&0x7F];
 			ssd1306_WriteString(stri, *curfont, White);
 			continue;
@@ -309,12 +328,22 @@ void disp_layout(int numdisp)
 			curfont = &Font_7x10;
 			break;
 		case CODE_ZONE_TEXT3s:
+#ifdef SSD1306_INCLUDE_FONT_6x8
+			ssd1306_SetCursor(0, TEXT_Y+12);
+			curfont = &Font_6x8;
+#else
 			ssd1306_SetCursor(0, TEXT_Y+10);
 			curfont = &Font_7x10;
+#endif
 			break;
 		case CODE_ZONE_TEXT4s:
+#ifdef SSD1306_INCLUDE_FONT_6x8
+			ssd1306_SetCursor(RIGHT_X, TEXT_Y+12);
+			curfont = &Font_6x8;
+#else
 			ssd1306_SetCursor(RIGHT_X, TEXT_Y+10);
 			curfont = &Font_7x10;
+#endif
 			break;
 #ifdef SSD1306_INCLUDE_FONT_16x26
 		case CODE_ZONE_TEXTBIG:
@@ -322,6 +351,15 @@ void disp_layout(int numdisp)
 			curfont = &Font_16x26;
 			break;
 #endif
+
+		case CODE_SPTR:
+			i++;
+			v16u = (int16_t) _GET_REG(numdisp, d[i]);
+			if (v16u<10) v16u = 10;
+			if (v16u>100) v16u = 100;
+			const char * stri = ui_strings[v16u];
+			ssd1306_WriteString(stri, *curfont, White);
+			break;
 		case CODE_DIGIT:
 			i++;
 			v16u = (int16_t) _GET_REG(numdisp, d[i]);
@@ -365,6 +403,10 @@ void disp_layout(int numdisp)
 			break;
 		case CODE_DIR:
 			i+=1;
+			v16s = _GET_REG(numdisp, d[i]);
+			if (v16s > 0) ssd1306_WriteChar('>', *curfont, White);
+			else if (v16s < 0) ssd1306_WriteChar('<', *curfont, White);
+			else ssd1306_WriteChar('|', *curfont, White);
 			break;
 
 

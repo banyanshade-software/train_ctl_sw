@@ -58,6 +58,11 @@ void turnout_tick(_UNUSED_ uint32_t notif_flags, uint32_t tick, uint32_t dt)
 		first = 0;
 		turnout_reset();
 	}
+	static int cnt = 0;
+	cnt ++;
+	if (cnt%4) return; // half freq
+	// TODO we need a fixed freq for turnout
+
 	process_turnout_timers(tick, dt);
 	for (;;) {
 		msg_64_t m;
@@ -87,7 +92,7 @@ typedef struct turnout_vars {
 	uint8_t st;
 } turnout_vars_t;
 
-static turnout_vars_t tvars[NUM_LOCAL_TURNOUTS];
+static turnout_vars_t tvars[NUM_LOCAL_TURNOUTS]={0};
 
 
 #define ST_IDLE		0
@@ -117,6 +122,7 @@ static void process_turnout_cmd(msg_64_t *m, _UNUSED_ uint32_t tick, _UNUSED_ ui
 #endif
 	switch (m->cmd) {
 	case CMD_TURNOUT_A:
+		itm_debug2(DBG_TURNOUT, "TA", tidx, avars->value);
 		avars->value = -1;
 #ifndef TRAIN_SIMU
 	    HAL_GPIO_WritePin(aconf->cmd_port, aconf->pinA, GPIO_PIN_RESET);
@@ -125,6 +131,7 @@ static void process_turnout_cmd(msg_64_t *m, _UNUSED_ uint32_t tick, _UNUSED_ ui
 		avars->st = ST_SETA;
 		break;
 	case CMD_TURNOUT_B:
+		itm_debug2(DBG_TURNOUT, "TB", tidx, avars->value);
 		avars->value = -1;
 #ifndef TRAIN_SIMU
 	    HAL_GPIO_WritePin(aconf->cmd_port, aconf->pinA, GPIO_PIN_RESET);

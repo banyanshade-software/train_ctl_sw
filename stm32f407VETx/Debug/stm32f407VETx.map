@@ -14797,7 +14797,7 @@ OUTPUT(stm32f407VETx.elf elf32-littlearm)
  .debug_ranges  0x00000000000027d0       0x28 trainctl/utils/itm_debug.o
  .debug_ranges  0x00000000000027f8       0x38 trainctl/utils/lf_mqueue.o
 
-.debug_macro    0x0000000000000000    0x30663
+.debug_macro    0x0000000000000000    0x30669
  .debug_macro   0x0000000000000000      0x2b5 Core/Src/freertos.o
  .debug_macro   0x00000000000002b5      0xa5a Core/Src/freertos.o
  .debug_macro   0x0000000000000d0f      0x174 Core/Src/freertos.o
@@ -14971,34 +14971,34 @@ OUTPUT(stm32f407VETx.elf elf32-littlearm)
  .debug_macro   0x0000000000029b75      0x50a trainctl/IHM/disp.o
  .debug_macro   0x000000000002a07f       0x46 trainctl/IHM/disp.o
  .debug_macro   0x000000000002a0c5      0x483 trainctl/IHM/ihm.o
- .debug_macro   0x000000000002a548      0x5ca trainctl/ctrl/ctrl.o
- .debug_macro   0x000000000002ab12       0x16 trainctl/ctrl/ctrl.o
- .debug_macro   0x000000000002ab28       0x10 trainctl/ctrl/ctrl.o
- .debug_macro   0x000000000002ab38       0x10 trainctl/ctrl/ctrl.o
- .debug_macro   0x000000000002ab48      0x551 trainctl/low/canton.o
- .debug_macro   0x000000000002b099      0x547 trainctl/low/canton_bemf.o
- .debug_macro   0x000000000002b5e0      0x53a trainctl/low/presence_detection.o
- .debug_macro   0x000000000002bb1a      0x563 trainctl/low/turnout.o
- .debug_macro   0x000000000002c07d      0x3fe trainctl/misc.o
- .debug_macro   0x000000000002c47b      0x49b trainctl/param.o
- .debug_macro   0x000000000002c916      0x4c5 trainctl/railconfig.o
- .debug_macro   0x000000000002cddb       0x46 trainctl/railconfig.o
- .debug_macro   0x000000000002ce21       0x10 trainctl/railconfig.o
- .debug_macro   0x000000000002ce31      0x526 trainctl/statval.o
- .debug_macro   0x000000000002d357      0x4fc trainctl/train.o
- .debug_macro   0x000000000002d853      0x555 trainctl/txrxcmd.o
- .debug_macro   0x000000000002dda8      0x179 trainctl/msg/trainmsg.o
- .debug_macro   0x000000000002df21       0x10 trainctl/msg/trainmsg.o
- .debug_macro   0x000000000002df31      0x3ce trainctl/spdctl/inertia.o
- .debug_macro   0x000000000002e2ff      0x413 trainctl/spdctl/pidctl.o
- .debug_macro   0x000000000002e712      0x561 trainctl/spdctl/spdctl.o
- .debug_macro   0x000000000002ec73      0x4a6 trainctl/stm32/taskctrl.o
- .debug_macro   0x000000000002f119       0xd9 trainctl/stm32/taskctrl.o
- .debug_macro   0x000000000002f1f2      0x48f trainctl/stm32/taskdisp.o
- .debug_macro   0x000000000002f681      0x552 trainctl/stm32/txrxtask.o
- .debug_macro   0x000000000002fbd3      0x537 trainctl/topology/topology.o
- .debug_macro   0x000000000003010a      0x40e trainctl/utils/itm_debug.o
- .debug_macro   0x0000000000030518      0x14b trainctl/utils/lf_mqueue.o
+ .debug_macro   0x000000000002a548      0x5d0 trainctl/ctrl/ctrl.o
+ .debug_macro   0x000000000002ab18       0x16 trainctl/ctrl/ctrl.o
+ .debug_macro   0x000000000002ab2e       0x10 trainctl/ctrl/ctrl.o
+ .debug_macro   0x000000000002ab3e       0x10 trainctl/ctrl/ctrl.o
+ .debug_macro   0x000000000002ab4e      0x551 trainctl/low/canton.o
+ .debug_macro   0x000000000002b09f      0x547 trainctl/low/canton_bemf.o
+ .debug_macro   0x000000000002b5e6      0x53a trainctl/low/presence_detection.o
+ .debug_macro   0x000000000002bb20      0x563 trainctl/low/turnout.o
+ .debug_macro   0x000000000002c083      0x3fe trainctl/misc.o
+ .debug_macro   0x000000000002c481      0x49b trainctl/param.o
+ .debug_macro   0x000000000002c91c      0x4c5 trainctl/railconfig.o
+ .debug_macro   0x000000000002cde1       0x46 trainctl/railconfig.o
+ .debug_macro   0x000000000002ce27       0x10 trainctl/railconfig.o
+ .debug_macro   0x000000000002ce37      0x526 trainctl/statval.o
+ .debug_macro   0x000000000002d35d      0x4fc trainctl/train.o
+ .debug_macro   0x000000000002d859      0x555 trainctl/txrxcmd.o
+ .debug_macro   0x000000000002ddae      0x179 trainctl/msg/trainmsg.o
+ .debug_macro   0x000000000002df27       0x10 trainctl/msg/trainmsg.o
+ .debug_macro   0x000000000002df37      0x3ce trainctl/spdctl/inertia.o
+ .debug_macro   0x000000000002e305      0x413 trainctl/spdctl/pidctl.o
+ .debug_macro   0x000000000002e718      0x561 trainctl/spdctl/spdctl.o
+ .debug_macro   0x000000000002ec79      0x4a6 trainctl/stm32/taskctrl.o
+ .debug_macro   0x000000000002f11f       0xd9 trainctl/stm32/taskctrl.o
+ .debug_macro   0x000000000002f1f8      0x48f trainctl/stm32/taskdisp.o
+ .debug_macro   0x000000000002f687      0x552 trainctl/stm32/txrxtask.o
+ .debug_macro   0x000000000002fbd9      0x537 trainctl/topology/topology.o
+ .debug_macro   0x0000000000030110      0x40e trainctl/utils/itm_debug.o
+ .debug_macro   0x000000000003051e      0x14b trainctl/utils/lf_mqueue.o
 
 .debug_line     0x0000000000000000    0x32ce8
  .debug_line    0x0000000000000000      0x8d4 Core/Src/freertos.o
@@ -15066,7 +15066,7 @@ OUTPUT(stm32f407VETx.elf elf32-littlearm)
  .debug_line    0x0000000000031b00      0xbbc trainctl/utils/itm_debug.o
  .debug_line    0x00000000000326bc      0x62c trainctl/utils/lf_mqueue.o
 
-.debug_str      0x0000000000000000    0xea2e7
+.debug_str      0x0000000000000000    0xea2f9
  .debug_str     0x0000000000000000    0xd2b57 Core/Src/freertos.o
                                       0xd2e13 (size before relaxing)
  .debug_str     0x00000000000d2b57     0x7c4f Core/Src/main.o
@@ -15153,47 +15153,47 @@ OUTPUT(stm32f407VETx.elf elf32-littlearm)
                                       0xd8613 (size before relaxing)
  .debug_str     0x00000000000e8191      0x323 trainctl/IHM/ihm.o
                                       0xd81ce (size before relaxing)
- .debug_str     0x00000000000e84b4      0x8c2 trainctl/ctrl/ctrl.o
-                                      0xd9404 (size before relaxing)
- .debug_str     0x00000000000e8d76      0x2f0 trainctl/low/canton.o
+ .debug_str     0x00000000000e84b4      0x8d4 trainctl/ctrl/ctrl.o
+                                      0xd9416 (size before relaxing)
+ .debug_str     0x00000000000e8d88      0x2f0 trainctl/low/canton.o
                                       0xd8fb3 (size before relaxing)
- .debug_str     0x00000000000e9066      0x123 trainctl/low/canton_bemf.o
+ .debug_str     0x00000000000e9078      0x123 trainctl/low/canton_bemf.o
                                       0xd8dc7 (size before relaxing)
- .debug_str     0x00000000000e9189       0x6d trainctl/low/presence_detection.o
+ .debug_str     0x00000000000e919b       0x6d trainctl/low/presence_detection.o
                                       0xd8bb2 (size before relaxing)
- .debug_str     0x00000000000e91f6      0x1b2 trainctl/low/turnout.o
+ .debug_str     0x00000000000e9208      0x1b2 trainctl/low/turnout.o
                                       0xd8d63 (size before relaxing)
- .debug_str     0x00000000000e93a8      0x134 trainctl/misc.o
+ .debug_str     0x00000000000e93ba      0x134 trainctl/misc.o
                                       0xd708b (size before relaxing)
- .debug_str     0x00000000000e94dc       0x7d trainctl/param.o
+ .debug_str     0x00000000000e94ee       0x7d trainctl/param.o
                                       0xd7c4a (size before relaxing)
- .debug_str     0x00000000000e9559      0x111 trainctl/railconfig.o
+ .debug_str     0x00000000000e956b      0x111 trainctl/railconfig.o
                                       0xd83bd (size before relaxing)
- .debug_str     0x00000000000e966a      0x109 trainctl/statval.o
+ .debug_str     0x00000000000e967c      0x109 trainctl/statval.o
                                       0xd81ff (size before relaxing)
- .debug_str     0x00000000000e9773       0x33 trainctl/train.o
+ .debug_str     0x00000000000e9785       0x33 trainctl/train.o
                                       0xd80f9 (size before relaxing)
- .debug_str     0x00000000000e97a6      0x1ef trainctl/txrxcmd.o
+ .debug_str     0x00000000000e97b8      0x1ef trainctl/txrxcmd.o
                                       0xd8eae (size before relaxing)
- .debug_str     0x00000000000e9995      0x17c trainctl/msg/trainmsg.o
+ .debug_str     0x00000000000e99a7      0x17c trainctl/msg/trainmsg.o
                                        0x7c74 (size before relaxing)
- .debug_str     0x00000000000e9b11       0x9b trainctl/spdctl/inertia.o
+ .debug_str     0x00000000000e9b23       0x9b trainctl/spdctl/inertia.o
                                       0xd6f00 (size before relaxing)
- .debug_str     0x00000000000e9bac       0xb8 trainctl/spdctl/pidctl.o
+ .debug_str     0x00000000000e9bbe       0xb8 trainctl/spdctl/pidctl.o
                                       0xd6fa8 (size before relaxing)
- .debug_str     0x00000000000e9c64      0x250 trainctl/spdctl/spdctl.o
+ .debug_str     0x00000000000e9c76      0x250 trainctl/spdctl/spdctl.o
                                       0xd912b (size before relaxing)
- .debug_str     0x00000000000e9eb4       0xce trainctl/stm32/taskctrl.o
+ .debug_str     0x00000000000e9ec6       0xce trainctl/stm32/taskctrl.o
                                       0xd8330 (size before relaxing)
- .debug_str     0x00000000000e9f82       0xb4 trainctl/stm32/taskdisp.o
+ .debug_str     0x00000000000e9f94       0xb4 trainctl/stm32/taskdisp.o
                                       0xd8622 (size before relaxing)
- .debug_str     0x00000000000ea036       0xdd trainctl/stm32/txrxtask.o
+ .debug_str     0x00000000000ea048       0xdd trainctl/stm32/txrxtask.o
                                       0xd93de (size before relaxing)
- .debug_str     0x00000000000ea113       0xb1 trainctl/topology/topology.o
+ .debug_str     0x00000000000ea125       0xb1 trainctl/topology/topology.o
                                       0xd8ba6 (size before relaxing)
- .debug_str     0x00000000000ea1c4       0xb7 trainctl/utils/itm_debug.o
+ .debug_str     0x00000000000ea1d6       0xb7 trainctl/utils/itm_debug.o
                                       0xd6fa5 (size before relaxing)
- .debug_str     0x00000000000ea27b       0x6c trainctl/utils/lf_mqueue.o
+ .debug_str     0x00000000000ea28d       0x6c trainctl/utils/lf_mqueue.o
                                        0x72e8 (size before relaxing)
 
 .comment        0x0000000000000000       0x7b

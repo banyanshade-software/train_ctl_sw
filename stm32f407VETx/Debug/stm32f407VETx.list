@@ -35,15 +35,15 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY, DEBUGGING
  15 .debug_ranges 00002830  00000000  00000000  00088448  2**3
                   CONTENTS, READONLY, DEBUGGING
- 16 .debug_macro  00030663  00000000  00000000  0008ac78  2**0
+ 16 .debug_macro  00030669  00000000  00000000  0008ac78  2**0
                   CONTENTS, READONLY, DEBUGGING
- 17 .debug_line   00032ce8  00000000  00000000  000bb2db  2**0
+ 17 .debug_line   00032ce8  00000000  00000000  000bb2e1  2**0
                   CONTENTS, READONLY, DEBUGGING
- 18 .debug_str    000ea2e7  00000000  00000000  000edfc3  2**0
+ 18 .debug_str    000ea2f9  00000000  00000000  000edfc9  2**0
                   CONTENTS, READONLY, DEBUGGING
- 19 .comment      0000007b  00000000  00000000  001d82aa  2**0
+ 19 .comment      0000007b  00000000  00000000  001d82c2  2**0
                   CONTENTS, READONLY
- 20 .debug_frame  0000aeb0  00000000  00000000  001d8328  2**2
+ 20 .debug_frame  0000aeb0  00000000  00000000  001d8340  2**2
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -54028,9 +54028,9 @@ static void update_c2_state_limits(int tidx, train_ctrl_t *tvars, update_reason_
  8013f44:	494f      	ldr	r1, [pc, #316]	; (8014084 <update_c2_state_limits+0x298>)
  8013f46:	f44f 6080 	mov.w	r0, #1024	; 0x400
  8013f4a:	f7fe ffa7 	bl	8012e9c <itm_debug1>
-			tvars->spd_limit = 20;//			set_speed_limit(tn, 20);
+			tvars->spd_limit = EOT_SPD_LIMIT;//			set_speed_limit(tn, 20);
  8013f4e:	68bb      	ldr	r3, [r7, #8]
- 8013f50:	2214      	movs	r2, #20
+ 8013f50:	2264      	movs	r2, #100	; 0x64
  8013f52:	811a      	strh	r2, [r3, #8]
 			const train_config_t *tconf = get_train_cnf(tidx);
  8013f54:	68f8      	ldr	r0, [r7, #12]

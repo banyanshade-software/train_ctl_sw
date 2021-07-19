@@ -22,7 +22,7 @@ static uint8_t ignore_ina_presence = 1;
 
 
 #define SCEN_TWOTRAIN 	0
-
+#define EOT_SPD_LIMIT	100   //20
 
 // timers number
 #define TLEAVE_C1  	0
@@ -727,7 +727,7 @@ static void update_c2_state_limits(int tidx, train_ctrl_t *tvars, update_reason_
 		// end of track
 		if (updreason == upd_c1c2) {
 			itm_debug1(DBG_CTRL, "eot", tidx);
-			tvars->spd_limit = 20;//			set_speed_limit(tn, 20);
+			tvars->spd_limit = EOT_SPD_LIMIT;//			set_speed_limit(tn, 20);
 			const train_config_t *tconf = get_train_cnf(tidx);
 			posetval = pose_middle(_blk_addr_to_blk_num(tvars->canton1_addr), tconf, tvars->_dir);
 			tvars->behaviour_flags |= BEHAVE_EOT1;

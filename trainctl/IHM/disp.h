@@ -42,5 +42,14 @@ uint16_t ihm_getvar(int numdisp, int varnum);
 2 = dir+speed notified by ctrl
 3 = 10+state
 4 = dir (-1,0,+1)
+
+
+ihm vars for detect1 :
+5 = Von
+6 = Voff (B)
+7 = I
+8 = rot/pwm
+9 = vidx
+
 */
 #endif /* IHM_DISP_H_ */

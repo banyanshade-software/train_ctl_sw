@@ -45,12 +45,15 @@ LFMQUEUE_DEF_C(from_ui, msg_64_t, 		4,  1)
 LFMQUEUE_DEF_C(from_nowhere, msg_64_t, 	2, 0)
 
 
+LFMQUEUE_DEF_C(to_ina3221, msg_64_t, 	4, 0)
+LFMQUEUE_DEF_C(from_ina3221, msg_64_t, 	64,  1)
+
 typedef struct {
 	mqf_t *to;
 	mqf_t *from;
 } qdef_t;
 
-#define NQDEF 8
+#define NQDEF 9
 static const qdef_t qdef[NQDEF] = {
 		/* 0*/ { &to_turnout, &from_turnout },
 		/* 1*/ { &to_canton,  &from_canton},
@@ -59,7 +62,8 @@ static const qdef_t qdef[NQDEF] = {
         /* 4*/ { &to_forward_usb, &from_forward_usb},
         /* 5*/ { &to_ctrl, &from_ctrl},
 		/* 6*/ { &to_ui, &from_ui},
-		/* 7*/ { NULL, &from_nowhere}
+		/* 7*/ { &to_ina3221, &from_ina3221},
+		/* 8*/ { NULL, &from_nowhere}
 };
 
 typedef struct {

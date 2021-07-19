@@ -125,7 +125,7 @@ static void run_ina_task(void)
 
 		for (;;) {
 			msg_64_t m;
-			int rc = mqf_read_to_ctrl(&m);
+			int rc = mqf_read_to_ina3221(&m);
 			if (rc) break;
 			switch (m.cmd) {
 			case CMD_RESET:
@@ -388,44 +388,63 @@ static void _read_complete(_UNUSED_ int err)
 	uint16_t *valu = (uint16_t *) cur_values;
 	int16_t  *vals = (int16_t *) cur_values;
 	static int8_t presence[INA3221_NUM_VALS] = {0};
+
 	for (int i = 0; i<INA3221_NUM_VALS; i++) {
-		valu[i] = __builtin_bswap16(valu[i]);
-		itm_debug2(DBG_INA3221, "ina val", i, vals[i]);
-
-		int p = (abs(vals[i])>1000) ? 1 : 0;
-		if (p == presence[i]) continue;
-		presence[i] = p;
-		itm_debug3(DBG_INA3221|DBG_PRES, "PRSCH", i,p, vals[i]);
-		// notify change
-		msg_64_t m;
-		m.from = MA_CANTON(localBoardNum, 0);
-		m.to = MA_CONTROL();
-		m.cmd = CMD_PRESENCE_CHANGE;
-		m.sub = i;
-		m.v1u = p;
-		m.v2 = vals[i];
-		mqf_write_from_canton(&m);
+			valu[i] = __builtin_bswap16(valu[i]);
 	}
+	msg_64_t m;
 
-	static int cnt=0;
-	cnt++;
-	if ((0) && ((cnt%50)==0)) {
-		msg_64_t m;
-		static int16_t v[12];
-		memcpy(v, vals, 12*2);
-		for (int i=0; i<12; i++) {
-			if (abs(v[i]) > 400) {
-				itm_debug2(DBG_INA3221, "ina big", i, v[i]);
-			}
-		}
-		if ((1)) v[7] = cnt;
-		m.from = MA_CANTON(localBoardNum, 0);
+	switch (run_mode) {
+	default:
+		break;
+	case runmode_detect1:
+		m.from =  MA_CANTON(localBoardNum, 0);
 		m.to = MA_UI(1);
-		m.cmd = CMD_INA3221_REPORT;
-		m.v32u = (uint32_t) v;
-		mqf_write_from_canton(&m);
+		m.cmd = CMD_INA3221_VAL1;
+		m.sub = 1;
+		m.v1 = vals[1];
+		mqf_write_from_ina3221(&m);
+		break;
+	case runmode_normal:
+		for (int i = 0; i<INA3221_NUM_VALS; i++) {
+			itm_debug2(DBG_INA3221, "ina val", i, vals[i]);
+			int p = (abs(vals[i])>1000) ? 1 : 0;
+			if (p == presence[i]) continue;
+			presence[i] = p;
+			itm_debug3(DBG_INA3221|DBG_PRES, "PRSCH", i,p, vals[i]);
+			// notify change
+			m.from = MA_CANTON(localBoardNum, 0);
+			m.to = MA_CONTROL();
+			m.cmd = CMD_PRESENCE_CHANGE;
+			m.sub = i;
+			m.v1u = p;
+			m.v2 = vals[i];
+			mqf_write_from_ina3221(&m);
+
+
+			static int cnt=0;
+			cnt++;
+			if ((0) && ((cnt%50)==0)) {
+				msg_64_t m;
+				static int16_t v[12];
+				memcpy(v, vals, 12*2);
+				for (int i=0; i<12; i++) {
+					if (abs(v[i]) > 400) {
+						itm_debug2(DBG_INA3221, "ina big", i, v[i]);
+					}
+				}
+				if ((1)) v[7] = cnt;
+				m.from = MA_CANTON(localBoardNum, 0);
+				m.to = MA_UI(1);
+				m.cmd = CMD_INA3221_REPORT;
+				m.v32u = (uint32_t) v;
+				mqf_write_from_ina3221(&m);
+			}
+			break;
+		}
 	}
 }
+
 
 void HAL_I2C_MemTxCpltCallback(_UNUSED_ I2C_HandleTypeDef *hi2c)
 {
@@ -1068,7 +1087,7 @@ static void _ina3221_configure(int a, int continuous)
     w16 = INA3221_CONF_CH1_EN | INA3221_CONF_CH2_EN | INA3221_CONF_CH3_EN
     		| INA3221_CONF_VS_CT_140u
 			| INA3221_CONF_MODE_SHUNT;
-    w16 |= (continuous ? INA3221_CONF_AVG1 : INA3221_CONF_AVG16);
+    w16 |= (continuous ? INA3221_CONF_AVG256 : INA3221_CONF_AVG1);
 
     if (continuous) w16 |= INA3221_CONF_MODE_CONTINUOUS;
 	ina_conf_val = w16;

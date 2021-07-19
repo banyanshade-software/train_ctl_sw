@@ -437,7 +437,102 @@ static void ihm_runtick_testcanton(int f)
 	ihm_runtick_off(f);
 }
 
+// ---------------------------------
+// run mode detect1
+// ---------------------------------
 
+static void ui_process_msg_d1(void);
+
+static void ihm_runtick_detect1(int init)
+{
+	static int voltidx = 7;
+	needsrefresh_mask = 0;
+
+	if (init) {
+		voltidx = 7;
+		osDelay(500); // ugly : make sure other tasklet are ready. TODO : fix this
+		itm_debug1(DBG_UI, "UI init", 0);
+		ihm_setlayout(0, LAYOUT_DETECT1);
+		for (int i = 0; i<DISP_MAX_REGS; i++) {
+			ihm_setvar(0, i, 0);
+		}
+		ihm_setvar(0, 9, voltidx);
+		SET_NEEDSREFRESH(0);
+		msg_64_t m;
+		m.from = MA_UI(1);
+		m.to = MA_CANTON(0,1);
+		m.cmd = CMD_BEMF_ON;
+		mqf_write_from_ui(&m);
+
+		m.from = MA_UI(1);
+		m.to = MA_CANTON(0,1);
+		m.cmd = CMD_SETVPWM;
+		m.v1u = voltidx;
+		m.v2 = 0;
+		mqf_write_from_ui(&m);
+	}
+	// rotary encoder
+	static  uint16_t rotpos = 0xFFFF;
+	uint16_t p = get_rotary(&htim4);
+	if (p != rotpos) {
+		// pos changed
+		rotpos = p;
+		ihm_setvar(0, 8, rotpos);
+		SET_NEEDSREFRESH(0);
+
+		msg_64_t m;
+		m.from = MA_UI(1);
+		m.to = MA_CANTON(0,1);
+		m.cmd = CMD_SETVPWM;
+		m.v1u = voltidx;
+		m.v2 = rotpos;
+		mqf_write_from_ui(&m);
+
+	}
+	// process messages --------------
+	ui_process_msg_d1();
+
+	// update displays ---------------
+	for (int i=0; i<MAX_DISP; i++) {
+		if (NEEDSREFRESH(i)) {
+			disp_layout(i);
+		}
+	}
+}
+
+
+
+static void ui_process_msg_d1(void)
+{
+	for (;;) {
+		msg_64_t m;
+		int rc = mqf_read_to_ui(&m);
+		if (rc) break;
+
+		switch(m.cmd) {
+
+        case CMD_SETRUN_MODE:
+            run_mode = m.v1u;
+            return;
+            break;
+
+
+        case CMD_BEMF_NOTIF:
+    		ihm_setvar(0, 5, m.v2); //Von
+    		ihm_setvar(0, 6, m.v1); //Voff
+    		SET_NEEDSREFRESH(0);
+    		break;
+        case CMD_INA3221_VAL1:
+        	ihm_setvar(0, 7, m.v1);
+        	SET_NEEDSREFRESH(0);
+        	break;
+
+        default:
+        	itm_debug1(DBG_ERR|DBG_UI, "unhndld msg", m.cmd);
+        	break;
+		}
+	}
+}
 // ---------------------------------
 // run mode detect
 // ---------------------------------
@@ -447,11 +542,3 @@ static void ihm_runtick_detect(int f)
 	ihm_runtick_off(f);
 }
 
-// ---------------------------------
-// run mode detect1
-// ---------------------------------
-
-static void ihm_runtick_detect1(int f)
-{
-	ihm_runtick_off(f);
-}

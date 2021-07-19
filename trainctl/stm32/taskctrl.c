@@ -154,7 +154,8 @@ static void run_task_ctrl(void)
 		m.to = MA_BROADCAST;
 		m.cmd = CMD_SETRUN_MODE;
 		//m.v1u = runmode_off;
-		m.v1u = runmode_normal;
+		//m.v1u = runmode_normal;
+		m.v1u = runmode_detect1;
 		mqf_write_from_nowhere(&m); // XXX it wont be sent to ctl
 	}
 

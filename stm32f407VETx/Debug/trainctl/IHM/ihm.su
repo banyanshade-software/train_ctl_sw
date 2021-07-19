@@ -13,5 +13,6 @@ ihm.c:255:13:ui_process_msg	40	static
 ihm.c:389:13:ui_process_msg_off	24	static
 ihm.c:407:6:ihm_runtick_off	24	static
 ihm.c:435:13:ihm_runtick_testcanton	16	static
-ihm.c:445:13:ihm_runtick_detect	16	static
-ihm.c:454:13:ihm_runtick_detect1	16	static
+ihm.c:446:13:ihm_runtick_detect1	48	static
+ihm.c:505:13:ui_process_msg_d1	24	static
+ihm.c:540:13:ihm_runtick_detect	16	static

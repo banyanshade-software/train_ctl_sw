@@ -158,7 +158,7 @@ LFMQUEUE_DEF_H(from_ctrl, msg_64_t)
 #define CMD_TRTSPD_NOTIF			0x24
 #define CMD_VOFF_NOTIF				0x25
 #define CMD_TRSTATE_NOTIF			0x26
-
+#define CMD_INA3221_VAL1			0x27	// in detect1 mode
 /* other */
 #define CMD_POSE_SET_TRIG			0x50
 #define CMD_POSE_TRIGGERED			0x51
@@ -172,6 +172,10 @@ LFMQUEUE_DEF_H(from_forward_usb, msg_64_t)
 
 LFMQUEUE_DEF_H(to_ui, msg_64_t)
 LFMQUEUE_DEF_H(from_ui, msg_64_t)
+
+
+LFMQUEUE_DEF_H(to_ina3221, msg_64_t)
+LFMQUEUE_DEF_H(from_ina3221, msg_64_t)
 
 #define CMD_NOTIF_SPEED     0xA0
 #define CMD_UI_MSG			0xA1	// obsolete?

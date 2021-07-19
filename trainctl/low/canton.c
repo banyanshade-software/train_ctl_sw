@@ -123,6 +123,7 @@ static void handle_canton_cmd(int cidx, msg_64_t *m)
 
 static void handle_msg_normal(msg_64_t *m);
 static void handle_msg_cantontest(msg_64_t *m);
+static void handle_msg_detect1(msg_64_t *m);
 
 void canton_tick(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_ uint32_t dt)
 {
@@ -160,8 +161,10 @@ void canton_tick(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_
         case runmode_normal:
         	handle_msg_normal(&m);
         	break;
-        case runmode_detect:
         case runmode_detect1:
+        	handle_msg_detect1(&m);
+        	break;
+        case runmode_detect:
         	break;
         case runmode_testcanton:
         	handle_msg_cantontest(&m);
@@ -179,6 +182,11 @@ static void handle_msg_normal(msg_64_t *m)
     if (!IS_CANTON(m->to)) return;
     cidx = m->to & 0x07;
     handle_canton_cmd(cidx, m);
+}
+
+static void handle_msg_detect1(msg_64_t *m)
+{
+	handle_msg_normal(m);
 }
 
 static void handle_msg_cantontest(msg_64_t *m)

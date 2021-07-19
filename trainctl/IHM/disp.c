@@ -132,6 +132,12 @@
 static const uint8_t *disp[MAX_DISP] = {NULL};
 
 
+static const uint8_t layout_off[] = {
+		CODE_ZONE_STATUS,	CODE_STR|2,
+		CODE_ZONE_TEXT1,	CODE_STR|0,
+		CODE_END
+};
+
 static const uint8_t default_layout[] = {
 		CODE_ZONE_STATUS, 	CODE_STR|0,
 		CODE_ZONE_TEXT1s,	CODE_STR|1,
@@ -151,7 +157,7 @@ static const uint8_t layout_manual[] = {
 		CODE_ZONE_MODE,     CODE_STR|5, CODE_DIR, 4, CODE_STR|20, CODE_SPTR,3,
 		CODE_ZONE_TEXT1,  	CODE_STR|9, CODE_SVAL, 1, CODE_STR|6,
 		CODE_ZONE_TEXT2s, 	CODE_GRAPH_SLEVEL, 2,
-		CODE_ZONE_TEXT4s,	CODE_STR|2,
+		CODE_ZONE_TEXT3s,	CODE_STR|2,
 		CODE_END
 };
 
@@ -169,7 +175,7 @@ static const uint8_t layout_ina3221_i2c[] = {
 		CODE_ZONE_TEXT1s,  CODE_STR|23, CODE_DIGIT, 2,
 		CODE_ZONE_TEXT2s,  CODE_STR|24, CODE_DIGIT, 3,
 		CODE_ZONE_TEXT3s,   CODE_STR|25,
-		CODE_ZONE_TEXT4s,	CODE_STR|26,
+		CODE_ZONE_TEXT3s,	CODE_STR|26,
 		CODE_END
 };
 
@@ -202,6 +208,9 @@ void ihm_setlayout(int numdisp, int numlayout)
 	case LAYOUT_INA3221_VAL:
 		p = layout_ina3221_val;
 		break;
+	case LAYOUT_OFF:
+		p = layout_off;
+		break;
 	default:
 		itm_debug1(DBG_ERR|DBG_UI, "bad layout", numlayout);
 		break;
@@ -215,7 +224,7 @@ void ihm_setlayout(int numdisp, int numlayout)
  *
  */
 static const char *ui_strings[] = {
-/*0*/		"Automatic Train Ctrl",
+/*0*/		"ATC-Z",
 /*1*/		__DATE__,
 /*2*/		"(c) Daniel Braun",
 /*3*/		"Stop",

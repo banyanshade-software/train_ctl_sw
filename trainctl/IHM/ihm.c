@@ -89,6 +89,37 @@ static int16_t get_srotary(TIM_HandleTypeDef *ptdef)
 	return ((p<<ENC_MUL2)>>ENC_DIV2);//>>1;
 }
 
+
+
+
+// ----------------------------------------------------------------------------------
+// global run mode, each tasklet implement this
+static runmode_t run_mode = 0;
+//static uint8_t testerAddr;
+
+
+// ----------------------------------------------------------------------------------
+
+static void ihm_runtick_normal(int);
+static void ihm_runtick_off(int);
+static void ihm_runtick_testcanton(int);
+static void ihm_runtick_detect(int);
+static void ihm_runtick_detect1(int);
+
+void ihm_runtick(void)
+{
+	static int performInit = 1;
+	runmode_t orm = run_mode;
+	switch (run_mode) {
+	case runmode_normal:	ihm_runtick_normal(performInit); 	break;
+	case runmode_off:		ihm_runtick_off(performInit); 		break;
+	case runmode_testcanton:ihm_runtick_testcanton(performInit); break;
+	case runmode_detect1:	ihm_runtick_detect1(performInit);	break;
+	case runmode_detect:	ihm_runtick_detect(performInit);	break;
+	default:				ihm_runtick_off(performInit);		break;
+	}
+	performInit = (run_mode == orm) ? 0 : 1;
+}
 // -----------------------------------------------------------------------
 
 static void ui_process_msg(void);
@@ -103,7 +134,7 @@ typedef enum {
 
 // TODO : change this for per display struct
 static ihm_mode_t ihm_dispmode = mode_init;
-static int ihm_train = 0;
+//static int ihm_train = 0;
 
 static void set_displayout(void)
 {
@@ -139,12 +170,10 @@ static void set_dispmode(ihm_mode_t m)
 	set_displayout();
 }
 
-void ihm_runtick(void)
+void ihm_runtick_normal(int init)
 {
 	//static int cnt=0;
-	static int first = 0;
-	if (!first) {
-		first = 1;
+	if (init) {
 		itm_debug1(DBG_UI, "UI init", 0);
 		set_dispmode(mode_init);
 		for (int i = 0; i<DISP_MAX_REGS; i++) {
@@ -157,6 +186,7 @@ void ihm_runtick(void)
 	// scan rotary encoder -----------
 	for (int i=0; i<MAX_ROTARY; i++) {
 #if UNSIGNED_ROT
+		// obsolete and untested now
 		uint16_t p = get_rotary(&htim4);
 		if (p != rot_position[i]) {
 			// pos changed
@@ -185,7 +215,7 @@ void ihm_runtick(void)
 				//ihm_setvar(0, 1, ((int)rot0_position - 50));
 				SET_NEEDSREFRESH(0);
 			}
-			if (drive_mode[i]) {
+			if (drive_mode[i]) {	// TODO refactor drive_mode
 				msg_64_t m;
 				m.from = MA_UI(i);
 				m.to = MA_CONTROL_T(i);
@@ -221,7 +251,6 @@ void ihm_runtick(void)
 	}
 }
 
-static int test_mode=0;
 
 static void ui_process_msg(void)
 {
@@ -237,10 +266,11 @@ static void ui_process_msg(void)
 		switch(m.cmd) {
 		default:
 			break;
-        case CMD_TEST_MODE:
-            test_mode = m.v1u;
+        case CMD_SETRUN_MODE:
+            run_mode = m.v1u;
             return;
             break;
+
         case CMD_SETVPWM:	// TODO remove
         	//if (test_mode) ui_canton_pwm(m.from, m.v1u, m.v2);
         	return;
@@ -351,3 +381,77 @@ static void ui_process_msg(void)
 
 
 // ---------------------------------
+// run mode OFF
+// ---------------------------------
+
+
+
+static void ui_process_msg_off(void)
+{
+	for (;;) {
+		msg_64_t m;
+		int rc = mqf_read_to_ui(&m);
+		if (rc) break;
+
+		switch(m.cmd) {
+		default:
+			break;
+        case CMD_SETRUN_MODE:
+            run_mode = m.v1u;
+            return;
+            break;
+		}
+	}
+}
+
+void ihm_runtick_off(int init)
+{
+	needsrefresh_mask = 0;
+
+	if (init) {
+		itm_debug1(DBG_UI, "UI init", 0);
+		ihm_setlayout(0, LAYOUT_OFF);
+		for (int i = 0; i<DISP_MAX_REGS; i++) {
+			ihm_setvar(0, i, 0);
+		}
+		SET_NEEDSREFRESH(0);
+	}
+	// process messages --------------
+	ui_process_msg_off();
+
+	// update displays ---------------
+	for (int i=0; i<MAX_DISP; i++) {
+		if (NEEDSREFRESH(i)) {
+			disp_layout(i);
+		}
+	}
+}
+
+
+// ---------------------------------
+// run mode Cantontest
+// ---------------------------------
+
+static void ihm_runtick_testcanton(int f)
+{
+	ihm_runtick_off(f);
+}
+
+
+// ---------------------------------
+// run mode detect
+// ---------------------------------
+
+static void ihm_runtick_detect(int f)
+{
+	ihm_runtick_off(f);
+}
+
+// ---------------------------------
+// run mode detect1
+// ---------------------------------
+
+static void ihm_runtick_detect1(int f)
+{
+	ihm_runtick_off(f);
+}

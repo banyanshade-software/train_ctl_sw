@@ -146,7 +146,18 @@ volatile uint32_t t0ctrl;
 static void run_task_ctrl(void)
 {
 	int cnt = 0;
-	//if ((0))   calibrate_bemf(); //XXXX
+	//if ((0))   calibrate_bemf(); //XXX
+
+	if ((1)) {
+		msg_64_t m;
+		m.from = MA_BROADCAST;
+		m.to = MA_BROADCAST;
+		m.cmd = CMD_SETRUN_MODE;
+		//m.v1u = runmode_off;
+		m.v1u = runmode_normal;
+		mqf_write_from_nowhere(&m); // XXX it wont be sent to ctl
+	}
+
 	for (;;) {
 		uint32_t notif;
 		xTaskNotifyWait(0, 0xFFFFFFFF, &notif, portMAX_DELAY);

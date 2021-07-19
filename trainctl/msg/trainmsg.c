@@ -9,8 +9,12 @@
 #include "trainmsg.h"
 #include "../utils/itm_debug.h"
 
+#define _UNUSED_ __attribute__((unused))
+
 uint8_t localBoardNum = 0; // TODO move to config
 
+
+// LFMQUEUE_DEF_C(_name, _type,_num, _sil)
 
 
 LFMQUEUE_DEF_C(to_turnout, msg_64_t, 	8, 0)
@@ -36,14 +40,17 @@ LFMQUEUE_DEF_C(from_ctrl, msg_64_t, 	12, 0)
 
 
 LFMQUEUE_DEF_C(to_ui, msg_64_t, 		64, 0)
-LFMQUEUE_DEF_C(from_ui, msg_64_t, 		4, 1)
+LFMQUEUE_DEF_C(from_ui, msg_64_t, 		4,  1)
+
+LFMQUEUE_DEF_C(from_nowhere, msg_64_t, 	2, 0)
+
 
 typedef struct {
 	mqf_t *to;
 	mqf_t *from;
 } qdef_t;
 
-#define NQDEF 7
+#define NQDEF 8
 static const qdef_t qdef[NQDEF] = {
 		/* 0*/ { &to_turnout, &from_turnout },
 		/* 1*/ { &to_canton,  &from_canton},
@@ -51,7 +58,8 @@ static const qdef_t qdef[NQDEF] = {
         /* 3*/ { &to_forward, &from_forward},
         /* 4*/ { &to_forward_usb, &from_forward_usb},
         /* 5*/ { &to_ctrl, &from_ctrl},
-		/* 6*/ { &to_ui, &from_ui}
+		/* 6*/ { &to_ui, &from_ui},
+		/* 7*/ { NULL, &from_nowhere}
 };
 
 typedef struct {
@@ -71,7 +79,7 @@ static const qroute_t routes[NROUTES] = {
 
 };
 
-static void msg_error(const char *msg)
+static void msg_error(_UNUSED_ const char *msg)
 {
 
 }
@@ -85,6 +93,7 @@ static void dispatch_m64(msg_64_t *m, int f)
                 continue;
             }
             mqf_t *q = qdef[i].to;
+            if (!q) continue;
             mqf_write(q, m);
         }
         return;
@@ -112,7 +121,7 @@ static void dump_qusage(int i, int d, mqf_t *q)
 	q->maxuse = 0;
 }
 
-void msgsrv_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
+void msgsrv_tick(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_ uint32_t dt)
 {
     static int first = 1;
     if (first) {

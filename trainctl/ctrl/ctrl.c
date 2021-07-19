@@ -58,11 +58,10 @@ typedef struct {
 
 static train_ctrl_t trctl[NUM_TRAINS] = {0};
 
-// "ERR "  -101
 
-static uint8_t test_mode = 0;
+// global run mode, each tasklet implement this
+static runmode_t run_mode = 0;
 static uint8_t testerAddr;
-
 
 static void ctrl_reset(void);
 
@@ -361,26 +360,32 @@ void ctrl_run_tick(_UNUSED_ uint32_t notif_flags, uint32_t tick, _UNUSED_ uint32
 		if (rc) break;
         switch (m.cmd) {
             case CMD_RESET:
-                test_mode = 0; // FALLTHRU
+                //test_mode = 0;
+                // FALLTHRU
             case CMD_EMERGENCY_STOP:
                 ctrl_reset(); // untested
                 continue;
                 break;
-            case CMD_TEST_MODE:
-                test_mode = m.v1u;
-                testerAddr = m.from;
+            case CMD_SETRUN_MODE:
+            	if (run_mode != m.v1u) {
+            		run_mode = m.v1u;
+            		testerAddr = m.from;
+            		first = 1;
+            	}
                 continue;
                 break;
             default:
             	break;
         }
-        if (test_mode & (m.from != testerAddr)) {
-            continue;
-        }
+        if (run_mode != runmode_normal) continue;
+
+        //if (test_mode & (m.from != testerAddr)) {
+        //    continue;
+        //}
 
         // -----------------------------------------
 		if (IS_CONTROL_T(m.to)) {
-			if (test_mode) continue;
+			//if (test_mode) continue;
 			int tidx = m.to & 0x7;
 			train_ctrl_t *tvar = &trctl[tidx];
 

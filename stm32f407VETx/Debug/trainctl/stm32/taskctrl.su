@@ -1,9 +1,10 @@
+trainmsg.h:197:1:mqf_write_from_nowhere	16	static
 itm_debug.h:37:20:itm_debug1	32	static
 itm_debug.h:41:20:itm_debug2	32	static
 taskctrl.c:60:6:StartCtrlTask	24	static
 taskctrl.c:129:6:set_pwm_freq	24	static
-taskctrl.c:146:13:run_task_ctrl	40	static
-taskctrl.c:241:6:HAL_ADC_ConvCpltCallback	32	static,ignoring_inline_asm
-taskctrl.c:250:6:HAL_ADC_ConvHalfCpltCallback	32	static,ignoring_inline_asm
-taskctrl.c:259:6:HAL_ADC_LevelOutOfWindowCallback	16	static
-taskctrl.c:263:7:HAL_ADC_ErrorCallback	16	static
+taskctrl.c:146:13:run_task_ctrl	48	static
+taskctrl.c:252:6:HAL_ADC_ConvCpltCallback	32	static,ignoring_inline_asm
+taskctrl.c:261:6:HAL_ADC_ConvHalfCpltCallback	32	static,ignoring_inline_asm
+taskctrl.c:270:6:HAL_ADC_LevelOutOfWindowCallback	16	static
+taskctrl.c:274:7:HAL_ADC_ErrorCallback	16	static

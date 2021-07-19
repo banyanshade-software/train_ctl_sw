@@ -23,6 +23,10 @@ void disp_layout(int numdisp);
 #define LAYOUT_INIT		1
 #define LAYOUT_MANUAL	2
 #define LAYOUT_AUTO		3
+
+#define LAYOUT_OFF		4
+#define LAYOUT_DETECT1	5
+
 #define LAYOUT_INA3221_DETECT	200
 #define	LAYOUT_INA3221_VAL		201
 

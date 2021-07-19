@@ -33,13 +33,14 @@
 //#include "auto1.h"
 #include "txrxcmd.h"
 
-//#ifdef USE_INA3221
-//#include "../ina3221/ina3221.h"
-//#endif
 
-//volatile  uint8_t trainctl_test_mode = 0;
+// ----------------------------------------------------------------------------------
+// global run mode, each tasklet implement this
+static runmode_t run_mode = 0;
+static uint8_t testerAddr;
 
-//static void _set_speed_test_mode(int16_t sv100);
+
+// ----------------------------------------------------------------------------------
 
 
 //static void process_adc(volatile adc_buffer_t *buf, int32_t ticks);
@@ -110,8 +111,6 @@ static void spdctl_reset(void)
 	}
 }
 
-static uint8_t test_mode = 0;
-static uint8_t testerAddr;
 
 void spdctl_run_tick(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, uint32_t dt)
 {
@@ -133,22 +132,31 @@ void spdctl_run_tick(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, uint
         
         switch (m.cmd) {
         case CMD_RESET:
-            test_mode = 0; // FALLTHRU
+        	// FALLTHRU
         case CMD_EMERGENCY_STOP:
             spdctl_reset();
             break;
-        case CMD_TEST_MODE:
-            test_mode = (uint8_t) m.v1u;
-            testerAddr = m.from;
+        case CMD_SETRUN_MODE:
+        	if (m.v1u != run_mode) {
+        		run_mode = (runmode_t) m.v1u;
+        		testerAddr = m.from;
+        		first = 1;
+        	}
             break;
         default:
         	break;
         }
-        if (test_mode & (m.from != testerAddr)) {
-            continue;
+
+        switch (run_mode) {
+        case runmode_normal: break;
+        case runmode_off:
+        	continue;
+        default:
+        	continue;
         }
+
+        // mode normal
         if (IS_TRAIN_SC(m.to)) {
-            //if (test_mode) continue;
             int tidx = m.to & 0x7;
             USE_TRAIN(tidx)
             switch (m.cmd) {
@@ -196,7 +204,6 @@ void spdctl_run_tick(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, uint
             }
         }
 	}
-	if (test_mode) return;
 	/* process trains */
 	for (int i=0; i<NUM_TRAINS; i++) {
 		//itm_debug1(DBG_SPDCTL, "------ pc", i);
@@ -242,11 +249,11 @@ static void train_periodic_control(int numtrain, uint32_t dt)
 		itm_debug3(DBG_INERTIA, "inertia", numtrain, tvars->target_speed, v);
 	}
     
-	if ((1)) {
+	/*if ((0)) {
 		static int16_t lastspeed = 9999;
 		//if (v != lastspeed) debug_info('T', 0, "trg.v= ", v,0,0);
 		lastspeed = v;
-	}
+	}*/
     if (tconf->enable_pid) {
         // corresponding BEMF target
         // 100% = 1.5V

@@ -10,6 +10,9 @@
 #include <memory.h>
 #include "lf_mqueue.h"
 #include "itm_debug.h"
+
+#define _UNUSED_ __attribute__((unused))
+
 //#include <iot_atomic.h>
 
 // https://electronics.stackexchange.com/questions/13100/replacement-for-queues-in-rtos#13102
@@ -38,7 +41,7 @@ int mqf_len(mqf_t *m)
 
 void dump_msg(mqf_t *mq, int n);
 
-void mqf_qfull(mqf_t *m,  int t)
+void mqf_qfull(mqf_t *m, _UNUSED_ int t)
 {
 	itm_debug1(DBG_ERR|DBG_MSG, "w/full", 0);
 	for (;;) {

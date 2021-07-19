@@ -94,11 +94,19 @@ typedef union {
 	uint64_t raw;
 } msg_64_t;
 
+typedef enum {
+	runmode_off,		// when switching mode
+	runmode_normal,
+	runmode_testcanton,
+	runmode_detect1,
+	runmode_detect
+} runmode_t;
 
 /* general command */
 #define CMD_RESET 			0xFF
 #define CMD_EMERGENCY_STOP 	0xFE
-#define CMD_TEST_MODE	 	0xFC
+
+#define CMD_SETRUN_MODE	 	0xFC
 
 
 LFMQUEUE_DEF_H(to_turnout, msg_64_t)
@@ -112,6 +120,7 @@ LFMQUEUE_DEF_H(from_turnout, msg_64_t)
 LFMQUEUE_DEF_H(to_canton, msg_64_t)
 LFMQUEUE_DEF_H(from_canton, msg_64_t)
 /*to_canton : */
+/* WARNING : BEMF cmd must be (m->cmd & 0x40)*/
 #define CMD_BEMF_ON			0x40
 #define CMD_BEMF_OFF		0x41
 
@@ -185,6 +194,7 @@ void msgsrv_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt);
 // TODO
 void purge_all_queue(void);
 
+LFMQUEUE_DEF_H(from_nowhere, msg_64_t)
 
 
 

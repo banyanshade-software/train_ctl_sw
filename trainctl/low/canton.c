@@ -69,6 +69,16 @@ static canton_vars_t canton_vars[NUM_LOCAL_CANTONS_SW]={0};
 static void canton_set_pwm(int cn, const canton_config_t *c, canton_vars_t *v,  int8_t dir, int duty);
 void canton_set_volt(int cn, const canton_config_t *c, canton_vars_t *v, int voltidx);
 
+
+
+//--------------------------------------------
+// global run mode, each tasklet implement this
+static runmode_t run_mode = 0;
+static uint8_t testerAddr;
+//--------------------------------------------
+
+
+
 static void canton_reset(void)
 {
 	for (int i = 0; i<NUM_LOCAL_CANTONS_SW; i++) {
@@ -78,9 +88,6 @@ static void canton_reset(void)
 		canton_set_volt(i, cconf, cvars,  7);
 	}
 }
-
-static uint8_t test_mode = 0;
-static uint8_t testerAddr = 0;
 
 static void handle_canton_cmd(int cidx, msg_64_t *m)
 {
@@ -114,6 +121,9 @@ static void handle_canton_cmd(int cidx, msg_64_t *m)
 }
 
 
+static void handle_msg_normal(msg_64_t *m);
+static void handle_msg_cantontest(msg_64_t *m);
+
 void canton_tick(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_ uint32_t dt)
 {
 	static int first=1;
@@ -132,83 +142,74 @@ void canton_tick(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_
             canton_reset();
             bemf_reset();
             break;
-        case CMD_TEST_MODE:
-            test_mode = m.v1u;
-            testerAddr = m.from;
-            bemf_test_all = 1; //(m.to == MA_BROADCAST) ? 1 : 0;
-            bemf_test_mode = test_mode;
+        case CMD_SETRUN_MODE:
+        	if (m.v1u != run_mode) {
+        		run_mode = m.v1u;
+        		testerAddr = m.from;
+        		bemf_run_mode = run_mode; //(m.to == MA_BROADCAST) ? 1 : 0;
+        		bemf_reset();
+        		first = 1;
+        	}
             break;
         default:
         	break;
         }
-        if (test_mode && (testerAddr != m.from)) {
-            continue;
-        }
-
-        int cidx = -1;
-        if (IS_BROADCAST(m.to)) {
-        	cidx = -1;
-        } else if (IS_CANTON(m.to)) {
-        	cidx = m.to & 0x07;
-        } else {
-			itm_debug1(DBG_LOWCTRL, "not handled msg", m.cmd);
-			continue;
-        }
-        if ((test_mode==1) && (CMD_SETVPWM == m.cmd)) {
-        	// in test mode, forward CMD_SETVPWM to UI for display
-        	msg_64_t m2 = m;
-        	m2.from = m2.to;
-        	m2.to = MA_UI(1);
-     		mqf_write_from_canton(&m2);
-       	}
-        if (cidx>=0) handle_canton_cmd(cidx, &m);
-        else {
-        	// broadcast
-        	for (int i=0; i<NUM_LOCAL_CANTONS_HW; i++) {
-        		handle_canton_cmd(i, &m);
-        	}
+        switch (run_mode) {
+        case runmode_off:
+        	break;
+        case runmode_normal:
+        	handle_msg_normal(&m);
+        	break;
+        case runmode_detect:
+        case runmode_detect1:
+        	break;
+        case runmode_testcanton:
+        	handle_msg_cantontest(&m);
+        	break;
+        default:
+        	break;
         }
 	}
 }
 
+
+static void handle_msg_normal(msg_64_t *m)
+{
+    int cidx = -1;
+    if (!IS_CANTON(m->to)) return;
+    cidx = m->to & 0x07;
+    handle_canton_cmd(cidx, m);
+}
+
+static void handle_msg_cantontest(msg_64_t *m)
+{
+	int cidx = -1;
+	if (IS_BROADCAST(m->to)) {
+		cidx = -1;
+	} else if (IS_CANTON(m->to)) {
+		cidx = m->to & 0x07;
+	} else {
+		itm_debug1(DBG_LOWCTRL, "not handled msg", m->cmd);
+		return;
+	}
+    if (CMD_SETVPWM == m->cmd) {
+    	// in test mode, forward CMD_SETVPWM to UI for display
+    	msg_64_t m2 = *m;
+    	m2.from = m2.to;
+    	m2.to = MA_UI(1);
+    	mqf_write_from_canton(&m2);
+    }
+    if (cidx>=0) handle_canton_cmd(cidx, m);
+    else {
+    	// broadcast
+    	for (int i=0; i<NUM_LOCAL_CANTONS_HW; i++) {
+    		handle_canton_cmd(i, m);
+    	}
+    }
+}
+
+
 // ------------------------------------------------------------
-
-/*
-int canton_take(int numcanton, canton_occupency_t st,  int trainidx)
-{
-	if (trainidx<0 || trainidx>32) return canton_error(ERR_BAD_PARAM, "bad params 1");
-	if (st < canton_next) return canton_error(ERR_BAD_PARAM, "bad params 2");
-	USE_CANTON(numcanton) // cconf cvars
-	//if (v->curtrain) return canton_error(ERR_CANTON_USED, "canton alreday in use");
-	if (cvars->status != canton_free) return canton_error(ERR_CANTON_USED, "canton already in use");
-
-	cvars->status = st;
-	cvars->curtrainidx = trainidx;
-	(void) cconf; // unused
-	return 0;
-}
-
-int canton_change_status(int numcanton, canton_occupency_t st,  int trainidx)
-{
-	if (trainidx<0 || trainidx>32) return canton_error(ERR_BAD_PARAM, "bad params 3");
-	if (st < canton_next) return canton_error(ERR_BAD_PARAM, "bad params 4");
-	USE_CANTON(numcanton) // cconf cvars
-	if (cvars->curtrainidx != trainidx) return canton_error(ERR_CANTON_USED, "canton already in use 2");
-	cvars->status = st;
-	(void)cconf; // unused
-	return 0;
-}
-
-int canton_release(int numcanton, int trainidx)
-{
-	USE_CANTON(numcanton) // cconf cvars
-	if (cvars->curtrainidx != trainidx) return canton_error(ERR_CANTON_USED, "canton already in use 3");
-	cvars->curtrainidx = 0xFF;
-	cvars->status = canton_free;
-	(void)cconf; // unused
-	return 0;
-}
-*/
 
 
 // #pragma mark -

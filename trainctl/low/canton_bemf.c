@@ -15,7 +15,7 @@
 
 volatile adc_buf_t train_adc_buf[2]; // double buffer
 
-uint8_t bemf_test_mode = 0;
+runmode_t bemf_run_mode = runmode_off;
 uint8_t bemf_test_all = 0;
 
 static uint8_t bemf_to[NUM_LOCAL_CANTONS_SW] = {0xFF, 0xFF, 0xFF, 0xFF,  0xFF, 0xFF, 0xFF, 0xFF};
@@ -37,6 +37,7 @@ void bemf_msg(msg_64_t *m)
 {
 	if (!IS_CANTON(m->to)) {
 		// error
+		itm_debug1(DBG_ERR, "bad bemf c", m->to);
 		return;
 	}
 	int idx = m->to & 0x07;
@@ -50,12 +51,15 @@ void bemf_msg(msg_64_t *m)
 		bemf_to[idx] = m->from;
 		break;
 	default:
+		itm_debug1(DBG_ERR, "bad bemf c", m->to);
 		break;
 	}
 }
 
 void bemf_tick(uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_ uint32_t dt)
 {
+	if (bemf_run_mode == runmode_off) return;
+
 	itm_debug1(DBG_ADC, "------- btk", (int) notif_flags);
 	if (notif_flags & NOTIF_NEW_ADC_1) {
 		if (notif_flags & NOTIF_NEW_ADC_2) {
@@ -155,7 +159,7 @@ static void process_adc(volatile adc_buf_t *buf, _UNUSED_ uint32_t deltaticks)
 #error ohla
 #endif
 		int skp = 0;
-		if (bemf_test_mode && (bemf_test_all)&& (i<3)) {
+		if ((bemf_run_mode == runmode_testcanton) && (i<3)) {
 			skp = 1;
 		} else if (0xFF == bemf_to[i]) {
 			continue;

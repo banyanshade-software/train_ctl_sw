@@ -1087,7 +1087,7 @@ static void _ina3221_configure(int a, int continuous)
     w16 = INA3221_CONF_CH1_EN | INA3221_CONF_CH2_EN | INA3221_CONF_CH3_EN
     		| INA3221_CONF_VS_CT_140u
 			| INA3221_CONF_MODE_SHUNT;
-    w16 |= (continuous ? INA3221_CONF_AVG256 : INA3221_CONF_AVG1);
+    w16 |= (continuous ? INA3221_CONF_AVG16 : INA3221_CONF_AVG1);
 
     if (continuous) w16 |= INA3221_CONF_MODE_CONTINUOUS;
 	ina_conf_val = w16;

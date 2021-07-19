@@ -1249,7 +1249,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
   }
   if (htim->Instance == TIM1) {
 	  uint32_t t1 = __HAL_TIM_GET_COUNTER(&htim1);
-	  if (1 || (t1<50)) {
+	  if (0 || (t1<50)) {
 		  static uint32_t cnt = 0;
 		  itm_debug2(DBG_TIM|DBG_INA3221, "tim1",cnt, t1);
 		  cnt++;

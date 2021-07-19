@@ -445,11 +445,11 @@ static void ui_process_msg_d1(void);
 
 static void ihm_runtick_detect1(int init)
 {
-	static int voltidx = 7;
+	static int voltidx = 1;
 	needsrefresh_mask = 0;
 
 	if (init) {
-		voltidx = 7;
+		voltidx = 0;
 		osDelay(500); // ugly : make sure other tasklet are ready. TODO : fix this
 		itm_debug1(DBG_UI, "UI init", 0);
 		ihm_setlayout(0, LAYOUT_DETECT1);
@@ -472,8 +472,8 @@ static void ihm_runtick_detect1(int init)
 		mqf_write_from_ui(&m);
 	}
 	// rotary encoder
-	static  uint16_t rotpos = 0xFFFF;
-	uint16_t p = get_rotary(&htim4);
+	static  int16_t rotpos = 0x7FFF;
+	int16_t p = get_srotary(&htim4);
 	if (p != rotpos) {
 		// pos changed
 		rotpos = p;

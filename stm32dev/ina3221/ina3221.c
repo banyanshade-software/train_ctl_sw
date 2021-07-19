@@ -110,90 +110,122 @@ static int _read_cvrf(void);
 
 static volatile uint16_t mask_en_val = 0;
 
+static void handle_ina_notif(uint32_t notif);
+
+static 	ina_state_t state = state_idle;
+
 static void run_ina_task(void)
 {
 	ina3221_init_and_configure();
-	ina_state_t state = state_idle;
 	_UNUSED_ int nstuck = 0;
-	int rc;
 	for (;;) {
 		uint32_t notif = 0;
 		xTaskNotifyWait(0, 0xFFFFFFFF, &notif, portMAX_DELAY);
-		if (notif & NOTIF_INA_TRIG) {
+		handle_ina_notif(notif);
+
+		for (;;) {
+			msg_64_t m;
+			int rc = mqf_read_to_ctrl(&m);
+			if (rc) break;
+			switch (m.cmd) {
+			case CMD_RESET:
+				// FALLTHRU
+			case CMD_EMERGENCY_STOP:
+				// TODO
+				continue;
+				break;
+			case CMD_SETRUN_MODE:
+				if (run_mode != m.v1u) {
+					run_mode = m.v1u;
+					testerAddr = m.from;
+				}
+				continue;
+				break;
+			default:
+				break;
+			}
+		}
+	}
+}
+
+static void handle_ina_notif(uint32_t notif)
+{
+	int rc;
+	if (notif & NOTIF_INA_TRIG) {
 #if INA3221_CONTIUNOUS
-			// just ignore
+		// just ignore
 #else
-			if (state_idle == state) {
-				nstuck = 0;
-				itm_debug1(DBG_INA3221, "-TRG", 0);
-                int dev = _next_dev(-1);
-                if (dev >= 0) {
-                    state = dev + state_trig_0;
-                    if (cur_values == values) {
-                    	cur_values = values + 12;
-                    	prev_values = values;
-                    } else if (cur_values == values + 12) {
-                    	cur_values = values;
-                    	prev_values = values + 12;
-                    } else {
-                    	bkpoint(0, 1001);
-                    }
-                    rc = _trig(dev);
-                    if (rc) {
-                    	state = state_idle;
-                    	continue;
-                    }
-                } else {
-    				itm_debug1(DBG_INA3221, "TRG/N", 0);
-#if INA3221_TASKRD
-#else
-                    _read_complete(0);
-#endif
-                    state = state_idle;
-                }
-			} else {
-				nstuck++;
-				if (nstuck>3) {
-					bkpoint(0, 1000);
-					itm_debug1(DBG_ERR|DBG_INA3221, "STUCK", state);
+		if (state_idle == state) {
+			nstuck = 0;
+			itm_debug1(DBG_INA3221, "-TRG", 0);
+			int dev = _next_dev(-1);
+			if (dev >= 0) {
+				state = dev + state_trig_0;
+				if (cur_values == values) {
+					cur_values = values + 12;
+					prev_values = values;
+				} else if (cur_values == values + 12) {
+					cur_values = values;
+					prev_values = values + 12;
+				} else {
+					bkpoint(0, 1001);
+				}
+				rc = _trig(dev);
+				if (rc) {
 					state = state_idle;
 					continue;
 				}
-			}
-#endif // INA3221_CONTIUNOUS
-		}
-		if (notif & NOTIF_INA_WRCOMPL) {
-			itm_debug1(DBG_INA3221, "WRcpl", state);
-            if ((state >= state_trig_0) && (state <= state_trig_3)) {
-                int dev = state - state_trig_0;
-                dev = _next_dev(dev);
-                if (dev >= 0) {
-                    state = dev + state_trig_0;
-                    rc = _trig(dev);
-                    if (rc) {
-                    	state = state_idle;
-                    	continue;
-                    }
-                } else {
+			} else {
+				itm_debug1(DBG_INA3221, "TRG/N", 0);
 #if INA3221_TASKRD
-                	state = state_idle;
+#else
+	_read_complete(0);
+#endif
+state = state_idle;
+			}
+		} else {
+			nstuck++;
+			if (nstuck>3) {
+				bkpoint(0, 1000);
+				itm_debug1(DBG_ERR|DBG_INA3221, "STUCK", state);
+				state = state_idle;
+				continue;
+			}
+		}
+#endif // INA3221_CONTIUNOUS
+	}
+	if (notif & NOTIF_INA_WRCOMPL) {
+		itm_debug1(DBG_INA3221, "WRcpl", state);
+		if ((state >= state_trig_0) && (state <= state_trig_3)) {
+			int dev = state - state_trig_0;
+			dev = _next_dev(dev);
+			if (dev >= 0) {
+				state = dev + state_trig_0;
+				rc = _trig(dev);
+				if (rc) {
+					state = state_idle;
+					return;
+				}
+			} else {
+#if INA3221_TASKRD
+state = state_idle;
 #else
 #if INA3221_CHECKCONV
-                	state = state_chk_cvrf;
-                	_read_cvrf();
+state = state_chk_cvrf;
+_read_cvrf();
 #else
-                	dev = _next_dev(-1);
-                	if (dev >= 0) {
-                		state = state_rd_0 + dev * 3;
-                		_reg_read(dev, 0);
-                	} else {
-                		_read_complete(0);
-                		state = state_idle;
-                	}
+	dev = _next_dev(-1);
+	if (dev >= 0) {
+		state = state_rd_0 + dev * 3;
+		_reg_read(dev, 0);
+	} else {
+		_read_complete(0);
+		state = state_idle;
+	}
 #endif
 #endif
-                }
-                /*} else {
+			}
+			/*} else {
                     dev = _next_dev(-1);
                     if (dev >= 0) {
                         state = state_rd_0 + dev * 3;
@@ -203,88 +235,88 @@ static void run_ina_task(void)
                         state = state_idle;
                     }
                 }*/
-            } else {
-                bkpoint(1,1000);
-            }
+		} else {
+			bkpoint(1,1000);
 		}
-		if (notif & NOTIF_INA_READ) {
+	}
+	if (notif & NOTIF_INA_READ) {
 #if INA3221_TASKRD
 #if INA3221_CHECKCONV
-			state = state_chk_cvrf;
-			_read_cvrf();
+		state = state_chk_cvrf;
+		_read_cvrf();
 #else
-			int dev = _next_dev(-1);
-			if (dev >= 0) {
-				state = state_rd_0 + dev * 3;
-				_reg_read(dev, 0);
-			} else {
-				_read_complete(0);
-				state = state_idle;
-			}
+		int dev = _next_dev(-1);
+		if (dev >= 0) {
+			state = state_rd_0 + dev * 3;
+			_reg_read(dev, 0);
+		} else {
+			_read_complete(0);
+			state = state_idle;
+		}
 
 #endif
 #endif
-		}
-		if (notif & NOTIF_INA_RDCOMPL) {
-			itm_debug1(DBG_INA3221, "RDcpl", state);
+	}
+	if (notif & NOTIF_INA_RDCOMPL) {
+		itm_debug1(DBG_INA3221, "RDcpl", state);
 #if INA3221_CHECKCONV
-			if (state == state_chk_cvrf) {
-				mask_en_val = __builtin_bswap16(mask_en_val);
-				if (mask_en_val & 0x0001) {
-					itm_debug2(DBG_INA3221, "samplok", state, mask_en_val);
-					int dev = _next_dev(-1);
-					if (dev >= 0) {
-						state = state_rd_0 + dev * 3;
-						_reg_read(dev, 0);
-					} else {
-						_read_complete(0);
-						state = state_idle;
-					}
+		if (state == state_chk_cvrf) {
+			mask_en_val = __builtin_bswap16(mask_en_val);
+			if (mask_en_val & 0x0001) {
+				itm_debug2(DBG_INA3221, "samplok", state, mask_en_val);
+				int dev = _next_dev(-1);
+				if (dev >= 0) {
+					state = state_rd_0 + dev * 3;
+					_reg_read(dev, 0);
 				} else {
-					itm_debug2(DBG_INA3221, "again", state, mask_en_val);
-                	_read_cvrf();
+					_read_complete(0);
+					state = state_idle;
 				}
+			} else {
+				itm_debug2(DBG_INA3221, "again", state, mask_en_val);
+				_read_cvrf();
+			}
 #else
-			if (0) {
+		if (0) {
 #endif
-			} else if ((state >= state_rd_0) && (state <= state_rd_11)) {
-                int reg = (state - state_rd_0) % 3;
-                int dev = (state - state_rd_0) / 3;
-                if (reg==2){
-                    dev = _next_dev(dev);
-                    if (dev >= 0) {
-                        state = (state_rd_0 + dev) * 3;
-                        _reg_read(dev, 0);
-                    } else {
-                        _read_complete(0);
-                        state = state_idle;
-                    }
-                } else {
-                    state++;
-                    _reg_read(dev, reg+1);
-                } 
-            } else {
-                bkpoint(2,1000);
-            }
-		}
-		if (notif & NOTIF_INA_ERR) {
-            bkpoint(3, lastErr);
-            if ((state >= state_rd_0) && (state <= state_rd_11)) {
-                // write error
-                // TODO
-            	state = state_idle;
-            } else if ((state >= state_trig_0) && (state <= state_trig_3)) {
-                // read error
-                // TODO
-            	state = state_idle;
-            } else {
-                bkpoint(3,1000);
-            }
-            itm_debug1(DBG_INA3221|DBG_ERR, "i2c rst", lastErr);
-        	HAL_I2C_Init(&INA3221_I2C_PORT);
+		} else if ((state >= state_rd_0) && (state <= state_rd_11)) {
+			int reg = (state - state_rd_0) % 3;
+			int dev = (state - state_rd_0) / 3;
+			if (reg==2){
+				dev = _next_dev(dev);
+				if (dev >= 0) {
+					state = (state_rd_0 + dev) * 3;
+					_reg_read(dev, 0);
+				} else {
+					_read_complete(0);
+					state = state_idle;
+				}
+			} else {
+				state++;
+				_reg_read(dev, reg+1);
+			}
+		} else {
+			bkpoint(2,1000);
 		}
 	}
+	if (notif & NOTIF_INA_ERR) {
+		bkpoint(3, lastErr);
+		if ((state >= state_rd_0) && (state <= state_rd_11)) {
+			// write error
+			// TODO
+			state = state_idle;
+		} else if ((state >= state_trig_0) && (state <= state_trig_3)) {
+			// read error
+			// TODO
+			state = state_idle;
+		} else {
+			bkpoint(3,1000);
+		}
+		itm_debug1(DBG_INA3221|DBG_ERR, "i2c rst", lastErr);
+		HAL_I2C_Init(&INA3221_I2C_PORT);
+	}
 }
+
 
 
 

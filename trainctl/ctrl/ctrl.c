@@ -22,7 +22,7 @@ static uint8_t ignore_ina_presence = 1;
 
 
 #define SCEN_TWOTRAIN 	0
-#define EOT_SPD_LIMIT	100   //20
+#define EOT_SPD_LIMIT	50   //20
 
 // timers number
 #define TLEAVE_C1  	0

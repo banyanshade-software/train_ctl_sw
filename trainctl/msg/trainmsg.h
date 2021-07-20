@@ -115,6 +115,8 @@ LFMQUEUE_DEF_H(from_turnout, msg_64_t)
 /* turnout command */
 #define CMD_TURNOUT_A		0x31
 #define CMD_TURNOUT_B		0x32
+#define CMD_TURNOUT_HI_A    0x33
+#define CMD_TURNOUT_HI_B    0x34
 
 
 LFMQUEUE_DEF_H(to_canton, msg_64_t)

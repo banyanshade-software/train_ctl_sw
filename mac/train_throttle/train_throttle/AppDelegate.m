@@ -200,36 +200,20 @@ typedef void (^respblk_t)(void);
     [self sendTargetSpeed];
 }
 
-static int useMsg64 = 0;
 
 - (void) sendTargetSpeed
 {
     if (_linkok < LINK_OK) return;
-    if (useMsg64) {
-        uint8_t spdfrm[] = "|x612345678|.........";
-        int l = 2+8+2;
-        int16_t v16 = (uint16_t) (_polarity * _targetspeed);
-        spdfrm[3] = MA_TRAIN_SC(0);
-        spdfrm[4] = MA_UI(0);
-        spdfrm[5] = CMD_SET_TARGET_SPEED;
-        spdfrm[6] = 0; // sub
-        spdfrm[7] = v16 & 0xFF;
-        spdfrm[8] = (v16 >> 8) & 0xFF;
-        [self sendFrame:spdfrm len:l blen:sizeof(spdfrm) then:nil];
-        return;
-    }
-    NSLog(@"targetspeed sendFrame");
-    lastThrottle = [NSDate timeIntervalSinceReferenceDate];
-    uint8_t spdfrm[] = "|xT\0V__|.........";
-    int l = 2+4+2;
-    uint16_t v16 = (uint16_t) (_polarity * _targetspeed);
-    if (_linkok == LINK_SIMUHI) {
-        train_set_target_speed(0, v16);
-        return;
-    }
-    // assume same endienness (little)
-    memcpy(spdfrm+5, &v16, 2);
-    [self sendFrame:spdfrm len:l blen:sizeof(spdfrm) then:nil];
+    
+    int16_t v16 = (uint16_t) (_polarity * _targetspeed);
+    
+    msg_64_t m;
+    m.to = MA_CONTROL_T(0);
+    m.from = MA_UI(0);
+    m.cmd = CMD_MDRIVE_SPEED_DIR;
+    m.v1u = abs(v16);
+    m.v2 = SIGNOF0(v16);
+    [self sendMsg64:m];
 }
 
 - (IBAction) stopAll:(id)sender
@@ -274,45 +258,29 @@ static int useMsg64 = 0;
 
 - (IBAction) turnoutA:(id)sender
 {
-#if 1
+    NSControl *c = (NSControl *)sender;
+    NSInteger tn = c.tag;
+
     msg_64_t m;
     m.to = MA_TURNOUT(0, 0);
     m.from = MA_UI(0);
-    m.cmd = CMD_TURNOUT_A;
-    //m.v1u = tm;
+    m.cmd = CMD_TURNOUT_HI_A;
+    m.v1u = (uint16_t) tn;
     [self sendMsg64:m];
-#else
-    uint8_t spdfrm[] = "|zA\0S|....";
-    NSInteger t = [sender tag];
-    spdfrm[3] = (uint8_t)t;
-    int l = 2+4+0;
-    [self sendFrame:spdfrm len:l blen:sizeof(spdfrm) then:^{
-        NSLog(@"turnout done");
-    }];
-#endif
 }
 
 - (IBAction) turnoutB:(id)sender
 {
+    NSControl *c = (NSControl *)sender;
+    NSInteger tn = c.tag;
     msg_64_t m;
     m.to = MA_TURNOUT(0, 0);
     m.from = MA_UI(0);
-    m.cmd = CMD_TURNOUT_B;
-    //m.v1u = tm;
+    m.cmd = CMD_TURNOUT_HI_B;
+    m.v1u = (uint16_t) tn;
     [self sendMsg64:m];
 }
 
-
-- (IBAction) turnoutW:(id)sender
-{
-    uint8_t spdfrm[] = "|zA\0W|....";
-    NSInteger t = [sender tag];
-    spdfrm[3] = (uint8_t)t;
-    int l = 2+4+0;
-    [self sendFrame:spdfrm len:l blen:sizeof(spdfrm) then:^{
-        NSLog(@"turnoutW done");
-    }];
-}
 
 - (IBAction)clearePose:(id)sender
 {
@@ -980,7 +948,6 @@ static int frm_unescape(uint8_t *buf, int len)
     if (!IS_UI(frm.param[0])) {
         NSLog(@"only handle UI");
     }
-    useMsg64 = 1;
     int nt=0;
     int16_t v;
     switch (frm.param[2]) {
@@ -1849,19 +1816,19 @@ didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic
     if (testMode == _testMode) return;
     _testMode = testMode;
     
-    int tm = 0;
-    switch (testMode) {
-        case 0: tm = 0; break;
-        case 1: tm = 1; break;
-        case 2: tm = 1; break;
-        default:
-            break;
-    }
+   
     msg_64_t m;
     m.to = MA_BROADCAST;
     m.from = MA_UI(0);
-    m.cmd = CMD_TEST_MODE;
-    m.v1u = tm;
+    m.cmd = CMD_SETRUN_MODE;
+    switch (testMode) {
+        case 0: m.v1u = runmode_normal; break;
+        case 1: m.v1u = runmode_testcanton; break;
+        case 2: m.v1u = runmode_testcanton; break;
+        case 3: m.v1u = runmode_detect1; break;
+        default:
+            break;
+    }
     [self sendMsg64:m];
 }
 

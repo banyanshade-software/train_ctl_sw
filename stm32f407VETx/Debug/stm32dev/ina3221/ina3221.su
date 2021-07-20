@@ -1,8 +1,8 @@
 itm_debug.h:37:20:itm_debug1	32	static
 itm_debug.h:41:20:itm_debug2	32	static
 itm_debug.h:45:20:itm_debug3	32	static
-trainmsg.h:177:1:mqf_read_to_ina3221	16	static
-trainmsg.h:178:1:mqf_write_from_ina3221	16	static
+trainmsg.h:179:1:mqf_read_to_ina3221	16	static
+trainmsg.h:180:1:mqf_write_from_ina3221	16	static
 ina3221.c:41:13:bkpoint	16	static
 ina3221.c:117:13:run_ina_task	32	static
 ina3221.c:151:13:handle_ina_notif	40	static

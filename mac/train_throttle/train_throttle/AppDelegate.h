@@ -78,7 +78,6 @@
 // turnout is identified by tag
 - (IBAction) turnoutA:(id)sender;
 - (IBAction) turnoutB:(id)sender;
-- (IBAction) turnoutW:(id)sender;
 
 - (IBAction) clearePose:(id)sender;
 

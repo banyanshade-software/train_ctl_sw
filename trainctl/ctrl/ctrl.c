@@ -992,7 +992,7 @@ static void check_behaviour(_UNUSED_ uint32_t tick)
 				continue;
 			}
 			if ((flags & BEHAVE_EOT2) && (tvars->_dir > 0)) {
-				set_timer(tidx, tvars, TBEHAVE, 4000);
+				set_timer(tidx, tvars, TBEHAVE, 15*1000);
 				evt_cmd_set_setdirspeed(tidx, tvars, 0, 0, 1);
 				return;
 			}

@@ -398,6 +398,7 @@ static void _read_complete(_UNUSED_ int err)
 	default:
 		break;
 	case runmode_detect1:
+		itm_debug1(DBG_INA3221, "D/1", vals[1]);
 		m.from =  MA_CANTON(localBoardNum, 0);
 		m.to = MA_UI(1);
 		m.cmd = CMD_INA3221_VAL1;

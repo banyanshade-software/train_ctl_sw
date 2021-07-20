@@ -445,11 +445,11 @@ static void ui_process_msg_d1(void);
 
 static void ihm_runtick_detect1(int init)
 {
-	static int voltidx = 1;
+	static int voltidx = 7;
 	needsrefresh_mask = 0;
 
 	if (init) {
-		voltidx = 0;
+		voltidx = 7;
 		osDelay(500); // ugly : make sure other tasklet are ready. TODO : fix this
 		itm_debug1(DBG_UI, "UI init", 0);
 		ihm_setlayout(0, LAYOUT_DETECT1);

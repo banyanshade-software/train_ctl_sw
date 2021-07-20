@@ -195,7 +195,7 @@ void spdctl_run_tick(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, uint
                     break;
                 case CMD_POSE_SET_TRIG:
                 	itm_debug2(DBG_POSEC, "POSE set", tidx, m.v32);
-                	tvars->pose_trig = m.v32;
+                	tvars->pose_trig = m.v32*10;
                 	// check if already trigg
                 	pose_check_trig(tidx, tvars, 0);
                 	break;
@@ -345,13 +345,21 @@ static void train_periodic_control(int numtrain, uint32_t dt)
 
     /* estimate speed/position with bemf */
     if ((1)) {
-    	//canton_vars_t *cv = get_canton_vars(tvars->current_canton);
-        int32_t b = tvars->bemf_cv; //cv->bemf_centivolt;
-        if (abs(b)<25) b = 0;
+        int32_t b = tvars->bemf_cv;
+        if (abs(b)<25) b = 0; // XXXXXXX
+
         // TODO: BEMF to speed. currently part of it is done in convert_to_centivolt
         //       but we assume speed is really proportional to BEMF
-        tvars->position_estimate += b;
+
+        //  dt is not precise enough
+        int32_t pi = (b*1000)/cur_freqhz;
+        tvars->position_estimate += pi;
         itm_debug3(DBG_POSE, "pose", numtrain, tvars->position_estimate, b);
+        itm_debug3(DBG_POSE, "pi", b, dt,  pi);
+
+        //if (abs(tvars->position_estimate) > 0x1FFFFFF) {
+        //	itm_debug3(DBG_ERR, "PbPose", numtrain, b, dt);
+        //}
         pose_check_trig(numtrain, tvars, b);
         if (tconf->notify_pose) {
     		train_notif(numtrain, 'i', (void *)&tvars->position_estimate, sizeof(int32_t));

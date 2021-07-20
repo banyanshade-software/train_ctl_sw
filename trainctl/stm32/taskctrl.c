@@ -134,6 +134,8 @@ void set_pwm_freq(int freqhz)
 	if ((ps<1) || (ps>0xFFFF)) ps = 1200;
 	ps = ps-1;
 	cur_freqhz = 60000/(ps+1);
+	// not an error but we want it in the log
+	itm_debug3(DBG_ERR|DBG_CTRL, "FREQ", freqhz, ps, cur_freqhz);
 	__HAL_TIM_SET_PRESCALER(&htim1, ps);
 	__HAL_TIM_SET_PRESCALER(&htim2, ps);
 	__HAL_TIM_SET_PRESCALER(&htim8, ps);
@@ -154,8 +156,8 @@ static void run_task_ctrl(void)
 		m.to = MA_BROADCAST;
 		m.cmd = CMD_SETRUN_MODE;
 		//m.v1u = runmode_off;
-		//m.v1u = runmode_normal;
-		m.v1u = runmode_detect1;
+		m.v1u = runmode_normal;
+		//m.v1u = runmode_detect1;
 		mqf_write_from_nowhere(&m); // XXX it wont be sent to ctl
 	}
 

@@ -17,5 +17,5 @@ main.c:1020:13:MX_DMA_Init	16	static
 main.c:1038:13:MX_GPIO_Init	56	static
 main.c:1135:13:StartUiTask	16	static
 main.c:1194:13:ina3221_task_start	16	static
-main.c:1213:6:HAL_TIM_PeriodElapsedCallback	32	static,ignoring_inline_asm
-main.c:1273:6:Error_Handler	4	static
+main.c:1213:6:HAL_TIM_PeriodElapsedCallback	40	static,ignoring_inline_asm
+main.c:1278:6:Error_Handler	4	static

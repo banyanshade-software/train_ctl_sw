@@ -114,28 +114,15 @@ void StartUiTask(_UNUSED_ void *argument)
 
 	HAL_TIM_Encoder_Start(&htim4, TIM_CHANNEL_ALL);
 
-	//display_addr[0] = 0; //XXX
-	//needsrefresh_mask = 0;
+
 	for (int i=0; i<MAX_DISP; i++) {
 		I2C_Scan();
 		ssd1306_Init();
-		//ui_msg5(1, ">w?");
-		//SET_NEEDSREFRESH(i);
 	}
 	for (;;) {
-#if 0
-		uint32_t notif;
-		xTaskNotifyWait(0, 0xFFFFFFFF, &notif, portMAX_DELAY);
-		if (notif != NOTIF_TICKUI) {
-			itm_debug1(DBG_ERR|DBG_UI, "notif?", notif);
-		}
-		if (!(notif & NOTIF_TICKUI)) continue;
-#else
 		static TickType_t lasttick = 0;
 		vTaskDelayUntil(&lasttick, 100);
-		//lasttick = HAL_GetTick();
-
-#endif
+		//lasttick = HAL_GetTick(); done by vTaskDelayUntil
 		ihm_runtick();
 	}
 }

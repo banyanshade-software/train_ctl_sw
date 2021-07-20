@@ -1248,19 +1248,24 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 	  }
   }
   if (htim->Instance == TIM1) {
-	  uint32_t t1 = __HAL_TIM_GET_COUNTER(&htim1);
-	  if (0 || (t1<50)) {
-		  static uint32_t cnt = 0;
-		  itm_debug2(DBG_TIM|DBG_INA3221, "tim1",cnt, t1);
-		  cnt++;
+	  static uint32_t lasttick = 0;
+	  uint32_t t = HAL_GetTick();
+	  if (t >= lasttick+5) { // not faster than 20Hz, whatever the frequency is
+		  lasttick = t;
+		  uint32_t t1 = __HAL_TIM_GET_COUNTER(&htim1);
+		  if (0 || (t1<50)) {
+			  static uint32_t cnt = 0;
+			  itm_debug2(DBG_TIM|DBG_INA3221, "tim1",cnt, t1);
+			  cnt++;
 #if INA3221_TASK
-		  BaseType_t higher=0;
-		  xTaskNotifyFromISR(ina3221_taskHandle, (cnt%2) ? NOTIF_INA_READ : NOTIF_INA_TRIG, eSetBits, &higher);
-		  portYIELD_FROM_ISR(higher);
+			  BaseType_t higher=0;
+			  xTaskNotifyFromISR(ina3221_taskHandle, (cnt%2) ? NOTIF_INA_READ : NOTIF_INA_TRIG, eSetBits, &higher);
+			  portYIELD_FROM_ISR(higher);
 #else
-		  void ina3221_trigger_conversion(void);
-		  ina3221_trigger_conversion();
+			  void ina3221_trigger_conversion(void);
+			  ina3221_trigger_conversion();
 #endif
+		  }
 	  }
   }
   /* USER CODE END Callback 1 */

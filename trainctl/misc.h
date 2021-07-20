@@ -193,4 +193,7 @@ void startCycleCounter(void);
 #endif
 
 
+extern int cur_freqhz;
+
+
 #endif /* TRAINCTL_MISC_H_ */

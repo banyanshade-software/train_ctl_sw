@@ -107,7 +107,6 @@ void railconfig_setup_default(void);
 
 // ---------------------------------------------- other
 
-extern int cur_freqhz;
 extern void set_pwm_freq(int freqhz);
 
 

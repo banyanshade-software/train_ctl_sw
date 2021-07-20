@@ -238,42 +238,13 @@ static  canton_config_t Cantons[NUM_CANTONS] = {
 #error holala
 #endif
 
-#ifdef ADD_DUMMY_CANTON
-#error obsolete
-		{//CANTON_TYPE_DUMMY,
-            //  0    1    2    3    4    5    6    7    8    9    10   11  12    13   14   15
-				//{ 1000, 874, 770, 699, 621, 578, 538, 507, 451, 432, 413, 398, 379, 367, 355, 345}, // volts[16]
-								{ 1000, 770, 621,  538, 451, 413, 379, 355}, // volts[8]            //{ 1000, 0,    0, 0, 0, 621, 0,   0, 0, 0, 0, 0, 0, 0, 0, 0}, // volts[16]  V2
-            //{ 1000, 874,  0, 0, 0, 621, 538, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // volts[16]  V4
-				NULL,NULL,NULL /*,NULL*/, 0, 0, 0, //0,
-				0, 0, 0,
-				0, /* notif BEMF */
-		},
-#endif
 };
 
-#if 0
-static  block_canton_config_t BlockCantons[NUM_CANTONS] = {
-		/*  uint8_t left_a;
-			uint8_t left_b;
-				uint8_t left_turnout;
-			uint8_t right_a;
-			uint8_t right_b;
-				uint8_t right_turnout;
-			uint8_t len; */
-		{{0xFF, 0xFF, 0xFF},    {0x02, 0xFF, 0xFF},   50},	// 0
-		{{0xFF, 0xFF, 0xFF},    {0x02, 0xFF, 0xFF},   50},  // 1
-		{{0x00, 0x01, 0   },    {0xFF, 0xFF, 0xFF},   50},  // 2
 
-		{{0xFF, 0xFF, 0xFF}, {0xFF, 0xFF, 0xFF},  50},
-		{{0xFF, 0xFF, 0xFF}, {0xFF, 0xFF, 0xFF},  50},
-
-};
-#endif
 
 #define DEFAULT_TRAIN_CFG(_EN, _R, _P)  { \
 						{ /* pidctl_config_t*/ \
-								600, 500, 750,  /* kP, kI, kD */ \
+								400, 150, -1000,  /* kP, kI, kD */ \
 						}, \
 						{ /* inertia_config_t */ \
 								350, 200		/* dec, acc */ \
@@ -284,7 +255,7 @@ static  block_canton_config_t BlockCantons[NUM_CANTONS] = {
 						1, /* enable_pid */			\
 						0, /* notify_speed */		\
 						0, /* notify_pose */		\
-						1, /* bemfIIR; */			\
+						0, /* bemfIIR; */			\
 						0, /* postIIR */			\
 						0, /* fix_bemf; */			\
 						0,  /*	uint8_t en_spd2pow; */\
@@ -303,16 +274,13 @@ static const turnout_config_t Turnouts[NUM_TURNOUTS] = {
 #ifndef TRAIN_SIMU
         {TURN1A_GPIO_Port, TURN1A_Pin, TURN1B_Pin,
 #else
-            {NULL, 1, 2,
+        {NULL, 1, 2,
 #endif
-            }
+        }
 };
 
 
-        //static canton_vars_t  CantonsVars[NUM_CANTONS];
-        //static block_canton_vars_t  BlockCantonsVars[NUM_CANTONS];
-        //static train_vars_t   TrainsVars[NUM_TRAINS];
-        //static turnout_vars_t TurnoutVars[NUM_TURNOUTS];
+
 
 static int setup_done = 1;
 
@@ -322,29 +290,8 @@ const canton_config_t *get_canton_cnf(int idx)
 	if ((idx<0) || (idx>= NUM_CANTONS)) return NULL;
 	return &Cantons[idx];
 }
-/*
-canton_vars_t *get_canton_vars(int idx)
-{
-	if (!setup_done) return config_error(ERR_SETUP_KO, "railconfig_setup_default not called");
-	if ((idx<0) || (idx>= NUM_CANTONS)) return NULL;
-	return &CantonsVars[idx];
-}
-*/
-/*
-const block_canton_config_t *get_block_canton_cnf(int idx)
-{
-	if (!setup_done) return config_error(ERR_SETUP_KO, "railconfig_setup_default not called");
-	if ((idx<0) || (idx>= NUM_CANTONS)) return NULL;
-	return &BlockCantons[idx];
-}
 
-block_canton_vars_t *get_block_canton_vars(int idx)
-{
-	if (!setup_done) return config_error(ERR_SETUP_KO, "railconfig_setup_default not called");
-	if ((idx<0) || (idx>= NUM_CANTONS)) return NULL;
-	return &BlockCantonsVars[idx];
-}
-*/
+
 const train_config_t *get_train_cnf(int idx)
 {
 	if (!setup_done) return config_error(ERR_SETUP_KO, "railconfig_setup_default not called");
@@ -352,76 +299,13 @@ const train_config_t *get_train_cnf(int idx)
 	return &Trains[idx];
 }
 
-/*
-train_vars_t *get_train_vars(int idx)
-{
-	if (!setup_done) return config_error(ERR_SETUP_KO, "railconfig_setup_default not called");
-	if ((idx<0) || (idx>= NUM_TRAINS)) return NULL;
-	return &TrainsVars[idx];
-}
 
-*/
 const turnout_config_t  *get_turnout_cnf(int idx)
 {
 	if (!setup_done) return config_error(ERR_SETUP_KO, "railconfig_setup_default not called");
 	if ((idx<0) || (idx>= NUM_TURNOUTS)) return NULL;
 	return &Turnouts[idx];
 }
-/*
-turnout_vars_t  *get_turnout_vars(int idx)
-{
-	if (!setup_done) return config_error(ERR_SETUP_KO, "railconfig_setup_default not called");
-	if ((idx<0) || (idx>= NUM_TURNOUTS)) return NULL;
-	return &TurnoutVars[idx];
-}
-*/
 
-/*
-int canton_idx(canton_vars_t *v)
-{
-	return (int)(v-&CantonsVars[0]);
-}
-
-int block_canton_idx(block_canton_vars_t *v)
-{
-	return (int)(v-&BlockCantonsVars[0]);
-}
-int train_idx(train_vars_t *v)
-{
-	return (int)(v-&TrainsVars[0]);
-}
-
-int turnout_idx(turnout_vars_t *v)
-{
-	return (int)(v-&TurnoutVars[0]);
-}
-*/
-
-/*
-void railconfig_setup_default(void)
-{
-    setup_done = 1;
-	for (int i=0; i<NUM_CANTONS; i++) {
-		canton_reset(&Cantons[i], &CantonsVars[i]);
-		block_canton_reset(&BlockCantons[i], &BlockCantonsVars[i]);
-	}
-	for (int i=0; i<NUM_TRAINS; i++) {
-		train_reset(&Trains[i], &TrainsVars[i]);
-	}
-    canton_set_train(0,  0);
-    //canton_take(0, canton_occupied_loco,  0);
-    TrainsVars[0].current_canton = 0;
-    TrainsVars[0].current_canton_dir = 1;
-    canton_set_train(2,  0);
-    //canton_take(1, canton_occupied_loco,  0);
-    TrainsVars[0].next_canton = 2;
-    TrainsVars[0].next_canton_dir = 0;
-    //TrainsVars[0].prev_canton = 0xFF;
-    //TrainsVars[0].prev_canton_dir = 0;
-    for (int i=0; i<NUM_TURNOUTS; i++) {
-		turnout_reset(i);
-	}
-}
-*/
 
 

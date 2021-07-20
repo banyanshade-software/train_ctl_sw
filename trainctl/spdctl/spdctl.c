@@ -217,7 +217,6 @@ static void train_periodic_control(int numtrain, uint32_t dt)
 {
 	if (stop_all) return;
 
-	//num_train_periodic_control++;
 
 	USE_TRAIN(numtrain)	// tconf tvars
     if (!tconf) {
@@ -229,31 +228,20 @@ static void train_periodic_control(int numtrain, uint32_t dt)
 		return;
 	}
 	int16_t v = tvars->target_speed;
-	//int16_t v = tvars->target_speed * tvars->C1_dir;
 
 	itm_debug2(DBG_SPDCTL, "target", numtrain, v);
 
-	/*if (trainctl_test_mode) {
-		static int16_t lastspeed = 9999;
-		if (lastspeed != v) {
-			_set_speed_test_mode(v);
-			lastspeed = v;
-		}
-        return;
-	}*/
+
     // inertia before PID
 	if (1==tconf->enable_inertia) {
 		int changed;
-		tvars->inertiavars.target = tvars->target_speed;
-		v = inertia_value(&tconf->inertiacnf, &tvars->inertiavars, dt, &changed);
+		inertia_set_target(numtrain, &tconf->inertiacnf, &tvars->inertiavars, tvars->target_speed);
+		//tvars->inertiavars.target = tvars->target_speed;
+		v = inertia_value(numtrain, &tconf->inertiacnf, &tvars->inertiavars, &changed);
 		itm_debug3(DBG_INERTIA, "inertia", numtrain, tvars->target_speed, v);
 	}
     
-	/*if ((0)) {
-		static int16_t lastspeed = 9999;
-		//if (v != lastspeed) debug_info('T', 0, "trg.v= ", v,0,0);
-		lastspeed = v;
-	}*/
+
     if (tconf->enable_pid) {
         // corresponding BEMF target
         // 100% = 1.5V
@@ -263,10 +251,7 @@ static void train_periodic_control(int numtrain, uint32_t dt)
         pidctl_set_target(&tconf->pidcnf, &tvars->pidvars, tbemf);
         // XXXX notif_target_bemf(tconf, tvars, tbemf);
     }
-    /*
-    canton_vars_t *cv = get_canton_vars(tvars->current_canton);
-    int32_t bemf = cv->bemf_centivolt;
-    */
+
     int32_t bemf = tvars->bemf_cv;
     if (tconf->bemfIIR) {
     	tvars->bemfiir = (80*tvars->bemfiir + 20*bemf)/100;
@@ -278,7 +263,6 @@ static void train_periodic_control(int numtrain, uint32_t dt)
     	}
         if (!tvars->pidvars.stopped && (tvars->target_speed == 0) && (abs(tvars->bemf_cv)<10)) {
     		itm_debug1(DBG_PID, "stop", 0);
-        	//debug_info('T', 0, "ZERO", cv->bemf_centivolt,0, 0);
 			pidctl_reset(&tconf->pidcnf, &tvars->pidvars);
 			debug_info('T', numtrain, "STOP_PID", 0,0, 0);
 			tvars->pidvars.stopped = 1;
@@ -288,11 +272,10 @@ static void train_periodic_control(int numtrain, uint32_t dt)
         	v = 0;
         } else {
         	itm_debug3(DBG_PID, "pid", numtrain, bemf, v);
-        	//const canton_config_t *cc = get_canton_cnf(vars->current_canton);
         	if (bemf>MAX_PID_VALUE)  bemf=MAX_PID_VALUE; // XXX
         	if (bemf<-MAX_PID_VALUE) bemf=-MAX_PID_VALUE;
 
-        	int32_t v2 = pidctl_value(&tconf->pidcnf, &tvars->pidvars, bemf, dt);
+        	int32_t v2 = pidctl_value(&tconf->pidcnf, &tvars->pidvars, bemf);
         	int32_t v3;
         	v3 = (v2>100) ? 100 : v2;
         	v3 = (v3<-100) ? -100: v3;
@@ -306,8 +289,9 @@ static void train_periodic_control(int numtrain, uint32_t dt)
     }
     // or inertia after PID
     if (2==tconf->enable_inertia) {
-        tvars->inertiavars.target = v;
-        v = inertia_value(&tconf->inertiacnf, &tvars->inertiavars, dt, NULL);
+		inertia_set_target(numtrain, &tconf->inertiacnf, &tvars->inertiavars, v);
+        //tvars->inertiavars.target = v;
+        v = inertia_value(numtrain, &tconf->inertiacnf, &tvars->inertiavars, NULL);
     }
 
     if (tconf->en_spd2pow) {
@@ -346,7 +330,7 @@ static void train_periodic_control(int numtrain, uint32_t dt)
     /* estimate speed/position with bemf */
     if ((1)) {
         int32_t b = tvars->bemf_cv;
-        if (abs(b)<25) b = 0; // XXXXXXX
+        if (abs(b)<10) b = 0; // XXXXXXX
 
         // TODO: BEMF to speed. currently part of it is done in convert_to_centivolt
         //       but we assume speed is really proportional to BEMF
@@ -357,9 +341,6 @@ static void train_periodic_control(int numtrain, uint32_t dt)
         itm_debug3(DBG_POSE, "pose", numtrain, tvars->position_estimate, b);
         itm_debug3(DBG_POSE, "pi", b, dt,  pi);
 
-        //if (abs(tvars->position_estimate) > 0x1FFFFFF) {
-        //	itm_debug3(DBG_ERR, "PbPose", numtrain, b, dt);
-        //}
         pose_check_trig(numtrain, tvars, b);
         if (tconf->notify_pose) {
     		train_notif(numtrain, 'i', (void *)&tvars->position_estimate, sizeof(int32_t));
@@ -420,9 +401,6 @@ static void _set_speed(int tidx, const train_config_t *cnf, train_vars_t *vars)
 
 
 	int16_t sv100 = vars->last_speed;
-
-    //num_set_speed++;
-
 
     c1 =  get_canton_cnf(vars->C1);
     c2 =  get_canton_cnf(vars->C2);

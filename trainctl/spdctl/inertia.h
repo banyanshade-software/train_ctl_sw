@@ -33,9 +33,14 @@ typedef struct {
     int16_t cur;
 } inertia_vars_t;
 
-int16_t inertia_value(const inertia_config_t *cnf, inertia_vars_t *var, uint16_t elapsed_ticks, int *pchanged);
-void    inertia_set_target(const inertia_config_t *cnf, inertia_vars_t *var, int16_t v);
-void    inertia_reset(const inertia_config_t *cnf, inertia_vars_t *var);
+int16_t inertia_value(int tidx, const inertia_config_t *cnf, inertia_vars_t *var, int *pchanged);
+void    inertia_reset(int tidx, const inertia_config_t *cnf, inertia_vars_t *var);
+
+static inline void inertia_set_target(int tidx, _UNUSED_ const inertia_config_t *cnf, inertia_vars_t *vars, int16_t v)
+{
+	itm_debug2(DBG_INERTIA, "iner targ", tidx, v);
+	vars->target = v;
+}
 
 
 #endif /* INERTIA_H_ */

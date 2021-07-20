@@ -42,7 +42,7 @@ typedef struct pidctl_vars {
 void pidctl_reset(const pidctl_config_t *c, pidctl_vars_t *v);
 
 void pidctl_set_target(const pidctl_config_t *c, pidctl_vars_t *v, int32_t val);
-int32_t pidctl_value(const pidctl_config_t *c, pidctl_vars_t *v, int32_t cur_v, uint32_t ellapsed_tick);
+int32_t pidctl_value(const pidctl_config_t *c, pidctl_vars_t *v, int32_t cur_v);
 
 /*
  * PID ctrl operates on raw BEMF values, mmostly between -280..280 (-1V..+1V)

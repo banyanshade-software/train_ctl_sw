@@ -51,30 +51,30 @@ void pidctl_set_target(_UNUSED_ const pidctl_config_t *c, pidctl_vars_t *v, int3
 
 #define MAX_I (25000)
 
-int32_t pidctl_value(const pidctl_config_t *c, pidctl_vars_t *v, int32_t cur_v, uint32_t dt)
+int32_t pidctl_value(const pidctl_config_t *c, pidctl_vars_t *v, int32_t cur_v)
 {
 	// cuv in native BEMF value
-    if (!dt) dt = 1;
-    if (dt>100) dt=100;
+	int32_t dt10 = 10000 / cur_freqhz; // dt*10 in ms
+
+
 	int32_t err = v->target_v - cur_v;
     if (err> 2*MAX_PID_VALUE) err =  2*MAX_PID_VALUE;
     if (err<-2*MAX_PID_VALUE) err = -2*MAX_PID_VALUE;
 
-    int32_t dv = (v->has_last) ? 1000*(err - v->last_err)/((int32_t)dt) : 0; //XXX
+    int32_t dv = (v->has_last) ? 1000*10*(err - v->last_err)/dt10 : 0; //XXX
 	v->last_err = err;
     v->has_last = 1;
-	if ((1)) v->sume += err*dt;
-    else     v->sume = v->sume*.99 + err*dt;
+	if ((1)) v->sume += (err*dt10)/10;
+    else     v->sume = v->sume*.99 + (err*dt10)/10;
     if (v->sume>MAX_I) v->sume = MAX_I;
     else if (v->sume<-MAX_I) v->sume = -MAX_I;
+
 	int32_t iv = v->sume / 100;
 
-	//debug_info('T', 0, "PID  ", err, iv, dv);
 	itm_debug2(DBG_PID, "pid tc", v->target_v, cur_v);
     itm_debug3(DBG_PID, "pid edi", err, dv, v->sume);
 
 	int32_t r = c->kP * err + (c->kD * dv)/1000 + c->kI * iv;
-	//debug_info('T', 0, "PID*k",  c->kP * err, c->kI * iv, (c->kD * dv)/1000);
 
 	return r/1000;
 }

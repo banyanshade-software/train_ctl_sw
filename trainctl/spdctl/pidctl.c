@@ -49,7 +49,7 @@ void pidctl_set_target(_UNUSED_ const pidctl_config_t *c, pidctl_vars_t *v, int3
 	v->target_v = val;
 }
 
-#define MAX_I (25000)
+#define MAX_I (250000)
 
 int32_t pidctl_value(const pidctl_config_t *c, pidctl_vars_t *v, int32_t cur_v)
 {

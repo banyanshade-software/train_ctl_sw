@@ -39,9 +39,9 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY, DEBUGGING
  17 .debug_line   00032e70  00000000  00000000  000bb9a4  2**0
                   CONTENTS, READONLY, DEBUGGING
- 18 .debug_str    000ea3f2  00000000  00000000  000ee814  2**0
+ 18 .debug_str    000ea3f3  00000000  00000000  000ee814  2**0
                   CONTENTS, READONLY, DEBUGGING
- 19 .comment      0000007b  00000000  00000000  001d8c06  2**0
+ 19 .comment      0000007b  00000000  00000000  001d8c07  2**0
                   CONTENTS, READONLY
  20 .debug_frame  0000b00c  00000000  00000000  001d8c84  2**2
                   CONTENTS, READONLY, DEBUGGING
@@ -61989,7 +61989,7 @@ void pidctl_set_target(_UNUSED_ const pidctl_config_t *c, pidctl_vars_t *v, int3
 
 08017468 <pidctl_value>:
 
-#define MAX_I (25000)
+#define MAX_I (250000)
 
 int32_t pidctl_value(const pidctl_config_t *c, pidctl_vars_t *v, int32_t cur_v)
 {
@@ -62001,7 +62001,7 @@ int32_t pidctl_value(const pidctl_config_t *c, pidctl_vars_t *v, int32_t cur_v)
  8017472:	607a      	str	r2, [r7, #4]
 	// cuv in native BEMF value
 	int32_t dt10 = 10000 / cur_freqhz; // dt*10 in ms
- 8017474:	4b4a      	ldr	r3, [pc, #296]	; (80175a0 <pidctl_value+0x138>)
+ 8017474:	4b49      	ldr	r3, [pc, #292]	; (801759c <pidctl_value+0x134>)
  8017476:	681b      	ldr	r3, [r3, #0]
  8017478:	f242 7210 	movw	r2, #10000	; 0x2710
  801747c:	fb92 f3f3 	sdiv	r3, r2, r3
@@ -62023,10 +62023,10 @@ int32_t pidctl_value(const pidctl_config_t *c, pidctl_vars_t *v, int32_t cur_v)
  801749a:	627b      	str	r3, [r7, #36]	; 0x24
     if (err<-2*MAX_PID_VALUE) err = -2*MAX_PID_VALUE;
  801749c:	6a7b      	ldr	r3, [r7, #36]	; 0x24
- 801749e:	4a41      	ldr	r2, [pc, #260]	; (80175a4 <pidctl_value+0x13c>)
+ 801749e:	4a40      	ldr	r2, [pc, #256]	; (80175a0 <pidctl_value+0x138>)
  80174a0:	4293      	cmp	r3, r2
  80174a2:	da01      	bge.n	80174a8 <pidctl_value+0x40>
- 80174a4:	4b3f      	ldr	r3, [pc, #252]	; (80175a4 <pidctl_value+0x13c>)
+ 80174a4:	4b3e      	ldr	r3, [pc, #248]	; (80175a0 <pidctl_value+0x138>)
  80174a6:	627b      	str	r3, [r7, #36]	; 0x24
 
     int32_t dv = (v->has_last) ? 1000*10*(err - v->last_err)/dt10 : 0; //XXX
@@ -62062,7 +62062,7 @@ int32_t pidctl_value(const pidctl_config_t *c, pidctl_vars_t *v, int32_t cur_v)
  80174e6:	6a7b      	ldr	r3, [r7, #36]	; 0x24
  80174e8:	6a39      	ldr	r1, [r7, #32]
  80174ea:	fb01 f303 	mul.w	r3, r1, r3
- 80174ee:	492e      	ldr	r1, [pc, #184]	; (80175a8 <pidctl_value+0x140>)
+ 80174ee:	492d      	ldr	r1, [pc, #180]	; (80175a4 <pidctl_value+0x13c>)
  80174f0:	fb81 0103 	smull	r0, r1, r1, r3
  80174f4:	1089      	asrs	r1, r1, #2
  80174f6:	17db      	asrs	r3, r3, #31
@@ -62074,89 +62074,90 @@ int32_t pidctl_value(const pidctl_config_t *c, pidctl_vars_t *v, int32_t cur_v)
     if (v->sume>MAX_I) v->sume = MAX_I;
  8017500:	68bb      	ldr	r3, [r7, #8]
  8017502:	685b      	ldr	r3, [r3, #4]
- 8017504:	f246 12a8 	movw	r2, #25000	; 0x61a8
- 8017508:	4293      	cmp	r3, r2
- 801750a:	dd04      	ble.n	8017516 <pidctl_value+0xae>
- 801750c:	68bb      	ldr	r3, [r7, #8]
- 801750e:	f246 12a8 	movw	r2, #25000	; 0x61a8
- 8017512:	605a      	str	r2, [r3, #4]
- 8017514:	e007      	b.n	8017526 <pidctl_value+0xbe>
+ 8017504:	4a28      	ldr	r2, [pc, #160]	; (80175a8 <pidctl_value+0x140>)
+ 8017506:	4293      	cmp	r3, r2
+ 8017508:	dd03      	ble.n	8017512 <pidctl_value+0xaa>
+ 801750a:	68bb      	ldr	r3, [r7, #8]
+ 801750c:	4a26      	ldr	r2, [pc, #152]	; (80175a8 <pidctl_value+0x140>)
+ 801750e:	605a      	str	r2, [r3, #4]
+ 8017510:	e007      	b.n	8017522 <pidctl_value+0xba>
     else if (v->sume<-MAX_I) v->sume = -MAX_I;
- 8017516:	68bb      	ldr	r3, [r7, #8]
- 8017518:	685b      	ldr	r3, [r3, #4]
- 801751a:	4a24      	ldr	r2, [pc, #144]	; (80175ac <pidctl_value+0x144>)
- 801751c:	4293      	cmp	r3, r2
- 801751e:	da02      	bge.n	8017526 <pidctl_value+0xbe>
- 8017520:	68bb      	ldr	r3, [r7, #8]
- 8017522:	4a22      	ldr	r2, [pc, #136]	; (80175ac <pidctl_value+0x144>)
- 8017524:	605a      	str	r2, [r3, #4]
+ 8017512:	68bb      	ldr	r3, [r7, #8]
+ 8017514:	685b      	ldr	r3, [r3, #4]
+ 8017516:	4a25      	ldr	r2, [pc, #148]	; (80175ac <pidctl_value+0x144>)
+ 8017518:	4293      	cmp	r3, r2
+ 801751a:	da02      	bge.n	8017522 <pidctl_value+0xba>
+ 801751c:	68bb      	ldr	r3, [r7, #8]
+ 801751e:	4a23      	ldr	r2, [pc, #140]	; (80175ac <pidctl_value+0x144>)
+ 8017520:	605a      	str	r2, [r3, #4]
 
 	int32_t iv = v->sume / 100;
- 8017526:	68bb      	ldr	r3, [r7, #8]
- 8017528:	685b      	ldr	r3, [r3, #4]
- 801752a:	4a21      	ldr	r2, [pc, #132]	; (80175b0 <pidctl_value+0x148>)
- 801752c:	fb82 1203 	smull	r1, r2, r2, r3
- 8017530:	1152      	asrs	r2, r2, #5
- 8017532:	17db      	asrs	r3, r3, #31
- 8017534:	1ad3      	subs	r3, r2, r3
- 8017536:	61bb      	str	r3, [r7, #24]
+ 8017522:	68bb      	ldr	r3, [r7, #8]
+ 8017524:	685b      	ldr	r3, [r3, #4]
+ 8017526:	4a22      	ldr	r2, [pc, #136]	; (80175b0 <pidctl_value+0x148>)
+ 8017528:	fb82 1203 	smull	r1, r2, r2, r3
+ 801752c:	1152      	asrs	r2, r2, #5
+ 801752e:	17db      	asrs	r3, r3, #31
+ 8017530:	1ad3      	subs	r3, r2, r3
+ 8017532:	61bb      	str	r3, [r7, #24]
 
 	itm_debug2(DBG_PID, "pid tc", v->target_v, cur_v);
- 8017538:	68bb      	ldr	r3, [r7, #8]
- 801753a:	689a      	ldr	r2, [r3, #8]
- 801753c:	687b      	ldr	r3, [r7, #4]
- 801753e:	491d      	ldr	r1, [pc, #116]	; (80175b4 <pidctl_value+0x14c>)
- 8017540:	2004      	movs	r0, #4
- 8017542:	f7ff ff21 	bl	8017388 <itm_debug2>
+ 8017534:	68bb      	ldr	r3, [r7, #8]
+ 8017536:	689a      	ldr	r2, [r3, #8]
+ 8017538:	687b      	ldr	r3, [r7, #4]
+ 801753a:	491e      	ldr	r1, [pc, #120]	; (80175b4 <pidctl_value+0x14c>)
+ 801753c:	2004      	movs	r0, #4
+ 801753e:	f7ff ff23 	bl	8017388 <itm_debug2>
     itm_debug3(DBG_PID, "pid edi", err, dv, v->sume);
- 8017546:	68bb      	ldr	r3, [r7, #8]
- 8017548:	685b      	ldr	r3, [r3, #4]
- 801754a:	9300      	str	r3, [sp, #0]
- 801754c:	69fb      	ldr	r3, [r7, #28]
- 801754e:	6a7a      	ldr	r2, [r7, #36]	; 0x24
- 8017550:	4919      	ldr	r1, [pc, #100]	; (80175b8 <pidctl_value+0x150>)
- 8017552:	2004      	movs	r0, #4
- 8017554:	f7ff ff34 	bl	80173c0 <itm_debug3>
+ 8017542:	68bb      	ldr	r3, [r7, #8]
+ 8017544:	685b      	ldr	r3, [r3, #4]
+ 8017546:	9300      	str	r3, [sp, #0]
+ 8017548:	69fb      	ldr	r3, [r7, #28]
+ 801754a:	6a7a      	ldr	r2, [r7, #36]	; 0x24
+ 801754c:	491a      	ldr	r1, [pc, #104]	; (80175b8 <pidctl_value+0x150>)
+ 801754e:	2004      	movs	r0, #4
+ 8017550:	f7ff ff36 	bl	80173c0 <itm_debug3>
 
 	int32_t r = c->kP * err + (c->kD * dv)/1000 + c->kI * iv;
- 8017558:	68fb      	ldr	r3, [r7, #12]
- 801755a:	681b      	ldr	r3, [r3, #0]
- 801755c:	6a7a      	ldr	r2, [r7, #36]	; 0x24
- 801755e:	fb02 f203 	mul.w	r2, r2, r3
- 8017562:	68fb      	ldr	r3, [r7, #12]
- 8017564:	689b      	ldr	r3, [r3, #8]
- 8017566:	69f9      	ldr	r1, [r7, #28]
- 8017568:	fb01 f303 	mul.w	r3, r1, r3
- 801756c:	4913      	ldr	r1, [pc, #76]	; (80175bc <pidctl_value+0x154>)
- 801756e:	fb81 0103 	smull	r0, r1, r1, r3
- 8017572:	1189      	asrs	r1, r1, #6
- 8017574:	17db      	asrs	r3, r3, #31
- 8017576:	1acb      	subs	r3, r1, r3
- 8017578:	441a      	add	r2, r3
- 801757a:	68fb      	ldr	r3, [r7, #12]
- 801757c:	685b      	ldr	r3, [r3, #4]
- 801757e:	69b9      	ldr	r1, [r7, #24]
- 8017580:	fb01 f303 	mul.w	r3, r1, r3
- 8017584:	4413      	add	r3, r2
- 8017586:	617b      	str	r3, [r7, #20]
+ 8017554:	68fb      	ldr	r3, [r7, #12]
+ 8017556:	681b      	ldr	r3, [r3, #0]
+ 8017558:	6a7a      	ldr	r2, [r7, #36]	; 0x24
+ 801755a:	fb02 f203 	mul.w	r2, r2, r3
+ 801755e:	68fb      	ldr	r3, [r7, #12]
+ 8017560:	689b      	ldr	r3, [r3, #8]
+ 8017562:	69f9      	ldr	r1, [r7, #28]
+ 8017564:	fb01 f303 	mul.w	r3, r1, r3
+ 8017568:	4914      	ldr	r1, [pc, #80]	; (80175bc <pidctl_value+0x154>)
+ 801756a:	fb81 0103 	smull	r0, r1, r1, r3
+ 801756e:	1189      	asrs	r1, r1, #6
+ 8017570:	17db      	asrs	r3, r3, #31
+ 8017572:	1acb      	subs	r3, r1, r3
+ 8017574:	441a      	add	r2, r3
+ 8017576:	68fb      	ldr	r3, [r7, #12]
+ 8017578:	685b      	ldr	r3, [r3, #4]
+ 801757a:	69b9      	ldr	r1, [r7, #24]
+ 801757c:	fb01 f303 	mul.w	r3, r1, r3
+ 8017580:	4413      	add	r3, r2
+ 8017582:	617b      	str	r3, [r7, #20]
 
 	return r/1000;
- 8017588:	697b      	ldr	r3, [r7, #20]
- 801758a:	4a0c      	ldr	r2, [pc, #48]	; (80175bc <pidctl_value+0x154>)
- 801758c:	fb82 1203 	smull	r1, r2, r2, r3
- 8017590:	1192      	asrs	r2, r2, #6
- 8017592:	17db      	asrs	r3, r3, #31
- 8017594:	1ad3      	subs	r3, r2, r3
+ 8017584:	697b      	ldr	r3, [r7, #20]
+ 8017586:	4a0d      	ldr	r2, [pc, #52]	; (80175bc <pidctl_value+0x154>)
+ 8017588:	fb82 1203 	smull	r1, r2, r2, r3
+ 801758c:	1192      	asrs	r2, r2, #6
+ 801758e:	17db      	asrs	r3, r3, #31
+ 8017590:	1ad3      	subs	r3, r2, r3
 }
- 8017596:	4618      	mov	r0, r3
- 8017598:	3728      	adds	r7, #40	; 0x28
- 801759a:	46bd      	mov	sp, r7
- 801759c:	bd80      	pop	{r7, pc}
- 801759e:	bf00      	nop
- 80175a0:	200005a0 	.word	0x200005a0
- 80175a4:	ffffe890 	.word	0xffffe890
- 80175a8:	66666667 	.word	0x66666667
- 80175ac:	ffff9e58 	.word	0xffff9e58
+ 8017592:	4618      	mov	r0, r3
+ 8017594:	3728      	adds	r7, #40	; 0x28
+ 8017596:	46bd      	mov	sp, r7
+ 8017598:	bd80      	pop	{r7, pc}
+ 801759a:	bf00      	nop
+ 801759c:	200005a0 	.word	0x200005a0
+ 80175a0:	ffffe890 	.word	0xffffe890
+ 80175a4:	66666667 	.word	0x66666667
+ 80175a8:	0003d090 	.word	0x0003d090
+ 80175ac:	fffc2f70 	.word	0xfffc2f70
  80175b0:	51eb851f 	.word	0x51eb851f
  80175b4:	08019cd8 	.word	0x08019cd8
  80175b8:	08019ce0 	.word	0x08019ce0
@@ -62942,159 +62943,158 @@ static void train_periodic_control(int numtrain, uint32_t dt)
  8017b2a:	6c3b      	ldr	r3, [r7, #64]	; 0x40
  8017b2c:	7cdb      	ldrb	r3, [r3, #19]
  8017b2e:	2b00      	cmp	r3, #0
- 8017b30:	d01d      	beq.n	8017b6e <train_periodic_control+0xee>
+ 8017b30:	d01e      	beq.n	8017b70 <train_periodic_control+0xf0>
         // corresponding BEMF target
         // 100% = 1.5V
-        int32_t tbemf = 150*v/10 * tvars->C1_dir;
+        int32_t tbemf = 1500*v/10 * tvars->C1_dir;
  8017b32:	f9b7 304e 	ldrsh.w	r3, [r7, #78]	; 0x4e
- 8017b36:	2296      	movs	r2, #150	; 0x96
- 8017b38:	fb02 f303 	mul.w	r3, r2, r3
- 8017b3c:	4a4a      	ldr	r2, [pc, #296]	; (8017c68 <train_periodic_control+0x1e8>)
- 8017b3e:	fb82 1203 	smull	r1, r2, r2, r3
- 8017b42:	1092      	asrs	r2, r2, #2
- 8017b44:	17db      	asrs	r3, r3, #31
- 8017b46:	1ad3      	subs	r3, r2, r3
- 8017b48:	6bfa      	ldr	r2, [r7, #60]	; 0x3c
- 8017b4a:	f992 201e 	ldrsb.w	r2, [r2, #30]
- 8017b4e:	fb02 f303 	mul.w	r3, r2, r3
- 8017b52:	63bb      	str	r3, [r7, #56]	; 0x38
+ 8017b36:	f240 52dc 	movw	r2, #1500	; 0x5dc
+ 8017b3a:	fb02 f303 	mul.w	r3, r2, r3
+ 8017b3e:	4a4a      	ldr	r2, [pc, #296]	; (8017c68 <train_periodic_control+0x1e8>)
+ 8017b40:	fb82 1203 	smull	r1, r2, r2, r3
+ 8017b44:	1092      	asrs	r2, r2, #2
+ 8017b46:	17db      	asrs	r3, r3, #31
+ 8017b48:	1ad3      	subs	r3, r2, r3
+ 8017b4a:	6bfa      	ldr	r2, [r7, #60]	; 0x3c
+ 8017b4c:	f992 201e 	ldrsb.w	r2, [r2, #30]
+ 8017b50:	fb02 f303 	mul.w	r3, r2, r3
+ 8017b54:	63bb      	str	r3, [r7, #56]	; 0x38
         tbemf = tbemf / 4; //XXX why ?? new cables (more capacitance ?)
- 8017b54:	6bbb      	ldr	r3, [r7, #56]	; 0x38
- 8017b56:	2b00      	cmp	r3, #0
- 8017b58:	da00      	bge.n	8017b5c <train_periodic_control+0xdc>
- 8017b5a:	3303      	adds	r3, #3
- 8017b5c:	109b      	asrs	r3, r3, #2
- 8017b5e:	63bb      	str	r3, [r7, #56]	; 0x38
+ 8017b56:	6bbb      	ldr	r3, [r7, #56]	; 0x38
+ 8017b58:	2b00      	cmp	r3, #0
+ 8017b5a:	da00      	bge.n	8017b5e <train_periodic_control+0xde>
+ 8017b5c:	3303      	adds	r3, #3
+ 8017b5e:	109b      	asrs	r3, r3, #2
+ 8017b60:	63bb      	str	r3, [r7, #56]	; 0x38
         // TODO make this divisor a parameter
         pidctl_set_target(&tconf->pidcnf, &tvars->pidvars, tbemf);
- 8017b60:	6c38      	ldr	r0, [r7, #64]	; 0x40
- 8017b62:	6bfb      	ldr	r3, [r7, #60]	; 0x3c
- 8017b64:	3308      	adds	r3, #8
- 8017b66:	6bba      	ldr	r2, [r7, #56]	; 0x38
- 8017b68:	4619      	mov	r1, r3
- 8017b6a:	f7ff fc69 	bl	8017440 <pidctl_set_target>
+ 8017b62:	6c38      	ldr	r0, [r7, #64]	; 0x40
+ 8017b64:	6bfb      	ldr	r3, [r7, #60]	; 0x3c
+ 8017b66:	3308      	adds	r3, #8
+ 8017b68:	6bba      	ldr	r2, [r7, #56]	; 0x38
+ 8017b6a:	4619      	mov	r1, r3
+ 8017b6c:	f7ff fc68 	bl	8017440 <pidctl_set_target>
         // XXXX notif_target_bemf(tconf, tvars, tbemf);
     }
 
     int32_t bemf_mv = tvars->bemf_mv;
- 8017b6e:	6bfb      	ldr	r3, [r7, #60]	; 0x3c
- 8017b70:	685b      	ldr	r3, [r3, #4]
- 8017b72:	64bb      	str	r3, [r7, #72]	; 0x48
+ 8017b70:	6bfb      	ldr	r3, [r7, #60]	; 0x3c
+ 8017b72:	685b      	ldr	r3, [r3, #4]
+ 8017b74:	64bb      	str	r3, [r7, #72]	; 0x48
     if (tconf->bemfIIR) {
- 8017b74:	6c3b      	ldr	r3, [r7, #64]	; 0x40
- 8017b76:	7d9b      	ldrb	r3, [r3, #22]
- 8017b78:	2b00      	cmp	r3, #0
- 8017b7a:	d017      	beq.n	8017bac <train_periodic_control+0x12c>
+ 8017b76:	6c3b      	ldr	r3, [r7, #64]	; 0x40
+ 8017b78:	7d9b      	ldrb	r3, [r3, #22]
+ 8017b7a:	2b00      	cmp	r3, #0
+ 8017b7c:	d017      	beq.n	8017bae <train_periodic_control+0x12e>
     	tvars->bemfiir = (80*tvars->bemfiir + 20*bemf_mv)/100;
- 8017b7c:	6bfb      	ldr	r3, [r7, #60]	; 0x3c
- 8017b7e:	6b1a      	ldr	r2, [r3, #48]	; 0x30
- 8017b80:	4613      	mov	r3, r2
- 8017b82:	009b      	lsls	r3, r3, #2
- 8017b84:	4413      	add	r3, r2
- 8017b86:	011b      	lsls	r3, r3, #4
- 8017b88:	4619      	mov	r1, r3
- 8017b8a:	6cba      	ldr	r2, [r7, #72]	; 0x48
- 8017b8c:	4613      	mov	r3, r2
- 8017b8e:	009b      	lsls	r3, r3, #2
- 8017b90:	4413      	add	r3, r2
- 8017b92:	009b      	lsls	r3, r3, #2
- 8017b94:	440b      	add	r3, r1
- 8017b96:	4a35      	ldr	r2, [pc, #212]	; (8017c6c <train_periodic_control+0x1ec>)
- 8017b98:	fb82 1203 	smull	r1, r2, r2, r3
- 8017b9c:	1152      	asrs	r2, r2, #5
- 8017b9e:	17db      	asrs	r3, r3, #31
- 8017ba0:	1ad2      	subs	r2, r2, r3
- 8017ba2:	6bfb      	ldr	r3, [r7, #60]	; 0x3c
- 8017ba4:	631a      	str	r2, [r3, #48]	; 0x30
+ 8017b7e:	6bfb      	ldr	r3, [r7, #60]	; 0x3c
+ 8017b80:	6b1a      	ldr	r2, [r3, #48]	; 0x30
+ 8017b82:	4613      	mov	r3, r2
+ 8017b84:	009b      	lsls	r3, r3, #2
+ 8017b86:	4413      	add	r3, r2
+ 8017b88:	011b      	lsls	r3, r3, #4
+ 8017b8a:	4619      	mov	r1, r3
+ 8017b8c:	6cba      	ldr	r2, [r7, #72]	; 0x48
+ 8017b8e:	4613      	mov	r3, r2
+ 8017b90:	009b      	lsls	r3, r3, #2
+ 8017b92:	4413      	add	r3, r2
+ 8017b94:	009b      	lsls	r3, r3, #2
+ 8017b96:	440b      	add	r3, r1
+ 8017b98:	4a34      	ldr	r2, [pc, #208]	; (8017c6c <train_periodic_control+0x1ec>)
+ 8017b9a:	fb82 1203 	smull	r1, r2, r2, r3
+ 8017b9e:	1152      	asrs	r2, r2, #5
+ 8017ba0:	17db      	asrs	r3, r3, #31
+ 8017ba2:	1ad2      	subs	r2, r2, r3
+ 8017ba4:	6bfb      	ldr	r3, [r7, #60]	; 0x3c
+ 8017ba6:	631a      	str	r2, [r3, #48]	; 0x30
     	bemf_mv = tvars->bemfiir;
- 8017ba6:	6bfb      	ldr	r3, [r7, #60]	; 0x3c
- 8017ba8:	6b1b      	ldr	r3, [r3, #48]	; 0x30
- 8017baa:	64bb      	str	r3, [r7, #72]	; 0x48
+ 8017ba8:	6bfb      	ldr	r3, [r7, #60]	; 0x3c
+ 8017baa:	6b1b      	ldr	r3, [r3, #48]	; 0x30
+ 8017bac:	64bb      	str	r3, [r7, #72]	; 0x48
     }
     if (tconf->enable_pid) {
- 8017bac:	6c3b      	ldr	r3, [r7, #64]	; 0x40
- 8017bae:	7cdb      	ldrb	r3, [r3, #19]
- 8017bb0:	2b00      	cmp	r3, #0
- 8017bb2:	f000 80ba 	beq.w	8017d2a <train_periodic_control+0x2aa>
+ 8017bae:	6c3b      	ldr	r3, [r7, #64]	; 0x40
+ 8017bb0:	7cdb      	ldrb	r3, [r3, #19]
+ 8017bb2:	2b00      	cmp	r3, #0
+ 8017bb4:	f000 80b9 	beq.w	8017d2a <train_periodic_control+0x2aa>
     	if (tvars->target_speed) {
- 8017bb6:	6bfb      	ldr	r3, [r7, #60]	; 0x3c
- 8017bb8:	f9b3 3000 	ldrsh.w	r3, [r3]
- 8017bbc:	2b00      	cmp	r3, #0
- 8017bbe:	d004      	beq.n	8017bca <train_periodic_control+0x14a>
+ 8017bb8:	6bfb      	ldr	r3, [r7, #60]	; 0x3c
+ 8017bba:	f9b3 3000 	ldrsh.w	r3, [r3]
+ 8017bbe:	2b00      	cmp	r3, #0
+ 8017bc0:	d004      	beq.n	8017bcc <train_periodic_control+0x14c>
     		tvars->pidvars.stopped = 0;
- 8017bc0:	6bfa      	ldr	r2, [r7, #60]	; 0x3c
- 8017bc2:	7d13      	ldrb	r3, [r2, #20]
- 8017bc4:	f36f 0341 	bfc	r3, #1, #1
- 8017bc8:	7513      	strb	r3, [r2, #20]
+ 8017bc2:	6bfa      	ldr	r2, [r7, #60]	; 0x3c
+ 8017bc4:	7d13      	ldrb	r3, [r2, #20]
+ 8017bc6:	f36f 0341 	bfc	r3, #1, #1
+ 8017bca:	7513      	strb	r3, [r2, #20]
     	}
         if (!tvars->pidvars.stopped && (tvars->target_speed == 0) && (abs(tvars->bemf_mv)<100)) {
- 8017bca:	6bfb      	ldr	r3, [r7, #60]	; 0x3c
- 8017bcc:	7d1b      	ldrb	r3, [r3, #20]
- 8017bce:	f003 0302 	and.w	r3, r3, #2
- 8017bd2:	b2db      	uxtb	r3, r3
- 8017bd4:	2b00      	cmp	r3, #0
- 8017bd6:	d12c      	bne.n	8017c32 <train_periodic_control+0x1b2>
- 8017bd8:	6bfb      	ldr	r3, [r7, #60]	; 0x3c
- 8017bda:	f9b3 3000 	ldrsh.w	r3, [r3]
- 8017bde:	2b00      	cmp	r3, #0
- 8017be0:	d127      	bne.n	8017c32 <train_periodic_control+0x1b2>
- 8017be2:	6bfb      	ldr	r3, [r7, #60]	; 0x3c
- 8017be4:	685b      	ldr	r3, [r3, #4]
- 8017be6:	f113 0f63 	cmn.w	r3, #99	; 0x63
- 8017bea:	db22      	blt.n	8017c32 <train_periodic_control+0x1b2>
- 8017bec:	6bfb      	ldr	r3, [r7, #60]	; 0x3c
- 8017bee:	685b      	ldr	r3, [r3, #4]
- 8017bf0:	2b63      	cmp	r3, #99	; 0x63
- 8017bf2:	dc1e      	bgt.n	8017c32 <train_periodic_control+0x1b2>
+ 8017bcc:	6bfb      	ldr	r3, [r7, #60]	; 0x3c
+ 8017bce:	7d1b      	ldrb	r3, [r3, #20]
+ 8017bd0:	f003 0302 	and.w	r3, r3, #2
+ 8017bd4:	b2db      	uxtb	r3, r3
+ 8017bd6:	2b00      	cmp	r3, #0
+ 8017bd8:	d12c      	bne.n	8017c34 <train_periodic_control+0x1b4>
+ 8017bda:	6bfb      	ldr	r3, [r7, #60]	; 0x3c
+ 8017bdc:	f9b3 3000 	ldrsh.w	r3, [r3]
+ 8017be0:	2b00      	cmp	r3, #0
+ 8017be2:	d127      	bne.n	8017c34 <train_periodic_control+0x1b4>
+ 8017be4:	6bfb      	ldr	r3, [r7, #60]	; 0x3c
+ 8017be6:	685b      	ldr	r3, [r3, #4]
+ 8017be8:	f113 0f63 	cmn.w	r3, #99	; 0x63
+ 8017bec:	db22      	blt.n	8017c34 <train_periodic_control+0x1b4>
+ 8017bee:	6bfb      	ldr	r3, [r7, #60]	; 0x3c
+ 8017bf0:	685b      	ldr	r3, [r3, #4]
+ 8017bf2:	2b63      	cmp	r3, #99	; 0x63
+ 8017bf4:	dc1e      	bgt.n	8017c34 <train_periodic_control+0x1b4>
     		itm_debug1(DBG_PID, "stop", 0);
- 8017bf4:	2200      	movs	r2, #0
- 8017bf6:	491e      	ldr	r1, [pc, #120]	; (8017c70 <train_periodic_control+0x1f0>)
- 8017bf8:	2004      	movs	r0, #4
- 8017bfa:	f7ff fce1 	bl	80175c0 <itm_debug1>
+ 8017bf6:	2200      	movs	r2, #0
+ 8017bf8:	491d      	ldr	r1, [pc, #116]	; (8017c70 <train_periodic_control+0x1f0>)
+ 8017bfa:	2004      	movs	r0, #4
+ 8017bfc:	f7ff fce0 	bl	80175c0 <itm_debug1>
 			pidctl_reset(&tconf->pidcnf, &tvars->pidvars);
- 8017bfe:	6c3a      	ldr	r2, [r7, #64]	; 0x40
- 8017c00:	6bfb      	ldr	r3, [r7, #60]	; 0x3c
- 8017c02:	3308      	adds	r3, #8
- 8017c04:	4619      	mov	r1, r3
- 8017c06:	4610      	mov	r0, r2
- 8017c08:	f7ff fbf6 	bl	80173f8 <pidctl_reset>
+ 8017c00:	6c3a      	ldr	r2, [r7, #64]	; 0x40
+ 8017c02:	6bfb      	ldr	r3, [r7, #60]	; 0x3c
+ 8017c04:	3308      	adds	r3, #8
+ 8017c06:	4619      	mov	r1, r3
+ 8017c08:	4610      	mov	r0, r2
+ 8017c0a:	f7ff fbf5 	bl	80173f8 <pidctl_reset>
 			debug_info('T', numtrain, "STOP_PID", 0,0, 0);
- 8017c0c:	6879      	ldr	r1, [r7, #4]
- 8017c0e:	2300      	movs	r3, #0
- 8017c10:	9301      	str	r3, [sp, #4]
- 8017c12:	2300      	movs	r3, #0
- 8017c14:	9300      	str	r3, [sp, #0]
- 8017c16:	2300      	movs	r3, #0
- 8017c18:	4a16      	ldr	r2, [pc, #88]	; (8017c74 <train_periodic_control+0x1f4>)
- 8017c1a:	2054      	movs	r0, #84	; 0x54
- 8017c1c:	f7ff fd46 	bl	80176ac <debug_info>
+ 8017c0e:	6879      	ldr	r1, [r7, #4]
+ 8017c10:	2300      	movs	r3, #0
+ 8017c12:	9301      	str	r3, [sp, #4]
+ 8017c14:	2300      	movs	r3, #0
+ 8017c16:	9300      	str	r3, [sp, #0]
+ 8017c18:	2300      	movs	r3, #0
+ 8017c1a:	4a16      	ldr	r2, [pc, #88]	; (8017c74 <train_periodic_control+0x1f4>)
+ 8017c1c:	2054      	movs	r0, #84	; 0x54
+ 8017c1e:	f7ff fd45 	bl	80176ac <debug_info>
 			tvars->pidvars.stopped = 1;
- 8017c20:	6bfa      	ldr	r2, [r7, #60]	; 0x3c
- 8017c22:	7d13      	ldrb	r3, [r2, #20]
- 8017c24:	f043 0302 	orr.w	r3, r3, #2
- 8017c28:	7513      	strb	r3, [r2, #20]
+ 8017c22:	6bfa      	ldr	r2, [r7, #60]	; 0x3c
+ 8017c24:	7d13      	ldrb	r3, [r2, #20]
+ 8017c26:	f043 0302 	orr.w	r3, r3, #2
+ 8017c2a:	7513      	strb	r3, [r2, #20]
         	v = 0;
- 8017c2a:	2300      	movs	r3, #0
- 8017c2c:	f8a7 304e 	strh.w	r3, [r7, #78]	; 0x4e
- 8017c30:	e07b      	b.n	8017d2a <train_periodic_control+0x2aa>
+ 8017c2c:	2300      	movs	r3, #0
+ 8017c2e:	f8a7 304e 	strh.w	r3, [r7, #78]	; 0x4e
+ 8017c32:	e07a      	b.n	8017d2a <train_periodic_control+0x2aa>
         } else if (tvars->pidvars.stopped) {
- 8017c32:	6bfb      	ldr	r3, [r7, #60]	; 0x3c
- 8017c34:	7d1b      	ldrb	r3, [r3, #20]
- 8017c36:	f003 0302 	and.w	r3, r3, #2
- 8017c3a:	b2db      	uxtb	r3, r3
- 8017c3c:	2b00      	cmp	r3, #0
- 8017c3e:	d01d      	beq.n	8017c7c <train_periodic_control+0x1fc>
+ 8017c34:	6bfb      	ldr	r3, [r7, #60]	; 0x3c
+ 8017c36:	7d1b      	ldrb	r3, [r3, #20]
+ 8017c38:	f003 0302 	and.w	r3, r3, #2
+ 8017c3c:	b2db      	uxtb	r3, r3
+ 8017c3e:	2b00      	cmp	r3, #0
+ 8017c40:	d01c      	beq.n	8017c7c <train_periodic_control+0x1fc>
     		itm_debug2(DBG_PID, "stopped", numtrain, v);
- 8017c40:	f9b7 304e 	ldrsh.w	r3, [r7, #78]	; 0x4e
- 8017c44:	687a      	ldr	r2, [r7, #4]
- 8017c46:	490c      	ldr	r1, [pc, #48]	; (8017c78 <train_periodic_control+0x1f8>)
- 8017c48:	2004      	movs	r0, #4
- 8017c4a:	f7ff fcd3 	bl	80175f4 <itm_debug2>
+ 8017c42:	f9b7 304e 	ldrsh.w	r3, [r7, #78]	; 0x4e
+ 8017c46:	687a      	ldr	r2, [r7, #4]
+ 8017c48:	490b      	ldr	r1, [pc, #44]	; (8017c78 <train_periodic_control+0x1f8>)
+ 8017c4a:	2004      	movs	r0, #4
+ 8017c4c:	f7ff fcd2 	bl	80175f4 <itm_debug2>
         	v = 0;
- 8017c4e:	2300      	movs	r3, #0
- 8017c50:	f8a7 304e 	strh.w	r3, [r7, #78]	; 0x4e
- 8017c54:	e069      	b.n	8017d2a <train_periodic_control+0x2aa>
- 8017c56:	bf00      	nop
+ 8017c50:	2300      	movs	r3, #0
+ 8017c52:	f8a7 304e 	strh.w	r3, [r7, #78]	; 0x4e
+ 8017c56:	e068      	b.n	8017d2a <train_periodic_control+0x2aa>
  8017c58:	200053e0 	.word	0x200053e0
  8017c5c:	200053f0 	.word	0x200053f0
  8017c60:	08019d48 	.word	0x08019d48
@@ -63148,19 +63148,20 @@ static void train_periodic_control(int numtrain, uint32_t dt)
  8017ccc:	64bb      	str	r3, [r7, #72]	; 0x48
         	}
 
-        	int32_t v2 = pidctl_value(&tconf->pidcnf, &tvars->pidvars, bemf_mv/10); //XXX
+        	int32_t v2 = pidctl_value(&tconf->pidcnf, &tvars->pidvars, bemf_mv)/10; //XXX
  8017cce:	6c38      	ldr	r0, [r7, #64]	; 0x40
  8017cd0:	6bfb      	ldr	r3, [r7, #60]	; 0x3c
- 8017cd2:	f103 0108 	add.w	r1, r3, #8
- 8017cd6:	6cbb      	ldr	r3, [r7, #72]	; 0x48
- 8017cd8:	4a9d      	ldr	r2, [pc, #628]	; (8017f50 <train_periodic_control+0x4d0>)
- 8017cda:	fb82 c203 	smull	ip, r2, r2, r3
- 8017cde:	1092      	asrs	r2, r2, #2
- 8017ce0:	17db      	asrs	r3, r3, #31
- 8017ce2:	1ad3      	subs	r3, r2, r3
- 8017ce4:	461a      	mov	r2, r3
- 8017ce6:	f7ff fbbf 	bl	8017468 <pidctl_value>
- 8017cea:	6378      	str	r0, [r7, #52]	; 0x34
+ 8017cd2:	3308      	adds	r3, #8
+ 8017cd4:	6cba      	ldr	r2, [r7, #72]	; 0x48
+ 8017cd6:	4619      	mov	r1, r3
+ 8017cd8:	f7ff fbc6 	bl	8017468 <pidctl_value>
+ 8017cdc:	4603      	mov	r3, r0
+ 8017cde:	4a9c      	ldr	r2, [pc, #624]	; (8017f50 <train_periodic_control+0x4d0>)
+ 8017ce0:	fb82 1203 	smull	r1, r2, r2, r3
+ 8017ce4:	1092      	asrs	r2, r2, #2
+ 8017ce6:	17db      	asrs	r3, r3, #31
+ 8017ce8:	1ad3      	subs	r3, r2, r3
+ 8017cea:	637b      	str	r3, [r7, #52]	; 0x34
         	int32_t v3;
         	v3 = (v2>100) ? 100 : v2;
  8017cec:	6b7b      	ldr	r3, [r7, #52]	; 0x34

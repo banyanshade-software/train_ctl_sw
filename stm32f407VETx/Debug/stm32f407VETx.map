@@ -15108,7 +15108,7 @@ OUTPUT(stm32f407VETx.elf elf32-littlearm)
  .debug_line    0x0000000000031c88      0xbbc trainctl/utils/itm_debug.o
  .debug_line    0x0000000000032844      0x62c trainctl/utils/lf_mqueue.o
 
-.debug_str      0x0000000000000000    0xea3f2
+.debug_str      0x0000000000000000    0xea3f3
  .debug_str     0x0000000000000000    0xd2b57 Core/Src/freertos.o
                                       0xd2e13 (size before relaxing)
  .debug_str     0x00000000000d2b57     0x7c58 Core/Src/main.o
@@ -15221,21 +15221,21 @@ OUTPUT(stm32f407VETx.elf elf32-littlearm)
                                        0x7cc0 (size before relaxing)
  .debug_str     0x00000000000e9c2e       0x7f trainctl/spdctl/inertia.o
                                       0xd6ef6 (size before relaxing)
- .debug_str     0x00000000000e9cad       0xb8 trainctl/spdctl/pidctl.o
-                                      0xd6fb9 (size before relaxing)
- .debug_str     0x00000000000e9d65      0x263 trainctl/spdctl/spdctl.o
+ .debug_str     0x00000000000e9cad       0xb9 trainctl/spdctl/pidctl.o
+                                      0xd6fba (size before relaxing)
+ .debug_str     0x00000000000e9d66      0x263 trainctl/spdctl/spdctl.o
                                       0xd9168 (size before relaxing)
- .debug_str     0x00000000000e9fc8       0xce trainctl/stm32/taskctrl.o
+ .debug_str     0x00000000000e9fc9       0xce trainctl/stm32/taskctrl.o
                                       0xd8369 (size before relaxing)
- .debug_str     0x00000000000ea096       0xab trainctl/stm32/taskdisp.o
+ .debug_str     0x00000000000ea097       0xab trainctl/stm32/taskdisp.o
                                       0xd8650 (size before relaxing)
- .debug_str     0x00000000000ea141       0xdd trainctl/stm32/txrxtask.o
+ .debug_str     0x00000000000ea142       0xdd trainctl/stm32/txrxtask.o
                                       0xd93de (size before relaxing)
- .debug_str     0x00000000000ea21e       0xb1 trainctl/topology/topology.o
+ .debug_str     0x00000000000ea21f       0xb1 trainctl/topology/topology.o
                                       0xd8bd5 (size before relaxing)
- .debug_str     0x00000000000ea2cf       0xb7 trainctl/utils/itm_debug.o
+ .debug_str     0x00000000000ea2d0       0xb7 trainctl/utils/itm_debug.o
                                       0xd6fb0 (size before relaxing)
- .debug_str     0x00000000000ea386       0x6c trainctl/utils/lf_mqueue.o
+ .debug_str     0x00000000000ea387       0x6c trainctl/utils/lf_mqueue.o
                                        0x72e8 (size before relaxing)
 
 .comment        0x0000000000000000       0x7b

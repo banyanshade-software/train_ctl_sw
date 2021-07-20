@@ -48,7 +48,7 @@ int32_t pidctl_value(const pidctl_config_t *c, pidctl_vars_t *v, int32_t cur_v);
  * PID ctrl operates on raw BEMF values, mmostly between -280..280 (-1V..+1V)
  */
 
-// TODO update this, since we now operate on centivolt
+// TODO update this,
 #define MAX_PID_VALUE 3000
 
 #endif /* PIDCTL_H_ */

@@ -49,6 +49,6 @@ int32_t pidctl_value(const pidctl_config_t *c, pidctl_vars_t *v, int32_t cur_v);
  */
 
 // TODO update this, since we now operate on centivolt
-#define MAX_PID_VALUE 280
+#define MAX_PID_VALUE 3000
 
 #endif /* PIDCTL_H_ */

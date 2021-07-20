@@ -93,7 +93,7 @@ void bemf_tick(uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_ uint32_t d
 static const int32_t bemf_zero_values[MAX_PWM*2+1] = {-92, -72, -49, -41, -31, -24, -19, -15, -12, -9, -8, -80, -64, -47, -30, -23, -18, -14, -12, -7, -74, -60, -45, -35, -22, -18, -12, -71, -42, -32, -21, -18, -11, -11, -65, -40, -24, -18, -47, -37, -22, -13, -44, -28, -56, -34, -21, -14, -9, -49, -31, -47, -24, -35, -44, -20, -30, -31, -38, -30, -15, -8, -7, -4, -2, -1, -1, -1, 0, 0, -2, -1, -1, -1, -1, -2, -1, -1, -1, 0, -1, 0, -1, -1, -1, 0, 0, 0, -1, -2, 0, 0, 0, 0, 0, -3, -1, 0, 0, 0, 0, 0, 3, 0, 0, -1, -3, -2, 0, 0, 0, 4, 0, -1, 2, 3, 0, 1, 1, 4, 10, 22, 33, 25, 28, 17, 38, 29, 19, 43, 26, 44, 7, 9, 18, 31, 53, 25, 42, 13, 20, 35, 46, 17, 22, 37, 65, 9, 10, 15, 20, 29, 36, 70, 12, 14, 19, 33, 43, 55, 72, 9, 9, 16, 20, 25, 32, 51, 66, 87, 11, 11, 14, 17, 19, 27, 34, 43, 57, 72, 92};
 #endif
 
-
+#if 0
 static _UNUSED_ inline int32_t bemf_convert_to_centivolt_for_display(_UNUSED_ const canton_config_t *c,  int32_t m) // unit 0.01v
 {
 #if INCLUDE_FIXBEMF
@@ -120,9 +120,10 @@ static _UNUSED_ inline int32_t bemf_convert_to_centivolt_for_display(_UNUSED_ co
     if (BEMF_RAW) return m;
 	return ((m * 4545 * 33) / (4096*100));
 }
+#endif
 
 
-static inline int32_t bemf_convert_to_centivolt(_UNUSED_ const canton_config_t *c, int32_t m)
+static inline int32_t bemf_convert_to_millivolt(_UNUSED_ const canton_config_t *c, int32_t m)
 {
 #if INCLUDE_FIXBEMF
 	if (v->fix_bemf && (v->curtrainidx!=0xFF)) {
@@ -142,7 +143,7 @@ static inline int32_t bemf_convert_to_centivolt(_UNUSED_ const canton_config_t *
 	}
 #endif
 
-	return ((m * 4545 * 33) / (4096*100));
+	return ((m * 4545 * 33) / (4096*10));
 }
 
 /// ---------------------------------------------------------------------------------------
@@ -166,16 +167,11 @@ static void process_adc(volatile adc_buf_t *buf, _UNUSED_ uint32_t deltaticks)
 		}
 
 		const canton_config_t *c = get_canton_cnf(i);
-		/*
-		int32_t voffa = bemf_convert_to_centivolt(c, buf[i].voffA);
-		int32_t voffb = bemf_convert_to_centivolt(c, buf[i].voffB);
-		int32_t vona = bemf_convert_to_centivolt(c, buf[i].vonA);
-		int32_t vonb = bemf_convert_to_centivolt(c, buf[i].vonB);
-		 */
-		int32_t voffa = bemf_convert_to_centivolt(c, buf->off[i].vA);
-		int32_t voffb = bemf_convert_to_centivolt(c, buf->off[i].vB);
-		int32_t vona =  bemf_convert_to_centivolt(c, buf->on[i].vA);
-		int32_t vonb =  bemf_convert_to_centivolt(c, buf->on[i].vB);
+
+		int32_t voffa = bemf_convert_to_millivolt(c, buf->off[i].vA);
+		int32_t voffb = bemf_convert_to_millivolt(c, buf->off[i].vB);
+		int32_t vona =  bemf_convert_to_millivolt(c, buf->on[i].vA);
+		int32_t vonb =  bemf_convert_to_millivolt(c, buf->on[i].vB);
 
 		int16_t voff = (int16_t)(voffb-voffa);
 		int16_t von  = (int16_t)(vonb-vona);
@@ -210,7 +206,6 @@ static void process_adc(volatile adc_buf_t *buf, _UNUSED_ uint32_t deltaticks)
 		m.v1 = voff;
 		m.v2 = von;
 		mqf_write(&from_canton, &m);
-
 	}
 }
 

@@ -112,10 +112,10 @@
 #define		CODE_DIR			0xC1	// direction indicatior (< o >)
 #define		CODE_UVAL			0xC2
 #define		CODE_UVAL4			0xC3
-#define		CODE_UVAL100        0xC4	// centivolt display (fixed point)
+#define		CODE_UVAL1000       0xC4	// millivolt display (fixed point)
 #define		CODE_SVAL			0xC5
 #define		CODE_SVAL4			0xC6
-#define		CODE_SVAL100		0xC7	// centivolt, signed
+#define		CODE_SVAL1000		0xC7	// millivolt, signed
 #define		CODE_GRAPH_LEVEL	0xC8
 #define		CODE_GRAPH_SLEVEL	0xC9
 #define		CODE_SPTR			0xCA	// strnum in register
@@ -190,8 +190,8 @@ static const uint8_t layout_ina3221_val[] = {
 };
 
 static const uint8_t layout_detect1[] = {
-		CODE_ZONE_STATUS, CODE_STR|27, CODE_SVAL100, 5, // V=
-		CODE_ZONE_MODE,   CODE_STR|28, CODE_SVAL100, 6, // B=
+		CODE_ZONE_STATUS, CODE_STR|27, CODE_SVAL1000, 5, // V=
+		CODE_ZONE_MODE,   CODE_STR|28, CODE_SVAL1000, 6, // B=
 		CODE_ZONE_TEXT2s, CODE_STR|29, CODE_SVAL4,   7, // I=
 		CODE_ZONE_TEXT1,  CODE_STR|30, CODE_SVAL,    8, // PWM
 		CODE_ZONE_TEXT4s, CODE_STR|31, CODE_UVAL,	 9, // VoltIdx
@@ -307,10 +307,10 @@ uint16_t ihm_getvar(int numdisp, int varnum)
 //static void write_num(char *buf, uint32_t v, int ndigit);
 static void write_unum(uint16_t v, FontDef *curfont);
 static void write_unum4(uint16_t v, FontDef *curfont);
-static void write_unum100(uint16_t v, FontDef *curfont);
+static void write_unum1000(uint16_t v, FontDef *curfont);
 static void write_snum(int16_t v, FontDef *curfont);
 static void write_snum4(int16_t v, FontDef *curfont);
-static void write_snum100(int16_t v, FontDef *curfont);
+static void write_snum1000(int16_t v, FontDef *curfont);
 static void write_bargraph(int16_t v, int16_t min, int16_t max);
 static void write_sbargraph(int16_t v, int16_t min, int16_t max);
 
@@ -409,10 +409,10 @@ void disp_layout(int numdisp)
 			v16s = (int16_t) _GET_REG(numdisp, d[i]);
 			write_snum4(v16s, curfont);
 			break;
-		case CODE_SVAL100:
+		case CODE_SVAL1000:
 			i++;
 			v16s = (int16_t) _GET_REG(numdisp, d[i]);
-			write_snum100(v16s, curfont);
+			write_snum1000(v16s, curfont);
 			break;
 		case CODE_UVAL:
 			i++;
@@ -424,10 +424,10 @@ void disp_layout(int numdisp)
 			v16u = _GET_REG(numdisp, d[i]);
 			write_unum4(v16u, curfont);
 			break;
-		case CODE_UVAL100:
+		case CODE_UVAL1000:
 			i++;
 			v16u = _GET_REG(numdisp, d[i]);
-			write_unum100(v16u, curfont);
+			write_unum1000(v16u, curfont);
 			break;
 		case CODE_GRAPH_LEVEL:
 			i++;
@@ -514,12 +514,12 @@ static void write_num(char *buf, uint32_t v, int ndigit)
 }
 */
 
-static void _write_unum(uint16_t v, FontDef *curfont, uint8_t hzero, uint8_t fp100)
+static void _write_unum(uint16_t v, FontDef *curfont, uint8_t hzero, uint8_t fp1000)
 {
 	int f = 0;
 	int ns = 1000;
-	if (fp100) {
-		ns = 100;
+	if (fp1000) {
+		ns = 1000;
 		hzero = 1;
 	}
 	for (int i=ns;i>0; i = i /10) {
@@ -532,7 +532,7 @@ static void _write_unum(uint16_t v, FontDef *curfont, uint8_t hzero, uint8_t fp1
 			}
 		}
 		ssd1306_WriteChar(n+'0', *curfont, White);
-		if ((f==0) && fp100) {
+		if ((f==0) && fp1000) {
 			ssd1306_WriteChar(',', *curfont, White);
 			hzero = 1;
 		}
@@ -549,9 +549,9 @@ static void write_unum4(uint16_t v, FontDef *curfont)
 	if (v>9999) v=9999;
 	_write_unum(v, curfont, 1, 0);
 }
-static void write_unum100(uint16_t v, FontDef *curfont)
+static void write_unum1000(uint16_t v, FontDef *curfont)
 {
-	if (v>999) v=999;
+	if (v>9999) v=9999;
 	_write_unum(v, curfont, 1, 1);
 }
 static void write_snum(int16_t v, FontDef *curfont)
@@ -579,10 +579,10 @@ static void write_snum4(int16_t v, FontDef *curfont)
 	_write_unum(abs(v), curfont, 1, 0);
 }
 
-static void write_snum100(int16_t v, FontDef *curfont)
+static void write_snum1000(int16_t v, FontDef *curfont)
 {
-	if (v<-999) v=-999;
-	if (v>999) v=999;
+	if (v<-9999) v=-9999;
+	if (v>9999) v=9999;
 	if (v < 0) {
 		ssd1306_WriteChar('-', *curfont, White);
 	} else {

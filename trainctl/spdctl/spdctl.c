@@ -59,7 +59,7 @@ uint32_t train_ntick = 0;
 typedef struct train_vars {
 	int16_t target_speed;	// always >= 0
 
-	int32_t bemf_cv;
+	int32_t bemf_mv;		// millivolt
 	pidctl_vars_t pidvars;
 	inertia_vars_t inertiavars;
 
@@ -163,13 +163,13 @@ void spdctl_run_tick(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, uint
                 case CMD_BEMF_NOTIF:
                     if (m.from == tvars->C1) {
                         itm_debug3(DBG_PID, "st bemf", tidx, m.v1, m.from);
-                        if (!tvars->c2bemf) tvars->bemf_cv = m.v1;
+                        if (!tvars->c2bemf) tvars->bemf_mv = m.v1;
                         break;
                     } else if (m.from == tvars->C2) {
                         itm_debug3(DBG_PID, "c2 bemf", tidx, m.v1, m.from);
-                        if (tvars->c2bemf) tvars->bemf_cv = m.v1;
-                        else if (abs(m.v1) > abs(tvars->bemf_cv)+50) {
-                        	itm_debug3(DBG_SPDCTL|DBG_PRES, "c2_hi", tidx, m.v1, tvars->bemf_cv);
+                        if (tvars->c2bemf) tvars->bemf_mv = m.v1;
+                        else if (abs(m.v1) > abs(tvars->bemf_mv)+500) {
+                        	itm_debug3(DBG_SPDCTL|DBG_PRES, "c2_hi", tidx, m.v1, tvars->bemf_mv);
                         	msg_64_t m;
                         	m.from = MA_TRAIN_SC(tidx);
                         	m.to = MA_CONTROL_T(tidx);
@@ -252,16 +252,16 @@ static void train_periodic_control(int numtrain, uint32_t dt)
         // XXXX notif_target_bemf(tconf, tvars, tbemf);
     }
 
-    int32_t bemf = tvars->bemf_cv;
+    int32_t bemf_mv = tvars->bemf_mv;
     if (tconf->bemfIIR) {
-    	tvars->bemfiir = (80*tvars->bemfiir + 20*bemf)/100;
-    	bemf = tvars->bemfiir;
+    	tvars->bemfiir = (80*tvars->bemfiir + 20*bemf_mv)/100;
+    	bemf_mv = tvars->bemfiir;
     }
     if (tconf->enable_pid) {
     	if (tvars->target_speed) {
     		tvars->pidvars.stopped = 0;
     	}
-        if (!tvars->pidvars.stopped && (tvars->target_speed == 0) && (abs(tvars->bemf_cv)<10)) {
+        if (!tvars->pidvars.stopped && (tvars->target_speed == 0) && (abs(tvars->bemf_mv)<100)) {
     		itm_debug1(DBG_PID, "stop", 0);
 			pidctl_reset(&tconf->pidcnf, &tvars->pidvars);
 			debug_info('T', numtrain, "STOP_PID", 0,0, 0);
@@ -271,11 +271,17 @@ static void train_periodic_control(int numtrain, uint32_t dt)
     		itm_debug2(DBG_PID, "stopped", numtrain, v);
         	v = 0;
         } else {
-        	itm_debug3(DBG_PID, "pid", numtrain, bemf, v);
-        	if (bemf>MAX_PID_VALUE)  bemf=MAX_PID_VALUE; // XXX
-        	if (bemf<-MAX_PID_VALUE) bemf=-MAX_PID_VALUE;
+        	itm_debug3(DBG_PID, "pid", numtrain, bemf_mv, v);
+        	if (bemf_mv>MAX_PID_VALUE)  {
+        		itm_debug3(DBG_PID|DBG_SPDCTL, "MAX_PID", numtrain, bemf_mv, MAX_PID_VALUE);
+        		bemf_mv = MAX_PID_VALUE; // XXX
+        	}
+        	if (bemf_mv<-MAX_PID_VALUE) {
+        		itm_debug3(DBG_PID|DBG_SPDCTL, "MAX_PID", numtrain, bemf_mv, MAX_PID_VALUE);
+        		bemf_mv = -MAX_PID_VALUE;
+        	}
 
-        	int32_t v2 = pidctl_value(&tconf->pidcnf, &tvars->pidvars, bemf);
+        	int32_t v2 = pidctl_value(&tconf->pidcnf, &tvars->pidvars, bemf_mv/10); //XXX
         	int32_t v3;
         	v3 = (v2>100) ? 100 : v2;
         	v3 = (v3<-100) ? -100: v3;
@@ -318,25 +324,25 @@ static void train_periodic_control(int numtrain, uint32_t dt)
             mqf_write_from_spdctl(&m);
         }
     }
-    if (tconf->notify_speed) {
+    if (tconf->notify_speed) { // to be removed
     	struct spd_notif n;
     	n.sv100 = v;
     	n.pid_target = tvars->pidvars.target_v;
     	//canton_vars_t *cv1 = get_canton_vars(tvars->current_canton);
-    	n.bemf_centivolt = tvars->bemf_cv; //cv1->bemf_centivolt;
+    	n.bemf_centivolt = tvars->bemf_mv/10; //cv1->bemf_centivolt;
     	train_notif(numtrain, 'V', (void *)&n, sizeof(n));
     }
 
     /* estimate speed/position with bemf */
     if ((1)) {
-        int32_t b = tvars->bemf_cv;
-        if (abs(b)<10) b = 0; // XXXXXXX
+        int32_t b = tvars->bemf_mv;
+        if (abs(b)<100) b = 0; // XXX XXXX
 
         // TODO: BEMF to speed. currently part of it is done in convert_to_centivolt
         //       but we assume speed is really proportional to BEMF
 
         //  dt is not precise enough
-        int32_t pi = (b*1000)/cur_freqhz;
+        int32_t pi = (b*100)/cur_freqhz;
         tvars->position_estimate += pi;
         itm_debug3(DBG_POSE, "pose", numtrain, tvars->position_estimate, b);
         itm_debug3(DBG_POSE, "pi", b, dt,  pi);

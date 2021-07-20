@@ -5,5 +5,5 @@ misc.h:109:21:runtime_error	16	static
 canton_bemf.c:29:6:bemf_reset	16	static
 canton_bemf.c:36:6:bemf_msg	24	static
 canton_bemf.c:59:6:bemf_tick	24	static
-canton_bemf.c:125:23:bemf_convert_to_centivolt	16	static
-canton_bemf.c:150:13:process_adc	80	static
+canton_bemf.c:126:23:bemf_convert_to_millivolt	16	static
+canton_bemf.c:151:13:process_adc	80	static

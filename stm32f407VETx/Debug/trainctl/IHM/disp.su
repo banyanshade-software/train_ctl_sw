@@ -8,9 +8,9 @@ disp.c:498:22:hexchr	16	static
 disp.c:517:13:_write_unum	32	static
 disp.c:543:13:write_unum	16	static
 disp.c:547:13:write_unum4	16	static
-disp.c:552:13:write_unum100	16	static
+disp.c:552:13:write_unum1000	16	static
 disp.c:557:13:write_snum	16	static
 disp.c:570:13:write_snum4	16	static
-disp.c:582:13:write_snum100	16	static
+disp.c:582:13:write_snum1000	16	static
 disp.c:594:13:write_bargraph	40	static
 disp.c:614:13:write_sbargraph	48	static

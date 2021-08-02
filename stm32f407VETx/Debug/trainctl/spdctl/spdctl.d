@@ -66,7 +66,7 @@ trainctl/spdctl/spdctl.o: \
  /Users/danielbraun/devel/train/sw/trainctl/spdctl/spdctl.h \
  ../../trainctl/trainctl_iface.h ../../trainctl/railconfig.h \
  ../../trainctl/low/canton_config.h ../../trainctl/train.h \
- ../../trainctl/low/turnout_config.h ../../trainctl/txrxcmd.h
+ ../../trainctl/low/turnout_config.h ../../trainctl/statval.h
 
 ../../trainctl/misc.h:
 
@@ -216,4 +216,4 @@ trainctl/spdctl/spdctl.o: \
 
 ../../trainctl/low/turnout_config.h:
 
-../../trainctl/txrxcmd.h:
+../../trainctl/statval.h:

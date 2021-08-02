@@ -61,7 +61,8 @@ trainctl/low/turnout.o: \
  ../../trainctl/param.h ../../trainctl/train.h \
  ../../trainctl/spdctl/inertia.h ../../trainctl/spdctl/pidctl.h \
  ../../trainctl/low/canton.h ../../trainctl/low/canton_config.h \
- ../../trainctl/low/turnout_config.h ../../trainctl/trainctl_iface.h
+ ../../trainctl/low/turnout_config.h ../../trainctl/trainctl_iface.h \
+ ../../trainctl/statval.h
 
 /Users/danielbraun/devel/train/sw/trainctl/low/turnout.h:
 
@@ -202,3 +203,5 @@ trainctl/low/turnout.o: \
 ../../trainctl/low/turnout_config.h:
 
 ../../trainctl/trainctl_iface.h:
+
+../../trainctl/statval.h:

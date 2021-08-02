@@ -463,9 +463,9 @@ static void txframe_send_msg64(msg_64_t *msg)
 
 
 // buf should be long enough to store a int32_t with escape, so 8 bytes
-int frame_gather_stat(int step, uint8_t *buf)
+
+int frame_gather_stat(stat_iterator_t *step, uint8_t *buf)
 {
-	// int32_t stat_val_get(int step);
 	int done;
 	int32_t v = stat_val_get(step, &done);
 	if (done) return 0;
@@ -477,20 +477,33 @@ int frame_gather_stat(int step, uint8_t *buf)
 	return l;
 }
 
+volatile int stat_on_progress = 0;
+
+void txframe_send_stat(void)
+{
+	if (stat_on_progress) return;
+    frame_msg_t m;
+    m.t = TXFRAME_TYPE_STAT;
+    txframe_send(&m, 1);
+}
+
 void frame_send_stat(void(*cb)(uint8_t *d, int l), uint32_t tick)
 {
+	stat_on_progress = 1;
     uint8_t buf[8];
     //if ((1)) tick = 0xAA55AA55;
     int l = _frm_escape2(buf, (void *) &tick, 4, 8);
     cb(buf, l);
 
-	int i;
-	for (i=0; ; i++) {
-		l = frame_gather_stat(i, buf);
+	stat_iterator_t step;
+    int eos = stat_iterator_reset(&step);
+    
+    for (;!eos; eos=stat_iterator_next(&step)) {
+		l = frame_gather_stat(&step, buf);
 		if (l<=0) {
 			return;
 		}
 		cb(buf, l);
 	}
+    stat_on_progress = 0;
 }
-

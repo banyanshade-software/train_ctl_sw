@@ -13,8 +13,8 @@
 
 #include "../topology/topology.h"
 #include "railconfig.h"
+#include "statval.h"
 
-//#define DUMMY_BEHAVIOUR 0	// simple/hardcoded behaviour for test
 
 // for test/debug
 static uint8_t ignore_bemf_presence = 0;
@@ -33,6 +33,8 @@ static uint8_t ignore_ina_presence = 1;
 #define TLEAVE_C1_VALUE 20
 #define TGUARD_C1_VALUE 100
 
+
+// -----------------------------------------------------------
 //per train stucture
 
 
@@ -57,6 +59,19 @@ typedef struct {
 
 
 static train_ctrl_t trctl[NUM_TRAINS] = {0};
+
+// -----------------------------------------------------------
+
+const stat_val_t statval_ctrl[] = {
+        { trctl, offsetof(train_ctrl_t, _state),           sizeof(train_state_t)   _P("ctrl_state")},
+        { trctl, offsetof(train_ctrl_t, _target_speed),    sizeof(uint16_t)        _P("ctrl_target_speed")},
+        { trctl, offsetof(train_ctrl_t, canton1_addr),     sizeof(uint8_t)         _P("ctrl_canton1_addr")},
+        { trctl, offsetof(train_ctrl_t, canton2_addr),     sizeof(uint8_t)         _P("ctrl_canton2_addr")},
+        { trctl, offsetof(train_ctrl_t, desired_speed),    sizeof(uint16_t)        _P("ctrl_desired_speed")},
+        { trctl, offsetof(train_ctrl_t, spd_limit),        sizeof(uint16_t)        _P("ctrl_spd_limit")},
+        { NULL,  sizeof(train_ctrl_t), 0 _P(NULL)}
+};
+
 
 
 // global run mode, each tasklet implement this
@@ -352,7 +367,7 @@ void ctrl_run_tick(_UNUSED_ uint32_t notif_flags, uint32_t tick, _UNUSED_ uint32
 		ctrl_init();
 		ctrl_reset();
     }
-
+   
 	check_block_delayed(tick);
 
 	/* process messages */
@@ -440,6 +455,11 @@ void ctrl_run_tick(_UNUSED_ uint32_t notif_flags, uint32_t tick, _UNUSED_ uint32
 	check_blk_tick(tick);
 	check_behaviour(tick);
 	//hi_tick(notif_flags, tick, dt);
+
+	if ((1)) {
+		void txframe_send_stat(void);
+		txframe_send_stat();
+	}
 }
 
 // ---------------------------------------------------------------
@@ -992,7 +1012,7 @@ static void check_behaviour(_UNUSED_ uint32_t tick)
 				continue;
 			}
 			if ((flags & BEHAVE_EOT2) && (tvars->_dir > 0)) {
-				set_timer(tidx, tvars, TBEHAVE, 15*1000);
+				set_timer(tidx, tvars, TBEHAVE, 3*60*1000);
 				evt_cmd_set_setdirspeed(tidx, tvars, 0, 0, 1);
 				return;
 			}

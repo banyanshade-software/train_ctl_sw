@@ -44,6 +44,7 @@
 #include "train_simu.h"
 #endif
 
+#include "statval.h"
 
 
 static void turnout_reset(void);

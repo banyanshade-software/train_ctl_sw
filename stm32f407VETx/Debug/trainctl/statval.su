@@ -1,3 +1,6 @@
-statval.c:63:25:_getval	40	static
-statval.c:89:9:stat_val_get	16	static
-statval.c:118:5:get_val_info	48	static
+statval.c:43:13:build_meta	24	static
+statval.c:58:25:_getval	40	static
+statval.c:80:5:stat_iterator_reset	16	static
+statval.c:89:6:stat_iterator_next	24	static
+statval.c:105:9:stat_val_get	32	static
+statval.c:143:5:get_val_info	24	static

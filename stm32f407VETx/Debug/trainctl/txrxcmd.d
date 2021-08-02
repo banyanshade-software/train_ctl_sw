@@ -52,6 +52,7 @@ trainctl/txrxcmd.o: /Users/danielbraun/devel/train/sw/trainctl/txrxcmd.c \
  ../Core/Inc/trainctl_config.h \
  /Users/danielbraun/devel/train/sw/trainctl/utils/itm_debug.h \
  /Users/danielbraun/devel/train/sw/trainctl/txrxcmd.h \
+ /Users/danielbraun/devel/train/sw/trainctl/statval.h \
  /Users/danielbraun/devel/train/sw/trainctl/railconfig.h \
  /Users/danielbraun/devel/train/sw/trainctl/low/canton_config.h \
  ../../trainctl/misc.h /Users/danielbraun/devel/train/sw/trainctl/param.h \
@@ -61,7 +62,6 @@ trainctl/txrxcmd.o: /Users/danielbraun/devel/train/sw/trainctl/txrxcmd.c \
  /Users/danielbraun/devel/train/sw/trainctl/low/canton.h \
  /Users/danielbraun/devel/train/sw/trainctl/low/canton_config.h \
  /Users/danielbraun/devel/train/sw/trainctl/low/turnout_config.h \
- /Users/danielbraun/devel/train/sw/trainctl/statval.h \
  /Users/danielbraun/devel/train/sw/trainctl/msg/trainmsg.h \
  /Users/danielbraun/devel/train/sw/trainctl/msg/../utils/lf_mqueue.h \
  /Users/danielbraun/devel/train/sw/trainctl/msg/notif.h \
@@ -175,6 +175,8 @@ trainctl/txrxcmd.o: /Users/danielbraun/devel/train/sw/trainctl/txrxcmd.c \
 
 /Users/danielbraun/devel/train/sw/trainctl/txrxcmd.h:
 
+/Users/danielbraun/devel/train/sw/trainctl/statval.h:
+
 /Users/danielbraun/devel/train/sw/trainctl/railconfig.h:
 
 /Users/danielbraun/devel/train/sw/trainctl/low/canton_config.h:
@@ -194,8 +196,6 @@ trainctl/txrxcmd.o: /Users/danielbraun/devel/train/sw/trainctl/txrxcmd.c \
 /Users/danielbraun/devel/train/sw/trainctl/low/canton_config.h:
 
 /Users/danielbraun/devel/train/sw/trainctl/low/turnout_config.h:
-
-/Users/danielbraun/devel/train/sw/trainctl/statval.h:
 
 /Users/danielbraun/devel/train/sw/trainctl/msg/trainmsg.h:
 

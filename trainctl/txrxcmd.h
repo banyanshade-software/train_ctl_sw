@@ -25,6 +25,8 @@
 #define TXRXCMD_H_
 
 #include "trainctl_iface.h"
+#include "statval.h"
+
 
 void usbPollQueues(void);
 
@@ -50,12 +52,7 @@ static inline void txframe_send_notif(frame_msg_t *m, int len)
 }
 
 
-static inline void txframe_send_stat(void)
-{
-    frame_msg_t m;
-    m.t = TXFRAME_TYPE_STAT;
-    txframe_send(&m, 1);
-}
+void txframe_send_stat(void);
 
 static inline void txframe_send_debug(frame_msg_t *m, int len)
 {
@@ -66,7 +63,7 @@ static inline void txframe_send_debug(frame_msg_t *m, int len)
 
 
 // buf should be long enough to store a int32_t with escape, so 8 bytes
-int frame_gather_stat(int step, uint8_t *buf);
+int frame_gather_stat(stat_iterator_t *step, uint8_t *buf);
 /*
  * send stat frame using callback function
  * frame header and end delimiter are NOT sent by frame_send_stat

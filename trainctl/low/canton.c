@@ -44,12 +44,15 @@
 #include "train_simu.h"
 #endif
 #include "railconfig.h"
+#include "statval.h"
 
 
 #ifndef TRAIN_SIMU
 TIM_HandleTypeDef *CantonTimerHandles[8] = {NULL};
 #endif
 
+
+// ------------------------------------------------------
 
 typedef struct canton_vars {
 	int8_t cur_dir;
@@ -59,6 +62,18 @@ typedef struct canton_vars {
 } canton_vars_t;
 
 static canton_vars_t canton_vars[NUM_LOCAL_CANTONS_SW]={0};
+
+// ------------------------------------------------------
+
+const stat_val_t statval_canton[] = {
+        { canton_vars, offsetof(canton_vars_t, cur_dir) , 1          _P("c_dir")},
+        { canton_vars, offsetof(canton_vars_t, cur_voltidx) , 1      _P("c_vidx")},
+        { canton_vars, offsetof(canton_vars_t, cur_pwm_duty) , 2     _P("c_pwm")},
+        
+        { NULL, 0, sizeof(canton_vars_t) _P(NULL)}
+};
+
+// ------------------------------------------------------
 
 #define USE_CANTON(_idx) \
 		const canton_config_t *cconf = get_canton_cnf(_idx); \

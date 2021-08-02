@@ -192,8 +192,41 @@ void startCycleCounter(void);
  * long = 500us 48000 cycles */
 #endif
 
-
+// ---------------------------------------------
 extern int cur_freqhz;
+
+
+// ---------------------------------------------
+// stat vals
+
+/*
+typedef enum {
+    stat_per_train,
+    stat_per_blk,
+    stat_per_subblk
+} stat_type_t;
+
+// stat domain
+#define STAT_CTRL                   (0<<1)
+#define STAT_SPDCTL                 (0<<2)
+#define STAT_PRES                   (0<<3)
+
+extern uint8_t stat_generation;
+extern uint32_t stat_domain;
+void stat_register(void *ptr, int siz, int sign, stat_type_t t, int idx);
+
+#define STAT_VAL(_domain, _value, _stat_type, _n) do {                  \
+    static uint8_t _sg = 0;                                             \
+    if (_sg != stat_generation) {                                       \
+        if (_domain & stat_domain) {                                    \
+            int s = sizeof(typeof(_value));                             \
+            int is_signed = ((typeof(_value))(-1) < (typeof(_value))(0));  \
+            stat_register(&(_value),s, is_signed, (_stat_type), (_n)) ; \
+        }                                                               \
+        _sg = stat_generation;                                          \
+    }                                                                   \
+} while(0)
+*/
 
 
 #endif /* TRAINCTL_MISC_H_ */

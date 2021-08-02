@@ -62,7 +62,7 @@ trainctl/ctrl/ctrl.o: \
  ../../trainctl/param.h ../../trainctl/train.h \
  ../../trainctl/spdctl/inertia.h ../../trainctl/spdctl/pidctl.h \
  ../../trainctl/low/canton.h ../../trainctl/low/canton_config.h \
- ../../trainctl/low/turnout_config.h
+ ../../trainctl/low/turnout_config.h ../../trainctl/statval.h
 
 ../../trainctl/misc.h:
 
@@ -203,3 +203,5 @@ trainctl/ctrl/ctrl.o: \
 ../../trainctl/low/canton_config.h:
 
 ../../trainctl/low/turnout_config.h:
+
+../../trainctl/statval.h:

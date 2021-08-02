@@ -1,4 +1,4 @@
-txrxcmd.h:45:20:txframe_send_notif	16	static
+txrxcmd.h:47:20:txframe_send_notif	16	static
 trainmsg.h:171:1:mqf_read_to_forward_usb	16	static
 trainmsg.h:172:1:mqf_write_from_forward_usb	16	static
 txrxcmd.c:56:12:_frm_escape	40	static
@@ -14,5 +14,6 @@ txrxcmd.c:375:6:trainctl_notif	24	static
 txrxcmd.c:383:6:trainctl_notif2	32	static
 txrxcmd.c:422:6:frame_send_notif	24	static
 txrxcmd.c:440:13:txframe_send_msg64	24	static
-txrxcmd.c:466:5:frame_gather_stat	32	static
-txrxcmd.c:480:6:frame_send_stat	32	static
+txrxcmd.c:467:5:frame_gather_stat	32	static
+txrxcmd.c:482:6:txframe_send_stat	48	static
+txrxcmd.c:490:6:frame_send_stat	48	static

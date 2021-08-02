@@ -23,42 +23,37 @@
 #include "low/canton_config.h"
 #include "railconfig.h"
 
+
 typedef struct {
-	off_t off;
-	int8_t   l;
-#ifdef  HOST_SIDE
-    const char *param_name;
-#endif
-} stat_val_t;
+    const stat_val_t *statval;
+    int numelem;
+    size_t structsize;
+    int numtrain; // or canton
+} meta_stat_t;
 
-#ifdef HOST_SIDE
-#define _P(_n) ,_n
-#else
-#define _P(_n)
-#endif
+#define NUM_META 3
+static meta_stat_t meta[NUM_META+1] = {
+    {statval_ctrl, 0, 0, NUM_TRAINS},
+    {statval_spdctrl, 0, 0, NUM_TRAINS},
+    {statval_canton, 0, 0, NUM_LOCAL_CANTONS_HW},
+    //{statval_ina3221, 0, 0, 12},
+    {NULL, 0, 0, 0}
+};
 
-static const stat_val_t statvaltrain[] = {
-		/*{ offsetof(train_vars_t, pidvars.last_err), 4   _P("pid_last_err")},
-		{ offsetof(train_vars_t, pidvars.sume), 4       _P("pid_sum_e")},
-		{ offsetof(train_vars_t, pidvars.target_v), 4   _P("pid_target")},
-		{ offsetof(train_vars_t, inertiavars.target), 2 _P("ine_t")},
-		{ offsetof(train_vars_t, inertiavars.cur), 2    _P("ine_c")},
-		{ offsetof(train_vars_t, target_speed), 2       _P("target_speed")},
-		{ offsetof(train_vars_t, last_speed), 2         _P("curspeed")},
-        { offsetof(train_vars_t, position_estimate), 4  _P("train0_pose")},
-        { offsetof(train_vars_t, bemfiir), 4            _P("bemfiir_centivolts")},
-*/};
+static void build_meta(void)
+{
+    meta_stat_t *m;
+    for (m = &meta[0]; m->statval; m++) {
+        const stat_val_t *v;
+        int n=0;
+        for (v = &(m->statval[0]) ; v->ptr; v++) {
+            n++;
+        }
+        m->numelem = n;
+        m->structsize = v->off;
+    }
+}
 
-static const stat_val_t statvalcanton[] = {
-/*		{ offsetof(canton_vars_t, cur_dir) , 1          _P("dir")},
-        { offsetof(canton_vars_t, cur_voltidx) , 1      _P("vidx")},
-		{ offsetof(canton_vars_t, cur_pwm_duty) , 2     _P("canton_%d_pwm")},
-		{ offsetof(canton_vars_t, bemf_centivolt) , 4   _P("canton_%d_bemfcentivolt")},
-        { offsetof(canton_vars_t, selected_centivolt),2 _P("canton_%d_centivolts")},
-        { offsetof(canton_vars_t, von_centivolt) , 2    _P("canton_%d_centivon")},
-        { offsetof(canton_vars_t, i_on) , 2   		    _P("canton_%d_ion")},
-        { offsetof(canton_vars_t, i_off) , 2            _P("canton_%d_ioff")},
-*/};
 
 _UNUSED_ static int32_t _getval(void *ptr, off_t offset, int l)
 {
@@ -81,15 +76,44 @@ _UNUSED_ static int32_t _getval(void *ptr, off_t offset, int l)
 	return v32;
 }
 
-static const int numvaltrain = sizeof(statvaltrain)/sizeof(statvaltrain[0]);
-static const int numvalcanton = sizeof(statvalcanton)/sizeof(statvalcanton[0]);
 
-
-
-int32_t stat_val_get(int step, int *pdone)
+int stat_iterator_reset(stat_iterator_t *it)
 {
-	*pdone = 1;
+    it->midx = 0;
+    it->tidx = 0;
+    it->vidx = 0;
+    if (!NUM_META) return -1;
+    return 0;
+}
+
+int  stat_iterator_next(stat_iterator_t *it)
+{
+    meta_stat_t *m = &meta[it->midx];
+    it->vidx ++;
+    if (it->vidx >= m->numelem) {
+        it->vidx = 0;
+        it->tidx ++;
+    }
+    if (it->tidx >= m->numtrain) {
+        it->tidx = 0;
+        it->midx ++;
+    }
+    if (it->midx >= NUM_META) return -1;
+    return 0;
+}
+
+int32_t stat_val_get(stat_iterator_t *step, int *pdone)
+{
+	*pdone = 0;
+    meta_stat_t *m = &meta[step->midx];
+    const stat_val_t *sv = &(m->statval[step->vidx]);
+    uint8_t *cptr = (uint8_t *)(sv->ptr);
+    uint8_t *vars = cptr + step->tidx * m->structsize;
+    return _getval(vars, sv->off, sv->l);
 	return 0;
+}
+    
+    
 #if 0
 	*pdone = 0;
 	int nt = step / numvaltrain;
@@ -112,11 +136,18 @@ int32_t stat_val_get(int step, int *pdone)
 		const stat_val_t *sv = &statvaltrain[idx];
 		return _getval(vars, sv->off, sv->l);
 	}
-#endif
 }
+#endif
+
 
 int get_val_info(int step, off_t *poffset, int *plen, int *ptridx, int *pcntidx, const char  **pzName, int numtrain, int numcanton)
 {
+    static int first = 1;
+    if (first) {
+        build_meta();
+        first=0;
+    }
+#if 0
     *ptridx = -1;
     *pcntidx = -1;
     *pzName = NULL;
@@ -150,5 +181,9 @@ int get_val_info(int step, off_t *poffset, int *plen, int *ptridx, int *pcntidx,
         *pzName = sv->param_name;
 #endif
     }
+#endif
     return 0;
 }
+
+
+

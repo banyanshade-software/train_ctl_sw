@@ -19,10 +19,44 @@
 
 #include <sys/types.h>
 
-int32_t stat_val_get(int step, int *pdone);
+typedef struct statiteraror {
+    int midx;
+    int tidx;
+    int vidx;
+} stat_iterator_t;
+
+
+int stat_iterator_reset(stat_iterator_t *it);
+int stat_iterator_next(stat_iterator_t *it);
+
+int32_t stat_val_get(stat_iterator_t *step, int *pdone);
 
 
 
 int get_val_info(int step, off_t *poffset, int *plen, int *ptridx, int *pcntidx, const char  **pzName, int numtrain, int numcanton);
+
+
+
+typedef struct {
+    void *ptr;
+    off_t off;
+    int8_t   l;
+#ifdef  HOST_SIDE
+    const char *param_name;
+#endif
+} stat_val_t;
+
+
+#ifdef HOST_SIDE
+#define _P(_n) ,_n
+#else
+#define _P(_n)
+#endif
+
+extern const stat_val_t statval_ctrl[];
+extern const stat_val_t statval_spdctrl[];
+extern const stat_val_t statval_canton[];
+extern const stat_val_t statval_ina3221[];
+
 
 #endif /* STATVAL_H_ */

@@ -65,6 +65,7 @@ trainctl/stm32/txrxtask.o: \
  ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_def.h \
  /Users/danielbraun/devel/train/sw/trainctl/stm32/../txrxcmd.h \
  /Users/danielbraun/devel/train/sw/trainctl/stm32/../trainctl_iface.h \
+ /Users/danielbraun/devel/train/sw/trainctl/stm32/../statval.h \
  ../../trainctl/misc.h
 
 /Users/danielbraun/devel/train/sw/trainctl/stm32/txrxtask.h:
@@ -198,5 +199,7 @@ trainctl/stm32/txrxtask.o: \
 /Users/danielbraun/devel/train/sw/trainctl/stm32/../txrxcmd.h:
 
 /Users/danielbraun/devel/train/sw/trainctl/stm32/../trainctl_iface.h:
+
+/Users/danielbraun/devel/train/sw/trainctl/stm32/../statval.h:
 
 ../../trainctl/misc.h:

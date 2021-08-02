@@ -31,8 +31,8 @@
 #include "spdctl.h"
 #include "railconfig.h"
 //#include "auto1.h"
-#include "txrxcmd.h"
-
+//#include "txrxcmd.h"
+#include "statval.h"
 
 // ----------------------------------------------------------------------------------
 // global run mode, each tasklet implement this
@@ -56,6 +56,10 @@ uint32_t train_tick_last_dt = 0;
 uint32_t train_ntick = 0;
 
 
+
+// ------------------------------------------------------
+
+
 typedef struct train_vars {
 	int16_t target_speed;	// always >= 0
 
@@ -66,10 +70,8 @@ typedef struct train_vars {
     uint8_t C1;	// current canton adress
 	uint8_t C2; // next canton address
 	// TODO add C2alt, alternative next canton (manual turnout / detect defect in turnout)
-
 	int8_t  C1_dir; // -1 or +1
 	int8_t  C2_dir;
-
 
 	int16_t last_speed;
 	int16_t prev_last_speed;
@@ -86,7 +88,28 @@ typedef struct train_vars {
 
 } train_vars_t;
 
+
 static train_vars_t trspc_vars[NUM_TRAINS]={0};
+
+// ------------------------------------------------------
+
+
+const stat_val_t statval_spdctrl[] = {
+    { trspc_vars, offsetof(train_vars_t, target_speed), 2       _P("spd_target_speed")},
+    { trspc_vars, offsetof(train_vars_t, pidvars.last_err), 4   _P("pid_last_err")},
+    { trspc_vars, offsetof(train_vars_t, pidvars.sume), 4       _P("pid_sum_e")},
+    { trspc_vars, offsetof(train_vars_t, pidvars.target_v), 4   _P("pid_target")},
+    { trspc_vars, offsetof(train_vars_t, inertiavars.target), 2 _P("ine_t")},
+    
+    { trspc_vars, offsetof(train_vars_t, inertiavars.cur), 2    _P("ine_c")},
+    { trspc_vars, offsetof(train_vars_t, last_speed), 2         _P("spd_curspeed")},
+    { trspc_vars, offsetof(train_vars_t, position_estimate), 4  _P("pose")},
+    { trspc_vars, offsetof(train_vars_t, pose_trig), 4          _P("pose_trig")},
+    { NULL, sizeof(train_vars_t), 0 _P(NULL)}
+};
+
+
+// ------------------------------------------------------
 
 
 #define USE_TRAIN(_idx) \

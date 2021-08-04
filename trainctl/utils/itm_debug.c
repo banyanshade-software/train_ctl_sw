@@ -41,7 +41,7 @@
 
 #define DBG_
 #ifdef TRAIN_SIMU
-char* itoa (unsigned long long  value,  char str[],  int radix)
+char* itoa ( long  value,  char str[],  int radix)
 {
     char        buf [66];
     char*       dest = buf + sizeof(buf);

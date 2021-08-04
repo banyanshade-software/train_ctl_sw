@@ -43,24 +43,25 @@
 @property (nonatomic) int numcantons;
 
 
-@property (nonatomic) double canton_0_bemfcentivolt;
-@property (nonatomic) double bemfiir_centivolts;
-@property (nonatomic) double canton_0_centivolts;
-@property (nonatomic) double canton_0_centivon;
-@property (nonatomic) int    canton_0_pwm;
+@property (nonatomic) double T0_bemf_mv;
+//@property (nonatomic) double bemfiir_centivolts;
+//@property (nonatomic) double canton_0_centivolts;
+//@property (nonatomic) double canton_0_centivon;
+@property (nonatomic) int    C0_vidx;
+@property (nonatomic) int    C0_pwm;
 //@property (nonatomic) double canton_0_intensity;
-@property (nonatomic) double canton_0_ion;
-@property (nonatomic) double canton_0_ioff;
+//@property (nonatomic) double canton_0_ion;
+//@property (nonatomic) double canton_0_ioff;
 
 
-@property (nonatomic) double canton_1_bemfcentivolt;
+//@property (nonatomic) double T0_bemf_mv;
 //@property (nonatomic) double canton_1_bemf_lp;
-@property (nonatomic) double canton_1_centivolts;
-@property (nonatomic) double canton_1_centivon;
-@property (nonatomic) int    canton_1_pwm;
-@property (nonatomic) double canton_1_intensity;
+//@property (nonatomic) double canton_1_centivolts;
+@property (nonatomic) int    C1_vidx;
+@property (nonatomic) int    C1_pwm;
+//@property (nonatomic) double canton_1_intensity;
 
-@property (nonatomic) int train0_pose;
+@property (nonatomic) int T0_pose;
 
 - (IBAction) changeParam:(id)sender;
 

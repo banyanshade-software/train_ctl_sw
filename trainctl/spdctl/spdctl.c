@@ -95,16 +95,17 @@ static train_vars_t trspc_vars[NUM_TRAINS]={0};
 
 
 const stat_val_t statval_spdctrl[] = {
-    { trspc_vars, offsetof(train_vars_t, target_speed), 2       _P("spd_target_speed")},
-    { trspc_vars, offsetof(train_vars_t, pidvars.last_err), 4   _P("pid_last_err")},
-    { trspc_vars, offsetof(train_vars_t, pidvars.sume), 4       _P("pid_sum_e")},
-    { trspc_vars, offsetof(train_vars_t, pidvars.target_v), 4   _P("pid_target")},
-    { trspc_vars, offsetof(train_vars_t, inertiavars.target), 2 _P("ine_t")},
+    { trspc_vars, offsetof(train_vars_t, target_speed), 2       _P("T#_spd_target_speed")},
+    { trspc_vars, offsetof(train_vars_t, bemf_mv), 4            _P("T#_bemf_mv")},
+    { trspc_vars, offsetof(train_vars_t, pidvars.last_err), 4   _P("T#_pid_last_err")},
+    { trspc_vars, offsetof(train_vars_t, pidvars.sume), 4       _P("T#_pid_sum_e")},
+    { trspc_vars, offsetof(train_vars_t, pidvars.target_v), 4   _P("T#_pid_target")},
+    { trspc_vars, offsetof(train_vars_t, inertiavars.target), 2 _P("T#_ine_t")},
     
-    { trspc_vars, offsetof(train_vars_t, inertiavars.cur), 2    _P("ine_c")},
-    { trspc_vars, offsetof(train_vars_t, last_speed), 2         _P("spd_curspeed")},
-    { trspc_vars, offsetof(train_vars_t, position_estimate), 4  _P("pose")},
-    { trspc_vars, offsetof(train_vars_t, pose_trig), 4          _P("pose_trig")},
+    { trspc_vars, offsetof(train_vars_t, inertiavars.cur), 2    _P("T#_ine_c")},
+    { trspc_vars, offsetof(train_vars_t, last_speed), 2         _P("T#_spd_curspeed")},
+    { trspc_vars, offsetof(train_vars_t, position_estimate), 4  _P("T#_pose")},
+    { trspc_vars, offsetof(train_vars_t, pose_trig), 4          _P("T#_pose_trig")},
     { NULL, sizeof(train_vars_t), 0 _P(NULL)}
 };
 

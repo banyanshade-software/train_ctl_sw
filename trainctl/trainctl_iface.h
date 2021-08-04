@@ -89,7 +89,7 @@ void auto1_run(uint32_t notif, uint32_t tick);
 
 // ---------------------------------------------- canton
 
-#define BEMF_RAW 0
+//#define BEMF_RAW 0
 
 
 

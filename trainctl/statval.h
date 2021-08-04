@@ -33,7 +33,8 @@ int32_t stat_val_get(stat_iterator_t *step, int *pdone);
 
 
 
-int get_val_info(int step, off_t *poffset, int *plen, int *ptridx, int *pcntidx, const char  **pzName, int numtrain, int numcanton);
+int get_val_info(stat_iterator_t *step, off_t *poffset, int *plen, int *pidx,
+    const char  **pzName);
 
 
 
@@ -58,5 +59,6 @@ extern const stat_val_t statval_spdctrl[];
 extern const stat_val_t statval_canton[];
 extern const stat_val_t statval_ina3221[];
 
+extern uint32_t gtick;
 
 #endif /* STATVAL_H_ */

@@ -1004,13 +1004,13 @@ static int frm_unescape(uint8_t *buf, int len)
                         int32_t v[4];
                         memcpy(&v, frm.param, 4*sizeof(int32_t));
                         //   unit 1/100 V
-                        self.canton_0_bemfcentivolt =  BEMF_RAW ? v[0] : v[0]/100.0;
+                        self.T0_bemf_mv =  v[0]; // BEMF_RAW ?  : v[0]/100.0;
                         // IIR low pass on bemf
                        // self.canton_0_bemf_lp = _canton_0_bemf_lp*.97+0.03*_canton_0_bemfcentivolt;
                         if (frm.cmd == 'B') {
-                            self.canton_0_centivon =   BEMF_RAW ? v[1] : v[1]/100.0;
-                            self.canton_0_centivolts = v[2]/100.0;
-                            self.canton_0_pwm =   v[3];
+                            //self.canton_0_centivon =   BEMF_RAW ? v[1] : v[1]/100.0;
+                            //self.canton_0_centivolts = v[2]/100.0;
+                            self.C0_pwm =   v[3];
                         }
                     }
                     return;
@@ -1023,7 +1023,8 @@ static int frm_unescape(uint8_t *buf, int len)
                     //NSLog(@"train %d, v=%d\n", frm.num, spd.sv100);
                     if (0==frm.num || '0'==frm.num) { // XXX for test
                         self.curspeed = _polarity*spd.sv100;
-                        self.target_bemf = (BEMF_RAW) ? spd.pid_target: spd.pid_target/100.0;
+                        //self.target_bemf = (BEMF_RAW) ? spd.pid_target: spd.pid_target/100.0;
+                        self.target_bemf = spd.pid_target;
                         if ((1)) {
                             static int bmin = 0;
                             static int bmax = 0;
@@ -1038,7 +1039,7 @@ static int frm_unescape(uint8_t *buf, int len)
                     break;
                 case 'i':
                     memcpy(&v32, frm.param, sizeof(int32_t));
-                    self.train0_pose = v32;
+                    self.T0_pose = v32;
                     return;
                     break;
                 case 'A':
@@ -1071,81 +1072,64 @@ static int frm_unescape(uint8_t *buf, int len)
     uint32_t *ptr = frm.param32;
     //uint32_t tick = *ptr++;
     nval--;
-    int step = -1;
-    for (;;nval--, step++) {
-       
+    stat_iterator_t step;
+    int rc;
+    int validx;
+    for (validx=0,rc = stat_iterator_reset(&step); !rc; rc = stat_iterator_next(&step), validx++) {
         int32_t v = *ptr++;
         off_t offset; int len;
-        int trnidx=-1;
-        int cntidx=-1;
+        int idx=-1;
         const char *name = NULL;
-        if (step>=0) {
-            int rc = get_val_info(step, &offset, &len, &trnidx, &cntidx, &name, self.numtrains, self.numcantons);
-            if (rc) {
-                // end
-                if (nval>-1) {
-                    NSLog(@"still has val after process");
-                }
-                goto done;
-            }
-        }
+
+        get_val_info(&step, &offset, &len, &idx, &name);
+        
         if (nval<0) {
             NSLog(@"short stat frame");
             goto done;
         }
-        //NSLog(@"stat : '%s'[%d,%d] = %d\n", name ? name : "_", trnidx,cntidx, v);
+        //NSLog(@"stat : '%s'[%d] = %d\n", name ? name : "_", idx, v);
         NSString *key = nil;
 
         static NSMutableSet *unhandled_key = nil;
         if (!unhandled_key) unhandled_key = [[NSMutableSet alloc]initWithCapacity:20];
-        if (name) {
-            NSString *m = [NSString stringWithUTF8String:name];
-            key = m;
-            if (trnidx >= 0) {
-                key = [NSString stringWithFormat:m, trnidx];
-            } else if (cntidx >= 0) {
-                key = [NSString stringWithFormat:m, cntidx];
-            }
-            NSNumber *nsv = @(v);
-            if ([key hasPrefix:@"canton_"]) {
-                [cantons_value setValue:nsv forKey:key];
-            }
-            if (![unhandled_key containsObject:key]) {
-                //NSLog(@"---- %@\n", key);
-                if ([key isEqualToString:@"canton_0_volts"]) {
-                    NSLog(@"hop  canton_0_volts %@", nsv);
-                }
-                if ([key hasSubString:@"centi"]) {
-                    nsv = @(v/100.0);
-                }
-                @try {
-                    [self setValue:nsv forKey:key];
-                } @catch (NSException *exception) {
-                    NSLog(@"key %@ not ok: %@", key, exception);
-                    [unhandled_key addObject:key];
-                }
-              
+        NSString *nkey;
+
+        if (!name) {
+            NSLog(@"no stat name");
+            continue;
+        }
+        
+        NSString *m = [NSString stringWithUTF8String:name];
+        key = m;
+        key = [NSString stringWithFormat:m, idx];
+        
+        NSString *sidx = [NSString stringWithFormat:@"%d", idx];
+        nkey= [key stringByReplacingOccurrencesOfString:@"#" withString:sidx];
+        
+        NSNumber *nsv = @(v);
+        if ([key hasPrefix:@"C#_"]) {
+            [cantons_value setValue:nsv forKey:nkey];
+        }
+        
+        if (![unhandled_key containsObject:nkey]) {
+            //NSLog(@"---- %@\n", key);
+            @try {
+                [self setValue:nsv forKey:nkey];
+            } @catch (NSException *exception) {
+                NSLog(@"key %@ (%@) not ok: %@", nkey, key, exception);
+                [unhandled_key addObject:nkey];
             }
         }
+        
         if (_recordState == 1) {
             if (!recordItems) recordItems=[[NSMutableDictionary alloc]init];
-            if (-1==step) {
-                [recordFile writeData:[@"T_s, " dataUsingEncoding:NSUTF8StringEncoding]];
-                graph_t0 = v;
-            } else {
-                if (key) [recordItems setObject:@(step+1) forKey:key];
-                NSString *s = [NSString stringWithFormat:@"%@, ", key ? key : @"_"];
-                [recordFile writeData:[s dataUsingEncoding:NSUTF8StringEncoding]];
-            }
+            
+            if (nkey) [recordItems setObject:@(validx+1) forKey:nkey];
+            NSString *s = [NSString stringWithFormat:@"%@, ", nkey ? nkey : @"_"];
+            [recordFile writeData:[s dataUsingEncoding:NSUTF8StringEncoding]];
         } else if (_recordState) {
             NSString *s;
-            if ([key hasSubString:@"centi"]) {
-                    s = [NSString stringWithFormat:@"%f, ", v/100.0];
-            } else if (step==-1) {
-                        s = [NSString stringWithFormat:@"%f, ", (v-graph_t0)/1000.0];
-            } else {
-                    s = [NSString stringWithFormat:@"%d, ", v];
-            }
+            s = [NSString stringWithFormat:@"%d, ", v];
             [recordFile writeData:[s dataUsingEncoding:NSUTF8StringEncoding]];
         }
     }
@@ -1168,10 +1152,12 @@ done:
     NSString *cn = [tableColumn identifier];
     if (![cn length]) return @"-";
     if ([cn isEqual:@"canton_num"]) return @(row);
-    NSString *k = [NSString stringWithFormat:@"canton_%d_%@", (int)row, cn];
+    NSString *sr = [NSString stringWithFormat:@"%d", row];
+    NSString *k = [cn stringByReplacingOccurrencesOfString:@"#" withString:sr];
+    //NSString *k = [NSString stringWithFormat:@"C%d_%@", (int)row, cn];
     NSNumber *n = [cantons_value objectForKey:k];
     if (cantons_value && !n) {
-        NSLog(@"unknown %@",k);
+        if ((0)) NSLog(@"unknown %@",k);
     }
     return n;
 }
@@ -1270,6 +1256,9 @@ static AppDelegate *theDelegate = nil;
     t0 = lastSimu;
     simuTimer = [NSTimer timerWithTimeInterval:0.1 target:self selector:@selector(simuTimer) userInfo:nil repeats:YES];
     [[NSRunLoop mainRunLoop]addTimer:simuTimer forMode:NSDefaultRunLoopMode];
+
+    _testMode = -1;
+    [self setTestMode:0];
     
 }
 
@@ -1358,11 +1347,13 @@ void train_simu_canton_volt(int numcanton, int voltidx, int vlt100)
     }
     switch (numcanton) {
         case 0:
-            self.canton_0_centivolts = vlt;
+            self.C0_vidx = voltidx;
+            //self.canton_0_centivolts = vlt;
             [_simTrain0 setVolt:vlt];
             break;
         case 1:
-            self.canton_1_centivolts = vlt;
+            //self.canton_1_centivolts = vlt;
+            self.C1_vidx = voltidx;
             break;
         default:
             break;
@@ -1382,10 +1373,11 @@ void train_simu_canton_set_pwm(int numcanton, int8_t dir, int duty)
     }
     switch (numcanton) {
         case 0:
-            self.canton_0_pwm = sduty;
+            self.C0_pwm = sduty;
             break;
         case 1:
-            self.canton_1_pwm = sduty;
+            self.C1_pwm = sduty;
+            break;
         default:
             break;
     }
@@ -1606,14 +1598,15 @@ void notif_target_bemf(const train_config_t *cnf, train_vars_t *vars, int32_t va
 {
     static NSDictionary *graphs = nil;
     if (!graphs) graphs =
-    @{ @"power"  : @[ @"", @"target_speed", @"curspeed", @"canton_0_centivolts", @"canton_0_pwm", @"vidx"],
-       @"power2" : @[ @"curspeed", @"canton_0_centivolts", @"canton_0_pwm", @"vidx"],
-       @"BEMF"   : @[ @"",  @"canton_0_bemfcentivolt", @"bemfiir_centivolts"/*,  @"pid_sum_e"*/],
-       @"Vsense" : @[ @"", @"canton_0_bemf_centivolt", @"canton_0_von_centivolt"],
+    @{ @"power0"  : @[ @"tick", @"T0_ctrl_target_speed", @"T0_spd_curspeed",
+                      @"C0_pwm", @"C0_vidx", @"C1_pwm", @"C1_vidx", @"C2_pwm", @"C2_vidx"],
+       //@"power2" : @[ @"spd_curspeed", /*@"canton_0_centivolts",*/ @"C0_pwm", @"C0_vidx"],
+       @"BEMF"   : @[ @"tick",  @"T0_bemf_mv",  @"T0_spd_pid_sum_e"],
+       @"Vsense" : @[ @"tick",  @"T0_bemf_mv"],
 
-       @"PID"    : @[ @"", @"pid_target", @"canton_0_bemfcentivolt", @"pid_last_err", @"bemfiir_centivolts"/*,  @"pid_sum_e"*/],
-       @"inertia": @[@"ine_t", @"ine_c"],
-       @"pose"   : @[@"curspped", @"canton_0_bemfcentivolt", @"dir", @"train0_pose"]
+       @"PID"    : @[ @"tick", @"T0_spd_pid_target", @"T0_bemf_mv", @"T0_spd_pid_last_err", @"T0_spd_pid_sum_e"],
+       @"inertia": @[@"T0_ine_t", @"T0_ine_c"],
+       @"pose"   : @[@"T0_spd_curspeed", @"T0_bemf_mv", @"dir", @"pose", @"pose_trig"]
     };
     NSString *k = nil;
     switch (ngraph) {

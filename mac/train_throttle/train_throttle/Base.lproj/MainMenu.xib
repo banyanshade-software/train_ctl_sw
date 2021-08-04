@@ -1026,7 +1026,7 @@
                                                 <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
                                             <connections>
-                                                <binding destination="Voe-Tx-rLC" name="value" keyPath="train0_pose" id="yll-0V-8fs"/>
+                                                <binding destination="Voe-Tx-rLC" name="value" keyPath="T0_pose" id="qPF-DD-QHt"/>
                                             </connections>
                                         </textField>
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="S9f-g7-xC5">
@@ -1131,9 +1131,6 @@
                                                 <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
-                                            <connections>
-                                                <binding destination="Voe-Tx-rLC" name="value" keyPath="canton_0_bemfcentivolt" id="mGb-n6-vm7"/>
-                                            </connections>
                                         </textField>
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="GlB-Iw-aDx">
                                             <rect key="frame" x="14" y="325" width="36" height="16"/>
@@ -1151,7 +1148,7 @@
                                                 <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
                                             <connections>
-                                                <binding destination="Voe-Tx-rLC" name="value" keyPath="canton_0_centivolts" id="Eld-gI-iIF"/>
+                                                <binding destination="Voe-Tx-rLC" name="value" keyPath="C0_vidx" id="0xa-d1-Oe2"/>
                                             </connections>
                                         </textField>
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="1jJ-dG-NNg">
@@ -1164,14 +1161,11 @@
                                         </textField>
                                         <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="f6D-9z-qNd">
                                             <rect key="frame" x="65" y="296" width="96" height="21"/>
-                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" drawsBackground="YES" id="9dB-wE-gsH">
+                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" enabled="NO" sendsActionOnEndEditing="YES" borderStyle="bezel" drawsBackground="YES" id="9dB-wE-gsH">
                                                 <font key="font" usesAppearanceFont="YES"/>
                                                 <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
-                                            <connections>
-                                                <binding destination="Voe-Tx-rLC" name="value" keyPath="canton_0_ion" id="l4J-OB-4YA"/>
-                                            </connections>
                                         </textField>
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="567-3W-PLK">
                                             <rect key="frame" x="14" y="299" width="36" height="16"/>
@@ -1189,7 +1183,7 @@
                                                 <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
                                             <connections>
-                                                <binding destination="Voe-Tx-rLC" name="value" keyPath="canton_0_pwm" id="wz5-Ik-e1a"/>
+                                                <binding destination="Voe-Tx-rLC" name="value" keyPath="C0_pwm" id="wV6-VR-xY7"/>
                                             </connections>
                                         </textField>
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="WcK-Sl-7YT">
@@ -1208,9 +1202,6 @@
                                                 <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
-                                            <connections>
-                                                <binding destination="Voe-Tx-rLC" name="value" keyPath="canton_0_centivon" id="DoQ-VM-Y88"/>
-                                            </connections>
                                         </textField>
                                         <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="LMZ-ks-gTv">
                                             <rect key="frame" x="184" y="325" width="96" height="21"/>
@@ -1223,13 +1214,10 @@
                                                 <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
-                                            <connections>
-                                                <binding destination="Voe-Tx-rLC" name="value" keyPath="bemfiir_centivolts" id="8zO-Nm-OIB"/>
-                                            </connections>
                                         </textField>
                                         <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="gYY-Nd-z3F">
                                             <rect key="frame" x="184" y="296" width="96" height="21"/>
-                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="lo9-CN-mrj">
+                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" enabled="NO" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="lo9-CN-mrj">
                                                 <numberFormatter key="formatter" formatterBehavior="default10_4" numberStyle="decimal" minimumIntegerDigits="1" maximumIntegerDigits="2000000000" maximumFractionDigits="3" id="kpk-bf-k2a"/>
                                                 <font key="font" metaFont="system"/>
                                                 <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -1238,9 +1226,6 @@
                                                     <binding destination="Voe-Tx-rLC" name="value" keyPath="target_bemf" id="uJ3-21-7S0"/>
                                                 </connections>
                                             </textFieldCell>
-                                            <connections>
-                                                <binding destination="Voe-Tx-rLC" name="value" keyPath="canton_0_ioff" id="qbZ-Ve-8X6"/>
-                                            </connections>
                                         </textField>
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="7YT-e7-ySa">
                                             <rect key="frame" x="182" y="227" width="100" height="16"/>
@@ -1260,9 +1245,6 @@
                                                 <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
-                                            <connections>
-                                                <binding destination="Voe-Tx-rLC" name="value" keyPath="target_bemf" id="LcV-i3-02I"/>
-                                            </connections>
                                         </textField>
                                     </subviews>
                                     <constraints>
@@ -1317,7 +1299,7 @@
                                                 <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
                                             <connections>
-                                                <binding destination="Voe-Tx-rLC" name="value" keyPath="canton_1_centivolts" id="m2o-YI-Y49"/>
+                                                <binding destination="Voe-Tx-rLC" name="value" keyPath="C1_vidx" id="ToZ-oP-m7f"/>
                                             </connections>
                                         </textField>
                                         <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="cod-UP-oeo">
@@ -1327,9 +1309,6 @@
                                                 <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
-                                            <connections>
-                                                <binding destination="Voe-Tx-rLC" name="value" keyPath="canton_1_intensity" id="B1e-KX-BFw"/>
-                                            </connections>
                                         </textField>
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="g6U-Nc-Xdf">
                                             <rect key="frame" x="11" y="325" width="36" height="16"/>
@@ -1373,9 +1352,6 @@
                                                 <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
-                                            <connections>
-                                                <binding destination="Voe-Tx-rLC" name="value" keyPath="canton_1_bemfcentivolt" id="pba-4s-jdp"/>
-                                            </connections>
                                         </textField>
                                         <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ZWP-k0-dZL">
                                             <rect key="frame" x="61" y="175" width="96" height="21"/>
@@ -1385,7 +1361,7 @@
                                                 <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
                                             <connections>
-                                                <binding destination="Voe-Tx-rLC" name="value" keyPath="canton_1_pwm" id="Utg-eZ-gCj"/>
+                                                <binding destination="Voe-Tx-rLC" name="value" keyPath="C1_pwm" id="Ehd-eV-qye"/>
                                             </connections>
                                         </textField>
                                         <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="MPi-tf-zBB">
@@ -1399,9 +1375,6 @@
                                                 <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
-                                            <connections>
-                                                <binding destination="Voe-Tx-rLC" name="value" keyPath="canton_1_centivon" id="YZZ-sQ-1he"/>
-                                            </connections>
                                         </textField>
                                     </subviews>
                                     <constraints>
@@ -1777,7 +1750,7 @@
                                             <rect key="frame" x="16" y="16" width="804" height="338"/>
                                             <clipView key="contentView" id="OXu-El-CJ6">
                                                 <rect key="frame" x="1" y="0.0" width="802" height="337"/>
-                                                <autoresizingMask key="autoresizingMask"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" headerView="71L-Yv-M5N" id="gBS-dQ-Fjb">
                                                         <rect key="frame" x="0.0" y="0.0" width="802" height="312"/>
@@ -1799,8 +1772,8 @@
                                                                 </textFieldCell>
                                                                 <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                             </tableColumn>
-                                                            <tableColumn identifier="centivolts" width="68" minWidth="40" maxWidth="1000" id="iRH-Zw-IWk">
-                                                                <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" title="Volts">
+                                                            <tableColumn identifier="C#_vidx" width="68" minWidth="40" maxWidth="1000" id="iRH-Zw-IWk">
+                                                                <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" title="VoltIDX">
                                                                     <font key="font" metaFont="smallSystem"/>
                                                                     <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                                     <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
@@ -1812,7 +1785,7 @@
                                                                 </textFieldCell>
                                                                 <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                             </tableColumn>
-                                                            <tableColumn identifier="pwm" width="66" minWidth="10" maxWidth="3.4028234663852886e+38" id="wmd-cg-L6s">
+                                                            <tableColumn identifier="C#_pwm" width="66" minWidth="10" maxWidth="3.4028234663852886e+38" id="wmd-cg-L6s">
                                                                 <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="PWM">
                                                                     <font key="font" metaFont="smallSystem"/>
                                                                     <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
@@ -1825,8 +1798,8 @@
                                                                 </textFieldCell>
                                                                 <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                             </tableColumn>
-                                                            <tableColumn identifier="bemfcentivolt" width="64" minWidth="10" maxWidth="3.4028234663852886e+38" id="8fs-jI-DTg">
-                                                                <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="BEMF">
+                                                            <tableColumn identifier="C#_dir" width="64" minWidth="10" maxWidth="3.4028234663852886e+38" id="8fs-jI-DTg">
+                                                                <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Dir">
                                                                     <font key="font" metaFont="smallSystem"/>
                                                                     <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -1838,7 +1811,7 @@
                                                                 </textFieldCell>
                                                                 <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                             </tableColumn>
-                                                            <tableColumn identifier="ion" width="62" minWidth="10" maxWidth="3.4028234663852886e+38" id="kON-vu-UWa">
+                                                            <tableColumn width="62" minWidth="10" maxWidth="3.4028234663852886e+38" id="kON-vu-UWa">
                                                                 <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Intensity">
                                                                     <font key="font" metaFont="smallSystem"/>
                                                                     <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
@@ -1851,7 +1824,7 @@
                                                                 </textFieldCell>
                                                                 <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                             </tableColumn>
-                                                            <tableColumn identifier="ioff" width="80" minWidth="10" maxWidth="3.4028234663852886e+38" id="zEv-EL-8SQ">
+                                                            <tableColumn width="80" minWidth="10" maxWidth="3.4028234663852886e+38" id="zEv-EL-8SQ">
                                                                 <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Ioff">
                                                                     <font key="font" metaFont="smallSystem"/>
                                                                     <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
@@ -2111,7 +2084,7 @@
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="109" y="138" width="708" height="600"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1280" height="800"/>
-            <view key="contentView" identifier="par_G0_test_mode" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="eW8-Bh-GGe">
+            <view key="contentView" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="eW8-Bh-GGe">
                 <rect key="frame" x="0.0" y="0.0" width="665" height="415"/>
                 <subviews>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Cnw-SD-Jxt">
@@ -2145,7 +2118,7 @@
                         </constraints>
                     </box>
                     <box ambiguous="YES" title="Notif" translatesAutoresizingMaskIntoConstraints="NO" id="UsH-T6-g9C">
-                        <rect key="frame" x="165" y="999" width="123" height="100"/>
+                        <rect key="frame" x="165" y="1184" width="123" height="100"/>
                         <view key="contentView" id="nGc-lB-NOm">
                             <rect key="frame" x="3" y="3" width="117" height="82"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -2613,7 +2586,7 @@
                         </textFieldCell>
                     </textField>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ZjS-L6-RW5">
-                        <rect key="frame" x="166" y="1304" width="46" height="16"/>
+                        <rect key="frame" x="166" y="1489" width="46" height="16"/>
                         <textFieldCell key="cell" lineBreakMode="clipping" title="Train 0" id="l0l-uz-MaN">
                             <font key="font" usesAppearanceFont="YES"/>
                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>

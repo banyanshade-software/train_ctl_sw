@@ -31,17 +31,29 @@ typedef struct {
     int numtrain; // or canton
 } meta_stat_t;
 
-#define NUM_META 3
+
+const stat_val_t statval_glob[] = {
+    { &gtick, 0,           sizeof(uint32_t)   _P("tick")},
+    { NULL,  0, 0 _P(NULL)}
+};
+
+#define NUM_META 4
 static meta_stat_t meta[NUM_META+1] = {
-    {statval_ctrl, 0, 0, NUM_TRAINS},
-    {statval_spdctrl, 0, 0, NUM_TRAINS},
-    {statval_canton, 0, 0, NUM_LOCAL_CANTONS_HW},
+    {statval_glob, 0, 0, 1},
+    // stats only on first 3 trains and first 4 blocks
+    {statval_ctrl, 0, 0, MIN(3,NUM_TRAINS)},
+    {statval_spdctrl, 0, 0, MIN(3,NUM_TRAINS)},
+    {statval_canton, 0, 0, MIN(4,NUM_LOCAL_CANTONS_HW)},
     //{statval_ina3221, 0, 0, 12},
     {NULL, 0, 0, 0}
 };
 
+static volatile int meta_ok = 0;
 static void build_meta(void)
 {
+    int ok = __sync_fetch_and_or(&meta_ok, 1);
+    if (ok) return;
+    
     meta_stat_t *m;
     for (m = &meta[0]; m->statval; m++) {
         const stat_val_t *v;
@@ -104,6 +116,11 @@ int  stat_iterator_next(stat_iterator_t *it)
 
 int32_t stat_val_get(stat_iterator_t *step, int *pdone)
 {
+    static int first = 1;
+    if (first) {
+        build_meta();
+        first=0;
+    }
 	*pdone = 0;
     meta_stat_t *m = &meta[step->midx];
     const stat_val_t *sv = &(m->statval[step->vidx]);
@@ -139,51 +156,27 @@ int32_t stat_val_get(stat_iterator_t *step, int *pdone)
 }
 #endif
 
-
-int get_val_info(int step, off_t *poffset, int *plen, int *ptridx, int *pcntidx, const char  **pzName, int numtrain, int numcanton)
+#ifdef HOST_SIDE
+int get_val_info(stat_iterator_t *step,
+                 off_t *poffset, int *plen, int *pidx, const char  **pzName)
 {
     static int first = 1;
     if (first) {
         build_meta();
         first=0;
     }
-#if 0
-    *ptridx = -1;
-    *pcntidx = -1;
-    *pzName = NULL;
+    meta_stat_t *m = &meta[step->midx];
+    const stat_val_t *sv = &(m->statval[step->vidx]);
+    //uint8_t *cptr = (uint8_t *)(sv->ptr);
+    //uint8_t *vars = cptr + step->tidx * m->structsize;
     
-    if (!numvaltrain) return 0;
-    
-    int nt = step / numvaltrain;
-    if (nt>=NUM_TRAINS) {
-        // canton
-        step -= NUM_TRAINS*numvaltrain;
-        int nc = step / numvalcanton;
-        if (nc >= NUM_LOCAL_CANTONS_SW) {
-            // done
-            return -1;
-        }
-        int idx = step % numvalcanton;
-        const stat_val_t *sv = &statvalcanton[idx];
-        *poffset = sv->off;
-        *plen = sv->l;
-        *pcntidx = nc;
-#ifdef HOST_SIDE
-        *pzName = sv->param_name;
-#endif
-    } else {
-        int idx = step % numvaltrain;
-        const stat_val_t *sv = &statvaltrain[idx];
-        *poffset = sv->off;
-        *plen = sv->l;
-        *ptridx = nt;
-#ifdef HOST_SIDE
-        *pzName = sv->param_name;
-#endif
-    }
-#endif
+    *poffset = sv->off;
+    *plen = sv->l;
+    *pidx = step->tidx;
+    *pzName = sv->param_name;
+
     return 0;
 }
 
-
+#endif //HOST_SIDE
 

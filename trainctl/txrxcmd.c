@@ -487,22 +487,29 @@ void txframe_send_stat(void)
     txframe_send(&m, 1);
 }
 
+uint32_t gtick = 0;
+
 void frame_send_stat(void(*cb)(uint8_t *d, int l), uint32_t tick)
 {
 	stat_on_progress = 1;
     uint8_t buf[8];
     //if ((1)) tick = 0xAA55AA55;
-    int l = _frm_escape2(buf, (void *) &tick, 4, 8);
-    cb(buf, l);
+    //int l = _frm_escape2(buf, (void *) &tick, 4, 8); // tick now handld as normal stat
+    //cb(buf, l);
 
 	stat_iterator_t step;
     int eos = stat_iterator_reset(&step);
+    gtick = tick;
     
+    int nv = 0; // for debug only, num of val
+    int nb = 0; // and num of bytes
     for (;!eos; eos=stat_iterator_next(&step)) {
-		l = frame_gather_stat(&step, buf);
+		int l = frame_gather_stat(&step, buf);
 		if (l<=0) {
 			return;
 		}
+        nv++;
+        nb += l;
 		cb(buf, l);
 	}
     stat_on_progress = 0;

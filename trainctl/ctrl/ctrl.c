@@ -63,12 +63,12 @@ static train_ctrl_t trctl[NUM_TRAINS] = {0};
 // -----------------------------------------------------------
 
 const stat_val_t statval_ctrl[] = {
-        { trctl, offsetof(train_ctrl_t, _state),           sizeof(train_state_t)   _P("ctrl_state")},
-        { trctl, offsetof(train_ctrl_t, _target_speed),    sizeof(uint16_t)        _P("ctrl_target_speed")},
-        { trctl, offsetof(train_ctrl_t, canton1_addr),     sizeof(uint8_t)         _P("ctrl_canton1_addr")},
-        { trctl, offsetof(train_ctrl_t, canton2_addr),     sizeof(uint8_t)         _P("ctrl_canton2_addr")},
-        { trctl, offsetof(train_ctrl_t, desired_speed),    sizeof(uint16_t)        _P("ctrl_desired_speed")},
-        { trctl, offsetof(train_ctrl_t, spd_limit),        sizeof(uint16_t)        _P("ctrl_spd_limit")},
+        { trctl, offsetof(train_ctrl_t, _state),           sizeof(train_state_t)   _P("T#_ctrl_state")},
+        { trctl, offsetof(train_ctrl_t, _target_speed),    sizeof(uint16_t)        _P("T#_ctrl_target_speed")},
+        { trctl, offsetof(train_ctrl_t, canton1_addr),     sizeof(uint8_t)         _P("T#_ctrl_canton1_addr")},
+        { trctl, offsetof(train_ctrl_t, canton2_addr),     sizeof(uint8_t)         _P("T#_ctrl_canton2_addr")},
+        { trctl, offsetof(train_ctrl_t, desired_speed),    sizeof(uint16_t)        _P("T#_ctrl_desired_speed")},
+        { trctl, offsetof(train_ctrl_t, spd_limit),        sizeof(uint16_t)        _P("T#_ctrl_spd_limit")},
         { NULL,  sizeof(train_ctrl_t), 0 _P(NULL)}
 };
 

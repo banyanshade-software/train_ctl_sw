@@ -70,7 +70,7 @@ const stat_val_t statval_canton[] = {
         { canton_vars, offsetof(canton_vars_t, cur_voltidx) , 1      _P("C#_vidx")},
         { canton_vars, offsetof(canton_vars_t, cur_pwm_duty) , 2     _P("C#_pwm")},
         
-        { NULL, 0, sizeof(canton_vars_t) _P(NULL)}
+        { NULL, sizeof(canton_vars_t), 0  _P(NULL)}
 };
 
 // ------------------------------------------------------

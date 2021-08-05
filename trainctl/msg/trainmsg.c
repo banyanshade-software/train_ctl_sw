@@ -35,7 +35,7 @@ LFMQUEUE_DEF_C(to_forward_usb, msg_64_t,	8, 1)
 LFMQUEUE_DEF_C(from_forward_usb, msg_64_t,  16, 0)
 
 
-LFMQUEUE_DEF_C(to_ctrl, msg_64_t, 		12, 0)
+LFMQUEUE_DEF_C(to_ctrl, msg_64_t, 		16, 0)
 LFMQUEUE_DEF_C(from_ctrl, msg_64_t, 	12, 0)
 
 

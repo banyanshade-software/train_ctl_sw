@@ -951,10 +951,13 @@ static int frm_unescape(uint8_t *buf, int len)
     }
     int nt=0;
     int16_t v;
-    switch (frm.param[2]) {
+    msg_64_t m;
+    memcpy(&m, frm.param, sizeof(m));
+
+    switch (m.cmd) {
         case CMD_NOTIF_SPEED:
-            nt = frm.param[1] & 0x07;
-            v = (frm.param[3]<<8) | frm.param[2];
+            nt = m.from & 0x07;
+            v = m.v1u;
             NSLog(@"train %d spd %d\n", nt, v);
             self.curspeed = v;
             break;
@@ -1089,7 +1092,7 @@ static int frm_unescape(uint8_t *buf, int len)
             NSLog(@"short stat frame");
             goto done;
         }
-        //NSLog(@"stat : '%s'[%d] = %d\n", name ? name : "_", idx, v);
+        //if (!strcmp(name, "C#_pwm")) NSLog(@"stat : '%s'[%d] = %d\n", name ? name : "_", idx, v);
         NSString *key = nil;
 
         static NSMutableSet *unhandled_key = nil;
@@ -1115,7 +1118,7 @@ static int frm_unescape(uint8_t *buf, int len)
             [trains_value setValue:nsv forKey:nkey];
         }
         if (![unhandled_key containsObject:nkey]) {
-            NSLog(@"---- %@\n", key);
+            //NSLog(@"---- %@\n", key);
             @try {
                 [self setValue:nsv forKey:nkey];
             } @catch (NSException *exception) {
@@ -1142,6 +1145,7 @@ done:
         _recordState = 2;
     }
     [self.cantonTableView reloadData];
+    [self.trainTableView reloadData];
 }
 
 
@@ -1166,11 +1170,11 @@ done:
     if ([cn isEqual:@"canton_num"]) return @(row);
     if ([cn isEqual:@"num"]) return @(row);
     if ([cn isEqual:@"train_num"]) return @(row);
-    NSString *sr = [NSString stringWithFormat:@"%d", row];
+    NSString *sr = [NSString stringWithFormat:@"%d", (int) row];
     NSString *k = [cn stringByReplacingOccurrencesOfString:@"#" withString:sr];
     //NSString *k = [NSString stringWithFormat:@"C%d_%@", (int)row, cn];
     NSNumber *n = [dic objectForKey:k];
-    if (cantons_value && !n) {
+    if (dic && !n) {
         if ((0)) NSLog(@"unknown %@",k);
     }
     return n;
@@ -1298,39 +1302,26 @@ void task_auto_stop_auto(void)
     NSTimeInterval dt = t-lastSimu;
     lastSimu = t;
     uint32_t ticks = (uint32_t)(dt * 1000.0);
-    double bemf = [_simTrain0 bemfAfter:ticks sinceStart:(t-t0)];
-    // xxxx
-    int bemfi = -(bemf/4.545) * 3.3 *4096;
-    //NSLog(@"bemf %f -> %d\n", bemf, bemfi);
+    
     
     for (int i =0; i<2; i++) {
         memset((void*)&(train_adc_buf[i]), 0, sizeof(adc_buf_t));
     }
-    int n1 = [_simTrain0 simuCurCanton];
-    if (n1>=0) {
-        train_adc_buf[0].off[n1].vA = (bemfi>0) ? 0 : -bemfi;
-        train_adc_buf[0].off[n1].vB = (bemfi>0) ? bemfi : 0;
+    
+    [_simTrain0 computeTrainsAfter:ticks sinceStart:(t-t0)];
+    for (int nc = 0; nc < NUM_LOCAL_CANTONS_HW; nc++) {
+        double bemf = [_simTrain0 bemfForCantonNum:nc];
+        // xxxx
+        int bemfi = -(bemf/4.545) * 3.3 *4096;
+        //NSLog(@"bemf %f -> %d\n", bemf, bemfi);
+        train_adc_buf[0].off[nc].vA = (bemfi>0) ? 0 : -bemfi;
+        train_adc_buf[0].off[nc].vB = (bemfi>0) ? bemfi : 0;
     }
-    int n2 = [_simTrain0 simuNextCanton];
-    if (n2>=0) {
-        train_adc_buf[0].off[n2].vA = (bemfi>0) ? 0 : -bemfi;
-        train_adc_buf[0].off[n2].vB = (bemfi>0) ? bemfi : 0;
-    }
+    
 
     int notif = NOTIF_NEW_ADC_1;
-    /*
-     bemf_tick(notif, t, dt);
-     itm_debug1(DBG_LOWCTRL, "--msg", dt);
-     msgsrv_tick(notif, t, dt);
-     itm_debug1(DBG_LOWCTRL, "--spdctl", dt);
-     spdctl_run_tick(notif, t, dt);
-     itm_debug1(DBG_LOWCTRL, "--canton", dt);
-     canton_tick(notif, t, dt);
-     itm_debug1(DBG_LOWCTRL, "--trnout", dt);
-     turnout_tick(notif, t, dt);
-     itm_debug1(DBG_LOWCTRL, "--ctrl", dt);
-     ctrl_run_tick(notif, t, dt);
-     */
+   
+    
     bemf_tick(notif, t, dt);
     msgsrv_tick(notif, t, dt);
     spdctl_run_tick(notif, t, dt);
@@ -1340,12 +1331,6 @@ void task_auto_stop_auto(void)
     usbPollQueues();
     ctrl_run_tick(notif, t, dt);
 
-    /*
-    train_run_tick(NOTIF_NEW_ADC_1, (t-t0)*1000, ticks);
-    task_auto_notif |= AUTO1_NOTIF_TICK;
-    //auto1_run(task_auto_notif, (t-t0)*1000);
-    task_auto_notif = 0;
-     */
 }
 
 void train_simu_canton_volt(int numcanton, int voltidx, int vlt100)
@@ -1356,6 +1341,9 @@ void train_simu_canton_volt(int numcanton, int voltidx, int vlt100)
 - (void) simuSetVoltCanton:(int)numcanton voltidx:(int)voltidx vlt100:(int)vlt100
 {
     double vlt = vlt100/100.0;
+    // TODO addr to num canton
+    [_simTrain0 setVolt:vlt forCantonNum:numcanton];
+#if 0
     if (numcanton == [_simTrain0 simuCurCanton]) {
         [_simTrain0 setVolt:vlt];
     }
@@ -1372,6 +1360,7 @@ void train_simu_canton_volt(int numcanton, int voltidx, int vlt100)
         default:
             break;
     }
+#endif
 }
 
 void train_simu_canton_set_pwm(int numcanton, int8_t dir, int duty)
@@ -1381,7 +1370,9 @@ void train_simu_canton_set_pwm(int numcanton, int8_t dir, int duty)
 
 - (void) simuSetPwmCanton:(int)numcanton dir:(int)dir duty:(int)duty
 {
-    int sduty = duty*dir;
+    //int sduty = duty*dir;
+    [_simTrain0 setPwm:duty dir:dir forCantonNum:numcanton];
+#if 0
     if (numcanton == [_simTrain0 simuCurCanton]) {
         [_simTrain0 setPwm:duty dir:dir];
     }
@@ -1395,6 +1386,7 @@ void train_simu_canton_set_pwm(int numcanton, int8_t dir, int duty)
         default:
             break;
     }
+#endif
 }
 
 // connection to trainctl simu can be either

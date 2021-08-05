@@ -10,20 +10,21 @@
 #import "railconfig.h"
 
 @interface SimTrain ()
-@property (nonatomic,readwrite) double speed;
+//@property (nonatomic,readwrite) double speed;
 @end
+
+
 @implementation SimTrain {
-    double volt;
-    double pwm;
-    int dir;
+    double volt[NUM_CANTONS];
+    double pwm[NUM_CANTONS];
+    int dir[NUM_CANTONS];
+    double bemf[NUM_CANTONS];
     
-    double power;
-    
-    double position;
-    double len;
-    //double c1_len;
-    int c0;
-    int c1;
+    double speed[NUM_TRAINS];
+    double position[NUM_TRAINS];
+
+    int c1[NUM_TRAINS];
+    int cold[NUM_TRAINS];
 }
 
 @synthesize speed = _speed;
@@ -32,117 +33,73 @@
 {
     self = [super init];
     if (!self) return nil;
-    c0 = 0;
-    c1 = 0xFF;
-    position = 0;
-    //const block_canton_config_t *bcnf = get_block_canton_cnf(c0);
-    len = 100; //bcnf->len;
+    for (int i=0; i<NUM_TRAINS; i++) {
+        c1[i] = -1;
+        cold[i] = -1;
+        speed[i] = 0;
+        position[i] = 0;
+    }
+    for (int i=0; i<NUM_CANTONS; i++) {
+        bemf[i] = 0.0;
+        volt[i] = 2.0;
+        pwm[i] = 0;
+        dir[i] = 0;
+    }
+    c1[0] = 1;
+   
     return self;
 }
 
-- (void)setVolt:(double)v
+- (void)setVolt:(double)v forCantonNum:(int)numc
 {
-    volt = v;
-    [self updatePower];
+    NSAssert(numc>=0, @"bad numc");
+    NSAssert(numc<NUM_CANTONS, @"bad numc");
+    volt[numc] = v;
 }
-- (void)setPwm:(double)p dir:(int)d
+- (void)setPwm:(double)p dir:(int)d forCantonNum:(int)numc
 {
-    pwm = p;
-    dir = d;
-    
-    [self updatePower];
-}
-
-- (void) updatePower
-{
-    power = volt*pwm/1000.0; // 0-1
+    NSAssert(numc>=0, @"bad numc");
+    NSAssert(numc<NUM_CANTONS, @"bad numc");
+    pwm[numc] = p;
+    dir[numc] = d;
 }
 
-- (double) bemfAfter:(NSTimeInterval)ellapsed sinceStart:(NSTimeInterval)ts
+
+- (void) computeTrainsAfter:(NSTimeInterval)ellapsed sinceStart:(NSTimeInterval)ts
+{
+    if (ellapsed<20) {
+        NSLog(@"ellapsed %f small", ellapsed);
+    }
+    for (int i=0; i<NUM_CANTONS; i++) {
+        bemf[i]=0.0;
+    }
+    for (int tn=0; tn<NUM_TRAINS; tn++) {
+        if (c1[tn]<0) continue;
+        int cn = c1[tn];
+        NSAssert(cn>=0, @"bad cn");
+        NSAssert(cn<NUM_CANTONS, @"bad cn");
+        double spower = volt[cn]*pwm[cn]/1000.0;
+        NSLog(@"train %d power %f", tn, spower);
+        const canton_config_t *cnf = get_canton_cnf(cn); // canton num / canton addr /local etc TODO
+        speed[tn] = spower * 5.0;
+        double be = spower * 2.10 / 10.0;
+        bemf[cn] = be * (cnf->reverse_bemf ? -1 : 1);
+        int co = cold[tn];
+        if (co>=0) {
+            cnf = get_canton_cnf(co);
+            bemf[co] = be * (cnf->reverse_bemf ? -1 : 1);
+            cold[tn] = -1;
+        }
+    }
+}
+
+- (double) bemfForCantonNum:(int)numc
 {
     // power to speed
     // no inertia after 20ms
-
-    double s; // 0 -1
-    if (power<0.30) s = 0;
-    else s = dir*(power-0.30);
-    if (ellapsed<20) {
-        s = (ellapsed*s - (20-ellapsed)*_speed)/20;
-    }
-    //s += ((rand()%100)-50)*0.001;
-    if (ts>10) {
-        s = s*.7; // steep for instance
-    }
-    position += s;
-    self.speed = s;
-    // full speed : 1V
-    double bemf = _speed / 5;
-    //bemf += (rand()%100-50)*0.001; // more noise
-    //bemf *= dir;
-    
-    int d=0;
-    double delta=-1;
-    if (position<0) {
-        //NSLog(@"neg pos");
-        if (s>0) {
-            NSLog(@"but speed>0 ?");
-        }
-        d = -1;
-        delta = -position;
-    } else if (position>=len) {
-        if (s<0) {
-            NSLog(@"but speed<0 ?");
-        }
-        d = 1;
-        delta = position-len;
-    }
-    if (d) {
-        NSAssert(delta>=0, @"holala");
-        if (c1==0xFF) {
-            [self findC1:d];
-            if (c1==0xFF) {
-                NSLog(@"end of track");
-                position = (d>=0) ? len : 0;
-            }
-        } else if (delta>0.9) {
-            c0 = c1;
-            c1 = 0xFF;
-            position = 0;
-            len = 0;
-            if (c0 != 0xFF) {
-                //const block_canton_config_t *bcnf = get_block_canton_cnf(c0);
-                len = 0;//bcnf->len;
-                position = (d>=0) ? 0 : len;
-            }
-        }
-    }
-    return bemf;
+    return bemf[numc];
 }
 
-- (void) findC1:(int)dir
-{
-    if (dir>0) {
-        switch (c0) {
-            case 0: c1 = 2; break;
-            case 1: c1 = 2; break;
-            default: c1 = 0xFF; break;
-        }
-    } else {
-        switch (c0) {
-            case 0: c1 = 0xFF; break;
-            case 1: c1 = 0xFF; break;
-            default: c1 = 1; break;
-        }    }
-}
-
-- (int) simuCurCanton
-{
-    return (c0==0xFF) ? -1 : c0;
-}
-- (int) simuNextCanton
-{
-    return (c1==0xFF) ? -1 : c1;
-}
 
 
 

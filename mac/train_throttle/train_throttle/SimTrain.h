@@ -14,13 +14,16 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic,readonly) double speed;
 
-- (void)setVolt:(double)volt;
-- (void)setPwm:(double)duty dir:(int)d;
-- (double) bemfAfter:(NSTimeInterval)ellapsed sinceStart:(NSTimeInterval)ts;
+- (void)setVolt:(double)volt forCantonNum:(int)numc;
+- (void)setPwm:(double)duty dir:(int)d forCantonNum:(int)numc;
+
+- (void) computeTrainsAfter:(NSTimeInterval)ellapsed sinceStart:(NSTimeInterval)ts;
+
+- (double) bemfForCantonNum:(int)numc;
 
 
-- (int) simuCurCanton;
-- (int) simuNextCanton;
+//- (int) simuCurCanton;
+//- (int) simuNextCanton;
 
 @end
 

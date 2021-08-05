@@ -8,6 +8,7 @@
 
 #import "SimTrain.h"
 #import "railconfig.h"
+#include "topology.h"
 
 @interface SimTrain ()
 //@property (nonatomic,readwrite) double speed;
@@ -62,6 +63,7 @@
     NSAssert(numc<NUM_CANTONS, @"bad numc");
     pwm[numc] = p;
     dir[numc] = d;
+    //NSLog(@"setPwm %f dir %d cn=%d", p, d, numc);
 }
 
 
@@ -78,10 +80,15 @@
         int cn = c1[tn];
         NSAssert(cn>=0, @"bad cn");
         NSAssert(cn<NUM_CANTONS, @"bad cn");
+        const canton_config_t *cnf = get_canton_cnf(cn); // canton num / canton addr /local etc TODO
+        
+        // update pos
+        position[tn] += dir[tn]*speed[tn]*ellapsed/1000;
+        NSLog(@"xxxtrain %d pos: %f len %d", tn, position[tn], get_blk_len(cn));
+        
         double spower = volt[cn]*pwm[cn]/1000.0;
         NSLog(@"train %d power %f", tn, spower);
-        const canton_config_t *cnf = get_canton_cnf(cn); // canton num / canton addr /local etc TODO
-        speed[tn] = spower * 5.0;
+        speed[tn] = spower * 25.0;
         double be = spower * 2.10 / 10.0;
         bemf[cn] = be * (cnf->reverse_bemf ? -1 : 1);
         int co = cold[tn];

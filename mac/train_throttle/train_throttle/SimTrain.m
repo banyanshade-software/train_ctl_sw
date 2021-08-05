@@ -80,15 +80,41 @@
         int cn = c1[tn];
         NSAssert(cn>=0, @"bad cn");
         NSAssert(cn<NUM_CANTONS, @"bad cn");
-        const canton_config_t *cnf = get_canton_cnf(cn); // canton num / canton addr /local etc TODO
         
         // update pos
         position[tn] += dir[tn]*speed[tn]*ellapsed/1000;
+        int blen = get_blk_len(cn);
         NSLog(@"xxxtrain %d pos: %f len %d", tn, position[tn], get_blk_len(cn));
-        
+        if (dir[tn]>0) {
+            if (position[tn]>blen) {
+                int nb = _next_block_num(cn, 0);
+                if (nb<0) {
+                    NSLog(@"END OF TRACK !!");
+                } else {
+                    cold[tn] = cn;
+                    cn = nb;
+                    c1[tn] = nb;
+                    position[tn] = 0;
+                }
+            }
+        } else if (dir[tn]<0) {
+            if (position[tn]<-blen) {
+                int nb = _next_block_num(cn, 1);
+                if (nb<0) {
+                    NSLog(@"END OF TRACK !!");
+                } else {
+                    cold[tn] = cn;
+                    cn = nb;
+                    c1[tn] = nb;
+                    position[tn] = 0;
+                }
+            }
+        }
+        const canton_config_t *cnf = get_canton_cnf(cn); // canton num / canton addr /local etc TODO
+
         double spower = volt[cn]*pwm[cn]/1000.0;
         NSLog(@"train %d power %f", tn, spower);
-        speed[tn] = spower * 25.0;
+        speed[tn] = spower * 5.0;
         double be = spower * 2.10 / 10.0;
         bemf[cn] = be * (cnf->reverse_bemf ? -1 : 1);
         int co = cold[tn];

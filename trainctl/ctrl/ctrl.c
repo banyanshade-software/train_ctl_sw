@@ -21,7 +21,7 @@ static uint8_t ignore_bemf_presence = 0;
 static uint8_t ignore_ina_presence = 1;
 
 
-#define SCEN_TWOTRAIN 	1
+#define SCEN_TWOTRAIN 	0
 #define EOT_SPD_LIMIT	50   //20
 
 // timers number

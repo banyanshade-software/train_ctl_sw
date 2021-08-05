@@ -77,6 +77,7 @@ typedef void (^respblk_t)(void);
     NSFileHandle *recordFile;
     NSMutableDictionary *recordItems;
     NSMutableDictionary *cantons_value;
+    NSMutableDictionary *trains_value;
     // plot
     uint32_t graph_t0;
     NSTask *gnuplotTask;
@@ -1067,7 +1068,8 @@ static int frm_unescape(uint8_t *buf, int len)
     //if ((1)) return;
     
     cantons_value = [[NSMutableDictionary alloc]initWithCapacity:25];
-    
+    trains_value = [[NSMutableDictionary alloc]initWithCapacity:25];
+
     int nval = frm.pidx / 4;
     uint32_t *ptr = frm.param32;
     //uint32_t tick = *ptr++;
@@ -1109,10 +1111,11 @@ static int frm_unescape(uint8_t *buf, int len)
         NSNumber *nsv = @(v);
         if ([key hasPrefix:@"C#_"]) {
             [cantons_value setValue:nsv forKey:nkey];
+        } else if ([key hasPrefix:@"T#_"]) {
+            [trains_value setValue:nsv forKey:nkey];
         }
-        
         if (![unhandled_key containsObject:nkey]) {
-            //NSLog(@"---- %@\n", key);
+            NSLog(@"---- %@\n", key);
             @try {
                 [self setValue:nsv forKey:nkey];
             } @catch (NSException *exception) {
@@ -1149,13 +1152,24 @@ done:
 
 - (id)tableView:(NSTableView *)tableView objectValueForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row
 {
+    NSDictionary *dic = nil;
+    if (tableView == _cantonTableView) {
+        dic = cantons_value;
+    } else if (tableView == _trainTableView) {
+        dic = trains_value;
+    } else {
+        NSLog(@"hu?");
+        return nil;
+    }
     NSString *cn = [tableColumn identifier];
     if (![cn length]) return @"-";
     if ([cn isEqual:@"canton_num"]) return @(row);
+    if ([cn isEqual:@"num"]) return @(row);
+    if ([cn isEqual:@"train_num"]) return @(row);
     NSString *sr = [NSString stringWithFormat:@"%d", row];
     NSString *k = [cn stringByReplacingOccurrencesOfString:@"#" withString:sr];
     //NSString *k = [NSString stringWithFormat:@"C%d_%@", (int)row, cn];
-    NSNumber *n = [cantons_value objectForKey:k];
+    NSNumber *n = [dic objectForKey:k];
     if (cantons_value && !n) {
         if ((0)) NSLog(@"unknown %@",k);
     }

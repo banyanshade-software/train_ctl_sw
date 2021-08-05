@@ -36,6 +36,7 @@
 
 @property (nonatomic, weak) IBOutlet NSView *paramView;
 @property (nonatomic, weak) IBOutlet NSTableView *cantonTableView;
+@property (nonatomic, weak) IBOutlet NSTableView *trainTableView;
 
 @property (nonatomic) double target_bemf;
 

@@ -67,11 +67,11 @@
 }
 
 
-- (void) computeTrainsAfter:(NSTimeInterval)ellapsed sinceStart:(NSTimeInterval)ts
+- (void) computeTrainsAfter:(uint32_t)ellapsed sinceStart:(uint32_t)ts
 {
-    if (ellapsed<20) {
-        NSLog(@"ellapsed %f small", ellapsed);
-    }
+    //if (ellapsed<20) {
+    //    NSLog(@"ellapsed %f small", ellapsed);
+    //}
     for (int i=0; i<NUM_CANTONS; i++) {
         bemf[i]=0.0;
     }
@@ -82,7 +82,7 @@
         NSAssert(cn<NUM_CANTONS, @"bad cn");
         
         // update pos
-        position[tn] += dir[tn]*speed[tn]*ellapsed/1000;
+        position[tn] += speed[tn]*ellapsed/1000;
         int blen = get_blk_len(cn);
         NSLog(@"xxxtrain %d pos: %f len %d", tn, position[tn], get_blk_len(cn));
         if (dir[tn]>0) {
@@ -112,15 +112,17 @@
         }
         const canton_config_t *cnf = get_canton_cnf(cn); // canton num / canton addr /local etc TODO
 
-        double spower = volt[cn]*pwm[cn]/1000.0;
+        double spower = dir[cn]*volt[cn]*pwm[cn]/1000.0;
         NSLog(@"train %d power %f", tn, spower);
-        speed[tn] = spower * 5.0;
+        speed[tn] = spower * 50.0;
         double be = spower * 2.10 / 10.0;
-        bemf[cn] = be * (cnf->reverse_bemf ? -1 : 1);
+        int revbemf = cnf->reverse_bemf;
+        revbemf = 0;
+        bemf[cn] = be * (revbemf ? -1 : 1);
         int co = cold[tn];
         if (co>=0) {
             cnf = get_canton_cnf(co);
-            bemf[co] = be * (cnf->reverse_bemf ? -1 : 1);
+            bemf[co] = be * (revbemf ? -1 : 1);
             cold[tn] = -1;
         }
     }

@@ -17,7 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)setVolt:(double)volt forCantonNum:(int)numc;
 - (void)setPwm:(double)duty dir:(int)d forCantonNum:(int)numc;
 
-- (void) computeTrainsAfter:(NSTimeInterval)ellapsed sinceStart:(NSTimeInterval)ts;
+- (void) computeTrainsAfter:(uint32_t)ellapsed sinceStart:(uint32_t)ts;
 
 - (double) bemfForCantonNum:(int)numc;
 

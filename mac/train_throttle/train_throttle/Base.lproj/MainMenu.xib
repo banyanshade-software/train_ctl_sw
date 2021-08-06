@@ -1703,14 +1703,14 @@
                                             </connections>
                                         </button>
                                         <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="dNW-25-dVW">
-                                            <rect key="frame" x="122" y="207" width="83" height="25"/>
-                                            <popUpButtonCell key="cell" type="push" title="power" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="DgP-sL-kcM" id="XP9-nh-ts4">
+                                            <rect key="frame" x="122" y="207" width="84" height="25"/>
+                                            <popUpButtonCell key="cell" type="push" title="power0" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="DgP-sL-kcM" id="XP9-nh-ts4">
                                                 <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                                 <font key="font" metaFont="menu"/>
                                                 <menu key="menu" id="9zT-1A-LqK">
                                                     <items>
-                                                        <menuItem title="power" state="on" id="DgP-sL-kcM" userLabel="power"/>
-                                                        <menuItem title="power2" id="zQ1-6B-Kqs"/>
+                                                        <menuItem title="power0" state="on" id="DgP-sL-kcM" userLabel="power"/>
+                                                        <menuItem title="Vsense" id="zQ1-6B-Kqs"/>
                                                         <menuItem title="BEMF" id="bz2-Mr-Qg4" userLabel="BEMF"/>
                                                         <menuItem title="PID" id="i1r-NN-nrb"/>
                                                         <menuItem title="inertia" id="bmz-hi-zv5"/>

@@ -1130,7 +1130,7 @@ static int frm_unescape(uint8_t *buf, int len)
         if (_recordState == 1) {
             if (!recordItems) recordItems=[[NSMutableDictionary alloc]init];
             
-            if (nkey) [recordItems setObject:@(validx+1) forKey:nkey];
+            if (nkey) [recordItems setObject:@(validx) forKey:nkey];
             NSString *s = [NSString stringWithFormat:@"%@, ", nkey ? nkey : @"_"];
             [recordFile writeData:[s dataUsingEncoding:NSUTF8StringEncoding]];
         } else if (_recordState) {
@@ -1272,7 +1272,7 @@ static AppDelegate *theDelegate = nil;
     self.simTrain0 = [[SimTrain alloc]init];
     lastSimu = [NSDate timeIntervalSinceReferenceDate];
     t0 = lastSimu;
-    simuTimer = [NSTimer timerWithTimeInterval:0.1 target:self selector:@selector(simuTimer) userInfo:nil repeats:YES];
+    simuTimer = [NSTimer timerWithTimeInterval:0.01 target:self selector:@selector(simuTimer) userInfo:nil repeats:YES];
     [[NSRunLoop mainRunLoop]addTimer:simuTimer forMode:NSDefaultRunLoopMode];
 
     _testMode = -1;
@@ -1298,17 +1298,18 @@ void task_auto_stop_auto(void)
     dispatch_once(&onceToken, ^{
         t0 = [NSDate timeIntervalSinceReferenceDate];
     });
-    NSTimeInterval t = [NSDate timeIntervalSinceReferenceDate];
+    NSTimeInterval t = [NSDate timeIntervalSinceReferenceDate]-t0;
     NSTimeInterval dt = t-lastSimu;
     lastSimu = t;
-    uint32_t ticks = (uint32_t)(dt * 1000.0);
-    
+    uint32_t mdt = (uint32_t)(dt * 1000.0);
+    uint32_t mt = (uint32_t)(t * 1000.0);
+
     
     for (int i =0; i<2; i++) {
         memset((void*)&(train_adc_buf[i]), 0, sizeof(adc_buf_t));
     }
     
-    [_simTrain0 computeTrainsAfter:ticks sinceStart:(t-t0)];
+    [_simTrain0 computeTrainsAfter:mdt sinceStart:mt];
     for (int nc = 0; nc < NUM_LOCAL_CANTONS_HW; nc++) {
         double bemf = [_simTrain0 bemfForCantonNum:nc];
         // xxxx
@@ -1322,14 +1323,14 @@ void task_auto_stop_auto(void)
     int notif = NOTIF_NEW_ADC_1;
    
     
-    bemf_tick(notif, t, dt);
-    msgsrv_tick(notif, t, dt);
-    spdctl_run_tick(notif, t, dt);
-    //msgsrv_tick(notif, t, dt);
-    canton_tick(notif, t, dt);
-    turnout_tick(notif, t, dt);
+    bemf_tick(notif,        mt, mdt);
+    msgsrv_tick(notif,      mt, mdt);
+    spdctl_run_tick(notif,  mt, mdt);
+    //msgsrv_tick(notif,    mt, mdt);
+    canton_tick(notif,      mt, mdt);
+    turnout_tick(notif,     mt, mdt);
     usbPollQueues();
-    ctrl_run_tick(notif, t, dt);
+    ctrl_run_tick(notif,    mt, mdt);
 
 }
 
@@ -1607,21 +1608,22 @@ void notif_target_bemf(const train_config_t *cnf, train_vars_t *vars, int32_t va
     @{ @"power0"  : @[ @"tick", @"T0_ctrl_target_speed", @"T0_spd_curspeed",
                       @"C0_pwm", @"C0_vidx", @"C1_pwm", @"C1_vidx", @"C2_pwm", @"C2_vidx"],
        //@"power2" : @[ @"spd_curspeed", /*@"canton_0_centivolts",*/ @"C0_pwm", @"C0_vidx"],
-       @"BEMF"   : @[ @"tick",  @"T0_bemf_mv",  @"T0_spd_pid_sum_e"],
+       @"BEMF"   : @[ @"tick",  @"T0_bemf_mv" /*,  @"T0_pid_sum_e"*/],
        @"Vsense" : @[ @"tick",  @"T0_bemf_mv"],
 
-       @"PID"    : @[ @"tick", @"T0_spd_pid_target", @"T0_bemf_mv", @"T0_spd_pid_last_err", @"T0_spd_pid_sum_e"],
+       @"PID"    : @[ @"tick", @"T0_pid_target",@"T0_pid_target_v", @"T0_bemf_mv", @"T0_pid_last_err", @"T0_pid_sum_e"],
        @"inertia": @[@"T0_ine_t", @"T0_ine_c"],
-       @"pose"   : @[@"T0_spd_curspeed", @"T0_bemf_mv", @"dir", @"pose", @"pose_trig"]
+       @"pose"   : @[@"tick", @"T0_spd_curspeed", @"T0_bemf_mv", @"T0_ctrl_dir", @"T0_pose", @"T0_pose_trig"]
     };
     NSString *k = nil;
     switch (ngraph) {
-        case 0: k=@"power"; break;
-        case 1: k=@"power2"; break;
+        case 0: k=@"power0"; break;
+        case 1: k=@"Vsense"; break;
         case 2: k=@"BEMF"; break;
         case 3: k=@"PID"; break;
         case 4: k=@"inertia"; break;
         case 5: k=@"pose"; break;
+            //Vsense
         default: return;
     }
     NSArray *t = [graphs objectForKey:k];

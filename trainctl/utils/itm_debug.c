@@ -41,7 +41,7 @@
 
 #define DBG_
 #ifdef TRAIN_SIMU
-char* itoa ( long  value,  char str[],  int radix)
+char* itoa ( int32_t  value,  char str[],  int radix)
 {
     char        buf [66];
     char*       dest = buf + sizeof(buf);
@@ -52,13 +52,20 @@ char* itoa ( long  value,  char str[],  int radix)
         return str;
     }
 
+#if 0
     if (radix < 0) {
         radix = -radix;
-        if ( (long long) value < 0) {
+        if (value < 0) {
             value = -value;
             sign = 1;
         }
     }
+#else
+    if (value < 0) {
+        sign = 1;
+        value = -value;
+    }
+#endif
 
     *--dest = '\0';
 
@@ -132,7 +139,7 @@ int _write(_UNUSED_ int32_t file, uint8_t *ptr, int32_t len)
 #endif
 
 
-void _itm_debug3(const char *msg, int v1, int v2, int v3, int n)
+void _itm_debug3(const char *msg, int32_t v1, int32_t v2, int32_t v3, int n)
 {
 	uint8_t buf[64];
 	memset(buf, 0, sizeof(buf));
@@ -153,8 +160,8 @@ void _itm_debug3(const char *msg, int v1, int v2, int v3, int n)
 	itoa(v3, (char *)p+1, 10);
 done:
 	p = buf+strlen((char *)buf);
-	*p = '\n';
 #ifndef TRAIN_SIMU
+    *p = '\n';
 	_write(0, buf, strlen((char *)buf));
 #else
     puts((char*)buf);

@@ -15,7 +15,7 @@
 #include "txrxcmd.h"
 //#include "low/canton.h"
 #include "StringExtension.h"
-
+#include "uitrack.h"
 
 #define HIGHLEVEL_SIMU_CNX 0
 
@@ -210,7 +210,7 @@ typedef void (^respblk_t)(void);
     
     msg_64_t m;
     m.to = MA_CONTROL_T(0);
-    m.from = MA_UI(0);
+    m.from = MA_UI(UISUB_USB);
     m.cmd = CMD_MDRIVE_SPEED_DIR;
     m.v1u = abs(v16);
     m.v2 = SIGNOF0(v16);
@@ -264,7 +264,7 @@ typedef void (^respblk_t)(void);
 
     msg_64_t m;
     m.to = MA_TURNOUT(0, 0);
-    m.from = MA_UI(0);
+    m.from = MA_UI(UISUB_USB);
     m.cmd = CMD_TURNOUT_HI_A;
     m.v1u = (uint16_t) tn;
     [self sendMsg64:m];
@@ -276,7 +276,7 @@ typedef void (^respblk_t)(void);
     NSInteger tn = c.tag;
     msg_64_t m;
     m.to = MA_TURNOUT(0, 0);
-    m.from = MA_UI(0);
+    m.from = MA_UI(UISUB_USB);
     m.cmd = CMD_TURNOUT_HI_B;
     m.v1u = (uint16_t) tn;
     [self sendMsg64:m];
@@ -1332,6 +1332,7 @@ void task_auto_stop_auto(void)
     usbPollQueues();
     ctrl_run_tick(notif,    mt, mdt);
 
+    uitrack_run_tick(notif, mt, mdt);
 }
 
 void train_simu_canton_volt(int numcanton, int voltidx, int vlt100)
@@ -1800,7 +1801,7 @@ didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic
     memcpy(spdfrm+3, &m, sizeof(m));
 #if 0
     spdfrm[3] = m.
-    spdfrm[4] = MA_UI(0);
+    spdfrm[4] = MA_UI(UISUB_USB);
     spdfrm[5] = CMD_SET_TARGET_SPEED;
     spdfrm[6] = 0; // sub
     spdfrm[7] = v16 & 0xFF;
@@ -1820,7 +1821,7 @@ didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic
    
     msg_64_t m;
     m.to = MA_BROADCAST;
-    m.from = MA_UI(0);
+    m.from = MA_UI(UISUB_USB);
     m.cmd = CMD_SETRUN_MODE;
     switch (testMode) {
         case 0: m.v1u = runmode_normal; break;
@@ -1843,7 +1844,7 @@ didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic
             if (i==testCanton) continue;
             msg_64_t m;
             m.to = MA_CANTON(0, i);
-            m.from = MA_UI(0);
+            m.from = MA_UI(UISUB_USB);
             m.cmd = CMD_SETVPWM;
             m.v1u = 7;
             m.v2 = 0;
@@ -1873,7 +1874,7 @@ didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic
 {
     msg_64_t m;
     m.to = (_testMode == 1) ? MA_CANTON(0, _testCanton) : MA_BROADCAST;
-    m.from = MA_UI(0);
+    m.from = MA_UI(UISUB_USB);
     m.cmd = CMD_SETVPWM;
     m.v1u = _testVoltIdx;
     m.v2 = _testPWM;

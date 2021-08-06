@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1B18114F26BD5BA30008F21C /* uitrack.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B18114D26BD5BA30008F21C /* uitrack.c */; };
 		1B46EE552692684F00FAC813 /* topology.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B46EE542692684E00FAC813 /* topology.c */; };
 		1B4BCB022549ADC90062961D /* statval.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B4BCB002549ADC70062961D /* statval.c */; };
 		1B61090D256AAE1A00F1AC45 /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B61090C256AAE1900F1AC45 /* CoreBluetooth.framework */; };
@@ -37,6 +38,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		1B18114D26BD5BA30008F21C /* uitrack.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = uitrack.c; sourceTree = "<group>"; };
+		1B18114E26BD5BA30008F21C /* uitrack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = uitrack.h; sourceTree = "<group>"; };
 		1B46EE542692684E00FAC813 /* topology.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = topology.c; sourceTree = "<group>"; };
 		1B4BCB002549ADC70062961D /* statval.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = statval.c; sourceTree = "<group>"; };
 		1B4BCB012549ADC80062961D /* statval.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = statval.h; sourceTree = "<group>"; };
@@ -108,6 +111,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		1B18114C26BD5BA30008F21C /* uitrack */ = {
+			isa = PBXGroup;
+			children = (
+				1B18114D26BD5BA30008F21C /* uitrack.c */,
+				1B18114E26BD5BA30008F21C /* uitrack.h */,
+			);
+			path = uitrack;
+			sourceTree = "<group>";
+		};
 		1B61090B256AAE1800F1AC45 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -187,6 +199,7 @@
 		1BD93C4A2546FF42006C4D70 /* trainctl */ = {
 			isa = PBXGroup;
 			children = (
+				1B18114C26BD5BA30008F21C /* uitrack */,
 				1B92EA312631A0CC00558716 /* topology */,
 				1B92EA2D2631A0BA00558716 /* ctrl */,
 				1B7A2A0E262D599E004E0481 /* utils */,
@@ -343,6 +356,7 @@
 				1B7A2A02262D5948004E0481 /* turnout.c in Sources */,
 				1B7A2A03262D5948004E0481 /* canton.c in Sources */,
 				1B4BCB022549ADC90062961D /* statval.c in Sources */,
+				1B18114F26BD5BA30008F21C /* uitrack.c in Sources */,
 				1B7A2A01262D5948004E0481 /* canton_bemf.c in Sources */,
 				1BD93C712546FF44006C4D70 /* txrxcmd.c in Sources */,
 			);

@@ -219,7 +219,7 @@ static void handle_msg_cantontest(msg_64_t *m)
     	// in test mode, forward CMD_SETVPWM to UI for display
     	msg_64_t m2 = *m;
     	m2.from = m2.to;
-    	m2.to = MA_UI(1);
+    	m2.to = MA_UI(UISUB_TFT);
     	mqf_write_from_canton(&m2);
     }
     if (cidx>=0) handle_canton_cmd(cidx, m);

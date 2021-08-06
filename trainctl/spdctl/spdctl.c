@@ -343,7 +343,7 @@ static void train_periodic_control(int numtrain, uint32_t dt)
         if ((1)) { // TODO remove
             msg_64_t m;
             m.from = MA_TRAIN_SC(numtrain);
-            m.to = MA_UI(0);
+            m.to = MA_UI(UISUB_TFT);
             m.cmd = CMD_NOTIF_SPEED;
             m.v1 = v;
             mqf_write_from_spdctl(&m);

@@ -192,7 +192,7 @@ static void process_adc(volatile adc_buf_t *buf, _UNUSED_ uint32_t deltaticks)
 			if ((cnt%32)==0) {
 				msg_64_t m;
 				m.from = MA_CANTON(localBoardNum, i);
-				m.to = MA_UI(1);
+				m.to = MA_UI(UISUB_TFT);
 				m.cmd = CMD_VOFF_NOTIF;
 				m.v1 = voff;
 				m.v2 = von;

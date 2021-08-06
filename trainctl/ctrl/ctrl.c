@@ -195,7 +195,7 @@ static inline void set_state(int tidx, train_ctrl_t *tvar, train_state_t ns)
 	// notif UI
 	msg_64_t m;
 	m.from = MA_CONTROL_T(tidx);
-	m.to = MA_UI(1); // fix me
+	m.to = MA_UI(UISUB_TFT);
 	m.cmd = CMD_TRSTATE_NOTIF;
 	m.v1u = ns;
 	mqf_write_from_ctrl(&m);
@@ -210,7 +210,7 @@ static void ctrl_set_mode(int trnum, train_mode_t mode)
 	// notif UI
 	msg_64_t m;
 	m.from = MA_CONTROL_T(trnum);
-	m.to = MA_UI(1); // fix me
+	m.to = MA_UI(UISUB_TFT);
 	m.cmd = CMD_TRMODE_NOTIF;
 	m.v1u = mode;
 	mqf_write_from_ctrl(&m);
@@ -224,7 +224,7 @@ static void ctrl_set_status(int trnum, train_status_t status)
 	// notif UI
 	msg_64_t m;
 	m.from = MA_CONTROL_T(trnum);
-	m.to = MA_UI(1); // fix me
+	m.to = MA_UI(UISUB_TFT);
 	m.cmd = CMD_TRSTATUS_NOTIF;
 	m.v1u = status;
 	mqf_write_from_ctrl(&m);
@@ -470,6 +470,21 @@ static uint8_t blk_occup[NUM_CANTONS] = {0}; // TODO 32
 static uint8_t occupency_changed = 0;
 
 
+static uint8_t notif_blk_reset = 1;
+
+static void notif_blk_occup_chg(int blknum, uint8_t val)
+{
+    msg_64_t m;
+    m.from = MA_CONTROL();
+    m.to = MA_UI(UISUB_TRACK);
+    m.cmd = CMD_BLK_CHANGE;
+    m.vbytes[0] = blknum;
+    m.vbytes[1] = val;
+    m.vbytes[2] = notif_blk_reset ? 1 : 0;
+    notif_blk_reset = 0;
+    mqf_write_from_ctrl(&m);
+}
+
 static void set_block_num_occupency(int blknum, uint8_t v)
 {
 	if (-1 == blknum) fatal();
@@ -486,7 +501,9 @@ static void set_block_num_occupency(int blknum, uint8_t v)
 	if ((1)) {
 		itm_debug3(DBG_CTRL, "BO123:", blk_occup[0], blk_occup[1], blk_occup[2]);
 	}
+    notif_blk_occup_chg(blknum, blk_occup[blknum]);
 }
+
 static void set_block_addr_occupency(uint8_t blkaddr, uint8_t v)
 {
 	set_block_num_occupency(_blk_addr_to_blk_num(blkaddr), v);
@@ -527,6 +544,7 @@ static void check_block_delayed(_UNUSED_ uint32_t tick)
 			itm_debug1(DBG_CTRL, "FREE(d)", i);
 			blk_occup[i] = BLK_OCC_FREE;
 			occupency_changed = 1;
+            notif_blk_occup_chg(i, blk_occup[i]);
 		} else if (blk_occup[i] > BLK_OCC_DELAY1) {
 			blk_occup[i]--;
 		}
@@ -877,7 +895,7 @@ static void ctrl_set_tspeed(int trnum, train_ctrl_t *tvars, uint16_t tspd)
 	itm_debug2(DBG_UI|DBG_CTRL, "ctrl_set_tspeed", trnum, tspd);
 	msg_64_t m;
 	m.from = MA_CONTROL_T(trnum);
-	m.to = MA_UI(1); // TODO : fix me
+	m.to = MA_UI(UISUB_TFT);
 	m.cmd = CMD_TRTSPD_NOTIF;
 	m.v1u = tspd;
 	m.v2 = trctl[trnum]._dir;
@@ -905,7 +923,7 @@ static void ctrl_set_dir(int trnum,  train_ctrl_t *tvars, int  dir, int force)
 	tvars->_dir = dir;
 
 	// notif UI
-	m.to = MA_UI(1); // fix me
+	m.to = MA_UI(UISUB_TFT);
 	m.cmd = CMD_TRDIR_NOTIF;
 	m.v1 = dir;
 	mqf_write_from_ctrl(&m);

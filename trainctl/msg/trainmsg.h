@@ -50,6 +50,11 @@ typedef uint8_t  msg_addr_t;
 #define MA_ADDR_3_UI 	0x80
 #define IS_UI(_addr) (MA_ADDR_3_UI == ((_addr) & MA_ADDR_MASK_3))
 
+// MA_UI sub adresses
+#define UISUB_USB   0   // usb connected GUI (train_throttle)
+#define UISUB_TFT   1   // normal UI
+#define UISUB_TRACK 2   // track diagram
+
 // train spd control : up to 8 trains
 //  1 1 0 0  1 t t t
 #define MA_ADDR_5_TRSC	0xC8
@@ -176,11 +181,17 @@ LFMQUEUE_DEF_H(to_ui, msg_64_t)
 LFMQUEUE_DEF_H(from_ui, msg_64_t)
 
 
+LFMQUEUE_DEF_H(to_ui_track, msg_64_t)
+LFMQUEUE_DEF_H(from_ui_track, msg_64_t)
+
+
 LFMQUEUE_DEF_H(to_ina3221, msg_64_t)
 LFMQUEUE_DEF_H(from_ina3221, msg_64_t)
 
 #define CMD_NOTIF_SPEED     0xA0
 #define CMD_UI_MSG			0xA1	// obsolete?
+
+#define CMD_BLK_CHANGE      0xA2
 
 #include "../IHM/ihm_messages.h"
 

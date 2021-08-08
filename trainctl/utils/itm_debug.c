@@ -143,7 +143,8 @@ void _itm_debug3(const char *msg, int32_t v1, int32_t v2, int32_t v3, int n)
 {
 	uint8_t buf[64];
 	memset(buf, 0, sizeof(buf));
-	write_num(buf, HAL_GetTick(), 7);
+    uint32_t tck = HAL_GetTick();
+	write_num(buf, tck, 7);
 	buf[7]=':';
 	strncpy((char *)buf+8, msg, 12);
 	uint8_t *p = buf+strlen((char *)buf);

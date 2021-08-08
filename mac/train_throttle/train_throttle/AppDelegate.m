@@ -1298,6 +1298,8 @@ void task_auto_stop_auto(void)
 {
     task_auto_notif |= AUTO1_NOTIF_CMD_STOP;
 }
+
+uint32_t SimuTick = 0;
 - (void) simuTimer
 {
     static NSTimeInterval t0;
@@ -1310,6 +1312,7 @@ void task_auto_stop_auto(void)
     lastSimu = t;
     uint32_t mdt = (uint32_t)(dt * 1000.0);
     uint32_t mt = (uint32_t)(t * 1000.0);
+    SimuTick = mt;
 
     
     for (int i =0; i<2; i++) {
@@ -1329,7 +1332,6 @@ void task_auto_stop_auto(void)
 
     int notif = NOTIF_NEW_ADC_1;
    
-    
     bemf_tick(notif,        mt, mdt);
     msgsrv_tick(notif,      mt, mdt);
     spdctl_run_tick(notif,  mt, mdt);

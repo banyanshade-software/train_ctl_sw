@@ -13,7 +13,8 @@
 void train_simu_canton_volt(int numcanton, int voltidx, int vlt100);
 void train_simu_canton_set_pwm(int numcanton, int8_t dir, int duty);
 
-#define HAL_GetTick() (0)
+extern uint32_t SimuTick;
+#define HAL_GetTick() (SimuTick)
 
 //#define NUM_LOCAL_CANTONS 8
 #define NUM_LOCAL_CANTONS_HW 5

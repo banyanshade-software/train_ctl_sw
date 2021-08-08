@@ -43,5 +43,10 @@ static void uitrack_reset(void)
 }
 static void uitrack_change_blk(int blk, int v)
 {
+    impl_uitrack_change_blk(blk, v);
+}
+
+void  __attribute__((weak))  impl_uitrack_change_blk(int blk, int v)
+{
     
 }

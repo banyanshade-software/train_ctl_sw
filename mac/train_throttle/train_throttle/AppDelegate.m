@@ -122,12 +122,19 @@ typedef void (^respblk_t)(void);
         c.enabled = NO;
         self->nparam++;
     }];
-    self.numtrains = 1;
-    self.numcantons = 1+1;
-    // for deebug
+    self.numtrains = 1; //XXX obsolete
+    self.numcantons = 1+1; // XXX obsolete
+    NSURL *u = [[NSBundle mainBundle] URLForResource:@"uitrack" withExtension:@"html"];
+    NSError *err;
+    NSString *ctohtml = [NSString stringWithContentsOfURL:u encoding:NSUTF8StringEncoding error:&err];
+    [_ctoWebView loadHTMLString:ctohtml baseURL:nil];
+    
+    // for debug
     //[self getParams]; //XXX XXX
     //[self startBLE];
     [self openUsb];
+    
+    
 }
 
 
@@ -1880,6 +1887,50 @@ didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic
     m.v2 = _testPWM;
     [self sendMsg64:m];
 }
+
+
+#pragma mark -
+
+void impl_uitrack_change_blk(int blk, int v)
+{
+    [theDelegate uitrac_change_blk:blk val:v];
+}
+
+- (void) uitrac_change_blk:(int) blk val:(int)v
+{
+    NSString *js;
+    NSString *nblk = [NSString stringWithFormat:@"BLK%d", blk];
+    NSString *col = @"white";
+    switch (v) {
+        case BLK_OCC_FREE: // BLK_OCC_FREE:
+            col = @"darkgray";
+            break;
+        case BLK_OCC_STOP:
+            col = @"brown";
+            break;
+        case BLK_OCC_LEFT:
+            col = @"orange";
+            break;
+        case BLK_OCC_RIGHT:
+            col = @"red";
+            break;
+        case BLK_OCC_C2:
+            col = @"yellow";
+            break;
+        default:
+            if ((v>=BLK_OCC_DELAY1) && (v<=BLK_OCC_DELAYM)) {
+                col = @"salmon";
+            }
+            break;
+    }
+    js = [NSString stringWithFormat:@"document.getElementById('%@').style.stroke = '%@';", nblk, col];
+    [_ctoWebView evaluateJavaScript:js completionHandler:^(id v, NSError *err) {
+        if (err) {
+            NSLog(@"js error : %@\n", err);
+        }
+    }];
+}
+
 
 @end
 

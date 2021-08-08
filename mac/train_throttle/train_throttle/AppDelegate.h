@@ -8,12 +8,14 @@
 
 #import <Cocoa/Cocoa.h>
 #import <CoreBluetooth/CoreBluetooth.h>
+#import <WebKit/WebKit.h>
 
 @class SimTrain;
 
 @interface AppDelegate : NSObject <NSApplicationDelegate,
     CBCentralManagerDelegate,CBPeripheralDelegate,
-    NSTableViewDelegate,NSTableViewDataSource>
+    NSTableViewDelegate,NSTableViewDataSource,
+    WKUIDelegate, WKNavigationDelegate>
 
 @property (nonatomic,readonly) int curspeed;
 @property (nonatomic) int targetspeed;
@@ -37,6 +39,9 @@
 @property (nonatomic, weak) IBOutlet NSView *paramView;
 @property (nonatomic, weak) IBOutlet NSTableView *cantonTableView;
 @property (nonatomic, weak) IBOutlet NSTableView *trainTableView;
+
+
+@property (nonatomic, weak) IBOutlet WKWebView *ctoWebView;
 
 @property (nonatomic) double target_bemf;
 

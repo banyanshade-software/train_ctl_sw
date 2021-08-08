@@ -136,14 +136,6 @@ static void sub_presence_changed(uint32_t tick, uint8_t from_addr, uint8_t segnu
 // ----------------------------------------------------------------------------
 //  block presence
 
-#define BLK_OCC_FREE	0x00
-#define BLK_OCC_STOP	0x01
-#define BLK_OCC_LEFT	0x02
-#define BLK_OCC_RIGHT	0x03
-#define BLK_OCC_C2		0x04
-
-#define BLK_OCC_DELAY1	0x10
-#define BLK_OCC_DELAYM	0x16
 
 #define USE_BLOCK_DELAY_FREE 1
 

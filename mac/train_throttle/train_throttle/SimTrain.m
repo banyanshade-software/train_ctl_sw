@@ -85,24 +85,26 @@
         position[tn] += speed[tn]*ellapsed/1000;
         int blen = get_blk_len(cn);
         NSLog(@"xxxtrain %d pos: %f len %d", tn, position[tn], get_blk_len(cn));
-        if (dir[tn]>0) {
+        if (dir[cn]>0) {
             if (position[tn]>blen) {
                 int nb = _next_block_num(cn, 0);
                 if (nb<0) {
                     NSLog(@"END OF TRACK !!");
                 } else {
+                    NSLog(@"GOTO BLK %d (>0)", nb);
                     cold[tn] = cn;
                     cn = nb;
                     c1[tn] = nb;
                     position[tn] = 0;
                 }
             }
-        } else if (dir[tn]<0) {
+        } else if (dir[cn]<0) {
             if (position[tn]<-blen) {
                 int nb = _next_block_num(cn, 1);
                 if (nb<0) {
                     NSLog(@"END OF TRACK !!");
                 } else {
+                    NSLog(@"GOTO BLK %d (<0)", nb);
                     cold[tn] = cn;
                     cn = nb;
                     c1[tn] = nb;

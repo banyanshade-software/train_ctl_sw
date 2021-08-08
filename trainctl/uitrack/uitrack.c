@@ -13,6 +13,7 @@
 
 static void uitrack_reset(void);
 static void uitrack_change_blk(int blk, int v);
+static void uitrack_change_tn(int tn, int v);
 
 void uitrack_run_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
 {
@@ -32,6 +33,12 @@ void uitrack_run_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
                 }
                 uitrack_change_blk(blk, v);
                 break;
+            case CMD_TURNOUT_A:
+                uitrack_change_tn(m.v2, 0);
+                break;
+            case CMD_TURNOUT_B:
+                uitrack_change_tn(m.v2, 1);
+                break;
         }
     }
 }
@@ -46,7 +53,17 @@ static void uitrack_change_blk(int blk, int v)
     impl_uitrack_change_blk(blk, v);
 }
 
+static void uitrack_change_tn(int tn, int v)
+{
+    impl_uitrack_change_tn(tn, v);
+}
+
 void  __attribute__((weak))  impl_uitrack_change_blk(int blk, int v)
+{
+    
+}
+
+void  __attribute__((weak))  impl_uitrack_change_tn(int tn, int v)
 {
     
 }

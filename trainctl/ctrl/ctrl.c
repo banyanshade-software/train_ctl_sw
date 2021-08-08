@@ -971,6 +971,11 @@ static void check_blk_tick(_UNUSED_ uint32_t tick)
 
 
 // ---------------------------------------------------------------
+//
+// this is the MAIN turnout cmd : (thru CMD_TURNOUT_HI_A/B)
+// - sends cmd to turnout tasklet
+// - updates topology
+// - sends info to UI (cto)
 
 static void set_turnout(int tn, int v)
 {
@@ -987,6 +992,11 @@ static void set_turnout(int tn, int v)
 	topolgy_set_turnout(tn, v);
 
 	occupency_changed = 1;
+    
+    // forward to CTO
+    m.to = MA_UI(UISUB_TRACK);
+    m.v2 = tn;
+    mqf_write_from_ctrl(&m);
 }
 
 // ---------------------------------------------------------------

@@ -270,7 +270,7 @@ typedef void (^respblk_t)(void);
     NSInteger tn = c.tag;
 
     msg_64_t m;
-    m.to = MA_TURNOUT(0, 0);
+    m.to = MA_CONTROL(); //MA_TURNOUT(0, 0);
     m.from = MA_UI(UISUB_USB);
     m.cmd = CMD_TURNOUT_HI_A;
     m.v1u = (uint16_t) tn;
@@ -282,7 +282,7 @@ typedef void (^respblk_t)(void);
     NSControl *c = (NSControl *)sender;
     NSInteger tn = c.tag;
     msg_64_t m;
-    m.to = MA_TURNOUT(0, 0);
+    m.to = MA_CONTROL(); //MA_TURNOUT(0, 0);
     m.from = MA_UI(UISUB_USB);
     m.cmd = CMD_TURNOUT_HI_B;
     m.v1u = (uint16_t) tn;
@@ -1894,6 +1894,23 @@ didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic
 void impl_uitrack_change_blk(int blk, int v)
 {
     [theDelegate uitrac_change_blk:blk val:v];
+}
+void impl_uitrack_change_tn(int tn, int v)
+{
+    [theDelegate uitrac_change_tn:tn val:v];
+}
+
+- (void) uitrac_change_tn:(int)tn val:(int)v
+{
+    NSString *t1 = [NSString stringWithFormat:@"to%d%c", tn, v ? 't' : 's'];
+    NSString *t2 = [NSString stringWithFormat:@"to%d%c", tn, v ? 's' : 't'];
+    NSString *js = [NSString stringWithFormat:@"document.getElementById('%@').style['stroke-width'] = 1; document.getElementById('%@').style['stroke-width'] = 8;", t2, t1];
+    [_ctoWebView evaluateJavaScript:js completionHandler:^(id v, NSError *err) {
+        if (err) {
+            NSLog(@"js error : %@\n", err);
+        }
+    }];
+
 }
 
 - (void) uitrac_change_blk:(int) blk val:(int)v

@@ -64,7 +64,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "74"
             endingLineNumber = "74"
-            landmarkName = "update_state(st, trseg, step)"
+            landmarkName = "update_state(st, trseg, step, target)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -94,8 +94,8 @@
             filePath = "trackplan/trkplan.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "274"
-            endingLineNumber = "274"
+            startingLineNumber = "275"
+            endingLineNumber = "275"
             landmarkName = "test_me()"
             landmarkType = "9">
          </BreakpointContent>
@@ -113,22 +113,6 @@
             startingLineNumber = "142"
             endingLineNumber = "142"
             landmarkName = "print_route(p, initialstate)"
-            landmarkType = "9">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "0D2A033D-D5E1-4A10-97BA-85971915131B"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "trackplan/trkplan.c"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "203"
-            endingLineNumber = "203"
-            landmarkName = "update_score(st)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>

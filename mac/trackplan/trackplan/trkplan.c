@@ -24,7 +24,7 @@ static track_segment_t trseg[] = {
     /*3*/ {2,    0xFF,    0xFF, 0xFF}
 };
 
-static void update_score(trstate_t *st);
+static void update_score(trstate_t *st, trtarget_t *tg);
 
 
 static void intial_state(trstate_t
@@ -49,7 +49,7 @@ int get_segstate(trstate_t *st, segstate_t *retseg)
     return 0;
 }
 
-int update_state(trstate_t *st, track_segment_t *trseg, uint16_t step)
+int update_state(trstate_t *st, track_segment_t *trseg, uint16_t step, trtarget_t *target)
 {
     int rc = 0;
     for (int i=0; i<MAX_TRAINS; i++) {
@@ -93,7 +93,7 @@ int update_state(trstate_t *st, track_segment_t *trseg, uint16_t step)
         }
         if (ns != 0xFF) st->t[i] = ns;
     }
-    update_score(st);
+    update_score(st, target);
     return rc;
 }
 
@@ -155,12 +155,12 @@ static void print_state(trstate_t *st)
     printf("  %s %s\n", (st->flags & RC_COL) ? "COL" :"", (st->flags & RC_OUT) ? "OUT":"");
 }
 
-int update_state_all(trstate_t *st, track_segment_t *trseg, tplan_t *p)
+int update_state_all(trstate_t *st, track_segment_t *trseg, tplan_t *p, trtarget_t *target)
 {
     int rc = 0;
     st->score = 0;
     for (int i=0; i<MAX_TIMESTEP; i++) {
-        rc |= update_state(st, trseg, p->step[i]);
+        rc |= update_state(st, trseg, p->step[i], target);
         if ((0)) print_state(st);
     }
     if ((0)) printf("score : %d\n", st->score);
@@ -185,7 +185,7 @@ static void init_testplan(void)
 #endif
 
 
-static void update_score(trstate_t *st)
+static void update_score(trstate_t *st, trtarget_t *tg)
 {
     if (st->flags & RC_COL) {
         st->score -= 30;
@@ -194,15 +194,12 @@ static void update_score(trstate_t *st)
         st->score -= 20;
     }
     // hardcoded
-    if (st->t[0]==3) {
-        st->score += 20;
-    } else {
-        st->score -= 2;
-    }
-    if (st->t[1]==1) {
-        st->score += 20;
-    } else{
-        st->score -= 2;
+    for (int i=0; i<MAX_TRAINS; i++) {
+        if (st->t[i] == tg->t[i]) {
+            st->score += 20;
+        } else {
+            st->score -= 2;
+        }
     }
 }
 
@@ -247,6 +244,10 @@ void test_me(void)
 {
     trstate_t state;
     trstate_t initialstate;
+    trtarget_t target;
+    for (int i=0; i<MAX_TRAINS; i++) target.t[i] = 0xFF;
+    target.t[0] = 3;
+    target.t[1] = 1;
     /*
     init_testplan();
     intial_state(&state);
@@ -269,7 +270,7 @@ void test_me(void)
         double m = 0;
         for (int pop = 0; pop<NUM_POPULATION; pop++) {
             memcpy(&state, &initialstate, sizeof(state));
-            update_state_all(&state, trseg, &population[pop]);
+            update_state_all(&state, trseg, &population[pop], &target);
             printf("individu %d score %d\n", pop, population[pop].score);
             if ((0)) print_route(&population[pop], &initialstate);
             m += population[pop].score;

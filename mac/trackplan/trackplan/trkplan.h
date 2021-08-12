@@ -15,7 +15,7 @@
 
 #define MAX_TIMESTEP        8
 #define MAX_TRAINS          4
-#define MAX_SEGM            16  // only a safeguard
+#define MAX_SEGM            8  // only a safeguard
 
 #define NUM_POPULATION      16
 #define NUM_GENERATIONS     100
@@ -107,14 +107,17 @@ typedef struct {
     int16_t score;
 } trstate_t;
 
+typedef struct{
+    int8_t t[MAX_TRAINS];
+} trtarget_t;
 
 #define RC_OK  0
 #define RC_OUT 1
 #define RC_COL 2
 
 int get_segstate(trstate_t *st, segstate_t *retseg);
-int update_state(trstate_t *st, track_segment_t *trseg, uint16_t step);
-int update_state_all(trstate_t *st, track_segment_t *trseg, tplan_t *p);
+int update_state(trstate_t *st, track_segment_t *trseg, uint16_t step, trtarget_t *t);
+int update_state_all(trstate_t *st, track_segment_t *trseg, tplan_t *p, trtarget_t *t);
 
 void test_me(void);
 

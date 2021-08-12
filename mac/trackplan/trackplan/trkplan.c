@@ -21,7 +21,7 @@ static track_segment_t trseg[] = {
     /*0*/ {0xFF, 0xFF, 2,    0xFF},
     /*1*/ {0xFF, 0xFF, 2,    0xFF},
     /*2*/ {1,    0,    3,    0xFF},
-    /*3*/ {2,    0,    0xFF, 0xFF}
+    /*3*/ {2,    0xFF,    0xFF, 0xFF}
 };
 
 static void update_score(trstate_t *st);
@@ -97,6 +97,54 @@ int update_state(trstate_t *st, track_segment_t *trseg, uint16_t step)
     return rc;
 }
 
+
+static void print_route(tplan_t *p, trstate_t *initialstate)
+{
+    for (int i=0; i<MAX_TRAINS; i++) {
+        trstate_t state = *initialstate;
+        printf("route T%d : %d ", i, state.t[i]);
+        for (int stp=0; stp < MAX_TIMESTEP; stp++) {
+            //uint16_t step[MAX_TIMESTEP];
+            uint16_t step = p->step[stp];
+            uint8_t s = state.t[i];
+            if (0xFF == s) continue;
+            uint16_t b = trbits_gettrain(step, i);
+            int m = trbits_motion(b);
+            int d = trbits_nextdir(b);
+            if (!m) {
+                printf(" -");
+                continue;
+            }
+            uint8_t ns1;
+            uint8_t ns2;
+            switch (m) {
+            case -1:
+                ns1 = trseg[s].left_1;
+                ns2 = trseg[s].left_2;
+                break;
+            case 1:
+                ns1 = trseg[s].right_1;
+                ns2 = trseg[s].right_2;
+                break;
+            default:
+                abort();
+                break;
+            }
+            int ns = ns1;
+            if ((ns2 != 0xFF) & d) {
+                ns = ns2;
+            }
+            printf(" %d", ns);
+            if (ns == 0xFF) {
+                break;
+            }
+            state.t[i] = ns;
+        } // stp
+        printf("\n");
+    } // trains
+
+}
+
 static void print_state(trstate_t *st)
 {
     for (int i = 0; i<MAX_TRAINS; i++) {
@@ -111,7 +159,7 @@ int update_state_all(trstate_t *st, track_segment_t *trseg, tplan_t *p)
 {
     int rc = 0;
     st->score = 0;
-    for (int i=0; i<MAX_T; i++) {
+    for (int i=0; i<MAX_TIMESTEP; i++) {
         rc |= update_state(st, trseg, p->step[i]);
         if ((0)) print_state(st);
     }
@@ -120,6 +168,7 @@ int update_state_all(trstate_t *st, track_segment_t *trseg, tplan_t *p)
     return rc;
 }
 
+#if 0
 static tplan_t testplan;
 
 static void init_testplan(void)
@@ -133,6 +182,7 @@ static void init_testplan(void)
     set_motion_dir(&testplan.step[i], 0,  0, 0);       set_motion_dir(&testplan.step[i++], 1,  1, 0);
     set_motion_dir(&testplan.step[i], 0,  0, 0);       set_motion_dir(&testplan.step[i++], 1,  -1, 0);
 }
+#endif
 
 
 static void update_score(trstate_t *st)
@@ -158,14 +208,13 @@ static void update_score(trstate_t *st)
 
 #pragma mark -
 
-#define NUM_POPULATION 16
 
 static tplan_t population[NUM_POPULATION];
 
 static void set_random_trkseg(tplan_t *tseg)
 {
     memset(tseg, 0, sizeof(*tseg));
-    for (int i=0; i<MAX_T; i++) {
+    for (int i=0; i<MAX_TIMESTEP; i++) {
         for (int t=0; t<MAX_TRAINS; t++) {
             set_motion_dir(&tseg->step[i], t,  rand()%3-1, rand()%2);
         }
@@ -185,31 +234,44 @@ static int get_parent(tplan_t *p, int n)
 }
 static void crossover(tplan_t *res, tplan_t *p1, tplan_t *p2)
 {
-    int n = (rand()%(MAX_T-2))+1;
-    for (int i=0; i<MAX_T; i++) {
+    int n = (rand()%(MAX_TIMESTEP-2))+1;
+    for (int i=0; i<MAX_TIMESTEP; i++) {
         res->step[i] = (i<n) ? p1->step[i] : p2->step[i];
     }
 }
 
+
+#pragma mark -
+
 void test_me(void)
 {
-    init_testplan();
     trstate_t state;
+    trstate_t initialstate;
+    /*
+    init_testplan();
     intial_state(&state);
     print_state(&state);
     int rc = update_state_all(&state, trseg, &testplan);
     printf("hop\n");
+     */
+#ifdef SRAND_VAL
+    srand(SRAND_VAL);
+#else
+    srand((unsigned int)time(NULL));
+#endif
+    
+    intial_state(&initialstate);
     for (int i=0; i<NUM_POPULATION; i++) {
         set_random_trkseg(&population[i]);
     }
-    srand((unsigned int)time(NULL));
-    for (int gen = 0; gen<100; gen ++) {
+    for (int gen = 0; gen<NUM_GENERATIONS; gen ++) {
         printf("\n---------------- g%d\n", gen);
         double m = 0;
         for (int pop = 0; pop<NUM_POPULATION; pop++) {
-            intial_state(&state);
+            memcpy(&state, &initialstate, sizeof(state));
             update_state_all(&state, trseg, &population[pop]);
             printf("individu %d score %d\n", pop, population[pop].score);
+            if ((0)) print_route(&population[pop], &initialstate);
             m += population[pop].score;
         }
         m /= NUM_POPULATION;
@@ -238,19 +300,22 @@ void test_me(void)
         }
         printf("nk2=%d\n", nk2);
         // crossover
-        for (int p = 0; p<NUM_POPULATION; p++) {
-            if (population[p].mark) continue;
-            int p1,p2;
-            p1 = get_parent(population, NUM_POPULATION);
-            do {
-                p2 = get_parent(population, NUM_POPULATION);
-            } while (p2 != p1);
-            crossover(&population[p], &population[p1], &population[p2]);
+        for (int nc = 0; nc<5; nc++) {
+            for (int p = 0; p<NUM_POPULATION; p++) {
+                if (population[p].mark) continue;
+                if ((rand()%100) < PERCENT_CROSS5) continue;
+                int p1,p2;
+                p1 = get_parent(population, NUM_POPULATION);
+                do {
+                    p2 = get_parent(population, NUM_POPULATION);
+                } while (p2 != p1);
+                crossover(&population[p], &population[p1], &population[p2]);
+            }
         }
         // mutation
-        for (int i=0; i<20; i++) {
+        for (int i=0; i<NUM_MUTATIONS; i++) {
             int p = rand()%NUM_POPULATION;
-            int t = rand()%MAX_T;
+            int t = rand()%MAX_TIMESTEP;
             int tr = rand()%MAX_TRAINS;
             int motion =  trbits_motion(trbits_gettrain(population[p].step[t], tr));
             int nextdir = trbits_nextdir(trbits_gettrain(population[p].step[t], tr));
@@ -262,6 +327,16 @@ void test_me(void)
             set_motion_dir(&population[p].step[t], tr, motion, nextdir);
         }
     }
+    int bestScore = 0;
+    int bestIdx = 0;
+    for (int i=0; i<NUM_POPULATION; i++) {
+        if (population[i].score > bestScore) {
+            bestScore = population[i].score;
+            bestIdx = i;
+        }
+    }
+    printf("best score i=%d score=%d\n", bestIdx, bestScore);
+    print_route(&population[bestIdx], &initialstate);
     printf("done\n");
     exit(0);
 }

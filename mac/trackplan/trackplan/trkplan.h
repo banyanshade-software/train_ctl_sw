@@ -13,9 +13,16 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-#define MAX_T       8
-#define MAX_TRAINS  4
-#define MAX_SEGM    16
+#define MAX_TIMESTEP        8
+#define MAX_TRAINS          4
+#define MAX_SEGM            16  // only a safeguard
+
+#define NUM_POPULATION      16
+#define NUM_GENERATIONS     100
+#define PERCENT_CROSS5      60
+#define NUM_MUTATIONS       50
+
+//#define SRAND_VAL       2
 /*
  per train:
  X X            motion   01=<-  11=-> 00=idle  (10=unused)
@@ -61,13 +68,24 @@ static inline void set_motion_dir(uint16_t *pbits, int trn, int motion, int next
     }
 }
 
+
+/*
+ * tplan_t is individual in population
+ * it contains step (direction for each trains among time)
+ */
 typedef  struct {
-    uint16_t step[MAX_T];
+    uint16_t step[MAX_TIMESTEP];
     int16_t score;
     uint8_t mark;
 } tplan_t;
+
+
 // ------------------------------------------------------------------
 
+/* ---------------
+ * track_segment_t
+ * holds topology
+ */
 typedef struct {
     uint8_t left_1;
     uint8_t left_2;

@@ -92,7 +92,7 @@
                     NSLog(@"END OF TRACK !!");
                 } else {
                     NSLog(@"GOTO BLK %d (>0)", nb);
-                    cold[tn] = cn;
+                        cold[tn] = cn;
                     cn = nb;
                     c1[tn] = nb;
                     position[tn] = 0;

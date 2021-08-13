@@ -64,7 +64,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "74"
             endingLineNumber = "74"
-            landmarkName = "update_state(st, trseg, step, target)"
+            landmarkName = "update_state(st, step, target)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -80,7 +80,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "101"
             endingLineNumber = "101"
-            landmarkName = "print_route(p, initialstate)"
+            landmarkName = "update_state(st, step, target)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>

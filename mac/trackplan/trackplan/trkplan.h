@@ -15,7 +15,8 @@
 
 #define MAX_TIMESTEP        8
 #define MAX_TRAINS          4
-#define MAX_SEGM            8  // only a safeguard
+#define MAX_SEGM            32  // only a safeguard
+#define HARDCODED_TOPOLOGY  0
 
 #define NUM_POPULATION      16
 #define NUM_GENERATIONS     100
@@ -82,6 +83,7 @@ typedef  struct {
 
 // ------------------------------------------------------------------
 
+#if HARDCODED_TOPOLOGY 
 /* ---------------
  * track_segment_t
  * holds topology
@@ -93,6 +95,7 @@ typedef struct {
     uint8_t right_2;
 } track_segment_t;
 
+#endif
 
 // ------------------------------------------------------------------
 
@@ -116,8 +119,8 @@ typedef struct{
 #define RC_COL 2
 
 int get_segstate(trstate_t *st, segstate_t *retseg);
-int update_state(trstate_t *st, track_segment_t *trseg, uint16_t step, trtarget_t *t);
-int update_state_all(trstate_t *st, track_segment_t *trseg, tplan_t *p, trtarget_t *t);
+int update_state(trstate_t *st, uint16_t step, trtarget_t *t);
+int update_state_all(trstate_t *st, tplan_t *p, trtarget_t *t);
 
 void test_me(void);
 

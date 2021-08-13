@@ -11,18 +11,23 @@
 #include <memory.h>
 #include <time.h>
 
-/*
+#include "topology.h"
+
+
+#if HARDCODED_TOPOLOGY
+/* hardcoded : (HARDCODED_TOPOLOGY=1)
  
     0 -----\
       ______\_____ _______
         1      2     3
  */
-static track_segment_t trseg[] = {
+static track_segment_t gTrseg[] = {
     /*0*/ {0xFF, 0xFF, 2,    0xFF},
     /*1*/ {0xFF, 0xFF, 2,    0xFF},
     /*2*/ {1,    0,    3,    0xFF},
     /*3*/ {2,    0xFF,    0xFF, 0xFF}
 };
+#endif
 
 static void update_score(trstate_t *st, trtarget_t *tg);
 
@@ -49,7 +54,7 @@ int get_segstate(trstate_t *st, segstate_t *retseg)
     return 0;
 }
 
-int update_state(trstate_t *st, track_segment_t *trseg, uint16_t step, trtarget_t *target)
+int update_state(trstate_t *st, uint16_t step, trtarget_t *target)
 {
     int rc = 0;
     for (int i=0; i<MAX_TRAINS; i++) {
@@ -59,26 +64,39 @@ int update_state(trstate_t *st, track_segment_t *trseg, uint16_t step, trtarget_
         int m = trbits_motion(b);
         int d = trbits_nextdir(b);
         if (!m) continue;
-        uint8_t ns1;
-        uint8_t ns2;
+        int ns1;
+        int ns2;
+#if HARDCODED_TOPOLOGY
         switch (m) {
             case -1:
-                ns1 = trseg[s].left_1;
-                ns2 = trseg[s].left_2;
+                ns1 = gTrseg[s].left_1;
+                ns2 = gTrseg[s].left_2;
                 break;
             case 1:
-                ns1 = trseg[s].right_1;
-                ns2 = trseg[s].right_2;
+                ns1 = gTrseg[s].right_1;
+                ns2 = gTrseg[s].right_2;
                 break;
             default:
                 abort();
                 break;
         }
+#else
+        int tn;
+        if (m < 0) {
+            next_blocks_nums(s, 1, &ns1, &ns2, &tn);
+        } else if (m > 0) {
+            next_blocks_nums(s, 0, &ns1, &ns2, &tn);
+        } else {
+           abort();
+        }
+#endif
+        if (ns1==0xFF) ns1 = -1;
+        if (ns2==0xFF) ns2 = -1;
         int ns = ns1;
-        if ((ns2 != 0xFF) & d) {
+        if ((ns2 != -1) & d) {
             ns = ns2;
         }
-        if (ns == 0xFF) {
+        if (ns == -1) {
             rc |= RC_OUT;
             st->flags |= RC_OUT;
         } else {
@@ -91,7 +109,7 @@ int update_state(trstate_t *st, track_segment_t *trseg, uint16_t step, trtarget_
                 }
             }
         }
-        if (ns != 0xFF) st->t[i] = ns;
+        if (ns != -1) st->t[i] = ns;
     }
     update_score(st, target);
     return rc;
@@ -115,27 +133,40 @@ static void print_route(tplan_t *p, trstate_t *initialstate)
                 printf(" -");
                 continue;
             }
-            uint8_t ns1;
-            uint8_t ns2;
+            int ns1;
+            int ns2;
+#if HARDCODED_TOPOLOGY
             switch (m) {
             case -1:
-                ns1 = trseg[s].left_1;
-                ns2 = trseg[s].left_2;
+                ns1 = gTrseg[s].left_1;
+                ns2 = gTrseg[s].left_2;
                 break;
             case 1:
-                ns1 = trseg[s].right_1;
-                ns2 = trseg[s].right_2;
+                ns1 = gTrseg[s].right_1;
+                ns2 = gTrseg[s].right_2;
                 break;
             default:
                 abort();
                 break;
             }
+#else
+            int tn;
+            if (m < 0) {
+                next_blocks_nums(s, 1, &ns1, &ns2, &tn);
+            } else if (m > 0) {
+                next_blocks_nums(s, 0, &ns1, &ns2, &tn);
+            } else {
+                abort();
+            }
+#endif
+            if (ns1==0xFF) ns1 = -1;
+            if (ns2==0xFF) ns2 = -1;
             int ns = ns1;
-            if ((ns2 != 0xFF) & d) {
+            if ((ns2 != -1) & d) {
                 ns = ns2;
             }
             printf(" %d", ns);
-            if (ns == 0xFF) {
+            if (ns == -1) {
                 break;
             }
             state.t[i] = ns;
@@ -155,12 +186,12 @@ static void print_state(trstate_t *st)
     printf("  %s %s\n", (st->flags & RC_COL) ? "COL" :"", (st->flags & RC_OUT) ? "OUT":"");
 }
 
-int update_state_all(trstate_t *st, track_segment_t *trseg, tplan_t *p, trtarget_t *target)
+int update_state_all(trstate_t *st, tplan_t *p, trtarget_t *target)
 {
     int rc = 0;
     st->score = 0;
     for (int i=0; i<MAX_TIMESTEP; i++) {
-        rc |= update_state(st, trseg, p->step[i], target);
+        rc |= update_state(st, p->step[i], target);
         if ((0)) print_state(st);
     }
     if ((0)) printf("score : %d\n", st->score);
@@ -270,7 +301,7 @@ void test_me(void)
         double m = 0;
         for (int pop = 0; pop<NUM_POPULATION; pop++) {
             memcpy(&state, &initialstate, sizeof(state));
-            update_state_all(&state, trseg, &population[pop], &target);
+            update_state_all(&state, &population[pop], &target);
             printf("individu %d score %d\n", pop, population[pop].score);
             if ((0)) print_route(&population[pop], &initialstate);
             m += population[pop].score;

@@ -12,6 +12,7 @@
 		1B75030F25F8AC980049F0B8 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1B75030D25F8AC980049F0B8 /* MainMenu.xib */; };
 		1B75031225F8AC980049F0B8 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B75031125F8AC980049F0B8 /* main.m */; };
 		1B75031B25F8ACCC0049F0B8 /* trkplan.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B75031A25F8ACCC0049F0B8 /* trkplan.c */; };
+		1BB47D9526C5B1700075B315 /* topology.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BB47D9326C5B1700075B315 /* topology.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -25,6 +26,8 @@
 		1B75031325F8AC980049F0B8 /* trackplan.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = trackplan.entitlements; sourceTree = "<group>"; };
 		1B75031925F8ACCC0049F0B8 /* trkplan.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = trkplan.h; sourceTree = "<group>"; };
 		1B75031A25F8ACCC0049F0B8 /* trkplan.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = trkplan.c; sourceTree = "<group>"; };
+		1BB47D9326C5B1700075B315 /* topology.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = topology.c; path = ../../trainctl/topology/topology.c; sourceTree = "<group>"; };
+		1BB47D9426C5B1700075B315 /* topology.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = topology.h; path = ../../trainctl/topology/topology.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -41,6 +44,7 @@
 		1B7502FC25F8AC910049F0B8 = {
 			isa = PBXGroup;
 			children = (
+				1BB47D9226C58A5E0075B315 /* topology */,
 				1B75030725F8AC910049F0B8 /* trackplan */,
 				1B75030625F8AC910049F0B8 /* Products */,
 			);
@@ -68,6 +72,15 @@
 				1B75031325F8AC980049F0B8 /* trackplan.entitlements */,
 			);
 			path = trackplan;
+			sourceTree = "<group>";
+		};
+		1BB47D9226C58A5E0075B315 /* topology */ = {
+			isa = PBXGroup;
+			children = (
+				1BB47D9326C5B1700075B315 /* topology.c */,
+				1BB47D9426C5B1700075B315 /* topology.h */,
+			);
+			name = topology;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -139,6 +152,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1BB47D9526C5B1700075B315 /* topology.c in Sources */,
 				1B75031225F8AC980049F0B8 /* main.m in Sources */,
 				1B75030A25F8AC910049F0B8 /* AppDelegate.m in Sources */,
 				1B75031B25F8ACCC0049F0B8 /* trkplan.c in Sources */,
@@ -202,6 +216,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
+					"TRACKPLAN_TESTPGM=1",
 				);
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
@@ -255,6 +270,10 @@
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"TRACKPLAN_TESTPGM=1",
+					"$(inherited)",
+				);
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
@@ -277,6 +296,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = 86FRVQ49X4;
 				ENABLE_HARDENED_RUNTIME = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
 				INFOPLIST_FILE = trackplan/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -296,6 +316,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = 86FRVQ49X4;
 				ENABLE_HARDENED_RUNTIME = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
 				INFOPLIST_FILE = trackplan/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

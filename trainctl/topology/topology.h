@@ -62,6 +62,7 @@ int _blk_num_for_sub_num(int subnum);
 int _next_block_num(int blknum, uint8_t left);
 int _next_sub_num_for_sub_num(int subnum, uint8_t left);
 
+void next_blocks_nums(int blknum, uint8_t left, int *pb1, int *pb2, int *t);
 // ---------------------------------------------------------------------
 
 static inline uint8_t blk_addr_for_sub_addr(uint8_t addr, uint8_t sub)

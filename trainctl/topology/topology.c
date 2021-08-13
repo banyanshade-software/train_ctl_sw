@@ -14,7 +14,18 @@
 
 #include <stddef.h>
 #include <memory.h>
+
+
+
+#ifndef TRACKPLAN_TESTPGM
 #include "railconfig.h"
+#else
+#include <stdio.h>
+#define NUM_TURNOUTS 16
+#define DBG_TURNOUTS 1
+#define itm_debug3(_fl, _msg, _a, _b, _c) do {printf(_msg  "%d %d %d", _a, _b, _c);} while(0)
+#endif
+
 #include "topology.h"
 
 
@@ -29,6 +40,7 @@ int _blk_num_for_sub_num(int subnum)
 
 int _next_block_num(int blknum, uint8_t left)
 {
+#if 0
 	if ((0)) return -1; // XXX
 	switch (blknum) {
 	case 0:
@@ -40,6 +52,54 @@ int _next_block_num(int blknum, uint8_t left)
 	default:
 		return -1;
 	}
+#endif
+    int a,b,tn;
+    next_blocks_nums(blknum, left, &a, &b, &tn);
+    if (tn>=0) {
+        a = topology_get_turnout(tn) ? b : a;
+    }
+    return a;
+}
+
+
+void next_blocks_nums(int blknum, uint8_t left, int *pb1, int *pb2, int *tn)
+{
+
+    *pb1 = -1;
+    *pb2 = -1;
+    *tn = -1;
+    switch (blknum) {
+    case 0:
+            if (left) {
+                *pb1 = -1;
+                *pb2 = -1;
+            } else {
+                *pb1  = 1;
+                *pb2 = -1;
+            }
+            break;
+    case 1:
+            if (left) {
+                *tn = 0;
+                *pb1 = 0;
+                *pb2 = 2;
+            } else {
+                *pb1 = -1;
+                *pb2 = -1;
+            }
+            break;
+    case 2:
+            if (left) {
+                *pb1 = -1;
+                *pb2 = -1;
+            } else {
+                *pb1 = 1;
+                *pb2 = -1;
+            }
+            break;
+    default:
+            break;
+    }
 }
 
 int get_blk_len(int blknum)

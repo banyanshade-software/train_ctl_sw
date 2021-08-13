@@ -61,13 +61,66 @@ int _next_block_num(int blknum, uint8_t left)
     return a;
 }
 
+typedef struct {
+    uint8_t left1;
+    uint8_t left2;
+    uint8_t ltn; // leeee turnout
+    uint8_t right1;
+    uint8_t right2;
+    uint8_t rtn; // leeee turnout
+} topo_seg_t;
+
+#define TOPOLOGY 0
+ 
+static topo_seg_t Topology[] = {
+#if TOPOLOGY == 1
+    // trackplan test
+    /* 0 */ { 0xFF, 0xFF, 0xFF,   2,    0xFF, 0},
+    /* 1 */ { 0xFF, 0xFF, 0xFF,   2,    0xFF, 0},
+    /* 2 */ { 0,    1,    0,      3,    0xFF, 0xFF},
+    /* 3 */ { 2,    0xFF, 0xFF,   0xFF, 0xFF, 0xFF}
+#elif TOPOLOGY == 2
+    // partial layout, 3 segs
+    /* 0 */ { 0xFF, 0xFF, 0xFF,   1,    0xFF, 0},
+    /* 1 */ { 2,    0,       0,   0xFF, 0xFF, 0xFF},
+    /* 2 */ { 0xFF, 0xFF, 0xFF,   1,    0xFF, 0},
+#elif TOPOLOGY == 0
+    // layout 5 segs
+    /* 0 */ { 0xFF, 0xFF, 0xFF,   1,    0xFF, 0},
+    /* 1 */ { 0,    2,       0,   3,    0xFF, 1},
+    /* 2 */ { 0xFF, 0xFF, 0xFF,   1,    0xFF, 0},
+    /* 3 */ { 4,    1,       1,   0xFF, 0xFF, 0xFF},
+    /* 4 */ { 0xFF, 0xFF, 0xFF,   3,    0xFF, 1}
+#else
+    /* 0 */ { 0xFF, 0xFF, 0xFF,   1,    0xFF, 0},
+    /* 1 */ { 0,    2,       0,   0xFF, 0xFF, 0xFF},
+    /* 2 */ { 0xFF, 0xFF, 0xFF,   1,    0xFF, 0},
+#error bad TOPOLOGY value
+#endif
+};
 
 void next_blocks_nums(int blknum, uint8_t left, int *pb1, int *pb2, int *tn)
 {
-
     *pb1 = -1;
     *pb2 = -1;
     *tn = -1;
+    if (blknum<0) {
+        abort();
+        return;
+    }
+    if (left) {
+        *pb1 = Topology[blknum].left1;
+        *pb2 = Topology[blknum].left2;
+        *tn =  Topology[blknum].ltn;
+    } else {
+        *pb1 = Topology[blknum].right1;
+        *pb2 = Topology[blknum].right2;
+        *tn =  Topology[blknum].rtn;
+    }
+    if (*pb1 == 0xFF) *pb1 = -1;
+    if (*pb2 == 0xFF) *pb2 = -1;
+    if (*tn  == 0xFF) *tn  = -1;
+#if 0
     switch (blknum) {
     case 0:
             if (left) {
@@ -100,6 +153,7 @@ void next_blocks_nums(int blknum, uint8_t left, int *pb1, int *pb2, int *tn)
     default:
             break;
     }
+#endif
 }
 
 int get_blk_len(int blknum)

@@ -135,6 +135,7 @@
 
 
 static  canton_config_t Cantons[NUM_CANTONS] = {
+    // C0
 		{//CANTON_TYPE_PROTO1,
 				//  0    1    2    3    4    5    6    7    8    9    10   11  12    13   14   15
 				//{ 1000, 874, 770, 699, 621, 578, 538, 507, 451, 432, 413, 398, 379, 367, 355, 345}, // volts[16]
@@ -149,7 +150,8 @@ static  canton_config_t Cantons[NUM_CANTONS] = {
 				1, /* reverse BEMF*/
 		},
 #if NUM_LOCAL_CANTONS_SW == 8
-		{//CANTON_TYPE_PROTO1,
+	// C1
+        {//CANTON_TYPE_PROTO1,
 				//  0    1    2    3    4    5    6    7    8    9    10   11  12    13   14   15
 				//{ 1000, 874, 770, 699, 621, 578, 538, 507, 451, 432, 413, 398, 379, 367, 355, 345}, // volts[16]
 								{ 1000, 770, 621,  538, 451, 413, 379, 355}, // volts[8]				//{ 1000, 0,    0, 0, 0, 621, 0,   0, 0, 0, 0, 0, 0, 0, 0, 0}, // volts[16]  V2
@@ -161,6 +163,7 @@ static  canton_config_t Cantons[NUM_CANTONS] = {
 				0, /*notif BEMF */
 				1, /* reverse BEMF*/
 		},
+    // C2
 		{//CANTON_TYPE_PROTO1,
 				//  0    1    2    3    4    5    6    7    8    9    10   11  12    13   14   15
 				//{ 1000, 874, 770, 699, 621, 578, 538, 507, 451, 432, 413, 398, 379, 367, 355, 345}, // volts[16]
@@ -173,6 +176,7 @@ static  canton_config_t Cantons[NUM_CANTONS] = {
 				0, /*notif BEMF */
 				1, /* reverse BEMF*/
 		},
+    // C3
 		{//CANTON_TYPE_PROTO1,
 				//  0    1    2    3    4    5    6    7    8    9    10   11  12    13   14   15
 				//{ 1000, 874, 770, 699, 621, 578, 538, 507, 451, 432, 413, 398, 379, 367, 355, 345}, // volts[16]
@@ -183,8 +187,9 @@ static  canton_config_t Cantons[NUM_CANTONS] = {
 				VOLT_3_SEL0_Pin, VOLT_3_SEL1_Pin, VOLT_3_SEL2_Pin,// 0/* VOLT_3_SEL3_Pin*/,
 				3, TIM_CHANNEL_1, TIM_CHANNEL_2,  // TIM_HandleTypeDef
 				0, /*notif BEMF */
-				0, /* reverse BEMF*/
+				1, /* reverse BEMF*/
 		},
+    // C4
 		{//CANTON_TYPE_PROTO1,
 				//  0    1    2    3    4    5    6    7    8    9    10   11  12    13   14   15
 				//{ 1000, 874, 770, 699, 621, 578, 538, 507, 451, 432, 413, 398, 379, 367, 355, 345}, // volts[16]
@@ -195,7 +200,7 @@ static  canton_config_t Cantons[NUM_CANTONS] = {
 				VOLT_4_SEL0_Pin, VOLT_4_SEL1_Pin, VOLT_4_SEL2_Pin, //0/* VOLT_4_SEL3_Pin*/,
 				3, TIM_CHANNEL_3, TIM_CHANNEL_4,  // TIM_HandleTypeDef
 				0, /*notif BEMF */
-				0, /* reverse BEMF*/
+				1, /* reverse BEMF*/
 		},
 #ifdef VOLT_5_SEL0_GPIO_Port
 		{//CANTON_TYPE_PROTO1,
@@ -208,7 +213,7 @@ static  canton_config_t Cantons[NUM_CANTONS] = {
 				VOLT_5_SEL0_Pin, VOLT_5_SEL1_Pin, VOLT_5_SEL2_Pin, //0/* VOLT_4_SEL3_Pin*/,
 				4, TIM_CHANNEL_1, TIM_CHANNEL_1,  // TIM_HandleTypeDef 4==TIM12
 				0, /*notif BEMF */
-				0, /* reverse BEMF*/
+				1, /* reverse BEMF*/
 		},
 #else
 		{

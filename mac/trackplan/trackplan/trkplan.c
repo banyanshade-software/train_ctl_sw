@@ -93,6 +93,7 @@ int update_state(trstate_t *st, uint16_t step, trtarget_t *target)
         if (ns1==0xFF) ns1 = -1;
         if (ns2==0xFF) ns2 = -1;
         int ns = ns1;
+        if (ns == -1) ns = ns2;
         if ((ns2 != -1) & d) {
             ns = ns2;
         }

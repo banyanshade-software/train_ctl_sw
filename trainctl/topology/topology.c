@@ -87,8 +87,8 @@ static topo_seg_t Topology[] = {
 #elif TOPOLOGY == 0
     // layout 5 segs
     /* 0 */ { 0xFF, 0xFF, 0xFF,   1,    0xFF, 0},
-    /* 1 */ { 0,    2,       0,   3,    0xFF, 1},
-    /* 2 */ { 0xFF, 0xFF, 0xFF,   1,    0xFF, 0},
+    /* 1 */ { 0,    2,       0,   0xFF, 3,    1},
+    /* 2 */ { 0xFF, 0xFF, 0xFF,   0xFF, 1,    0},
     /* 3 */ { 4,    1,       1,   0xFF, 0xFF, 0xFF},
     /* 4 */ { 0xFF, 0xFF, 0xFF,   3,    0xFF, 1}
 #else
@@ -166,7 +166,7 @@ int get_blk_len(int blknum)
 	case 2:
 		return 50;
 	default:
-		return 10;
+		return 30;
 	}
 }
 

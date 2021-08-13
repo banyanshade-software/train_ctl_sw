@@ -229,7 +229,8 @@ static void ctrl_init(void)
 	memset(trctl, 0, sizeof(train_ctrl_t)*NUM_TRAINS);
 	ctrl_set_mode(0, train_manual);
 	ctrl_set_mode(1, train_auto);
-	set_turnout(0, 0);
+    set_turnout(0, 0);
+    set_turnout(1, 1);
 	if ((1)) {
 		trctl[0].canton1_addr = MA_CANTON(0, 1);//MA_CANTON(0, 1); // initial blk
 		trctl[0].canton2_addr = 0xFF;
@@ -1029,7 +1030,7 @@ static void check_behaviour(_UNUSED_ uint32_t tick)
 		itm_debug3(DBG_CTRL, "hi f=", tidx, flags, tvars->canton1_addr);
 		if (tidx == 1) {
 			if ((flags & BEHAVE_RESTARTBLK) && (tvars->canton1_addr == MA_CANTON(0,2))) {
-				set_turnout(0, 1);
+                set_turnout(0, 1);
 				continue;
 			}
 			if ((flags & BEHAVE_EOT2) && (tvars->_dir > 0)) {

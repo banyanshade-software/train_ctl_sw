@@ -14,6 +14,11 @@
 #include "topology.h"
 
 
+//static int get_segstate(trstate_t *st, segstate_t *retseg);
+static int update_state(trstate_t *st, uint16_t step, trtarget_t *t, int score);
+static int update_state_all(trstate_t *st, tplan_t *p, trtarget_t *t);
+static void update_score(trstate_t *st, trtarget_t *tg, int step);
+
 #if HARDCODED_TOPOLOGY
 /* hardcoded : (HARDCODED_TOPOLOGY=1)
  
@@ -29,7 +34,6 @@ static track_segment_t gTrseg[] = {
 };
 #endif
 
-static void update_score(trstate_t *st, trtarget_t *tg);
 
 
 static void intial_state(trstate_t   *st)
@@ -40,7 +44,8 @@ static void intial_state(trstate_t   *st)
         st->t[i]=0xFF;
     }
 }
-int get_segstate(trstate_t *st, segstate_t *retseg)
+/*
+static int get_segstate(trstate_t *st, segstate_t *retseg)
 {
     memset(retseg, 0, sizeof(*retseg));
     for (int i=0; i<MAX_TRAINS; i++) {
@@ -51,8 +56,9 @@ int get_segstate(trstate_t *st, segstate_t *retseg)
     }
     return 0;
 }
+*/
 
-int update_state(trstate_t *st, uint16_t step, trtarget_t *target)
+static int update_state(trstate_t *st, uint16_t step, trtarget_t *target, int stepnum)
 {
     int rc = 0;
     for (int i=0; i<MAX_TRAINS; i++) {
@@ -110,7 +116,7 @@ int update_state(trstate_t *st, uint16_t step, trtarget_t *target)
         }
         if (ns != -1) st->t[i] = ns;
     }
-    update_score(st, target);
+    update_score(st, target, stepnum);
     return rc;
 }
 
@@ -189,12 +195,12 @@ static void print_state(trstate_t *st)
     printf("  %s %s\n", (st->flags & RC_COL) ? "COL" :"", (st->flags & RC_OUT) ? "OUT":"");
 }
 
-int update_state_all(trstate_t *st, tplan_t *p, trtarget_t *target)
+static int update_state_all(trstate_t *st, tplan_t *p, trtarget_t *target)
 {
     int rc = 0;
     st->score = 0;
     for (int i=0; i<MAX_TIMESTEP; i++) {
-        rc |= update_state(st, p->step[i], target);
+        rc |= update_state(st, p->step[i], target, i);
         if ((0)) print_state(st);
     }
     if ((0)) printf("score : %d\n", st->score);
@@ -218,24 +224,24 @@ static void init_testplan(void)
 }
 #endif
 
-
-static void update_score(trstate_t *st, trtarget_t *tg)
+#define SCORE_PRINT (0)
+static void update_score(trstate_t *st, trtarget_t *tg, int stepnum)
 {
-    printf("score upd st t0=%d t1=%d\n", st->t[0], st->t[1]);
+    if ((SCORE_PRINT)) printf("score upd st t0=%d t1=%d\n", st->t[0], st->t[1]);
     if (st->flags & RC_COL) {
-        printf("  score COL -30\n");
+        if ((SCORE_PRINT)) printf("  score COL -30\n");
         st->score -= 30;
     }
     if (st->flags & RC_OUT) {
-        printf("  score OUT -20\n");
+        if ((SCORE_PRINT)) printf("  score OUT -20\n");
         st->score -= 20;
     }
     // hardcoded
     for (int i=0; i<MAX_TRAINS; i++) {
         if (tg->t[i] == 0xFF) continue;
         if (st->t[i] == tg->t[i]) {
-            printf("  score match +20 : st->t[%d] = target %d\n", i, tg->t[i]);
-            st->score += 20;
+            if ((SCORE_PRINT)) printf("  score match +20 : st->t[%d] = target %d\n", i, tg->t[i]);
+            st->score += (stepnum == MAX_TIMESTEP-1) ? 30 : 10;
         } else {
             st->score -= 2;
         }

@@ -18,8 +18,8 @@
 #define MAX_SEGM            32  // only a safeguard
 #define HARDCODED_TOPOLOGY  0
 
-#define NUM_POPULATION      16
-#define NUM_GENERATIONS     300
+#define NUM_POPULATION      32
+#define NUM_GENERATIONS     3000
 #define PERCENT_CROSS5      60
 #define NUM_MUTATIONS       50
 
@@ -118,9 +118,6 @@ typedef struct{
 #define RC_OUT 1
 #define RC_COL 2
 
-int get_segstate(trstate_t *st, segstate_t *retseg);
-int update_state(trstate_t *st, uint16_t step, trtarget_t *t);
-int update_state_all(trstate_t *st, tplan_t *p, trtarget_t *t);
 
 void test_me(void);
 

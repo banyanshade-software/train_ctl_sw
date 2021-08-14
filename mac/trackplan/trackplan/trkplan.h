@@ -13,13 +13,13 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-#define MAX_TIMESTEP        8
+#define MAX_TIMESTEP        12
 #define MAX_TRAINS          4
 #define MAX_SEGM            32  // only a safeguard
 #define HARDCODED_TOPOLOGY  0
 
 #define NUM_POPULATION      16
-#define NUM_GENERATIONS     100
+#define NUM_GENERATIONS     300
 #define PERCENT_CROSS5      60
 #define NUM_MUTATIONS       50
 
@@ -105,13 +105,13 @@ typedef struct {
 } segstate_t;
 
 typedef struct {
-    int8_t t[MAX_TRAINS];
+    uint8_t t[MAX_TRAINS];
     uint8_t flags;
     int16_t score;
 } trstate_t;
 
 typedef struct{
-    int8_t t[MAX_TRAINS];
+    uint8_t t[MAX_TRAINS];
 } trtarget_t;
 
 #define RC_OK  0

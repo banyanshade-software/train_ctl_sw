@@ -32,12 +32,10 @@ static track_segment_t gTrseg[] = {
 static void update_score(trstate_t *st, trtarget_t *tg);
 
 
-static void intial_state(trstate_t
-                         *st)
+static void intial_state(trstate_t   *st)
 {
     memset(st, 0, sizeof(*st));
-    st->t[0]=1;
-    st->t[1]=3;
+   
     for (int i=2; i<MAX_TRAINS; i++) {
         st->t[i]=0xFF;
     }
@@ -160,11 +158,15 @@ static void print_route(tplan_t *p, trstate_t *initialstate)
                 abort();
             }
 #endif
+            int ns;
             if (ns1==0xFF) ns1 = -1;
             if (ns2==0xFF) ns2 = -1;
-            int ns = ns1;
-            if ((ns2 != -1) & d) {
+            if (ns1 == -1) {
                 ns = ns2;
+            } else if (ns2 == -1) {
+                ns = ns1;
+            } else {
+                ns = d ? ns2 : ns1;
             }
             printf(" %d", ns);
             if (ns == -1) {
@@ -219,15 +221,20 @@ static void init_testplan(void)
 
 static void update_score(trstate_t *st, trtarget_t *tg)
 {
+    printf("score upd st t0=%d t1=%d\n", st->t[0], st->t[1]);
     if (st->flags & RC_COL) {
+        printf("  score COL -30\n");
         st->score -= 30;
     }
     if (st->flags & RC_OUT) {
+        printf("  score OUT -20\n");
         st->score -= 20;
     }
     // hardcoded
     for (int i=0; i<MAX_TRAINS; i++) {
+        if (tg->t[i] == 0xFF) continue;
         if (st->t[i] == tg->t[i]) {
+            printf("  score match +20 : st->t[%d] = target %d\n", i, tg->t[i]);
             st->score += 20;
         } else {
             st->score -= 2;
@@ -278,8 +285,7 @@ void test_me(void)
     trstate_t initialstate;
     trtarget_t target;
     for (int i=0; i<MAX_TRAINS; i++) target.t[i] = 0xFF;
-    target.t[0] = 3;
-    target.t[1] = 1;
+    
     /*
     init_testplan();
     intial_state(&state);
@@ -294,6 +300,12 @@ void test_me(void)
 #endif
     
     intial_state(&initialstate);
+    initialstate.t[0]=0;
+    initialstate.t[1]=2;
+    
+    target.t[0] = 2;
+    target.t[1] = 0;
+    
     for (int i=0; i<NUM_POPULATION; i++) {
         set_random_trkseg(&population[i]);
     }

@@ -67,7 +67,10 @@ static int update_state(trstate_t *st, uint16_t step, trtarget_t *target, int st
         uint16_t b = trbits_gettrain(step, i);
         int m = trbits_motion(b);
         int d = trbits_nextdir(b);
-        if (!m) continue;
+        if (!m) {
+            st->score += 1; // TODO this should be in update_score
+            continue;
+        }
         int ns1;
         int ns2;
 #if HARDCODED_TOPOLOGY
@@ -230,18 +233,18 @@ static void update_score(trstate_t *st, trtarget_t *tg, int stepnum)
     if ((SCORE_PRINT)) printf("score upd st t0=%d t1=%d\n", st->t[0], st->t[1]);
     if (st->flags & RC_COL) {
         if ((SCORE_PRINT)) printf("  score COL -30\n");
-        st->score -= 30;
+        st->score -= 50;
     }
     if (st->flags & RC_OUT) {
         if ((SCORE_PRINT)) printf("  score OUT -20\n");
-        st->score -= 20;
+        st->score -= 30;
     }
     // hardcoded
     for (int i=0; i<MAX_TRAINS; i++) {
         if (tg->t[i] == 0xFF) continue;
         if (st->t[i] == tg->t[i]) {
             if ((SCORE_PRINT)) printf("  score match +20 : st->t[%d] = target %d\n", i, tg->t[i]);
-            st->score += (stepnum == MAX_TIMESTEP-1) ? 30 : 10;
+            st->score += (stepnum == MAX_TIMESTEP-1) ? 60 : 30;
         } else {
             st->score -= 2;
         }

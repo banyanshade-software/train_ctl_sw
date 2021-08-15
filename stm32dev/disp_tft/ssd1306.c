@@ -187,8 +187,8 @@ void ssd1306_FillZone(uint8_t x, uint8_t y, uint8_t wx, uint8_t wy, SSD1306_COLO
     uint32_t xi;
     uint32_t yi;
 
-    int by = y/8;
-    int bly = (y+wy+7)/8;
+    uint32_t by = y/8;
+    uint32_t bly = (y+wy+7)/8;
 
     for (yi = by; yi < bly; yi++) {
     	uint8_t b = 0xFF;

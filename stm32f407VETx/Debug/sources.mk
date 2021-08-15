@@ -40,5 +40,6 @@ trainctl/msg \
 trainctl/spdctl \
 trainctl/stm32 \
 trainctl/topology \
+trainctl/uitrack \
 trainctl/utils \
 

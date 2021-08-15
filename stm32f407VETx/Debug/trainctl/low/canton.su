@@ -2,8 +2,8 @@ itm_debug.h:37:20:itm_debug1	32	static
 itm_debug.h:45:20:itm_debug3	32	static
 misc.h:80:19:canton_error	16	static
 misc.h:84:19:canton_error_rc	24	static
-trainmsg.h:122:1:mqf_read_to_canton	16	static
-trainmsg.h:123:1:mqf_write_from_canton	16	static
+trainmsg.h:127:1:mqf_read_to_canton	16	static
+trainmsg.h:128:1:mqf_write_from_canton	16	static
 canton.c:97:13:canton_reset	32	static
 canton.c:107:13:handle_canton_cmd	32	static
 canton.c:143:6:canton_tick	40	static

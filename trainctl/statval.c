@@ -73,6 +73,9 @@ _UNUSED_ static int32_t _getval(void *ptr, off_t offset, int l)
 	int32_t v32=0;
     int16_t v16; int8_t v8;
 	switch(l) {
+	default:
+		v32=0;
+		break;
 	case 1:
 		v8 = p8[offset];
 		v32 = (int32_t) v8;

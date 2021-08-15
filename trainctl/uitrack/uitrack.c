@@ -10,12 +10,13 @@
 #include "uitrack.h"
 
 #include "../msg/trainmsg.h"
+#include "misc.h"
 
 static void uitrack_reset(void);
 static void uitrack_change_blk(int blk, int v);
 static void uitrack_change_tn(int tn, int v);
 
-void uitrack_run_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
+void uitrack_run_tick(_UNUSED_ uint32_t notif_flags, uint32_t tick, _UNUSED_ uint32_t dt)
 {
     for (;;) {
         msg_64_t m;
@@ -24,21 +25,23 @@ void uitrack_run_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
         if (m.to != MA_UI(UISUB_TRACK)) continue;
         int blk; int v; int rst;
         switch (m.cmd) {
-            case CMD_BLK_CHANGE:
-                blk = m.vbytes[0];
-                v   = m.vbytes[1];
-                rst = m.vbytes[2];
-                if (rst) {
-                    uitrack_reset();
-                }
-                uitrack_change_blk(blk, v);
-                break;
-            case CMD_TURNOUT_A:
-                uitrack_change_tn(m.v2, 0);
-                break;
-            case CMD_TURNOUT_B:
-                uitrack_change_tn(m.v2, 1);
-                break;
+        default:
+        	break;
+        case CMD_BLK_CHANGE:
+        	blk = m.vbytes[0];
+        	v   = m.vbytes[1];
+        	rst = m.vbytes[2];
+        	if (rst) {
+        		uitrack_reset();
+        	}
+        	uitrack_change_blk(blk, v);
+        	break;
+        case CMD_TURNOUT_A:
+        	uitrack_change_tn(m.v2, 0);
+        	break;
+        case CMD_TURNOUT_B:
+        	uitrack_change_tn(m.v2, 1);
+        	break;
         }
     }
 }
@@ -58,12 +61,12 @@ static void uitrack_change_tn(int tn, int v)
     impl_uitrack_change_tn(tn, v);
 }
 
-void  __attribute__((weak))  impl_uitrack_change_blk(int blk, int v)
+void  __attribute__((weak))  impl_uitrack_change_blk(_UNUSED_ int blk, _UNUSED_ int v)
 {
     
 }
 
-void  __attribute__((weak))  impl_uitrack_change_tn(int tn, int v)
+void  __attribute__((weak))  impl_uitrack_change_tn(_UNUSED_ int tn, _UNUSED_ int v)
 {
     
 }

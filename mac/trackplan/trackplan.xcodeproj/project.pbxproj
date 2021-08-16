@@ -7,15 +7,17 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1B60329B26CA4C4B00D5B6CA /* trkplan.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B60329A26CA4C4600D5B6CA /* trkplan.c */; };
 		1B75030A25F8AC910049F0B8 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B75030925F8AC910049F0B8 /* AppDelegate.m */; };
 		1B75030C25F8AC980049F0B8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1B75030B25F8AC980049F0B8 /* Assets.xcassets */; };
 		1B75030F25F8AC980049F0B8 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1B75030D25F8AC980049F0B8 /* MainMenu.xib */; };
 		1B75031225F8AC980049F0B8 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B75031125F8AC980049F0B8 /* main.m */; };
-		1B75031B25F8ACCC0049F0B8 /* trkplan.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B75031A25F8ACCC0049F0B8 /* trkplan.c */; };
 		1BB47D9526C5B1700075B315 /* topology.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BB47D9326C5B1700075B315 /* topology.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		1B60329926CA4C4600D5B6CA /* trkplan.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = trkplan.h; sourceTree = "<group>"; };
+		1B60329A26CA4C4600D5B6CA /* trkplan.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = trkplan.c; sourceTree = "<group>"; };
 		1B75030525F8AC910049F0B8 /* trackplan.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = trackplan.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1B75030825F8AC910049F0B8 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		1B75030925F8AC910049F0B8 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -24,8 +26,6 @@
 		1B75031025F8AC980049F0B8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1B75031125F8AC980049F0B8 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		1B75031325F8AC980049F0B8 /* trackplan.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = trackplan.entitlements; sourceTree = "<group>"; };
-		1B75031925F8ACCC0049F0B8 /* trkplan.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = trkplan.h; sourceTree = "<group>"; };
-		1B75031A25F8ACCC0049F0B8 /* trkplan.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = trkplan.c; sourceTree = "<group>"; };
 		1BB47D9326C5B1700075B315 /* topology.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = topology.c; path = ../../trainctl/topology/topology.c; sourceTree = "<group>"; };
 		1BB47D9426C5B1700075B315 /* topology.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = topology.h; path = ../../trainctl/topology/topology.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -41,9 +41,20 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		1B60329826CA4C4600D5B6CA /* trkpln */ = {
+			isa = PBXGroup;
+			children = (
+				1B60329926CA4C4600D5B6CA /* trkplan.h */,
+				1B60329A26CA4C4600D5B6CA /* trkplan.c */,
+			);
+			name = trkpln;
+			path = ../../trainctl/trkpln;
+			sourceTree = "<group>";
+		};
 		1B7502FC25F8AC910049F0B8 = {
 			isa = PBXGroup;
 			children = (
+				1B60329826CA4C4600D5B6CA /* trkpln */,
 				1BB47D9226C58A5E0075B315 /* topology */,
 				1B75030725F8AC910049F0B8 /* trackplan */,
 				1B75030625F8AC910049F0B8 /* Products */,
@@ -62,8 +73,6 @@
 			isa = PBXGroup;
 			children = (
 				1B75030825F8AC910049F0B8 /* AppDelegate.h */,
-				1B75031925F8ACCC0049F0B8 /* trkplan.h */,
-				1B75031A25F8ACCC0049F0B8 /* trkplan.c */,
 				1B75030925F8AC910049F0B8 /* AppDelegate.m */,
 				1B75030B25F8AC980049F0B8 /* Assets.xcassets */,
 				1B75030D25F8AC980049F0B8 /* MainMenu.xib */,
@@ -155,7 +164,7 @@
 				1BB47D9526C5B1700075B315 /* topology.c in Sources */,
 				1B75031225F8AC980049F0B8 /* main.m in Sources */,
 				1B75030A25F8AC910049F0B8 /* AppDelegate.m in Sources */,
-				1B75031B25F8ACCC0049F0B8 /* trkplan.c in Sources */,
+				1B60329B26CA4C4B00D5B6CA /* trkplan.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

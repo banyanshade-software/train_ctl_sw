@@ -13,6 +13,106 @@
 
 #include "topology.h"
 
+// -------------------------------------------------------------------------
+// -------------------------------------------------------------------------
+
+//#define SRAND_VAL       2
+/*
+ per train:
+ X X            motion   01=<-  11=-> 00=idle  (10=unused)
+      X         next-dir
+ 16bit contains up to 5 trains, MSB not used
+ */
+static inline uint16_t trbits_gettrain(uint16_t bits, int8_t ntrain)
+{
+    uint16_t v = (bits >> (3*ntrain)) & 0x7;
+    return v;
+}
+static inline int16_t trbits_motion(int16_t bits)
+{
+    int16_t t = (bits & 0x6)>>1;
+    switch (t) {
+        case 0: return 0;
+        case 1: return 1;
+        case 3: return -1;
+        default: abort();
+            break;
+    }
+    return 0;
+}
+static inline uint16_t trbits_nextdir(int16_t bits)
+{
+    return bits & 0x01;
+}
+
+static inline void set_motion_dir(uint16_t *pbits, int trn, int motion, int nextdir)
+{
+    uint16_t t = ((uint16_t)(motion & 0x3))<<1 | (nextdir & 1);
+    uint16_t m = 0x7;
+    t = t<<(trn*3);
+    m = m<<(trn*3);
+    *pbits &= ~m;
+    *pbits |= t;
+    
+    if ((1)) {
+        int m = trbits_motion(trbits_gettrain(*pbits, trn));
+        int d = trbits_nextdir(trbits_gettrain(*pbits, trn));
+        if (m != motion) abort();
+        if (d != nextdir) abort();
+    }
+}
+
+
+/*
+ * tplan_t is individual in population
+ * it contains step (direction for each trains among time)
+ */
+typedef  struct {
+    uint16_t step[MAX_TIMESTEP];
+    int16_t score;
+    uint8_t mark;
+} tplan_t;
+
+
+// ------------------------------------------------------------------
+
+#if HARDCODED_TOPOLOGY
+/* ---------------
+ * track_segment_t
+ * holds topology
+ */
+typedef struct {
+    uint8_t left_1;
+    uint8_t left_2;
+    uint8_t right_1;
+    uint8_t right_2;
+} track_segment_t;
+
+#endif
+
+// ------------------------------------------------------------------
+
+typedef struct {
+    int8_t s[MAX_SEGM];
+    // more ?
+} segstate_t;
+
+typedef struct {
+    uint8_t t[MAX_TRAINS];
+    uint8_t flags;
+    int16_t score;
+} trstate_t;
+
+typedef struct{
+    uint8_t t[MAX_TRAINS];
+} trtarget_t;
+
+#define RC_OK  0
+#define RC_OUT 1
+#define RC_COL 2
+
+// -------------------------------------------------------------------------
+
 
 //static int get_segstate(trstate_t *st, segstate_t *retseg);
 static int update_state(trstate_t *st, uint16_t step, trtarget_t *t, int score);
@@ -34,6 +134,8 @@ static track_segment_t gTrseg[] = {
 };
 #endif
 
+// -------------------------------------------------------------------------
+// -------------------------------------------------------------------------
 
 
 static void intial_state(trstate_t   *st)
@@ -44,19 +146,8 @@ static void intial_state(trstate_t   *st)
         st->t[i]=0xFF;
     }
 }
-/*
-static int get_segstate(trstate_t *st, segstate_t *retseg)
-{
-    memset(retseg, 0, sizeof(*retseg));
-    for (int i=0; i<MAX_TRAINS; i++) {
-        uint8_t s = st->t[i];
-        if (0xFF == s) continue;
-        if (s>=MAX_SEGM) abort();
-        retseg->s[s]=i;
-    }
-    return 0;
-}
-*/
+
+
 
 static int update_state(trstate_t *st, uint16_t step, trtarget_t *target, int stepnum)
 {
@@ -288,33 +379,40 @@ static void crossover(tplan_t *res, tplan_t *p1, tplan_t *p2)
 
 #pragma mark -
 
-void test_me(void)
+static trstate_t  initialstate;
+static trtarget_t target;
+static uint8_t target_changed = 0;
+static int bestIdx = 0;
+
+void trkpln_set_train_pos(int trnum, int segnum)
 {
-    trstate_t state;
-    trstate_t initialstate;
-    trtarget_t target;
+    initialstate.t[trnum] = segnum;
+}
+void trkpln_set_train_target(int trnum, int segnum)
+{
+    target.t[trnum] = segnum;
+    target_changed = 1;
+}
+
+void trkpln_init(void)
+{
+    intial_state(&initialstate);
     for (int i=0; i<MAX_TRAINS; i++) target.t[i] = 0xFF;
-    
-    /*
-    init_testplan();
-    intial_state(&state);
-    print_state(&state);
-    int rc = update_state_all(&state, trseg, &testplan);
-    printf("hop\n");
-     */
 #ifdef SRAND_VAL
     srand(SRAND_VAL);
 #else
     srand((unsigned int)time(NULL));
-#endif
+    #endif
+}
+#pragma mark -
+
+void trkpln_process(void)
+{
+    if (!target_changed) return;
+    target_changed = 0;
     
-    intial_state(&initialstate);
-    initialstate.t[0]=0;
-    initialstate.t[1]=2;
-    
-    target.t[0] = 2;
-    target.t[1] = 0;
-    
+    trstate_t state;
+
     for (int i=0; i<NUM_POPULATION; i++) {
         set_random_trkseg(&population[i]);
     }
@@ -382,7 +480,7 @@ void test_me(void)
         }
     }
     int bestScore = 0;
-    int bestIdx = 0;
+    bestIdx = 0;
     for (int i=0; i<NUM_POPULATION; i++) {
         if (population[i].score > bestScore) {
             bestScore = population[i].score;
@@ -390,7 +488,31 @@ void test_me(void)
         }
     }
     printf("best score i=%d score=%d\n", bestIdx, bestScore);
+    return;
+}
+
+void trkpln_get_route(int trnum)
+{
     print_route(&population[bestIdx], &initialstate);
+}
+
+
+
+#pragma mark -
+void test_me(void)
+{
+    trkpln_init();
+    trkpln_set_train_pos(0, 0);
+    trkpln_set_train_pos(1, 2);
+    
+    trkpln_set_train_target(0, 2);
+    trkpln_set_train_target(1, 0);
+
+    trkpln_process();
+    
+    trkpln_get_route(0);
     printf("done\n");
-    exit(0);
+     exit(0);
+
+
 }

@@ -43,19 +43,6 @@ int _blk_num_for_sub_num(int subnum)
 
 int _next_block_num(int blknum, uint8_t left)
 {
-#if 0
-	if ((0)) return -1; // XXX
-	switch (blknum) {
-	case 0:
-		return left ? 	-1 : 1;
-	case 1:
-		return left ?	(topology_get_turnout(0) ? 2 : 0)  : -1;
-	case 2:
-		return left ?   -1 : 1;
-	default:
-		return -1;
-	}
-#endif
     int a,b,tn;
     next_blocks_nums(blknum, left, &a, &b, &tn);
     if (tn>=0) {
@@ -65,6 +52,7 @@ int _next_block_num(int blknum, uint8_t left)
 }
 
 typedef struct {
+	uint8_t lencm;
     uint8_t left1;
     uint8_t left2;
     uint8_t ltn; // leeee turnout
@@ -75,29 +63,29 @@ typedef struct {
 
 #define TOPOLOGY 0
  
-static topo_seg_t Topology[] = {
+static const topo_seg_t Topology[] = {
 #if TOPOLOGY == 1
     // trackplan test
-    /* 0 */ { 0xFF, 0xFF, 0xFF,   2,    0xFF, 0},
-    /* 1 */ { 0xFF, 0xFF, 0xFF,   2,    0xFF, 0},
-    /* 2 */ { 0,    1,    0,      3,    0xFF, 0xFF},
-    /* 3 */ { 2,    0xFF, 0xFF,   0xFF, 0xFF, 0xFF}
+    /* 0 */ { 84, 0xFF, 0xFF, 0xFF,   2,    0xFF, 0},
+    /* 1 */ { 42, 0xFF, 0xFF, 0xFF,   2,    0xFF, 0},
+    /* 2 */ { 73,    1,    0,      3,    0xFF, 0xFF},
+    /* 3 */ { 32,    0xFF, 0xFF,   0xFF, 0xFF, 0xFF}
 #elif TOPOLOGY == 2
     // partial layout, 3 segs
-    /* 0 */ { 0xFF, 0xFF, 0xFF,   1,    0xFF, 0},
-    /* 1 */ { 2,    0,       0,   0xFF, 0xFF, 0xFF},
-    /* 2 */ { 0xFF, 0xFF, 0xFF,   1,    0xFF, 0},
+    /* 0 */ {84, 0xFF, 0xFF, 0xFF,   1,    0xFF, 0},
+    /* 1 */ {42,  2,    0,       0,   0xFF, 0xFF, 0xFF},
+    /* 2 */ {73,  0xFF, 0xFF, 0xFF,   1,    0xFF, 0},
 #elif TOPOLOGY == 0
     // layout 5 segs
-    /* 0 */ { 0xFF, 0xFF, 0xFF,   1,    0xFF, 0},
-    /* 1 */ { 0,    2,       0,   0xFF, 3,    1},
-    /* 2 */ { 0xFF, 0xFF, 0xFF,   0xFF, 1,    0},
-    /* 3 */ { 4,    1,       1,   0xFF, 0xFF, 0xFF},
-    /* 4 */ { 0xFF, 0xFF, 0xFF,   3,    0xFF, 1}
+    /* 0 */ { 84, 0xFF, 0xFF, 0xFF,   1,    0xFF, 0},
+    /* 1 */ { 42, 0,    2,       0,   0xFF, 3,    1},
+    /* 2 */ { 73, 0xFF, 0xFF, 0xFF,   0xFF, 1,    0},
+    /* 3 */ { 32, 4,    1,       1,   0xFF, 0xFF, 0xFF},
+    /* 4 */ { 105, 0xFF, 0xFF, 0xFF,   3,    0xFF, 1}
 #else
-    /* 0 */ { 0xFF, 0xFF, 0xFF,   1,    0xFF, 0},
-    /* 1 */ { 0,    2,       0,   0xFF, 0xFF, 0xFF},
-    /* 2 */ { 0xFF, 0xFF, 0xFF,   1,    0xFF, 0},
+    /* 0 */ { 84, 0xFF, 0xFF, 0xFF,   1,    0xFF, 0},
+    /* 1 */ { 42, 0,    2,       0,   0xFF, 0xFF, 0xFF},
+    /* 2 */ { 73, 0xFF, 0xFF, 0xFF,   1,    0xFF, 0},
 #error bad TOPOLOGY value
 #endif
 };
@@ -123,44 +111,12 @@ void next_blocks_nums(int blknum, uint8_t left, int *pb1, int *pb2, int *tn)
     if (*pb1 == 0xFF) *pb1 = -1;
     if (*pb2 == 0xFF) *pb2 = -1;
     if (*tn  == 0xFF) *tn  = -1;
-#if 0
-    switch (blknum) {
-    case 0:
-            if (left) {
-                *pb1 = -1;
-                *pb2 = -1;
-            } else {
-                *pb1  = 1;
-                *pb2 = -1;
-            }
-            break;
-    case 1:
-            if (left) {
-                *tn = 0;
-                *pb1 = 0;
-                *pb2 = 2;
-            } else {
-                *pb1 = -1;
-                *pb2 = -1;
-            }
-            break;
-    case 2:
-            if (left) {
-                *pb1 = -1;
-                *pb2 = -1;
-            } else {
-                *pb1 = 1;
-                *pb2 = -1;
-            }
-            break;
-    default:
-            break;
-    }
-#endif
 }
 
 int get_blk_len(int blknum)
 {
+	return Topology[blknum].lencm;
+	/*
 	switch (blknum) {
 	case 0:
 		return 70;
@@ -171,6 +127,7 @@ int get_blk_len(int blknum)
 	default:
 		return 30;
 	}
+	*/
 }
 
 

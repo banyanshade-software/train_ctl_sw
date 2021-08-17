@@ -1,6 +1,6 @@
-itm_debug.h:37:20:itm_debug1	32	static
-itm_debug.h:41:20:itm_debug2	32	static
-itm_debug.h:45:20:itm_debug3	32	static
+itm_debug.h:39:20:itm_debug1	32	static
+itm_debug.h:43:20:itm_debug2	32	static
+itm_debug.h:47:20:itm_debug3	32	static
 trainmsg.h:148:1:mqf_read_to_ctrl	16	static
 trainmsg.h:149:1:mqf_write_from_ctrl	16	static
 topology.h:26:19:_sub_addr_to_sub_num	24	static
@@ -11,7 +11,7 @@ ctrl.c:85:13:fatal	8	static
 ctrl.c:168:13:ctrl_reset	4	static
 ctrl.c:175:20:set_state	32	static
 ctrl.c:197:13:ctrl_set_mode	24	static
-ctrl.c:227:13:ctrl_init	8	static
+ctrl.c:227:13:ctrl_init	16	static
 ctrl.c:274:13:reset_timer	24	static
 ctrl.c:280:13:set_timer	32	static
 ctrl.c:287:13:check_timers	40	static
@@ -39,4 +39,4 @@ ctrl.c:928:13:set_pose_trig	32	static
 ctrl.c:943:16:pose_middle	40	static
 ctrl.c:955:13:check_blk_tick	32	static
 ctrl.c:981:13:set_turnout	24	static
-ctrl.c:1005:13:check_behaviour	24	static
+ctrl.c:1005:13:check_behaviour	40	static

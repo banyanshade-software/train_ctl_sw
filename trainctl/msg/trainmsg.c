@@ -36,7 +36,7 @@ LFMQUEUE_DEF_C(from_forward_usb, msg_64_t,  16, 0)
 
 
 LFMQUEUE_DEF_C(to_ctrl, msg_64_t, 		16, 0)
-LFMQUEUE_DEF_C(from_ctrl, msg_64_t, 	12, 0)
+LFMQUEUE_DEF_C(from_ctrl, msg_64_t, 	32, 0)
 
 
 LFMQUEUE_DEF_C(to_ui, msg_64_t, 		64, 1)
@@ -81,7 +81,11 @@ static const qroute_t routes[NROUTES] = {
 		{MA_ADDR_MASK_2,						MA_ADDR_2_TURNOUT,		3},
 		{MA_ADDR_MASK_2,						MA_ADDR_2_CANTON,		3},
         {MA_ADDR_MASK_3|0x1F,                   MA_ADDR_3_UI|1,         6},
+#ifdef TRAIN_SIMU
         {MA_ADDR_MASK_3|0x1F,                   MA_ADDR_3_UI|2,         8},
+#else
+        {MA_ADDR_MASK_3|0x1F,                   MA_ADDR_3_UI|2,         4},
+#endif
         {MA_ADDR_MASK_3,                        MA_ADDR_3_UI,           4},
 		{MA_ADDR_MASK_5,						MA_ADDR_5_TRSC,			2},
 		{MA_ADDR_MASK_5,						MA_ADDR_5_CTRL,			5}
@@ -96,6 +100,9 @@ static void msg_error(_UNUSED_ const char *msg)
 
 static void dispatch_m64(msg_64_t *m, int f)
 {
+	/* if (m->cmd == 0xA2) {
+		itm_debug1(DBG_USB, "disp A2", m->cmd);
+	}*/
     if (m->to == MA_BROADCAST) {
         for (int i=0; i<NQDEF; i++) {
             if (i == f) {

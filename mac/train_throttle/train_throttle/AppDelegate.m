@@ -67,6 +67,8 @@ typedef void (^respblk_t)(void);
     int nparam;
     int nparamresp;
 
+    NSTimer *usbTimer;
+
     // simu
     NSTimer *simuTimer;
     NSTimeInterval lastSimu;
@@ -714,6 +716,11 @@ typedef void (^respblk_t)(void);
     //self.linkok = LINK_OK; // XXX
     [self performSelector:@selector(getParams) withObject:nil afterDelay:0.2];
     //[self performSelector:@selector(getParams) withObject:nil afterDelay:2.2];
+    
+    theDelegate = self;
+    simuTimer = [NSTimer timerWithTimeInterval:0.01 target:self selector:@selector(usbTimer) userInfo:nil repeats:YES];
+    [[NSRunLoop mainRunLoop]addTimer:simuTimer forMode:NSDefaultRunLoopMode];
+
 }
 
 
@@ -961,6 +968,10 @@ static int frm_unescape(uint8_t *buf, int len)
     msg_64_t m;
     memcpy(&m, frm.param, sizeof(m));
 
+    if (MA_UI(UISUB_TRACK)==m.to) {
+        mqf_write_to_ui_track(&m);
+        return;
+    }
     switch (m.cmd) {
         case CMD_NOTIF_SPEED:
             nt = m.from & 0x07;
@@ -969,7 +980,7 @@ static int frm_unescape(uint8_t *buf, int len)
             self.curspeed = v;
             break;
         default:
-            NSLog(@"frameMsg64 UI msg not handled");
+            NSLog(@"frameMsg64 UI msg not handled 0x%X", m.cmd);
             break;
     }
 }
@@ -1307,12 +1318,20 @@ uint32_t SimuTick = 0;
     dispatch_once(&onceToken, ^{
         t0 = [NSDate timeIntervalSinceReferenceDate];
     });
+#if 0
+    // "real" time
     NSTimeInterval t = [NSDate timeIntervalSinceReferenceDate]-t0;
     NSTimeInterval dt = t-lastSimu;
     lastSimu = t;
     uint32_t mdt = (uint32_t)(dt * 1000.0);
     uint32_t mt = (uint32_t)(t * 1000.0);
     SimuTick = mt;
+#else
+    SimuTick += 10;
+    uint32_t mdt = 10;
+    uint32_t mt = SimuTick;
+#endif
+   
 
     
     for (int i =0; i<2; i++) {
@@ -1343,6 +1362,30 @@ uint32_t SimuTick = 0;
 
     uitrack_run_tick(notif, mt, mdt);
 }
+
+- (void) usbTimer
+{
+    static NSTimeInterval t0;
+    static dispatch_once_t onceToken=0;
+    dispatch_once(&onceToken, ^{
+        t0 = [NSDate timeIntervalSinceReferenceDate];
+    });
+    NSTimeInterval t = [NSDate timeIntervalSinceReferenceDate]-t0;
+    NSTimeInterval dt = t-lastSimu;
+    lastSimu = t;
+    uint32_t mdt = (uint32_t)(dt * 1000.0);
+    uint32_t mt = (uint32_t)(t * 1000.0);
+    SimuTick = mt;
+
+    
+    int notif = NOTIF_NEW_ADC_1;
+   
+    
+    //msgsrv_tick(notif,      mt, mdt);
+   
+    uitrack_run_tick(notif, mt, mdt);
+}
+
 
 void train_simu_canton_volt(int numcanton, int voltidx, int vlt100)
 {

@@ -125,6 +125,9 @@ void usbPollQueues(void)
         msg_64_t m;
         int rc = mqf_read_to_forward_usb(&m);
         if (rc) break;
+        /*if (0xA2 == m.cmd) {
+        	itm_debug1(DBG_USB, "Got A2", m.cmd);
+        }*/
         txframe_send_msg64(&m);
     }
 }

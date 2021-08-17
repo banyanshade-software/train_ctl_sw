@@ -21,8 +21,8 @@ static uint8_t ignore_bemf_presence = 0;
 static uint8_t ignore_ina_presence = 1;
 
 
-#define SCEN_TWOTRAIN 	0
-#define EOT_SPD_LIMIT	50   //20
+#define SCEN_TWOTRAIN 	1
+#define EOT_SPD_LIMIT	70   //20
 
 // timers number
 #define TLEAVE_C1  	0
@@ -230,7 +230,7 @@ static void ctrl_init(void)
 	ctrl_set_mode(0, train_manual);
 	ctrl_set_mode(1, train_auto);
     set_turnout(0, 0);
-    set_turnout(1, 1);
+    set_turnout(1, 0);
 	if ((1)) {
 		trctl[0].canton1_addr = MA_CANTON(0, 1);//MA_CANTON(0, 1); // initial blk
 		trctl[0].canton2_addr = 0xFF;
@@ -726,7 +726,7 @@ static void evt_timer(int tidx, train_ctrl_t *tvar, int tnum)
 
 static void update_c2_state_limits(int tidx, train_ctrl_t *tvars, update_reason_t updreason)
 {
-	itm_debug3(DBG_CTRLHI, "UPDC2", tidx, tvars->canton1_addr, updreason);
+	itm_debug3(DBG_CTRL, "UPDC2", tidx, tvars->canton1_addr, updreason);
 	uint8_t c2addr = 0xFF;
 	uint16_t olim = tvars->spd_limit;
 	uint32_t posetval = 0;
@@ -1034,8 +1034,9 @@ static void check_behaviour(_UNUSED_ uint32_t tick)
 				continue;
 			}
 			if ((flags & BEHAVE_EOT2) && (tvars->_dir > 0)) {
-				set_timer(tidx, tvars, TBEHAVE, 3*60*1000);
+				set_timer(tidx, tvars, TBEHAVE, 1*60*1000);
 				evt_cmd_set_setdirspeed(tidx, tvars, 0, 0, 1);
+                //set_turnout(0, 1);
 				return;
 			}
 			if ((flags & BEHAVE_EOT2) && (tvars->_dir < 0)) {
@@ -1064,7 +1065,7 @@ static void check_behaviour(_UNUSED_ uint32_t tick)
 			if (flags & BEHAVE_TBEHAVE) {
 				itm_debug2(DBG_CTRL, "TBehave", tidx, tvars->canton1_addr);
 				if (tvars->canton1_addr == MA_CANTON(0,0)) {
-					evt_cmd_set_setdirspeed(tidx, tvars, 1, 45, 1);
+					evt_cmd_set_setdirspeed(tidx, tvars, 1, 95, 1);
 				} else if (tvars->canton1_addr == MA_CANTON(0,1)) {
 					evt_cmd_set_setdirspeed(tidx, tvars, -1, 45, 1);
 				} else {
@@ -1074,8 +1075,13 @@ static void check_behaviour(_UNUSED_ uint32_t tick)
 				continue;
 			}
 			if (flags & BEHAVE_EOT2)  {
-				set_timer(tidx, tvars, TBEHAVE, 700);
 				evt_cmd_set_setdirspeed(tidx, tvars, 0, 0, 1);
+                if (tvars->canton1_addr == MA_CANTON(0,0)) {
+                    set_timer(tidx, tvars, TBEHAVE, 1000*5);
+                    set_turnout(0, 1);
+                } else if (tvars->canton1_addr == MA_CANTON(0,1)) {
+                    set_timer(tidx, tvars, TBEHAVE, 1000*60*1);
+                }
 				continue;
 			}
 		}

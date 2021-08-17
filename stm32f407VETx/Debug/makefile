@@ -10,6 +10,7 @@ RM := rm -rf
 -include sources.mk
 -include trainctl/utils/subdir.mk
 -include trainctl/uitrack/subdir.mk
+-include trainctl/trkpln/subdir.mk
 -include trainctl/topology/subdir.mk
 -include trainctl/stm32/subdir.mk
 -include trainctl/spdctl/subdir.mk

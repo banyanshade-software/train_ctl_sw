@@ -1,5 +1,5 @@
-itm_debug.h:37:20:itm_debug1	32	static
-itm_debug.h:41:20:itm_debug2	32	static
+itm_debug.h:39:20:itm_debug1	32	static
+itm_debug.h:43:20:itm_debug2	32	static
 main.c:191:5:main	8	static
 main.c:290:6:SystemClock_Config	104	static
 main.c:342:13:MX_ADC1_Init	24	static

@@ -11,8 +11,21 @@
 #include <memory.h>
 #include <time.h>
 
-#include "topology.h"
+#include "../topology/topology.h"
 
+
+#ifndef TRACKPLAN_TESTPGM
+#include "railconfig.h"
+#else
+
+#include <stdio.h>
+#include <stdlib.h>
+
+#define NUM_TURNOUTS 16
+#define DBG_TURNOUTS 1
+#define itm_debug3(_fl, _msg, _a, _b, _c) do {printf(_msg  "%d %d %d", _a, _b, _c);} while(0)
+#define itm_debug2(_fl, _msg, _a, _b) do {printf(_msg  "%d %d", _a, _b);} while(0)
+#endif
 // -------------------------------------------------------------------------
 // -------------------------------------------------------------------------
 
@@ -284,9 +297,13 @@ static void print_state(trstate_t *st)
     for (int i = 0; i<MAX_TRAINS; i++) {
         uint8_t s = st->t[i];
         if (s==0xFF) continue;
-        printf("T%d seg %d   ", i, s);
+        itm_debug2(DBG_TRKPLN, "T/seg", i, s);
     }
+#ifdef TRACKPLAN_TESTPGM
     printf("  %s %s\n", (st->flags & RC_COL) ? "COL" :"", (st->flags & RC_OUT) ? "OUT":"");
+#else
+    itm_debug2(DBG_TRKPLN, "C/O", (st->flags & RC_COL) ? 1 : 0, (st->flags & RC_OUT) ? 1 : 0);
+#endif
 }
 
 static int update_state_all(trstate_t *st, tplan_t *p, trtarget_t *target)
@@ -342,7 +359,9 @@ static void update_score(trstate_t *st, trtarget_t *tg, int stepnum)
     }
 }
 
-#pragma mark -
+
+// -------------------------------------------------------------------------------------------
+// -------------------------------------------------------------------------------------------
 
 
 static tplan_t population[NUM_POPULATION];
@@ -357,7 +376,9 @@ static void set_random_trkseg(tplan_t *tseg)
     }
 }
 
-#pragma mark -
+
+// -------------------------------------------------------------------------------------------
+// -------------------------------------------------------------------------------------------
 
 static int get_parent(tplan_t *p, int n)
 {
@@ -404,6 +425,8 @@ void trkpln_init(void)
     srand((unsigned int)time(NULL));
     #endif
 }
+
+
 #pragma mark -
 
 void trkpln_process(void)
@@ -418,7 +441,8 @@ void trkpln_process(void)
     }
     for (int gen = 0; gen<NUM_GENERATIONS; gen ++) {
         printf("\n---------------- g%d\n", gen);
-        double m = 0;
+        //double m = 0;
+        int32_t m = 0;
         for (int pop = 0; pop<NUM_POPULATION; pop++) {
             memcpy(&state, &initialstate, sizeof(state));
             update_state_all(&state, &population[pop], &target);
@@ -427,7 +451,8 @@ void trkpln_process(void)
             m += population[pop].score;
         }
         m /= NUM_POPULATION;
-        printf("average score : %f\n", m);
+        //printf("average score : %f\n", m);
+        printf("average score : %d\n", m);
         int nkill = 0;
         for (int pop = 0; pop<NUM_POPULATION; pop++) {
             if (population[pop].score<m) {
@@ -498,7 +523,10 @@ void trkpln_get_route(int trnum)
 
 
 
-#pragma mark -
+// -------------------------------------------------------------------------------------------
+// -------------------------------------------------------------------------------------------
+
+
 void test_me(void)
 {
     trkpln_init();

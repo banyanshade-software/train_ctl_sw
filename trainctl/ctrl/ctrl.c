@@ -139,8 +139,8 @@ static void sub_presence_changed(uint32_t tick, uint8_t from_addr, uint8_t segnu
 
 #define USE_BLOCK_DELAY_FREE 1
 
-static void set_block_num_occupency(int blknum, uint8_t v);
-static void set_block_addr_occupency(uint8_t blkaddr, uint8_t v);
+static void set_block_num_occupency(int blknum, uint8_t v, uint8_t trnum);
+static void set_block_addr_occupency(uint8_t blkaddr, uint8_t v, uint8_t trnum);
 static uint8_t get_block_num_occupency(int blknum);
 static void check_block_delayed(uint32_t tick);
 
@@ -238,7 +238,7 @@ static void ctrl_init(void)
 		trctl[0].desired_speed = 0;
 		trctl[0]._target_speed = 0;
 		set_state(0, &trctl[0], train_station);
-		set_block_addr_occupency(trctl[0].canton1_addr, BLK_OCC_STOP);
+		set_block_addr_occupency(trctl[0].canton1_addr, BLK_OCC_STOP, 0);
 
 		if ((SCEN_TWOTRAIN)) {
 			trctl[1].canton1_addr = MA_CANTON(0, 2); // initial blk
@@ -247,7 +247,7 @@ static void ctrl_init(void)
 			trctl[1]._target_speed = 0;
 			trctl[1].desired_speed = 12;
 			set_state(1, &trctl[1], train_station);
-			set_block_addr_occupency(trctl[1].canton1_addr, BLK_OCC_STOP);
+			set_block_addr_occupency(trctl[1].canton1_addr, BLK_OCC_STOP, 1);
 
 			update_c2_state_limits(0, &trctl[0], upd_init);
 			update_c2_state_limits(1, &trctl[1], upd_init);
@@ -465,7 +465,7 @@ static uint8_t occupency_changed = 0;
 
 static uint8_t notif_blk_reset = 1;
 
-static void notif_blk_occup_chg(int blknum, uint8_t val)
+static void notif_blk_occup_chg(int blknum, uint8_t val, uint8_t trnum)
 {
     msg_64_t m;
     m.from = MA_CONTROL();
@@ -473,12 +473,13 @@ static void notif_blk_occup_chg(int blknum, uint8_t val)
     m.cmd = CMD_BLK_CHANGE;
     m.vbytes[0] = blknum;
     m.vbytes[1] = val;
-    m.vbytes[2] = notif_blk_reset ? 1 : 0;
+    m.vbytes[2] = trnum;
+    m.vbytes[3] = 0;
     notif_blk_reset = 0;
     mqf_write_from_ctrl(&m);
 }
 
-static void set_block_num_occupency(int blknum, uint8_t v)
+static void set_block_num_occupency(int blknum, uint8_t v, uint8_t trnum)
 {
 	if (-1 == blknum) fatal();
 	if (blk_occup[blknum] != v) {
@@ -494,12 +495,12 @@ static void set_block_num_occupency(int blknum, uint8_t v)
 	if ((1)) {
 		itm_debug3(DBG_CTRL, "BO123:", blk_occup[0], blk_occup[1], blk_occup[2]);
 	}
-    notif_blk_occup_chg(blknum, blk_occup[blknum]);
+    notif_blk_occup_chg(blknum, blk_occup[blknum], trnum);
 }
 
-static void set_block_addr_occupency(uint8_t blkaddr, uint8_t v)
+static void set_block_addr_occupency(uint8_t blkaddr, uint8_t v, uint8_t trnum)
 {
-	set_block_num_occupency(_blk_addr_to_blk_num(blkaddr), v);
+	set_block_num_occupency(_blk_addr_to_blk_num(blkaddr), v,  trnum);
 }
 
 static uint8_t get_block_num_occupency(int blknum)
@@ -523,21 +524,17 @@ static uint8_t occupied(int dir)
 static void check_block_delayed(_UNUSED_ uint32_t tick)
 {
 	if (!USE_BLOCK_DELAY_FREE) return;
-#if 0
-	static int cnt = 0;
-	cnt++;
-	if (cnt % 10) return;
-#else
+
 	static uint32_t lastcheck = 0;
 	if (tick<lastcheck+100) return;
 	lastcheck = tick;
-#endif
+
 	for (int i=0; i<NUM_CANTONS; i++) {
 		if (blk_occup[i] == BLK_OCC_DELAY1) {
 			itm_debug1(DBG_CTRL, "FREE(d)", i);
 			blk_occup[i] = BLK_OCC_FREE;
 			occupency_changed = 1;
-            notif_blk_occup_chg(i, blk_occup[i]);
+            notif_blk_occup_chg(i, blk_occup[i], 0xFF);
 		} else if (blk_occup[i] > BLK_OCC_DELAY1) {
 			blk_occup[i]--;
 		}
@@ -559,7 +556,7 @@ static void evt_entered_c2(int tidx, train_ctrl_t *tvar, uint8_t from_bemf)
 		} else {
 			set_timer(tidx, tvar, TLEAVE_C1, TGUARD_C1_VALUE);
 		}
-		set_block_addr_occupency(tvar->canton2_addr, occupied(tvar->_dir));
+		set_block_addr_occupency(tvar->canton2_addr, occupied(tvar->_dir), tidx);
 		set_state(tidx, tvar, train_running_c1c2);
 		break;
 	case train_running_c1c2:
@@ -576,7 +573,7 @@ static void evt_leaved_c1(int tidx, train_ctrl_t *tvars)
 	switch (tvars->_state) {
 	case train_running_c1c2:
 		reset_timer(tidx, tvars, TLEAVE_C1);
-		set_block_addr_occupency(tvars->canton1_addr, BLK_OCC_FREE);
+		set_block_addr_occupency(tvars->canton1_addr, BLK_OCC_FREE, tidx);
 		tvars->canton1_addr = tvars->canton2_addr;
 		tvars->canton2_addr = 0xFF;
 		set_state(tidx, tvars, train_running_c1);
@@ -648,7 +645,7 @@ static void evt_cmd_set_setdirspeed(int tidx, train_ctrl_t *tvars, int8_t dir, u
 		itm_debug1(DBG_CTRL, "quit stop", tidx);
 		odir = 0;
 		set_state(tidx, tvars, train_running_c1);
-		set_block_addr_occupency(tvars->canton1_addr, (dir>0)? BLK_OCC_RIGHT:BLK_OCC_LEFT);
+		set_block_addr_occupency(tvars->canton1_addr, (dir>0)? BLK_OCC_RIGHT:BLK_OCC_LEFT, tidx);
 	}
 	if (tvars->_state == train_running_c1c2 && (odir != dir) && dir) {
 		// special care here TODO when reversing change while in c1 to c2 transition
@@ -660,9 +657,9 @@ static void evt_cmd_set_setdirspeed(int tidx, train_ctrl_t *tvars, int8_t dir, u
 		tvars->_dir = dir;
 		if (!dir) {
 			itm_debug1(DBG_CTRL, "stopping", tidx);
-			set_block_addr_occupency(tvars->canton1_addr, BLK_OCC_STOP);
+			set_block_addr_occupency(tvars->canton1_addr, BLK_OCC_STOP, tidx);
 		} else {
-			set_block_addr_occupency(tvars->canton1_addr, (dir>0)? BLK_OCC_RIGHT:BLK_OCC_LEFT);
+			set_block_addr_occupency(tvars->canton1_addr, (dir>0)? BLK_OCC_RIGHT:BLK_OCC_LEFT, tidx);
 		}
 		update_c2_state_limits(tidx, tvars, upd_change_dir);
 	}
@@ -741,7 +738,7 @@ static void update_c2_state_limits(int tidx, train_ctrl_t *tvars, update_reason_
 	case train_station:
 		tvars->_dir = 0;
 		tvars->_target_speed = 0;
-		if (tvars->canton2_addr != 0xFF) set_block_addr_occupency(tvars->canton2_addr, BLK_OCC_FREE);
+		if (tvars->canton2_addr != 0xFF) set_block_addr_occupency(tvars->canton2_addr, BLK_OCC_FREE, 0xFF);
 		tvars->canton2_addr = 0xFF;
 		goto sendlow;
 	default:
@@ -755,7 +752,7 @@ static void update_c2_state_limits(int tidx, train_ctrl_t *tvars, update_reason_
 		set_state(tidx, tvars, train_station);
 		tvars->behaviour_flags |= BEHAVE_STOPPED;
 		tvars->_target_speed = 0;
-		if (tvars->canton2_addr != 0xFF) set_block_addr_occupency(tvars->canton2_addr, BLK_OCC_FREE);
+		if (tvars->canton2_addr != 0xFF) set_block_addr_occupency(tvars->canton2_addr, BLK_OCC_FREE, 0xFF);
 		tvars->canton2_addr = 0xFF;
 		goto sendlow;
 	}
@@ -815,7 +812,7 @@ static void update_c2_state_limits(int tidx, train_ctrl_t *tvars, update_reason_
 			    	// change C2. Can this occur ? if turnout is changed
 			    	// but turnout should not be changed if C2 already set
 			    	itm_debug3(DBG_ERR|DBG_CTRL, "C2 change", tidx, tvars->canton2_addr, c2addr);
-			    	set_block_addr_occupency(tvars->canton2_addr, BLK_OCC_FREE);
+			    	set_block_addr_occupency(tvars->canton2_addr, BLK_OCC_FREE, 0xFF);
 			    	tvars->canton2_addr = 0xFF;
 			    }
 			    // occupied
@@ -831,7 +828,7 @@ static void update_c2_state_limits(int tidx, train_ctrl_t *tvars, update_reason_
 		// sanity check, can be removed (TODO)
 		if ((get_block_num_occupency(c2num) != BLK_OCC_FREE)
 				&& (get_block_num_occupency(c2num) != BLK_OCC_C2))fatal();
-		set_block_num_occupency(c2num, BLK_OCC_C2);
+		set_block_num_occupency(c2num, BLK_OCC_C2, tidx);
 	}
     c2addr = (c2num>=0) ? _blk_num_to_blk_addr(c2num) : 0xFF;
 

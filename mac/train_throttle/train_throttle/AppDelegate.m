@@ -1936,9 +1936,9 @@ didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic
 
 #pragma mark -
 
-void impl_uitrack_change_blk(int blk, int v)
+void impl_uitrack_change_blk(int blk, int v, int trn)
 {
-    [theDelegate uitrac_change_blk:blk val:v];
+    [theDelegate uitrac_change_blk:blk val:v train:trn];
 }
 void impl_uitrack_change_tn(int tn, int v)
 {
@@ -1958,30 +1958,36 @@ void impl_uitrack_change_tn(int tn, int v)
 
 }
 
-- (void) uitrac_change_blk:(int) blk val:(int)v
+- (void) uitrac_change_blk:(int) blk val:(int)v train:(int)trn
 {
     NSString *js;
     NSString *nblk = [NSString stringWithFormat:@"BLK%d", blk];
     NSString *col = @"white";
+    NSString *strn = (trn == 0xFF) ? nil : [NSString stringWithFormat:@"(T%d", trn];
     switch (v) {
         case BLK_OCC_FREE: // BLK_OCC_FREE:
             col = @"darkgray";
             break;
         case BLK_OCC_STOP:
             col = @"brown";
+            strn = [strn stringByAppendingString:@"--)"];
             break;
         case BLK_OCC_LEFT:
             col = @"orange";
+            strn = [strn stringByAppendingString:@"<<)"];
             break;
         case BLK_OCC_RIGHT:
             col = @"red";
+            strn = [strn stringByAppendingString:@">>)"];
             break;
         case BLK_OCC_C2:
             col = @"yellow";
+            strn = [strn stringByAppendingString:@"••)"];
             break;
         default:
             if ((v>=BLK_OCC_DELAY1) && (v<=BLK_OCC_DELAYM)) {
                 col = @"salmon";
+                strn = [strn stringByAppendingString:@")"];
             }
             break;
     }
@@ -1991,6 +1997,15 @@ void impl_uitrack_change_tn(int tn, int v)
             NSLog(@"js error : %@\n", err);
         }
     }];
+    js = [NSString stringWithFormat:@"document.getElementById('txtc%d').textContent = '%@'; document.getElementById('txtc%d').style.visibility = '%@';",
+          blk, strn ? strn : @"",
+          blk, strn ? @"visible" : @"hidden"];
+    [_ctoWebView evaluateJavaScript:js completionHandler:^(id v, NSError *err) {
+        if (err) {
+            NSLog(@"js error : %@\n", err);
+        }
+    }];
+    
 }
 
 

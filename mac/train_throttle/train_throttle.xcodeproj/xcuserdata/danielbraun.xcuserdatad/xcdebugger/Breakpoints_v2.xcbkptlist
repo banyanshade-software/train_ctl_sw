@@ -3705,7 +3705,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "485"
             endingLineNumber = "485"
-            landmarkName = "set_block_num_occupency(blknum, v)"
+            landmarkName = "set_block_num_occupency(blknum, v, trnum)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -3865,7 +3865,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "54"
             endingLineNumber = "54"
-            landmarkName = "uitrack_change_blk(blk, v)"
+            landmarkName = "uitrack_reset()"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -3897,7 +3897,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1989"
             endingLineNumber = "1989"
-            landmarkName = "-uitrac_change_blk:val:"
+            landmarkName = "-uitrac_change_blk:val:train:"
             landmarkType = "7">
             <Locations>
                <Location
@@ -3945,7 +3945,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1990"
             endingLineNumber = "1990"
-            landmarkName = "-uitrac_change_blk:val:"
+            landmarkName = "-uitrac_change_blk:val:train:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -4417,7 +4417,7 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "04A33EE9-4492-4254-9B07-5347058D32F6"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../../trainctl/ctrl/ctrl.c"
@@ -4465,7 +4465,7 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "9FFDD540-91B8-44C0-A405-5BE852F4A5D8"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../../trainctl/ctrl/ctrl.c"
@@ -4475,6 +4475,70 @@
             endingLineNumber = "1022"
             landmarkName = "check_behaviour(tick)"
             landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "BBB21DCB-CC33-4167-A3C6-89FA11AFBC29"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "train_throttle/AppDelegate.m"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "2005"
+            endingLineNumber = "2005"
+            landmarkName = "-uitrac_change_blk:val:train:"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "C556B158-429F-46B0-9921-002FD9E01681"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "train_throttle/AppDelegate.m"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "2003"
+            endingLineNumber = "2003"
+            landmarkName = "-uitrac_change_blk:val:train:"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "C556B158-429F-46B0-9921-002FD9E01681 - d21b03fe197a9b5"
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "-[AppDelegate uitrac_change_blk:val:train:]"
+                  moduleName = "train_throttle"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/danielbraun/devel/train/sw/mac/train_throttle/train_throttle/AppDelegate.m"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "2003"
+                  endingLineNumber = "2003"
+                  offsetFromSymbolStart = "1097">
+               </Location>
+               <Location
+                  uuid = "C556B158-429F-46B0-9921-002FD9E01681 - d81ea0792cf188ab"
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "__43-[AppDelegate uitrac_change_blk:val:train:]_block_invoke_2"
+                  moduleName = "train_throttle"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/danielbraun/devel/train/sw/mac/train_throttle/train_throttle/AppDelegate.m"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "2004"
+                  endingLineNumber = "2004"
+                  offsetFromSymbolStart = "75">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

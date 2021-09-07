@@ -1284,7 +1284,7 @@
                                             </connections>
                                         </button>
                                         <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="dNW-25-dVW">
-                                            <rect key="frame" x="122" y="207" width="84" height="25"/>
+                                            <rect key="frame" x="122" y="207" width="93" height="25"/>
                                             <popUpButtonCell key="cell" type="push" title="power0" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="DgP-sL-kcM" id="XP9-nh-ts4">
                                                 <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                                 <font key="font" metaFont="menu"/>
@@ -1292,8 +1292,10 @@
                                                     <items>
                                                         <menuItem title="power0" state="on" id="DgP-sL-kcM" userLabel="power"/>
                                                         <menuItem title="Vsense" id="zQ1-6B-Kqs"/>
-                                                        <menuItem title="BEMF" id="bz2-Mr-Qg4" userLabel="BEMF"/>
-                                                        <menuItem title="PID" id="i1r-NN-nrb"/>
+                                                        <menuItem title="BEMF_T0" id="bz2-Mr-Qg4" userLabel="BEMF_T0"/>
+                                                        <menuItem title="BEMF_T1" id="r6W-CK-UlO" userLabel="BEMF_T1"/>
+                                                        <menuItem title="PID_T0" id="i1r-NN-nrb"/>
+                                                        <menuItem title="PID_T1" id="7xD-Hp-goY"/>
                                                         <menuItem title="inertia" id="bmz-hi-zv5"/>
                                                         <menuItem title="pose" id="UNx-fi-qfh"/>
                                                     </items>
@@ -1898,7 +1900,7 @@
                 <rect key="frame" x="0.0" y="185" width="665" height="415"/>
                 <subviews>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Cnw-SD-Jxt">
-                        <rect key="frame" x="18" y="1270" width="56" height="14"/>
+                        <rect key="frame" x="18" y="1640" width="56" height="14"/>
                         <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" title="PWM freq" id="ZSs-mL-lqQ">
                             <font key="font" metaFont="smallSystem"/>
                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -1928,7 +1930,7 @@
                         </constraints>
                     </box>
                     <box ambiguous="YES" title="Notif" translatesAutoresizingMaskIntoConstraints="NO" id="UsH-T6-g9C">
-                        <rect key="frame" x="165" y="1554" width="123" height="100"/>
+                        <rect key="frame" x="165" y="1924" width="123" height="100"/>
                         <view key="contentView" id="nGc-lB-NOm">
                             <rect key="frame" x="3" y="3" width="117" height="82"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1969,7 +1971,7 @@
                         </constraints>
                     </box>
                     <box ambiguous="YES" title="Speed" translatesAutoresizingMaskIntoConstraints="NO" id="gKI-pI-aNn">
-                        <rect key="frame" x="290" y="1184" width="358" height="100"/>
+                        <rect key="frame" x="290" y="1554" width="358" height="100"/>
                         <view key="contentView" id="1eU-q3-RAX">
                             <rect key="frame" x="3" y="3" width="352" height="82"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -2367,7 +2369,7 @@
                         </view>
                     </box>
                     <textField identifier="par_G0_pwmfreq" verticalHuggingPriority="750" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="23m-14-Hyr">
-                        <rect key="frame" x="20" y="871" width="96" height="21"/>
+                        <rect key="frame" x="20" y="1241" width="96" height="21"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="96" id="2Pc-2p-wvq"/>
                         </constraints>
@@ -2385,7 +2387,7 @@
                         </connections>
                     </textField>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="GDB-7Z-9UV">
-                        <rect key="frame" x="18" y="1489" width="84" height="16"/>
+                        <rect key="frame" x="18" y="1859" width="84" height="16"/>
                         <constraints>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="80" id="qiK-0Q-59m"/>
                         </constraints>
@@ -2396,7 +2398,7 @@
                         </textFieldCell>
                     </textField>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ZjS-L6-RW5">
-                        <rect key="frame" x="166" y="1859" width="46" height="16"/>
+                        <rect key="frame" x="166" y="2229" width="46" height="16"/>
                         <textFieldCell key="cell" lineBreakMode="clipping" title="Train 0" id="l0l-uz-MaN">
                             <font key="font" usesAppearanceFont="YES"/>
                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -2404,7 +2406,7 @@
                         </textFieldCell>
                     </textField>
                     <textField identifier="par_G0_numcantons" verticalHuggingPriority="750" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="PqE-6N-tyk">
-                        <rect key="frame" x="20" y="799" width="96" height="21"/>
+                        <rect key="frame" x="20" y="1169" width="96" height="21"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" drawsBackground="YES" id="BgV-Fs-IYW">
                             <font key="font" usesAppearanceFont="YES"/>
                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -2420,7 +2422,7 @@
                         </textFieldCell>
                     </textField>
                     <button identifier="par_G0_test_mode" verticalHuggingPriority="750" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Zj0-BG-zBp">
-                        <rect key="frame" x="18" y="1056" width="83" height="18"/>
+                        <rect key="frame" x="18" y="1426" width="83" height="18"/>
                         <buttonCell key="cell" type="check" title="test mode" bezelStyle="regularSquare" imagePosition="left" inset="2" id="ggf-pg-m1r">
                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                             <font key="font" metaFont="system"/>

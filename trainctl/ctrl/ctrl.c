@@ -645,7 +645,7 @@ static void evt_cmd_set_setdirspeed(int tidx, train_ctrl_t *tvars, int8_t dir, u
 		itm_debug1(DBG_CTRL, "quit stop", tidx);
 		odir = 0;
 		set_state(tidx, tvars, train_running_c1);
-		set_block_addr_occupency(tvars->canton1_addr, (dir>0)? BLK_OCC_RIGHT:BLK_OCC_LEFT, tidx);
+        set_block_addr_occupency(tvars->canton1_addr, occupied(dir), tidx);
 	}
 	if (tvars->_state == train_running_c1c2 && (odir != dir) && dir) {
 		// special care here TODO when reversing change while in c1 to c2 transition
@@ -657,10 +657,8 @@ static void evt_cmd_set_setdirspeed(int tidx, train_ctrl_t *tvars, int8_t dir, u
 		tvars->_dir = dir;
 		if (!dir) {
 			itm_debug1(DBG_CTRL, "stopping", tidx);
-			set_block_addr_occupency(tvars->canton1_addr, BLK_OCC_STOP, tidx);
-		} else {
-			set_block_addr_occupency(tvars->canton1_addr, (dir>0)? BLK_OCC_RIGHT:BLK_OCC_LEFT, tidx);
 		}
+        set_block_addr_occupency(tvars->canton1_addr,occupied(dir), tidx);
 		update_c2_state_limits(tidx, tvars, upd_change_dir);
 	}
 
@@ -1049,9 +1047,9 @@ static void check_behaviour(_UNUSED_ uint32_t tick)
 			}
 			if (flags & BEHAVE_TBEHAVE) {
 				if (tvars->canton1_addr == MA_CANTON(0,1)) {
-					evt_cmd_set_setdirspeed(tidx, tvars, -1, 15, 1);
+					evt_cmd_set_setdirspeed(tidx, tvars, -1, 20, 1);
 				} else if (tvars->canton1_addr == MA_CANTON(0,2)) {
-					evt_cmd_set_setdirspeed(tidx, tvars, 1, 15, 1);
+					evt_cmd_set_setdirspeed(tidx, tvars, 1, 20, 1);
 				} else {
 					itm_debug3(DBG_CTRL, "unex TB", tidx, tvars->_dir, tvars->canton1_addr);
 				}

@@ -48,6 +48,7 @@ int _next_block_num(int blknum, uint8_t left)
     if (tn>=0) {
         a = topology_get_turnout(tn) ? b : a;
     }
+    if ((a<0) && (b<0)) return -2; // end of track
     return a;
 }
 

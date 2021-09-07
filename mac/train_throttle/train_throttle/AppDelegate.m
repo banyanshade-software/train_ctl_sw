@@ -1129,7 +1129,11 @@ static int frm_unescape(uint8_t *buf, int len)
         NSString *sidx = [NSString stringWithFormat:@"%d", idx];
         nkey= [key stringByReplacingOccurrencesOfString:@"#" withString:sidx];
         
+        if ([key isEqualToString:@"T#_pid_sum_e"]) {
+            v = v/1000;
+        }
         NSNumber *nsv = @(v);
+
         if ([key hasPrefix:@"C#_"]) {
             [cantons_value setValue:nsv forKey:nkey];
         } else if ([key hasPrefix:@"T#_"]) {
@@ -1661,10 +1665,13 @@ void notif_target_bemf(const train_config_t *cnf, train_vars_t *vars, int32_t va
     @{ @"power0"  : @[ @"tick", @"T0_ctrl_target_speed", @"T0_spd_curspeed",
                       @"C0_pwm", @"C0_vidx", @"C1_pwm", @"C1_vidx", @"C2_pwm", @"C2_vidx"],
        //@"power2" : @[ @"spd_curspeed", /*@"canton_0_centivolts",*/ @"C0_pwm", @"C0_vidx"],
-       @"BEMF"   : @[ @"tick",  @"T0_bemf_mv" /*,  @"T0_pid_sum_e"*/],
+       @"BEMF_T0"   : @[ @"tick",  @"T0_pid_target", @"T0_spd_curspeed", @"T0_bemf_mv" /*,  @"T0_pid_sum_e"*/],
+       @"BEMF_T1"   : @[ @"tick",  @"T1_pid_target", @"T1_spd_curspeed", @"T1_bemf_mv" /*,  @"T0_pid_sum_e"*/],
        @"Vsense" : @[ @"tick",  @"T0_bemf_mv"],
 
-       @"PID"    : @[ @"tick", @"T0_pid_target",@"T0_pid_target_v", @"T0_bemf_mv", @"T0_pid_last_err", @"T0_pid_sum_e"],
+       @"PID_T0"    : @[ @"tick", @"T0_pid_target",@"T0_pid_target_v", @"T0_bemf_mv", @"T0_pid_last_err", @"T0_pid_sum_e"],
+       @"PID_T1"    : @[ @"tick", @"T1_pid_target",@"T1_pid_target_v", @"T1_bemf_mv", @"T1_pid_last_err", @"T1_pid_sum_e"],
+
        @"inertia": @[@"T0_ine_t", @"T0_ine_c"],
        @"pose"   : @[@"tick", @"T0_spd_curspeed", @"T0_bemf_mv", @"T0_ctrl_dir", @"T0_pose", @"T0_pose_trig"]
     };
@@ -1672,12 +1679,15 @@ void notif_target_bemf(const train_config_t *cnf, train_vars_t *vars, int32_t va
     switch (ngraph) {
         case 0: k=@"power0"; break;
         case 1: k=@"Vsense"; break;
-        case 2: k=@"BEMF"; break;
-        case 3: k=@"PID"; break;
-        case 4: k=@"inertia"; break;
-        case 5: k=@"pose"; break;
+        case 2: k=@"BEMF_T0"; break;
+        case 3: k=@"BEMF_T1"; break;
+        case 4: k=@"PID_T0"; break;
+        case 5: k=@"PID_T1"; break;
+        case 6: k=@"inertia"; break;
+        case 7: k=@"pose"; break;
             //Vsense
-        default: return;
+        default:
+            return;
     }
     NSArray *t = [graphs objectForKey:k];
     if (!t) return;

@@ -270,8 +270,8 @@ static void train_periodic_control(int numtrain, uint32_t dt)
     if (tconf->enable_pid) {
         // corresponding BEMF target
         // 100% = 1.5V
-        int32_t tbemf = 1500*v/10 * tvars->C1_dir;
-        tbemf = tbemf / 4; //XXX why ?? new cables (more capacitance ?)
+        int32_t tbemf = 1800*v/100 * tvars->C1_dir;
+        //tbemf = tbemf / 4; //XXX why ?? new cables (more capacitance ?)
         // TODO make this divisor a parameter
         pidctl_set_target(&tconf->pidcnf, &tvars->pidvars, tbemf);
         // XXXX notif_target_bemf(tconf, tvars, tbemf);

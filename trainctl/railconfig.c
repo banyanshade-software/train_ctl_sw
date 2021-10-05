@@ -249,13 +249,13 @@ static  canton_config_t Cantons[NUM_CANTONS] = {
 
 #define DEFAULT_TRAIN_CFG(_EN, _R, _P)  { \
 						{ /* pidctl_config_t*/ \
-								400, 150, -1000,  /* kP, kI, kD */ \
+								400, 150, -500,  /* kP, kI, kD */ \
 						}, \
 						{ /* inertia_config_t */ \
-								350, 200		/* dec, acc */ \
+								120, 120		/* dec, acc */ \
 						}, \
 						vpolicy_normal,  /*vpolicy_normal, vpolicy_pure_volt, vpolicy_pure_pwm,*/ \
-						0, /* enable_inertia */		\
+						1, /* enable_inertia */		\
 						_EN, /* enabled */			\
 						1, /* enable_pid */			\
 						0, /* notify_speed */		\
@@ -270,18 +270,21 @@ static  canton_config_t Cantons[NUM_CANTONS] = {
 				}
 
 static  train_config_t Trains[NUM_TRAINS] = {
-		DEFAULT_TRAIN_CFG(1,0, 700), DEFAULT_TRAIN_CFG(1,0, 500), DEFAULT_TRAIN_CFG(0,0,500), DEFAULT_TRAIN_CFG(0,0,500),
+		DEFAULT_TRAIN_CFG(1,0, 600), DEFAULT_TRAIN_CFG(1,0, 500), DEFAULT_TRAIN_CFG(0,0,500), DEFAULT_TRAIN_CFG(0,0,500),
 		DEFAULT_TRAIN_CFG(0,0,500), DEFAULT_TRAIN_CFG(0,0,500), DEFAULT_TRAIN_CFG(0,0,500), DEFAULT_TRAIN_CFG(0,0,500),
 };
 
 
 static const turnout_config_t Turnouts[NUM_TURNOUTS] = {
 #ifndef TRAIN_SIMU
-        {TURN1A_GPIO_Port, TURN1A_Pin, TURN1B_Pin,
+        {TURN1A_GPIO_Port, TURN1A_Pin, TURN1B_Pin},
+        {TURN2A_GPIO_Port, TURN2A_Pin, TURN2B_Pin},
+        {TURN3A_GPIO_Port, TURN3A_Pin, TURN3B_Pin},
+        //{TURN4A_GPIO_Port, TURN4A_Pin, TURN4B_Pin},
 #else
-        {NULL, 1, 2,
+        {NULL, 1, 2}
 #endif
-        }
+
 };
 
 

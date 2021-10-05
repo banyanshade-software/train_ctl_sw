@@ -621,6 +621,12 @@ static void evt_cmd_set_setdirspeed(int tidx, train_ctrl_t *tvars, int8_t dir, u
 	int8_t odir = tvars->_dir;
 	uint16_t otspd = tvars->_target_speed;
 
+	if ((1)) {
+		// for debug
+		if (odir && (!tspd || !dir)) {
+			itm_debug1(DBG_CTRL, "stopping", tidx);
+		}
+	}
 	if (!dir && tspd) {
 		itm_debug2(DBG_ERR|DBG_CTRL, "dir0spd", tidx, tspd);
 		tspd = 0;
@@ -1047,9 +1053,9 @@ static void check_behaviour(_UNUSED_ uint32_t tick)
 			}
 			if (flags & BEHAVE_TBEHAVE) {
 				if (tvars->canton1_addr == MA_CANTON(0,1)) {
-					evt_cmd_set_setdirspeed(tidx, tvars, -1, 20, 1);
+					evt_cmd_set_setdirspeed(tidx, tvars, -1, 40, 1);
 				} else if (tvars->canton1_addr == MA_CANTON(0,2)) {
-					evt_cmd_set_setdirspeed(tidx, tvars, 1, 20, 1);
+					evt_cmd_set_setdirspeed(tidx, tvars, 1, 40, 1);
 				} else {
 					itm_debug3(DBG_CTRL, "unex TB", tidx, tvars->_dir, tvars->canton1_addr);
 				}
@@ -1060,7 +1066,7 @@ static void check_behaviour(_UNUSED_ uint32_t tick)
 			if (flags & BEHAVE_TBEHAVE) {
 				itm_debug2(DBG_CTRL, "TBehave", tidx, tvars->canton1_addr);
 				if (tvars->canton1_addr == MA_CANTON(0,0)) {
-					evt_cmd_set_setdirspeed(tidx, tvars, 1, 50, 1);
+					evt_cmd_set_setdirspeed(tidx, tvars, 1, 95, 1);
 				} else if (tvars->canton1_addr == MA_CANTON(0,1)) {
 					evt_cmd_set_setdirspeed(tidx, tvars, -1, 95, 1);
 				} else {

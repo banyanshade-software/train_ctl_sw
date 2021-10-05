@@ -102,7 +102,6 @@ const stat_val_t statval_spdctrl[] = {
     { trspc_vars, offsetof(train_vars_t, pidvars.sume), 4       _P("T#_pid_sum_e")},
     { trspc_vars, offsetof(train_vars_t, pidvars.target_v), 4   _P("T#_pid_target")},
     { trspc_vars, offsetof(train_vars_t, inertiavars.target), 2 _P("T#_ine_t")},
-    
     { trspc_vars, offsetof(train_vars_t, inertiavars.cur), 2    _P("T#_ine_c")},
     { trspc_vars, offsetof(train_vars_t, last_speed), 2         _P("T#_spd_curspeed")},
     { trspc_vars, offsetof(train_vars_t, position_estimate), 4  _P("T#_pose")},
@@ -392,6 +391,7 @@ static void set_c1_c2(int tidx, train_vars_t *tvars, uint8_t c1, int8_t dir1, ui
 
 	if ((tvars->C1 != 0xFF) && (tvars->C1 != c1)  && (tvars->C1 != c2)) {
 		m.to = tvars->C1;
+		itm_debug1(DBG_SPDCTL, "stp c1", tidx);
 		m.cmd = CMD_STOP;
 		mqf_write_from_spdctl(&m);
 		m.cmd = CMD_BEMF_OFF;
@@ -399,6 +399,7 @@ static void set_c1_c2(int tidx, train_vars_t *tvars, uint8_t c1, int8_t dir1, ui
 	}
 	if ((tvars->C2 != 0xFF) && (tvars->C2 != c1)  && (tvars->C2 != c2)) {
 		m.to = tvars->C2;
+		itm_debug1(DBG_SPDCTL, "stp c2", tidx);
 		m.cmd = CMD_STOP;
 		mqf_write_from_spdctl(&m);
 		m.cmd = CMD_BEMF_OFF;

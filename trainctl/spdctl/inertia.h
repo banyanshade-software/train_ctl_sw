@@ -38,7 +38,7 @@ void    inertia_reset(int tidx, const inertia_config_t *cnf, inertia_vars_t *var
 
 static inline void inertia_set_target(int tidx, _UNUSED_ const inertia_config_t *cnf, inertia_vars_t *vars, int16_t v)
 {
-	itm_debug2(DBG_INERTIA, "iner targ", tidx, v);
+	itm_debug2(DBG_INERTIA, "i/targ", tidx, v);
 	vars->target = v;
 }
 

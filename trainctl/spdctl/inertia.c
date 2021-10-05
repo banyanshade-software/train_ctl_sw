@@ -29,7 +29,7 @@
 
 void inertia_reset(int tidx, _UNUSED_ const inertia_config_t *cnf, inertia_vars_t *vars)
 {
-	itm_debug1(DBG_INERTIA, "iner rst", tidx);
+	itm_debug1(DBG_INERTIA, "i/rst", tidx);
 	vars->target = 0;
 	vars->cur = 0;
 }
@@ -44,32 +44,33 @@ int16_t inertia_value(int tidx, const inertia_config_t *config, inertia_vars_t *
 
     if (pchanged) *pchanged = 0;
     if (vars->target == vars->cur/10) {
-    	itm_debug1(DBG_INERTIA, "no chg", tidx);
+    	itm_debug1(DBG_INERTIA, "i/no chg", tidx);
     	return vars->target;
     }
 
+    itm_debug3(DBG_INERTIA, "i/val", tidx, vars->cur, vars->target);
 
 	if (st*sc >= 0) {
 		// same direction
 		if (abs(vars->target*10)>abs(vars->cur)) {
 			// acceleration
-			inc = config->acc * dt10 / 10000;
+			inc = (config->acc * dt10) / 10000;
 			inc = MIN(inc, abs(vars->target*10)-abs(vars->cur));
 			inc = sc * inc;
-	    	itm_debug2(DBG_INERTIA, "acc", tidx, inc);
+	    	itm_debug3(DBG_INERTIA, "i/acc", tidx, inc, dt10);
 		} else {
 			// deceleration
-			inc = config->dec * dt10 / 10000;
+			inc = (config->dec * dt10) / 10000;
 			inc = MIN(inc, -abs(vars->target*10)+abs(vars->cur));
 			inc = -sc * inc;
-	    	itm_debug2(DBG_INERTIA, "dec", tidx, inc);
+	    	itm_debug3(DBG_INERTIA, "i/dec", tidx, inc, dt10);
 		}
 	} else {
 		// dir change
-		itm_debug1(DBG_INERTIA, "dir change", tidx);
 		inc = config->dec * dt10 / 10000;
         inc = MIN(inc, abs(vars->target*10-vars->cur));
         inc = -1 * sc * inc;
+		itm_debug2(DBG_INERTIA, "i/dir chg", tidx, inc);
 	}
 	int vold = vars->cur/10;
 	vars->cur += inc;

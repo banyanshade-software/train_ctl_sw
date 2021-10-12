@@ -1080,7 +1080,7 @@
                                                 <rect key="frame" x="3" y="3" width="101" height="86"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
-                                                    <button verticalHuggingPriority="750" tag="3" translatesAutoresizingMaskIntoConstraints="NO" id="l4Q-iI-W2b">
+                                                    <button verticalHuggingPriority="750" tag="2" translatesAutoresizingMaskIntoConstraints="NO" id="l4Q-iI-W2b">
                                                         <rect key="frame" x="10" y="38" width="81" height="32"/>
                                                         <constraints>
                                                             <constraint firstAttribute="width" constant="69" id="2VN-H0-b9D"/>
@@ -1121,7 +1121,7 @@
                                                 <rect key="frame" x="3" y="3" width="101" height="86"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
-                                                    <button verticalHuggingPriority="750" tag="4" translatesAutoresizingMaskIntoConstraints="NO" id="PEV-52-8m5">
+                                                    <button verticalHuggingPriority="750" tag="3" translatesAutoresizingMaskIntoConstraints="NO" id="PEV-52-8m5">
                                                         <rect key="frame" x="10" y="38" width="81" height="32"/>
                                                         <constraints>
                                                             <constraint firstAttribute="width" constant="69" id="5EP-HH-epk"/>
@@ -1134,7 +1134,7 @@
                                                             <action selector="turnoutA:" target="Voe-Tx-rLC" id="upC-JE-oIY"/>
                                                         </connections>
                                                     </button>
-                                                    <button verticalHuggingPriority="750" tag="4" translatesAutoresizingMaskIntoConstraints="NO" id="svC-A8-TLQ">
+                                                    <button verticalHuggingPriority="750" tag="3" translatesAutoresizingMaskIntoConstraints="NO" id="svC-A8-TLQ">
                                                         <rect key="frame" x="10" y="9" width="81" height="32"/>
                                                         <buttonCell key="cell" type="push" title="B (turn)" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="52u-UM-awl">
                                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -1908,7 +1908,7 @@
                         </textFieldCell>
                     </textField>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="bPL-58-xHf">
-                        <rect key="frame" x="18" y="1198" width="75" height="14"/>
+                        <rect key="frame" x="18" y="1568" width="75" height="14"/>
                         <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" title="Num Cantons" id="Qgd-gB-GsB">
                             <font key="font" metaFont="smallSystem"/>
                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -2369,7 +2369,7 @@
                         </view>
                     </box>
                     <textField identifier="par_G0_pwmfreq" verticalHuggingPriority="750" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="23m-14-Hyr">
-                        <rect key="frame" x="20" y="1241" width="96" height="21"/>
+                        <rect key="frame" x="20" y="1611" width="96" height="21"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="96" id="2Pc-2p-wvq"/>
                         </constraints>

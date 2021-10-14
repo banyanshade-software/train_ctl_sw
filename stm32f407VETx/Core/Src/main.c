@@ -1056,11 +1056,11 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(GPIOA, LED1_Pin|GPIO_PIN_9|GPIO_PIN_10|GPIO_PIN_15, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_2|VOLT_3_SEL0_Pin|GPIO_PIN_13|GPIO_PIN_4
+  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_2|GPIO_PIN_12|GPIO_PIN_13|GPIO_PIN_4
                           |GPIO_PIN_5|TURN1A_Pin|TURN1B_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOD, VOLT_2_SEL2_Pin|VOLT_3_SEL0D9_Pin|VOLT_3_SEL1_Pin|VOLT_3_SEL2_Pin
+  HAL_GPIO_WritePin(GPIOD, VOLT_2_SEL2_Pin|VOLT_3_SEL0_Pin|VOLT_3_SEL1_Pin|VOLT_3_SEL2_Pin
                           |VOLT_0_SEL0_Pin|VOLT_0_SEL1_Pin|VOLT_0_SEL2_Pin|VOLT_1_SEL0_Pin
                           |VOLT_1_SEL1_Pin|VOLT_1_SEL2_Pin|VOLT_2_SEL0_Pin|VOLT_2_SEL1_Pin, GPIO_PIN_RESET);
 
@@ -1091,19 +1091,19 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : PB2 VOLT_3_SEL0_Pin PB13 PB4
+  /*Configure GPIO pins : PB2 PB12 PB13 PB4
                            PB5 TURN1A_Pin TURN1B_Pin */
-  GPIO_InitStruct.Pin = GPIO_PIN_2|VOLT_3_SEL0_Pin|GPIO_PIN_13|GPIO_PIN_4
+  GPIO_InitStruct.Pin = GPIO_PIN_2|GPIO_PIN_12|GPIO_PIN_13|GPIO_PIN_4
                           |GPIO_PIN_5|TURN1A_Pin|TURN1B_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : VOLT_2_SEL2_Pin VOLT_3_SEL0D9_Pin VOLT_3_SEL1_Pin VOLT_3_SEL2_Pin
+  /*Configure GPIO pins : VOLT_2_SEL2_Pin VOLT_3_SEL0_Pin VOLT_3_SEL1_Pin VOLT_3_SEL2_Pin
                            VOLT_0_SEL0_Pin VOLT_0_SEL1_Pin VOLT_0_SEL2_Pin VOLT_1_SEL0_Pin
                            VOLT_1_SEL1_Pin VOLT_1_SEL2_Pin VOLT_2_SEL0_Pin VOLT_2_SEL1_Pin */
-  GPIO_InitStruct.Pin = VOLT_2_SEL2_Pin|VOLT_3_SEL0D9_Pin|VOLT_3_SEL1_Pin|VOLT_3_SEL2_Pin
+  GPIO_InitStruct.Pin = VOLT_2_SEL2_Pin|VOLT_3_SEL0_Pin|VOLT_3_SEL1_Pin|VOLT_3_SEL2_Pin
                           |VOLT_0_SEL0_Pin|VOLT_0_SEL1_Pin|VOLT_0_SEL2_Pin|VOLT_1_SEL0_Pin
                           |VOLT_1_SEL1_Pin|VOLT_1_SEL2_Pin|VOLT_2_SEL0_Pin|VOLT_2_SEL1_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;

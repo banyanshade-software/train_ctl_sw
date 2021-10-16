@@ -138,6 +138,7 @@ void set_pwm_freq(int freqhz)
 	itm_debug3(DBG_ERR|DBG_CTRL, "FREQ", freqhz, ps, cur_freqhz);
 	__HAL_TIM_SET_PRESCALER(&htim1, ps);
 	__HAL_TIM_SET_PRESCALER(&htim2, ps);
+	__HAL_TIM_SET_PRESCALER(&htim3, ps);
 	__HAL_TIM_SET_PRESCALER(&htim8, ps);
 }
 

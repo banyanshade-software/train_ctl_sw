@@ -60,7 +60,7 @@ void bemf_tick(uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_ uint32_t d
 {
 	if (bemf_run_mode == runmode_off) return;
 
-	itm_debug1(DBG_ADC, "------- btk", (int) notif_flags);
+	//itm_debug1(DBG_ADC, "------- btk", (int) notif_flags);
 	if (notif_flags & NOTIF_NEW_ADC_1) {
 		if (notif_flags & NOTIF_NEW_ADC_2) {
 			itm_debug1(DBG_ERR|DBG_LOWCTRL|DBG_TIM, "both", (int) notif_flags);
@@ -150,6 +150,9 @@ static inline int32_t bemf_convert_to_millivolt(_UNUSED_ const canton_config_t *
 
 static void process_adc(volatile adc_buf_t *buf, _UNUSED_ uint32_t deltaticks)
 {
+	static int cnt=0;
+	cnt++; // for debug, allow us to print msg every x adc conversiont
+
 	for (int i=0; i<NUM_LOCAL_CANTONS_HW; i++) {
 		USE_CANTON(i)
 
@@ -162,8 +165,6 @@ static void process_adc(volatile adc_buf_t *buf, _UNUSED_ uint32_t deltaticks)
 		int skp = 0;
 		if ((bemf_run_mode == runmode_testcanton) && (i<3)) {
 			skp = 1;
-		} else if (0xFF == bemf_to[i]) {
-			continue;
 		}
 
 		const canton_config_t *c = get_canton_cnf(i);
@@ -181,11 +182,23 @@ static void process_adc(volatile adc_buf_t *buf, _UNUSED_ uint32_t deltaticks)
 			von = -von;
 		}
 		if ((1)) {
-			itm_debug3(DBG_ADC|DBG_LOWCTRL, "ADC/Voff", i, voffa, voffb);
-			itm_debug3(DBG_ADC|DBG_LOWCTRL, "ADC/Von",  i, vona, vonb);
-			itm_debug3(DBG_ADC|DBG_LOWCTRL, "ADCoi", i,  voff, von);
+			if (!(cnt % 50)) {
+				itm_debug3(DBG_ADC|DBG_LOWCTRL, "ADC/Vof", i, voffa, voffb);
+				itm_debug3(DBG_ADC|DBG_LOWCTRL, "ADC/Von",  i, vona, vonb);
+				itm_debug3(DBG_ADC|DBG_LOWCTRL, "ADC/V01", i,  voff, von);
+			}
+		}
+
+		/* only send bemf for canton that are active (expecting bemf)
+		 * this could be (and was) done before millivolt conversion,
+		 * but we want some debug
+		 */
+		if (0xFF == bemf_to[i]) {
+			continue;
 		}
 		if (skp) continue;
+
+
 		if ((i==0) && NOTIF_VOFF) {
 			static int cnt = 0;
 			cnt++;

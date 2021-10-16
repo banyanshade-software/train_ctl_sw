@@ -21,7 +21,7 @@ static uint8_t ignore_bemf_presence = 0;
 static uint8_t ignore_ina_presence = 1;
 
 
-#define SCEN_TWOTRAIN 	1
+#define SCEN_TWOTRAIN 	0 //1
 #define EOT_SPD_LIMIT	70   //20
 
 // timers number
@@ -569,7 +569,7 @@ static void evt_entered_c2(int tidx, train_ctrl_t *tvar, uint8_t from_bemf)
 
 static void evt_leaved_c1(int tidx, train_ctrl_t *tvars)
 {
-	itm_debug2(DBG_CTRL, "evt_left_c1", tidx, tvars->_state);
+	itm_debug3(DBG_CTRL, "evt_left_c1", tidx, tvars->_state, tvars->canton1_addr);
 	switch (tvars->_state) {
 	case train_running_c1c2:
 		reset_timer(tidx, tvars, TLEAVE_C1);

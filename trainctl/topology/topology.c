@@ -48,6 +48,12 @@ int _next_block_num(int blknum, uint8_t left)
     if (tn>=0) {
         a = topology_get_turnout(tn) ? b : a;
     }
+    // sanity */
+    if ((a>15) || (b>15)) {
+    	// log
+    	if (a>15) a = -1;
+    	if (b>15) b = -1;
+    }
     if ((a<0) && (b<0)) return -2; // end of track
     return a;
 }
@@ -78,11 +84,11 @@ static const topo_seg_t Topology[] = {
     /* 2 */ {73,  0xFF, 0xFF, 0xFF,   1,    0xFF, 0},
 #elif TOPOLOGY == 0
     // layout 5 segs
-    /* 0 */ { 84, 0xFF, 0xFF, 0xFF,   1,    0xFF, 0},
-    /* 1 */ { 42, 0,    2,       0,   0xFF, 3,    1},
-    /* 2 */ { 73, 0xFF, 0xFF, 0xFF,   0xFF, 1,    0},
-    /* 3 */ { 32, 4,    1,       1,   0xFF, 0xFF, 0xFF},
-    /* 4 */ { 105, 0xFF, 0xFF, 0xFF,   3,    0xFF, 1}
+    /* 0 */ { 84,   0xFF, 0xFF, 0xFF,      1,    0xFF, 0},
+    /* 1 */ { 42, 	0,    2,       0,      0xFF, 3,    1},
+    /* 2 */ { 73, 	0xFF, 0xFF, 0xFF,      0xFF, 1,    0},
+    /* 3 */ { 32, 	4,    1,       1,      0xFF, 0xFF, 0xFF},
+    /* 4 */ { 105, 	0xFF, 0xFF, 0xFF,      3,    0xFF, 1}
 #else
     /* 0 */ { 84, 0xFF, 0xFF, 0xFF,   1,    0xFF, 0},
     /* 1 */ { 42, 0,    2,       0,   0xFF, 0xFF, 0xFF},

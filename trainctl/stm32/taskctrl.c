@@ -62,8 +62,8 @@ void StartCtrlTask(_UNUSED_ void *argument)
 	int nsmpl = sizeof(train_adc_buf)/sizeof(uint16_t);
 
 	if (sizeof(train_adc_buf) != sizeof(uint16_t)*NUM_LOCAL_CANTONS_HW*8) Error_Handler();
-	if (nsmpl != 5*2*4) Error_Handler();
-
+	if (nsmpl != NUM_LOCAL_CANTONS_HW*2*4) Error_Handler();
+	if (NUM_LOCAL_CANTONS_HW != 6) Error_Handler();
 	//__HAL_DMA_ENABLE_IT(&hdma_i2c3_rx, DMA_IT_TC);
 	//__HAL_DMA_ENABLE_IT(&hdma_i2c3_tx, DMA_IT_TC);
 

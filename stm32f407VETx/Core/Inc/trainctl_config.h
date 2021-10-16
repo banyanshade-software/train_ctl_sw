@@ -16,7 +16,7 @@
  * NUM_LOCAL_CANTONS_HW : really configured blocked (used for ADC)
  * NUM_LOCAL_CANTONS_SW : max available in software
  */
-#define NUM_LOCAL_CANTONS_HW 5
+#define NUM_LOCAL_CANTONS_HW 6
 #define NUM_LOCAL_CANTONS_SW 8
 
 #define NUM_TRAINS	8

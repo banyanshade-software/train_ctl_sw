@@ -1,5 +1,0 @@
-statval.c:52:13:build_meta	24	static
-statval.c:70:25:_getval	40	static
-statval.c:95:5:stat_iterator_reset	16	static
-statval.c:104:6:stat_iterator_next	24	static
-statval.c:120:9:stat_val_get	32	static

@@ -1,6 +1,0 @@
-itm_debug.h:39:20:itm_debug1	32	static
-lf_mqueue.c:20:6:mqf_clear	16	static
-lf_mqueue.c:27:5:mqf_len	24	static
-lf_mqueue.c:44:6:mqf_qfull	24	static
-lf_mqueue.c:57:5:mqf_write	24	static
-lf_mqueue.c:86:5:mqf_read	24	static

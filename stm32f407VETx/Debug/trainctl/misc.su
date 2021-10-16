@@ -1,8 +1,0 @@
-itm_debug.h:39:20:itm_debug1	32	static
-misc.c:29:6:flash_led	8	static
-misc.c:40:5:trainctl_error	40	static
-misc.c:53:28:trainctl_notif	16	static
-misc.c:57:28:trainctl_notif2	16	static
-misc.c:64:6:long_isr	16	static
-misc.c:78:10:GetCycleCount64	32	static,ignoring_inline_asm
-misc.c:94:6:startCycleCounter	4	static

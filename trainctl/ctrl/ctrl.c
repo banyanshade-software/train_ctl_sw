@@ -409,9 +409,10 @@ void ctrl_run_tick(_UNUSED_ uint32_t notif_flags, uint32_t tick, _UNUSED_ uint32
 			train_ctrl_t *tvar = &trctl[tidx];
 
 			switch (m.cmd) {
-			case CMD_PRESENCE_CHANGE:{
+			case CMD_PRESENCE_SUB_CHANGE:
 				if (ignore_ina_presence) break;
-				sub_presence_changed(tick, m.from, m.sub, m.v1u, m.v2);
+            case CMD_PRESENCE_VSUB_CHANGE: {
+				sub_presence_changed(tick, m.from, m.subc, m.v1u, m.v2);
 				break;
 			}
 			case CMD_BEMF_DETECT_ON_C2: {

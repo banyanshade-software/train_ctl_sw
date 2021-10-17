@@ -48,8 +48,8 @@ int _next_block_num(int blknum, uint8_t left)
     if (tn>=0) {
         a = topology_get_turnout(tn) ? b : a;
     }
-    // sanity */
-    if ((a>15) || (b>15)) {
+    // sanity XXX KO with virtual canton */
+    if ((a>150) || (b>150)) {
     	// log
     	if (a>15) a = -1;
     	if (b>15) b = -1;
@@ -70,7 +70,7 @@ typedef struct {
 
 #define TOPOLOGY 0
  
-static const topo_seg_t Topology[] = {
+static const topo_seg_t _Topology[] = {
 #if TOPOLOGY == 1
     // trackplan test
     /* 0 */ { 84, 0xFF, 0xFF, 0xFF,   2,    0xFF, 0},
@@ -85,9 +85,10 @@ static const topo_seg_t Topology[] = {
 #elif TOPOLOGY == 0
     // layout 5 segs
     /* 0 */ { 84,   0xFF, 0xFF, 0xFF,      1,    0xFF, 0},
-    /* 1 */ { 42, 	0,    2,       0,      0xFF, 3,    1},
+    /* 1 */ //{ 42,     0,    2,       0,      0xFF, 3,    1},
+    /* 1 */ { 42,     0,    2,       0,      0xFF, 128,    1},
     /* 2 */ { 73, 	0xFF, 0xFF, 0xFF,      0xFF, 1,    0},
-    /* 3 */ { 32, 	4,    1,       1,      0xFF, 0xFF, 0xFF},
+    /* 3 */ { 32, 	4,    1,       1,      0xFF, 0xFF, 0xFF},  // unused
     /* 4 */ { 105, 	0xFF, 0xFF, 0xFF,      3,    0xFF, 1}
 #else
     /* 0 */ { 84, 0xFF, 0xFF, 0xFF,   1,    0xFF, 0},
@@ -96,6 +97,24 @@ static const topo_seg_t Topology[] = {
 #error bad TOPOLOGY value
 #endif
 };
+
+typedef struct {
+    uint8_t rseg;
+    topo_seg_t t;
+} vtopo_seg_t;
+
+static const  vtopo_seg_t _VTopology[] = {
+    /* 0x80 */ {3,  {30,     0x81, 1,  1,      0xFF, 0xFF, 0xFF}},
+    /* 0x81 */ {3,  {140,    0xFF, 0xFF, 0xFF, 0x80, 0xFF, 1}}
+};
+
+static inline const topo_seg_t *Topology(int blknum) {
+    if (blknum > 127) {
+        const vtopo_seg_t *p =  &_VTopology[blknum-128];
+        return &(p->t);
+    }
+    return &_Topology[blknum];
+}
 
 void next_blocks_nums(int blknum, uint8_t left, int *pb1, int *pb2, int *tn)
 {
@@ -107,13 +126,13 @@ void next_blocks_nums(int blknum, uint8_t left, int *pb1, int *pb2, int *tn)
         return;
     }
     if (left) {
-        *pb1 = Topology[blknum].left1;
-        *pb2 = Topology[blknum].left2;
-        *tn =  Topology[blknum].ltn;
+        *pb1 = Topology(blknum)->left1;
+        *pb2 = Topology(blknum)->left2;
+        *tn =  Topology(blknum)->ltn;
     } else {
-        *pb1 = Topology[blknum].right1;
-        *pb2 = Topology[blknum].right2;
-        *tn =  Topology[blknum].rtn;
+        *pb1 = Topology(blknum)->right1;
+        *pb2 = Topology(blknum)->right2;
+        *tn =  Topology(blknum)->rtn;
     }
     if (*pb1 == 0xFF) *pb1 = -1;
     if (*pb2 == 0xFF) *pb2 = -1;
@@ -122,7 +141,7 @@ void next_blocks_nums(int blknum, uint8_t left, int *pb1, int *pb2, int *tn)
 
 int get_blk_len(int blknum)
 {
-	return Topology[blknum].lencm;
+	return Topology(blknum)->lencm;
 	/*
 	switch (blknum) {
 	case 0:

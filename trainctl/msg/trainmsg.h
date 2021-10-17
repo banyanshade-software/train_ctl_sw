@@ -79,7 +79,7 @@ typedef union {
 			uint8_t rbytes[6];
 			struct {
 				uint8_t cmd;
-				uint8_t sub;
+				uint8_t subc;
 				union {
 					uint32_t v32u;
 					int32_t v32;
@@ -149,9 +149,10 @@ LFMQUEUE_DEF_H(to_ctrl, msg_64_t)
 LFMQUEUE_DEF_H(from_ctrl, msg_64_t)
 
 /* to ctrl */
-#define CMD_PRESENCE_CHANGE			0x12
-#define CMD_BEMF_DETECT_ON_C2		0x13
-#define CMD_BEMF_DETECT_ON_C2ALT 	0x14
+#define CMD_PRESENCE_SUB_CHANGE     0x12
+#define CMD_PRESENCE_VSUB_CHANGE    0x13
+#define CMD_BEMF_DETECT_ON_C2		0x14
+#define CMD_BEMF_DETECT_ON_C2ALT 	0x15  // unused for now, detect on wrong C2 (turnout was not positionned correctly)
 
 //#define CMD_MDRIVE_SPEED 			0x15
 //#define	CMD_MDRIVE_DIR			0x16

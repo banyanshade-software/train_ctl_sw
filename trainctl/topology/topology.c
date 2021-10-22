@@ -87,7 +87,7 @@ static const topo_seg_t Topology[] = {
     /* 0 */ { 84,   0xFF, 0xFF, 0xFF,      1,    0xFF, 0},
     /* 1 */ { 42, 	0,    2,       0,      0xFF, 3,    1},
     /* 2 */ { 73, 	0xFF, 0xFF, 0xFF,      0xFF, 1,    0},
-    /* 3 */ { 32, 	4,    1,       1,      0xFF, 0xFF, 0xFF},
+    /* 3 */ { 140, 	4,    1,       1,      0xFF, 0xFF, 0xFF},
     /* 4 */ { 105, 	0xFF, 0xFF, 0xFF,      3,    0xFF, 1}
 #else
     /* 0 */ { 84, 0xFF, 0xFF, 0xFF,   1,    0xFF, 0},

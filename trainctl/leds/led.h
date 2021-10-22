@@ -11,4 +11,16 @@
 
 #include <stdio.h>
 
+void led_run_all(void);
+void led_reset_all(void);
+void led_start_prog(uint8_t lednum, uint8_t prognum);
+
+#define LED_PRG_OFF 0
+#define LED_PRG_25p 1
+#define LED_PRG_50p 2
+#define LED_PRG_ON  3
+#define LED_PRG_TST 4
+
+extern void led_io(uint8_t lednum, uint8_t v);
+
 #endif /* led_h */

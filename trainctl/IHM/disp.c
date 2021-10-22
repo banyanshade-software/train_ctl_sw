@@ -244,7 +244,7 @@ static const char *ui_strings[] = {
 /*2*/		"(c) Daniel Braun",
 /*3*/		"Stop",
 
-/*4*/		"Train ",
+/*4*/		"train ",
 /*5*/		"M ",
 /*6*/		"%",
 /*7*/		"A ",

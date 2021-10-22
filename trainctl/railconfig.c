@@ -317,3 +317,17 @@ const turnout_config_t  *get_turnout_cnf(int idx)
 
 
 
+static const led_config_t _led_conf[CONFIG_NLED] = {
+#ifndef TRAIN_SIMU
+    { LED0_GPIO_Port, LED0_Pin}
+#else
+    { NULL, 0}
+#endif
+};
+
+const led_config_t *get_led_cnf(int idx)
+{
+    if (idx<0) return NULL;
+    if (idx>CONFIG_NLED) return NULL;
+    return &_led_conf[CONFIG_NLED];
+}

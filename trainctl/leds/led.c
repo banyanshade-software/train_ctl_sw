@@ -58,7 +58,11 @@ static uint32_t prog_test[] = {
 
 
 static uint32_t *progs[] = {
-    prog_off, prog_25p, prog_50p, prog_on, prog_test
+    /* 0 */ prog_off,
+	/* 1 */ prog_25p,
+	/* 2 */ prog_50p,
+	/* 3 */ prog_on,
+	/* 4 */ prog_test
 };
 // ---------------------------------------
 

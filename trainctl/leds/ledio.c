@@ -17,8 +17,11 @@ void led_io(uint8_t lednum, uint8_t v)
 	const led_config_t *cled = get_led_cnf(lednum);
 	if (!cled) {
 		itm_debug1(DBG_LED|DBG_ERR, "bad led", lednum);
+		Error_Handler();
+		//HardFault_Handler();
 	}
 	HAL_GPIO_WritePin(cled->port_led, cled->pin_led, (v) ? GPIO_PIN_SET : GPIO_PIN_RESET);
+	//HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, GPIO_PIN_SET);
 
 }
 

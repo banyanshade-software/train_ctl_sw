@@ -329,5 +329,5 @@ const led_config_t *get_led_cnf(int idx)
 {
     if (idx<0) return NULL;
     if (idx>CONFIG_NLED) return NULL;
-    return &_led_conf[CONFIG_NLED];
+    return &_led_conf[idx];
 }

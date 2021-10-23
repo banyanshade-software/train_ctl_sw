@@ -26,15 +26,20 @@ void led_run_tick(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED
 	if ((1)) {
 		uint32_t tm = tick % 10000;
 		static int r=0;
+		static int prog = 0;
 		if ((tm<100) && !r) {
 			msg_64_t m;
 			m.cmd = CMD_LED_RUN;
 			m.from = MA_BROADCAST; // dont care
 			m.to = MA_LED_B(0);
 			m.v1u = 0;
-			m.v2u = LED_PRG_TST;
+			m.v2u = prog;
 			mqf_write_from_nowhere(&m);
 			r = 1;
+			prog++;
+			if (prog>LED_PRG_TST) {
+				prog = 0;
+			}
 		}
 		if (tm>5000) r=0;
 	}

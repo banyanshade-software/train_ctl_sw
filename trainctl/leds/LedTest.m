@@ -9,7 +9,6 @@
 #include <stdlib.h>
 #include <string.h>
 #import <XCTest/XCTest.h>
-
 #include "led.h"
 
 @interface LedTest : XCTestCase

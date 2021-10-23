@@ -36,8 +36,8 @@ void inertia_reset(int tidx, _UNUSED_ const inertia_config_t *cnf, inertia_vars_
 
 int16_t inertia_value(int tidx, const inertia_config_t *config, inertia_vars_t *vars, int *pchanged)
 {
-	int st =  SIGNOF(vars->target);
-	int sc =  SIGNOF(vars->cur);
+	int st =  SIGNOF0(vars->target);
+	int sc =  SIGNOF0(vars->cur);
 	int inc;
 
 	int32_t dt10 = (10*1000)/cur_freqhz;
@@ -52,6 +52,7 @@ int16_t inertia_value(int tidx, const inertia_config_t *config, inertia_vars_t *
 
 	if (st*sc >= 0) {
 		// same direction
+        if (!sc) sc = st; // case where cur=0
 		if (abs(vars->target*10)>abs(vars->cur)) {
 			// acceleration
 			inc = (config->acc * dt10) / 10000;

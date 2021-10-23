@@ -52,7 +52,7 @@ void led_io(uint8_t lednum, uint8_t v)
     led_err = 0;
     
     led_reset_all();
-    led_run_tick();
+    led_run_all();
 }
 
 - (void)tearDown {
@@ -64,7 +64,7 @@ void led_io(uint8_t lednum, uint8_t v)
     // Use XCTAssert and related functions to verify your tests produce the correct results.
     led_start_prog(0, LED_PRG_25p);
     for (int i=0; i<100; i++) {
-        led_run_tick();
+        led_run_all();
     }
     [self commonCheck:100];
     for (int i=0; i<100; i++) {
@@ -82,7 +82,7 @@ void led_io(uint8_t lednum, uint8_t v)
     // Use XCTAssert and related functions to verify your tests produce the correct results.
     led_start_prog(0, LED_PRG_50p);
     for (int i=0; i<100; i++) {
-        led_run_tick();
+        led_run_all();
     }
     [self commonCheck:100];
     for (int i=0; i<100; i++) {
@@ -99,7 +99,7 @@ void led_io(uint8_t lednum, uint8_t v)
     // Use XCTAssert and related functions to verify your tests produce the correct results.
     led_start_prog(0, LED_PRG_OFF);
     for (int i=0; i<10; i++) {
-        led_run_tick();
+        led_run_all();
     }
     [self commonCheck:1];
     XCTAssert(!strcmp(outled0, "0"), "bad output");
@@ -110,7 +110,7 @@ void led_io(uint8_t lednum, uint8_t v)
     // Use XCTAssert and related functions to verify your tests produce the correct results.
     led_start_prog(0, LED_PRG_ON);
     for (int i=0; i<10; i++) {
-        led_run_tick();
+        led_run_all();
     }
     [self commonCheck:1];
     XCTAssert(!strcmp(outled0, "1"), "bad output");
@@ -130,9 +130,6 @@ const char *tstref =  "\
 101010101010101010101010\
 101010101010101010101010\
 101010101010101010101010\
-101010101010101010101010\
-101010101010101010101010\
-101010101010101010101010\
 111111111111111111111111\
 111111111111111111111111\
 111111111111111111111111\
@@ -140,19 +137,8 @@ const char *tstref =  "\
 111111111111111111111111\
 111111111111111111111111\
 111111111111111111111111\
-111111111111111111111111\
-111111111111111111111111\
-111111111111111111111111\
-111111111111111111111111\
-111111111111111111111111\
-111111111111111111111111\
-111111111111111111111111\
-101010101010101010101010\
-101010101010101010101010\
-101010101010101010101010\
-101010101010101010101010\
-101010101010101010101010\
-101010101010101010101010\
+101010101010101011111110\
+101010101010101011111110\
 1";
 
 static int ncmp(const char *a, const char *b)
@@ -169,7 +155,7 @@ static int ncmp(const char *a, const char *b)
     // Use XCTAssert and related functions to verify your tests produce the correct results.
     led_start_prog(0, LED_PRG_TST);
     for (int i=0; i<1000; i++) {
-        led_run_tick();
+        led_run_all();
     }
     [self commonCheck:strlen(tstref)];
     int k = ncmp(tstref, outled0);

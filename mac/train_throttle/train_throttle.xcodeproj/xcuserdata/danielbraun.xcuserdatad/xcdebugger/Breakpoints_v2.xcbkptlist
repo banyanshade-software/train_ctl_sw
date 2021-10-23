@@ -4793,7 +4793,7 @@
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "54"
                   endingLineNumber = "54"
-                  offsetFromSymbolStart = "4394">
+                  offsetFromSymbolStart = "4412">
                </Location>
                <Location
                   uuid = "66154E43-69CA-402F-8AA1-075DC71E460C - 8973002a884d6156"
@@ -4808,7 +4808,7 @@
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "54"
                   endingLineNumber = "54"
-                  offsetFromSymbolStart = "4830">
+                  offsetFromSymbolStart = "4848">
                </Location>
                <Location
                   uuid = "66154E43-69CA-402F-8AA1-075DC71E460C - 8973002a884d6156"
@@ -4823,7 +4823,7 @@
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "54"
                   endingLineNumber = "54"
-                  offsetFromSymbolStart = "5328">
+                  offsetFromSymbolStart = "5346">
                </Location>
                <Location
                   uuid = "66154E43-69CA-402F-8AA1-075DC71E460C - 8973002a884d6156"
@@ -4838,7 +4838,7 @@
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "54"
                   endingLineNumber = "54"
-                  offsetFromSymbolStart = "5446">
+                  offsetFromSymbolStart = "5464">
                </Location>
             </Locations>
          </BreakpointContent>
@@ -4871,7 +4871,7 @@
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "63"
                   endingLineNumber = "63"
-                  offsetFromSymbolStart = "11690">
+                  offsetFromSymbolStart = "11708">
                </Location>
                <Location
                   uuid = "42C00260-4DE5-498E-8E27-DFB07D91D67E - 8973002a884d6156"
@@ -4886,7 +4886,7 @@
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "63"
                   endingLineNumber = "63"
-                  offsetFromSymbolStart = "12126">
+                  offsetFromSymbolStart = "12144">
                </Location>
                <Location
                   uuid = "42C00260-4DE5-498E-8E27-DFB07D91D67E - 8973002a884d6156"
@@ -4901,7 +4901,7 @@
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "63"
                   endingLineNumber = "63"
-                  offsetFromSymbolStart = "12624">
+                  offsetFromSymbolStart = "12642">
                </Location>
                <Location
                   uuid = "42C00260-4DE5-498E-8E27-DFB07D91D67E - 8973002a884d6156"
@@ -4916,7 +4916,7 @@
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "63"
                   endingLineNumber = "63"
-                  offsetFromSymbolStart = "12742">
+                  offsetFromSymbolStart = "12760">
                </Location>
             </Locations>
          </BreakpointContent>
@@ -5253,7 +5253,7 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "EEE0594A-2A34-4570-8126-8B7141C9854F"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../../trainctl/spdctl/TestInertia.m"
@@ -5266,7 +5266,7 @@
             <Locations>
                <Location
                   uuid = "EEE0594A-2A34-4570-8126-8B7141C9854F - 76fcf43919769450"
-                  shouldBeEnabled = "Yes"
+                  shouldBeEnabled = "No"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
                   symbolName = "-[TestInertia testDec2]"
@@ -5281,7 +5281,7 @@
                </Location>
                <Location
                   uuid = "EEE0594A-2A34-4570-8126-8B7141C9854F - 76fcf43919769450"
-                  shouldBeEnabled = "Yes"
+                  shouldBeEnabled = "No"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
                   symbolName = "-[TestInertia testDec2]"
@@ -5296,7 +5296,7 @@
                </Location>
                <Location
                   uuid = "EEE0594A-2A34-4570-8126-8B7141C9854F - 76fcf43919769450"
-                  shouldBeEnabled = "Yes"
+                  shouldBeEnabled = "No"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
                   symbolName = "-[TestInertia testDec2]"
@@ -5311,7 +5311,7 @@
                </Location>
                <Location
                   uuid = "EEE0594A-2A34-4570-8126-8B7141C9854F - 76fcf43919769450"
-                  shouldBeEnabled = "Yes"
+                  shouldBeEnabled = "No"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
                   symbolName = "-[TestInertia testDec2]"
@@ -5325,6 +5325,116 @@
                   offsetFromSymbolStart = "5467">
                </Location>
             </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "67FC9583-2031-4B09-93D3-5760DF1E3891"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../trainctl/spdctl/TestInertia.m"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "234"
+            endingLineNumber = "234"
+            landmarkName = "-testDec2"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "3FA5FA26-5960-475D-AD19-DF9176046C1B"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../trainctl/spdctl/TestInertia.m"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "87"
+            endingLineNumber = "87"
+            landmarkName = "-testDec1"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "3FA5FA26-5960-475D-AD19-DF9176046C1B - 76fcf43699f69753"
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "-[TestInertia testDec1]"
+                  moduleName = "trainctlTests"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/danielbraun/devel/train/sw/trainctl/spdctl/TestInertia.m"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "87"
+                  endingLineNumber = "87"
+                  offsetFromSymbolStart = "4412">
+               </Location>
+               <Location
+                  uuid = "3FA5FA26-5960-475D-AD19-DF9176046C1B - 76fcf43699f69753"
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "-[TestInertia testDec1]"
+                  moduleName = "trainctlTests"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/danielbraun/devel/train/sw/trainctl/spdctl/TestInertia.m"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "87"
+                  endingLineNumber = "87"
+                  offsetFromSymbolStart = "4848">
+               </Location>
+               <Location
+                  uuid = "3FA5FA26-5960-475D-AD19-DF9176046C1B - 76fcf43699f69753"
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "-[TestInertia testDec1]"
+                  moduleName = "trainctlTests"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/danielbraun/devel/train/sw/trainctl/spdctl/TestInertia.m"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "87"
+                  endingLineNumber = "87"
+                  offsetFromSymbolStart = "5349">
+               </Location>
+               <Location
+                  uuid = "3FA5FA26-5960-475D-AD19-DF9176046C1B - 76fcf43699f69753"
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "-[TestInertia testDec1]"
+                  moduleName = "trainctlTests"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/danielbraun/devel/train/sw/trainctl/spdctl/TestInertia.m"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "87"
+                  endingLineNumber = "87"
+                  offsetFromSymbolStart = "5467">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "ED7C1021-50B0-436F-AC90-202636F159B6"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../trainctl/spdctl/TestInertia.m"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "81"
+            endingLineNumber = "81"
+            landmarkName = "-testDec1"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

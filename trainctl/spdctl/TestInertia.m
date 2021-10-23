@@ -39,11 +39,11 @@ static inertia_vars_t vars;
     // This is an example of a functional test case.
     // Use XCTAssert and related functions to verify your tests produce the correct results.
     vars.target = 50;
-    vars.cur = 0;
+    vars.cur100 = 0;
     cnf.acc = 300;
     cnf.dec = 50;
     int chg=0;
-    int16_t v = vars.cur/10;
+    int16_t v = vars.cur100/100;
     for (int i=0; i<100; i++) {
         int16_t v2 = inertia_value(0, &cnf, &vars, &chg);
         if (v != v2) XCTAssert(chg, "chg");
@@ -72,11 +72,11 @@ static inertia_vars_t vars;
     // This is an example of a functional test case.
     // Use XCTAssert and related functions to verify your tests produce the correct results.
     vars.target = 5;
-    vars.cur = 500;
+    vars.cur100 = 50*100;
     cnf.acc = 300;
     cnf.dec = 200;
     int chg=0;
-    int16_t v = vars.cur/10;
+    int16_t v = vars.cur100/100;
     for (int i=0; i<100; i++) {
         int16_t v2 = inertia_value(0, &cnf, &vars, &chg);
         if (v != v2) XCTAssert(chg, "chg");
@@ -106,11 +106,11 @@ static inertia_vars_t vars;
     // This is an example of a functional test case.
     // Use XCTAssert and related functions to verify your tests produce the correct results.
     vars.target = -50;
-    vars.cur = 0;
+    vars.cur100 = 0;
     cnf.acc = 300;
     cnf.dec = 50;
     int chg=0;
-    int16_t v = vars.cur/10;
+    int16_t v = vars.cur100/100;
     for (int i=0; i<100; i++) {
         int16_t v2 = inertia_value(0, &cnf, &vars, &chg);
         if (v != v2) XCTAssert(chg, "chg");
@@ -139,11 +139,11 @@ static inertia_vars_t vars;
     // This is an example of a functional test case.
     // Use XCTAssert and related functions to verify your tests produce the correct results.
     vars.target = -5;
-    vars.cur = -500;
+    vars.cur100 = -50*100;
     cnf.acc = 300;
     cnf.dec = 100;
     int chg=0;
-    int16_t v = vars.cur/10;
+    int16_t v = vars.cur100/100;
     for (int i=0; i<100; i++) {
         int16_t v2 = inertia_value(0, &cnf, &vars, &chg);
         if (v != v2) XCTAssert(chg, "chg");
@@ -172,11 +172,11 @@ static inertia_vars_t vars;
     // This is an example of a functional test case.
     // Use XCTAssert and related functions to verify your tests produce the correct results.
     vars.target = 50;
-    vars.cur = -300;
+    vars.cur100 = -30*100;
     cnf.acc = 300;
     cnf.dec = 100;
     int chg=0;
-    int16_t v = vars.cur/10;
+    int16_t v = vars.cur100/100;
     for (int i=0; i<100; i++) {
         int16_t v2 = inertia_value(0, &cnf, &vars, &chg);
         if (v != v2) XCTAssert(chg, "chg");
@@ -225,11 +225,11 @@ static inertia_vars_t vars;
     // This is an example of a functional test case.
     // Use XCTAssert and related functions to verify your tests produce the correct results.
     vars.target = 5;
-    vars.cur = 500;
+    vars.cur100 = 50*100;
     cnf.acc = 300;
     cnf.dec = 150;
     int chg=0;
-    int16_t v = vars.cur/10;
+    int16_t v = vars.cur100/100;
     for (int i=0; i<100; i++) {
         int16_t v2 = inertia_value(0, &cnf, &vars, &chg);
         if (v != v2) XCTAssert(chg, "chg");

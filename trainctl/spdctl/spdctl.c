@@ -102,7 +102,7 @@ const stat_val_t statval_spdctrl[] = {
     { trspc_vars, offsetof(train_vars_t, pidvars.sume), 4       _P("T#_pid_sum_e")},
     { trspc_vars, offsetof(train_vars_t, pidvars.target_v), 4   _P("T#_pid_target")},
     { trspc_vars, offsetof(train_vars_t, inertiavars.target), 2 _P("T#_ine_t")},
-    { trspc_vars, offsetof(train_vars_t, inertiavars.cur), 2    _P("T#_ine_c")},
+    { trspc_vars, offsetof(train_vars_t, inertiavars.cur100), 2    _P("T#_ine_c")},
     { trspc_vars, offsetof(train_vars_t, last_speed), 2         _P("T#_spd_curspeed")},
     { trspc_vars, offsetof(train_vars_t, position_estimate), 4  _P("T#_pose")},
     { trspc_vars, offsetof(train_vars_t, pose_trig), 4          _P("T#_pose_trig")},

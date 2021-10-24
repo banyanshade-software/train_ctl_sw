@@ -98,10 +98,9 @@ static void err(void)
     
 }
 
-static uint8_t run_ledmachine(ledmachine_t *state)
+static uint8_t _run_one(ledmachine_t *state, uint8_t *rerun)
 {
-    if (state->prognum == 0xFF) return 0;
-rerun:
+    *rerun = 0;
     if (state->bit) {
         state->bit--;
         uint8_t b = state->bit;
@@ -122,13 +121,16 @@ rerun:
     } else if (!(opcode & 0x80000000)) { //R()
         state->bit = 24;
         state->repeat_counter = (opcode >> 24) & 0x7F;
-        goto rerun;
+        *rerun = 1;
+        return 0;
     } else if (0x80000000 == opcode) { // JMP()
         state->pc = w & 0x0000FFFF; // 0x00FFFFFF but PC is 16bits
-        goto rerun;
+        *rerun = 1;
+        return 0;
     } else if (0x81000000 == opcode) { // PROG()
         start_prog(state, w & 0x000000FF);
-        goto rerun;
+        *rerun = 1;
+        return 0;
     } else if (0xFE000000 == (w & 0xFE000000)) { // RETURN()
         uint8_t s = (w & 0x01000000) ?  1 : 0;
         state->prognum = 0xFF;
@@ -145,6 +147,20 @@ rerun:
     // invalid opcode
     state->pc++;
     return 0;
+}
+
+static uint8_t run_ledmachine(ledmachine_t *state)
+{
+    if (state->prognum == 0xFF) return 0;
+    uint8_t rerun;
+    uint8_t rc = _run_one(state, &rerun);
+    if (rerun) {
+        rc = _run_one(state, &rerun);
+        if (rerun) {
+            Error_Handler();
+        }
+    }
+    return rc;
 }
 
 static ledmachine_t leds[CONFIG_NLED];

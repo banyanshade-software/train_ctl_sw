@@ -230,7 +230,7 @@ static void run_task_ctrl(void)
 		presdect_tick(notif, t, dt);
 		//}
 #endif
-		led_run_tick(notif, t, dt);
+		//led_run_tick(notif, t, dt);
 
 		itm_debug1(DBG_LOWCTRL, "--done", dt);
 		uint32_t et = HAL_GetTick() - t;

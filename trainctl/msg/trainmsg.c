@@ -45,7 +45,7 @@ LFMQUEUE_DEF_C(from_ui, msg_64_t, 		4,  0)
 LFMQUEUE_DEF_C(to_ui_track, msg_64_t,   8, 1)
 LFMQUEUE_DEF_C(from_ui_track, msg_64_t, 2, 0)
 
-LFMQUEUE_DEF_C(from_nowhere, msg_64_t, 	2, 0)
+LFMQUEUE_DEF_C(from_nowhere, msg_64_t, 	4, 0)
 
 
 LFMQUEUE_DEF_C(to_ina3221, msg_64_t, 	4, 0)
@@ -106,7 +106,7 @@ static void msg_error(_UNUSED_ const char *msg)
 
 static void dispatch_m64(msg_64_t *m, int f)
 {
-	if ((0)) {
+	if ((1)) {
 		if (m->cmd == 0x52) {
 			itm_debug1(DBG_USB, "disp A2", m->cmd);
 		}

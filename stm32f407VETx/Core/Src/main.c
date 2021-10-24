@@ -124,6 +124,18 @@ const osThreadAttr_t ina3221_task_attributes = {
   .cb_size = sizeof(ina3221_taskControlBlock),
   .priority = (osPriority_t) osPriorityRealtime,
 };
+/* Definitions for ledTask */
+osThreadId_t ledTaskHandle;
+uint32_t ledTaskBuffer[ 128 ];
+osStaticThreadDef_t ledTaskControlBlock;
+const osThreadAttr_t ledTask_attributes = {
+  .name = "ledTask",
+  .stack_mem = &ledTaskBuffer[0],
+  .stack_size = sizeof(ledTaskBuffer),
+  .cb_mem = &ledTaskControlBlock,
+  .cb_size = sizeof(ledTaskControlBlock),
+  .priority = (osPriority_t) osPriorityRealtime4,
+};
 /* Definitions for frameQueue */
 osMessageQueueId_t frameQueueHandle;
 uint8_t frameQueueBuffer[ 48 * sizeof( frame_msg_t ) ];
@@ -158,6 +170,7 @@ void StartUiTask(void *argument);
 extern void StartCtrlTask(void *argument);
 extern void StartTxRxFrameTask(void *argument);
 void ina3221_task_start(void *argument);
+void start_led_task(void *argument);
 
 /* USER CODE BEGIN PFP */
 
@@ -263,6 +276,9 @@ int main(void)
 
   /* creation of ina3221_task */
   ina3221_taskHandle = osThreadNew(ina3221_task_start, NULL, &ina3221_task_attributes);
+
+  /* creation of ledTask */
+  ledTaskHandle = osThreadNew(start_led_task, NULL, &ledTask_attributes);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -1222,6 +1238,24 @@ __weak void ina3221_task_start(void *argument)
   /* USER CODE END ina3221_task_start */
 }
 
+/* USER CODE BEGIN Header_start_led_task */
+/**
+* @brief Function implementing the ledTask thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_start_led_task */
+__weak void start_led_task(void *argument)
+{
+  /* USER CODE BEGIN start_led_task */
+  /* Infinite loop */
+  for(;;)
+  {
+    osDelay(1);
+  }
+  /* USER CODE END start_led_task */
+}
+
 /**
   * @brief  Period elapsed callback in non blocking mode
   * @note   This function is called  when TIM7 interrupt took place, inside
@@ -1239,6 +1273,14 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
     HAL_IncTick();
   }
   /* USER CODE BEGIN Callback 1 */
+  /*
+  if ((htim->Instance == TIM7) && ledTaskHandle) {
+	  BaseType_t higher=0;
+	  xTaskNotifyFromISR(ledTaskHandle, NOTIF_SYSTICK, eSetBits, &higher);
+	  portYIELD_FROM_ISR(higher);
+
+	NOT OK because system time prio is too high, can't invoke system call
+    }*/
   /*
   if (htim->Instance == TIM7) {
 	  static uint32_t lastuitick = 0;

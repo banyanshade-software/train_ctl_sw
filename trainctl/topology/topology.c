@@ -32,131 +32,148 @@
 #include "topology.h"
 
 
-int _blk_num_for_sub_num(int subnum)
-{
-	if (subnum == 2) return 0;
-	if (subnum == 1) return 1;
-	if (subnum == 0) return 2;
-	return -1;
-}
 
-
-int _next_block_num(int blknum, uint8_t left)
-{
-    int a,b,tn;
-    next_blocks_nums(blknum, left, &a, &b, &tn);
-    if (tn>=0) {
-        a = topology_get_turnout(tn) ? b : a;
-    }
-    // sanity XXX KO with virtual canton */
-    if ((a>150) || (b>150)) {
-    	// log
-    	if (a>15) a = -1;
-    	if (b>15) b = -1;
-    }
-    if ((a<0) && (b<0)) return -2; // end of track
-    return a;
-}
 
 typedef struct {
-	uint8_t lencm;
+    uint8_t canton_addr;
+    uint8_t ina_segnum;
+    
+	uint8_t length_cm;
+    
     uint8_t left1;
     uint8_t left2;
     uint8_t ltn; // leeee turnout
     uint8_t right1;
     uint8_t right2;
     uint8_t rtn; // leeee turnout
-} topo_seg_t;
+} topo_lsblk_t;
 
-#define TOPOLOGY 0
- 
-static const topo_seg_t _Topology[] = {
-#if TOPOLOGY == 1
-    // trackplan test
-    /* 0 */ { 84, 0xFF, 0xFF, 0xFF,   2,    0xFF, 0},
-    /* 1 */ { 42, 0xFF, 0xFF, 0xFF,   2,    0xFF, 0},
-    /* 2 */ { 73,    1,    0,      3,    0xFF, 0xFF},
-    /* 3 */ { 32,    0xFF, 0xFF,   0xFF, 0xFF, 0xFF}
-#elif TOPOLOGY == 2
-    // partial layout, 3 segs
-    /* 0 */ {84, 0xFF, 0xFF, 0xFF,   1,    0xFF, 0},
-    /* 1 */ {42,  2,    0,       0,   0xFF, 0xFF, 0xFF},
-    /* 2 */ {73,  0xFF, 0xFF, 0xFF,   1,    0xFF, 0},
-#elif TOPOLOGY == 0
+
+
+static const topo_lsblk_t _Topology[] = {
     // layout 5 segs
-    /* 0 */ { 84,   0xFF, 0xFF, 0xFF,      1,    0xFF, 0},
-    /* 1 */ //{ 42,     0,    2,       0,      0xFF, 3,    1},
-    /* 1 */ { 42,     0,    2,       0,      0xFF, 128,    1},
-    /* 2 */ { 73, 	0xFF, 0xFF, 0xFF,      0xFF, 1,    0},
-    /* 3 */ { 32, 	4,    1,       1,      0xFF, 0xFF, 0xFF},  // unused
-    /* 4 */ { 105, 	0xFF, 0xFF, 0xFF,      3,    0xFF, 1}
-#else
-    /* 0 */ { 84, 0xFF, 0xFF, 0xFF,   1,    0xFF, 0},
-    /* 1 */ { 42, 0,    2,       0,   0xFF, 0xFF, 0xFF},
-    /* 2 */ { 73, 0xFF, 0xFF, 0xFF,   1,    0xFF, 0},
-#error bad TOPOLOGY value
-#endif
+    /* 0 */ { MA_CANTON(0, 0),  0xFF,   84,     0xFF, 0xFF, 0xFF,      1,    0xFF, 0},
+    /* 1 */ { MA_CANTON(0, 1),  0xFF,   42,     0,    2,       0,      0xFF, 3,    1},
+    /* 2 */ { MA_CANTON(0, 2),  0xFF,   73, 	0xFF, 0xFF, 0xFF,      0xFF, 1,    0},
+    /* 3 */ { MA_CANTON(0, 3),  0xFF,   32, 	4,    1,       1,      0xFF, 0xFF, 0xFF},  // unused
+    /* 4 */ { MA_CANTON(0, 3),  0xFF,   105, 	0xFF, 0xFF, 0xFF,      3,    0xFF, 1}
 };
 
-typedef struct {
-    uint8_t rseg;
-    topo_seg_t t;
-} vtopo_seg_t;
 
-static const  vtopo_seg_t _VTopology[] = {
-    /* 0x80 */ {3,  {30,     0x81, 1,  1,      0xFF, 0xFF, 0xFF}},
-    /* 0x81 */ {3,  {140,    0xFF, 0xFF, 0xFF, 0x80, 0xFF, 1}}
-};
-
-static inline const topo_seg_t *Topology(int blknum) {
-    if (blknum > 127) {
-        const vtopo_seg_t *p =  &_VTopology[blknum-128];
-        return &(p->t);
+static inline int numTopology(void)
+{
+    static int s=0;
+    if (!s) {
+        s = sizeof(_Topology)/sizeof(topo_lsblk_t);
     }
-    return &_Topology[blknum];
+    return s;
 }
 
-void next_blocks_nums(int blknum, uint8_t left, int *pb1, int *pb2, int *tn)
+static inline const topo_lsblk_t *Topology(lsblk_num_t blknum)
 {
-    *pb1 = -1;
-    *pb2 = -1;
+    return &_Topology[blknum.n];
+}
+
+void next_lsblk_nums(lsblk_num_t blknum, uint8_t left, lsblk_num_t *pb1, lsblk_num_t *pb2, int *tn)
+{
+    pb1->n = -1;
+    pb2->n = -1;
     *tn = -1;
-    if (blknum<0) {
+    if (blknum.n<0) {
         abort();
         return;
     }
     if (left) {
-        *pb1 = Topology(blknum)->left1;
-        *pb2 = Topology(blknum)->left2;
+        pb1->n = Topology(blknum)->left1;
+        pb2->n = Topology(blknum)->left2;
         *tn =  Topology(blknum)->ltn;
     } else {
-        *pb1 = Topology(blknum)->right1;
-        *pb2 = Topology(blknum)->right2;
+        pb1->n = Topology(blknum)->right1;
+        pb2->n = Topology(blknum)->right2;
         *tn =  Topology(blknum)->rtn;
     }
-    if (*pb1 == 0xFF) *pb1 = -1;
-    if (*pb2 == 0xFF) *pb2 = -1;
+    if (pb1->n == 0xFF) pb1->n = -1;
+    if (pb2->n == 0xFF) pb2->n = -1;
     if (*tn  == 0xFF) *tn  = -1;
 }
 
-int get_blk_len(int blknum)
+int get_blk_len(lsblk_num_t blknum)
 {
-	return Topology(blknum)->lencm;
-	/*
-	switch (blknum) {
-	case 0:
-		return 70;
-	case 1:
-		return 40;
-	case 2:
-		return 50;
-	default:
-		return 30;
-	}
-	*/
+	return Topology(blknum)->length_cm;
+	
+}
+
+lsblk_num_t next_lsblk(lsblk_num_t blknum, uint8_t left)
+{
+    if (blknum.n == -1) return blknum;
+    
+    lsblk_num_t a, b;
+    int tn;
+    next_lsblk_nums(blknum, left, &a, &b, &tn);
+    if (tn>=0) {
+        a = topology_get_turnout(tn) ? b : a;
+    }
+    // sanity XXX KO with virtual canton */
+    if ((a.n>150) || (b.n>150)) {
+        // log
+        if (a.n>150) a.n = -1;
+        if (b.n>150) b.n = -1;
+    }
+    //if ((a.n<0) && (b.n<0)) return a; // end of track
+    return a;
 }
 
 
+uint8_t canton_for_lsblk(lsblk_num_t n)
+{
+    return Topology(n)->canton_addr;
+}
+
+lsblk_num_t first_lsblk_with_canton(uint8_t ca,  lsblk_num_t fromblk)
+{
+    if (0xFF == ca) {
+        lsblk_num_t n = {-1};
+        return n;
+    }
+    for (int i=0; i<numTopology(); i++) {
+        lsblk_num_t n;
+        n.n = i;
+        const topo_lsblk_t *t = Topology(n);
+        if (t->canton_addr != ca) continue;
+        if (   (t->left1  != fromblk.n)
+            && (t->left2  != fromblk.n)
+            && (t->right1 != fromblk.n)
+            && (t->right2 != fromblk.n)) continue;
+        return n;
+    }
+    lsblk_num_t n = {-1};
+    return n;
+}
+lsblk_num_t any_lsblk_with_canton(uint8_t ca)
+{
+    if (0xFF == ca) {
+        lsblk_num_t n = {-1};
+        return n;
+    }
+    for (int i=0; i<numTopology(); i++) {
+        lsblk_num_t n;
+        n.n = i;
+        const topo_lsblk_t *t = Topology(n);
+        if (t->canton_addr != ca) continue;
+        return n;
+    }
+    lsblk_num_t n = {-1};
+    return n;
+}
+
+uint8_t next_block_addr(uint8_t blkaddr, uint8_t left)
+{
+    // slow should not be used ?
+    lsblk_num_t f = any_lsblk_with_canton(blkaddr);
+    lsblk_num_t n = next_lsblk(f, left);
+    if (n.n<0) return 0xFF;
+    return canton_for_lsblk(n);
+}
 // --------------------------------------------------------------------------------------
 
 static volatile uint32_t turnoutvals = 0; // bit field

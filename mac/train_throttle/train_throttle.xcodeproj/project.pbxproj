@@ -11,6 +11,7 @@
 		1B18115126BFFCC00008F21C /* uitrack.html in Resources */ = {isa = PBXBuildFile; fileRef = 1B18115026BFFCC00008F21C /* uitrack.html */; };
 		1B18115326C00F500008F21C /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B18115226C00F4F0008F21C /* WebKit.framework */; };
 		1B46EE552692684F00FAC813 /* topology.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B46EE542692684E00FAC813 /* topology.c */; };
+		1B4B70A22729194F00FBDB52 /* TopologyTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B4B70A12729194F00FBDB52 /* TopologyTest.m */; };
 		1B4BCB022549ADC90062961D /* statval.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B4BCB002549ADC70062961D /* statval.c */; };
 		1B60329726CA4C0200D5B6CA /* trkplan.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B60329626CA4BF400D5B6CA /* trkplan.c */; };
 		1B61090D256AAE1A00F1AC45 /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B61090C256AAE1900F1AC45 /* CoreBluetooth.framework */; };
@@ -46,6 +47,7 @@
 		1B18115026BFFCC00008F21C /* uitrack.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = uitrack.html; sourceTree = "<group>"; };
 		1B18115226C00F4F0008F21C /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
 		1B46EE542692684E00FAC813 /* topology.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = topology.c; sourceTree = "<group>"; };
+		1B4B70A12729194F00FBDB52 /* TopologyTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TopologyTest.m; sourceTree = "<group>"; };
 		1B4BCB002549ADC70062961D /* statval.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = statval.c; sourceTree = "<group>"; };
 		1B4BCB012549ADC80062961D /* statval.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = statval.h; sourceTree = "<group>"; };
 		1B60329526CA4BF400D5B6CA /* trkplan.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = trkplan.h; sourceTree = "<group>"; };
@@ -211,6 +213,7 @@
 				1B46EE542692684E00FAC813 /* topology.c */,
 				1B92EA322631A0CC00558716 /* topology.h */,
 				1B92EA332631C9CD00558716 /* occupency.h */,
+				1B4B70A12729194F00FBDB52 /* TopologyTest.m */,
 			);
 			path = topology;
 			sourceTree = "<group>";
@@ -365,6 +368,7 @@
 				1BED2AA025173D1F0080FC97 /* main.m in Sources */,
 				1BD93C6D2546FF44006C4D70 /* railconfig.c in Sources */,
 				1BD93C732546FF44006C4D70 /* train.c in Sources */,
+				1B4B70A22729194F00FBDB52 /* TopologyTest.m in Sources */,
 				1BD93C6C2546FF44006C4D70 /* param.c in Sources */,
 				1BED2A9825173CF40080FC97 /* AppDelegate.m in Sources */,
 				1B67360F2531E4450063EA9A /* SimTrain.m in Sources */,

@@ -45,9 +45,9 @@ typedef struct {
 	uint16_t _target_speed;
 	int8_t   _dir;
 
-	uint8_t  canton1_addr;
-	uint8_t  canton2_addr;
-
+	uint8_t     can1_addr;
+    lsblk_num_t c1_sblk;
+	uint8_t     can2_addr;
 
 	uint16_t spd_limit;
 	uint16_t desired_speed;
@@ -66,8 +66,9 @@ const stat_val_t statval_ctrl[] = {
         { trctl, offsetof(train_ctrl_t, _state),           sizeof(train_state_t)   _P("T#_ctrl_state")},
         { trctl, offsetof(train_ctrl_t, _dir),             sizeof(uint8_t)         _P("T#_ctrl_dir")},
         { trctl, offsetof(train_ctrl_t, _target_speed),    sizeof(uint16_t)        _P("T#_ctrl_target_speed")},
-        { trctl, offsetof(train_ctrl_t, canton1_addr),     sizeof(uint8_t)         _P("T#_ctrl_canton1_addr")},
-        { trctl, offsetof(train_ctrl_t, canton2_addr),     sizeof(uint8_t)         _P("T#_ctrl_canton2_addr")},
+        { trctl, offsetof(train_ctrl_t, can1_addr),        sizeof(uint8_t)         _P("T#_ctrl_canton1_addr")},
+        { trctl, offsetof(train_ctrl_t, c1_sblk.n),        sizeof(uint8_t)         _P("T#_ctrl_canton1_lsb")},
+        { trctl, offsetof(train_ctrl_t, can2_addr),        sizeof(uint8_t)         _P("T#_ctrl_canton2_addr")},
         { trctl, offsetof(train_ctrl_t, desired_speed),    sizeof(uint16_t)        _P("T#_ctrl_desired_speed")},
         { trctl, offsetof(train_ctrl_t, spd_limit),        sizeof(uint16_t)        _P("T#_ctrl_spd_limit")},
         { NULL,  sizeof(train_ctrl_t), 0 _P(NULL)}
@@ -134,13 +135,13 @@ static void check_timers(uint32_t tick);
 static void sub_presence_changed(uint32_t tick, uint8_t from_addr, uint8_t segnum, uint16_t v, int16_t ival);
 
 // ----------------------------------------------------------------------------
-//  block presence
+//  block occupency
 
 
 #define USE_BLOCK_DELAY_FREE 1
 
-static void set_block_num_occupency(int blknum, uint8_t v, uint8_t trnum);
-static void set_block_addr_occupency(uint8_t blkaddr, uint8_t v, uint8_t trnum);
+//static void set_block_num_occupency(int blknum, uint8_t v, uint8_t trnum);
+static void set_block_addr_occupency(uint8_t blkaddr, uint8_t v, uint8_t trnum, lsblk_num_t lsb);
 static uint8_t get_block_num_occupency(int blknum);
 static void check_block_delayed(uint32_t tick);
 
@@ -232,23 +233,24 @@ static void ctrl_init(void)
     set_turnout(0, 0);
     set_turnout(1, 0);
 	if ((1)) {
-		trctl[0].canton1_addr = MA_CANTON(0, 1);//MA_CANTON(0, 1); // initial blk
-		trctl[0].canton2_addr = 0xFF;
+		trctl[0].can1_addr = MA_CANTON(0, 1);//MA_CANTON(0, 1); // initial blk
+        trctl[0].c1_sblk = any_lsblk_with_canton(trctl[0].can1_addr);
+		trctl[0].can2_addr = 0xFF;
 		trctl[0]._dir = 0;
 		trctl[0].desired_speed = 0;
 		trctl[0]._target_speed = 0;
 		set_state(0, &trctl[0], train_station);
-		set_block_addr_occupency(trctl[0].canton1_addr, BLK_OCC_STOP, 0);
+		set_block_addr_occupency(trctl[0].can1_addr, BLK_OCC_STOP, 0, trctl[0].c1_sblk);
 
 		if ((SCEN_TWOTRAIN)) {
-			trctl[1].canton1_addr = MA_CANTON(0, 2); // initial blk
-			trctl[1].canton2_addr = 0xFF;
+			trctl[1].can1_addr = MA_CANTON(0, 2); // initial blk
+            trctl[1].c1_sblk = any_lsblk_with_canton(trctl[1].can1_addr);
+			trctl[1].can2_addr = 0xFF;
 			trctl[1]._dir = 1;
 			trctl[1]._target_speed = 0;
 			trctl[1].desired_speed = 12;
 			set_state(1, &trctl[1], train_station);
-			set_block_addr_occupency(trctl[1].canton1_addr, BLK_OCC_STOP, 1);
-
+			set_block_addr_occupency(trctl[1].can1_addr, BLK_OCC_STOP, 1, trctl[1].c1_sblk);
 			update_c2_state_limits(0, &trctl[0], upd_init);
 			update_c2_state_limits(1, &trctl[1], upd_init);
 
@@ -256,8 +258,9 @@ static void ctrl_init(void)
 				evt_cmd_set_setdirspeed(1, &trctl[1], 1, 30, 1);
 			}
 		} else {
-			trctl[1].canton1_addr = 0xFF;
-			trctl[1].canton2_addr = 0xFF;
+			trctl[1].can1_addr = 0xFF;
+            trctl[1].c1_sblk = any_lsblk_with_canton(trctl[1].can1_addr);
+			trctl[1].can2_addr = 0xFF;
 			ctrl_set_mode(1, train_notrunning);
 			set_state(1, &trctl[1], train_off);
 			//trctl[1].enabled = 0;
@@ -266,6 +269,7 @@ static void ctrl_init(void)
 		}
 	}
 }
+xxxx
 
 // ----------------------------------------------------------------------------
 // timers

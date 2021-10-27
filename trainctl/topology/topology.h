@@ -8,21 +8,22 @@
 #ifndef TOPOLOGY_TOPOLOGY_H_
 #define TOPOLOGY_TOPOLOGY_H_
 
-/*
-                       /--5.1---- --5.2--
- -1.1-- -1.2--\--2----/-4---/--6.1- -6.2--
-               \----3------/
- 
- ('1.1 '1.2 (switchr ('2 '3))
- ('2 (switchr '4 ('5.1 5.2)))
- ('6.1 (switchl '4 '3))
- 
- l2r : (blk 1.1 ...) (blk 1.2 ...) (sw s 1) (blk 2) (sw_s 2) (blk 4) (sw is 3) (blk 6.1) (blk 6.2)
- l2r : (sw t 1) (3) (sw it 3)
- l2r : (sw t 2) (blk 5.1) (blk 5.2)
- */
+
 #include "../msg/trainmsg.h"
 
+
+/*
+Cantons (Blocks), share common electrical power, and therefore there can be only one train on a given block
+Blocks are divided in Logical SubBlocks (one or more Logical Blocks per Canton)
+
+Logical SubBlocks may use current dectection (ina3221), or only rely on BEMF POSition Evaluation to
+detect on wich Logical SubBlocks a train is positioned
+
+Topology is based on Logical SubBlocks
+*/
+
+
+/*
 static inline int _sub_addr_to_sub_num(uint8_t addr, uint8_t sub)
 {
     int brd = MA_2_BOARD(addr);
@@ -55,16 +56,40 @@ static uint8_t _blk_num_to_blk_addr(int blknum)
     int brd = blknum/6;
     return MA_CANTON(brd, nc);
 }
+*/
 
 // ---------------------------------------------------------------------
-
+/*
 int _blk_num_for_sub_num(int subnum);
 int _next_block_num(int blknum, uint8_t left);
 int _next_sub_num_for_sub_num(int subnum, uint8_t left);
+*/
 
-void next_blocks_nums(int blknum, uint8_t left, int *pb1, int *pb2, int *t);
+/* in order to identify places where there might be confusion betweeen addr and lsblk we define
+ * a struct to avoid implicit casts
+ */
+
+typedef struct {
+    int8_t n;
+} lsblk_num_t;
+
+
+void next_lsblk_nums(lsblk_num_t blknum, uint8_t left, lsblk_num_t *pb1, lsblk_num_t *pb2, int *t);
+lsblk_num_t next_lsblk(lsblk_num_t blknum, uint8_t left);
+
 // ---------------------------------------------------------------------
 
+uint8_t canton_for_lsblk(lsblk_num_t n);
+
+lsblk_num_t first_lsblk_with_canton(uint8_t ca, lsblk_num_t fromblk);
+
+lsblk_num_t any_lsblk_with_canton(uint8_t ca);
+
+// ---------------------------------------------------------------------
+
+uint8_t next_block_addr(uint8_t blkaddr, uint8_t left);
+
+/*
 static inline uint8_t blk_addr_for_sub_addr(uint8_t addr, uint8_t sub)
 {
     int n = _sub_addr_to_sub_num(addr, sub);
@@ -85,10 +110,11 @@ static inline int next_sub_block_addr(uint8_t subaddr, uint8_t sub, int left, ui
     snum = _next_sub_num_for_sub_num(snum, left);
     return _sub_num_to_sub_addr(snum, rsub);
 }
-
+*/
 // ---------------------------------------------------------------------
 
-int get_blk_len(int blknum);
+//int get_blk_len(int blknum);
+int get_lsblk_len(lsblk_num_t num);
 
 // ---------------------------------------------------------------------
 

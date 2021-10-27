@@ -45,18 +45,22 @@ LFMQUEUE_DEF_C(from_ui, msg_64_t, 		4,  0)
 LFMQUEUE_DEF_C(to_ui_track, msg_64_t,   8, 1)
 LFMQUEUE_DEF_C(from_ui_track, msg_64_t, 2, 0)
 
-LFMQUEUE_DEF_C(from_nowhere, msg_64_t, 	2, 0)
+LFMQUEUE_DEF_C(from_nowhere, msg_64_t, 	4, 0)
 
 
 LFMQUEUE_DEF_C(to_ina3221, msg_64_t, 	4, 0)
 LFMQUEUE_DEF_C(from_ina3221, msg_64_t, 	64,  1)
+
+
+LFMQUEUE_DEF_C(to_led,   msg_64_t, 		8, 0)
+LFMQUEUE_DEF_C(from_led, msg_64_t, 		1, 0)
 
 typedef struct {
 	mqf_t *to;
 	mqf_t *from;
 } qdef_t;
 
-#define NQDEF 10
+#define NQDEF 11
 static const qdef_t qdef[NQDEF] = {
 		/* 0*/ { &to_turnout, &from_turnout },
 		/* 1*/ { &to_canton,  &from_canton},
@@ -67,14 +71,15 @@ static const qdef_t qdef[NQDEF] = {
         /* 6*/ { &to_ui, &from_ui},
 		/* 7*/ { &to_ina3221, &from_ina3221},
         /* 8*/ { &to_ui_track, &from_ui_track},
-		/* 9*/ { NULL, &from_nowhere}
+        /* 9*/ { &to_led, &from_led},
+		/*10*/ { NULL, &from_nowhere}
 };
 
 typedef struct {
 	uint8_t mask; uint8_t value; uint8_t destq;
 } qroute_t;
 
-#define NROUTES 9
+#define NROUTES 10
 static const qroute_t routes[NROUTES] = {
 		{MA_ADDR_MASK_2|MA_ADDR_MASK_BOARD,		MA_ADDR_2_TURNOUT|0,	0},
 		{MA_ADDR_MASK_2|MA_ADDR_MASK_BOARD,		MA_ADDR_2_CANTON|0,		1},
@@ -88,7 +93,8 @@ static const qroute_t routes[NROUTES] = {
 #endif
         {MA_ADDR_MASK_3,                        MA_ADDR_3_UI,           4},
 		{MA_ADDR_MASK_5,						MA_ADDR_5_TRSC,			2},
-		{MA_ADDR_MASK_5,						MA_ADDR_5_CTRL,			5}
+		{MA_ADDR_MASK_5,						MA_ADDR_5_CTRL,			5},
+		{MA_ADDR_MASK_8,						MA_ADDR_5_LED|0,		9} //TODO: route to other brd
 
 };
 
@@ -100,9 +106,11 @@ static void msg_error(_UNUSED_ const char *msg)
 
 static void dispatch_m64(msg_64_t *m, int f)
 {
-	/* if (m->cmd == 0xA2) {
-		itm_debug1(DBG_USB, "disp A2", m->cmd);
-	}*/
+	if ((1)) {
+		if (m->cmd == 0x52) {
+			itm_debug1(DBG_USB, "disp A2", m->cmd);
+		}
+	}
     if (m->to == MA_BROADCAST) {
         for (int i=0; i<NQDEF; i++) {
             if (i == f) {

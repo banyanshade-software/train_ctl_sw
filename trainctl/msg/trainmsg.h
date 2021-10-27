@@ -18,10 +18,10 @@ extern uint8_t localBoardNum;
 typedef uint8_t  msg_addr_t;
 //
 // first 2 bits :
-// 0 x : (6bits) bbb xxx
-// 1 0 x : (5bits)
-// 1 1 0 x x : (3 bits)
-// 1 1 1 x x x x x
+// M2:  0 x : (6bits) bbb xxx		CANTON (00) and TURNOUT (01)
+// M3   1 0 x : (5bits)				UI
+// M5   1 1 0 x x : (3 bits)		SPD_CTL (110 01) + trn,  CTRL (110 10) + trn , LED (110 11)+brd
+// M8   1 1 1 x x x x x
 
 #define MA_ADDR_MASK_2		0xC0
 #define MA_ADDR_MASK_BOARD	0x38
@@ -67,6 +67,11 @@ typedef uint8_t  msg_addr_t;
 #define MA_CONTROL_T(_t) (MA_ADDR_5_CTRL  | (((_t)& 0x07)))
 #define MA_CONTROL() MA_CONTROL_T(7)
 #define IS_CONTROL_T(_addr)  (MA_ADDR_5_CTRL == ((_addr) & MA_ADDR_MASK_5))
+
+// led (per board)
+#define MA_ADDR_5_LED 	0xD8
+#define MA_LED_B(_b) (MA_ADDR_5_LED  | (((_b)& 0x07)))
+#define IS_LED_B(_b) (MA_ADDR_5_LED == ((_b) & MA_ADDR_MASK_5))
 
 #define IS_BROADCAST(_addr) (0xFF == (_addr))
 #define MA_BROADCAST 0xFF
@@ -206,6 +211,14 @@ static inline void ui_msg(int dispnum,uint8_t msgnum, msg_64_t *m, uint8_t from)
 	//n = (n>5) ? 5 : n;
 	//memcpy(m->rbytes+1, txt, n);
 }
+
+
+
+
+LFMQUEUE_DEF_H(to_led, msg_64_t)
+LFMQUEUE_DEF_H(from_led, msg_64_t)
+
+#define CMD_LED_RUN			0x52
 
 void msgsrv_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt);
 

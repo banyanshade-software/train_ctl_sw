@@ -31,50 +31,52 @@ void inertia_reset(int tidx, _UNUSED_ const inertia_config_t *cnf, inertia_vars_
 {
 	itm_debug1(DBG_INERTIA, "i/rst", tidx);
 	vars->target = 0;
-	vars->cur = 0;
+	vars->cur100 = 0;
 }
 
 int16_t inertia_value(int tidx, const inertia_config_t *config, inertia_vars_t *vars, int *pchanged)
 {
-	int st =  SIGNOF(vars->target);
-	int sc =  SIGNOF(vars->cur);
+	int st =  SIGNOF0(vars->target);
+	int sc =  SIGNOF0(vars->cur100);
 	int inc;
 
-	int32_t dt10 = (10*1000)/cur_freqhz;
-
+	int32_t dt100 = (100*1000)/cur_freqhz;
+    int32_t trga100 = abs(vars->target*100);
+    
     if (pchanged) *pchanged = 0;
-    if (vars->target == vars->cur/10) {
+    if (vars->target == vars->cur100/100) {
     	itm_debug1(DBG_INERTIA, "i/no chg", tidx);
     	return vars->target;
     }
 
-    itm_debug3(DBG_INERTIA, "i/val", tidx, vars->cur, vars->target);
+    itm_debug3(DBG_INERTIA, "i/val", tidx, vars->cur100, vars->target);
 
 	if (st*sc >= 0) {
 		// same direction
-		if (abs(vars->target*10)>abs(vars->cur)) {
+        if (!sc) sc = st; // case where cur=0
+		if (trga100 > abs(vars->cur100)) {
 			// acceleration
-			inc = (config->acc * dt10) / 10000;
-			inc = MIN(inc, abs(vars->target*10)-abs(vars->cur));
+			inc = (config->acc * dt100) / 10000;
+			inc = MIN(inc, trga100-abs(vars->cur100));
 			inc = sc * inc;
-	    	itm_debug3(DBG_INERTIA, "i/acc", tidx, inc, dt10);
+	    	itm_debug3(DBG_INERTIA, "i/acc", tidx, inc, dt100);
 		} else {
 			// deceleration
-			inc = (config->dec * dt10) / 10000;
-			inc = MIN(inc, -abs(vars->target*10)+abs(vars->cur));
+			inc = (config->dec * dt100) / 10000;
+			inc = MIN(inc, -trga100+abs(vars->cur100));
 			inc = -sc * inc;
-	    	itm_debug3(DBG_INERTIA, "i/dec", tidx, inc, dt10);
+	    	itm_debug3(DBG_INERTIA, "i/dec", tidx, inc, dt100);
 		}
 	} else {
 		// dir change
-		inc = config->dec * dt10 / 10000;
-        inc = MIN(inc, abs(vars->target*10-vars->cur));
+		inc = config->dec * dt100 / 10000;
+        inc = MIN(inc, abs(vars->target*100-vars->cur100));
         inc = -1 * sc * inc;
 		itm_debug2(DBG_INERTIA, "i/dir chg", tidx, inc);
 	}
-	int vold = vars->cur/10;
-	vars->cur += inc;
-	int16_t vnew = vars->cur/10;
+	int vold = vars->cur100/100;
+	vars->cur100 += inc;
+	int16_t vnew = vars->cur100/100;
     if (pchanged) *pchanged = (vnew==vold) ? 0 : 1;
 	return vnew;
 }

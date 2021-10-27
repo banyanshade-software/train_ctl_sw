@@ -103,8 +103,18 @@ const turnout_config_t  *get_turnout_cnf(int idx);
 */
 // ---------------------------------------------------------
 
+typedef struct {
+#ifndef TRAIN_SIMU
+    GPIO_TypeDef *port_led;
+#else
+    void *dummy0; // for structure initialisation
+#endif
+    uint16_t pin_led;
+} led_config_t;
 
 
+#define CONFIG_NLED 1
+const led_config_t *get_led_cnf(int idx);
 
 
 #endif /* RAILCONFIG_H_ */

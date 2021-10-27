@@ -10,6 +10,8 @@
 
 
 
+
+
 #define NOTIF_NEW_ADC_1		0x00000001
 #define NOTIF_NEW_ADC_2		0x00000002
 
@@ -20,5 +22,6 @@
 #define NOTIF_INA_RDCOMPL	0x00000020
 #define NOTIF_INA_ERR		0x00000040
 
+#define NOTIF_SYSTICK		0x00000080
 
 #endif /* MSG_NOTIF_H_ */

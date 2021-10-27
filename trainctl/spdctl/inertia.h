@@ -30,7 +30,7 @@ typedef struct {
 
 typedef struct {
 	int16_t target;
-    int16_t cur;
+    int16_t cur100;
 } inertia_vars_t;
 
 int16_t inertia_value(int tidx, const inertia_config_t *cnf, inertia_vars_t *var, int *pchanged);

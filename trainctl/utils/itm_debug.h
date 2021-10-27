@@ -29,7 +29,7 @@ extern uint32_t debug_flags;
 //#define DBG_CTRLHI	(1UL<<15)
 #define DBG_TRKPLN	(1UL<<15)
 #define DBG_USB		(1UL<<16)
-
+#define DBG_LED		(1UL<<17)
 #define DBG_ERR		(1UL<<31)
 
 //void _itm_debug1(const char *msg, int v);

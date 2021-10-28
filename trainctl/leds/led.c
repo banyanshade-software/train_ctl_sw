@@ -8,6 +8,7 @@
 
 #include "led.h"
 #include "railconfig.h"
+#include "misc.h"
 
 /*
  LED bytecode is a sequence of 32 bits words

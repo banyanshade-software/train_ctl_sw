@@ -16,6 +16,8 @@
 //#include "low/canton.h"
 #include "StringExtension.h"
 #include "uitrack.h"
+#include "topology.h"
+#include "occupency.h"
 
 #define HIGHLEVEL_SIMU_CNX 0
 

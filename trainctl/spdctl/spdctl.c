@@ -80,7 +80,8 @@ typedef struct train_vars {
 	uint16_t C2_cur_volt_idx;
 
 	int32_t position_estimate;
-	int32_t pose_trig;
+    int32_t pose_trig1;
+    int32_t pose_trig2;
 	int32_t bemfiir;
     int16_t v_iir;
 
@@ -105,7 +106,8 @@ const stat_val_t statval_spdctrl[] = {
     { trspc_vars, offsetof(train_vars_t, inertiavars.cur100), 2    _P("T#_ine_c")},
     { trspc_vars, offsetof(train_vars_t, last_speed), 2         _P("T#_spd_curspeed")},
     { trspc_vars, offsetof(train_vars_t, position_estimate), 4  _P("T#_pose")},
-    { trspc_vars, offsetof(train_vars_t, pose_trig), 4          _P("T#_pose_trig")},
+    { trspc_vars, offsetof(train_vars_t, pose_trig1), 4          _P("T#_pose_trig")},
+    { trspc_vars, offsetof(train_vars_t, pose_trig2), 4          _P("T#_pose_trig2")},
     { NULL, sizeof(train_vars_t), 0 _P(NULL)}
 };
 
@@ -217,12 +219,17 @@ void spdctl_run_tick(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, uint
                     //static void set_c1_c2(int tidx, train_vars_t *tvars, uint8_t c1, int8_t dir1, uint8_t c2, int8_t dir2)
                     set_c1_c2(tidx, tvars, m.vbytes[0], m.vbytes[1], m.vbytes[2], m.vbytes[3]);
                     break;
-                case CMD_POSE_SET_TRIG:
-                	itm_debug2(DBG_POSEC, "POSE set", tidx, m.v32);
-                	tvars->pose_trig = m.v32*10;
+                case CMD_POSE_SET_TRIG1:
+                	itm_debug2(DBG_POSEC, "POSE set1", tidx, m.v32);
+                	tvars->pose_trig1 = m.v32*10;
                 	// check if already trigg
                 	pose_check_trig(tidx, tvars, 0);
                 	break;
+                case CMD_POSE_SET_TRIG2:
+                    itm_debug2(DBG_POSEC, "POSE set2", tidx, m.v32);
+                    tvars->pose_trig2 = m.v32*10;
+                    // check if already trigg
+                    pose_check_trig(tidx, tvars, 0);
                 default:
                     break;
             }
@@ -496,33 +503,55 @@ int train_set_target_speed(int numtrain, int16_t target)
 }
 
 
-static void pose_check_trig(int numtrain, train_vars_t *tvars, int32_t lastincr)
+static int _pose_check_trig(int numtrain, train_vars_t *tvars, int32_t lastincr, uint32_t pose)
 {
-	if (!tvars->pose_trig) return;
-	int tr = 0;
-	if (tvars->pose_trig > 0) {
-		if (lastincr<0) itm_debug3(DBG_ERR|DBG_POSEC, "wrong incr", numtrain, lastincr, tvars->pose_trig);
-		if (tvars->position_estimate >= tvars->pose_trig) {
-			tr = 1;
+	if (!pose) return 0;
+	if (pose > 0) {
+		if (lastincr<0) itm_debug3(DBG_ERR|DBG_POSEC, "wrong incr", numtrain, lastincr, pose);
+		if (tvars->position_estimate >= pose) {
+            return 1;
 		}
 	} else { // pose_trig < 0
-		if (lastincr>0) itm_debug3(DBG_ERR|DBG_POSEC, "wrong incr", numtrain, lastincr, tvars->pose_trig);
-		if (tvars->position_estimate <= tvars->pose_trig) {
-			tr = 1;
+		if (lastincr>0) itm_debug3(DBG_ERR|DBG_POSEC, "wrong incr", numtrain, lastincr, pose);
+		if (tvars->position_estimate <= pose) {
+            return 1;
 		}
 	}
-	if (!tr) return;
-	itm_debug3(DBG_POSEC, "POSE trig", numtrain, tvars->position_estimate, tvars->pose_trig);
-	msg_64_t m;
-	m.from = MA_TRAIN_SC(numtrain);
-	m.to = MA_CONTROL_T(numtrain);
-	m.cmd = CMD_POSE_TRIGGERED;
-	m.v1u = tvars->C1;
-	m.v2 = (int16_t) tvars->position_estimate; // XXX TODO: problem here pose is > 16bits
-	mqf_write_from_spdctl(&m);
+	return 0;
+}
 
-	// trig only once
-	tvars->pose_trig = 0;
+static void pose_check_trig(int numtrain, train_vars_t *tvars, int32_t lastincr)
+{
+    int rc1 = _pose_check_trig(numtrain, tvars, lastincr, tvars->pose_trig1);
+    int rc2 = _pose_check_trig(numtrain, tvars, lastincr, tvars->pose_trig2);
+
+    int r = 0;
+    if (rc1>0) {
+        r |= (1<<0);
+        tvars->pose_trig1 = 0; // trig only once
+        itm_debug3(DBG_POSEC, "POSE trg1", numtrain, tvars->position_estimate, tvars->pose_trig1);
+    }
+    if (rc2>0) {
+        r |= (1<<1);
+        tvars->pose_trig2 = 0; // trig only once
+        itm_debug3(DBG_POSEC, "POSE trg2", numtrain, tvars->position_estimate, tvars->pose_trig2);
+    }
+    if (!r) return;
+
+    msg_64_t m;
+    m.from = MA_TRAIN_SC(numtrain);
+    m.to = MA_CONTROL_T(numtrain);
+    m.cmd = CMD_POSE_TRIGGERED;
+    m.subc = r;
+    m.v1u = tvars->C1;
+    int32_t p = tvars->position_estimate;
+    if (abs(p)>0x7FFF) {
+        // TODO: problem here pose is > 16bits
+        itm_debug1(DBG_POSEC|DBG_ERR, "L pose", p);
+        p = SIGNOF(p)*0x7FFF;
+    }
+    m.v2 = (int16_t) p;
+    mqf_write_from_spdctl(&m);
 }
 /*
 void train_stop_all(void)

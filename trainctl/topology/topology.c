@@ -92,12 +92,12 @@ void next_lsblk_nums(lsblk_num_t blknum, uint8_t left, lsblk_num_t *pb1, lsblk_n
         pb2->n = Topology(blknum)->right2;
         *tn =  Topology(blknum)->rtn;
     }
-    if (pb1->n == 0xFF) pb1->n = -1;
-    if (pb2->n == 0xFF) pb2->n = -1;
+    //if (pb1->n == 0xFF) pb1->n = -1;
+    //if (pb2->n == 0xFF) pb2->n = -1;
     if (*tn  == 0xFF) *tn  = -1;
 }
 
-int get_blk_len(lsblk_num_t blknum)
+int get_lsblk_len(lsblk_num_t blknum)
 {
 	return Topology(blknum)->length_cm;
 	
@@ -114,10 +114,10 @@ lsblk_num_t next_lsblk(lsblk_num_t blknum, uint8_t left)
         a = topology_get_turnout(tn) ? b : a;
     }
     // sanity XXX KO with virtual canton */
-    if ((a.n>150) || (b.n>150)) {
+    if ((a.n>120) || (b.n>120)) {
         // log
-        if (a.n>150) a.n = -1;
-        if (b.n>150) b.n = -1;
+        if (a.n>120) a.n = -1;
+        if (b.n>120) b.n = -1;
     }
     //if ((a.n<0) && (b.n<0)) return a; // end of track
     return a;

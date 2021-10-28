@@ -27,7 +27,16 @@
 #define itm_debug2(_fl, _msg, _a, _b) do {printf(_msg  "%d %d", _a, _b);} while(0)
 #endif
 // -------------------------------------------------------------------------
-// -------------------------------------------------------------------------
+
+
+void next_blocks_nums(int blknum, uint8_t left, int *pb1, int *pb2, int *tn)
+{
+    abort();
+    // for compilation, trkplan will need major update
+}
+
+
+//-------------------------------------------------------------------------
 
 //#define SRAND_VAL       2
 /*
@@ -544,3 +553,4 @@ void test_me(void)
 
 
 }
+

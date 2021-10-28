@@ -157,7 +157,7 @@ static int ncmp(const char *a, const char *b)
         led_run_all();
     }
     [self commonCheck:strlen(tstref)];
-    int k = ncmp(tstref, outled0);
+    int  k = ncmp(tstref, outled0);
     
     XCTAssert(!strcmp(outled0, tstref), "bad output");
 }

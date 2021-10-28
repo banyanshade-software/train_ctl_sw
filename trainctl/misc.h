@@ -140,6 +140,9 @@ static inline void debug_info(uint32_t sel, uint32_t num, char *msg, int v1, int
 }
 /* ================================================================= */
 
+void Error_Handler(void);
+
+
 #ifndef TRAIN_SIMU
 uint32_t HAL_GetTick(void);
 

@@ -87,7 +87,7 @@ lsblk_num_t any_lsblk_with_canton(uint8_t ca);
 
 // ---------------------------------------------------------------------
 
-uint8_t next_block_addr(uint8_t blkaddr, uint8_t left);
+//uint8_t next_block_addr(uint8_t blkaddr, uint8_t left);
 
 /*
 static inline uint8_t blk_addr_for_sub_addr(uint8_t addr, uint8_t sub)

@@ -9,15 +9,32 @@
 #ifndef TOPOLOGY_OCCUPENCY_H_
 #define TOPOLOGY_OCCUPENCY_H_
 
-#error obsolete
-/* 5bits block and subblock clearance/occupency
- occupency can be OR'ed between block and subblock
- on block only, train num is in 3 lsb
- */
-#define OCC_OCCUPIED        0x80
-#define OCC_SLOW_LR         0x40
-#define OCC_SLOW_RL         0x20
-#define OCC_FORBID_LR       0x10
-#define OCC_FORBID_RL       0x08
 
+
+#define USE_BLOCK_DELAY_FREE 1
+
+
+
+#define BLK_OCC_FREE    0x00
+#define BLK_OCC_STOP    0x01
+#define BLK_OCC_LEFT    0x02
+#define BLK_OCC_RIGHT    0x03
+#define BLK_OCC_C2        0x04
+
+#define BLK_OCC_DELAY1    0x10
+#define BLK_OCC_DELAYM    0x16
+
+void set_block_addr_occupency(uint8_t blkaddr, uint8_t v, uint8_t trnum, lsblk_num_t lsb);
+uint8_t get_block_addr_occupency(uint8_t blknum);
+void check_block_delayed(uint32_t tick);
+
+extern uint8_t occupency_changed;
+
+
+static inline uint8_t occupied(int dir)
+{
+    if (dir<0) return BLK_OCC_LEFT;
+    if (dir>0) return BLK_OCC_RIGHT;
+    return BLK_OCC_STOP;
+}
 #endif /* occupency_h */

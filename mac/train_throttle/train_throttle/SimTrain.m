@@ -24,7 +24,8 @@
     double speed[NUM_TRAINS];
     double position[NUM_TRAINS];
 
-    int c1[NUM_TRAINS];
+    //int c1[NUM_TRAINS];
+    lsblk_num_t s1[NUM_TRAINS];
     int cold[NUM_TRAINS];
 }
 
@@ -35,7 +36,7 @@
     self = [super init];
     if (!self) return nil;
     for (int i=0; i<NUM_TRAINS; i++) {
-        c1[i] = -1;
+        s1[i].n = -1;
         cold[i] = -1;
         speed[i] = 0;
         position[i] = 0;
@@ -46,7 +47,7 @@
         pwm[i] = 0;
         dir[i] = 0;
     }
-    c1[0] = 1;
+    s1[0].n = 1;
    
     return self;
 }
@@ -76,38 +77,47 @@
         bemf[i]=0.0;
     }
     for (int tn=0; tn<NUM_TRAINS; tn++) {
-        if (c1[tn]<0) continue;
-        int cn = c1[tn];
-        NSAssert(cn>=0, @"bad cn");
-        NSAssert(cn<NUM_CANTONS, @"bad cn");
+        if (s1[tn].n < 0) continue;
+        //int cn = c1[tn];
         
         // update pos
         position[tn] += speed[tn]*ellapsed/1000;
-        int blen = get_blk_len(cn);
-        NSLog(@"xxxtrain %d pos: %f len %d", tn, position[tn], get_blk_len(cn));
+        //int get_lsblk_len(lsblk_num_t num);
+        int blen = get_lsblk_len(s1[tn]);
+        NSLog(@"xxxtrain %d pos: %f len %d", tn, position[tn], get_lsblk_len(s1[tn]));
+        int cn = canton_for_lsblk(s1[tn]);
+        NSAssert(cn>=0, @"bad cn");
+        NSAssert(cn<NUM_CANTONS, @"bad cn");
+
         if (dir[cn]>0) {
             if (position[tn]>blen) {
-                int nb = _next_block_num(cn, 0);
-                if (nb<0) {
+                lsblk_num_t ns = next_lsblk(s1[tn], 0);
+                uint8_t nb = canton_for_lsblk(ns);
+                if (nb==0xFF) {
                     NSLog(@"END OF TRACK !!");
                 } else {
-                    NSLog(@"GOTO BLK %d (>0)", nb);
+                    s1[tn] = ns;
+                    if (nb != cn) {
+                        NSLog(@"GOTO BLK %d (>0)", nb);
                         cold[tn] = cn;
-                    cn = nb;
-                    c1[tn] = nb;
+                        cn = nb;
+                    }
                     position[tn] = 0;
                 }
             }
         } else if (dir[cn]<0) {
             if (position[tn]<-blen) {
-                int nb = _next_block_num(cn, 1);
-                if (nb<0) {
+                lsblk_num_t ns = next_lsblk(s1[tn], 0);
+                uint8_t nb = canton_for_lsblk(ns);
+                if (nb==0xFF) {
                     NSLog(@"END OF TRACK !!");
                 } else {
-                    NSLog(@"GOTO BLK %d (<0)", nb);
-                    cold[tn] = cn;
-                    cn = nb;
-                    c1[tn] = nb;
+                    s1[tn] = ns;
+                    if (nb != cn) {
+                        NSLog(@"GOTO BLK %d (<0)", nb);
+                        cold[tn] = cn;
+                        cn = nb;
+                    }
                     position[tn] = 0;
                 }
             }

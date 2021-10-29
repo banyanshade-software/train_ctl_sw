@@ -17,51 +17,16 @@
 
 #include "occupency.h"
 
-// for test/debug
-static uint8_t ignore_bemf_presence = 0;
-static uint8_t ignore_ina_presence = 1;
+#include "ctrlP.h"
 
 
 #define SCEN_TWOTRAIN 	0 //1
-#define EOT_SPD_LIMIT	70   //20
 
-// timers number
-#define TLEAVE_C1  	0
-#define TBEHAVE		1
-#define NUM_TIMERS 	2
-
-// timers values in tick (ms)
-#define TLEAVE_C1_VALUE 20
-#define TGUARD_C1_VALUE 100
-
-
-// -----------------------------------------------------------
-//per train stucture
-
-
-typedef struct {
-	train_mode_t   _mode;
-	train_state_t  _state;
-
-	uint16_t _target_speed;
-	int8_t   _dir;
-
-	uint8_t     can1_addr;
-    lsblk_num_t c1_sblk;
-	uint8_t     can2_addr;
-
-	uint16_t spd_limit;
-	uint16_t desired_speed;
-	//uint8_t limited:1;
-
-	uint16_t behaviour_flags;
-	uint32_t timertick[NUM_TIMERS];
-} train_ctrl_t;
 
 
 static train_ctrl_t trctl[NUM_TRAINS] = {0};
 
-static lsblk_num_t snone = {-1};
+//static lsblk_num_t snone = {-1};
 
 // -----------------------------------------------------------
 
@@ -98,28 +63,12 @@ static void fatal(void)
 
 // ----------------------------------------------------------------------------
 // train FSM
-static void evt_cmd_set_setdirspeed(int tidx, train_ctrl_t *tvars, int8_t dir, uint16_t spd, _UNUSED_ uint8_t generated);
 static void evt_pose_triggered(int tidx, train_ctrl_t *tvar, uint8_t c_adder);
-static void evt_entered_c2(int tidx, train_ctrl_t *tvar, uint8_t from_bemf);
-static void evt_leaved_c1(int tidx, train_ctrl_t *tvar);
-static void evt_entered_c1(int tidx, train_ctrl_t *tvar, uint8_t from_bemf);
-static void evt_leaved_c2(int tidx, train_ctrl_t *tvar);
+
+
 static void evt_timer(int tidx, train_ctrl_t *tvar, int tnum);
 
-typedef enum {
-	upd_init,
-	upd_change_dir,
-	upd_c1c2,
-	upd_pose_trig,
-	upd_check,
-} update_reason_t;
 
-static void update_c2_state_limits(int tidx, train_ctrl_t *tvars, update_reason_t reason);
-static void set_pose_trig(int numtrain, int32_t pose, int n);
-static int32_t pose_middle(lsblk_num_t lsb, const train_config_t *tconf, int dir);
-
-static void ctrl_set_tspeed(int trnum, train_ctrl_t *tvars, uint16_t tspd);
-static void ctrl_set_dir(int trnum,  train_ctrl_t *tvars, int  dir, int force);
 
 
 static void check_blk_tick(uint32_t tick);
@@ -128,8 +77,8 @@ static void check_blk_tick(uint32_t tick);
 // ----------------------------------------------------------------------------
 // generic timer attached to train_ctrl_t struct
 
-static void reset_timer(int tidx, train_ctrl_t *tvar, int numtimer);
-static void set_timer(int tidx, train_ctrl_t *tvar, int numtimer, uint32_t tval);
+//static void ctrl_reset_timer(int tidx, train_ctrl_t *tvar, int numtimer);
+//static void ctrl_set_timer(int tidx, train_ctrl_t *tvar, int numtimer, uint32_t tval);
 static void check_timers(uint32_t tick);
 
 // ----------------------------------------------------------------------------
@@ -148,16 +97,6 @@ static void set_turnout(int tn, int v);
 // ----------------------------------------------------------------------------
 // behaviour
 
-// behaviour_flags
-#define BEHAVE_STOPPED		(1<<1)		// 2
-#define BEHAVE_EOT1			(1<<2)		// 4
-#define BEHAVE_EOT2			(1<<3)		// 8
-#define BEHAVE_BLKW			(1<<4)		// 16
-#define BEHAVE_PTRIG		(1<<5)		// 32
-#define BEHAVE_RESTARTBLK 	(1<<6)		// 64
-#define BEHAVE_TBEHAVE		(1<<7)		// 128
-#define BEHAVE_CHBKLK		(1<<8)		// 256
-
 static void check_behaviour(uint32_t tick);
 
 
@@ -168,26 +107,6 @@ static void ctrl_reset(void)
 // ----------------------------------------------------------------------------
 
 
-static inline void set_state(int tidx, train_ctrl_t *tvar, train_state_t ns)
-{
-	switch (ns) {
-	case train_off: 			itm_debug1(DBG_CTRL, "ST->OFF", tidx); break;
-	case train_running_c1: 		itm_debug1(DBG_CTRL, "ST->RC1", tidx); break;
-	case train_running_c1c2: 	itm_debug1(DBG_CTRL, "ST->C1C2", tidx); break;
-	case train_station:			itm_debug1(DBG_CTRL, "ST->STA", tidx); break;
-	case train_blk_wait:	 	itm_debug1(DBG_CTRL, "ST->BLKW", tidx); break;
-	case train_end_of_track:	itm_debug1(DBG_CTRL, "ST->EOT", tidx); break;
-	default: 					itm_debug2(DBG_CTRL, "ST->?", tidx, ns); break;
-	}
-	tvar->_state = ns;
-	// notif UI
-	msg_64_t m;
-	m.from = MA_CONTROL_T(tidx);
-	m.to = MA_UI(UISUB_TFT);
-	m.cmd = CMD_TRSTATE_NOTIF;
-	m.v1u = ns;
-	mqf_write_from_ctrl(&m);
-}
 
 
 static void ctrl_set_mode(int trnum, train_mode_t mode)
@@ -204,20 +123,6 @@ static void ctrl_set_mode(int trnum, train_mode_t mode)
 	mqf_write_from_ctrl(&m);
 }
 
-/*
-static void ctrl_set_status(int trnum, train_status_t status)
-{
-	if (trctl[trnum]._status == status) return;
-	trctl[trnum]._status = status;
-	// notif UI
-	msg_64_t m;
-	m.from = MA_CONTROL_T(trnum);
-	m.to = MA_UI(UISUB_TFT);
-	m.cmd = CMD_TRSTATUS_NOTIF;
-	m.v1u = status;
-	mqf_write_from_ctrl(&m);
-}
-*/
 
 
 static void ctrl_init(void)
@@ -234,7 +139,7 @@ static void ctrl_init(void)
 		trctl[0]._dir = 0;
 		trctl[0].desired_speed = 0;
 		trctl[0]._target_speed = 0;
-		set_state(0, &trctl[0], train_station);
+		ctrl_set_state(0, &trctl[0], train_station);
 		set_block_addr_occupency(trctl[0].can1_addr, BLK_OCC_STOP, 0, trctl[0].c1_sblk);
 
 		if ((SCEN_TWOTRAIN)) {
@@ -244,22 +149,22 @@ static void ctrl_init(void)
 			trctl[1]._dir = 1;
 			trctl[1]._target_speed = 0;
 			trctl[1].desired_speed = 12;
-			set_state(1, &trctl[1], train_station);
+			ctrl_set_state(1, &trctl[1], train_station);
 			set_block_addr_occupency(trctl[1].can1_addr, BLK_OCC_STOP, 1, trctl[1].c1_sblk);
-			update_c2_state_limits(0, &trctl[0], upd_init);
-			update_c2_state_limits(1, &trctl[1], upd_init);
+			ctrl_update_c2_state_limits(0, &trctl[0], get_train_cnf(0), upd_init);
+			ctrl_update_c2_state_limits(1, &trctl[1], get_train_cnf(1), upd_init);
 
 			if ((1)) {
-				evt_cmd_set_setdirspeed(1, &trctl[1], 1, 30, 1);
+				ctrl_evt_cmd_set_setdirspeed(1, &trctl[1], 1, 30, 1);
 			}
 		} else {
 			trctl[1].can1_addr = 0xFF;
             trctl[1].c1_sblk = any_lsblk_with_canton(trctl[1].can1_addr);
 			trctl[1].can2_addr = 0xFF;
 			ctrl_set_mode(1, train_notrunning);
-			set_state(1, &trctl[1], train_off);
+			ctrl_set_state(1, &trctl[1], train_off);
 			//trctl[1].enabled = 0;
-			update_c2_state_limits(0, &trctl[0], upd_init);
+			ctrl_update_c2_state_limits(0, &trctl[0], get_train_cnf(0), upd_init);
 
 		}
 	}
@@ -268,19 +173,6 @@ static void ctrl_init(void)
 // ----------------------------------------------------------------------------
 // timers
 
-
-static void reset_timer(int tidx, train_ctrl_t *tvar, int numtimer)
-{
-	itm_debug2(DBG_CTRL, "reset_timer", tidx, numtimer);
-	if (numtimer<0 || numtimer>=NUM_TIMERS) fatal();
-	tvar->timertick[numtimer] = 0;
-}
-static void set_timer(int tidx, train_ctrl_t *tvar, int numtimer, uint32_t tval)
-{
-	itm_debug3(DBG_CTRL, "set_timer", tidx, numtimer, tval);
-	if (numtimer<0 || numtimer>=NUM_TIMERS) fatal();
-	tvar->timertick[numtimer] = HAL_GetTick() + tval;
-}
 
 static void check_timers(uint32_t tick)
 {
@@ -300,26 +192,6 @@ static void check_timers(uint32_t tick)
 }
 
 // ----------------------------------------------------------------------------
-
-static void changed_lsblk(int tidx, train_ctrl_t *tvars, lsblk_num_t newsblk)
-{
-    if (newsblk.n == tvars->c1_sblk.n) {
-        itm_debug2(DBG_ERR|DBG_CTRL, "sam lsbl", tidx, newsblk.n);
-        return;
-    }
-    uint8_t ca = canton_for_lsblk(newsblk);
-    if (ca == 0xFF) {
-        itm_debug2(DBG_ERR|DBG_CTRL, "inval lsb", tidx, newsblk.n);
-        return;
-    }
-    if (ca == tvars->can2_addr) {
-        // TODO : switch canton
-    }
-    tvars->c1_sblk = newsblk;
-    // TODO update POSE
-    // TODO update occupency
-}
-
 
 
 
@@ -445,7 +317,7 @@ void ctrl_run_tick(_UNUSED_ uint32_t notif_flags, uint32_t tick, _UNUSED_ uint32
 					itm_debug3(DBG_CTRL, "not c2", tidx, m.v1u, tvar->can2_addr);
 					break;
 				}
-				evt_entered_c2(tidx, tvar, 1);
+				ctrl_evt_entered_c2(tidx, tvar, 1);
 				// -----xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 				//if (ignore_bemf_presence) break;
 				//const train_config_t *tconf = get_train_cnf(tidx);
@@ -453,7 +325,7 @@ void ctrl_run_tick(_UNUSED_ uint32_t notif_flags, uint32_t tick, _UNUSED_ uint32
 				break;
 			}
 			case CMD_MDRIVE_SPEED_DIR:
-				evt_cmd_set_setdirspeed(tidx, tvar, m.v2, m.v1u, 0);
+				ctrl_evt_cmd_set_setdirspeed(tidx, tvar, m.v2, m.v1u, 0);
 				break;
 
 			case CMD_POSE_TRIGGERED:
@@ -488,73 +360,23 @@ void ctrl_run_tick(_UNUSED_ uint32_t notif_flags, uint32_t tick, _UNUSED_ uint32
 
 
 
-static void evt_entered_c2(int tidx, train_ctrl_t *tvar, uint8_t from_bemf)
-{
-	if (from_bemf && ignore_bemf_presence) return;
-	switch (tvar->_state) {
-	case train_running_c1:
-		if (from_bemf && ignore_ina_presence) {
-			set_timer(tidx, tvar, TLEAVE_C1, TLEAVE_C1_VALUE);
-		} else {
-			set_timer(tidx, tvar, TLEAVE_C1, TGUARD_C1_VALUE);
-		}
-		set_block_addr_occupency(tvar->can2_addr, occupied(tvar->_dir), tidx,
-                                 first_lsblk_with_canton(tvar->can2_addr, tvar->c1_sblk));
-		set_state(tidx, tvar, train_running_c1c2);
-		break;
-	case train_running_c1c2:
-		break;
-	default:
-		itm_debug2(DBG_ERR|DBG_CTRL, "bad st/1",tidx, tvar->_state);
-		break;
-	}
-}
-
-static void evt_leaved_c1(int tidx, train_ctrl_t *tvars)
-{
-	itm_debug3(DBG_CTRL, "evt_left_c1", tidx, tvars->_state, tvars->can1_addr);
-	switch (tvars->_state) {
-	case train_running_c1c2:
-		reset_timer(tidx, tvars, TLEAVE_C1);
-		set_block_addr_occupency(tvars->can1_addr, BLK_OCC_FREE, 0xFF, snone);
-		tvars->can1_addr = tvars->can2_addr;
-        tvars->c1_sblk = first_lsblk_with_canton(tvars->can2_addr, tvars->c1_sblk);
-		tvars->can2_addr = 0xFF; // will be updated by update_c2
-		set_state(tidx, tvars, train_running_c1);
-		update_c2_state_limits(tidx, tvars, upd_c1c2);
-		tvars->behaviour_flags |= BEHAVE_CHBKLK;
-		break;
-	default:
-		itm_debug2(DBG_ERR|DBG_CTRL, "bad st/2",tidx, tvars->_state);
-		break;
-	}
-}
-
-static void evt_entered_c1(int tidx, train_ctrl_t *tvars, _UNUSED_ uint8_t from_bemf)
-{
-	itm_debug2(DBG_CTRL, "enter C1", tidx, tvars->_state);
-}
-static void evt_leaved_c2(int tidx, train_ctrl_t *tvar)
-{
-	itm_debug2(DBG_CTRL, "leave C2", tidx, tvar->_state);
-}
 
 static void evt_tleave(int tidx, train_ctrl_t *tvars)
 {
 	if (ignore_ina_presence) {
 		itm_debug2(DBG_ERR|DBG_CTRL, "TLeave", tidx, tvars->_state);
-		evt_leaved_c1(tidx, tvars);
+		ctrl_evt_leaved_c1(tidx, tvars);
 	} else if (tvars->_state == train_running_c1c2){
 		// this is TGUARD
 		itm_debug2(DBG_ERR|DBG_CTRL, "TGuard", tidx, tvars->_state);
 		// for now we do the same, but more to do for long trains
-		evt_leaved_c1(tidx, tvars);
+		ctrl_evt_leaved_c1(tidx, tvars);
 	} else {
 		itm_debug2(DBG_ERR|DBG_CTRL, "TGurd/bdst", tidx, tvars->_state);
 	}
 }
 
-static void evt_cmd_set_setdirspeed(int tidx, train_ctrl_t *tvars, int8_t dir, uint16_t tspd, _UNUSED_ uint8_t generated)
+void ctrl_evt_cmd_set_setdirspeed(int tidx, train_ctrl_t *tvars, int8_t dir, uint16_t tspd, _UNUSED_ uint8_t generated)
 {
 	itm_debug3(DBG_CTRL, "dirspd", tidx, dir, tspd);
 
@@ -588,13 +410,13 @@ static void evt_cmd_set_setdirspeed(int tidx, train_ctrl_t *tvars, int8_t dir, u
 	}
 	if ((tvars->_target_speed != 0) && (tvars->_dir != dir)) {
 		itm_debug3(DBG_ERR|DBG_CTRL, "dir ch mov", tidx, dir, tvars->_target_speed);
-		set_state(tidx, tvars, train_station); // say it did stopped
+		ctrl_set_state(tidx, tvars, train_station); // say it did stopped
 		// change dir while not stopped... what do we do here ?
 	}
 	if ((tvars->_state == train_station) && dir && tspd) {
 		itm_debug1(DBG_CTRL, "quit stop", tidx);
 		odir = 0;
-		set_state(tidx, tvars, train_running_c1);
+		ctrl_set_state(tidx, tvars, train_running_c1);
         // change dir in occupency
         set_block_addr_occupency(tvars->can1_addr, occupied(dir), tidx, tvars->c1_sblk);
 	}
@@ -611,7 +433,7 @@ static void evt_cmd_set_setdirspeed(int tidx, train_ctrl_t *tvars, int8_t dir, u
 		}
         // change dir in occupency
         set_block_addr_occupency(tvars->can1_addr, occupied(dir), tidx,  tvars->c1_sblk);
-		update_c2_state_limits(tidx, tvars, upd_change_dir);
+		ctrl_update_c2_state_limits(tidx, tvars, get_train_cnf(tidx), upd_change_dir);
 	}
 
 	ctrl_set_dir(tidx, tvars, dir, 0);
@@ -633,7 +455,7 @@ static void evt_pose_triggered(int tidx, train_ctrl_t *tvar, uint8_t c_addr)
 	switch (tvar->_state) {
 	case train_running_c1:
 		if (c_addr == tvar->can1_addr) {
-			update_c2_state_limits(tidx, tvar, upd_pose_trig);
+			ctrl_update_c2_state_limits(tidx, tvar,get_train_cnf(tidx), upd_pose_trig);
 			//hi_pose_triggered(tidx, tvar, _blk_addr_to_blk_num(c_addr));
 			// TODO
 		} else {
@@ -671,229 +493,12 @@ static void evt_timer(int tidx, train_ctrl_t *tvar, int tnum)
 
 
 
-static void update_c2_state_limits(int tidx, train_ctrl_t *tvars, update_reason_t updreason)
-{
-	itm_debug3(DBG_CTRL, "UPDC2", tidx, tvars->can1_addr, updreason);
-	uint8_t c2 = 0xFF;
-	uint16_t olim = tvars->spd_limit;
-	uint32_t posetval = 0;
-	if (updreason == upd_pose_trig) tvars->behaviour_flags |= BEHAVE_PTRIG;
-
-	switch (tvars->_state) {
-	case train_off:
-	case train_station:
-		tvars->_dir = 0;
-		tvars->_target_speed = 0;
-		if (tvars->can2_addr != 0xFF) set_block_addr_occupency(tvars->can2_addr, BLK_OCC_FREE, 0xFF, snone);
-		tvars->can2_addr = 0xFF;
-		goto sendlow;
-	default:
-		break;
-	}
-	if (tvars->can1_addr == 0xFF) {
-		itm_debug1(DBG_ERR|DBG_CTRL, "*** NO C1", tidx);
-		return;
-	}
-	if (!tvars->_dir) {
-		set_state(tidx, tvars, train_station);
-		tvars->behaviour_flags |= BEHAVE_STOPPED;
-		tvars->_target_speed = 0;
-		if (tvars->can2_addr != 0xFF) set_block_addr_occupency(tvars->can2_addr, BLK_OCC_FREE, 0xFF, snone);
-		tvars->can2_addr = 0xFF;
-		goto sendlow;
-	}
-    
-    
-	//int c1num = _blk_addr_to_blk_num(tvars->canton1_addr);
-	//int c2num = _next_block_num(c1num, (tvars->_dir<0));
-    
-    
-	itm_debug3(DBG_CTRL, "prev c1c2", tidx, tvars->can1_addr, tvars->can2_addr);
-    lsblk_num_t ns = next_lsblk(tvars->c1_sblk, (tvars->_dir < 0));
-    c2 = canton_for_lsblk(ns);
-	itm_debug3(DBG_CTRL, "c1c2addr", tidx, tvars->can2_addr, c2);
-
-	if (ns.n < 0) {
-		// end of track
-		if (updreason == upd_c1c2) {
-			itm_debug1(DBG_CTRL, "eot", tidx);
-			tvars->spd_limit = EOT_SPD_LIMIT;//			set_speed_limit(tn, 20);
-			const train_config_t *tconf = get_train_cnf(tidx);
-            //xxxx
-            posetval = pose_middle(tvars->c1_sblk, tconf, tvars->_dir);
-			tvars->behaviour_flags |= BEHAVE_EOT1;
-		} else if (updreason == upd_pose_trig) {
-			itm_debug1(DBG_CTRL, "eot2", tidx);
-			set_state(tidx, tvars, train_end_of_track);
-			tvars->spd_limit = 0;
-			tvars->behaviour_flags |= BEHAVE_EOT2;
-		}
-	} else {
-		switch (get_block_addr_occupency(c2)) {
-			case BLK_OCC_FREE:
-				itm_debug2(DBG_CTRL, "free", tidx, c2);
-				tvars->spd_limit = 100; //set_speed_limit(tidx, 100);
-				switch (tvars->_state) {
-				case train_running_c1:
-					break;
-				case train_blk_wait:
-					set_state(tidx, tvars, train_running_c1);
-					tvars->behaviour_flags |= BEHAVE_RESTARTBLK;
-					break;
-				default:
-					itm_debug2(DBG_ERR|DBG_CTRL, "bad st/4", tidx, tvars->_state);
-					break;
-				}
-				break;
-			default:
-			case BLK_OCC_RIGHT:
-			case BLK_OCC_LEFT:
-			case BLK_OCC_STOP:
-				itm_debug3(DBG_CTRL, "occ", tidx, c2, get_block_addr_occupency(c2));
-				set_state(tidx, tvars, train_blk_wait);
-				tvars->behaviour_flags |= BEHAVE_BLKW;
-				c2 = 0xFF;
-				tvars->spd_limit = 0;
-				break;
-			case BLK_OCC_C2: {
-                if (c2 == tvars->can2_addr) {
-			    	// normal case, same C2
-			    	break;
-			    } else if (tvars->can2_addr != 0xFF) {
-			    	// change C2. Can this occur ? if turnout is changed
-			    	// but turnout should not be changed if C2 already set
-			    	itm_debug3(DBG_ERR|DBG_CTRL, "C2 change", tidx, tvars->can2_addr, c2);
-			    	set_block_addr_occupency(tvars->can2_addr, BLK_OCC_FREE, 0xFF, snone);
-			    	tvars->can2_addr = 0xFF;
-			    }
-			    // occupied
-				itm_debug2(DBG_CTRL, "OCC C2", tidx, c2);
-				set_state(tidx, tvars, train_blk_wait);
-				c2 = 0xFF;
-				tvars->spd_limit = 0;
-				break;
-			}
-		}
-	}
-	if (c2 != 0xFF) {
-		// sanity check, can be removed (TODO)
-		if ((get_block_addr_occupency(c2) != BLK_OCC_FREE)
-				&& (get_block_addr_occupency(c2) != BLK_OCC_C2)) fatal();
-		set_block_addr_occupency(c2, BLK_OCC_C2, tidx, snone);
-	}
-
-sendlow:
-	if ((c2 != tvars->can2_addr) || (updreason == upd_c1c2) || (updreason == upd_change_dir) ||(updreason==upd_init)) {
-		itm_debug3(DBG_CTRL, "C1C2", tidx, tvars->can1_addr, tvars->can2_addr);
-		tvars->can2_addr = c2;
-
-		int dir = tvars->_dir;
-		const train_config_t *tconf = get_train_cnf(tidx);
-		if (tconf->reversed) dir = -dir;
-
-		msg_64_t m;
-		m.from = MA_CONTROL_T(tidx);
-		m.to =  MA_TRAIN_SC(tidx);
-		m.cmd = CMD_SET_C1_C2;
-		m.vbytes[0] = tvars->can1_addr;
-		m.vbytes[1] = dir;
-		m.vbytes[2] = tvars->can2_addr;
-		m.vbytes[3] = dir; // 0;
-		mqf_write_from_ctrl(&m);
-	}
-	if ((tvars->_mode != train_fullmanual) && (olim != tvars->spd_limit)) {
-		itm_debug2(DBG_CTRL, "lim upd", tidx, tvars->spd_limit);
-		uint16_t tspd = MIN(tvars->spd_limit, tvars->desired_speed);
-		switch (updreason) {
-		case upd_change_dir: // do nothing, ctrl_set_tspeed will be updated
-			break;
-		case upd_init:
-			break;
-		default:
-			ctrl_set_tspeed(tidx, tvars, tspd);
-			break;
-		}
-	}
-	if (posetval) {
-		//itm_debug2(DBG_CTRL, "set pose", tidx, posetval);
-		// POSE trigger must be sent *after* CMD_SET_C1_C2
-		set_pose_trig(tidx, posetval, 1);
-	}
-
-}
-
-
 
 // ---------------------------------------------------------------
-
-static void ctrl_set_tspeed(int trnum, train_ctrl_t *tvars, uint16_t tspd)
-{
-	if (tvars->_target_speed == tspd) return;
-	tvars->_target_speed = tspd;
-
-	// notif UI
-	itm_debug2(DBG_UI|DBG_CTRL, "ctrl_set_tspeed", trnum, tspd);
-	msg_64_t m;
-	m.from = MA_CONTROL_T(trnum);
-	m.to = MA_UI(UISUB_TFT);
-	m.cmd = CMD_TRTSPD_NOTIF;
-	m.v1u = tspd;
-	m.v2 = trctl[trnum]._dir;
-	mqf_write_from_ctrl(&m);
-
-	m.to = MA_TRAIN_SC(trnum);
-	m.cmd = CMD_SET_TARGET_SPEED;
-	// direction already given by SET_C1_C2
-	//m.v1 = trctl[trnum]._dir*trctl[trnum]._target_speed;
-	m.v1u = tvars->_target_speed;
-	mqf_write_from_ctrl(&m);
-
-
-}
-
-static void ctrl_set_dir(int trnum,  train_ctrl_t *tvars, int  dir, int force)
-{
-	if (!force && (tvars->_dir == dir)) return;
-
-	itm_debug2(DBG_CTRL, "setdir", trnum, dir);
-
-
-	msg_64_t m;
-	m.from = MA_CONTROL_T(trnum);
-	tvars->_dir = dir;
-
-	// notif UI
-	m.to = MA_UI(UISUB_TFT);
-	m.cmd = CMD_TRDIR_NOTIF;
-	m.v1 = dir;
-	mqf_write_from_ctrl(&m);
-}
 
 // ---------------------------------------------------------------
 
 
-static void set_pose_trig(int numtrain, int32_t pose, int n)
-{
-	itm_debug2(DBG_CTRL, "set posetr", numtrain, pose);
-	msg_64_t m;
-	m.from = MA_CONTROL_T(numtrain);
-	m.to =  MA_TRAIN_SC(numtrain);
-    m.cmd = n ? CMD_POSE_SET_TRIG2 :  CMD_POSE_SET_TRIG1;
-	const train_config_t *tconf = get_train_cnf(numtrain);
-	if (tconf->reversed)  m.v32 = -pose;
-	else m.v32 = pose;
-	mqf_write_from_ctrl(&m);
-}
-
-
-static int32_t pose_middle(lsblk_num_t lsb, const train_config_t *tconf, int dir)
-{
-	int cm = get_lsblk_len(lsb);
-	uint32_t p = cm * tconf->pose_per_cm;
-	uint32_t pm = p/2;
-	if (dir<0) pm = -pm;
-	return pm;
-}
 
 // ---------------------------------------------------------------
 
@@ -910,7 +515,7 @@ static void check_blk_tick(_UNUSED_ uint32_t tick)
 			if (tvars->_state == train_off) continue;
 			if ((tvars->_state == train_blk_wait) || (tvars->spd_limit <100)) {
 				itm_debug1(DBG_CTRL, "chk", tidx);
-				update_c2_state_limits(tidx, tvars, upd_check);
+				ctrl_update_c2_state_limits(tidx, tvars, get_train_cnf(tidx), upd_check);
 			}
 		}
 	}
@@ -965,7 +570,7 @@ static void check_behaviour(_UNUSED_ uint32_t tick)
 		if (tvars->_mode != train_auto) {
 			if ((tidx == 0) && (flags & BEHAVE_EOT2) && (tvars->_dir<0)) {
 				ctrl_set_mode(tidx, train_auto);
-				set_timer(tidx, tvars, TBEHAVE, 500);
+				ctrl_set_timer(tidx, tvars, TBEHAVE, 500);
 			}
 			continue;
 		}
@@ -981,27 +586,27 @@ static void check_behaviour(_UNUSED_ uint32_t tick)
 				continue;
 			}
 			if ((flags & BEHAVE_EOT2) && (tvars->_dir > 0)) {
-				set_timer(tidx, tvars, TBEHAVE, 1*60*1000);
-				evt_cmd_set_setdirspeed(tidx, tvars, 0, 0, 1);
+				ctrl_set_timer(tidx, tvars, TBEHAVE, 1*60*1000);
+				ctrl_evt_cmd_set_setdirspeed(tidx, tvars, 0, 0, 1);
                 //set_turnout(0, 1);
 				return;
 			}
 			if ((flags & BEHAVE_EOT2) && (tvars->_dir < 0)) {
-				set_timer(tidx, tvars, TBEHAVE, 300);
-				evt_cmd_set_setdirspeed(tidx, tvars, 0, 0, 1);
+				ctrl_set_timer(tidx, tvars, TBEHAVE, 300);
+				ctrl_evt_cmd_set_setdirspeed(tidx, tvars, 0, 0, 1);
 				set_turnout(0, 0);
 				continue;
 			}
 			if (flags & BEHAVE_EOT2) {
 				itm_debug3(DBG_CTRL, "unex EOT2", tidx, tvars->_dir, tvars->c1_sblk.n);
-				set_timer(tidx, tvars, TBEHAVE, 300);
+				ctrl_set_timer(tidx, tvars, TBEHAVE, 300);
 				continue;
 			}
 			if (flags & BEHAVE_TBEHAVE) {
 				if (tvars->c1_sblk.n == 1) {
-					evt_cmd_set_setdirspeed(tidx, tvars, -1, 40, 1);
+					ctrl_evt_cmd_set_setdirspeed(tidx, tvars, -1, 40, 1);
 				} else if (tvars->c1_sblk.n == 2) {
-					evt_cmd_set_setdirspeed(tidx, tvars, 1, 40, 1);
+					ctrl_evt_cmd_set_setdirspeed(tidx, tvars, 1, 40, 1);
 				} else {
 					itm_debug3(DBG_CTRL, "unex TB", tidx, tvars->_dir, tvars->can1_addr);
 				}
@@ -1012,9 +617,9 @@ static void check_behaviour(_UNUSED_ uint32_t tick)
 			if (flags & BEHAVE_TBEHAVE) {
 				itm_debug2(DBG_CTRL, "TBehave", tidx, tvars->c1_sblk.n);
 				if (tvars->c1_sblk.n == 0) {
-					evt_cmd_set_setdirspeed(tidx, tvars, 1, 95, 1);
+					ctrl_evt_cmd_set_setdirspeed(tidx, tvars, 1, 95, 1);
 				} else if (tvars->can1_addr == MA_CANTON(0,1)) {
-					evt_cmd_set_setdirspeed(tidx, tvars, -1, 95, 1);
+					ctrl_evt_cmd_set_setdirspeed(tidx, tvars, -1, 95, 1);
 				} else {
 					// should not happen
 					ctrl_set_mode(tidx, train_manual);
@@ -1022,12 +627,12 @@ static void check_behaviour(_UNUSED_ uint32_t tick)
 				continue;
 			}
 			if (flags & BEHAVE_EOT2)  {
-				evt_cmd_set_setdirspeed(tidx, tvars, 0, 0, 1);
+				ctrl_evt_cmd_set_setdirspeed(tidx, tvars, 0, 0, 1);
                 if (tvars->c1_sblk.n == 0) {
-                    set_timer(tidx, tvars, TBEHAVE, 1000*5);
+                    ctrl_set_timer(tidx, tvars, TBEHAVE, 1000*5);
                     set_turnout(0, 1);
                 } else if (tvars->c1_sblk.n == 1) {
-                    set_timer(tidx, tvars, TBEHAVE, 1000*60*1);
+                    ctrl_set_timer(tidx, tvars, TBEHAVE, 1000*60*1);
                 }
 				continue;
 			}

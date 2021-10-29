@@ -50,6 +50,10 @@
 		1BEB93C72729205300508C17 /* TopologyTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B4B70A12729194F00FBDB52 /* TopologyTest.m */; };
 		1BEB93C82729205800508C17 /* topology.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B46EE542692684E00FAC813 /* topology.c */; };
 		1BEB93CA2729F10D00508C17 /* occupency.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BEB93C92729F10D00508C17 /* occupency.c */; };
+		1BEB93CC272B317500508C17 /* occupency.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BEB93C92729F10D00508C17 /* occupency.c */; };
+		1BEB93CF272B325700508C17 /* ctrlP.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BEB93CE272B325700508C17 /* ctrlP.c */; };
+		1BEB93D0272B325700508C17 /* ctrlP.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BEB93CE272B325700508C17 /* ctrlP.c */; };
+		1BEB93D2272B342500508C17 /* TestCtrlP.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BEB93D1272B342500508C17 /* TestCtrlP.m */; };
 		1BED2A9825173CF40080FC97 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BED2A9725173CF40080FC97 /* AppDelegate.m */; };
 		1BED2A9A25173D1E0080FC97 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1BED2A9925173D1E0080FC97 /* Assets.xcassets */; };
 		1BED2A9D25173D1F0080FC97 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1BED2A9B25173D1F0080FC97 /* MainMenu.xib */; };
@@ -136,6 +140,9 @@
 		1BD93C662546FF42006C4D70 /* txrxcmd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = txrxcmd.h; sourceTree = "<group>"; };
 		1BD93C682546FF42006C4D70 /* misc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = misc.c; sourceTree = "<group>"; };
 		1BEB93C92729F10D00508C17 /* occupency.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = occupency.c; sourceTree = "<group>"; };
+		1BEB93CD272B325700508C17 /* ctrlP.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ctrlP.h; sourceTree = "<group>"; };
+		1BEB93CE272B325700508C17 /* ctrlP.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ctrlP.c; sourceTree = "<group>"; };
+		1BEB93D1272B342500508C17 /* TestCtrlP.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TestCtrlP.m; sourceTree = "<group>"; };
 		1BED2A9325173CF40080FC97 /* train_throttle.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = train_throttle.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1BED2A9625173CF40080FC97 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		1BED2A9725173CF40080FC97 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -254,6 +261,9 @@
 			children = (
 				1B92EA2E2631A0BA00558716 /* ctrl.c */,
 				1B92EA2F2631A0BA00558716 /* ctrl.h */,
+				1BEB93CD272B325700508C17 /* ctrlP.h */,
+				1BEB93CE272B325700508C17 /* ctrlP.c */,
+				1BEB93D1272B342500508C17 /* TestCtrlP.m */,
 			);
 			path = ctrl;
 			sourceTree = "<group>";
@@ -467,6 +477,8 @@
 			files = (
 				1BA0FCB22724B0530002DF4C /* pidctl.c in Sources */,
 				1B1C75FA2724446100F95111 /* TestInertia.m in Sources */,
+				1BEB93CC272B317500508C17 /* occupency.c in Sources */,
+				1BEB93D0272B325700508C17 /* ctrlP.c in Sources */,
 				1BEB93C72729205300508C17 /* TopologyTest.m in Sources */,
 				1B1C760027248C1500F95111 /* TestMQueue.m in Sources */,
 				1BC903182720B1920087CEA7 /* led.c in Sources */,
@@ -474,6 +486,7 @@
 				1BC9030F2720AD250087CEA7 /* trainctlTests.m in Sources */,
 				1B1C75FD27245D1400F95111 /* misc.c in Sources */,
 				1B1C760127248DA800F95111 /* lf_mqueue.c in Sources */,
+				1BEB93D2272B342500508C17 /* TestCtrlP.m in Sources */,
 				1B1C75FE27245D4E00F95111 /* itm_debug.c in Sources */,
 				1BC903172720AD730087CEA7 /* LedTest.m in Sources */,
 				1B1C75FC27245C3F00F95111 /* inertia.c in Sources */,
@@ -486,6 +499,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				1B7A2A0D262D595F004E0481 /* pidctl.c in Sources */,
+				1BEB93CF272B325700508C17 /* ctrlP.c in Sources */,
 				1BC90306272092EC0087CEA7 /* led.c in Sources */,
 				1BA4B49F2551DAF70043D763 /* StringExtension.m in Sources */,
 				1B92EA302631A0BA00558716 /* ctrl.c in Sources */,

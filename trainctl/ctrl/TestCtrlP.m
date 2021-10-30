@@ -189,6 +189,17 @@ static int compareMsg64(const msg_64_t *exp, int n, int clear);
            {.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_TARGET_SPEED, .v1=70, .v2=0},
            {.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_POSE_SET_TRIG2, .v32=320});
 
+    
+    ctrl_update_c2_state_limits(0, &tvars, tconf, upd_pose_trig);
+    XCTAssert(tvars._state == train_end_of_track);
+    XCTAssert(tvars.spd_limit == 0);
+    XCTAssert(tvars.can2_addr == 0xFF);
+    XCTAssert(tvars._target_speed == 0);
+    NSString *s3 = dump_msgbuf(0);
+    //{D0, 81, 26, 5, 0},{D0, 81, 24, 0, 1},{D0, C8, 10, 0, 0}
+    EXPMSG({.to=MA_UI(UISUB_TFT), .from=0xD0, .cmd=CMD_TRSTATE_NOTIF, .v1=5, .v2=0},
+              {.to=MA_UI(UISUB_TFT), .from=0xD0, .cmd=CMD_TRTSPD_NOTIF, .v1=0, .v2=1},
+              {.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_TARGET_SPEED, .v1=0, .v2=0});
 }
 // -------------------------------------
 

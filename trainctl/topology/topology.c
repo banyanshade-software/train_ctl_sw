@@ -40,11 +40,11 @@ typedef struct {
     
 	uint8_t length_cm;
     
-    uint8_t left1;
-    uint8_t left2;
+    int8_t left1;
+    int8_t left2;
     uint8_t ltn; // leeee turnout
-    uint8_t right1;
-    uint8_t right2;
+    int8_t right1;
+    int8_t right2;
     uint8_t rtn; // leeee turnout
 } topo_lsblk_t;
 
@@ -52,11 +52,12 @@ typedef struct {
 
 static const topo_lsblk_t _Topology[] = {
     // layout 5 segs
-    /* 0 */ { MA_CANTON(0, 0),  0xFF,   84,     0xFF, 0xFF, 0xFF,      1,    0xFF, 0},
-    /* 1 */ { MA_CANTON(0, 1),  0xFF,   42,     0,    2,       0,      0xFF, 3,    1},
-    /* 2 */ { MA_CANTON(0, 2),  0xFF,   73, 	0xFF, 0xFF, 0xFF,      0xFF, 1,    0},
-    /* 3 */ { MA_CANTON(0, 3),  0xFF,   32, 	4,    1,       1,      0xFF, 0xFF, 0xFF},  // unused
-    /* 4 */ { MA_CANTON(0, 3),  0xFF,   105, 	0xFF, 0xFF, 0xFF,      3,    0xFF, 1}
+    //          canton         ina     len      l1    l2    tn       r1   r2   tn
+    /* 0 */ { MA_CANTON(0, 0),  0xFF,   84,    -1,   -1, 0xFF,       1,  -1,    0},
+    /* 1 */ { MA_CANTON(0, 1),  0xFF,   42,     0,    2,    0,      -1,   3,    1},
+    /* 2 */ { MA_CANTON(0, 2),  0xFF,   73,    -1 ,  -1, 0xFF,      -1,   1,    0},
+    /* 3 */ { MA_CANTON(0, 3),  0xFF,   32, 	4,    1,    1,      -1,  -1, 0xFF},  // unused
+    /* 4 */ { MA_CANTON(0, 3),  0xFF,   105,   -1 ,  -1, 0xFF,       3,  -1,    1}
 };
 
 
@@ -103,14 +104,16 @@ int get_lsblk_len(lsblk_num_t blknum)
 	
 }
 
-lsblk_num_t next_lsblk(lsblk_num_t blknum, uint8_t left)
+lsblk_num_t next_lsblk(lsblk_num_t blknum, uint8_t left, uint8_t *palternate)
 {
+    if (palternate) *palternate = 0;
     if (blknum.n == -1) return blknum;
     
     lsblk_num_t a, b;
     int tn;
     next_lsblk_nums(blknum, left, &a, &b, &tn);
     if (tn>=0) {
+        if (palternate) *palternate = 1;
         a = topology_get_turnout(tn) ? b : a;
     }
     // sanity XXX KO with virtual canton */
@@ -126,6 +129,7 @@ lsblk_num_t next_lsblk(lsblk_num_t blknum, uint8_t left)
 
 uint8_t canton_for_lsblk(lsblk_num_t n)
 {
+    if (n.n<0) return 0xFF;
     return Topology(n)->canton_addr;
 }
 
@@ -170,7 +174,7 @@ uint8_t next_block_addr(uint8_t blkaddr, uint8_t left)
 {
     // slow should not be used ?
     lsblk_num_t f = any_lsblk_with_canton(blkaddr);
-    lsblk_num_t n = next_lsblk(f, left);
+    lsblk_num_t n = next_lsblk(f, left, NULL);
     if (n.n<0) return 0xFF;
     return canton_for_lsblk(n);
 }

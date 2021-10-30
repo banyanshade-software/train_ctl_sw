@@ -35,10 +35,12 @@ static int compareMsg64(const msg_64_t *exp, int n, int clear);
 
 @implementation TestCtrlP {
     train_ctrl_t tvars;
+    const train_config_t *tconf;
 }
 
 - (void)setUp
 {
+    tconf = get_train_cnf(0);
     notify_occupency_change = 0;
     occupency_clear();
     mqf_clear(&from_ctrl);
@@ -121,50 +123,71 @@ static int compareMsg64(const msg_64_t *exp, int n, int clear);
 
 - (void) test_update_c2
 {
+    topolgy_set_turnout(0, 0);
+    topolgy_set_turnout(1, 0);
     tvars._dir = 1;
     tvars._target_speed = 90;
+    tvars.desired_speed = 90;
     tvars.spd_limit = 99;
     tvars._state = train_station;
-    ctrl_update_c2_state_limits(0, &tvars, get_train_cnf(0), upd_init);
+    ctrl_update_c2_state_limits(0, &tvars, tconf, upd_init);
     // _dir and _target_speed should have been reseted becaunse train_station state
     XCTAssert(tvars._target_speed == 0);
     XCTAssert(tvars._dir == 0);
     EXPMSG({.to=MA_TRAIN_SC(0), .from=0xD0, .cmd=CMD_SET_C1_C2, .vb0=1, .vb1=0, .vb2=0xFF, .vb3=0});
+    
+    // start on sblk 1
+    XCTAssert(tvars.can1_addr == 0x01);
+    XCTAssert(tvars.c1_sblk.n == 1);
     
     tvars._state = train_running_c1;
     tvars._dir = 1;
     tvars.spd_limit = 100; //TODO : REMOVE should not be needed
     XCTAssert(tvars.can2_addr == 0xFF);
     
-    ctrl_update_c2_state_limits(0, &tvars, get_train_cnf(0), upd_change_dir);
-    XCTAssert(tvars.can2_addr == 0x00);
+    // train should be blk wait due to switch in bad position
+    ctrl_update_c2_state_limits(0, &tvars, tconf, upd_change_dir);
+    XCTAssert(tvars.can2_addr == 0xFF);
+    XCTAssert(tvars.spd_limit == 0);
+    XCTAssert(tvars._target_speed == 0);
+    XCTAssert(tvars._state == train_blk_wait);
+    //NSString *s = dump_msgbuf(0);
+    //{D0, 81, 26, 4, 0},{D0, C8, 11, 257, 511}
+    EXPMSG({.to=MA_UI(UISUB_TFT), .from=0xD0, .cmd=CMD_TRSTATE_NOTIF, .v1=4, .v2=0},
+           {.to=MA_TRAIN_SC(0), .from=0xD0, .cmd=CMD_SET_C1_C2, .vb0=1, .vb1=1, .vb2=0xFF, .vb3=1});
+
+    // train should restart after turnout change
+    topolgy_set_turnout(1, 1);
+    ctrl_update_c2_state_limits(0, &tvars, tconf, upd_check);
+    XCTAssert(tvars.can2_addr == 0x03);
     XCTAssert(tvars.spd_limit == 100);
+    XCTAssert(tvars._target_speed == 90);
     XCTAssert(tvars._state == train_running_c1);
-    XCTAssert(get_block_addr_occupency(0)==BLK_OCC_C2);
-    NSString *s = dump_msgbuf(0);
+    XCTAssert(get_block_addr_occupency(3)==BLK_OCC_C2);
     
-    EXPMSG({.to=MA_TRAIN_SC(0), .from=0xD0, .cmd=CMD_SET_C1_C2, .vb0=1, .vb1=1, .vb2=0, .vb3=1});
+    //NSString *s3 = dump_msgbuf(0);
+    //{D0, 81, 26, 1, 0},{D0, C8, 11, 257, 259},{D0, 81, 24, 90, 1},{D0, C8, 10, 90, 0}
+    EXPMSG({.to=MA_UI(UISUB_TFT), .from=0xD0, .cmd=CMD_TRSTATE_NOTIF, .v1=1, .v2=0},
+           {.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_C1_C2, .vb0=1, .vb1=1, .vb2=3, .vb3=1},
+           {.to=MA_UI(UISUB_TFT), .from=0xD0, .cmd=CMD_TRTSPD_NOTIF, .v1=90, .v2=1},
+           {.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_TARGET_SPEED, .v1=90, .v2=0});
 
-    
-    set_block_addr_occupency(tvars.can2_addr, occupied(tvars._dir), 0  ,
-                             first_lsblk_with_canton(tvars.can2_addr, tvars.c1_sblk));
-    tvars._state = train_running_c1c2;
-        
-
+    // got to c3, should stop half way due to end of trac
     tvars.c1_sblk = first_lsblk_with_canton(tvars.can2_addr, tvars.c1_sblk);
-    XCTAssert(tvars.c1_sblk.n == 0);
-    set_block_addr_occupency(tvars.can1_addr, BLK_OCC_FREE, 0xFF, snone);
     tvars.can1_addr = tvars.can2_addr;
+    tvars.can2_addr = 0xFF;
+    ctrl_update_c2_state_limits(0, &tvars, tconf, upd_c1c2);
     
-    tvars._state = train_running_c1;
-    ctrl_update_c2_state_limits(0, &tvars, get_train_cnf(0), upd_c1c2);
-    XCTAssert(tvars.spd_limit == 100);
-    XCTAssert(tvars.can2_addr == 0x01);
-    XCTAssert(get_block_addr_occupency(1)==BLK_OCC_C2);
-    NSString *s2 = dump_msgbuf(0);
-    // {D0, C8, 11, 256, 257},{D0, 81, 24, 0, 1},{D0, C8, 10, 0, 0}
-    //XCTAssert([dump_msgbuf(0) isEqualToString:@"{D7, 82, A2, 768, 0},{D7, 82, A2, 1, 255},{D7, 82, A2, 1025, 0},{D0, C8, 11, 256, 257},{D0, 81, 24, 0, 1},{D0, C8, 10, 0, 1}"]);
-    EXPMSG({.to=MA_TRAIN_SC(0), .from=0xD0, .cmd=CMD_SET_C1_C2, .vb0=0, .vb1=1, .vb2=1, .vb3=1});
+    XCTAssert(tvars._state == train_running_c1);
+    XCTAssert(tvars.spd_limit == 70);
+    XCTAssert(tvars.can2_addr == 0xFF);
+    XCTAssert(tvars._target_speed == 70);
+    //NSString *s3 = dump_msgbuf(0);
+    //{D0, C8, 11, 259, 511},{D0, 81, 24, 70, 1},{D0, C8, 10, 70, 0},{D0, C8, 51, 320, 0}
+    EXPMSG({.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_C1_C2, .vb0=3, .vb1=1, .vb2=0xFF, .vb3=1},
+           {.to=MA_UI(UISUB_TFT), .from=0xD0, .cmd=CMD_TRTSPD_NOTIF, .v1=70, .v2=1},
+           {.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_TARGET_SPEED, .v1=70, .v2=0},
+           {.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_POSE_SET_TRIG2, .v32=320});
 
 }
 // -------------------------------------
@@ -184,8 +207,18 @@ mqf_t from_ctrl =  {
 
 static int compareMsg64(const msg_64_t *exp, int n, int clear)
 {
-    if (mqf_len(&from_ctrl) != n) return -2;
-    int rc = memcmp(qbuf, exp, n*sizeof(msg_64_t));
+    int rc = 0;
+    if (mqf_len(&from_ctrl) != n) {
+        rc = -2;
+    } else {
+        for (int i=0; i<n; i++) {
+            // per msg compare, for easier debug
+            if (memcmp(&qbuf[i], &exp[i], sizeof(msg_64_t))) {
+                rc = i;
+                break;
+            }
+        }
+    }
     if (clear) {
         mqf_clear(&from_ctrl);
     }

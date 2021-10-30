@@ -181,23 +181,31 @@ void ctrl_update_c2_state_limits(int tidx, train_ctrl_t *tvars, const train_conf
     
     
     itm_debug3(DBG_CTRL, "prev c1c2", tidx, tvars->can1_addr, tvars->can2_addr);
-    lsblk_num_t ns = next_lsblk(tvars->c1_sblk, (tvars->_dir < 0));
+    uint8_t alternate = 0;
+    lsblk_num_t ns = next_lsblk(tvars->c1_sblk, (tvars->_dir < 0), &alternate);
     c2 = canton_for_lsblk(ns);
     itm_debug3(DBG_CTRL, "c1c2addr", tidx, tvars->can2_addr, c2);
 
     if (ns.n < 0) {
         // end of track
-        if (updreason == upd_c1c2) {
-            itm_debug1(DBG_CTRL, "eot", tidx);
-            tvars->spd_limit = EOT_SPD_LIMIT;
-            //xxxx
-            posetval = ctrl_pose_middle(tvars->c1_sblk, tconf, tvars->_dir);
-            tvars->behaviour_flags |= BEHAVE_EOT1;
-        } else if (updreason == upd_pose_trig) {
-            itm_debug1(DBG_CTRL, "eot2", tidx);
-            ctrl_set_state(tidx, tvars, train_end_of_track);
-            tvars->spd_limit = 0;
-            tvars->behaviour_flags |= BEHAVE_EOT2;
+        switch (updreason) {
+            case upd_c1c2:
+                itm_debug1(DBG_CTRL, "eot", tidx);
+                tvars->spd_limit = EOT_SPD_LIMIT;
+                //xxxx
+                posetval = ctrl_pose_middle(tvars->c1_sblk, tconf, tvars->_dir);
+                tvars->behaviour_flags |= BEHAVE_EOT1;
+                break;
+            case upd_change_dir:
+                //FALLTHRU
+            case upd_pose_trig:
+                itm_debug1(DBG_CTRL, "eot2", tidx);
+                ctrl_set_state(tidx, tvars, alternate ? train_blk_wait : train_end_of_track);
+                tvars->spd_limit = 0;
+                tvars->behaviour_flags |= BEHAVE_EOT2;
+                break;
+            default:
+                break;
         }
     } else {
         switch (get_block_addr_occupency(c2)) {

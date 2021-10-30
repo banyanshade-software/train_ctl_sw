@@ -91,7 +91,7 @@
 
         if (dir[cn]>0) {
             if (position[tn]>blen) {
-                lsblk_num_t ns = next_lsblk(s1[tn], 0);
+                lsblk_num_t ns = next_lsblk(s1[tn], 0, NULL);
                 uint8_t nb = canton_for_lsblk(ns);
                 if (nb==0xFF) {
                     NSLog(@"END OF TRACK !!");
@@ -107,7 +107,7 @@
             }
         } else if (dir[cn]<0) {
             if (position[tn]<-blen) {
-                lsblk_num_t ns = next_lsblk(s1[tn], 0);
+                lsblk_num_t ns = next_lsblk(s1[tn], 0, NULL);
                 uint8_t nb = canton_for_lsblk(ns);
                 if (nb==0xFF) {
                     NSLog(@"END OF TRACK !!");

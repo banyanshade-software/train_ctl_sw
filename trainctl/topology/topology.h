@@ -74,8 +74,23 @@ typedef struct {
 } lsblk_num_t;
 
 
-void next_lsblk_nums(lsblk_num_t blknum, uint8_t left, lsblk_num_t *pb1, lsblk_num_t *pb2, int *t);
-lsblk_num_t next_lsblk(lsblk_num_t blknum, uint8_t left);
+/// next_lsblk_nums
+/// @param blknum current lsblk
+/// @param left 0=right, 1=left
+/// @param pb1 returns next lsblk if turnout=0
+/// @param pb2 returns next lsblk if turnout=1
+/// @param ptn returns turnout number, 0xFF if none
+void next_lsblk_nums(lsblk_num_t blknum, uint8_t left, lsblk_num_t *pb1, lsblk_num_t *pb2, int *ptn);
+
+
+/// next_lsblk
+///
+/// returns next lsblk, for a given direction
+/// @param blknum curent lsblk
+/// @param left 0=right, 1=left
+/// @param palternate will be set to 1 if different turnout postion may lead to a route
+
+lsblk_num_t next_lsblk(lsblk_num_t blknum, uint8_t left, uint8_t *palternate);
 
 // ---------------------------------------------------------------------
 
@@ -124,6 +139,6 @@ int get_lsblk_len(lsblk_num_t num);
 // 0=straight (TURNOUT_A), 1=turn (TURNOUT_B)
 
 void topolgy_set_turnout(int tn, int v);
-int topology_get_turnout(int tn);
+int  topology_get_turnout(int tn);
 
 #endif /* TOPOLOGY_TOPOLOGY_H_ */

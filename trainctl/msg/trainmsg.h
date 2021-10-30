@@ -97,6 +97,12 @@ typedef union {
 						int16_t v2;
 					};
                     uint8_t vbytes[4];
+                    struct {
+                        uint8_t vb0;
+                        uint8_t vb1;
+                        uint8_t vb2;
+                        uint8_t vb3;
+                    };
 				};
 			}  __attribute__((packed));
 		};
@@ -198,7 +204,7 @@ LFMQUEUE_DEF_H(from_ina3221, msg_64_t)
 #define CMD_NOTIF_SPEED     0xA0
 #define CMD_UI_MSG			0xA1	// obsolete?
 
-#define CMD_BLK_CHANGE      0xA2
+#define CMD_BLK_CHG_NOTIF      0xA2
 
 #include "../IHM/ihm_messages.h"
 

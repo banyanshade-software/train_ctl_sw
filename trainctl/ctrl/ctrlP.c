@@ -262,7 +262,7 @@ sendlow:
         const train_config_t *tconf = get_train_cnf(tidx);
         if (tconf->reversed) dir = -dir;
 
-        msg_64_t m;
+        msg_64_t m = {0};
         m.from = MA_CONTROL_T(tidx);
         m.to =  MA_TRAIN_SC(tidx);
         m.cmd = CMD_SET_C1_C2;
@@ -298,7 +298,7 @@ sendlow:
 void ctrl_set_pose_trig(int numtrain, int32_t pose, int n)
 {
     itm_debug2(DBG_CTRL, "set posetr", numtrain, pose);
-    msg_64_t m;
+    msg_64_t m = {0};
     m.from = MA_CONTROL_T(numtrain);
     m.to =  MA_TRAIN_SC(numtrain);
     m.cmd = n ? CMD_POSE_SET_TRIG2 :  CMD_POSE_SET_TRIG1;
@@ -318,7 +318,7 @@ void ctrl_set_tspeed(int trnum, train_ctrl_t *tvars, uint16_t tspd)
 
     // notif UI
     itm_debug2(DBG_UI|DBG_CTRL, "ctrl_set_tspeed", trnum, tspd);
-    msg_64_t m;
+    msg_64_t m = {0};
     m.from = MA_CONTROL_T(trnum);
     m.to = MA_UI(UISUB_TFT);
     m.cmd = CMD_TRTSPD_NOTIF;
@@ -331,6 +331,7 @@ void ctrl_set_tspeed(int trnum, train_ctrl_t *tvars, uint16_t tspd)
     // direction already given by SET_C1_C2
     //m.v1 = trctl[trnum]._dir*trctl[trnum]._target_speed;
     m.v1u = tvars->_target_speed;
+    m.v2 = 0;
     mqf_write_from_ctrl(&m);
 }
 
@@ -343,7 +344,7 @@ void ctrl_set_dir(int trnum,  train_ctrl_t *tvars, int  dir, int force)
 
     tvars->_dir = dir;
 
-    msg_64_t m;
+    msg_64_t m = {0};
     m.from = MA_CONTROL_T(trnum);
 
     // notif UI

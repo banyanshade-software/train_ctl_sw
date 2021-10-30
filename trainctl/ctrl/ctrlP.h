@@ -94,7 +94,7 @@ static inline void ctrl_set_state(int tidx, train_ctrl_t *tvar, train_state_t ns
     
     
     // notif UI
-    msg_64_t m;
+    msg_64_t m = {0};
     m.from = MA_CONTROL_T(tidx);
     m.to = MA_UI(UISUB_TFT);
     m.cmd = CMD_TRSTATE_NOTIF;

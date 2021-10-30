@@ -24,6 +24,10 @@
 #define BLK_OCC_DELAY1    0x10
 #define BLK_OCC_DELAYM    0x16
 
+extern uint8_t notify_occupency_change;
+
+void occupency_clear(void);
+
 void set_block_addr_occupency(uint8_t blkaddr, uint8_t v, uint8_t trnum, lsblk_num_t lsb);
 uint8_t get_block_addr_occupency(uint8_t blknum);
 void check_block_delayed(uint32_t tick);

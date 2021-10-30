@@ -27,7 +27,7 @@ void uitrack_run_tick(_UNUSED_ uint32_t notif_flags, uint32_t tick, _UNUSED_ uin
         switch (m.cmd) {
         default:
         	break;
-        case CMD_BLK_CHANGE:
+        case CMD_BLK_CHG_NOTIF:
         	blk = m.vbytes[0];
         	v   = m.vbytes[1];
             trn = m.vbytes[2];

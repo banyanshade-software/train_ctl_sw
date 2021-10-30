@@ -27,6 +27,11 @@ static  canton_occ_t canton_occ[0x40] = {0};
 
 uint8_t occupency_changed = 0;
 
+void occupency_clear(void)
+{
+    memset(canton_occ, 0, sizeof(canton_occ));
+}
+
 static inline uint8_t addr_to_num(uint8_t addr)
 {
     // MA_CANTON(<#_board#>, <#_c#>)
@@ -35,13 +40,15 @@ static inline uint8_t addr_to_num(uint8_t addr)
 }
 
 static uint8_t notif_blk_reset = 1;
+uint8_t notify_occupency_change = 1;
 
 static void notif_blk_occup_chg(int blknum, uint8_t val, uint8_t trnum)
 {
-    msg_64_t m;
+    if (!notify_occupency_change) return;
+    msg_64_t m = {0};
     m.from = MA_CONTROL();
     m.to = MA_UI(UISUB_TRACK);
-    m.cmd = CMD_BLK_CHANGE;
+    m.cmd = CMD_BLK_CHG_NOTIF;
     m.vbytes[0] = blknum;
     m.vbytes[1] = val;
     m.vbytes[2] = trnum;
@@ -69,7 +76,8 @@ void set_block_addr_occupency(uint8_t blkaddr, uint8_t v, uint8_t trnum, lsblk_n
         co->lsblk = lsb;
         occupency_changed = 1;
     }
-    if (occupency_changed) {    notif_blk_occup_chg(blkaddr, co->occ, trnum);
+    if (occupency_changed) {
+        notif_blk_occup_chg(blkaddr, co->occ, trnum);
     }
 }
 

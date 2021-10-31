@@ -154,6 +154,8 @@ void ctrl_update_c2_state_limits(int tidx, train_ctrl_t *tvars, const train_conf
     uint32_t posetval = 0;
     if (updreason == upd_pose_trig) tvars->behaviour_flags |= BEHAVE_PTRIG;
 
+    // -----------------
+    // check stop state
     switch (tvars->_state) {
     case train_off:
     case train_station:
@@ -179,7 +181,9 @@ void ctrl_update_c2_state_limits(int tidx, train_ctrl_t *tvars, const train_conf
     }
     
     
-    
+    //-----------
+    // update c2
+    // check eot, set pose
     itm_debug3(DBG_CTRL, "prev c1c2", tidx, tvars->can1_addr, tvars->can2_addr);
     uint8_t alternate = 0;
     lsblk_num_t ns = next_lsblk(tvars->c1_sblk, (tvars->_dir < 0), &alternate);
@@ -260,7 +264,9 @@ void ctrl_update_c2_state_limits(int tidx, train_ctrl_t *tvars, const train_conf
                 && (get_block_addr_occupency(c2) != BLK_OCC_C2)) fatal();
         set_block_addr_occupency(c2, BLK_OCC_C2, tidx, snone);
     }
-
+    //-----------
+    // send to spd ctrl
+    // 
 sendlow:
     if ((c2 != tvars->can2_addr) || (updreason == upd_c1c2) || (updreason == upd_change_dir) ||(updreason==upd_init)) {
         itm_debug3(DBG_CTRL, "C1C2", tidx, tvars->can1_addr, tvars->can2_addr);

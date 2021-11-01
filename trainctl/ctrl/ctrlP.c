@@ -506,15 +506,21 @@ void ctrl2_check_checkstart(int tidx, train_ctrl_t *tvar)
 void ctrl2_check_stop(int tidx, train_ctrl_t *tvar)
 {
     switch (tvar->_state) {
-    case train_off:
-    case train_station:
-        ctrl2_set_dir(tidx, tvar, 0);
-        ctrl2_set_tspeed(tidx, tvar, 0);
-        if (tvar->can2_addr != 0xFF) set_block_addr_occupency(tvar->can2_addr, BLK_OCC_FREE, 0xFF, snone);
-        tvar->can2_addr = 0xFF;
-        break;
-    default:
-        break;
+        case train_off:
+        case train_station:
+            ctrl2_set_dir(tidx, tvar, 0);
+            //FALLTHRU
+        case train_blk_wait:
+        case train_end_of_track:
+            ctrl2_set_tspeed(tidx, tvar, 0);
+            ctrl2_set_tspeed(tidx, tvar, 0);
+            if (tvar->can2_addr != 0xFF) set_block_addr_occupency(tvar->can2_addr, BLK_OCC_FREE, 0xFF, snone);
+            tvar->can2_addr = 0xFF;
+            break;
+            
+            
+        default:
+            break;
     }
 }
 

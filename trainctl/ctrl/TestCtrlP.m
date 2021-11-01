@@ -181,7 +181,7 @@ static int compareMsg64(const msg_64_t *exp, int n, int clear);
     XCTAssert(tvars.c1c2 == 0);
     rc = ctrl2_tick_process(0, &tvars, tconf);
     XCTAssert(rc==3);
-    s = dump_msgbuf(0);
+    //s = dump_msgbuf(0);
     //{D0, C8, 51, -840, -1},{D0, C8, 11, -256, -1},{D0, C8, 10, 70, 0}
     // CMD_POSE_SET_TRIG2
     EXPMSG({.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_C1_C2,        .vb0=0, .vb1=-1, .vb2=0xFF, .vb3=-1}
@@ -191,7 +191,17 @@ static int compareMsg64(const msg_64_t *exp, int n, int clear);
     XCTAssert(tvars._dir==-1);
     XCTAssert(tvars._target_speed == 70);
 
-    
+    ctrl2_evt_pose_triggered(0, &tvars, 0x00, 1);
+    XCTAssert(!tvars.pose2_set);
+    rc = ctrl2_tick_process(0, &tvars, tconf);
+    XCTAssert(rc==3);
+    //s = dump_msgbuf(0);
+    // {D0, 81, 26, 4, 0},{D0, C8, 10, 0, 0}
+    EXPMSG({.to=MA_UI(UISUB_TFT), .from=0xD0, .cmd=CMD_TRSTATE_NOTIF,    .v1=4, .v2=0}
+          ,{.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_TARGET_SPEED, .v1=0, .v2=0});
+    XCTAssert(!tvars.pose2_set);
+    XCTAssert(tvars._dir==-1);
+    XCTAssert(tvars._target_speed == 0);
 }
 
 

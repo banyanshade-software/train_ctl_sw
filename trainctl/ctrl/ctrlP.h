@@ -74,7 +74,7 @@ typedef struct {
  tick_flags values
  */
 #define _TFLAG_C1_CHANGED    (1<<0)
-//#define _TFLAG_POSE_TRIG1    (1<<1)
+//#define _TFLAG_POSE_TRIG1  (1<<1)
 #define _TFLAG_C1LSB_CHANGED (1<<2)
 #define _TFLAG_POSE_TRIG2    (1<<3)
 #define _TFLAG_STOP_DETECTED (1<<4)

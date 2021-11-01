@@ -15,6 +15,7 @@
 
 
 static lsblk_num_t snone = {-1};
+static lsblk_num_t sone = {1};
 
 @interface TestCtrlP : XCTestCase
 
@@ -45,6 +46,9 @@ static int compareMsg64(const msg_64_t *exp, int n, int clear);
     occupency_clear();
     mqf_clear(&from_ctrl);
     memset(&tvars, 0, sizeof(tvars));
+    
+#ifdef OLD_CTRL
+
     tvars._dir = 0;
     tvars._mode = train_manual;
     tvars._state = train_off;
@@ -54,11 +58,168 @@ static int compareMsg64(const msg_64_t *exp, int n, int clear);
     tvars.can2_addr = 0xFF;
     tvars.behaviour_flags = 0;
     tvars.desired_speed = 0;
-    
+#endif
+    tvars._mode = train_manual;
+    ctrl2_init_train(0, &tvars, sone);
 }
 
 - (void)tearDown {
 }
+
+
+- (void) testTimer
+{
+    SimuTick = 1234;
+    
+    ctrl_set_timer(0, &tvars, TLEAVE_C1, 42);
+    ctrl_set_timer(0, &tvars, TBEHAVE, 58);
+    XCTAssert(tvars.timertick[0]==42+1234);
+    XCTAssert(tvars.timertick[1]==58+1234);
+    XCTAssert(mqf_len(&from_ctrl)==0);
+}
+
+
+
+
+- (void) test_set_trig
+{
+    ctrl_set_pose_trig(0, 142, 1);
+    XCTAssert(mqf_len(&from_ctrl)==1);
+    ctrl_set_pose_trig(0, -40, 0);
+    XCTAssert(mqf_len(&from_ctrl)==2);
+
+    EXPMSG({.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_POSE_SET_TRIG2, .v32=142},
+           {.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_POSE_SET_TRIG1, .v32=-40});
+
+
+}
+
+
+- (void)testState2 {
+    XCTAssert(sizeof(lsblk_num_t)==1);
+    XCTAssert(sizeof(msg_64_t)==8);
+    tvars.tick_flags = 0;
+    tvars._state = train_off;
+    
+    ctrl2_set_state(0, &tvars, train_station);
+    
+    XCTAssert(train_station == tvars._state);
+    XCTAssert(mqf_len(&from_ctrl)==0); // notif ui done after
+    int rc = ctrl2_tick_process(0, &tvars, tconf);
+    XCTAssert(rc==1);
+    XCTAssert(mqf_len(&from_ctrl)==1); // notif ui
+    //NSString *s = dump_msgbuf(0);
+    EXPMSG({.to=MA_UI(UISUB_TFT), .from=0xD0, .cmd=CMD_TRSTATE_NOTIF, .v1=2, .v2=0});
+
+    // same state : no notif ui
+    ctrl2_set_state(0, &tvars, train_station);
+    rc = ctrl2_tick_process(0, &tvars, tconf);
+    XCTAssert(rc==0);
+    XCTAssert(train_station == tvars._state);
+    XCTAssert(mqf_len(&from_ctrl)==0);
+    
+    ctrl2_set_state(0, &tvars, train_off);
+    ctrl2_set_state(0, &tvars, train_station);
+    ctrl2_set_state(0, &tvars, train_running_c1);
+    ctrl2_set_state(0, &tvars, train_station);
+    rc = ctrl2_tick_process(0, &tvars, tconf);
+    XCTAssert(rc==1);
+    XCTAssert(train_station == tvars._state);
+    XCTAssert(mqf_len(&from_ctrl)==1);
+    EXPMSG({.to=MA_UI(UISUB_TFT), .from=0xD0, .cmd=CMD_TRSTATE_NOTIF, .v1=2, .v2=0});
+}
+
+- (void) testTrainInit
+{
+    int rc = ctrl2_tick_process(0, &tvars, tconf);
+    XCTAssert(rc==2);
+    //NSString *s = dump_msgbuf(0);
+    // {D0, C8, 11, 1, 255},{D0, 81, 26, 2, 0},{D0, C8, 10, 0, 0}
+    EXPMSG({.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_C1_C2,        .vb0=1, .vb1=0, .vb2=0xFF, .vb3=0},
+           {.to=MA_UI(UISUB_TFT), .from=0xD0, .cmd=CMD_TRSTATE_NOTIF,    .v1=2, .v2=0},
+           {.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_TARGET_SPEED, .v1=0, .v2=0});
+}
+
+
+- (void) testTrainStartLeft
+{
+    int rc = ctrl2_tick_process(0, &tvars, tconf);
+    XCTAssert(rc==2);
+    dump_msgbuf(1);
+    // {D0, C8, 11, 1, 255},{D0, 81, 26, 2, 0},{D0, C8, 10, 0, 0}
+    
+    ctrl2_upcmd_set_desired_speed(0, &tvars, -92);
+    XCTAssert(tvars.desired_speed==-92);
+    XCTAssert(tvars.tick_flags == _TFLAG_DSPD_CHANGED);
+    
+    rc = ctrl2_tick_process(0, &tvars, tconf);
+    XCTAssert(rc==3);
+    NSString *s = dump_msgbuf(0);
+    EXPMSG({.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_C1_C2,        .vb0=1, .vb1=-1, .vb2=0, .vb3=-1}
+          ,{.to=MA_UI(UISUB_TFT), .from=0xD0, .cmd=CMD_TRSTATE_NOTIF,    .v1=1, .v2=0}
+          ,{.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_TARGET_SPEED, .v1=92, .v2=0});
+    XCTAssert(tvars._state == train_running_c1);
+    XCTAssert(tvars.spd_limit == 100);
+    XCTAssert(!tvars.pose2_set);
+    XCTAssert(tvars._dir == -1);
+    XCTAssert(tvars._target_speed == 92);
+    XCTAssert(tvars.can2_addr == 0x00);
+    
+    ctrl2_upcmd_set_desired_speed(0, &tvars, -82);
+    rc = ctrl2_tick_process(0, &tvars, tconf);
+    XCTAssert(rc==2);
+    s = dump_msgbuf(0);
+    EXPMSG({.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_TARGET_SPEED, .v1=82, .v2=0});
+    XCTAssert(tvars._target_speed == 82);
+    XCTAssert(tvars._dir == -1);
+    XCTAssert(tvars.can2_addr == 0x00);
+    
+    XCTAssert(tvars.c1c2 == 0);
+    ctrl2_evt_entered_c2(0, &tvars, 1);
+    XCTAssert(tvars.c1c2 == 1);
+    ctrl2_evt_leaved_c1(0, &tvars);
+    XCTAssert(tvars.c1c2 == 0);
+    rc = ctrl2_tick_process(0, &tvars, tconf);
+    XCTAssert(rc==3);
+    s = dump_msgbuf(0);
+    //{D0, C8, 51, -840, -1},{D0, C8, 11, -256, -1},{D0, C8, 10, 70, 0}
+    // CMD_POSE_SET_TRIG2
+    EXPMSG({.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_POSE_SET_TRIG2,   .v32=-840}
+          ,{.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_C1_C2,        .vb0=0, .vb1=-1, .vb2=0xFF, .vb3=-1}
+          ,{.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_TARGET_SPEED, .v1=70, .v2=0});
+    XCTAssert(tvars.pose2_set);
+    XCTAssert(tvars._dir==-1);
+    XCTAssert(tvars._target_speed == 70);
+
+    
+}
+
+
+- (void) testTrainStartRight
+{
+    int rc = ctrl2_tick_process(0, &tvars, tconf);
+    XCTAssert(rc==2);
+    dump_msgbuf(1);
+    // {D0, C8, 11, 1, 255},{D0, 81, 26, 2, 0},{D0, C8, 10, 0, 0}
+    
+    ctrl2_upcmd_set_desired_speed(0, &tvars, 92);
+    XCTAssert(tvars.desired_speed==92);
+    XCTAssert(tvars.tick_flags == _TFLAG_DSPD_CHANGED);
+    
+    rc = ctrl2_tick_process(0, &tvars, tconf);
+    XCTAssert(rc==3);
+    NSString *s = dump_msgbuf(0);
+    XCTAssert(tvars._state == train_running_c1);
+    XCTAssert(tvars.can2_addr == 0xFF);
+    XCTAssert(tvars.spd_limit == 70);
+    XCTAssert(tvars.pose2_set);
+    XCTAssert(tvars._dir == 1);
+    XCTAssert(tvars._target_speed == 70);
+}
+
+
+#ifdef OLD_CTRL
+
 
 - (void)testState {
     XCTAssert(sizeof(lsblk_num_t)==1);
@@ -79,17 +240,6 @@ static int compareMsg64(const msg_64_t *exp, int n, int clear);
     XCTAssert(mqf_len(&from_ctrl)==0);
 }
 
-- (void) testTimer
-{
-    SimuTick = 1234;
-    
-    ctrl_set_timer(0, &tvars, TLEAVE_C1, 42);
-    ctrl_set_timer(0, &tvars, TBEHAVE, 58);
-    XCTAssert(tvars.timertick[0]==42+1234);
-    XCTAssert(tvars.timertick[1]==58+1234);
-    XCTAssert(mqf_len(&from_ctrl)==0);
-}
-
 - (void) test_dir_tspeed
 {
     tvars._dir = 0;
@@ -106,21 +256,6 @@ static int compareMsg64(const msg_64_t *exp, int n, int clear);
     ctrl_set_tspeed(0, &tvars, 23);
     XCTAssert(mqf_len(&from_ctrl)==0);
 }
-
-- (void) test_set_trig
-{
-    ctrl_set_pose_trig(0, 142, 1);
-    XCTAssert(mqf_len(&from_ctrl)==1);
-    ctrl_set_pose_trig(0, -40, 0);
-    XCTAssert(mqf_len(&from_ctrl)==2);
-
-    EXPMSG({.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_POSE_SET_TRIG2, .v32=142},
-           {.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_POSE_SET_TRIG1, .v32=-40});
-
-
-}
-
-
 - (void) test_update_c2
 {
     topolgy_set_turnout(0, 0);
@@ -201,6 +336,7 @@ static int compareMsg64(const msg_64_t *exp, int n, int clear);
               {.to=MA_UI(UISUB_TFT), .from=0xD0, .cmd=CMD_TRTSPD_NOTIF, .v1=0, .v2=1},
               {.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_TARGET_SPEED, .v1=0, .v2=0});
 }
+#endif
 // -------------------------------------
 
 static msg_64_t qbuf[16];
@@ -225,6 +361,10 @@ static int compareMsg64(const msg_64_t *exp, int n, int clear)
         for (int i=0; i<n; i++) {
             // per msg compare, for easier debug
             if (memcmp(&qbuf[i], &exp[i], sizeof(msg_64_t))) {
+                NSLog(@"exp: %2.2x %2.2x cmd=%2.2x v1=%d v2=%d",
+                      exp[i].from, exp[i].to, exp[i].cmd, exp[i].v1, exp[i].v2);
+                NSLog(@"got: %2.2x %2.2x cmd=%2.2x v1=%d v2=%d",
+                      qbuf[i].from, qbuf[i].to, qbuf[i].cmd, qbuf[i].v1, qbuf[i].v2);
                 rc = i;
                 break;
             }

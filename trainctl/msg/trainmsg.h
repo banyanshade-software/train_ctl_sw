@@ -161,7 +161,7 @@ LFMQUEUE_DEF_H(from_ctrl, msg_64_t)
 
 /* to ctrl */
 #define CMD_PRESENCE_SUB_CHANGE     0x12
-#define CMD_PRESENCE_VSUB_CHANGE    0x13
+//#define CMD_PRESENCE_VSUB_CHANGE    0x13
 #define CMD_BEMF_DETECT_ON_C2		0x14
 #define CMD_BEMF_DETECT_ON_C2ALT 	0x15  // unused for now, detect on wrong C2 (turnout was not positionned correctly)
 
@@ -182,6 +182,8 @@ LFMQUEUE_DEF_H(from_ctrl, msg_64_t)
 #define CMD_POSE_SET_TRIG1          0x50
 #define CMD_POSE_SET_TRIG2          0x51
 #define CMD_POSE_TRIGGERED			0x52
+#define CMD_STOP_DETECTED           0x53
+
 
 LFMQUEUE_DEF_H(to_forward, msg_64_t)
 LFMQUEUE_DEF_H(from_forward, msg_64_t)

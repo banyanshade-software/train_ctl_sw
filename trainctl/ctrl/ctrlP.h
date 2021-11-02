@@ -56,6 +56,7 @@ typedef struct {
     
     uint8_t  c1c2:1;
     uint8_t  pose2_set:1;
+    uint8_t  pose2_is_blk_wait:1;
     
     uint8_t     can1_addr;
     lsblk_num_t c1_sblk;

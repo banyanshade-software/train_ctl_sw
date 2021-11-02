@@ -144,7 +144,7 @@ static int compareMsg64(const msg_64_t *exp, int n, int clear);
 - (void) testTrainStartLeft
 {
     int rc = ctrl2_tick_process(0, &tvars, tconf);
-    XCTAssert(rc==2);
+    XCTAssert(rc==1);
     dump_msgbuf(1);
     // {D0, C8, 11, 1, 255},{D0, 81, 26, 2, 0},{D0, C8, 10, 0, 0}
     
@@ -179,9 +179,10 @@ static int compareMsg64(const msg_64_t *exp, int n, int clear);
     XCTAssert(tvars.c1c2 == 1);
     ctrl2_evt_leaved_c1(0, &tvars);
     XCTAssert(tvars.c1c2 == 0);
+    XCTAssert(tvars.can2_addr == 0xFF);
     rc = ctrl2_tick_process(0, &tvars, tconf);
     XCTAssert(rc==3);
-    //s = dump_msgbuf(0);
+    s = dump_msgbuf(0);
     //{D0, C8, 51, -840, -1},{D0, C8, 11, -256, -1},{D0, C8, 10, 70, 0}
     // CMD_POSE_SET_TRIG2
     EXPMSG({.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_C1_C2,        .vb0=0, .vb1=-1, .vb2=0xFF, .vb3=-1}
@@ -204,11 +205,41 @@ static int compareMsg64(const msg_64_t *exp, int n, int clear);
     XCTAssert(tvars._target_speed == 0);
 }
 
+- (void) testTrainLeft2
+{
+    [self testTrainStartLeft];
+    
+    // do stop
+    ctrl2_evt_stop_detected(0, &tvars, 23);
+    int rc = ctrl2_tick_process(0, &tvars, tconf);
+    XCTAssert(rc==2);
+    XCTAssert(tvars._dir == 0);
+    //s = dump_msgbuf(0);
+    // {D0, C8, 11, 0, 1}
+    EXPMSG({.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_C1_C2,        .vb0=0, .vb1=0, .vb2=0xFF, .vb3=0});
+        
+    // now go right
+    occupency_changed = 0;
+    ctrl2_upcmd_set_desired_speed(0, &tvars, 90);
+    rc = ctrl2_tick_process(0, &tvars, tconf);
+    XCTAssert(rc==3);
+    NSString *s = dump_msgbuf(0);
+    // {D0, C8, 11, 256, 257},{D0, 81, 26, 1, 0},{D0, C8, 10, 70, 0}
+    EXPMSG({.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_C1_C2,        .vb0=0, .vb1=1, .vb2=1, .vb3=1},
+           {.to=MA_UI(UISUB_TFT), .from=0xD0, .cmd=CMD_TRSTATE_NOTIF,    .v1=1, .v2=0},
+           {.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_TARGET_SPEED, .v1=90, .v2=0});
+    XCTAssert(tvars._dir==1);
+    XCTAssert(tvars._target_speed == 90);
+    XCTAssert(tvars.spd_limit == 100);
+    XCTAssert(tvars.can2_addr = 0x01);
+    XCTAssert(tvars._state == train_running_c1);
+}
+
 
 - (void) testTrainStartRight
 {
     int rc = ctrl2_tick_process(0, &tvars, tconf);
-    XCTAssert(rc==2);
+    XCTAssert(rc==1);
     dump_msgbuf(1);
     // {D0, C8, 11, 1, 255},{D0, 81, 26, 2, 0},{D0, C8, 10, 0, 0}
     
@@ -217,14 +248,33 @@ static int compareMsg64(const msg_64_t *exp, int n, int clear);
     XCTAssert(tvars.tick_flags == _TFLAG_DSPD_CHANGED);
     
     rc = ctrl2_tick_process(0, &tvars, tconf);
-    XCTAssert(rc==3);
+    XCTAssert(rc==4);
     NSString *s = dump_msgbuf(0);
+    //{D0, C8, 11, 257, 511},{D0, 81, 26, 1, 0},{D0, C8, 51, 420, 0},{D0, C8, 10, 70, 0}
+    EXPMSG({.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_C1_C2,        .vb0=1, .vb1=1, .vb2=0xFF, .vb3=1}
+           ,{.to=MA_UI(UISUB_TFT), .from=0xD0, .cmd=CMD_TRSTATE_NOTIF,    .v1=1, .v2=0}
+           ,{.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_POSE_SET_TRIG2,   .v32=420}
+           ,{.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_TARGET_SPEED, .v1=70, .v2=0});
     XCTAssert(tvars._state == train_running_c1);
     XCTAssert(tvars.can2_addr == 0xFF);
     XCTAssert(tvars.spd_limit == 70);
     XCTAssert(tvars.pose2_set);
     XCTAssert(tvars._dir == 1);
     XCTAssert(tvars._target_speed == 70);
+    
+    ctrl2_evt_pose_triggered(0, &tvars, 0x01, 1);
+    XCTAssert(tvars.pose2_set == 0);
+    rc = ctrl2_tick_process(0, &tvars, tconf);
+    XCTAssert(rc==3);
+    s = dump_msgbuf(0);
+    // {D0, 81, 26, 4, 0},{D0, C8, 10, 0, 0}
+    EXPMSG({.to=MA_UI(UISUB_TFT), .from=0xD0, .cmd=CMD_TRSTATE_NOTIF,    .v1=3, .v2=0}
+          ,{.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_TARGET_SPEED, .v1=0, .v2=0});
+    XCTAssert(tvars._state == train_blk_wait);
+    XCTAssert(tvars._dir == 1);
+    XCTAssert(tvars._target_speed == 0);
+    //XCTAssert(tvars.spd_limit == 0);
+
 }
 
 
@@ -371,9 +421,9 @@ static int compareMsg64(const msg_64_t *exp, int n, int clear)
         for (int i=0; i<n; i++) {
             // per msg compare, for easier debug
             if (memcmp(&qbuf[i], &exp[i], sizeof(msg_64_t))) {
-                NSLog(@"exp: %2.2x %2.2x cmd=%2.2x v1=%d v2=%d",
+                NSLog(@"%d exp: %2.2x %2.2x cmd=%2.2x v1=%d v2=%d", i,
                       exp[i].from, exp[i].to, exp[i].cmd, exp[i].v1, exp[i].v2);
-                NSLog(@"got: %2.2x %2.2x cmd=%2.2x v1=%d v2=%d",
+                NSLog(@"%d got: %2.2x %2.2x cmd=%2.2x v1=%d v2=%d", i,
                       qbuf[i].from, qbuf[i].to, qbuf[i].cmd, qbuf[i].v1, qbuf[i].v2);
                 rc = i;
                 break;

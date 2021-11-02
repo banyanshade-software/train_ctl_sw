@@ -21,8 +21,8 @@
 
 static lsblk_num_t snone = {-1};
 
-#define EOT_SPD_LIMIT    70   //20
-
+#define SPD_LIMIT_EOT    70   //20
+#define SPD_LIMIT_NOLIMIT 100
 
 // for test/debug
 //static uint8_t ignore_bemf_presence = 0;
@@ -218,7 +218,7 @@ void ctrl_update_c2_state_limits(int tidx, train_ctrl_t *tvars, const train_conf
         switch (updreason) {
             case upd_c1c2:
                 itm_debug1(DBG_CTRL, "eot", tidx);
-                tvars->spd_limit = EOT_SPD_LIMIT;
+                tvars->spd_limit = SPD_LIMIT_EOT;
                 //xxxx
                 posetval = ctrl_pose_middle(tvars->c1_sblk, tconf, tvars->_dir);
                 tvars->behaviour_flags |= BEHAVE_EOT1;
@@ -451,6 +451,14 @@ void ctrl2_set_state(int tidx, train_ctrl_t *tvar, train_state_t ns)
     tvar->tick_flags |= _TFLAG_STATE_CHANGED;
 }
 
+void ctrl2_set_dir(int tidx, train_ctrl_t *tvar, int8_t dir)
+{
+    if (tvar->_dir != dir) {
+        tvar->tick_flags |= _TFLAG_DIR_CHANGED;
+        tvar->_dir = dir;
+    }
+}
+
 void ctrl2_stop_detected(int tidx, train_ctrl_t *tvars)
 {
     switch (tvars->_state) {
@@ -460,16 +468,10 @@ void ctrl2_stop_detected(int tidx, train_ctrl_t *tvars)
         default:
             break;
     }
+    ctrl2_set_dir(tidx, tvars, 0);
 }
 
 
-void ctrl2_set_dir(int tidx, train_ctrl_t *tvar, int8_t dir)
-{
-    if (tvar->_dir != dir) {
-        tvar->tick_flags |= _TFLAG_DIR_CHANGED;
-        tvar->_dir = dir;
-    }
-}
 
 void ctrl2_set_tspeed(int tidx, train_ctrl_t *tvar, uint16_t tspeed)
 {
@@ -490,6 +492,7 @@ void ctrl2_check_alreadystopped(int tidx, train_ctrl_t *tvar)
 }
 void ctrl2_check_checkstart(int tidx, train_ctrl_t *tvar)
 {
+    lsblk_num_t ns;
     if (!tvar->desired_speed) return;
     switch (tvar->_state) {
         case train_station:
@@ -497,7 +500,20 @@ void ctrl2_check_checkstart(int tidx, train_ctrl_t *tvar)
             ctrl2_set_state(tidx, tvar, train_running_c1);
             ctrl2_set_tspeed(tidx, tvar, SIGNOF0(tvar->desired_speed));
             break;
-            
+        
+        case train_end_of_track:
+        case train_blk_wait:
+            if (tvar->_target_speed) break; // already started
+            if (tvar->_dir) break;
+            ns = next_lsblk(tvar->c1_sblk, (tvar->desired_speed<0),  NULL);
+            if (ns.n>=0) {
+                ctrl2_set_state(tidx, tvar, train_running_c1);
+                ctrl2_set_dir(tidx, tvar, SIGNOF0(tvar->desired_speed));
+                //ctrl2_set_tspeed(tidx, tvar, SIGNOF0(tvar->desired_speed));
+            } else {
+                tvar->desired_speed = 0;
+            }
+            break;
         default:
             break;
     }
@@ -512,7 +528,6 @@ void ctrl2_check_stop(int tidx, train_ctrl_t *tvar)
             //FALLTHRU
         case train_blk_wait:
         case train_end_of_track:
-            ctrl2_set_tspeed(tidx, tvar, 0);
             ctrl2_set_tspeed(tidx, tvar, 0);
             if (tvar->can2_addr != 0xFF) set_block_addr_occupency(tvar->can2_addr, BLK_OCC_FREE, 0xFF, snone);
             tvar->can2_addr = 0xFF;
@@ -548,7 +563,7 @@ static void ctrl2_had_trig2(int tidx, train_ctrl_t *tvar)
     switch (tvar->_state) {
         //case train_running_c1c2:
         case train_running_c1:
-            ctrl2_set_state(tidx, tvar, train_end_of_track);
+            ctrl2_set_state(tidx, tvar, tvar->pose2_is_blk_wait ? train_blk_wait : train_end_of_track);
             break;
             
         default:
@@ -575,7 +590,8 @@ void ctrl2_update_topo(int tidx, train_ctrl_t *tvar, const train_config_t *tconf
                     ctrl2_set_state(tidx, tvar, alternate ? train_blk_wait : train_end_of_track);
                 } else {
                     tvar->pose2_set = 1;
-                    set_speed_limit(tvar, EOT_SPD_LIMIT);
+                    tvar->pose2_is_blk_wait = alternate ? 1 : 0;
+                    set_speed_limit(tvar, SPD_LIMIT_EOT);
                     //xxxx
                     int32_t posetval = ctrl_pose_middle(tvar->c1_sblk, tconf, tvar->_dir);
                     //ctrl_set_pose_trig(tidx, posetval, 1);
@@ -587,6 +603,8 @@ void ctrl2_update_topo(int tidx, train_ctrl_t *tvar, const train_config_t *tconf
                 break;
         }
         return;
+    } else {
+        set_speed_limit(tvar, SPD_LIMIT_NOLIMIT);
     }
     switch (tvar->_state) {
         case train_blk_wait:
@@ -603,22 +621,30 @@ void ctrl2_update_c2(int tidx, train_ctrl_t *tvar, const train_config_t *tconf, 
 {
     if (tvar->can1_addr == 0xFF) fatal();
     if (canton_for_lsblk(tvar->c1_sblk) != tvar->can1_addr) fatal();
-    //uint8_t old_c2 = tvar->can2_addr;
+    uint8_t old_c2 = tvar->can2_addr;
     tvar->can2_addr = 0xFF;
-
-    uint8_t alternate = 0;
-    lsblk_num_t ns = next_lsblk(tvar->c1_sblk, (tvar->_dir < 0), &alternate);
-    uint8_t c2 = canton_for_lsblk(ns);
-    itm_debug3(DBG_CTRL, "c1c2addr", tidx, tvar->can2_addr, c2);
-    if (c2 == tvar->can1_addr) {
-        //set trig
-        int32_t posetval = ctrl_pose_end(tvar->c1_sblk, tconf, tvar->_dir);
-        //ctrl_set_pose_trig(tidx, posetval, 0);
-        *ppose0 = posetval;
+    if (tvar->_dir) {
+        uint8_t alternate = 0;
+        lsblk_num_t ns = next_lsblk(tvar->c1_sblk, (tvar->_dir < 0), &alternate);
+        uint8_t c2 = canton_for_lsblk(ns);
+        itm_debug3(DBG_CTRL, "c1c2addr", tidx, tvar->can2_addr, c2);
+        if (c2 == tvar->can1_addr) {
+            //set trig
+            int32_t posetval = ctrl_pose_end(tvar->c1_sblk, tconf, tvar->_dir);
+            //ctrl_set_pose_trig(tidx, posetval, 0);
+            *ppose0 = posetval;
+        } else {
+            tvar->can2_addr = c2;
+        }
     } else {
-        tvar->can2_addr = c2;
+        tvar->can2_addr = 0xFF;
     }
-    tvar->tick_flags |= _TFLAG_C1C2_CHANGED;
+    if (tvar->can2_addr != old_c2) {
+        tvar->tick_flags |= _TFLAG_C1C2_CHANGED;
+        if (old_c2 != 0xFF) {
+            set_block_addr_occupency(old_c2, BLK_OCC_FREE, tidx, snone);
+        }
+    }
 }
 
 void ctrl2_notify_state(int tidx, train_ctrl_t *tvar)
@@ -691,7 +717,7 @@ void ctrl2_evt_leaved_c1(int tidx, train_ctrl_t *tvars)
     tvars->can1_addr = tvars->can2_addr;
     tvars->c1_sblk = first_lsblk_with_canton(tvars->can2_addr, tvars->c1_sblk);
     tvars->can2_addr = 0xFF; // will be updated by update_c2
-    tvars->tick_flags |= _TFLAG_C1_CHANGED | _TFLAG_C1LSB_CHANGED;
+    tvars->tick_flags |= _TFLAG_C1_CHANGED | _TFLAG_C1C2_CHANGED | _TFLAG_C1LSB_CHANGED;
 }
 
 
@@ -782,7 +808,7 @@ int ctrl2_tick_process(int tidx, train_ctrl_t *tvars, const train_config_t *tcon
         if (flags & (_TFLAG_C1LSB_CHANGED|_TFLAG_DIR_CHANGED)) {
             ctrl2_update_c2(tidx, tvars, tconf, &pose0);
         }
-        if (flags & (_TFLAG_C1LSB_CHANGED|_TFLAG_OCC_CHANGED)) {
+        if (flags & (_TFLAG_C1LSB_CHANGED|_TFLAG_OCC_CHANGED|_TFLAG_DIR_CHANGED)) {
             ctrl2_update_topo(tidx, tvars, tconf, &pose1);
         }
             

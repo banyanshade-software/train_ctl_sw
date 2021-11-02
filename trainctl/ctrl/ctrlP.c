@@ -580,6 +580,8 @@ void ctrl2_update_topo(int tidx, train_ctrl_t *tvar, const train_config_t *tconf
         default:
             break;
     }
+    if (!tvar->_dir) return;
+    
     uint8_t alternate = 0;
     lsblk_num_t ns = next_lsblk(tvar->c1_sblk, (tvar->_dir < 0), &alternate);
     if (ns.n < 0) {
@@ -603,16 +605,20 @@ void ctrl2_update_topo(int tidx, train_ctrl_t *tvar, const train_config_t *tconf
                 break;
         }
         return;
-    } else {
-        set_speed_limit(tvar, SPD_LIMIT_NOLIMIT);
     }
+    tvar->pose2_set = 0;
+    set_speed_limit(tvar, SPD_LIMIT_NOLIMIT);
+    
     switch (tvar->_state) {
         case train_blk_wait:
-            tvar->tick_flags |= _TFLAG_LIMIT_CHANGED;
+            tvar->tick_flags |= _TFLAG_LIMIT_CHANGED ; // _TFLAG_DIR_CHANGED will trigger update_c2
             ctrl2_set_state(tidx, tvar, train_running_c1);
             break;
         default:
             break;
+    }
+    if ((ns.n >= 0) && (tvar->can2_addr != canton_for_lsblk(ns))) {
+        tvar->tick_flags |= _TFLAG_DIR_CHANGED ; // _TFLAG_DIR_CHANGED will trigger update_c2
     }
 }
     
@@ -759,6 +765,7 @@ void ctrl2_evt_pose_triggered(int tidx, train_ctrl_t *tvar, uint8_t ca_addr, uin
             }
             break;
         case 1:
+            if (!tvar->pose2_set) return;
             tvar->pose2_set = 0;
             tvar->tick_flags |= _TFLAG_POSE_TRIG2;
             break;
@@ -774,7 +781,7 @@ void ctrl2_evt_stop_detected(int tidx, train_ctrl_t *tvar, int32_t pose)
 
 static const uint16_t perm_flags = (_TFLAG_STATE_CHANGED|_TFLAG_DIR_CHANGED|_TFLAG_TSPD_CHANGED|_TFLAG_C1C2_CHANGED);
 
-int ctrl2_tick_process(int tidx, train_ctrl_t *tvars, const train_config_t *tconf)
+int ctrl2_tick_process(int tidx, train_ctrl_t *tvars, const train_config_t *tconf, int8_t occupency_changed)
 {
     int nloop = 0;
     if (occupency_changed) tvars->tick_flags |= _TFLAG_OCC_CHANGED;

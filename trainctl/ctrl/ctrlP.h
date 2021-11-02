@@ -88,7 +88,7 @@ typedef struct {
 #define _TFLAG_C1C2_CHANGED  (1<<11)
 
 
-int ctrl2_tick_process(int tidx, train_ctrl_t *tvars, const train_config_t *tconf);
+int ctrl2_tick_process(int tidx, train_ctrl_t *tvars, const train_config_t *tconf, int8_t occupency_changed);
 void ctrl2_init_train(int tidx, train_ctrl_t *tvars,
                       lsblk_num_t sblk);
 

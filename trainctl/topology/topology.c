@@ -181,6 +181,7 @@ uint8_t next_block_addr(uint8_t blkaddr, uint8_t left)
 // --------------------------------------------------------------------------------------
 
 static volatile uint32_t turnoutvals = 0; // bit field
+uint8_t topology_or_occupency_changed = 0;
 
 void topolgy_set_turnout(int tn, int v)
 {
@@ -193,6 +194,7 @@ void topolgy_set_turnout(int tn, int v)
 	} else {
 		__sync_fetch_and_and(&turnoutvals, ~(1<<tn));
 	}
+    topology_or_occupency_changed = 1;
 	itm_debug3(DBG_TURNOUT, "tt",tn,v, topology_get_turnout(tn));
 }
 int topology_get_turnout(int tn)

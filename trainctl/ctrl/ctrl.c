@@ -349,12 +349,16 @@ void ctrl_run_tick(_UNUSED_ uint32_t notif_flags, uint32_t tick, _UNUSED_ uint32
 		}
 	}
 	check_timers(tick);
+    
+    uint8_t occ = topology_or_occupency_changed;
+    topology_or_occupency_changed = 0;
+    
     for (int tidx = 0; tidx<NUM_TRAINS; tidx++) {
         train_ctrl_t *tvars = &trctl[tidx];
         const train_config_t *tconf = get_train_cnf(tidx);
         if (!tconf->enabled) continue;
         if (tvars->_mode == train_notrunning) continue;
-        ctrl2_tick_process(tidx, tvars, tconf);
+        ctrl2_tick_process(tidx, tvars, tconf, occ);
     }
     //occupency_changed = 0;
     
@@ -572,8 +576,6 @@ static void set_turnout(int tn, int v)
 
 	mqf_write_from_ctrl(&m);
 	topolgy_set_turnout(tn, v);
-
-	occupency_changed = 1;
     
     // forward to CTO
     m.to = MA_UI(UISUB_TRACK);

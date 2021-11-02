@@ -32,7 +32,7 @@ void set_block_addr_occupency(uint8_t blkaddr, uint8_t v, uint8_t trnum, lsblk_n
 uint8_t get_block_addr_occupency(uint8_t blknum);
 void check_block_delayed(uint32_t tick);
 
-extern uint8_t occupency_changed;
+// extern uint8_t occupency_changed; replaced by topology_or_occupency_changed
 
 
 static inline uint8_t occupied(int dir)

@@ -25,7 +25,7 @@ typedef struct {
 static  canton_occ_t canton_occ[0x40] = {0};
 
 
-uint8_t occupency_changed = 0;
+//uint8_t occupency_changed = 0; replaced by topology_or_occupency_changed
 
 void occupency_clear(void)
 {
@@ -68,15 +68,15 @@ void set_block_addr_occupency(uint8_t blkaddr, uint8_t v, uint8_t trnum, lsblk_n
             itm_debug1(DBG_CTRL, "delay free", blkaddr);
         } else {
             co->occ = v;
-            occupency_changed = 1;
+            topology_or_occupency_changed = 1;
         }
     }
     co->trnum = trnum;
     if (co->lsblk.n != lsb.n) {
         co->lsblk = lsb;
-        occupency_changed = 1;
+        topology_or_occupency_changed = 1;
     }
-    if (occupency_changed) {
+    if (topology_or_occupency_changed) {
         notif_blk_occup_chg(blkaddr, co->occ, trnum);
     }
 }
@@ -104,7 +104,7 @@ void check_block_delayed(_UNUSED_ uint32_t tick)
         if (canton_occ[i].occ == BLK_OCC_DELAY1) {
             itm_debug1(DBG_CTRL, "FREE(d)", i);
             canton_occ[i].occ = BLK_OCC_FREE;
-            occupency_changed = 1;
+            topology_or_occupency_changed = 1;
             notif_blk_occup_chg(i, canton_occ[i].occ, 0xFF);
         } else if (canton_occ[i].occ > BLK_OCC_DELAY1) {
             canton_occ[i].occ --;

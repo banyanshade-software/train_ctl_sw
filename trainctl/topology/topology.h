@@ -11,6 +11,8 @@
 
 #include "../msg/trainmsg.h"
 
+extern uint8_t topology_or_occupency_changed;
+
 
 /*
 Cantons (Blocks), share common electrical power, and therefore there can be only one train on a given block

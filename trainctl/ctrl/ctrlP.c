@@ -419,7 +419,7 @@ void ctrl2_init_train(int tidx, train_ctrl_t *tvars,
     tvars->c1c2 = 0;
     tvars->pose2_set = 0;
     tvars->behaviour_flags = 0;
-    tvars->tick_flags |= _TFLAG_C1_CHANGED |
+    tvars->tick_flags |=
         _TFLAG_C1LSB_CHANGED | _TFLAG_DIR_CHANGED |
         _TFLAG_DSPD_CHANGED | _TFLAG_TSPD_CHANGED |
         _TFLAG_STATE_CHANGED | _TFLAG_LIMIT_CHANGED;
@@ -730,7 +730,7 @@ void ctrl2_evt_leaved_c1(int tidx, train_ctrl_t *tvars)
     tvars->can1_addr = tvars->can2_addr;
     tvars->c1_sblk = first_lsblk_with_canton(tvars->can2_addr, tvars->c1_sblk);
     tvars->can2_addr = 0xFF; // will be updated by update_c2
-    tvars->tick_flags |= _TFLAG_C1_CHANGED | _TFLAG_C1C2_CHANGED | _TFLAG_C1LSB_CHANGED;
+    tvars->tick_flags |=  _TFLAG_C1C2_CHANGED | _TFLAG_C1LSB_CHANGED;
 }
 
 
@@ -816,9 +816,7 @@ int ctrl2_tick_process(int tidx, train_ctrl_t *tvars, const train_config_t *tcon
         if (flags & _TFLAG_POSE_TRIG2) {
             ctrl2_had_trig2(tidx, tvars);
         }
-        if (flags & _TFLAG_C1_CHANGED) {
-            if (! (flags & _TFLAG_C1LSB_CHANGED)) fatal();
-        }
+        
         if (flags & (_TFLAG_C1LSB_CHANGED|_TFLAG_DIR_CHANGED)) {
             ctrl2_update_c2(tidx, tvars, tconf, &pose0);
         }

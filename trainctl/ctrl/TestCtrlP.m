@@ -132,18 +132,8 @@ static int compareMsg64(const msg_64_t *exp, int n, int clear);
     EXPMSG({.to=MA_UI(UISUB_TFT), .from=0xD0, .cmd=CMD_TRSTATE_NOTIF, .v1=2, .v2=0});
 }
 
-/*
 
- #define BLK_OCC_FREE    0x00
- #define BLK_OCC_STOP    0x01
- #define BLK_OCC_LEFT    0x02
- #define BLK_OCC_RIGHT    0x03
- #define BLK_OCC_C2        0x04
 
- #define BLK_OCC_DELAY1    0x10
- #define BLK_OCC_DELAYM    0x16
-i
- */
 static int check_occupency(int b1, int b2)
 {
     for (int i=0; i<15; i++) {

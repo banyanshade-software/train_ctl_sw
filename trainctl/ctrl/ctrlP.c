@@ -627,11 +627,15 @@ void ctrl2_update_c2(int tidx, train_ctrl_t *tvar, const train_config_t *tconf, 
 {
     if (tvar->can1_addr == 0xFF) fatal();
     if (canton_for_lsblk(tvar->c1_sblk) != tvar->can1_addr) fatal();
+    
+    set_block_addr_occupency(tvar->can1_addr, occupied(tvar->_dir), tidx, tvar->c1_sblk);
+    
     uint8_t old_c2 = tvar->can2_addr;
     tvar->can2_addr = 0xFF;
+    lsblk_num_t ns = snone;
     if (tvar->_dir) {
         uint8_t alternate = 0;
-        lsblk_num_t ns = next_lsblk(tvar->c1_sblk, (tvar->_dir < 0), &alternate);
+        ns = next_lsblk(tvar->c1_sblk, (tvar->_dir < 0), &alternate);
         uint8_t c2 = canton_for_lsblk(ns);
         itm_debug3(DBG_CTRL, "c1c2addr", tidx, tvar->can2_addr, c2);
         if (c2 == tvar->can1_addr) {
@@ -649,6 +653,9 @@ void ctrl2_update_c2(int tidx, train_ctrl_t *tvar, const train_config_t *tconf, 
         tvar->tick_flags |= _TFLAG_C1C2_CHANGED;
         if (old_c2 != 0xFF) {
             set_block_addr_occupency(old_c2, BLK_OCC_FREE, tidx, snone);
+        }
+        if (tvar->can2_addr != 0xFF) {
+            set_block_addr_occupency(tvar->can2_addr, BLK_OCC_C2, tidx, ns);
         }
     }
 }

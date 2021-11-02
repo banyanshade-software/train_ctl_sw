@@ -132,6 +132,40 @@ static int compareMsg64(const msg_64_t *exp, int n, int clear);
     EXPMSG({.to=MA_UI(UISUB_TFT), .from=0xD0, .cmd=CMD_TRSTATE_NOTIF, .v1=2, .v2=0});
 }
 
+/*
+
+ #define BLK_OCC_FREE    0x00
+ #define BLK_OCC_STOP    0x01
+ #define BLK_OCC_LEFT    0x02
+ #define BLK_OCC_RIGHT    0x03
+ #define BLK_OCC_C2        0x04
+
+ #define BLK_OCC_DELAY1    0x10
+ #define BLK_OCC_DELAYM    0x16
+i
+ */
+static int check_occupency(int b1, int b2)
+{
+    for (int i=0; i<15; i++) {
+        int s = get_block_addr_occupency(i);
+        int expocc = ((i==b1)||(i==b2)) ? 1 : 0;
+        switch (s) {
+            case BLK_OCC_STOP:
+            case BLK_OCC_LEFT:
+            case BLK_OCC_RIGHT:
+            case BLK_OCC_C2:
+                if (expocc) break;
+                return -1;
+                break;
+            default:
+                if (!expocc) break;
+                return -1;
+                break;
+        }
+    }
+    return 0;
+}
+
 - (void) testTrainInit
 {
     int rc = ctrl2_tick_process(0, &tvars, tconf, 0);
@@ -141,6 +175,7 @@ static int compareMsg64(const msg_64_t *exp, int n, int clear);
     EXPMSG({.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_C1_C2,        .vb0=1, .vb1=0, .vb2=0xFF, .vb3=0},
            {.to=MA_UI(UISUB_TFT), .from=0xD0, .cmd=CMD_TRSTATE_NOTIF,    .v1=2, .v2=0},
            {.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_TARGET_SPEED, .v1=0, .v2=0});
+    XCTAssert(0==check_occupency(1, -1));
 }
 
 
@@ -167,6 +202,7 @@ static int compareMsg64(const msg_64_t *exp, int n, int clear);
     XCTAssert(tvars._dir == -1);
     XCTAssert(tvars._target_speed == 92);
     XCTAssert(tvars.can2_addr == 0x00);
+    XCTAssert(0==check_occupency(1, 0));
     
     ctrl2_upcmd_set_desired_speed(0, &tvars, -82);
     rc = ctrl2_tick_process(0, &tvars, tconf, 0);
@@ -176,6 +212,8 @@ static int compareMsg64(const msg_64_t *exp, int n, int clear);
     XCTAssert(tvars._target_speed == 82);
     XCTAssert(tvars._dir == -1);
     XCTAssert(tvars.can2_addr == 0x00);
+    XCTAssert(0==check_occupency(1, 0));
+
     
     XCTAssert(tvars.c1c2 == 0);
     ctrl2_evt_entered_c2(0, &tvars, 1);
@@ -194,6 +232,7 @@ static int compareMsg64(const msg_64_t *exp, int n, int clear);
     XCTAssert(tvars.pose2_set);
     XCTAssert(tvars._dir==-1);
     XCTAssert(tvars._target_speed == 70);
+    XCTAssert(0==check_occupency(0, -1));
 
     ctrl2_evt_pose_triggered(0, &tvars, 0x00, 1);
     XCTAssert(!tvars.pose2_set);
@@ -206,6 +245,7 @@ static int compareMsg64(const msg_64_t *exp, int n, int clear);
     XCTAssert(!tvars.pose2_set);
     XCTAssert(tvars._dir==-1);
     XCTAssert(tvars._target_speed == 0);
+    XCTAssert(0==check_occupency(0, -1));
 }
 
 - (void) testTrainLeft2
@@ -217,6 +257,7 @@ static int compareMsg64(const msg_64_t *exp, int n, int clear);
     int rc = ctrl2_tick_process(0, &tvars, tconf, 0);
     XCTAssert(rc==2);
     XCTAssert(tvars._dir == 0);
+    XCTAssert(0==check_occupency(0, -1));
     //s = dump_msgbuf(0);
     // {D0, C8, 11, 0, 1}
     EXPMSG({.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_C1_C2,        .vb0=0, .vb1=0, .vb2=0xFF, .vb3=0});
@@ -235,6 +276,7 @@ static int compareMsg64(const msg_64_t *exp, int n, int clear);
     XCTAssert(tvars.spd_limit == 100);
     XCTAssert(tvars.can2_addr = 0x01);
     XCTAssert(tvars._state == train_running_c1);
+    XCTAssert(0==check_occupency(0, 1));
 }
 
 
@@ -263,6 +305,7 @@ static int compareMsg64(const msg_64_t *exp, int n, int clear);
     XCTAssert(tvars.pose2_set);
     XCTAssert(tvars._dir == 1);
     XCTAssert(tvars._target_speed == 70);
+    XCTAssert(0==check_occupency(1, -1));
 }
 
 - (void) testRightBlockWaitAndRestart
@@ -280,6 +323,7 @@ static int compareMsg64(const msg_64_t *exp, int n, int clear);
     XCTAssert(tvars._state == train_blk_wait);
     XCTAssert(tvars._dir == 1);
     XCTAssert(tvars._target_speed == 0);
+    XCTAssert(0==check_occupency(1, -1));
     //XCTAssert(tvars.spd_limit == 0);
     
     topolgy_set_turnout(1, 1);
@@ -294,6 +338,7 @@ static int compareMsg64(const msg_64_t *exp, int n, int clear);
     XCTAssert(tvars._target_speed == 92);
     XCTAssert(tvars._state == train_running_c1);
     XCTAssert(tvars.can2_addr == 0x03);
+    XCTAssert(0==check_occupency(1, 3));
 }
 
 
@@ -314,6 +359,7 @@ static int compareMsg64(const msg_64_t *exp, int n, int clear);
     XCTAssert(tvars.can2_addr == 0x03);
     XCTAssert(tvars.spd_limit == 100);
     XCTAssert(tvars.pose2_set == 0);
+    XCTAssert(0==check_occupency(1, 3));
     
     // late trigger may (and will) occur and should be ignored
     ctrl2_evt_pose_triggered(0, &tvars, 0x01, 1);

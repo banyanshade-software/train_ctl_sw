@@ -28,9 +28,12 @@ extern uint8_t notify_occupency_change;
 
 void occupency_clear(void);
 
+
 void set_block_addr_occupency(uint8_t blkaddr, uint8_t v, uint8_t trnum, lsblk_num_t lsb);
 uint8_t get_block_addr_occupency(uint8_t blknum);
 void check_block_delayed(uint32_t tick);
+
+uint8_t occupency_block_is_free(uint8_t blkaddr, uint8_t trnum);
 
 // extern uint8_t occupency_changed; replaced by topology_or_occupency_changed
 

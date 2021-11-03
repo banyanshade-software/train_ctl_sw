@@ -15,6 +15,7 @@
 
 
 static lsblk_num_t snone = {-1};
+static lsblk_num_t szero = {0};
 static lsblk_num_t sone = {1};
 
 @interface TestCtrlP : XCTestCase
@@ -33,6 +34,31 @@ static int compareMsg64(const msg_64_t *exp, int n, int clear);
 } while (0)
 
 
+static int check_occupency3(int b1, int b2, int b3)
+{
+    for (int i=0; i<15; i++) {
+        int s = get_block_addr_occupency(i);
+        int expocc = ((i==b1)||(i==b2)||(i==b3)) ? 1 : 0;
+        switch (s) {
+            case BLK_OCC_STOP:
+            case BLK_OCC_LEFT:
+            case BLK_OCC_RIGHT:
+            case BLK_OCC_C2:
+                if (expocc) break;
+                return -1;
+                break;
+            default:
+                if (!expocc) break;
+                return -1;
+                break;
+        }
+    }
+    return 0;
+}
+static int check_occupency(int b1, int b2)
+{
+    return check_occupency3(b1, b2, -1);
+}
 
 @implementation TestCtrlP {
     train_ctrl_t tvars;
@@ -134,27 +160,6 @@ static int compareMsg64(const msg_64_t *exp, int n, int clear);
 
 
 
-static int check_occupency(int b1, int b2)
-{
-    for (int i=0; i<15; i++) {
-        int s = get_block_addr_occupency(i);
-        int expocc = ((i==b1)||(i==b2)) ? 1 : 0;
-        switch (s) {
-            case BLK_OCC_STOP:
-            case BLK_OCC_LEFT:
-            case BLK_OCC_RIGHT:
-            case BLK_OCC_C2:
-                if (expocc) break;
-                return -1;
-                break;
-            default:
-                if (!expocc) break;
-                return -1;
-                break;
-        }
-    }
-    return 0;
-}
 
 - (void) testTrainInit
 {
@@ -248,15 +253,20 @@ static int check_occupency(int b1, int b2)
     XCTAssert(rc==2);
     XCTAssert(tvars._dir == 0);
     XCTAssert(0==check_occupency(0, -1));
-    //s = dump_msgbuf(0);
+    NSString *s1 = dump_msgbuf(0);
     // {D0, C8, 11, 0, 1}
     EXPMSG({.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_C1_C2,        .vb0=0, .vb1=0, .vb2=0xFF, .vb3=0});
-        
+    
+    // delayed free for block1
+    for (int i=0; i<20; i++) {
+        check_block_delayed(i*100);
+    }
+
     // now go right
     ctrl2_upcmd_set_desired_speed(0, &tvars, 90);
     rc = ctrl2_tick_process(0, &tvars, tconf, 0);
     XCTAssert(rc==4);
-    //NSString *s = dump_msgbuf(0);
+    NSString *s = dump_msgbuf(0);
     // {D0, C8, 11, 256, 257},{D0, 81, 26, 1, 0},{D0, C8, 10, 70, 0}
     EXPMSG({.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_C1_C2,        .vb0=0, .vb1=1, .vb2=1, .vb3=1},
            {.to=MA_UI(UISUB_TFT), .from=0xD0, .cmd=CMD_TRSTATE_NOTIF,    .v1=1, .v2=0},
@@ -267,6 +277,58 @@ static int check_occupency(int b1, int b2)
     XCTAssert(tvars.can2_addr = 0x01);
     XCTAssert(tvars._state == train_running_c1);
     XCTAssert(0==check_occupency(0, 1));
+}
+
+- (void) testTrainLeft2BlkNotFreed
+{
+    [self testTrainStartLeft];
+    
+    // do stop
+    ctrl2_evt_stop_detected(0, &tvars, 23);
+    int rc = ctrl2_tick_process(0, &tvars, tconf, 0);
+    XCTAssert(rc==2);
+    XCTAssert(tvars._dir == 0);
+    XCTAssert(0==check_occupency(0, -1));
+    NSString *s1 = dump_msgbuf(0);
+    // {D0, C8, 11, 0, 1}
+    EXPMSG({.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_C1_C2,        .vb0=0, .vb1=0, .vb2=0xFF, .vb3=0});
+    
+    // do NOT delayed free for block1
+    // thus going right will be forbidden due to block occupied
+    //for (int i=0; i<20; i++) {
+    //    check_block_delayed(i*100);
+    //}
+
+    // now go right
+    ctrl2_upcmd_set_desired_speed(0, &tvars, 90);
+    rc = ctrl2_tick_process(0, &tvars, tconf, 0);
+    XCTAssert(rc==2);
+    //NSString *s = dump_msgbuf(0);
+    // {D0, C8, 11, 256, 257},{D0, 81, 26, 1, 0},{D0, C8, 10, 70, 0}
+    EXPMSG({.to=MA_UI(UISUB_TFT), .from=0xD0, .cmd=CMD_TRSTATE_NOTIF,    .v1=3, .v2=0});
+    XCTAssert(tvars._dir==1);
+    XCTAssert(tvars._target_speed == 0);
+    XCTAssert(tvars.can2_addr = 0xFF);
+    XCTAssert(tvars._state == train_blk_wait);
+    XCTAssert(0==check_occupency(0, -1));
+    
+    // free the block, the train should start
+    for (int i=0; i<20; i++) {
+        check_block_delayed(i*100);
+    }
+    rc = ctrl2_tick_process(0, &tvars, tconf, 1);
+    XCTAssert(rc==3);
+    NSString *s2 = dump_msgbuf(0);
+    // {D0, C8, 11, 256, 257},{D0, 81, 26, 1, 0},{D0, C8, 10, 90, 0}
+    EXPMSG({.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_C1_C2,        .vb0=0, .vb1=1, .vb2=1, .vb3=1}
+          ,{.to=MA_UI(UISUB_TFT), .from=0xD0, .cmd=CMD_TRSTATE_NOTIF,    .v1=1, .v2=0}
+          ,{.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_TARGET_SPEED, .v1=90, .v2=0});
+    XCTAssert(tvars._dir==1);
+    XCTAssert(tvars._target_speed == 90);
+    XCTAssert(tvars.can2_addr = 0x01);
+    XCTAssert(tvars._state == train_running_c1);
+    XCTAssert(0==check_occupency(0, 1));
+
 }
 
 
@@ -360,6 +422,64 @@ static int check_occupency(int b1, int b2)
     XCTAssert(tvars._state == train_running_c1);
     XCTAssert(tvars.can2_addr == 0x03);
     XCTAssert(tvars.spd_limit == 100);
+}
+
+- (void) testTrainStartC2RightBlk
+{
+    topolgy_set_turnout(0, 0);
+    topolgy_set_turnout(1, 1); // route from c0-c1-c3
+    tvars.c1_sblk = szero;
+    tvars.can1_addr = 0x00;
+    int rc = ctrl2_tick_process(0, &tvars, tconf, 0);
+    XCTAssert(rc==1);
+    dump_msgbuf(1);
+    check_occupency(0, -1);
+    
+    ctrl2_upcmd_set_desired_speed(0, &tvars, 92);
+    rc = ctrl2_tick_process(0, &tvars, tconf, 0);
+    XCTAssert(rc==3);
+    NSString *s = dump_msgbuf(0);
+    EXPMSG({.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_C1_C2,        .vb0=0, .vb1=1, .vb2=1, .vb3=1}
+          ,{.to=MA_UI(UISUB_TFT), .from=0xD0, .cmd=CMD_TRSTATE_NOTIF,    .v1=1, .v2=0}
+          ,{.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_TARGET_SPEED, .v1=92, .v2=0});
+    XCTAssert(tvars._state == train_running_c1);
+    XCTAssert(tvars.spd_limit == 100);
+    XCTAssert(!tvars.pose2_set);
+    XCTAssert(tvars._dir == 1);
+    XCTAssert(tvars._target_speed == 92);
+    XCTAssert(tvars.can1_addr == 0x00);
+    XCTAssert(tvars.can2_addr == 0x01);
+    XCTAssert(0==check_occupency(0,1));
+
+    // stop
+    ctrl2_upcmd_set_desired_speed(0, &tvars, 0);
+    rc = ctrl2_tick_process(0, &tvars, tconf, 0);
+    s = dump_msgbuf(0);
+    XCTAssert(tvars.can1_addr == 0x00);
+    XCTAssert(tvars.can2_addr == 0x01);
+    XCTAssert(0==check_occupency(0,1));
+    
+    ctrl2_evt_stop_detected(0, &tvars, 333);
+    rc = ctrl2_tick_process(0, &tvars, tconf, 0);
+    s = dump_msgbuf(0);
+    XCTAssert(tvars.can1_addr == 0x00);
+    XCTAssert(tvars.can2_addr == 0xFF);
+    XCTAssert(0==check_occupency(0, -1));
+
+    
+
+    // sudently set blk 1 occupied
+    topology_or_occupency_changed = 0;
+    set_block_addr_occupency(1, BLK_OCC_STOP, 1, snone);
+    XCTAssert(topology_or_occupency_changed);
+    
+    // try to restart
+    ctrl2_upcmd_set_desired_speed(0, &tvars, 90);
+    rc = ctrl2_tick_process(0, &tvars, tconf, 1);
+    XCTAssert(rc==3);
+    s = dump_msgbuf(0);
+    // {D0, C8, 10, 0, 0},{D0, C8, 11, 0, 255},{D0, 81, 26, 2, 0},{D0, C8, 11, 256, 257},{D0, 81, 26, 1, 0},{D0, C8, 10, 90, 0}
+    XCTAssert(tvars.can2_addr == 0xFF);
 }
 
 

@@ -90,6 +90,13 @@ uint8_t get_block_addr_occupency(uint8_t blkaddr)
 }
 
 
+uint8_t occupency_block_is_free(uint8_t blkaddr, uint8_t trnum)
+{
+    canton_occ_t *oc = &canton_occ[addr_to_num(blkaddr)];
+    if (BLK_OCC_FREE == oc->occ) return 1;
+    if (trnum == oc->trnum) return 1;
+    return 0;
+}
 
 
 void check_block_delayed(_UNUSED_ uint32_t tick)
@@ -111,3 +118,4 @@ void check_block_delayed(_UNUSED_ uint32_t tick)
         }
     }
 }
+

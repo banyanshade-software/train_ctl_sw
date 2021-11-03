@@ -276,7 +276,7 @@ static void purge_block_delayed(void)
     XCTAssert(rc==2);
     XCTAssert(tvars._dir == 0);
     XCTAssert(0==check_occupency(0, -1));
-    NSString *s1 = dump_msgbuf(0);
+    //NSString *s1 = dump_msgbuf(0);
     // {D0, C8, 11, 0, 1}
     EXPMSG({.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_C1_C2,        .vb0=0, .vb1=0, .vb2=0xFF, .vb3=0});
     
@@ -287,7 +287,7 @@ static void purge_block_delayed(void)
     ctrl2_upcmd_set_desired_speed(0, &tvars, 90);
     rc = ctrl2_tick_process(0, &tvars, tconf, 0);
     XCTAssert(rc==4);
-    NSString *s = dump_msgbuf(0);
+    //NSString *s = dump_msgbuf(0);
     // {D0, C8, 11, 256, 257},{D0, 81, 26, 1, 0},{D0, C8, 10, 70, 0}
     EXPMSG({.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_C1_C2,        .vb0=0, .vb1=1, .vb2=1, .vb3=1},
            {.to=MA_UI(UISUB_TFT), .from=0xD0, .cmd=CMD_TRSTATE_NOTIF,    .v1=1, .v2=0},
@@ -366,7 +366,7 @@ static void purge_block_delayed(void)
     
     rc = ctrl2_tick_process(0, &tvars, tconf, 0);
     XCTAssert(rc==4);
-    NSString *s = dump_msgbuf(0);
+    //NSString *s = dump_msgbuf(0);
     //{D0, C8, 11, 257, 511},{D0, 81, 26, 1, 0},{D0, C8, 51, 420, 0},{D0, C8, 10, 70, 0}
     EXPMSG({.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_C1_C2,        .vb0=1, .vb1=1, .vb2=0xFF, .vb3=1}
            ,{.to=MA_UI(UISUB_TFT), .from=0xD0, .cmd=CMD_TRSTATE_NOTIF,    .v1=1, .v2=0}
@@ -422,7 +422,7 @@ static void purge_block_delayed(void)
     topolgy_set_turnout(1, 1);
     int rc = ctrl2_tick_process(0, &tvars, tconf, 1);
     XCTAssert(rc==3);
-    NSString *s = dump_msgbuf(0);
+    //NSString *s = dump_msgbuf(0);
     //{D0, C8, 11, 257, 259},{D0, 81, 26, 1, 0},{D0, C8, 10, 92, 0}
     EXPMSG({.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_C1_C2,        .vb0=1, .vb1=1, .vb2=3, .vb3=1}
           ,{.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_TARGET_SPEED, .v1=92, .v2=0});

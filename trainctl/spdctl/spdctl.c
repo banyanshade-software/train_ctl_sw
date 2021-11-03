@@ -243,6 +243,16 @@ void spdctl_run_tick(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, uint
 }
     
 
+void send_train_stopped(int numtrain, train_vars_t *tvars)
+{
+    msg_64_t m = {0};
+    m.from = MA_TRAIN_SC(numtrain);
+    m.to = MA_CONTROL_T(numtrain);
+    m.cmd = CMD_STOP_DETECTED;
+    m.v32 = tvars->position_estimate; // XXX TODO scale ?
+    mqf_write_from_spdctl(&m);
+}
+
 
 static void train_periodic_control(int numtrain, uint32_t dt)
 {
@@ -297,6 +307,8 @@ static void train_periodic_control(int numtrain, uint32_t dt)
 			pidctl_reset(&tconf->pidcnf, &tvars->pidvars);
 			debug_info('T', numtrain, "STOP_PID", 0,0, 0);
 			tvars->pidvars.stopped = 1;
+            send_train_stopped(numtrain, tvars);
+            
         	v = 0;
         } else if (tvars->pidvars.stopped) {
     		itm_debug2(DBG_PID, "stopped", numtrain, v);
@@ -339,6 +351,19 @@ static void train_periodic_control(int numtrain, uint32_t dt)
     	v = s * v2;
     }
 
+    if (!tconf->enable_pid) {
+        // stop detection without PID - but we still use pidvars.stopped, this is a little bit ugly
+        if (!tvars->pidvars.stopped) {
+            if (!tvars->target_speed && !v) {
+                tvars->pidvars.stopped = 1;
+                send_train_stopped(numtrain, tvars);
+            }
+        } else if (tvars->target_speed) {
+            tvars->pidvars.stopped = 0;
+        }
+    }
+    
+    
     int changed = (tvars->last_speed != v);
     tvars->last_speed = v;
 

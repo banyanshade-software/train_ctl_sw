@@ -26,9 +26,11 @@ static  canton_occ_t canton_occ[0x40] = {0};
 
 
 //uint8_t occupency_changed = 0; replaced by topology_or_occupency_changed
+static uint32_t lastcheck = 0;
 
 void occupency_clear(void)
 {
+    lastcheck = 0;
     memset(canton_occ, 0, sizeof(canton_occ));
 }
 
@@ -103,7 +105,6 @@ void check_block_delayed(_UNUSED_ uint32_t tick)
 {
     if (!USE_BLOCK_DELAY_FREE) return;
 
-    static uint32_t lastcheck = 0;
     if (tick<lastcheck+100) return;
     lastcheck = tick;
 

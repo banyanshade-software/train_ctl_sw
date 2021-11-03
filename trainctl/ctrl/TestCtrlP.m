@@ -59,6 +59,29 @@ static int check_occupency(int b1, int b2)
 {
     return check_occupency3(b1, b2, -1);
 }
+static int check_occupency3d(int b1, int b2, int b3)
+{
+    for (int i=0; i<15; i++) {
+        int s = get_block_addr_occupency(i);
+        int expocc = ((i==b1)||(i==b2)||(i==b3)) ? 1 : 0;
+        if (!expocc) {
+            if (BLK_OCC_FREE != s) return -1;
+        } else {
+            if (BLK_OCC_FREE == s) return -1;
+        }
+    }
+    return 0;
+}
+
+static void purge_block_delayed(void)
+{
+    static int dc = 0;
+    for (int i=0; i<20; i++) {
+        check_block_delayed(dc);
+        dc += 100;
+    }
+}
+
 
 @implementation TestCtrlP {
     train_ctrl_t tvars;
@@ -258,9 +281,7 @@ static int check_occupency(int b1, int b2)
     EXPMSG({.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_C1_C2,        .vb0=0, .vb1=0, .vb2=0xFF, .vb3=0});
     
     // delayed free for block1
-    for (int i=0; i<20; i++) {
-        check_block_delayed(i*100);
-    }
+    purge_block_delayed();
 
     // now go right
     ctrl2_upcmd_set_desired_speed(0, &tvars, 90);
@@ -289,15 +310,14 @@ static int check_occupency(int b1, int b2)
     XCTAssert(rc==2);
     XCTAssert(tvars._dir == 0);
     XCTAssert(0==check_occupency(0, -1));
-    NSString *s1 = dump_msgbuf(0);
+    //NSString *s1 = dump_msgbuf(0);
     // {D0, C8, 11, 0, 1}
     EXPMSG({.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_C1_C2,        .vb0=0, .vb1=0, .vb2=0xFF, .vb3=0});
     
     // do NOT delayed free for block1
     // thus going right will be forbidden due to block occupied
-    //for (int i=0; i<20; i++) {
-    //    check_block_delayed(i*100);
-    //}
+    //    purge_block_delayed();
+
 
     // now go right
     ctrl2_upcmd_set_desired_speed(0, &tvars, 90);
@@ -313,12 +333,13 @@ static int check_occupency(int b1, int b2)
     XCTAssert(0==check_occupency(0, -1));
     
     // free the block, the train should start
-    for (int i=0; i<20; i++) {
-        check_block_delayed(i*100);
-    }
+    purge_block_delayed();
+
+    XCTAssert(0==check_occupency3d(0, -1, -1));
+    
     rc = ctrl2_tick_process(0, &tvars, tconf, 1);
     XCTAssert(rc==3);
-    NSString *s2 = dump_msgbuf(0);
+    //NSString *s2 = dump_msgbuf(0);
     // {D0, C8, 11, 256, 257},{D0, 81, 26, 1, 0},{D0, C8, 10, 90, 0}
     EXPMSG({.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_C1_C2,        .vb0=0, .vb1=1, .vb2=1, .vb3=1}
           ,{.to=MA_UI(UISUB_TFT), .from=0xD0, .cmd=CMD_TRSTATE_NOTIF,    .v1=1, .v2=0}

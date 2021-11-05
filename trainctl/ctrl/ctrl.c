@@ -353,6 +353,9 @@ void ctrl_run_tick(_UNUSED_ uint32_t notif_flags, uint32_t tick, _UNUSED_ uint32
     uint8_t occ = topology_or_occupency_changed;
     topology_or_occupency_changed = 0;
     
+    if (occ) {
+        itm_debug1(DBG_CTRL, "ct/occ", 0);
+    }
     for (int tidx = 0; tidx<NUM_TRAINS; tidx++) {
         train_ctrl_t *tvars = &trctl[tidx];
         const train_config_t *tconf = get_train_cnf(tidx);

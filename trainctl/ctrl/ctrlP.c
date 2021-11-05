@@ -479,12 +479,21 @@ void ctrl2_set_dir(int tidx, train_ctrl_t *tvar, int8_t dir)
 void ctrl2_stop_detected(int tidx, train_ctrl_t *tvars)
 {
     switch (tvars->_state) {
+        //case train_end_of_track:
         case train_running_c1:
             ctrl2_set_state(tidx, tvars, train_station);
+            break;
+        case train_end_of_track:
+        case train_blk_wait:
+            if ((tvars->_dir) && (SIGNOF(tvars->_dir) != SIGNOF(tvars->desired_speed))) {
+                ctrl2_set_dir(tidx, tvars, SIGNOF(tvars->desired_speed));
+                ctrl2_set_state(tidx, tvars, train_station);
+            }
             break;
         default:
             break;
     }
+    
     ctrl2_set_dir(tidx, tvars, 0);
 }
 
@@ -605,10 +614,12 @@ void ctrl2_update_topo(int tidx, train_ctrl_t *tvar, const train_config_t *tconf
         default:
             break;
     }
-    if (!tvar->_dir) return;
+    
+    int d = (tvar->_dir) ? tvar->_dir : SIGNOF0(tvar->desired_speed);
+    if (!d) return;
     
     uint8_t alternate = 0;
-    lsblk_num_t ns = next_lsblk_free(tidx, tvar->c1_sblk, (tvar->_dir < 0), &alternate);
+    lsblk_num_t ns = next_lsblk_free(tidx, tvar->c1_sblk, (d < 0), &alternate);
     
     if (ns.n < 0) {
         switch (tvar->_state) {
@@ -617,6 +628,7 @@ void ctrl2_update_topo(int tidx, train_ctrl_t *tvar, const train_config_t *tconf
                 if (tvar->pose2_set) {
                     ctrl2_set_state(tidx, tvar, alternate ? train_blk_wait : train_end_of_track);
                 } else {
+                    if (!tvar->_dir) fatal();
                     tvar->pose2_set = 1;
                     tvar->pose2_is_blk_wait = alternate ? 1 : 0;
                     set_speed_limit(tvar, SPD_LIMIT_EOT);
@@ -633,18 +645,22 @@ void ctrl2_update_topo(int tidx, train_ctrl_t *tvar, const train_config_t *tconf
         return;
     }
     tvar->pose2_set = 0;
-    set_speed_limit(tvar, SPD_LIMIT_NOLIMIT);
     
     switch (tvar->_state) {
         case train_blk_wait:
             tvar->tick_flags |= _TFLAG_LIMIT_CHANGED ; // _TFLAG_DIR_CHANGED will trigger update_c2
             ctrl2_set_state(tidx, tvar, train_running_c1);
+            ctrl2_set_dir(tidx, tvar, d);
+            set_speed_limit(tvar, SPD_LIMIT_NOLIMIT);
+            break;
+        case train_running_c1:
+            set_speed_limit(tvar, SPD_LIMIT_NOLIMIT);
             break;
         default:
             break;
     }
     if ((ns.n >= 0) && (tvar->can2_addr != canton_for_lsblk(ns))) {
-        tvar->tick_flags |= _TFLAG_DIR_CHANGED ; // _TFLAG_DIR_CHANGED will trigger update_c2
+        tvar->tick_flags |= _TFLAG_NEED_C2 ; // _TFLAG_C1LSB_CHANGED will trigger update_c2
     }
 }
     
@@ -735,6 +751,16 @@ void ctrl2_evt_entered_c2(int tidx, train_ctrl_t *tvar, uint8_t from_bemf)
         itm_debug3(DBG_CTRL|DBG_ERR, "ent C2/c1c2", tidx, tvar->_state, from_bemf);
     }
     tvar->c1c2 = 1;
+    
+    if (from_bemf && ignore_ina_presence) {
+        ctrl_set_timer(tidx, tvar, TLEAVE_C1, TLEAVE_C1_VALUE);
+    } else {
+        ctrl_set_timer(tidx, tvar, TLEAVE_C1, TGUARD_C1_VALUE);
+    }
+    // update occupency status
+    set_block_addr_occupency(tvar->can2_addr, occupied(tvar->_dir), tidx,
+                             first_lsblk_with_canton(tvar->can2_addr, tvar->c1_sblk));
+           
 }
 
 
@@ -825,6 +851,9 @@ int ctrl2_tick_process(int tidx, train_ctrl_t *tvars, const train_config_t *tcon
     int32_t pose1 = 0;
     while (tvars->tick_flags) {
         nloop++;
+        if (nloop>16) {
+            itm_debug1(DBG_ERR|DBG_CTRL, "infinite", 0);
+        }
         uint16_t flags = tvars->tick_flags;
         pflags |= (flags & perm_flags);
         tvars->tick_flags = 0;
@@ -843,7 +872,7 @@ int ctrl2_tick_process(int tidx, train_ctrl_t *tvars, const train_config_t *tcon
             ctrl2_had_trig2(tidx, tvars);
         }
         
-        if (flags & (_TFLAG_C1LSB_CHANGED|_TFLAG_DIR_CHANGED)) {
+        if (flags & (_TFLAG_C1LSB_CHANGED|_TFLAG_DIR_CHANGED|_TFLAG_NEED_C2)) {
             ctrl2_update_c2(tidx, tvars, tconf, &pose0);
         }
         if (flags & (_TFLAG_C1LSB_CHANGED|_TFLAG_OCC_CHANGED|_TFLAG_DIR_CHANGED)) {

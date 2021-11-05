@@ -36,7 +36,7 @@ void occupency_clear(void)
 
 static inline uint8_t addr_to_num(uint8_t addr)
 {
-    // MA_CANTON(<#_board#>, <#_c#>)
+    // MA_CANTON(board, c)
     // // M2:  0 0 : (6bits) bbb xxx        CANTON (00) and TURNOUT (01)
     return addr & 0x3F;
 }
@@ -44,7 +44,7 @@ static inline uint8_t addr_to_num(uint8_t addr)
 static uint8_t notif_blk_reset = 1;
 uint8_t notify_occupency_change = 1;
 
-static void notif_blk_occup_chg(int blknum, uint8_t val, uint8_t trnum)
+static void notif_blk_occup_chg(int blknum, canton_occ_t *co)
 {
     if (!notify_occupency_change) return;
     msg_64_t m = {0};
@@ -52,9 +52,9 @@ static void notif_blk_occup_chg(int blknum, uint8_t val, uint8_t trnum)
     m.to = MA_UI(UISUB_TRACK);
     m.cmd = CMD_BLK_CHG_NOTIF;
     m.vbytes[0] = blknum;
-    m.vbytes[1] = val;
-    m.vbytes[2] = trnum;
-    m.vbytes[3] = 0;
+    m.vbytes[1] = co->occ;
+    m.vbytes[2] = co->trnum;
+    m.vbytes[3] = co->lsblk.n;
     notif_blk_reset = 0;
     mqf_write_from_ctrl(&m);
 }
@@ -71,6 +71,11 @@ void set_block_addr_occupency(uint8_t blkaddr, uint8_t v, uint8_t trnum, lsblk_n
         } else {
             co->occ = v;
             topology_or_occupency_changed = 1;
+            if (BLK_OCC_FREE == co->occ) {
+                // non delayed free, untested
+                trnum = -1;
+                lsb.n = -1;
+            }
         }
     }
     co->trnum = trnum;
@@ -79,7 +84,7 @@ void set_block_addr_occupency(uint8_t blkaddr, uint8_t v, uint8_t trnum, lsblk_n
         topology_or_occupency_changed = 1;
     }
     if (topology_or_occupency_changed) {
-        notif_blk_occup_chg(blkaddr, co->occ, trnum);
+        notif_blk_occup_chg(blkaddr, co);
     }
 }
 
@@ -112,8 +117,10 @@ void check_block_delayed(_UNUSED_ uint32_t tick)
         if (canton_occ[i].occ == BLK_OCC_DELAY1) {
             itm_debug1(DBG_CTRL, "FREE(d)", i);
             canton_occ[i].occ = BLK_OCC_FREE;
+            canton_occ[i].trnum = 0xFF;
+            canton_occ[i].lsblk.n = -1;
             topology_or_occupency_changed = 1;
-            notif_blk_occup_chg(i, canton_occ[i].occ, 0xFF);
+            notif_blk_occup_chg(i, &canton_occ[i]);
         } else if (canton_occ[i].occ > BLK_OCC_DELAY1) {
             canton_occ[i].occ --;
         }

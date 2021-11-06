@@ -6,6 +6,7 @@
 //  Copyright © 2021 Daniel BRAUN. All rights reserved.
 //
 
+#include <libgen.h>
 #import "AppDelegate.h"
 
 #include "topologyP.h"
@@ -74,8 +75,6 @@
 
 - (void)generateSblksInG:(NSMutableString *)resG T:(NSMutableString *)resT
 {
-    //if ((0)) return @" <polyline  id=\"BLK2\" points=\"130,15 130,122 177,165 342,165 \" stroke=\"#000000\" stroke-width=\"3px\" class=\"blk\" fill=\"none\" transform=\"\"></polyline>";
-    NSMutableString *res = [[NSMutableString alloc]init];
     int n = topology_num_sblkd();
     for (int i=0; i<n; i++) {
         const topo_lsblk_t *s = topology_get_sblkd(i);
@@ -118,13 +117,14 @@ typedef struct {
     int n;
     int l;
     int r;
+    int straight_ep;
 } turn_rec_t;
 
 typedef struct {
     turn_rec_t rec[3];
 } trec_t;
 
-static void find_rec(trec_t *rec, coord_t pt, int left)
+static void store_rec_tn(trec_t *rec, coord_t pt, int left, int straight_endpoint)
 {
     for (int i=0; i<3; i++) {
         if (rec->rec[i].n) {
@@ -132,6 +132,7 @@ static void find_rec(trec_t *rec, coord_t pt, int left)
                 rec->rec[i].n++;
                 if (left) rec->rec[i].l = 1;
                 else rec->rec[i].r = 1;
+                rec->rec[i].straight_ep = straight_endpoint;
                 return;
             }
         } else {
@@ -139,6 +140,7 @@ static void find_rec(trec_t *rec, coord_t pt, int left)
             rec->rec[i].p = pt;
             if (left) rec->rec[i].l = 1;
             else rec->rec[i].r = 1;
+            rec->rec[i].straight_ep = straight_endpoint;
             return;
         }
     }
@@ -164,7 +166,7 @@ static int rec_is_left(trec_t *rec)
     return -1;
 }
 
-static coord_t rec_get_dir(trec_t *rec, int n, int left)
+static coord_t rec_get_dir(trec_t *rec, int n, int left, int *pstraight)
 {
     for (int i=0; i<3; i++) {
         if (left && !rec->rec[i].l) continue;
@@ -173,6 +175,7 @@ static coord_t rec_get_dir(trec_t *rec, int n, int left)
             n--;
             continue;
         }
+        if (pstraight) *pstraight = rec->rec[i].straight_ep;
         return rec->rec[i].p;
     }
     abort();
@@ -180,12 +183,25 @@ static coord_t rec_get_dir(trec_t *rec, int n, int left)
 }
 static coord_t rec_get_left(trec_t *rec, int n)
 {
-    return rec_get_dir(rec, n, 1);
+    return rec_get_dir(rec, n, 1, NULL);
 }
 
 static coord_t rec_get_right(trec_t *rec, int n)
 {
-    return rec_get_dir(rec, n, 0);
+    return rec_get_dir(rec, n, 0, NULL);
+}
+
+static int rec_right_is_straight_ep(trec_t *rec, int n)
+{
+    int sep;
+    rec_get_dir(rec, n, 0, &sep);
+    return sep;
+}
+static int rec_left_is_straight_ep(trec_t *rec, int n)
+{
+    int sep;
+    rec_get_dir(rec, n, 1, &sep);
+    return sep;
 }
 
 - (void)generateTurnoutsInG:(NSMutableString *)resG T:(NSMutableString *)resT
@@ -199,7 +215,7 @@ static coord_t rec_get_right(trec_t *rec, int n)
         for (int b=0; b<ns; b++) {
             const topo_lsblk_t *s = topology_get_sblkd(b);
             if (s->ltn == tn) {
-                find_rec(&rec, s->points[0], 1);
+                store_rec_tn(&rec, s->points[0], 1, (s->left2==-1));
                 minx = MIN(minx, s->points[0].c);
                 maxx = MAX(maxx, s->points[0].c);
                 miny = MIN(miny, s->points[0].l);
@@ -207,7 +223,7 @@ static coord_t rec_get_right(trec_t *rec, int n)
             }
             if (s->rtn == tn) {
                 int li = last_pt_idx(s);
-                find_rec(&rec, s->points[li], 0);
+                store_rec_tn(&rec, s->points[li], 0, (s->right2==-1));
                 minx = MIN(minx, s->points[li].c);
                 maxx = MAX(maxx, s->points[li].c);
                 miny = MIN(miny, s->points[li].l);
@@ -216,28 +232,50 @@ static coord_t rec_get_right(trec_t *rec, int n)
         }
         if (minx==999) continue;
         int isl = rec_is_left(&rec);
-        // hop
+        // turnout
         [resT appendFormat:@"<circle cx=\"%d\" cy=\"%d\" r=\"%d\" stroke=\"#306030\" stroke-width=\"1px\" fill=\"none\"/>\n",
          SCL_X*(maxx+minx)/2, SCL_Y* (maxy+miny)/2, (SCL_X+SCL_Y)/3];
         [resT appendFormat:@"<text x=\"%dpx\" y=\"%dpx\" class=\"turnout\" Font-family=\"Helvetica\" fill=\"#80A080\" font-size=\"12px\">S%d</text>\n",
          SCL_X*(maxx+minx)/2-8, SCL_Y*(maxy+miny)/2+SCL_Y/2+16,
          tn];
         if (isl) {
-            [resG appendFormat:@"<polyline polyline id=\"tn%d_1\" class=\"turnout\" stroke=\"#000000\" stroke-width=\"1px\" fill=\"none\" points=\"%d,%d %d,%d\"></polyline>", tn,
+            [resG appendFormat:@"<polyline polyline id=\"to%d%c\" class=\"turnout\" stroke=\"#000000\" stroke-width=\"1px\" fill=\"none\" points=\"%d,%d %d,%d\"></polyline>\n", tn,
+                        rec_left_is_straight_ep(&rec, 0) ? 's' : 't',
                         rec_get_right(&rec,0).c*SCL_X, rec_get_right(&rec,0).l*SCL_Y,
                         rec_get_left(&rec,0).c*SCL_X, rec_get_left(&rec,0).l*SCL_Y];
-            [resG appendFormat:@"<polyline polyline id=\"tn%d_2\" class=\"turnout\" stroke=\"#000000\" stroke-width=\"1px\" fill=\"none\" points=\"%d,%d %d,%d\"></polyline>", tn,
+            [resG appendFormat:@"<polyline polyline id=\"to%d%c\" class=\"turnout\" stroke=\"#000000\" stroke-width=\"1px\" fill=\"none\" points=\"%d,%d %d,%d\"></polyline>\n", tn,
+                       rec_left_is_straight_ep(&rec, 1) ? 's' : 't',
                        rec_get_right(&rec,0).c*SCL_X, rec_get_right(&rec,0).l*SCL_Y,
                        rec_get_left(&rec,1).c*SCL_X, rec_get_left(&rec,1).l*SCL_Y];
         } else {
-            [resG appendFormat:@"<polyline polyline id=\"tn%d_1\" class=\"turnout\" stroke=\"#000000\" stroke-width=\"1px\" fill=\"none\" points=\"%d,%d %d,%d\"></polyline>", tn,
+            [resG appendFormat:@"<polyline polyline id=\"to%d%c\" class=\"turnout\" stroke=\"#000000\" stroke-width=\"1px\" fill=\"none\" points=\"%d,%d %d,%d\"></polyline>\n", tn,
+             rec_right_is_straight_ep(&rec, 0) ? 's' : 't',
              rec_get_left(&rec,0).c*SCL_X, rec_get_left(&rec,0).l*SCL_Y,
              rec_get_right(&rec,0).c*SCL_X, rec_get_right(&rec,0).l*SCL_Y];
-            [resG appendFormat:@"<polyline polyline id=\"tn%d_2\" class=\"turnout\" stroke=\"#000000\" stroke-width=\"1px\" fill=\"none\" points=\"%d,%d %d,%d\"></polyline>", tn,
+            [resG appendFormat:@"<polyline polyline id=\"to%d%c\" class=\"turnout\" stroke=\"#000000\" stroke-width=\"1px\" fill=\"none\" points=\"%d,%d %d,%d\"></polyline>\n", tn,
+             rec_right_is_straight_ep(&rec, 1) ? 's' : 't',
             rec_get_left(&rec,0).c*SCL_X, rec_get_left(&rec,0).l*SCL_Y,
             rec_get_right(&rec,1).c*SCL_X, rec_get_right(&rec,1).l*SCL_Y];
         }
         NSLog(@"hop");
+    }
+}
+
+- (NSURL *)savePath
+{
+    char *s = dirname(__FILE__);
+    NSString *p = [NSString stringWithFormat:@"%s/../../../trainctl/uitrack/uitrack.html", s];
+    NSURL *u = [NSURL fileURLWithPath:p];
+    return u;
+}
+
+- (IBAction) saveToFile:(id)sender
+{
+    NSURL *savepath = [self savePath];
+    NSError *err = nil;
+    BOOL ok = [svgHtml writeToURL:savepath atomically:YES encoding:NSUTF8StringEncoding error:&err];
+    if (!ok) {
+        NSLog(@"write error : %@", err);
     }
 }
 @end

@@ -699,7 +699,7 @@
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
                                 <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Knw-8i-Elr">
-                                    <rect key="frame" x="22" y="475" width="136" height="32"/>
+                                    <rect key="frame" x="14" y="475" width="144" height="32"/>
                                     <buttonCell key="cell" type="push" title="Gen" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="K7w-xB-eb7">
                                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                         <font key="font" metaFont="system"/>
@@ -708,11 +708,24 @@
                                         <action selector="generateAndDisplaySvg:" target="Voe-Tx-rLC" id="Guk-l0-hdz"/>
                                     </connections>
                                 </button>
+                                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="PSv-JV-OLy">
+                                    <rect key="frame" x="14" y="434" width="144" height="32"/>
+                                    <buttonCell key="cell" type="push" title="Save" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="vgh-f3-6wU">
+                                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                        <font key="font" metaFont="system"/>
+                                    </buttonCell>
+                                    <connections>
+                                        <action selector="saveToFile:" target="Voe-Tx-rLC" id="qxa-HD-xG5"/>
+                                    </connections>
+                                </button>
                             </subviews>
                             <constraints>
                                 <constraint firstItem="Knw-8i-Elr" firstAttribute="top" secondItem="oOf-8G-gzF" secondAttribute="top" constant="20" id="AZC-1Y-sFQ"/>
+                                <constraint firstItem="PSv-JV-OLy" firstAttribute="top" secondItem="Knw-8i-Elr" secondAttribute="bottom" constant="20" id="HNJ-J8-Ttg"/>
                                 <constraint firstAttribute="trailing" secondItem="Knw-8i-Elr" secondAttribute="trailing" constant="20" id="MO8-fx-Cdf"/>
-                                <constraint firstItem="Knw-8i-Elr" firstAttribute="leading" secondItem="oOf-8G-gzF" secondAttribute="leading" constant="28" id="dyh-mR-gwa"/>
+                                <constraint firstItem="PSv-JV-OLy" firstAttribute="leading" secondItem="oOf-8G-gzF" secondAttribute="leading" constant="20" id="Wc6-HZ-slH"/>
+                                <constraint firstItem="Knw-8i-Elr" firstAttribute="leading" secondItem="oOf-8G-gzF" secondAttribute="leading" constant="20" id="dyh-mR-gwa"/>
+                                <constraint firstAttribute="trailing" secondItem="PSv-JV-OLy" secondAttribute="trailing" constant="20" id="jhA-gg-DVE"/>
                             </constraints>
                         </view>
                         <constraints>

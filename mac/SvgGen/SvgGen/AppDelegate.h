@@ -13,5 +13,8 @@
 
 @property (nonatomic, weak) IBOutlet WKWebView *ctoWebView;
 
+- (IBAction) generateAndDisplaySvg:(id)sender;
+- (IBAction) saveToFile:(id)sender;
+
 @end
 

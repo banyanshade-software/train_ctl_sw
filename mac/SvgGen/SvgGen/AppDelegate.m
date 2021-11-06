@@ -45,44 +45,51 @@
 - (NSString *) generateSvg
 {
     NSMutableString *res = [[NSMutableString alloc]init];
+    NSMutableString *resG = [[NSMutableString alloc]init];
+    NSMutableString *resT = [[NSMutableString alloc]init];
     [res appendString:[self generateHeader]];
-    [res appendString:[self generateSblks]];
-    [res appendString:[self generateTurnouts]];
+    [self generateSblksInG:resG T:resT];
+    [self generateTurnoutsInG:resG T:resT];
+    [res appendString:@"<g id=\"main_group\">"];
+    [res appendString:resG];
+    [res appendString:@"</g>\n"];
+    [res appendString:resT];
     [res appendString:[self generateFooter]];
     return res;
 }
 
 - (NSString *) generateHeader
 {
-    return @"<html><body style=\"background-color:lightgrey;\">hello<br/><svg height=\"300px\" id=\"svg_document\" width=\"640px\" version=\"1.1\" preserveAspectRatio=\"xMidYMid meet\" viewBox=\"0 0 640 300\"><g id=\"main_group\">\n";
+    return @"<html><body style=\"background-color:lightgrey;\">hello<br/><svg height=\"300px\" id=\"svg_document\" width=\"700px\" version=\"1.1\" preserveAspectRatio=\"xMidYMid meet\" viewBox=\"0 0 700 300\">\n";
 
 }
 - (NSString *) generateFooter
 {
     return @"</g></svg></body></html>";
 }
-- (NSString *)generateTurnouts
-{
-    return @"";
-}
 
-- (NSString *)generateSblks
+
+#define SCL_X 40
+#define SCL_Y 40
+
+- (void)generateSblksInG:(NSMutableString *)resG T:(NSMutableString *)resT
 {
-    if ((0)) return @" <polyline  id=\"BLK2\" points=\"130,15 130,122 177,165 342,165 \" stroke=\"#000000\" stroke-width=\"3px\" class=\"blk\" fill=\"none\" transform=\"\"></polyline>";
+    //if ((0)) return @" <polyline  id=\"BLK2\" points=\"130,15 130,122 177,165 342,165 \" stroke=\"#000000\" stroke-width=\"3px\" class=\"blk\" fill=\"none\" transform=\"\"></polyline>";
     NSMutableString *res = [[NSMutableString alloc]init];
     int n = topology_num_sblkd();
     for (int i=0; i<n; i++) {
         const topo_lsblk_t *s = topology_get_sblkd(i);
         if (!s) break;
-        [res appendString:[self generateSblk:s num:i]];
+        [resG appendString:[self generateSblkPoly:s num:i]];
+        int tx = ((s->points[0].c + s->points[1].c) * SCL_X / 2)-20;
+        int ty = ((s->points[0].l + s->points[1].l) * SCL_Y / 2)-12;
+        [resT appendFormat:@"<text x=\"%dpx\" y=\"%dpx\" class=\"label\" Font-family=\"Helvetica\" fill=\"#8080A0\" font-size=\"12px\">b%d (c%d)</text>\n",
+         tx, ty, i, s->canton_addr];
     }
-    return res;
 }
 
-#define SCL_X 30
-#define SCL_Y 30
 
-- (NSString *) generateSblk:(const topo_lsblk_t *)seg num:(int)segnum
+- (NSString *) generateSblkPoly:(const topo_lsblk_t *)seg num:(int)segnum
 {
     NSMutableString *res = [[NSMutableString alloc]init];
     [res appendFormat:@"<polyline id=\"SBLK%2.2d\" class=\"CANTON%d\" stroke=\"#000000\" stroke-width=\"3px\" fill=\"none\" points=\"",
@@ -97,5 +104,38 @@
     [res appendString:@"\"></polyline>"];
     return res;
 }
-
+static int last_pt_idx(const topo_lsblk_t *s)
+{
+    for (int i=MAX_POINTS-1; i>=0; i--) {
+        if (s->points[i].l >= 0) return i;
+    }
+    return 0;
+}
+- (void)generateTurnoutsInG:(NSMutableString *)resG T:(NSMutableString *)resT
+{
+    int ns = topology_num_sblkd();
+    for (int tn=0; tn<16; tn++) {
+        // get turnout coord
+        int minx=999; int maxx=-1; int miny=999; int maxy=-1;
+        for (int b=0; b<ns; b++) {
+            const topo_lsblk_t *s = topology_get_sblkd(b);
+            if (s->ltn == tn) {
+                minx = MIN(minx, s->points[0].c);
+                maxx = MAX(maxx, s->points[0].c);
+                miny = MIN(miny, s->points[0].l);
+                maxy = MAX(maxy, s->points[0].l);
+            }
+            if (s->rtn == tn) {
+                int li = last_pt_idx(s);
+                minx = MIN(minx, s->points[li].c);
+                maxx = MAX(maxx, s->points[li].c);
+                miny = MIN(miny, s->points[li].l);
+                maxy = MAX(maxy, s->points[li].l);
+            }
+        }
+        if (minx==999) continue;
+        // hop
+        NSLog(@"hop");
+    }
+}
 @end

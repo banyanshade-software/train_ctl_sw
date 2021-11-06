@@ -34,6 +34,7 @@ typedef struct {
     uint8_t rtn; // leeee turnout
     
 #ifdef TOPOLOGY_SVG
+    int p0; // index in points for drawing text/info
     coord_t points[MAX_POINTS];
 #endif
 } topo_lsblk_t;

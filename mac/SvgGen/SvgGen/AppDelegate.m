@@ -81,8 +81,8 @@
         const topo_lsblk_t *s = topology_get_sblkd(i);
         if (!s) break;
         [resG appendString:[self generateSblkPoly:s num:i]];
-        int tx = ((s->points[0].c + s->points[1].c) * SCL_X / 2)-20;
-        int ty = ((s->points[0].l + s->points[1].l) * SCL_Y / 2)-12;
+        int tx = ((s->points[s->p0].c + s->points[s->p0+1].c) * SCL_X / 2)-20;
+        int ty = ((s->points[s->p0].l + s->points[s->p0+1].l) * SCL_Y / 2)-12;
         [resT appendFormat:@"<text x=\"%dpx\" y=\"%dpx\" class=\"label\" Font-family=\"Helvetica\" fill=\"#8080A0\" font-size=\"12px\">b%d (c%d)</text>\n",
          tx, ty, i, s->canton_addr];
     }

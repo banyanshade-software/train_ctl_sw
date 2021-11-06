@@ -111,15 +111,95 @@ static int last_pt_idx(const topo_lsblk_t *s)
     }
     return 0;
 }
+
+
+typedef struct {
+    coord_t p;
+    int n;
+    int l;
+    int r;
+} turn_rec_t;
+
+typedef struct {
+    turn_rec_t rec[3];
+} trec_t;
+
+static void find_rec(trec_t *rec, coord_t pt, int left)
+{
+    for (int i=0; i<3; i++) {
+        if (rec->rec[i].n) {
+            if ((rec->rec[i].p.l == pt.l) && (rec->rec[i].p.c == pt.c)) {
+                rec->rec[i].n++;
+                if (left) rec->rec[i].l = 1;
+                else rec->rec[i].r = 1;
+                return;
+            }
+        } else {
+            rec->rec[i].n = 1;
+            rec->rec[i].p = pt;
+            if (left) rec->rec[i].l = 1;
+            else rec->rec[i].r = 1;
+            return;
+        }
+    }
+    abort();
+}
+
+static int rec_is_left(trec_t *rec)
+{
+    int nt=0;
+    int nl=0;
+    int nr=0;
+    for (int i=0; i<3; i++) {
+        int n = rec->rec[i].n;
+        if (n!=1) abort();
+        nt += n;
+        nl += rec->rec[i].l;
+        nr += rec->rec[i].r;
+    }
+    if (nt != 3) abort();
+    if ((nl==2) && (nr==1)) return 1;
+    if ((nr==2) && (nl==1)) return 0;
+    abort();
+    return -1;
+}
+
+static coord_t rec_get_dir(trec_t *rec, int n, int left)
+{
+    for (int i=0; i<3; i++) {
+        if (left && !rec->rec[i].l) continue;
+        if (!left && !rec->rec[i].r) continue;
+        if (n) {
+            n--;
+            continue;
+        }
+        return rec->rec[i].p;
+    }
+    abort();
+    return rec->rec[0].p;
+}
+static coord_t rec_get_left(trec_t *rec, int n)
+{
+    return rec_get_dir(rec, n, 1);
+}
+
+static coord_t rec_get_right(trec_t *rec, int n)
+{
+    return rec_get_dir(rec, n, 0);
+}
+
 - (void)generateTurnoutsInG:(NSMutableString *)resG T:(NSMutableString *)resT
 {
     int ns = topology_num_sblkd();
     for (int tn=0; tn<16; tn++) {
         // get turnout coord
+        trec_t rec;
+        memset(&rec, 0, sizeof(rec));
         int minx=999; int maxx=-1; int miny=999; int maxy=-1;
         for (int b=0; b<ns; b++) {
             const topo_lsblk_t *s = topology_get_sblkd(b);
             if (s->ltn == tn) {
+                find_rec(&rec, s->points[0], 1);
                 minx = MIN(minx, s->points[0].c);
                 maxx = MAX(maxx, s->points[0].c);
                 miny = MIN(miny, s->points[0].l);
@@ -127,6 +207,7 @@ static int last_pt_idx(const topo_lsblk_t *s)
             }
             if (s->rtn == tn) {
                 int li = last_pt_idx(s);
+                find_rec(&rec, s->points[li], 0);
                 minx = MIN(minx, s->points[li].c);
                 maxx = MAX(maxx, s->points[li].c);
                 miny = MIN(miny, s->points[li].l);
@@ -134,12 +215,28 @@ static int last_pt_idx(const topo_lsblk_t *s)
             }
         }
         if (minx==999) continue;
+        int isl = rec_is_left(&rec);
         // hop
-        [resT appendFormat:@" <circle cx=\"%d\" cy=\"%d\" r=\"%d\" stroke=\"#306030\" stroke-width=\"1px\" fill=\"none\"/>\n",
+        [resT appendFormat:@"<circle cx=\"%d\" cy=\"%d\" r=\"%d\" stroke=\"#306030\" stroke-width=\"1px\" fill=\"none\"/>\n",
          SCL_X*(maxx+minx)/2, SCL_Y* (maxy+miny)/2, (SCL_X+SCL_Y)/3];
         [resT appendFormat:@"<text x=\"%dpx\" y=\"%dpx\" class=\"turnout\" Font-family=\"Helvetica\" fill=\"#80A080\" font-size=\"12px\">S%d</text>\n",
          SCL_X*(maxx+minx)/2-8, SCL_Y*(maxy+miny)/2+SCL_Y/2+16,
          tn];
+        if (isl) {
+            [resG appendFormat:@"<polyline polyline id=\"tn%d_1\" class=\"turnout\" stroke=\"#000000\" stroke-width=\"1px\" fill=\"none\" points=\"%d,%d %d,%d\"></polyline>", tn,
+                        rec_get_right(&rec,0).c*SCL_X, rec_get_right(&rec,0).l*SCL_Y,
+                        rec_get_left(&rec,0).c*SCL_X, rec_get_left(&rec,0).l*SCL_Y];
+            [resG appendFormat:@"<polyline polyline id=\"tn%d_2\" class=\"turnout\" stroke=\"#000000\" stroke-width=\"1px\" fill=\"none\" points=\"%d,%d %d,%d\"></polyline>", tn,
+                       rec_get_right(&rec,0).c*SCL_X, rec_get_right(&rec,0).l*SCL_Y,
+                       rec_get_left(&rec,1).c*SCL_X, rec_get_left(&rec,1).l*SCL_Y];
+        } else {
+            [resG appendFormat:@"<polyline polyline id=\"tn%d_1\" class=\"turnout\" stroke=\"#000000\" stroke-width=\"1px\" fill=\"none\" points=\"%d,%d %d,%d\"></polyline>", tn,
+             rec_get_left(&rec,0).c*SCL_X, rec_get_left(&rec,0).l*SCL_Y,
+             rec_get_right(&rec,0).c*SCL_X, rec_get_right(&rec,0).l*SCL_Y];
+            [resG appendFormat:@"<polyline polyline id=\"tn%d_2\" class=\"turnout\" stroke=\"#000000\" stroke-width=\"1px\" fill=\"none\" points=\"%d,%d %d,%d\"></polyline>", tn,
+            rec_get_left(&rec,0).c*SCL_X, rec_get_left(&rec,0).l*SCL_Y,
+            rec_get_right(&rec,1).c*SCL_X, rec_get_right(&rec,1).l*SCL_Y];
+        }
         NSLog(@"hop");
     }
 }

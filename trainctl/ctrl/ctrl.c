@@ -15,7 +15,7 @@
 #include "railconfig.h"
 #include "statval.h"
 
-#include "occupency.h"
+#include "../topology/occupency.h"
 
 #include "ctrlP.h"
 

@@ -21,29 +21,7 @@
 
 // timers values in tick (ms)
 #define TLEAVE_C1_VALUE 20
-#define TGUARD_C1_VALUE 100
-
-
-typedef enum {
-    train_notrunning=0,    // train is not running, mode not yet defined
-    train_manual,        // manual drive with anti collision
-    train_fullmanual,    // full manual mode
-    train_auto,            //    auto mode
-} train_mode_t;
-
-
-typedef enum {
-    train_off=0,
-    train_running_c1,    // running (auto or manual)
-#ifdef OLD_CTRL
-    train_running_c1c2, // transition c1/c2 on progress
-#endif
-    train_station,        // waiting at station
-    train_blk_wait,        // stopped (block control)
-    train_end_of_track,    // idem but can only be changed by a direction change
-} train_state_t;
-
-
+#define TGUARD_C1_VALUE 1
 
 typedef struct {
     train_mode_t   _mode;

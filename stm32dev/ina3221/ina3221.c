@@ -402,7 +402,7 @@ static void _read_complete(_UNUSED_ int err)
 		m.from =  MA_CANTON(localBoardNum, 0);
 		m.to = MA_UI(1);
 		m.cmd = CMD_INA3221_VAL1;
-		m.sub = 1;
+		m.subc = 1;
 		m.v1 = vals[1];
 		mqf_write_from_ina3221(&m);
 		break;
@@ -416,8 +416,8 @@ static void _read_complete(_UNUSED_ int err)
 			// notify change
 			m.from = MA_CANTON(localBoardNum, 0);
 			m.to = MA_CONTROL();
-			m.cmd = CMD_PRESENCE_CHANGE;
-			m.sub = i;
+			m.cmd = CMD_PRESENCE_SUB_CHANGE;
+			m.subc = i;
 			m.v1u = p;
 			m.v2 = vals[i];
 			mqf_write_from_ina3221(&m);

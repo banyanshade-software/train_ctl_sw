@@ -12,8 +12,8 @@
 #include "misc.h"
 #include "../msg/trainmsg.h"
 
-#include "topology.h"
-#include "occupency.h"
+#include "topology/topology.h"
+#include "topology/occupency.h"
 
 #include "ctrl.h"
 #include "ctrlP.h"
@@ -422,7 +422,7 @@ static void set_speed_limit(train_ctrl_t *tvar, uint16_t lim)
 }
 
 
-void ctrl2_init_train(int tidx, train_ctrl_t *tvars,
+void ctrl2_init_train(_UNUSED_ int tidx, train_ctrl_t *tvars,
                       lsblk_num_t sblk)
 {
     tvars->c1_sblk = sblk;
@@ -442,7 +442,7 @@ void ctrl2_init_train(int tidx, train_ctrl_t *tvars,
         _TFLAG_STATE_CHANGED | _TFLAG_LIMIT_CHANGED;
 }
 
-void ctrl2_upcmd_set_desired_speed(int tidx, train_ctrl_t *tvars, int16_t desired_speed)
+void ctrl2_upcmd_set_desired_speed(_UNUSED_ int tidx, train_ctrl_t *tvars, int16_t desired_speed)
 {
     if (tvars->desired_speed != desired_speed) {
         tvars->tick_flags |= _TFLAG_DSPD_CHANGED;
@@ -459,7 +459,7 @@ void ctrl2_upcmd_set_desired_speed(int tidx, train_ctrl_t *tvars, int16_t desire
     }
 }
 
-void ctrl2_set_state(int tidx, train_ctrl_t *tvar, train_state_t ns)
+void ctrl2_set_state(_UNUSED_ int tidx, train_ctrl_t *tvar, train_state_t ns)
 {
     if (ns == tvar->_state) {
         return;
@@ -468,7 +468,7 @@ void ctrl2_set_state(int tidx, train_ctrl_t *tvar, train_state_t ns)
     tvar->tick_flags |= _TFLAG_STATE_CHANGED;
 }
 
-void ctrl2_set_dir(int tidx, train_ctrl_t *tvar, int8_t dir)
+void ctrl2_set_dir(_UNUSED_ int tidx, train_ctrl_t *tvar, int8_t dir)
 {
     if (tvar->_dir != dir) {
         tvar->tick_flags |= _TFLAG_DIR_CHANGED;
@@ -499,7 +499,7 @@ void ctrl2_stop_detected(int tidx, train_ctrl_t *tvars)
 
 
 
-void ctrl2_set_tspeed(int tidx, train_ctrl_t *tvar, uint16_t tspeed)
+void ctrl2_set_tspeed(_UNUSED_ int tidx, train_ctrl_t *tvar, uint16_t tspeed)
 {
     if (tvar->_target_speed != tspeed) {
         tvar->tick_flags |= _TFLAG_TSPD_CHANGED;
@@ -832,7 +832,7 @@ void ctrl2_evt_pose_triggered(int tidx, train_ctrl_t *tvar, uint8_t ca_addr, uin
             break;
     }
 }
-void ctrl2_evt_stop_detected(int tidx, train_ctrl_t *tvar, int32_t pose)
+void ctrl2_evt_stop_detected(_UNUSED_ int tidx, train_ctrl_t *tvar, _UNUSED_ int32_t pose)
 {
     // TODO
     tvar->tick_flags |= _TFLAG_STOP_DETECTED;

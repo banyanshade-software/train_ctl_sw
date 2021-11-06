@@ -12,8 +12,8 @@
 #include "misc.h"
 #include "../msg/trainmsg.h"
 
-#include "topology/topology.h"
-#include "topology/occupency.h"
+#include "../topology/topology.h"
+#include "../topology/occupency.h"
 
 #include "ctrl.h"
 #include "ctrlP.h"

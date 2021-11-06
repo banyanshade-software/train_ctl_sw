@@ -697,21 +697,34 @@
                         <view key="contentView" id="oOf-8G-gzF">
                             <rect key="frame" x="3" y="3" width="172" height="523"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                            <subviews>
+                                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Knw-8i-Elr">
+                                    <rect key="frame" x="22" y="475" width="136" height="32"/>
+                                    <buttonCell key="cell" type="push" title="Gen" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="K7w-xB-eb7">
+                                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                        <font key="font" metaFont="system"/>
+                                    </buttonCell>
+                                    <connections>
+                                        <action selector="generateAndDisplaySvg:" target="Voe-Tx-rLC" id="Guk-l0-hdz"/>
+                                    </connections>
+                                </button>
+                            </subviews>
+                            <constraints>
+                                <constraint firstItem="Knw-8i-Elr" firstAttribute="top" secondItem="oOf-8G-gzF" secondAttribute="top" constant="20" id="AZC-1Y-sFQ"/>
+                                <constraint firstAttribute="trailing" secondItem="Knw-8i-Elr" secondAttribute="trailing" constant="20" id="MO8-fx-Cdf"/>
+                                <constraint firstItem="Knw-8i-Elr" firstAttribute="leading" secondItem="oOf-8G-gzF" secondAttribute="leading" constant="28" id="dyh-mR-gwa"/>
+                            </constraints>
                         </view>
                         <constraints>
                             <constraint firstAttribute="width" constant="172" id="LQX-tx-3vV"/>
                         </constraints>
                     </box>
-                    <wkWebView wantsLayer="YES" translatesAutoresizingMaskIntoConstraints="NO" id="QKO-nt-oH9">
+                    <wkWebView wantsLayer="YES" allowsLinkPreview="NO" translatesAutoresizingMaskIntoConstraints="NO" id="QKO-nt-oH9">
                         <rect key="frame" x="188" y="8" width="849" height="537"/>
                         <wkWebViewConfiguration key="configuration">
                             <audiovisualMediaTypes key="mediaTypesRequiringUserActionForPlayback" none="YES"/>
-                            <wkPreferences key="preferences"/>
+                            <wkPreferences key="preferences" javaScriptCanOpenWindowsAutomatically="NO"/>
                         </wkWebViewConfiguration>
-                        <connections>
-                            <outlet property="UIDelegate" destination="Voe-Tx-rLC" id="wGd-F1-Qqp"/>
-                            <outlet property="navigationDelegate" destination="Voe-Tx-rLC" id="oSr-ar-KpQ"/>
-                        </connections>
                     </wkWebView>
                 </subviews>
                 <constraints>

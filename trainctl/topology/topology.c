@@ -48,14 +48,14 @@ static const topo_lsblk_t _Topology[] = {
     // layout 5 segs
     //          canton         ina     len      l1    l2    tn       r1   r2   tn      graph pt
     /* 0 */ { MA_CANTON(0, 0),  0xFF,   84,    -1,   -1, 0xFF,       1,  -1,    0       _PTS({5,6}, {5,4}, {4,3}, {1,3})},
-    /* 1 */ { MA_CANTON(0, 1),  0xFF,   42,     0,    2,    0,      -1,   3,    1       _PTS({6,7}, {6,9}, _VP, _VP)},
+    /* 1 */ { MA_CANTON(0, 1),  0xFF,   42,     0,    2,    0,      -1,   3,    1       _PTS({5,7}, {5,9}, _VP, _VP)},
     /* 2 */ { MA_CANTON(0, 2),  0xFF,   73,    -1 ,  -1, 0xFF,      -1,   1,    0       _PTS({4,6}, {4,5}, {3,4}, {1,4})},
-    /* 3 */ { MA_CANTON(0, 3),  0xFF,   32, 	4,    1,    1,      -1,  -1, 0xFF       _PTS({7,8}, {7,9}, {6,10}, {1,10})},
-    /* 4 */ { MA_CANTON(0, 3),  0xFF,   105,   -1 ,  -1, 0xFF,       3,  -1,    1       _PTS({7,7}, {7,2}, {6,1}, {1,1})}
+    /* 3 */ { MA_CANTON(0, 3),  0xFF,   32, 	4,    1,    1,      -1,  -1, 0xFF       _PTS({6,10}, {6,11}, {5,12}, {1,12})},
+    /* 4 */ { MA_CANTON(0, 3),  0xFF,   105,   -1 ,  -1, 0xFF,       3,  -1,    1       _PTS({6,9}, {6,2}, {5,1}, {1,1})}
 };
 
 
-static inline int numTopology(void)
+static inline const int numTopology(void)
 {
     static int s=0;
     if (!s) {
@@ -74,6 +74,10 @@ const topo_lsblk_t *topology_get_sblkd(int lsblk)
     lsblk_num_t n;
     n.n = lsblk;
     return Topology(n);
+}
+const int topology_num_sblkd(void)
+{
+    return numTopology();
 }
 
 void next_lsblk_nums(lsblk_num_t blknum, uint8_t left, lsblk_num_t *pb1, lsblk_num_t *pb2, int *tn)

@@ -128,6 +128,7 @@
 		1BC903192720B4E60087CEA7 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Platforms/MacOSX.platform/Developer/Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		1BC9031B2720BFDA0087CEA7 /* ledio.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ledio.h; sourceTree = "<group>"; };
 		1BC9031C2720BFDA0087CEA7 /* ledio.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ledio.c; sourceTree = "<group>"; };
+		1BD7CD33273686E30035CF0A /* topologyP.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = topologyP.h; sourceTree = "<group>"; };
 		1BD93C4B2546FF42006C4D70 /* param.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = param.c; sourceTree = "<group>"; };
 		1BD93C4D2546FF42006C4D70 /* train.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = train.h; sourceTree = "<group>"; };
 		1BD93C4E2546FF42006C4D70 /* railconfig.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = railconfig.c; sourceTree = "<group>"; };
@@ -274,6 +275,7 @@
 			isa = PBXGroup;
 			children = (
 				1B46EE542692684E00FAC813 /* topology.c */,
+				1BD7CD33273686E30035CF0A /* topologyP.h */,
 				1B92EA322631A0CC00558716 /* topology.h */,
 				1B92EA332631C9CD00558716 /* occupency.h */,
 				1BEB93C92729F10D00508C17 /* occupency.c */,

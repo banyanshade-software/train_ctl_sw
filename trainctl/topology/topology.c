@@ -16,6 +16,10 @@
 #include <memory.h>
 
 
+#ifdef TOPOLOGY_SVG
+#define TRACKPLAN_TESTPGM
+#endif
+
 
 #ifndef TRACKPLAN_TESTPGM
 #include "railconfig.h"
@@ -30,34 +34,24 @@
 #endif
 
 #include "topology.h"
+#include "topologyP.h"
 
 
-
-
-typedef struct {
-    uint8_t canton_addr;
-    uint8_t ina_segnum;
-    
-	uint8_t length_cm;
-    
-    int8_t left1;
-    int8_t left2;
-    uint8_t ltn; // leeee turnout
-    int8_t right1;
-    int8_t right2;
-    uint8_t rtn; // leeee turnout
-} topo_lsblk_t;
-
-
+#ifdef TOPOLOGY_SVG
+#define _PTS(...)  ,{__VA_ARGS__}
+#define _VP {-1, -1}
+#else
+#define _PTS(...)
+#endif
 
 static const topo_lsblk_t _Topology[] = {
     // layout 5 segs
-    //          canton         ina     len      l1    l2    tn       r1   r2   tn
-    /* 0 */ { MA_CANTON(0, 0),  0xFF,   84,    -1,   -1, 0xFF,       1,  -1,    0},
-    /* 1 */ { MA_CANTON(0, 1),  0xFF,   42,     0,    2,    0,      -1,   3,    1},
-    /* 2 */ { MA_CANTON(0, 2),  0xFF,   73,    -1 ,  -1, 0xFF,      -1,   1,    0},
-    /* 3 */ { MA_CANTON(0, 3),  0xFF,   32, 	4,    1,    1,      -1,  -1, 0xFF},  // unused
-    /* 4 */ { MA_CANTON(0, 3),  0xFF,   105,   -1 ,  -1, 0xFF,       3,  -1,    1}
+    //          canton         ina     len      l1    l2    tn       r1   r2   tn      graph pt
+    /* 0 */ { MA_CANTON(0, 0),  0xFF,   84,    -1,   -1, 0xFF,       1,  -1,    0       _PTS({5,6}, {5,4}, {4,3}, {1,3})},
+    /* 1 */ { MA_CANTON(0, 1),  0xFF,   42,     0,    2,    0,      -1,   3,    1       _PTS({6,7}, {6,9}, _VP, _VP)},
+    /* 2 */ { MA_CANTON(0, 2),  0xFF,   73,    -1 ,  -1, 0xFF,      -1,   1,    0       _PTS({4,6}, {4,5}, {3,4}, {1,4})},
+    /* 3 */ { MA_CANTON(0, 3),  0xFF,   32, 	4,    1,    1,      -1,  -1, 0xFF       _PTS({7,8}, {7,9}, {6,10}, {1,10})},
+    /* 4 */ { MA_CANTON(0, 3),  0xFF,   105,   -1 ,  -1, 0xFF,       3,  -1,    1       _PTS({7,7}, {7,2}, {6,1}, {1,1})}
 };
 
 
@@ -73,6 +67,13 @@ static inline int numTopology(void)
 static inline const topo_lsblk_t *Topology(lsblk_num_t blknum)
 {
     return &_Topology[blknum.n];
+}
+
+const topo_lsblk_t *topology_get_sblkd(int lsblk)
+{
+    lsblk_num_t n;
+    n.n = lsblk;
+    return Topology(n);
 }
 
 void next_lsblk_nums(lsblk_num_t blknum, uint8_t left, lsblk_num_t *pb1, lsblk_num_t *pb2, int *tn)

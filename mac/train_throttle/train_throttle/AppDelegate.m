@@ -1973,7 +1973,7 @@ void impl_uitrack_change_tn(int tn, int v)
 - (void) uitrac_change_blk:(int) blk val:(int)v train:(int)trn
 {
     NSString *js;
-    NSString *nblk = [NSString stringWithFormat:@"BLK%d", blk];
+    //NSString *nblk = [NSString stringWithFormat:@"BLK%d", blk];
     NSString *col = @"white";
     NSString *strn = (trn == 0xFF) ? nil : [NSString stringWithFormat:@"(T%d", trn];
     switch (v) {
@@ -2003,7 +2003,8 @@ void impl_uitrack_change_tn(int tn, int v)
             }
             break;
     }
-    js = [NSString stringWithFormat:@"document.getElementById('%@').style.stroke = '%@';", nblk, col];
+    //js = [NSString stringWithFormat:@"document.getElementById('%@').style.stroke = '%@';", nblk, col];
+    js = [NSString stringWithFormat:@"segs = document.getElementsByClassName('CANTON%d');\nArray.from(segs, el => el.style.stroke = '%@');", blk, col];
     [_ctoWebView evaluateJavaScript:js completionHandler:^(id v, NSError *err) {
         if (err) {
             NSLog(@"js error : %@\n", err);

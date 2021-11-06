@@ -66,7 +66,7 @@
 }
 - (NSString *) generateFooter
 {
-    return @"</g></svg></body></html>";
+    return @"</g></svg></body></html>\n";
 }
 
 
@@ -100,7 +100,7 @@
          i ? " ":"",
          pt.c*SCL_X, pt.l*SCL_Y];
     }
-    [res appendString:@"\"></polyline>"];
+    [res appendString:@"\"></polyline>\n"];
     return res;
 }
 static int last_pt_idx(const topo_lsblk_t *s)

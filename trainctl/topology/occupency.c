@@ -61,6 +61,7 @@ static void notif_blk_occup_chg(int blknum, canton_occ_t *co)
 
 void set_block_addr_occupency(uint8_t blkaddr, uint8_t v, uint8_t trnum, lsblk_num_t lsb)
 {
+    int chg = 0;
     if (0xFF == blkaddr) Error_Handler();
     canton_occ_t *co = &canton_occ[addr_to_num(blkaddr)];
     if (co->occ != v) {
@@ -70,7 +71,7 @@ void set_block_addr_occupency(uint8_t blkaddr, uint8_t v, uint8_t trnum, lsblk_n
             itm_debug1(DBG_CTRL, "delay free", blkaddr);
         } else {
             co->occ = v;
-            topology_or_occupency_changed = 1;
+            chg = 1;
             if (BLK_OCC_FREE == co->occ) {
                 // non delayed free, untested
                 trnum = -1;
@@ -81,9 +82,10 @@ void set_block_addr_occupency(uint8_t blkaddr, uint8_t v, uint8_t trnum, lsblk_n
     co->trnum = trnum;
     if (co->lsblk.n != lsb.n) {
         co->lsblk = lsb;
-        topology_or_occupency_changed = 1;
+        chg = 1;
     }
-    if (topology_or_occupency_changed) {
+    if (chg) {
+        topology_or_occupency_changed = 1;
         notif_blk_occup_chg(blkaddr, co);
     }
 }

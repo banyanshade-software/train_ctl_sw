@@ -60,7 +60,7 @@
 
 - (NSString *) generateHeader
 {
-    return @"<html><body style=\"background-color:lightgrey;\">hello<br/><svg height=\"300px\" id=\"svg_document\" width=\"700px\" version=\"1.1\" preserveAspectRatio=\"xMidYMid meet\" viewBox=\"0 0 700 300\">\n";
+    return @"<html><body style=\"background-color:lightgrey;\">hello<br/><svg height=\"500px\" id=\"svg_document\" width=\"800px\" version=\"1.1\" preserveAspectRatio=\"xMidYMid meet\" viewBox=\"0 0 800 500\">\n";
 
 }
 - (NSString *) generateFooter
@@ -70,7 +70,7 @@
 
 
 #define SCL_X 40
-#define SCL_Y 40
+#define SCL_Y 50
 
 - (void)generateSblksInG:(NSMutableString *)resG T:(NSMutableString *)resT
 {
@@ -92,7 +92,7 @@
 - (NSString *) generateSblkPoly:(const topo_lsblk_t *)seg num:(int)segnum
 {
     NSMutableString *res = [[NSMutableString alloc]init];
-    [res appendFormat:@"<polyline id=\"SBLK%2.2d\" class=\"CANTON%d\" stroke=\"#000000\" stroke-width=\"3px\" fill=\"none\" points=\"",
+    [res appendFormat:@"<polyline id=\"SBLK%2.2d\" class=\"CANTON%d\" stroke=\"#000000\" stroke-width=\"5px\" fill=\"none\" points=\"",
      segnum, seg->canton_addr];
     for (int i=0; i<MAX_POINTS; i++) {
         coord_t pt = seg->points[i];
@@ -135,6 +135,11 @@ static int last_pt_idx(const topo_lsblk_t *s)
         }
         if (minx==999) continue;
         // hop
+        [resT appendFormat:@" <circle cx=\"%d\" cy=\"%d\" r=\"%d\" stroke=\"#306030\" stroke-width=\"1px\" fill=\"none\"/>\n",
+         SCL_X*(maxx+minx)/2, SCL_Y* (maxy+miny)/2, (SCL_X+SCL_Y)/3];
+        [resT appendFormat:@"<text x=\"%dpx\" y=\"%dpx\" class=\"turnout\" Font-family=\"Helvetica\" fill=\"#80A080\" font-size=\"12px\">S%d</text>\n",
+         SCL_X*(maxx+minx)/2-8, SCL_Y*(maxy+miny)/2+SCL_Y/2+16,
+         tn];
         NSLog(@"hop");
     }
 }

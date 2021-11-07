@@ -133,6 +133,23 @@ typedef void (^respblk_t)(void);
     NSString *ctohtml = [NSString stringWithContentsOfURL:u encoding:NSUTF8StringEncoding error:&err];
     [_ctoWebView loadHTMLString:ctohtml baseURL:nil];
     
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        // hide all info from this blk
+        NSString *js = @"Array.from(document.getElementsByClassName('trinfo'), el => el.style.visibility = 'hidden')";
+        [self->_ctoWebView evaluateJavaScript:js completionHandler:^(id v, NSError *err) {
+            if (err) {
+                NSLog(@"js error : %@\n", err);
+            }
+        }];
+        js = @"Array.from(document.getElementsByClassName('track'), el => el.style.stroke = 'darkgray')";
+        [self->_ctoWebView evaluateJavaScript:js completionHandler:^(id v, NSError *err) {
+            if (err) {
+                NSLog(@"js error : %@\n", err);
+            }
+        }];
+    });
+    
     // for debug
     //[self getParams]; //XXX XXX
     //[self startBLE];
@@ -471,7 +488,8 @@ typedef void (^respblk_t)(void);
         NSLog(@"get param %c%c '%s'\n",  cpsel[0], cpsel[1], cpn);
     
         if ((1) & (0==(n%10))) {
-            sleep(1);
+            //sleep(1);
+            usleep(200);
         }
         [self sendFrame:gpfrm len:(int)(5+nl+2) blen:sizeof(gpfrm) then:^{
             // handle response
@@ -1948,9 +1966,9 @@ didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic
 
 #pragma mark -
 
-void impl_uitrack_change_blk(int blk, int v, int trn)
+void impl_uitrack_change_blk(int blk, int v, int trn, int sblk)
 {
-    [theDelegate uitrac_change_blk:blk val:v train:trn];
+    [theDelegate uitrac_change_blk:blk val:v train:trn sblk:sblk];
 }
 void impl_uitrack_change_tn(int tn, int v)
 {
@@ -1970,7 +1988,7 @@ void impl_uitrack_change_tn(int tn, int v)
 
 }
 
-- (void) uitrac_change_blk:(int) blk val:(int)v train:(int)trn
+- (void) uitrac_change_blk:(int) blk val:(int)v train:(int)trn sblk:(int)sblk
 {
     NSString *js;
     //NSString *nblk = [NSString stringWithFormat:@"BLK%d", blk];
@@ -2010,6 +2028,31 @@ void impl_uitrack_change_tn(int tn, int v)
             NSLog(@"js error : %@\n", err);
         }
     }];
+    
+    // hide all info from this blk
+    js = [NSString stringWithFormat:@"Array.from(document.getElementsByClassName('trinfo_c%d'), el => el.style.visibility = 'hidden')", blk];
+    [_ctoWebView evaluateJavaScript:js completionHandler:^(id v, NSError *err) {
+        if (err) {
+            NSLog(@"js error : %@\n", err);
+        }
+    }];
+    if (sblk==255) {
+        NSLog(@"hop");
+    }
+    if (sblk>=0) {
+        js = [NSString stringWithFormat:@"Array.from(document.getElementsByClassName('trinfo_s%d'), el => el.style.visibility = 'visible'); document.getElementById('tr%d').textContent = '%@';", sblk, sblk,
+              strn ? strn : @""];
+        [_ctoWebView evaluateJavaScript:js completionHandler:^(id v, NSError *err) {
+            if (err) {
+                NSLog(@"js error : %@\n", err);
+            }
+        }];
+        
+    } else {
+        NSLog(@"no sblk info");
+    }
+    
+    /*
     js = [NSString stringWithFormat:@"document.getElementById('txtc%d').textContent = '%@'; document.getElementById('txtc%d').style.visibility = '%@';",
           blk, strn ? strn : @"",
           blk, strn ? @"visible" : @"hidden"];
@@ -2018,7 +2061,7 @@ void impl_uitrack_change_tn(int tn, int v)
             NSLog(@"js error : %@\n", err);
         }
     }];
-    
+    */
 }
 
 

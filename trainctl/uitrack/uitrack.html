@@ -1,11 +1,11 @@
 <html><body style="background-color:lightgrey;">hello<br/><svg height="500px" id="svg_document" width="800px" version="1.1" preserveAspectRatio="xMidYMid meet" viewBox="0 0 800 500">
-<g id="main_group"><polyline id="SBLK00" class="CANTON0" stroke="#000000" stroke-width="5px" fill="none" points="120,50 120,200 160,250 320,250"></polyline>
-<polyline id="SBLK01" class="CANTON1" stroke="#000000" stroke-width="5px" fill="none" points="360,250 480,250"></polyline>
-<polyline id="SBLK02" class="CANTON2" stroke="#000000" stroke-width="5px" fill="none" points="160,50 160,150 200,200 320,200"></polyline>
-<polyline id="SBLK03" class="CANTON3" stroke="#000000" stroke-width="5px" fill="none" points="520,300 600,300 640,250 640,50"></polyline>
-<polyline id="SBLK04" class="CANTON3" stroke="#000000" stroke-width="5px" fill="none" points="160,350 320,350 400,300 480,300"></polyline>
-<polyline id="SBLK05" class="CANTON3" stroke="#000000" stroke-width="5px" fill="none" points="80,50 80,300 120,350"></polyline>
-<polyline id="SBLK06" class="CANTON3" stroke="#000000" stroke-width="5px" fill="none" points="160,300 240,300"></polyline>
+<g id="main_group"><polyline id="SBLK00" class="track CANTON0" stroke="#000000" stroke-width="5px" fill="none" points="120,50 120,200 160,250 320,250"></polyline>
+<polyline id="SBLK01" class="track CANTON1" stroke="#000000" stroke-width="5px" fill="none" points="360,250 480,250"></polyline>
+<polyline id="SBLK02" class="track CANTON2" stroke="#000000" stroke-width="5px" fill="none" points="160,50 160,150 200,200 320,200"></polyline>
+<polyline id="SBLK03" class="track CANTON3" stroke="#000000" stroke-width="5px" fill="none" points="520,300 600,300 640,250 640,50"></polyline>
+<polyline id="SBLK04" class="track CANTON3" stroke="#000000" stroke-width="5px" fill="none" points="160,350 320,350 400,300 480,300"></polyline>
+<polyline id="SBLK05" class="track CANTON3" stroke="#000000" stroke-width="5px" fill="none" points="80,50 80,300 120,350"></polyline>
+<polyline id="SBLK06" class="track CANTON3" stroke="#000000" stroke-width="5px" fill="none" points="160,300 240,300"></polyline>
 <polyline polyline id="to0s" class="turnout" stroke="#000000" stroke-width="1px" fill="none" points="360,250 320,250"></polyline>
 <polyline polyline id="to0t" class="turnout" stroke="#000000" stroke-width="1px" fill="none" points="360,250 320,200"></polyline>
 <polyline polyline id="to1t" class="turnout" stroke="#000000" stroke-width="1px" fill="none" points="520,300 480,250"></polyline>
@@ -13,13 +13,27 @@
 <polyline polyline id="to2s" class="turnout" stroke="#000000" stroke-width="1px" fill="none" points="120,350 160,350"></polyline>
 <polyline polyline id="to2t" class="turnout" stroke="#000000" stroke-width="1px" fill="none" points="120,350 160,300"></polyline>
 </g>
-<text x="220px" y="238px" class="label" Font-family="Helvetica" fill="#8080A0" font-size="12px">b0 (c0)</text>
-<text x="400px" y="238px" class="label" Font-family="Helvetica" fill="#8080A0" font-size="12px">b1 (c1)</text>
-<text x="240px" y="188px" class="label" Font-family="Helvetica" fill="#8080A0" font-size="12px">b2 (c2)</text>
-<text x="540px" y="288px" class="label" Font-family="Helvetica" fill="#8080A0" font-size="12px">b3 (c3)</text>
-<text x="220px" y="338px" class="label" Font-family="Helvetica" fill="#8080A0" font-size="12px">b4 (c3)</text>
-<text x="60px" y="163px" class="label" Font-family="Helvetica" fill="#8080A0" font-size="12px">b5 (c3)</text>
-<text x="180px" y="288px" class="label" Font-family="Helvetica" fill="#8080A0" font-size="12px">b6 (c3)</text>
+<text x="220px" y="262px" class="label" Font-family="Helvetica" fill="#8080A0" font-size="12px" >b0 (c0)</text>
+<rect class="trinfo trinfo_s0 trinfo_c0" x="215" y="231" width="50" height="16" fill="#E0FFE0" stroke="#80A080" stroke-width="2px" />
+<text id="tr0" class="trinfo trinfo_s0 trinfo_c0" x="217px" y="243px"  Font-family="Helvetica" fill="#8080A0" font-size="10px" >TRINFO</text>
+<text x="400px" y="262px" class="label" Font-family="Helvetica" fill="#8080A0" font-size="12px" >b1 (c1)</text>
+<rect class="trinfo trinfo_s1 trinfo_c1" x="395" y="231" width="50" height="16" fill="#E0FFE0" stroke="#80A080" stroke-width="2px" />
+<text id="tr1" class="trinfo trinfo_s1 trinfo_c1" x="397px" y="243px"  Font-family="Helvetica" fill="#8080A0" font-size="10px" >TRINFO</text>
+<text x="240px" y="212px" class="label" Font-family="Helvetica" fill="#8080A0" font-size="12px" >b2 (c2)</text>
+<rect class="trinfo trinfo_s2 trinfo_c2" x="235" y="181" width="50" height="16" fill="#E0FFE0" stroke="#80A080" stroke-width="2px" />
+<text id="tr2" class="trinfo trinfo_s2 trinfo_c2" x="237px" y="193px"  Font-family="Helvetica" fill="#8080A0" font-size="10px" >TRINFO</text>
+<text x="540px" y="312px" class="label" Font-family="Helvetica" fill="#8080A0" font-size="12px" >b3 (c3)</text>
+<rect class="trinfo trinfo_s3 trinfo_c3" x="535" y="281" width="50" height="16" fill="#E0FFE0" stroke="#80A080" stroke-width="2px" />
+<text id="tr3" class="trinfo trinfo_s3 trinfo_c3" x="537px" y="293px"  Font-family="Helvetica" fill="#8080A0" font-size="10px" >TRINFO</text>
+<text x="220px" y="362px" class="label" Font-family="Helvetica" fill="#8080A0" font-size="12px" >b4 (c3)</text>
+<rect class="trinfo trinfo_s4 trinfo_c3" x="215" y="331" width="50" height="16" fill="#E0FFE0" stroke="#80A080" stroke-width="2px" />
+<text id="tr4" class="trinfo trinfo_s4 trinfo_c3" x="217px" y="343px"  Font-family="Helvetica" fill="#8080A0" font-size="10px" >TRINFO</text>
+<text x="68px" y="155px" class="label" Font-family="Helvetica" fill="#8080A0" font-size="12px" writing-mode=vertical-rl>b5 (c3)</text>
+<rect class="trinfo trinfo_s5 trinfo_c3" x="84" y="150" width="16" height="50" fill="#E0FFE0" stroke="#80A080" stroke-width="2px" />
+<text id="tr5" class="trinfo trinfo_s5 trinfo_c3" x="92px" y="153px"  Font-family="Helvetica" fill="#8080A0" font-size="10px" writing-mode=vertical-rl>TRINFO</text>
+<text x="180px" y="312px" class="label" Font-family="Helvetica" fill="#8080A0" font-size="12px" >b6 (c3)</text>
+<rect class="trinfo trinfo_s6 trinfo_c3" x="175" y="281" width="50" height="16" fill="#E0FFE0" stroke="#80A080" stroke-width="2px" />
+<text id="tr6" class="trinfo trinfo_s6 trinfo_c3" x="177px" y="293px"  Font-family="Helvetica" fill="#8080A0" font-size="10px" >TRINFO</text>
 <circle cx="340" cy="225" r="30" stroke="#306030" stroke-width="1px" fill="none"/>
 <text x="332px" y="266px" class="turnout" Font-family="Helvetica" fill="#80A080" font-size="12px">S0</text>
 <circle cx="500" cy="275" r="30" stroke="#306030" stroke-width="1px" fill="none"/>

@@ -80,10 +80,33 @@
         const topo_lsblk_t *s = topology_get_sblkd(i);
         if (!s) break;
         [resG appendString:[self generateSblkPoly:s num:i]];
-        int tx = ((s->points[s->p0].c + s->points[s->p0+1].c) * SCL_X / 2)-20;
-        int ty = ((s->points[s->p0].l + s->points[s->p0+1].l) * SCL_Y / 2)-12;
-        [resT appendFormat:@"<text x=\"%dpx\" y=\"%dpx\" class=\"label\" Font-family=\"Helvetica\" fill=\"#8080A0\" font-size=\"12px\">b%d (c%d)</text>\n",
-         tx, ty, i, s->canton_addr];
+        int cx = ((s->points[s->p0].c + s->points[s->p0+1].c) * SCL_X / 2);
+        int cy = ((s->points[s->p0].l + s->points[s->p0+1].l) * SCL_Y / 2);
+        int v = 0;
+        if (s->points[s->p0].c == s->points[s->p0+1].c) v=1;
+        int tx,ty, rx, ry;
+        if (v) {
+            tx = cx-12;
+            ty = cy-20;
+            rx = cx + 4;
+            ry = cy - 25;
+        } else {
+            tx = cx-20;
+            ty = cy+12;
+            rx = cx - 25;
+            ry = cy - 19;
+        }
+        [resT appendFormat:@"<text x=\"%dpx\" y=\"%dpx\" class=\"label\" Font-family=\"Helvetica\" fill=\"#8080A0\" font-size=\"12px\" %s>b%d (c%d)</text>\n",
+         tx, ty, v ? "writing-mode=vertical-rl" : "",
+            i, s->canton_addr];
+        
+        [resT appendFormat:@"<rect class=\"trinfo trinfo_s%d trinfo_c%d\" x=\"%d\" y=\"%d\" width=\"%d\" height=\"%d\" fill=\"#E0FFE0\" stroke=\"#80A080\" stroke-width=\"2px\" />\n",
+         i, s->canton_addr,
+         rx,ry, v ? 16 : 50, v ? 50 : 16];
+        [resT appendFormat:@"<text id=\"tr%d\" class=\"trinfo trinfo_s%d trinfo_c%d\" x=\"%dpx\" y=\"%dpx\"  Font-family=\"Helvetica\" fill=\"#8080A0\" font-size=\"10px\" %s>TRINFO</text>\n",
+         i, i, s->canton_addr,
+         rx + (v? 8: 2), ry + (v ? 3 : 12), v ? "writing-mode=vertical-rl" : ""
+         ];
     }
 }
 
@@ -91,7 +114,7 @@
 - (NSString *) generateSblkPoly:(const topo_lsblk_t *)seg num:(int)segnum
 {
     NSMutableString *res = [[NSMutableString alloc]init];
-    [res appendFormat:@"<polyline id=\"SBLK%2.2d\" class=\"CANTON%d\" stroke=\"#000000\" stroke-width=\"5px\" fill=\"none\" points=\"",
+    [res appendFormat:@"<polyline id=\"SBLK%2.2d\" class=\"track CANTON%d\" stroke=\"#000000\" stroke-width=\"5px\" fill=\"none\" points=\"",
      segnum, seg->canton_addr];
     for (int i=0; i<MAX_POINTS; i++) {
         coord_t pt = seg->points[i];

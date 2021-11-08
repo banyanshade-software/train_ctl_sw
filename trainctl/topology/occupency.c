@@ -59,6 +59,7 @@ static void notif_blk_occup_chg(int blknum, canton_occ_t *co)
     mqf_write_from_ctrl(&m);
 }
 
+
 void set_block_addr_occupency(uint8_t blkaddr, uint8_t v, uint8_t trnum, lsblk_num_t lsb)
 {
     int chg = 0;
@@ -96,6 +97,13 @@ uint8_t get_block_addr_occupency(uint8_t blkaddr)
 {
     if (0xFF == blkaddr) Error_Handler();
     return canton_occ[addr_to_num(blkaddr)].occ;
+}
+uint8_t occupency_block_addr_info(uint8_t blkaddr, uint8_t *ptrn, uint8_t *psblk)
+{
+    canton_occ_t *occ = &canton_occ[addr_to_num(blkaddr)];
+    if (ptrn) *ptrn = occ->trnum;
+    if (psblk) *psblk = occ->lsblk.n;
+    return occ->occ;
 }
 
 

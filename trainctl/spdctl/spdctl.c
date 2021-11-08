@@ -528,7 +528,7 @@ int train_set_target_speed(int numtrain, int16_t target)
 }
 
 
-static int _pose_check_trig(int numtrain, train_vars_t *tvars, int32_t lastincr, uint32_t pose)
+static int _pose_check_trig(int numtrain, train_vars_t *tvars, int32_t lastincr, int32_t pose)
 {
 	if (!pose) return 0;
 	if (pose > 0) {

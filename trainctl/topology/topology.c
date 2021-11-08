@@ -61,7 +61,7 @@ static const topo_lsblk_t _Topology[] = {
 };
 
 
-static inline const int numTopology(void)
+static inline  int numTopology(void)
 {
     static int s=0;
     if (!s) {
@@ -81,7 +81,8 @@ const topo_lsblk_t *topology_get_sblkd(int lsblk)
     n.n = lsblk;
     return Topology(n);
 }
-const int topology_num_sblkd(void)
+
+int topology_num_sblkd(void)
 {
     return numTopology();
 }

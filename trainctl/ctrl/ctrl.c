@@ -170,7 +170,7 @@ static void check_timers(uint32_t tick)
 
 
 
-static void sub_presence_changed(_UNUSED_ uint32_t tick, uint8_t from_addr, uint8_t lsegnum, uint16_t p, int16_t ival)
+static void sub_presence_changed(_UNUSED_ uint32_t tick, _UNUSED_ uint8_t from_addr, _UNUSED_ uint8_t lsegnum, _UNUSED_ uint16_t p, _UNUSED_ int16_t ival)
 {
     abort();
 #if 0

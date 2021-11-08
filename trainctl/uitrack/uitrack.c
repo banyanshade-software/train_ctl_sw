@@ -16,7 +16,7 @@ static void uitrack_reset(void);
 static void uitrack_change_blk(int blk, int v, int trn, int sblk);
 static void uitrack_change_tn(int tn, int v);
 
-void uitrack_run_tick(_UNUSED_ uint32_t notif_flags, uint32_t tick, _UNUSED_ uint32_t dt)
+void uitrack_run_tick(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_ uint32_t dt)
 {
     for (;;) {
         msg_64_t m;
@@ -45,7 +45,7 @@ void uitrack_run_tick(_UNUSED_ uint32_t notif_flags, uint32_t tick, _UNUSED_ uin
 }
 
 
-static void uitrack_reset(void)
+static _UNUSED_ void uitrack_reset(void)
 {
     
 }
@@ -59,7 +59,7 @@ static void uitrack_change_tn(int tn, int v)
     impl_uitrack_change_tn(tn, v);
 }
 
-void  __attribute__((weak))  impl_uitrack_change_blk(_UNUSED_ int blk, _UNUSED_ int v, int trn, int sblk)
+void  __attribute__((weak))  impl_uitrack_change_blk(_UNUSED_ int blk, _UNUSED_ int v, _UNUSED_ int trn, _UNUSED_ int sblk)
 {
     
 }

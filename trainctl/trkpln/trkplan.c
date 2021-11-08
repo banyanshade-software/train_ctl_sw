@@ -29,7 +29,7 @@
 // -------------------------------------------------------------------------
 
 
-void next_blocks_nums(int blknum, uint8_t left, int *pb1, int *pb2, int *tn)
+void next_blocks_nums(_UNUSED_ int blknum, _UNUSED_ uint8_t left, _UNUSED_ int *pb1, _UNUSED_ int *pb2, _UNUSED_ int *tn)
 {
     abort();
     // for compilation, trkplan will need major update
@@ -407,7 +407,7 @@ static void crossover(tplan_t *res, tplan_t *p1, tplan_t *p2)
 }
 
 
-#pragma mark -
+//#pragma mark -
 
 static trstate_t  initialstate;
 static trtarget_t target;
@@ -436,7 +436,7 @@ void trkpln_init(void)
 }
 
 
-#pragma mark -
+//#pragma mark -
 
 void trkpln_process(void)
 {
@@ -525,7 +525,7 @@ void trkpln_process(void)
     return;
 }
 
-void trkpln_get_route(int trnum)
+void trkpln_get_route(_UNUSED_  int trnum)
 {
     print_route(&population[bestIdx], &initialstate);
 }

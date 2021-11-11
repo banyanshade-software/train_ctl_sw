@@ -15,9 +15,11 @@
 #include "../topology/topology.h"
 #include "../topology/occupency.h"
 
+#include "misc.h"
+#include "railconfig.h"
+
 #include "ctrl.h"
 #include "ctrlP.h"
-#include "railconfig.h"
 
 static lsblk_num_t snone = {-1};
 
@@ -53,32 +55,28 @@ static uint32_t pose_convert_from_mm(const train_config_t *tconf, int32_t mm)
 }
 
 
-static int32_t ctrl_pose_middle(lsblk_num_t lsb, const train_config_t *tconf, train_ctrl_t *tvar)
+static int32_t ctrl_pose_middle_c1(const train_config_t *tconf, train_ctrl_t *tvar)
 {
-    int cm = get_lsblk_len(lsb);
+    int cm = get_lsblk_len(tvar->c1_sblk);
     int mm;
-    if (tvar->_dir<0) {
-        mm = -cm*5;
-    } else {
-        mm = cm*5;
-    }
-    mm += tvar->beginposmm;
+    mm = tvar->beginposmm + cm*5;
     int32_t p = pose_convert_from_mm(tconf, mm);
+    if (!p) p=1;
     return p;
 }
 
 
-static int32_t ctrl_pose_end(lsblk_num_t lsb, const train_config_t *tconf, train_ctrl_t *tvar)
+static int32_t ctrl_pose_end_c1(const train_config_t *tconf, train_ctrl_t *tvar)
 {
-    int cm = get_lsblk_len(lsb);
+    int cm = get_lsblk_len(tvar->c1_sblk);
     int mm;
     if (tvar->_dir<0) {
-        mm = -cm*10;
+        mm = tvar->beginposmm;
     } else {
-        mm = cm*10;
+        mm = tvar->beginposmm+cm*10;
     }
-    mm += tvar->beginposmm;
     int32_t p = pose_convert_from_mm(tconf, mm);
+    if (!p) p=1;
     return p;
 }
 
@@ -244,7 +242,7 @@ void ctrl_update_c2_state_limits(int tidx, train_ctrl_t *tvars, const train_conf
                 itm_debug1(DBG_CTRL, "eot", tidx);
                 tvars->spd_limit = SPD_LIMIT_EOT;
                 //xxxx
-                posetval = ctrl_pose_middle(tvars->c1_sblk, tconf, tvars);
+                posetval = ctrl_pose_middle_c1(tconf, tvars);
                 tvars->behaviour_flags |= BEHAVE_EOT1;
                 break;
             case upd_change_dir:
@@ -660,7 +658,7 @@ void ctrl2_update_topo(int tidx, train_ctrl_t *tvar, const train_config_t *tconf
                     tvar->pose2_is_blk_wait = alternate ? 1 : 0;
                     set_speed_limit(tvar, SPD_LIMIT_EOT);
                     //xxxx
-                    int32_t posetval = ctrl_pose_middle(tvar->c1_sblk, tconf, tvar);
+                    int32_t posetval = ctrl_pose_middle_c1(tconf, tvar);
                     //ctrl_set_pose_trig(tidx, posetval, 1);
                     *ppose1 = posetval;
                 }
@@ -710,7 +708,7 @@ void ctrl2_update_c2(int tidx, train_ctrl_t *tvar, const train_config_t *tconf, 
         itm_debug3(DBG_CTRL, "c1c2addr", tidx, tvar->can2_addr, c2);
         if (c2 == tvar->can1_addr) {
             //set trig
-            int32_t posetval = ctrl_pose_end(tvar->c1_sblk, tconf, tvar);
+            int32_t posetval = ctrl_pose_end_c1(tconf, tvar);
             //ctrl_set_pose_trig(tidx, posetval, 0);
             *ppose0 = posetval;
         } else {
@@ -811,6 +809,14 @@ void ctrl2_evt_leaved_c1(int tidx, train_ctrl_t *tvars)
     set_block_addr_occupency(tvars->can1_addr, BLK_OCC_FREE, 0xFF, snone);
     tvars->can1_addr = tvars->can2_addr;
     tvars->c1_sblk = first_lsblk_with_canton(tvars->can2_addr, tvars->c1_sblk);
+
+    int len = get_lsblk_len(tvars->c1_sblk);
+    if (tvars->_dir<0) {
+    	tvars->beginposmm =  -len*10;
+    } else {
+    	tvars->beginposmm = 0;
+    }
+
     tvars->can2_addr = 0xFF; // will be updated by update_c2
     tvars->tick_flags |=  _TFLAG_C1_CHANGED|_TFLAG_C1_CHANGED | _TFLAG_C1LSB_CHANGED;
 }
@@ -826,18 +832,19 @@ void ctrl2_evt_leaved_c2(int tidx, train_ctrl_t *tvar)
     itm_debug2(DBG_CTRL, "leave C2", tidx, tvar->_state);
 }
 
-void ctrl2_evt_pose_triggered(int tidx, train_ctrl_t *tvar, uint8_t ca_addr, uint8_t trigbits, int16_t cposd10)
+int ctrl2_evt_pose_triggered(int tidx, train_ctrl_t *tvar, uint8_t ca_addr, uint8_t trigbits, int16_t cposd10)
 {
+    int retcode = 0;
 	itm_debug3(DBG_CTRL, "POSEtrg", tidx, ca_addr, cposd10);
 
     if (tvar->_state != train_running_c1) {
         itm_debug2(DBG_ERR|DBG_CTRL, "bad st/3",tidx, tvar->_state);
         if (trigbits & (1<<1)) tvar->pose2_set = 0;
-        return;
+        return -1;
     }
     if (ca_addr != tvar->can1_addr) {
         itm_debug3(DBG_ERR|DBG_POSE|DBG_CTRL, "ptrg bad", tidx, ca_addr, tvar->can1_addr);
-        return;
+        return -1;
     }
     const train_config_t *tconf = get_train_cnf(tidx);
     tvar->curposmm = pose_convert_to_mm(tconf, cposd10*10);
@@ -854,18 +861,35 @@ void ctrl2_evt_pose_triggered(int tidx, train_ctrl_t *tvar, uint8_t ca_addr, uin
     		itm_debug3(DBG_ERR|DBG_CTRL, "bad sblk", tidx, ns.n, tvar->can1_addr);
     		goto t2;
     	}
-    	tvar->c1_sblk = ns;
+       
+        
+        int len1 = get_lsblk_len(tvar->c1_sblk);
+        int len2 = get_lsblk_len(ns);
+        int exppose;
+        tvar->c1_sblk = ns;
+        if (tvar->_dir<0) {
+            exppose = tvar->beginposmm;
+            tvar->beginposmm = tvar->beginposmm - len2*10;
+        } else {
+            tvar->beginposmm = tvar->beginposmm + len1*10;
+            exppose = tvar->beginposmm;
+        }
+        if (abs(tvar->curposmm - exppose)>30) {
+            itm_debug3(DBG_ERR, "large p", tidx, exppose, tvar->curposmm);
+            retcode = 2;
+        }
     	tvar->tick_flags |= _TFLAG_C1LSB_CHANGED;
-        tvar->beginposmm = tvar->_dir ? tvar->curposmm : tvar->curposmm + get_lsblk_len(ns)*10;
+        //tvar->beginposmm = (tvar->_dir >= 0) ? tvar->curposmm : tvar->curposmm + get_lsblk_len(ns)*10;
     }
 t2:
     if (trigbits & (1<<1)) {
     	// POSE Trig 2
 
-    	if (!tvar->pose2_set) return;
+    	if (!tvar->pose2_set) return 3;
     	tvar->pose2_set = 0;
     	tvar->tick_flags |= _TFLAG_POSE_TRIG2;
     }
+    return retcode;
 }
 void ctrl2_evt_stop_detected(_UNUSED_ int tidx, train_ctrl_t *tvar, _UNUSED_ int32_t pose)
 {

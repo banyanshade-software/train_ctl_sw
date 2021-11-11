@@ -18,6 +18,8 @@ static lsblk_num_t snone = {-1};
 static lsblk_num_t szero = {0};
 static lsblk_num_t sone = {1};
 static lsblk_num_t sthree = {3};
+static lsblk_num_t sfoor = {4};
+static lsblk_num_t sfive = {5};
 
 @interface TestCtrlP : XCTestCase
 
@@ -551,6 +553,108 @@ static void purge_block_delayed(void)
     
 }
 
+- (void) testSubPose1
+{
+    train_config_t myconf;
+    memcpy(&myconf, tconf, sizeof(myconf));
+    myconf.pose_per_cm = 20;
+    
+    topolgy_set_turnout(1, 0);
+    topolgy_set_turnout(2, 1);
+    ctrl2_init_train(0, &tvars, sthree);
+    int rc = ctrl2_tick_process(0, &tvars, &myconf, 0);
+    XCTAssert(rc==1);
+    NSString *s = dump_msgbuf(1);
+    
+    train_ctrl_t savtvar = tvars;
+    int l3 = 10*get_lsblk_len(sthree);
+    int l4 = 10*get_lsblk_len(sfoor);
+    int l5 = 10*get_lsblk_len(sfive);
+    XCTAssert(l3==320);
+    XCTAssert(l4==1100);
+    
+    //tvars.curposmm = 160;
+    tvars.beginposmm = 0;
+    
+    ctrl2_upcmd_set_desired_speed(0, &tvars, -30);
+    rc = ctrl2_tick_process(0, &tvars, &myconf, 0);
+    XCTAssert(rc==3);
+    s = dump_msgbuf(0);
+    // {D0, C8, 11, -253, -1},{D0, 81, 26, 1, 0},{D0, C8, 50, -640, -1},{D0, C8, 10, 82, 0}
+    // {D0, C8, 11, -253, -1},{D0, 81, 26, 1, 0},{D0, C8, 50, -640, -1},{D0, C8, 10, 82, 0}
+    EXPMSG({.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_C1_C2, .vb0=3, .vb1=-1, .vb2=0xFF, .vb3=-1}
+          ,{.to=MA_UI(UISUB_TFT), .from=0xD0, .cmd=CMD_TRSTATE_NOTIF,    .v1=1, .v2=0}
+          ,{.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_POSE_SET_TRIG1,   .v32=1}
+          ,{.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_TARGET_SPEED, .v1=30, .v2=0});
+
+    
+    tvars = savtvar;
+    tvars.beginposmm = -1000;
+    
+    ctrl2_upcmd_set_desired_speed(0, &tvars, -30);
+    rc = ctrl2_tick_process(0, &tvars, &myconf, 0);
+    XCTAssert(rc==3);
+    s = dump_msgbuf(0);
+    // {D0, C8, 11, -253, -1},{D0, 81, 26, 1, 0},{D0, C8, 50, -640, -1},{D0, C8, 10, 82, 0}
+    // {D0, C8, 11, -253, -1},{D0, 81, 26, 1, 0},{D0, C8, 50, -640, -1},{D0, C8, 10, 82, 0}
+    EXPMSG({.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_C1_C2, .vb0=3, .vb1=-1, .vb2=0xFF, .vb3=-1}
+          ,{.to=MA_UI(UISUB_TFT), .from=0xD0, .cmd=CMD_TRSTATE_NOTIF,    .v1=1, .v2=0}
+          ,{.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_POSE_SET_TRIG1,   .v32=-2000}
+          ,{.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_TARGET_SPEED, .v1=30, .v2=0});
+
+    rc  = ctrl2_evt_pose_triggered(0, &tvars, 0x03, (1<<0), -204);
+    XCTAssert(!rc);
+    XCTAssert(tvars.curposmm==-1020);
+    XCTAssert(tvars.beginposmm==-1000-1100);
+    
+    rc = ctrl2_tick_process(0, &tvars, &myconf, 0);
+    XCTAssert(rc==2);
+    s = dump_msgbuf(0);
+    // {D0, C8, 11, -253, -1},{D0, 81, 26, 1, 0},{D0, C8, 50, -640, -1},{D0, C8, 10, 82, 0}
+    EXPMSG({.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_POSE_SET_TRIG1,   .v32=-4200});
+    XCTAssert(tvars.curposmm==-1020);
+    XCTAssert(tvars.beginposmm==-2100);
+    
+    ctrl2_evt_stop_detected(0, &tvars, -3000);
+    XCTAssert(tvars.curposmm==-1500);
+    XCTAssert(tvars.beginposmm==-2100);
+
+    rc = ctrl2_tick_process(0, &tvars, &myconf, 0);
+    //XCTAssert(rc==2);
+    s = dump_msgbuf(1);
+    // {D0, C8, 11, 3, 255},{D0, 81, 26, 2, 0},{D0, C8, 10, 0, 0}
+
+    // now right
+    ctrl2_upcmd_set_desired_speed(0, &tvars, 42);
+    rc = ctrl2_tick_process(0, &tvars, &myconf, 0);
+    XCTAssert(rc==3);
+    s = dump_msgbuf(0);
+     //{D0, C8, 11, 259, 511},{D0, 81, 26, 1, 0},{D0, C8, 50, -2000, -1},{D0, C8, 10, 42, 0}
+
+
+    EXPMSG({.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_C1_C2, .vb0=3, .vb1=1, .vb2=0xFF, .vb3=1}
+          ,{.to=MA_UI(UISUB_TFT), .from=0xD0, .cmd=CMD_TRSTATE_NOTIF,    .v1=1, .v2=0}
+          ,{.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_POSE_SET_TRIG1,   .v32=-2000}
+          ,{.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_TARGET_SPEED, .v1=42, .v2=0});
+
+    XCTAssert(tvars.curposmm==-1500);
+    XCTAssert(tvars.beginposmm==-2100);
+    
+    rc  = ctrl2_evt_pose_triggered(0, &tvars, 0x03, (1<<0), -199);
+    XCTAssert(!rc);
+    XCTAssert(tvars.curposmm==-995);
+    XCTAssert(tvars.beginposmm==-1000);
+    
+    rc = ctrl2_tick_process(0, &tvars, &myconf, 0);
+    XCTAssert(rc==2);
+    s = dump_msgbuf(0);
+      // {D0, C8, 11, -253, -1},{D0, 81, 26, 1, 0},{D0, C8, 50, -640, -1},{D0, C8, 10, 82, 0}
+      EXPMSG({.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_POSE_SET_TRIG2,   .v32=-1680});
+      XCTAssert(tvars.curposmm==-995);
+      XCTAssert(tvars.beginposmm==-1000);
+
+}
+    
 
 - (void) testSub1
 {

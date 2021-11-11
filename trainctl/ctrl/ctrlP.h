@@ -47,6 +47,9 @@ typedef struct {
 
     uint16_t behaviour_flags;
     uint32_t timertick[NUM_TIMERS];
+    
+    int32_t curposmm;
+    int32_t beginposmm; // left side is 0, mm of right side
 } train_ctrl_t;
 
 /*
@@ -64,7 +67,8 @@ typedef struct {
 #define _TFLAG_TSPD_CHANGED  (1<<8)
 #define _TFLAG_LIMIT_CHANGED (1<<9)
 #define _TFLAG_DSPD_CHANGED  (1<<10)
-#define _TFLAG_C1C2_CHANGED  (1<<11)
+#define _TFLAG_C1_CHANGED    (1<<11)
+#define _TFLAG_C2_CHANGED    (1<<11)
 
 
 int ctrl2_tick_process(int tidx, train_ctrl_t *tvars, const train_config_t *tconf, int8_t occupency_changed);
@@ -93,7 +97,7 @@ void ctrl2_update_c2(int tidx, train_ctrl_t *tvar, const train_config_t *tconf, 
 void ctrl2_notify_state(int tidx, train_ctrl_t *tvar);
 void ctrl2_sendlow_tspd(int tidx, train_ctrl_t *tvar);
 void ctrl2_sendlow_c1c2(int tidx, train_ctrl_t *tvar);
-void ctrl2_evt_pose_triggered(int tidx, train_ctrl_t *tvar, uint8_t ca_addr, uint8_t trignum);
+void ctrl2_evt_pose_triggered(int tidx, train_ctrl_t *tvar, uint8_t ca_addr, uint8_t trigbits, int16_t cposd10);
 void ctrl2_evt_stop_detected(int tidx, train_ctrl_t *tvar, int32_t pose);
 
 void ctrl_set_pose_trig(int numtrain, int32_t pose, int n);

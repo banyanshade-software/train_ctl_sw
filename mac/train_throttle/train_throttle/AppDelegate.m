@@ -1693,7 +1693,7 @@ void notif_target_bemf(const train_config_t *cnf, train_vars_t *vars, int32_t va
        @"PID_T1"    : @[ @"tick", @"T1_pid_target",@"T1_pid_target_v", @"T1_bemf_mv", @"T1_pid_last_err", @"T1_pid_sum_e"],
 
        @"inertia": @[@"tick", @"T0_ine_t", @"T0_ine_c", @"T1_ine_t", @"T1_ine_c"],
-       @"pose"   : @[@"tick", @"T0_spd_curspeed", @"T0_bemf_mv", @"T0_ctrl_dir", @"T0_pose", @"T0_pose_trig"]
+       @"pose"   : @[@"tick", @"T0_spd_curspeed", @"T0_bemf_mv", @"T0_ctrl_dir", @"T0_pose", @"T0_pose_trig1",@"T0_pose_trig2", @"T0_curposmm", @"T0_beginposmm"]
     };
     NSString *k = nil;
     switch (ngraph) {

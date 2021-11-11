@@ -141,6 +141,7 @@ static void purge_block_delayed(void)
     ctrl_set_pose_trig(0, -40, 0);
     XCTAssert(mqf_len(&from_ctrl)==2);
 
+    NSString *s = dump_msgbuf(0);
     EXPMSG({.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_POSE_SET_TRIG2, .v32=142},
            {.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_POSE_SET_TRIG1, .v32=-40});
 
@@ -253,7 +254,7 @@ static void purge_block_delayed(void)
     XCTAssert(tvars._target_speed == 70);
     XCTAssert(0==check_occupency(0, -1));
 
-    ctrl2_evt_pose_triggered(0, &tvars, 0x00, 1);
+    ctrl2_evt_pose_triggered(0, &tvars, 0x00, (1<<1), 30);
     XCTAssert(!tvars.pose2_set);
     rc = ctrl2_tick_process(0, &tvars, tconf, 0);
     XCTAssert(rc==3);
@@ -387,7 +388,7 @@ static void purge_block_delayed(void)
 {
     [self testTrainStartRight];
     
-    ctrl2_evt_pose_triggered(0, &tvars, 0x01, 1);
+    ctrl2_evt_pose_triggered(0, &tvars, 0x01, (1<<1), 30);
     XCTAssert(tvars.pose2_set == 0);
     int rc = ctrl2_tick_process(0, &tvars, tconf, 0);
     XCTAssert(rc==3);
@@ -421,7 +422,7 @@ static void purge_block_delayed(void)
 {
     [self testTrainStartRight];
     
-    ctrl2_evt_pose_triggered(0, &tvars, 0x01, 1);
+    ctrl2_evt_pose_triggered(0, &tvars, 0x01, (1<<1), 30);
     XCTAssert(tvars.pose2_set == 0);
     int rc = ctrl2_tick_process(0, &tvars, tconf, 0);
     XCTAssert(rc==3);
@@ -480,7 +481,7 @@ static void purge_block_delayed(void)
     XCTAssert(0==check_occupency(1, 3));
     
     // late trigger may (and will) occur and should be ignored
-    ctrl2_evt_pose_triggered(0, &tvars, 0x01, 1);
+    ctrl2_evt_pose_triggered(0, &tvars, 0x01, (1<<1), 30);
     rc = ctrl2_tick_process(0, &tvars, tconf, 1);
     //XCTAssert(rc==0);
     XCTAssert(tvars._dir == 1);
@@ -542,7 +543,7 @@ static void purge_block_delayed(void)
     // try to restart
     ctrl2_upcmd_set_desired_speed(0, &tvars, 90);
     rc = ctrl2_tick_process(0, &tvars, tconf, 1);
-    XCTAssert(rc==3);
+    XCTAssert(rc==2);
     s = dump_msgbuf(0);
     // {D0, C8, 10, 0, 0},{D0, C8, 11, 0, 255},{D0, 81, 26, 2, 0},{D0, C8, 11, 256, 257},{D0, 81, 26, 1, 0},{D0, C8, 10, 90, 0}
     XCTAssert(tvars.can2_addr == 0xFF);
@@ -554,7 +555,7 @@ static void purge_block_delayed(void)
 - (void) testSub1
 {
     topolgy_set_turnout(1, 0);
-    topolgy_set_turnout(2, 0);
+    topolgy_set_turnout(2, 1);
     ctrl2_init_train(0, &tvars, sthree);
     int rc = ctrl2_tick_process(0, &tvars, tconf, 0);
     XCTAssert(rc==1);
@@ -567,7 +568,7 @@ static void purge_block_delayed(void)
     XCTAssert(rc==3);
     s = dump_msgbuf(0);
     // {D0, C8, 11, -253, -1},{D0, 81, 26, 1, 0},{D0, C8, 50, -640, -1},{D0, C8, 10, 82, 0}
-
+    // {D0, C8, 11, -253, -1},{D0, 81, 26, 1, 0},{D0, C8, 50, -640, -1},{D0, C8, 10, 82, 0}
     EXPMSG({.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_C1_C2, .vb0=3, .vb1=-1, .vb2=0xFF, .vb3=-1}
           ,{.to=MA_UI(UISUB_TFT), .from=0xD0, .cmd=CMD_TRSTATE_NOTIF,    .v1=1, .v2=0}
           ,{.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_POSE_SET_TRIG1,   .v32=-640}
@@ -583,31 +584,31 @@ static void purge_block_delayed(void)
     XCTAssert(rtrn==0);
     XCTAssert(rsblk==3);
     
-    ctrl2_evt_pose_triggered(0, &tvars, 0x03, 0);
+    ctrl2_evt_pose_triggered(0, &tvars, 0x03, (1<<0), -30);
     rc = ctrl2_tick_process(0, &tvars, tconf, 0);
     XCTAssert(rc==2);
     s = dump_msgbuf(0);
-    EXPMSG({.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_POSE_SET_TRIG1,   .v32=-1800});
+    EXPMSG({.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_POSE_SET_TRIG1,   .v32=-2500});
     XCTAssert(tvars._dir==-1);
     XCTAssert(tvars._target_speed == 82);
     XCTAssert(0==check_occupency(3, -1));
     occupency_block_addr_info(3, NULL, &rsblk);
     XCTAssert(rsblk==4);
     
-    ctrl2_evt_pose_triggered(0, &tvars, 0x03, 0);
+    ctrl2_evt_pose_triggered(0, &tvars, 0x03, (1<<0), -70);
     rc = ctrl2_tick_process(0, &tvars, tconf, 0);
     XCTAssert(rc==3);
     s = dump_msgbuf(0);
     occupency_block_addr_info(3, NULL, &rsblk);
     XCTAssert(rsblk==5);
-    EXPMSG({.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_POSE_SET_TRIG2,   .v32=-500}
+    EXPMSG({.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_POSE_SET_TRIG2,   .v32=-1100}
           ,{.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_TARGET_SPEED, .v1=70, .v2=0});
     XCTAssert(tvars._dir==-1);
     XCTAssert(tvars._target_speed == 70);
     XCTAssert(0==check_occupency(3, -1));
     XCTAssert(tvars.pose2_set==1);
     
-    ctrl2_evt_pose_triggered(0, &tvars, 0x03, 1);
+    ctrl2_evt_pose_triggered(0, &tvars, 0x03, (1<<1), 30);
     XCTAssert(tvars.pose2_set == 0);
     rc = ctrl2_tick_process(0, &tvars, tconf, 0);
     XCTAssert(rc==3);
@@ -781,7 +782,7 @@ static int compareMsg64(const msg_64_t *exp, int n, int clear)
                       exp[i].from, exp[i].to, exp[i].cmd, exp[i].v1, exp[i].v2);
                 NSLog(@"%d got: %2.2x %2.2x cmd=%2.2x v1=%d v2=%d", i,
                       qbuf[i].from, qbuf[i].to, qbuf[i].cmd, qbuf[i].v1, qbuf[i].v2);
-                rc = i;
+                rc = i+1;
                 break;
             }
         }

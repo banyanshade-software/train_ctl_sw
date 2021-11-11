@@ -39,6 +39,8 @@ const stat_val_t statval_ctrl[] = {
         { trctl, offsetof(train_ctrl_t, can2_addr),        sizeof(uint8_t)         _P("T#_ctrl_canton2_addr")},
         { trctl, offsetof(train_ctrl_t, desired_speed),    sizeof(uint16_t)        _P("T#_ctrl_desired_speed")},
         { trctl, offsetof(train_ctrl_t, spd_limit),        sizeof(uint16_t)        _P("T#_ctrl_spd_limit")},
+        { trctl, offsetof(train_ctrl_t, curposmm),         sizeof(int32_t)         _P("T#_curposmm")},
+        { trctl, offsetof(train_ctrl_t, beginposmm),         sizeof(int32_t)         _P("T#_beginposmm")},
         { NULL,  sizeof(train_ctrl_t), 0 _P(NULL)}
 };
 
@@ -65,10 +67,6 @@ static void fatal(void)
 // train FSM
 static void evt_timer(int tidx, train_ctrl_t *tvar, int tnum);
 
-#ifdef OLD_CTRL
-static void evt_pose_triggered(int tidx, train_ctrl_t *tvar, uint8_t c_adder);
-static void check_blk_tick(uint32_t tick);
-#endif
 
 // ----------------------------------------------------------------------------
 // generic timer attached to train_ctrl_t struct
@@ -130,6 +128,7 @@ static void ctrl_init(void)
     set_turnout(1, 0);
     lsblk_num_t s1 = {1};
     lsblk_num_t s2 = {2};
+    lsblk_num_t _UNUSED_ s3 = {3};
 	if ((1)) {
         ctrl2_init_train(0, &trctl[0], s1);
         
@@ -335,7 +334,7 @@ void ctrl_run_tick(_UNUSED_ uint32_t notif_flags, uint32_t tick, _UNUSED_ uint32
 
             case CMD_POSE_TRIGGERED:
                 itm_debug3(DBG_POSE, "Trig", m.v1u, m.v2u, m.subc);
-                ctrl2_evt_pose_triggered(tidx, tvar, m.v1u, m.subc);
+                ctrl2_evt_pose_triggered(tidx, tvar, m.v1u, m.subc, m.v2);
                 break;
             case CMD_STOP_DETECTED:
                 ctrl2_evt_stop_detected(tidx, tvar, m.v32);

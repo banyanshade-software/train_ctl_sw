@@ -106,7 +106,7 @@ const stat_val_t statval_spdctrl[] = {
     { trspc_vars, offsetof(train_vars_t, inertiavars.cur100), 2    _P("T#_ine_c")},
     { trspc_vars, offsetof(train_vars_t, last_speed), 2         _P("T#_spd_curspeed")},
     { trspc_vars, offsetof(train_vars_t, position_estimate), 4  _P("T#_pose")},
-    { trspc_vars, offsetof(train_vars_t, pose_trig1), 4          _P("T#_pose_trig")},
+    { trspc_vars, offsetof(train_vars_t, pose_trig1), 4          _P("T#_pose_trig1")},
     { trspc_vars, offsetof(train_vars_t, pose_trig2), 4          _P("T#_pose_trig2")},
     { NULL, sizeof(train_vars_t), 0 _P(NULL)}
 };
@@ -249,7 +249,7 @@ void send_train_stopped(int numtrain, train_vars_t *tvars)
     m.from = MA_TRAIN_SC(numtrain);
     m.to = MA_CONTROL_T(numtrain);
     m.cmd = CMD_STOP_DETECTED;
-    m.v32 = tvars->position_estimate; // XXX TODO scale ?
+    m.v32 = tvars->position_estimate / 10; // XXX TODO scale ?
     mqf_write_from_spdctl(&m);
 }
 
@@ -447,13 +447,15 @@ static void set_c1_c2(int tidx, train_vars_t *tvars, uint8_t c1, int8_t dir1, ui
 		m.cmd = CMD_BEMF_ON;
 		mqf_write_from_spdctl(&m);
 	}
+    if (c1 != tvars->C1) {
+        tvars->position_estimate = 0; // reset POSE
+    }
 	tvars->C1 = c1;
 	tvars->C1_dir = dir1;
 	tvars->C2 = c2;
 	tvars->C2_dir = dir2;
 	tvars->last_speed = 9000; // make sure cmd is sent
 	itm_debug2(DBG_POSEC, "POS reset", tidx, tvars->position_estimate);
-	tvars->position_estimate = 0; // reset POSE
 }
 
 
@@ -531,6 +533,7 @@ int train_set_target_speed(int numtrain, int16_t target)
 static int _pose_check_trig(int numtrain, train_vars_t *tvars, int32_t lastincr, int32_t pose)
 {
 	if (!pose) return 0;
+#if 0
 	if (pose > 0) {
 		if (lastincr<0) itm_debug3(DBG_ERR|DBG_POSEC, "wrong incr", numtrain, lastincr, pose);
 		if (tvars->position_estimate >= pose) {
@@ -541,7 +544,18 @@ static int _pose_check_trig(int numtrain, train_vars_t *tvars, int32_t lastincr,
 		if (tvars->position_estimate <= pose) {
             return 1;
 		}
-	}
+    }
+#endif
+    int dir = tvars->C1_dir;
+    if (!dir) return 0;
+    if ((SIGNOF0(lastincr)*dir) < 0) {
+        itm_debug3(DBG_ERR|DBG_POSEC, "wrong incr", numtrain, lastincr, pose);
+    }
+    if (dir >0) {
+        if (tvars->position_estimate >= pose) return 1;
+    } else {
+        if (tvars->position_estimate <= pose) return 1;
+    }
 	return 0;
 }
 
@@ -569,7 +583,7 @@ static void pose_check_trig(int numtrain, train_vars_t *tvars, int32_t lastincr)
     m.cmd = CMD_POSE_TRIGGERED;
     m.subc = r;
     m.v1u = tvars->C1;
-    int32_t p = tvars->position_estimate;
+    int32_t p = tvars->position_estimate / 100;
     if (abs(p)>0x7FFF) {
         // TODO: problem here pose is > 16bits
         itm_debug1(DBG_POSEC|DBG_ERR, "L pose", p);

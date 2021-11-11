@@ -47,7 +47,7 @@
         pwm[i] = 0;
         dir[i] = 0;
     }
-    s1[0].n = 1;
+    s1[0].n = 3;
    
     return self;
 }

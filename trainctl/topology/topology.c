@@ -54,9 +54,9 @@ static const topo_lsblk_t _Topology[] = {
 #if 0
     /* 4 */ { MA_CANTON(0, 3),  0xFF,   105,   -1 ,  -1, 0xFF,       3,  -1,    1       _PTS(2, {1,2}, {5,2}, {6,3}, {6,12} )}
 #else
-    /* 4 */ { MA_CANTON(0, 3),  0xFF,   110,   -1,  5,     2,       3,  -1,    1       _PTS(0, {7,4}, {7,8}, {6,10}, {6,12})},
-    /* 5 */ { MA_CANTON(0, 3),  0xFF,    50,   -1,  -1,  0xFF,       6,   4,    2       _PTS(0, {1,2}, {5,2}, {6,3}, _VP)},
-    /* 6 */ { MA_CANTON(0, 3),  0xFF,    20,   5,   -1,     2,       -1, -1, 0xFF       _PTS(0, {6,4}, {6,6}, _VP, _VP)}
+    /* 4 */ { MA_CANTON(0, 3),  0xFF,   110,   -1,   5,     2,       3,  -1,    1       _PTS(0, {7,4}, {7,8}, {6,10}, {6,12})},
+    /* 5 */ { MA_CANTON(0, 3),  0xFF,    40,   -1,  -1,  0xFF,       6,   4,    2       _PTS(0, {1,2}, {5,2}, {6,3}, _VP)},
+    /* 6 */ { MA_CANTON(0, 3),  0xFF,    20,    5,   -1,    2,       -1, -1, 0xFF       _PTS(0, {6,4}, {6,6}, _VP, _VP)}
 #endif
 };
 
@@ -81,6 +81,7 @@ const topo_lsblk_t *topology_get_sblkd(int lsblk)
     n.n = lsblk;
     return Topology(n);
 }
+
 
 int topology_num_sblkd(void)
 {

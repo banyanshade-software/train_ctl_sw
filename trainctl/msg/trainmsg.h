@@ -179,8 +179,8 @@ LFMQUEUE_DEF_H(from_ctrl, msg_64_t)
 #define CMD_TRSTATE_NOTIF			0x26
 #define CMD_INA3221_VAL1			0x27	// in detect1 mode
 /* other */
-#define CMD_POSE_SET_TRIG1          0x50
-#define CMD_POSE_SET_TRIG2          0x51
+#define CMD_POSE_SET_TRIG0          0x50
+#define CMD_POSE_SET_TRIG_U1        0x51
 #define CMD_POSE_TRIGGERED			0x52
 #define CMD_STOP_DETECTED           0x53
 

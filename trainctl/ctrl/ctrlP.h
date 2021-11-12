@@ -121,6 +121,9 @@ void ctrl_set_timer(int tidx, train_ctrl_t *tvar, int numtimer, uint32_t tval);
 #define BEHAVE_TBEHAVE        (1<<7)        // 128
 #define BEHAVE_CHBKLK        (1<<8)        // 256
 
+
+extern uint8_t ctrl_flag_notify_speed ;
+
 #ifdef OLD_CTRL
 static inline void ctrl_set_state(int tidx, train_ctrl_t *tvar, train_state_t ns)
 {

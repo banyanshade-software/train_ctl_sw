@@ -95,6 +95,7 @@ static void purge_block_delayed(void)
 {
     tconf = get_train_cnf(0);
     notify_occupency_change = 0;
+    ctrl_flag_notify_speed = 0;
     occupency_clear();
     mqf_clear(&from_ctrl);
     memset(&tvars, 0, sizeof(tvars));

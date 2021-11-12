@@ -30,6 +30,8 @@ static lsblk_num_t snone = {-1};
 //static uint8_t ignore_bemf_presence = 0;
 //static uint8_t ignore_ina_presence = 1;
 
+uint8_t ctrl_flag_notify_speed = 1;
+
 static void fatal(void)
 {
     itm_debug1(DBG_ERR, "fatal", 0);
@@ -752,6 +754,16 @@ void ctrl2_sendlow_tspd(int tidx, train_ctrl_t *tvar)
     m.v1u = tvar->_target_speed;
     m.v2 = 0;
     mqf_write_from_ctrl(&m);
+    
+    if (ctrl_flag_notify_speed) {
+        msg_64_t m = {0};
+        m.from = MA_CONTROL_T(tidx);
+        m.to = MA_UI(UISUB_TFT);
+        m.cmd = CMD_TRTSPD_NOTIF;
+        m.v1u = tvar->_target_speed;
+        m.v2 = tvar->_dir;
+        mqf_write_from_ctrl(&m);
+    }
 }
 
 void ctrl2_sendlow_c1c2(int tidx, train_ctrl_t *tvar)

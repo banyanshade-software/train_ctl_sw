@@ -256,7 +256,7 @@ static int rec_left_is_straight_ep(trec_t *rec, int n)
         if (minx==999) continue;
         int isl = rec_is_left(&rec);
         // turnout
-        [resT appendFormat:@"<circle cx=\"%d\" cy=\"%d\" r=\"%d\" stroke=\"#306030\" stroke-width=\"1px\" fill=\"none\"/>\n",
+        [resT appendFormat:@"<circle class=\"tncircle\" id=\"c%d\" cx=\"%d\" cy=\"%d\" r=\"%d\" stroke=\"#306030\" stroke-width=\"1px\" fill=\"#00000000\"/>\n", tn,
          SCL_X*(maxx+minx)/2, SCL_Y* (maxy+miny)/2, (SCL_X+SCL_Y)/3];
         [resT appendFormat:@"<text x=\"%dpx\" y=\"%dpx\" class=\"turnout\" Font-family=\"Helvetica\" fill=\"#80A080\" font-size=\"12px\">S%d</text>\n",
          SCL_X*(maxx+minx)/2-8, SCL_Y*(maxy+miny)/2+SCL_Y/2+16,

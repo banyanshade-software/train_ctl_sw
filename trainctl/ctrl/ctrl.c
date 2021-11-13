@@ -269,6 +269,9 @@ void ctrl_run_tick(_UNUSED_ uint32_t notif_flags, uint32_t tick, _UNUSED_ uint32
             case CMD_TURNOUT_HI_B:
                 set_turnout(m.v1u, 1);
                 break;
+            case CMD_TURNOUT_HI_TOG:
+                set_turnout(m.v1u, topology_get_turnout(m.v1u) ? 0 : 1);
+                break;
         }
         // -----------------------------------------
 		if (IS_CONTROL_T(m.to)) {

@@ -105,7 +105,9 @@ typedef void (^respblk_t)(void);
 
 @end
 
-@implementation AppDelegate
+@implementation AppDelegate {
+    WKUserContentController *wkuserctrl;
+}
 
 @synthesize curspeed = _curspeed;
 @synthesize targetspeed = _targetspeed;
@@ -148,7 +150,17 @@ typedef void (^respblk_t)(void);
                 NSLog(@"js error : %@\n", err);
             }
         }];
+        // add callback for turnouts
+        js = @"Array.from(document.getElementsByClassName('tncircle'), el => el.addEventListener(\"click\", function () {\
+           window.webkit.messageHandlers.ctc.postMessage(\"c\"+el.getAttribute('id'));} ));";
+        [self->_ctoWebView evaluateJavaScript:js completionHandler:^(id v, NSError *err) {
+            if (err) {
+                NSLog(@"js error : %@\n", err);
+            }
+        }];
     });
+    wkuserctrl = _ctoWebView.configuration.userContentController;
+    [wkuserctrl addScriptMessageHandler:self name:@"ctc"];
     
     // for debug
     //[self getParams]; //XXX XXX
@@ -157,12 +169,29 @@ typedef void (^respblk_t)(void);
     
     
 }
+                  
+                  
 
 
 - (void)applicationWillTerminate:(NSNotification *)aNotification {
     // Insert code here to tear down your application
 }
 
+- (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message
+{
+    NSString *s = message.body;
+    if ([s length] < 3) goto badmsg;
+    s = [s substringFromIndex:2];
+    int n = [s intValue];
+    [self toggleTurnout:n];
+    return;
+    
+badmsg:
+    NSLog(@"ho");
+}
+
+
+ 
 - (void) setShunting:(int)s
 {
     if (s == _shunting) return;
@@ -306,6 +335,16 @@ typedef void (^respblk_t)(void);
     m.to = MA_CONTROL(); //MA_TURNOUT(0, 0);
     m.from = MA_UI(UISUB_USB);
     m.cmd = CMD_TURNOUT_HI_B;
+    m.v1u = (uint16_t) tn;
+    [self sendMsg64:m];
+}
+
+- (void) toggleTurnout:(int)tn
+{
+    msg_64_t m;
+    m.to = MA_CONTROL(); //MA_TURNOUT(0, 0);
+    m.from = MA_UI(UISUB_USB);
+    m.cmd = CMD_TURNOUT_HI_TOG;
     m.v1u = (uint16_t) tn;
     [self sendMsg64:m];
 }

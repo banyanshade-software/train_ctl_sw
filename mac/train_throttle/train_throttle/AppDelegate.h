@@ -15,7 +15,7 @@
 @interface AppDelegate : NSObject <NSApplicationDelegate,
     CBCentralManagerDelegate,CBPeripheralDelegate,
     NSTableViewDelegate,NSTableViewDataSource,
-    WKUIDelegate, WKNavigationDelegate>
+    WKUIDelegate, WKNavigationDelegate, WKScriptMessageHandler>
 
 @property (nonatomic,readonly) int curspeed;
 @property (nonatomic) int targetspeed;

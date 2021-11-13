@@ -102,18 +102,7 @@ static void purge_block_delayed(void)
     topolgy_set_turnout(0, 0);
     topolgy_set_turnout(1, 0);
 
-#ifdef OLD_CTRL
 
-    tvars._dir = 0;
-    tvars._mode = train_manual;
-    tvars._state = train_off;
-    tvars._target_speed = 0;
-    tvars.c1_sblk.n = 1;
-    tvars.can1_addr = canton_for_lsblk(tvars.c1_sblk);
-    tvars.can2_addr = 0xFF;
-    tvars.behaviour_flags = 0;
-    tvars.desired_speed = 0;
-#endif
     tvars._mode = train_manual;
     ctrl2_init_train(0, &tvars, sone);
     NSLog(@"init done");

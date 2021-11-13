@@ -46,7 +46,7 @@ typedef struct {
     //int16_t desired_speed2;
     //uint8_t limited:1;
 
-    uint16_t behaviour_flags;
+    //uint16_t behaviour_flags;
     uint32_t timertick[NUM_TIMERS];
     
     int32_t curposmm;
@@ -111,6 +111,7 @@ void ctrl_reset_timer(int tidx, train_ctrl_t *tvar, int numtimer);
 void ctrl_set_timer(int tidx, train_ctrl_t *tvar, int numtimer, uint32_t tval);
 
 
+/*
 // behaviour_flags
 #define BEHAVE_STOPPED        (1<<1)        // 2
 #define BEHAVE_EOT1            (1<<2)        // 4
@@ -120,125 +121,9 @@ void ctrl_set_timer(int tidx, train_ctrl_t *tvar, int numtimer, uint32_t tval);
 #define BEHAVE_RESTARTBLK     (1<<6)        // 64
 #define BEHAVE_TBEHAVE        (1<<7)        // 128
 #define BEHAVE_CHBKLK        (1<<8)        // 256
-
+*/
 
 extern uint8_t ctrl_flag_notify_speed ;
 
-#ifdef OLD_CTRL
-static inline void ctrl_set_state(int tidx, train_ctrl_t *tvar, train_state_t ns)
-{
-    if (ns == tvar->_state) {
-        return;
-    }
-    switch (ns) {
-    case train_off:             itm_debug1(DBG_CTRL, "ST->OFF", tidx); break;
-    case train_running_c1:         itm_debug1(DBG_CTRL, "ST->RC1", tidx); break;
-    case train_running_c1c2:     itm_debug1(DBG_CTRL, "ST->C1C2", tidx); break;
-    case train_station:            itm_debug1(DBG_CTRL, "ST->STA", tidx); break;
-    case train_blk_wait:         itm_debug1(DBG_CTRL, "ST->BLKW", tidx); break;
-    case train_end_of_track:    itm_debug1(DBG_CTRL, "ST->EOT", tidx); break;
-    default:                     itm_debug2(DBG_CTRL, "ST->?", tidx, ns); break;
-    }
-    tvar->_state = ns;
-    
-    
-    // notif UI
-    msg_64_t m = {0};
-    m.from = MA_CONTROL_T(tidx);
-    m.to = MA_UI(UISUB_TFT);
-    m.cmd = CMD_TRSTATE_NOTIF;
-    m.v1u = ns;
-    mqf_write_from_ctrl(&m);
-}
-
-void ctrl_changed_lsblk(int tidx, train_ctrl_t *tvars, lsblk_num_t newsblk);
-
-void ctrl_evt_entered_c2(int tidx, train_ctrl_t *tvar, uint8_t from_bemf);
-void ctrl_evt_leaved_c1(int tidx, train_ctrl_t *tvar);
-
-
-typedef enum {
-    upd_init,
-    upd_change_dir,
-    upd_c1c2,
-    upd_pose_trig,
-    upd_check,
-} ctrl_update_reason_t;
-
-
-/// ctrl_update_c2_state_limits
-///
-///updates c2 info, and potentially speed limit and state
-///
-///should be called whenever changes are made in tvars :
-/// change direction, train goes on new canton, or topology/occupency
-/// changed
-///
-/// function is to be break into smaller part
-///
-/// @param tidx train number
-/// @param tvars train tvars
-/// @param tconf train config (used for cm to POSE conversion)
-/// @param updreason reason for updating
-
-void ctrl_update_c2_state_limits(int tidx, train_ctrl_t *tvars, const train_config_t *tconf, ctrl_update_reason_t updreason);
-
-
-/// ctrl_set_pose_trig
-///     order SPDCTL to set a trigger on POSE (POSition Estimate)
-///
-/// ctrl_set_pose_trig sends a CMD_POSE_SET_TRIG1 or CMD_POSE_SET_TRIG2 to SPDCTL
-/// trigger 0 is used to detect logical sub block transition
-///
-/// trigger 1 is used to stop in the middle of lsblk e.g. when end of track
-///
-/// @param numtrain train number
-/// @param pose pose value (internal unit, corresponding to BEMF integration)
-/// @param trignum trigger num (0 or 1)
-
-void ctrl_set_pose_trig(int numtrain, int32_t pose, int trignum);
-
-
-
-
-// --------------------------------------
-// main target-speed and direction command
-// sent to SPEED_CONTROL
-//
-
-/// ctrl_set_tspeed
-///     set target speed
-///
-///     target speed and direction are set independantly
-///
-///     UI is notified (unless no change are made) and
-///     command CMD_SET_TARGET_SPEED is sent to SpeedCtrl
-///
-/// @param trnum train number
-/// @param tvars train tvars
-/// @param tspd target speed (>=0)
-
-void ctrl_set_tspeed(int trnum, train_ctrl_t *tvars, uint16_t tspd);
-
-
-/// ctrl_set_dir
-///    set train diretion
-///
-///    note that train may have speed 0 and direvtion non-0
-///    (meaning it is stopping but not yet stopped due to inertia)
-///
-///    UI is notified (unless no change are made)
-///
-///    Nothing is sent to SpeedCtr so it is assumed that ctrl_set_tspeed() will also be sent.
-///
-/// @param trnum train number
-/// @param tvars train tvars
-/// @param dir direction (-1/0/1)
-/// @param force force sending msg even if no changed are made
-
-
-void ctrl_set_dir(int trnum,  train_ctrl_t *tvars, int  dir, int force);
-
-#endif
 
 #endif /* ctrlP_h */

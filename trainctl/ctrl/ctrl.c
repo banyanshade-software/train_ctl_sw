@@ -278,42 +278,7 @@ void ctrl_run_tick(_UNUSED_ uint32_t notif_flags, uint32_t tick, _UNUSED_ uint32
 			//if (test_mode) continue;
 			int tidx = m.to & 0x7;
 			train_ctrl_t *tvar = &trctl[tidx];
-#ifdef OLD_CTRL
-			switch (m.cmd) {
-			case CMD_PRESENCE_SUB_CHANGE:
-				if (ignore_ina_presence) break;
-            case CMD_PRESENCE_VSUB_CHANGE: {
-				sub_presence_changed(tick, m.from, m.subc, m.v1u, m.v2);
-				break;
-			}
-			case CMD_BEMF_DETECT_ON_C2: {
-				itm_debug2(DBG_CTRL,"BEMF/C2", tidx,  m.v1u);
-				train_ctrl_t *tvar = &trctl[tidx];
-				if (m.v1u != tvar->can2_addr) {
-					// typ. because we already switch to c2 (msg SET_C1_C2 and CMD_BEMF_DETECT_ON_C2 cross over
-					itm_debug3(DBG_CTRL, "not c2", tidx, m.v1u, tvar->can2_addr);
-					break;
-				}
-				ctrl_evt_entered_c2(tidx, tvar, 1);
-				// -----xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-				//if (ignore_bemf_presence) break;
-				//const train_config_t *tconf = get_train_cnf(tidx);
-				//train_switched_to_c2(tidx, tconf, tvar, 1);
-				break;
-			}
-			case CMD_MDRIVE_SPEED_DIR:
-				ctrl_evt_cmd_set_setdirspeed(tidx, tvar, m.v2, m.v1u, 0);
-				break;
 
-			case CMD_POSE_TRIGGERED:
-				itm_debug2(DBG_POSE, "Trig", m.v1u, m.v2u);
-				evt_pose_triggered(tidx, tvar, m.v1u);
-				break;
-			default:
-				break;
-
-			}
-#endif
             switch (m.cmd) {
             case CMD_PRESENCE_SUB_CHANGE:
                 if (ignore_ina_presence) break;
@@ -399,112 +364,7 @@ static void evt_tleave(int tidx, train_ctrl_t *tvars)
 }
 
 
-#ifdef OLD_CTRL
-static void evt_tleave(int tidx, train_ctrl_t *tvars)
-{
-	if (ignore_ina_presence) {
-		itm_debug2(DBG_ERR|DBG_CTRL, "TLeave", tidx, tvars->_state);
-		ctrl_evt_leaved_c1(tidx, tvars);
-	} else if (tvars->_state == train_running_c1c2){
-		// this is TGUARD
-		itm_debug2(DBG_ERR|DBG_CTRL, "TGuard", tidx, tvars->_state);
-		// for now we do the same, but more to do for long trains
-		ctrl_evt_leaved_c1(tidx, tvars);
-	} else {
-		itm_debug2(DBG_ERR|DBG_CTRL, "TGurd/bdst", tidx, tvars->_state);
-	}
-}
 
-void ctrl_evt_cmd_set_setdirspeed(int tidx, train_ctrl_t *tvars, int8_t dir, uint16_t tspd, _UNUSED_ uint8_t generated)
-{
-	itm_debug3(DBG_CTRL, "dirspd", tidx, dir, tspd);
-
-	if (tvars->_state == train_off) {
-		itm_debug1(DBG_ERR|DBG_CTRL, "dir ch off", tidx);
-		return;
-	}
-	int8_t odir = tvars->_dir;
-	uint16_t otspd = tvars->_target_speed;
-
-	if ((1)) {
-		// for debug
-		if (odir && (!tspd || !dir)) {
-			itm_debug1(DBG_CTRL, "stopping", tidx);
-		}
-	}
-	if (!dir && tspd) {
-		itm_debug2(DBG_ERR|DBG_CTRL, "dir0spd", tidx, tspd);
-		tspd = 0;
-	}
-	if (!tspd && dir) {
-		itm_debug2(DBG_ERR|DBG_CTRL, "spd0dir", tidx, dir);
-		dir = 0;
-	}
-	tvars->desired_speed = tspd;
-
-	if ((tspd == otspd) && (dir == odir)) {
-		// no change
-		itm_debug3(DBG_CTRL, "dirspd/=", tidx, dir, tspd);
-		return;
-	}
-	if ((tvars->_target_speed != 0) && (tvars->_dir != dir)) {
-		itm_debug3(DBG_ERR|DBG_CTRL, "dir ch mov", tidx, dir, tvars->_target_speed);
-		ctrl_set_state(tidx, tvars, train_station); // say it did stopped
-		// change dir while not stopped... what do we do here ?
-	}
-	if ((tvars->_state == train_station) && dir && tspd) {
-		itm_debug1(DBG_CTRL, "quit stop", tidx);
-		odir = 0;
-		ctrl_set_state(tidx, tvars, train_running_c1);
-        // change dir in occupency
-        set_block_addr_occupency(tvars->can1_addr, occupied(dir), tidx, tvars->c1_sblk);
-	}
-	if (tvars->_state == train_running_c1c2 && (odir != dir) && dir) {
-		// special care here TODO when reversing change while in c1 to c2 transition
-		// TODO
-		itm_debug1(DBG_ERR|DBG_CTRL, "c1c2 rev!", tidx);
-	}
-
-	if (dir != odir) {
-		tvars->_dir = dir;
-		if (!dir) {
-			itm_debug1(DBG_CTRL, "stopping", tidx);
-		}
-        // change dir in occupency
-        set_block_addr_occupency(tvars->can1_addr, occupied(dir), tidx,  tvars->c1_sblk);
-		ctrl_update_c2_state_limits(tidx, tvars, get_train_cnf(tidx), upd_change_dir);
-	}
-
-	ctrl_set_dir(tidx, tvars, dir, 0);
-
-	if (tvars->_mode != train_fullmanual) {
-		tspd = MIN(tvars->spd_limit, tspd);
-	}
-	//ctrl_set_status(tidx, tspd ? train_running : train_station);
-	ctrl_set_tspeed(tidx, tvars, tspd);
-}
-
-static void evt_pose_triggered(int tidx, train_ctrl_t *tvar, uint8_t c_addr)
-{
-	itm_debug3(DBG_CTRL, "pose trgd", tidx, c_addr, tvar->_state);
-	if (0==tidx) {
-		itm_debug2(DBG_CTRL, "----trg0", c_addr, tvar->_state);
-	}
-	switch (tvar->_state) {
-	case train_running_c1:
-		if (c_addr == tvar->can1_addr) {
-			ctrl_update_c2_state_limits(tidx, tvar,get_train_cnf(tidx), upd_pose_trig);
-			//hi_pose_triggered(tidx, tvar, _blk_addr_to_blk_num(c_addr));
-			// TODO
-		} else {
-			itm_debug3(DBG_ERR|DBG_POSE|DBG_CTRL, "ptrg bad", tidx, c_addr, tvar->can1_addr);
-		}
-		break;
-	default:
-		itm_debug2(DBG_ERR|DBG_CTRL, "bad st/3",tidx, tvar->_state);
-	}
-}
-#endif
 
 
 
@@ -517,7 +377,7 @@ static void evt_timer(int tidx, train_ctrl_t *tvar, int tnum)
 		evt_tleave(tidx, tvar);
 		break;
 	case TBEHAVE:
-		tvar->behaviour_flags |= BEHAVE_TBEHAVE;
+		//tvar->behaviour_flags |= BEHAVE_TBEHAVE;
 		break;
 	default:
 		itm_debug2(DBG_ERR|DBG_CTRL, "?TIM", tidx, tnum);
@@ -541,25 +401,7 @@ static void evt_timer(int tidx, train_ctrl_t *tvar, int tnum)
 
 // ---------------------------------------------------------------
 
-#ifdef OLD_CTRL
-static void check_blk_tick(_UNUSED_ uint32_t tick)
-{
-	if ((0)) return;
-	if (occupency_changed) {
-		occupency_changed = 0;
-		for (int tidx=0; tidx<NUM_TRAINS; tidx++) {
-			train_ctrl_t *tvars = &trctl[tidx];
-			const train_config_t *tconf = get_train_cnf(tidx);
-			if (!tconf->enabled) continue;
-			if (tvars->_state == train_off) continue;
-			if ((tvars->_state == train_blk_wait) || (tvars->spd_limit <100)) {
-				itm_debug1(DBG_CTRL, "chk", tidx);
-				ctrl_update_c2_state_limits(tidx, tvars, get_train_cnf(tidx), upd_check);
-			}
-		}
-	}
-}
-#endif
+
 
 // ---------------------------------------------------------------
 //

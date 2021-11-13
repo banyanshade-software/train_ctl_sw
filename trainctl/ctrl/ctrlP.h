@@ -81,6 +81,8 @@ void ctrl2_init_train(int tidx, train_ctrl_t *tvars,
                       lsblk_num_t sblk);
 
 void ctrl2_upcmd_set_desired_speed(int tidx, train_ctrl_t *tvars, int16_t desired_speed);
+void _ctrl2_upcmd_set_desired_speed(int tidx, train_ctrl_t *tvars, int16_t desired_speed);
+void ctrl2_upcmd_settrigU1_half(int tidx, train_ctrl_t *tvars);
 
 void ctrl2_set_mode(int tidx, train_ctrl_t *tvar, train_mode_t mode);
 

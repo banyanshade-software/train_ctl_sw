@@ -498,8 +498,8 @@
             filePath = "../../trainctl/ctrl/ctrlP.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "171"
-            endingLineNumber = "171"
+            startingLineNumber = "186"
+            endingLineNumber = "186"
             landmarkName = "ctrl2_init_train(tidx, tvars, sblk)"
             landmarkType = "9">
          </BreakpointContent>
@@ -514,8 +514,8 @@
             filePath = "../../trainctl/ctrl/ctrlP.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "634"
-            endingLineNumber = "634"
+            startingLineNumber = "647"
+            endingLineNumber = "647"
             landmarkName = "ctrl2_evt_pose_triggered(tidx, tvar, ca_addr, trigbits, cposd10)"
             landmarkType = "9">
          </BreakpointContent>
@@ -530,8 +530,8 @@
             filePath = "../../trainctl/ctrl/ctrlP.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "253"
-            endingLineNumber = "253"
+            startingLineNumber = "276"
+            endingLineNumber = "276"
             landmarkName = "ctrl2_set_tspeed(tidx, tvar, tspeed)"
             landmarkType = "9">
          </BreakpointContent>
@@ -546,8 +546,8 @@
             filePath = "../../trainctl/ctrl/ctrlP.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "659"
-            endingLineNumber = "659"
+            startingLineNumber = "672"
+            endingLineNumber = "672"
             landmarkName = "ctrl2_evt_stop_detected(tidx, tvar, pose)"
             landmarkType = "9">
          </BreakpointContent>
@@ -703,8 +703,8 @@
             filePath = "../../trainctl/ctrl/ctrlP.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "661"
-            endingLineNumber = "661"
+            startingLineNumber = "674"
+            endingLineNumber = "674"
             landmarkName = "ctrl2_evt_stop_detected(tidx, tvar, pose)"
             landmarkType = "9">
          </BreakpointContent>
@@ -751,8 +751,8 @@
             filePath = "../../trainctl/ctrl/ctrlP.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "263"
-            endingLineNumber = "263"
+            startingLineNumber = "286"
+            endingLineNumber = "286"
             landmarkName = "ctrl2_check_alreadystopped(tidx, tvar)"
             landmarkType = "9">
          </BreakpointContent>
@@ -1346,8 +1346,8 @@
             filePath = "../../trainctl/ctrl/ctrlP.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "492"
-            endingLineNumber = "492"
+            startingLineNumber = "505"
+            endingLineNumber = "505"
             landmarkName = "ctrl2_sendlow_tspd(tidx, tvar)"
             landmarkType = "9">
          </BreakpointContent>
@@ -1362,8 +1362,8 @@
             filePath = "../../trainctl/ctrl/ctrlP.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "520"
-            endingLineNumber = "520"
+            startingLineNumber = "533"
+            endingLineNumber = "533"
             landmarkName = "ctrl2_sendlow_c1c2(tidx, tvar)"
             landmarkType = "9">
          </BreakpointContent>
@@ -1378,8 +1378,8 @@
             filePath = "../../trainctl/ctrl/ctrlP.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "552"
-            endingLineNumber = "552"
+            startingLineNumber = "565"
+            endingLineNumber = "565"
             landmarkName = "ctrl2_evt_leaved_c1(tidx, tvars)"
             landmarkType = "9">
          </BreakpointContent>
@@ -1410,8 +1410,8 @@
             filePath = "../../trainctl/ctrl/ctrl.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "294"
-            endingLineNumber = "294"
+            startingLineNumber = "301"
+            endingLineNumber = "301"
             landmarkName = "ctrl_run_tick(notif_flags, tick, dt)"
             landmarkType = "9">
          </BreakpointContent>
@@ -1426,8 +1426,8 @@
             filePath = "../../trainctl/ctrl/ctrl.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "166"
-            endingLineNumber = "166"
+            startingLineNumber = "173"
+            endingLineNumber = "173"
             landmarkName = "check_timers(tick)"
             landmarkType = "9">
          </BreakpointContent>
@@ -1506,8 +1506,8 @@
             filePath = "../../trainctl/ctrl/ctrl.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "389"
-            endingLineNumber = "389"
+            startingLineNumber = "396"
+            endingLineNumber = "396"
             landmarkName = "evt_timer(tidx, tvar, tnum)"
             landmarkType = "9">
          </BreakpointContent>
@@ -1522,8 +1522,8 @@
             filePath = "../../trainctl/ctrl/ctrl.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "158"
-            endingLineNumber = "158"
+            startingLineNumber = "165"
+            endingLineNumber = "165"
             landmarkName = "check_timers(tick)"
             landmarkType = "9">
          </BreakpointContent>
@@ -1554,8 +1554,8 @@
             filePath = "../../trainctl/ctrl/ctrl.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "339"
-            endingLineNumber = "339"
+            startingLineNumber = "346"
+            endingLineNumber = "346"
             landmarkName = "ctrl_run_tick(notif_flags, tick, dt)"
             landmarkType = "9">
          </BreakpointContent>
@@ -1602,8 +1602,8 @@
             filePath = "../../trainctl/ctrl/ctrlP.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "365"
-            endingLineNumber = "365"
+            startingLineNumber = "378"
+            endingLineNumber = "378"
             landmarkName = "ctrl2_had_trig2(tidx, tvar)"
             landmarkType = "9">
          </BreakpointContent>
@@ -1618,8 +1618,8 @@
             filePath = "../../trainctl/ctrl/ctrlP.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "625"
-            endingLineNumber = "625"
+            startingLineNumber = "638"
+            endingLineNumber = "638"
             landmarkName = "ctrl2_evt_pose_triggered(tidx, tvar, ca_addr, trigbits, cposd10)"
             landmarkType = "9">
          </BreakpointContent>
@@ -1634,8 +1634,8 @@
             filePath = "../../trainctl/ctrl/ctrlP.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "396"
-            endingLineNumber = "396"
+            startingLineNumber = "409"
+            endingLineNumber = "409"
             landmarkName = "ctrl2_update_topo(tidx, tvar, tconf, ppose1)"
             landmarkType = "9">
          </BreakpointContent>
@@ -1650,8 +1650,8 @@
             filePath = "../../trainctl/ctrl/ctrlP.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "410"
-            endingLineNumber = "410"
+            startingLineNumber = "423"
+            endingLineNumber = "423"
             landmarkName = "ctrl2_update_topo(tidx, tvar, tconf, ppose1)"
             landmarkType = "9">
          </BreakpointContent>
@@ -1666,8 +1666,8 @@
             filePath = "../../trainctl/ctrl/ctrlP.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "627"
-            endingLineNumber = "627"
+            startingLineNumber = "640"
+            endingLineNumber = "640"
             landmarkName = "ctrl2_evt_pose_triggered(tidx, tvar, ca_addr, trigbits, cposd10)"
             landmarkType = "9">
          </BreakpointContent>
@@ -1775,8 +1775,8 @@
             filePath = "../../trainctl/ctrl/ctrlP.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "208"
-            endingLineNumber = "208"
+            startingLineNumber = "231"
+            endingLineNumber = "231"
             landmarkName = "ctrl2_set_state(tidx, tvar, ns)"
             landmarkType = "9">
          </BreakpointContent>
@@ -1791,8 +1791,8 @@
             filePath = "../../trainctl/ctrl/ctrlP.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "417"
-            endingLineNumber = "417"
+            startingLineNumber = "430"
+            endingLineNumber = "430"
             landmarkName = "ctrl2_update_topo(tidx, tvar, tconf, ppose1)"
             landmarkType = "9">
          </BreakpointContent>
@@ -1919,8 +1919,8 @@
             filePath = "../../trainctl/ctrl/ctrlP.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "562"
-            endingLineNumber = "562"
+            startingLineNumber = "575"
+            endingLineNumber = "575"
             landmarkName = "ctrl2_evt_leaved_c1(tidx, tvars)"
             landmarkType = "9">
          </BreakpointContent>
@@ -1951,8 +1951,8 @@
             filePath = "../../trainctl/ctrl/ctrlP.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "649"
-            endingLineNumber = "649"
+            startingLineNumber = "662"
+            endingLineNumber = "662"
             landmarkName = "ctrl2_evt_pose_triggered(tidx, tvar, ca_addr, trigbits, cposd10)"
             landmarkType = "9">
          </BreakpointContent>
@@ -1967,8 +1967,8 @@
             filePath = "../../trainctl/ctrl/ctrlP.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "664"
-            endingLineNumber = "664"
+            startingLineNumber = "677"
+            endingLineNumber = "677"
             landmarkName = "unknown"
             landmarkType = "0">
          </BreakpointContent>
@@ -1983,8 +1983,8 @@
             filePath = "../../trainctl/ctrl/ctrlP.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "576"
-            endingLineNumber = "576"
+            startingLineNumber = "589"
+            endingLineNumber = "589"
             landmarkName = "ctrl2_evt_leaved_c1(tidx, tvars)"
             landmarkType = "9">
          </BreakpointContent>
@@ -1999,8 +1999,8 @@
             filePath = "../../trainctl/ctrl/ctrlP.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "619"
-            endingLineNumber = "619"
+            startingLineNumber = "632"
+            endingLineNumber = "632"
             landmarkName = "ctrl2_evt_pose_triggered(tidx, tvar, ca_addr, trigbits, cposd10)"
             landmarkType = "9">
          </BreakpointContent>
@@ -2025,7 +2025,7 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "F8B60FE1-4806-4444-8BFF-16A13B3EC216"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "train_throttle/SimTrain.m"
@@ -2364,8 +2364,8 @@
             filePath = "../../trainctl/ctrl/ctrlP.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "600"
-            endingLineNumber = "600"
+            startingLineNumber = "613"
+            endingLineNumber = "613"
             landmarkName = "ctrl2_evt_pose_triggered(tidx, tvar, ca_addr, trigbits, cposd10)"
             landmarkType = "9">
          </BreakpointContent>
@@ -3117,8 +3117,8 @@
             filePath = "../../trainctl/ctrl/cautoP.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "21"
-            endingLineNumber = "21"
+            startingLineNumber = "35"
+            endingLineNumber = "35"
             landmarkName = "cauto_update_turnouts(tidx, cur, dir, next)"
             landmarkType = "9">
          </BreakpointContent>
@@ -3127,14 +3127,14 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "863FFCE0-3556-4901-B2B2-1E8F78584F58"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../../trainctl/ctrl/ctrlP.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "186"
-            endingLineNumber = "186"
+            startingLineNumber = "201"
+            endingLineNumber = "201"
             landmarkName = "ctrl2_upcmd_set_desired_speed(tidx, tvars, desired_speed)"
             landmarkType = "9">
          </BreakpointContent>
@@ -3143,86 +3143,6 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "D0B54F75-5D5F-46C3-8337-B88D03B69DC7"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../../trainctl/ctrl/ctrl.c"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "256"
-            endingLineNumber = "256"
-            landmarkName = "ctrl_run_tick(notif_flags, tick, dt)"
-            landmarkType = "9">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "7F780757-1695-40A8-83BD-447C4083814D"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../../trainctl/ctrl/ctrl.c"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "254"
-            endingLineNumber = "254"
-            landmarkName = "ctrl_run_tick(notif_flags, tick, dt)"
-            landmarkType = "9">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "4A456D25-891B-4F8D-B873-71EA2AECD656"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../../trainctl/ctrl/ctrlP.c"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "656"
-            endingLineNumber = "656"
-            landmarkName = "ctrl2_evt_stop_detected(tidx, tvar, pose)"
-            landmarkType = "9">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "B285A0AE-32F1-45AE-9D88-A7A329F25AC1"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../../trainctl/ctrl/ctrlP.c"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "689"
-            endingLineNumber = "689"
-            landmarkName = "ctrl2_tick_process(tidx, tvars, tconf, occupency_changed)"
-            landmarkType = "9">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "FD6AF588-E5C9-47F1-BF5F-5A2C3D57E711"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../../trainctl/ctrl/ctrl.c"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "267"
-            endingLineNumber = "267"
-            landmarkName = "ctrl_run_tick(notif_flags, tick, dt)"
-            landmarkType = "9">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "1C67443E-CB5B-4FB6-8E5D-52EA9000CE38"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
@@ -3238,6 +3158,86 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
+            uuid = "7F780757-1695-40A8-83BD-447C4083814D"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../trainctl/ctrl/ctrl.c"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "261"
+            endingLineNumber = "261"
+            landmarkName = "ctrl_run_tick(notif_flags, tick, dt)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "4A456D25-891B-4F8D-B873-71EA2AECD656"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../trainctl/ctrl/ctrlP.c"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "669"
+            endingLineNumber = "669"
+            landmarkName = "ctrl2_evt_stop_detected(tidx, tvar, pose)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "B285A0AE-32F1-45AE-9D88-A7A329F25AC1"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../trainctl/ctrl/ctrlP.c"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "702"
+            endingLineNumber = "702"
+            landmarkName = "ctrl2_tick_process(tidx, tvars, tconf, occupency_changed)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "FD6AF588-E5C9-47F1-BF5F-5A2C3D57E711"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../trainctl/ctrl/ctrl.c"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "274"
+            endingLineNumber = "274"
+            landmarkName = "ctrl_run_tick(notif_flags, tick, dt)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "1C67443E-CB5B-4FB6-8E5D-52EA9000CE38"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../trainctl/ctrl/ctrl.c"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "270"
+            endingLineNumber = "270"
+            landmarkName = "ctrl_run_tick(notif_flags, tick, dt)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
             uuid = "937232A1-178C-4501-8F67-70557ECBCB7D"
             shouldBeEnabled = "No"
             ignoreCount = "0"
@@ -3245,8 +3245,8 @@
             filePath = "../../trainctl/ctrl/ctrl.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "240"
-            endingLineNumber = "240"
+            startingLineNumber = "247"
+            endingLineNumber = "247"
             landmarkName = "ctrl_run_tick(notif_flags, tick, dt)"
             landmarkType = "9">
          </BreakpointContent>
@@ -3255,14 +3255,14 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "55D102F5-15BA-4DD8-ABA5-07CE660115F9"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../../trainctl/ctrl/ctrl.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "328"
-            endingLineNumber = "328"
+            startingLineNumber = "335"
+            endingLineNumber = "335"
             landmarkName = "ctrl_run_tick(notif_flags, tick, dt)"
             landmarkType = "9">
          </BreakpointContent>
@@ -3277,8 +3277,8 @@
             filePath = "../../trainctl/ctrl/ctrlP.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "666"
-            endingLineNumber = "666"
+            startingLineNumber = "679"
+            endingLineNumber = "679"
             landmarkName = "ctrl2_tick_process(tidx, tvars, tconf, occupency_changed)"
             landmarkType = "9">
          </BreakpointContent>
@@ -3293,8 +3293,8 @@
             filePath = "../../trainctl/ctrl/ctrlP.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "700"
-            endingLineNumber = "700"
+            startingLineNumber = "713"
+            endingLineNumber = "713"
             landmarkName = "ctrl2_tick_process(tidx, tvars, tconf, occupency_changed)"
             landmarkType = "9">
          </BreakpointContent>
@@ -3357,8 +3357,8 @@
             filePath = "../../trainctl/ctrl/ctrlP.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "249"
-            endingLineNumber = "249"
+            startingLineNumber = "272"
+            endingLineNumber = "272"
             landmarkName = "ctrl2_set_tspeed(tidx, tvar, tspeed)"
             landmarkType = "9">
          </BreakpointContent>
@@ -3373,24 +3373,8 @@
             filePath = "../../trainctl/ctrl/ctrlP.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "268"
-            endingLineNumber = "268"
-            landmarkName = "ctrl2_check_checkstart(tidx, tvars)"
-            landmarkType = "9">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "43D422FC-6329-447A-93B9-D37490D2552D"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../../trainctl/ctrl/ctrlP.c"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "274"
-            endingLineNumber = "274"
+            startingLineNumber = "291"
+            endingLineNumber = "291"
             landmarkName = "ctrl2_check_checkstart(tidx, tvars)"
             landmarkType = "9">
          </BreakpointContent>
@@ -3405,8 +3389,8 @@
             filePath = "../../trainctl/ctrl/ctrlP.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "722"
-            endingLineNumber = "722"
+            startingLineNumber = "730"
+            endingLineNumber = "730"
             landmarkName = "ctrl2_tick_process(tidx, tvars, tconf, occupency_changed)"
             landmarkType = "9">
          </BreakpointContent>
@@ -3421,8 +3405,8 @@
             filePath = "../../trainctl/ctrl/ctrlP.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "673"
-            endingLineNumber = "673"
+            startingLineNumber = "686"
+            endingLineNumber = "686"
             landmarkName = "ctrl2_tick_process(tidx, tvars, tconf, occupency_changed)"
             landmarkType = "9">
          </BreakpointContent>
@@ -3431,14 +3415,14 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "EA007114-E750-484D-BAB7-5AD605423A3E"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../../trainctl/ctrl/ctrlP.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "720"
-            endingLineNumber = "720"
+            startingLineNumber = "728"
+            endingLineNumber = "728"
             landmarkName = "ctrl2_tick_process(tidx, tvars, tconf, occupency_changed)"
             landmarkType = "9">
          </BreakpointContent>
@@ -3446,16 +3430,64 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "53564022-570D-402C-90B9-01B74AD66E8A"
+            uuid = "FBC7E946-B330-4CC5-A486-D3AE4EB58AA4"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../trainctl/ctrl/cautoP.c"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "22"
+            endingLineNumber = "22"
+            landmarkName = "route_error(tidx, tvars)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "ABF69102-3C1C-494C-A668-B6B6FEEA1382"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../../trainctl/ctrl/ctrlP.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "271"
-            endingLineNumber = "271"
-            landmarkName = "ctrl2_check_checkstart(tidx, tvars)"
+            startingLineNumber = "203"
+            endingLineNumber = "203"
+            landmarkName = "ctrl2_upcmd_set_desired_speed(tidx, tvars, desired_speed)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "0F0B1025-FEAF-45B9-88AB-068A1CC94635"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../trainctl/utils/lf_mqueue.c"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "47"
+            endingLineNumber = "47"
+            landmarkName = "mqf_qfull(m, t)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "167D5FDE-124F-4F20-B32A-13ADFA827FA1"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../trainctl/ctrl/cautoP.c"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "125"
+            endingLineNumber = "125"
+            landmarkName = "cauto_had_trigU1(tidx, tvars)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>

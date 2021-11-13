@@ -96,6 +96,12 @@ void ctrl_set_pose_trig(int numtrain, int32_t pose, int n)
     mqf_write_from_ctrl(&m);
 }
 
+void ctrl2_upcmd_settrigU1_half(int tidx, train_ctrl_t *tvars)
+{
+    if (!tvars->_dir) return;
+    int32_t p = ctrl_pose_middle_c1(get_train_cnf(tidx), tvars);
+    ctrl_set_pose_trig(tidx, p, 1);
+}
 
 void ctrl_reset_timer(int tidx, train_ctrl_t *tvar, int numtimer)
 {
@@ -134,17 +140,26 @@ void ctrl2_set_mode(int tidx, train_ctrl_t *tvar, train_mode_t mode)
 // ----------------------
 
 
-static lsblk_num_t next_lsblk_free(int tidx, lsblk_num_t blknum, uint8_t left, uint8_t *palternate)
+static lsblk_num_t next_lsblk_free(int tidx, train_ctrl_t *tvars,  uint8_t left, uint8_t *palternate)
 {
-    lsblk_num_t ns = next_lsblk(blknum, left, palternate);
+    lsblk_num_t nsa = {-1};
+    if (tvars->_mode == train_auto) {
+        nsa = cauto_peek_next_lsblk(tidx, tvars);
+    }
+    lsblk_num_t ns = next_lsblk(tvars->c1_sblk, left, palternate);
     if (ns.n >= 0) {
-        //  check occupency
-        uint8_t ca = canton_for_lsblk(ns);
-        int f = occupency_block_is_free(ca, tidx);
-        if (!f) {
-            // block not free
+        if ((nsa.n >= 0) && (nsa.n != ns.n)) {
             ns.n = -1;
             if (palternate) *palternate = 1;
+        } else {
+            //  check occupency
+            uint8_t ca = canton_for_lsblk(ns);
+            int f = occupency_block_is_free(ca, tidx);
+            if (!f) {
+                // block not free
+                ns.n = -1;
+                if (palternate) *palternate = 1;
+            }
         }
     }
     return ns;
@@ -183,8 +198,16 @@ void ctrl2_init_train(_UNUSED_ int tidx, train_ctrl_t *tvars,
 
 void ctrl2_upcmd_set_desired_speed(_UNUSED_ int tidx, train_ctrl_t *tvars, int16_t desired_speed)
 {
-    if (tvars->_mode == train_auto) return;
-    
+    if (tvars->_mode == train_auto) {
+        // switch back to manual ?
+        ctrl2_set_mode(tidx, tvars, train_manual);
+        //return;
+    }
+    _ctrl2_upcmd_set_desired_speed(tidx, tvars, desired_speed);
+}
+
+void _ctrl2_upcmd_set_desired_speed(_UNUSED_ int tidx, train_ctrl_t *tvars, int16_t desired_speed)
+{
     if (tvars->desired_speed != desired_speed) {
         tvars->tick_flags |= _TFLAG_DSPD_CHANGED;
 #if 0
@@ -235,7 +258,7 @@ void ctrl2_stop_detected(int tidx, train_ctrl_t *tvars)
         default:
             break;
     }
-    
+    if (tvars->_mode == train_auto) cauto_had_stop(tidx, tvars);
     ctrl2_set_dir(tidx, tvars, 0);
 }
 
@@ -267,17 +290,7 @@ void ctrl2_check_checkstart(int tidx, train_ctrl_t *tvars)
     
     if (!tvars->desired_speed) {
         if (tvars->_mode== train_auto) {
-            if (tvars->route[tvars->routeidx]==0xFF) {
-                ctrl2_set_mode(tidx, tvars, train_manual);
-                return;
-            }
-            if (tvars->route[tvars->routeidx] & 0x80) {
-                int8_t v = ((tvars->route[tvars->routeidx] & 0x7F)<<1);
-                tvars->desired_speed = v>>2;
-                tvars->desired_speed = SIGNOF0(tvars->desired_speed)*70;
-                tvars->routeidx++;
-                tvars->tick_flags |= _TFLAG_DSPD_CHANGED;
-            }
+            cauto_check_start(tidx, tvars);
         }
     }
     
@@ -295,7 +308,7 @@ void ctrl2_check_checkstart(int tidx, train_ctrl_t *tvars)
             if (tvars->_target_speed) break; // already started
             if (tvars->_dir) break;
             uint8_t alternate;
-            ns = next_lsblk_free(tidx, tvars->c1_sblk, (tvars->desired_speed<0),  &alternate);
+            ns = next_lsblk_free(tidx, tvars,  (tvars->desired_speed<0),  &alternate);
             if (ns.n>=0) {
                 ctrl2_set_state(tidx, tvars, train_running_c1);
                 ctrl2_set_dir(tidx, tvars, SIGNOF0(tvars->desired_speed));
@@ -384,7 +397,7 @@ void ctrl2_update_topo(int tidx, train_ctrl_t *tvar, const train_config_t *tconf
     if (!d) return;
     
     uint8_t alternate = 0;
-    lsblk_num_t ns = next_lsblk_free(tidx, tvar->c1_sblk, (d < 0), &alternate);
+    lsblk_num_t ns = next_lsblk_free(tidx, tvar, (d < 0), &alternate);
     
     if (ns.n < 0) {
         switch (tvar->_state) {
@@ -443,7 +456,7 @@ void ctrl2_update_c2(int tidx, train_ctrl_t *tvar, const train_config_t *tconf, 
     lsblk_num_t ns = snone;
     if (tvar->_dir) {
         uint8_t alternate = 0;
-        ns = next_lsblk_free(tidx, tvar->c1_sblk, (tvar->_dir < 0), &alternate);
+        ns = next_lsblk_free(tidx, tvar, tvar->_dir<0, &alternate);
         uint8_t c2 = canton_for_lsblk(ns);
         itm_debug3(DBG_CTRL, "c1c2addr", tidx, tvar->can2_addr, c2);
         if (c2 == tvar->can1_addr) {
@@ -597,7 +610,7 @@ int ctrl2_evt_pose_triggered(int tidx, train_ctrl_t *tvar, uint8_t ca_addr, uint
         return -1;
     }
     if (ca_addr != tvar->can1_addr) {
-        itm_debug3(DBG_ERR|DBG_POSE|DBG_CTRL, "ptrg bad", tidx, ca_addr, tvar->can1_addr);
+        itm_debug3(DBG_ERR|DBG_POSEC|DBG_CTRL, "ptrg bad", tidx, ca_addr, tvar->can1_addr);
         return -1;
     }
     const train_config_t *tconf = get_train_cnf(tidx);
@@ -607,7 +620,7 @@ int ctrl2_evt_pose_triggered(int tidx, train_ctrl_t *tvar, uint8_t ca_addr, uint
         if (tvar->trig_eoseg) {
             // POSE Trig 1
             //tvar->tick_flags |= _TFLAG_POSE_TRIG1;
-            lsblk_num_t ns = next_lsblk_free(tidx, tvar->c1_sblk, (tvar->_dir<0), NULL);
+            lsblk_num_t ns = next_lsblk_free(tidx, tvar,  (tvar->_dir<0), NULL);
             if (ns.n<0) {
                 itm_debug3(DBG_CTRL|DBG_ERR, "no next!", tidx, tvar->c1_sblk.n, tvar->_dir);
                 goto t2;
@@ -646,7 +659,8 @@ t2:
     	tvar->tick_flags |= _TFLAG_POSE_TRIG2;
     }
     if (trigbits & (1<<1)) {
-        itm_debug2(tidx, "bad trigbit", tidx, trigbits);
+        itm_debug2(DBG_POSEC|DBG_CTRL|DBG_AUTO, "trig 1U", tidx, trigbits);
+        cauto_had_trigU1(tidx, tvar);
         fatal();
     }
     return retcode;
@@ -698,15 +712,10 @@ int ctrl2_tick_process(int tidx, train_ctrl_t *tvars, const train_config_t *tcon
         }
         
         if ((tvars->_mode == train_auto) && (flags & _TFLAG_C1LSB_CHANGED)) {
-            if ((tvars->route) &&  (tvars->_dir) && (0 == (tvars->route[tvars->routeidx] & 0x80))) {
-                int nsb = tvars->route[tvars->routeidx] & 0x7F;
-                if (tvars->c1_sblk.n == nsb) {
-                    tvars->routeidx++;
-                } else {
-                    itm_debug3(DBG_AUTO|DBG_ERR, "bad c1", tidx, nsb, tvars->c1_sblk.n);
-                }
-            }
+            cauto_c1_updated(tidx, tvars);
+            
         }
+        /*
         if ((tvars->_mode == train_auto) && (flags & (_TFLAG_DIR_CHANGED|_TFLAG_C1LSB_CHANGED))) {
             if ((tvars->route) &&  (tvars->_dir) && (0 == (tvars->route[tvars->routeidx] & 0x80))) {
                 int nsb = tvars->route[tvars->routeidx] & 0x7F;
@@ -727,7 +736,7 @@ int ctrl2_tick_process(int tidx, train_ctrl_t *tvars, const train_config_t *tcon
                 	tvars->tick_flags |= _TFLAG_DSPD_CHANGED;
                 }
             }
-        }
+        }*/
         if (flags & (_TFLAG_C1LSB_CHANGED|_TFLAG_DIR_CHANGED|_TFLAG_NEED_C2)) {
             ctrl2_update_c2(tidx, tvars, tconf, &pose_s0eoseg);
         }

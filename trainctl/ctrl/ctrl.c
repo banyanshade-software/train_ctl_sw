@@ -122,11 +122,16 @@ static void ctrl_init(void)
     lsblk_num_t _UNUSED_ s3 = {3};
 	if ((1)) {
         ctrl2_init_train(0, &trctl[0], s1);
+        ctrl2_init_train(1, &trctl[1], s2);
         if ((1)) {
             static uint8_t route[] = { 0xC0/* <- */, 0, 0xAF/*->*/, 1, 3, 0xC0/*<-*/, 4, 5, 0xAF/*->*/,4, 3, 0xC0/*<-*/, 1, 2, 0xFF};
             trctl[0].routeidx = 0;
             trctl[0].route = route;
             // ctrl_set_mode(0, train_auto);
+            
+            static uint8_t route2[] = {0xAF /*->*/, 1, 0xC0 /*<-*/, 0, 0xFF};
+            trctl[1].routeidx = 0;
+            trctl[1].route = route2;
         }
         
 		if ((SCEN_TWOTRAIN)) {
@@ -322,7 +327,10 @@ void ctrl_run_tick(_UNUSED_ uint32_t notif_flags, uint32_t tick, _UNUSED_ uint32
     if ((trctl[0]._mode != train_auto) && (nsk==100)) {
         ctrl_set_mode(0, train_auto);
     }
-    
+    if ((trctl[5]._mode != train_auto) && (nsk==105)) {
+        ctrl_set_mode(1, train_auto);
+    }
+
 	check_timers(tick);
     
     uint8_t occ = topology_or_occupency_changed;

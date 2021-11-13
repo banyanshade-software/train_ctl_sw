@@ -274,6 +274,7 @@ void ctrl2_check_checkstart(int tidx, train_ctrl_t *tvars)
             if (tvars->route[tvars->routeidx] & 0x80) {
                 int8_t v = ((tvars->route[tvars->routeidx] & 0x7F)<<1);
                 tvars->desired_speed = v>>2;
+                tvars->desired_speed = SIGNOF0(tvars->desired_speed)*70;
                 tvars->routeidx++;
                 tvars->tick_flags |= _TFLAG_DSPD_CHANGED;
             }
@@ -510,6 +511,10 @@ void ctrl2_sendlow_c1c2(int tidx, train_ctrl_t *tvar)
     m.to =  MA_TRAIN_SC(tidx);
     m.cmd = CMD_SET_C1_C2;
     int dir = tvar->_dir;
+    
+    const train_config_t *tconf = get_train_cnf(tidx);
+    if (tconf->reversed) dir = -dir;
+    
     m.vbytes[0] = tvar->can1_addr;
     m.vbytes[1] = dir;
     m.vbytes[2] = tvar->can2_addr;
@@ -715,10 +720,11 @@ int ctrl2_tick_process(int tidx, train_ctrl_t *tvars, const train_config_t *tcon
                 if (tvars->route[tvars->routeidx]==0xFF) {
                     ctrl2_set_mode(tidx, tvars, train_manual);
                 } else {
-                    int8_t v = ((tvars->route[tvars->routeidx] & 0x7F)<<1);
-                    tvars->desired_speed = v>>2;
-                    tvars->routeidx++;
-                    tvars->tick_flags |= _TFLAG_DSPD_CHANGED;
+                	int8_t v = ((tvars->route[tvars->routeidx] & 0x7F)<<1);
+                	tvars->desired_speed = v>>2;
+                	tvars->desired_speed = SIGNOF0(tvars->desired_speed)*70;
+                	tvars->routeidx++;
+                	tvars->tick_flags |= _TFLAG_DSPD_CHANGED;
                 }
             }
         }

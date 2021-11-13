@@ -51,6 +51,9 @@ typedef struct {
     
     int32_t curposmm;
     int32_t beginposmm; // left side is 0, mm of right side
+    
+    uint8_t *route;
+    uint8_t routeidx;
 } train_ctrl_t;
 
 /*
@@ -69,7 +72,8 @@ typedef struct {
 #define _TFLAG_LIMIT_CHANGED (1<<9)
 #define _TFLAG_DSPD_CHANGED  (1<<10)
 #define _TFLAG_C1_CHANGED    (1<<11)
-#define _TFLAG_C2_CHANGED    (1<<11)
+#define _TFLAG_C2_CHANGED    (1<<11) //xx
+#define _TFLAG_MODE_CHANGED  (1<<14)
 
 
 int ctrl2_tick_process(int tidx, train_ctrl_t *tvars, const train_config_t *tconf, int8_t occupency_changed);
@@ -78,6 +82,7 @@ void ctrl2_init_train(int tidx, train_ctrl_t *tvars,
 
 void ctrl2_upcmd_set_desired_speed(int tidx, train_ctrl_t *tvars, int16_t desired_speed);
 
+void ctrl2_set_mode(int tidx, train_ctrl_t *tvar, train_mode_t mode);
 
 void ctrl2_evt_entered_c2(int tidx, train_ctrl_t *tvar, uint8_t from_bemf);
 void ctrl2_evt_leaved_c1(int tidx, train_ctrl_t *tvars);

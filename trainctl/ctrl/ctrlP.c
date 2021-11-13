@@ -20,6 +20,7 @@
 
 #include "ctrl.h"
 #include "ctrlP.h"
+#include "cautoP.h"
 
 static lsblk_num_t snone = {-1};
 
@@ -111,6 +112,21 @@ void ctrl_set_timer(int tidx, train_ctrl_t *tvar, int numtimer, uint32_t tval)
 }
 
 
+void ctrl2_set_mode(int tidx, train_ctrl_t *tvar, train_mode_t mode)
+{
+    itm_debug2(DBG_CTRL, "set mode", tidx, mode);
+    if (tvar->_mode == mode) return;
+    tvar->_mode = mode;
+    tvar->tick_flags |= _TFLAG_MODE_CHANGED;
+    
+    // notif UI
+    msg_64_t m;
+    m.from = MA_CONTROL_T(tidx);
+    m.to = MA_UI(UISUB_TFT);
+    m.cmd = CMD_TRMODE_NOTIF;
+    m.v1u = mode;
+    mqf_write_from_ctrl(&m);
+}
 
 
 
@@ -161,10 +177,14 @@ void ctrl2_init_train(_UNUSED_ int tidx, train_ctrl_t *tvars,
         _TFLAG_C1LSB_CHANGED | _TFLAG_DIR_CHANGED |
         _TFLAG_DSPD_CHANGED | _TFLAG_TSPD_CHANGED |
         _TFLAG_STATE_CHANGED | _TFLAG_LIMIT_CHANGED;
+    tvars->route = NULL;
+    tvars->routeidx = 0;
 }
 
 void ctrl2_upcmd_set_desired_speed(_UNUSED_ int tidx, train_ctrl_t *tvars, int16_t desired_speed)
 {
+    if (tvars->_mode == train_auto) return;
+    
     if (tvars->desired_speed != desired_speed) {
         tvars->tick_flags |= _TFLAG_DSPD_CHANGED;
 #if 0
@@ -225,6 +245,9 @@ void ctrl2_set_tspeed(_UNUSED_ int tidx, train_ctrl_t *tvar, uint16_t tspeed)
 {
     if (tvar->_target_speed != tspeed) {
         tvar->tick_flags |= _TFLAG_TSPD_CHANGED;
+        if (tspeed >= 0x7FFF) {
+            fatal();
+        }
         tvar->_target_speed = tspeed;
     }
 }
@@ -238,34 +261,51 @@ void ctrl2_check_alreadystopped(int tidx, train_ctrl_t *tvar)
         }
     }
 }
-void ctrl2_check_checkstart(int tidx, train_ctrl_t *tvar)
+void ctrl2_check_checkstart(int tidx, train_ctrl_t *tvars)
 {
     lsblk_num_t ns;
-    if (!tvar->desired_speed) return;
-    switch (tvar->_state) {
+    
+    if (!tvars->desired_speed) {
+        if (tvars->_mode== train_auto) {
+            if (tvars->route[tvars->routeidx]==0xFF) {
+                ctrl2_set_mode(tidx, tvars, train_manual);
+                return;
+            }
+            if (tvars->route[tvars->routeidx] & 0x80) {
+                int8_t v = ((tvars->route[tvars->routeidx] & 0x7F)<<1);
+                tvars->desired_speed = v>>2;
+                tvars->routeidx++;
+                tvars->tick_flags |= _TFLAG_DSPD_CHANGED;
+            }
+        }
+    }
+    
+    if (!tvars->desired_speed) return;
+    
+    switch (tvars->_state) {
         case train_station:
-            ctrl2_set_dir(tidx, tvar, SIGNOF0(tvar->desired_speed));
-            ctrl2_set_state(tidx, tvar, train_running_c1);
-            ctrl2_set_tspeed(tidx, tvar, SIGNOF0(tvar->desired_speed));
+            ctrl2_set_dir(tidx, tvars, SIGNOF0(tvars->desired_speed));
+            ctrl2_set_state(tidx, tvars, train_running_c1);
+            //ctrl2_set_tspeed(tidx, tvars, SIGNOF0(tvars->desired_speed));
             break;
         
         case train_end_of_track:
         case train_blk_wait:
-            if (tvar->_target_speed) break; // already started
-            if (tvar->_dir) break;
+            if (tvars->_target_speed) break; // already started
+            if (tvars->_dir) break;
             uint8_t alternate;
-            ns = next_lsblk_free(tidx, tvar->c1_sblk, (tvar->desired_speed<0),  &alternate);
+            ns = next_lsblk_free(tidx, tvars->c1_sblk, (tvars->desired_speed<0),  &alternate);
             if (ns.n>=0) {
-                ctrl2_set_state(tidx, tvar, train_running_c1);
-                ctrl2_set_dir(tidx, tvar, SIGNOF0(tvar->desired_speed));
+                ctrl2_set_state(tidx, tvars, train_running_c1);
+                ctrl2_set_dir(tidx, tvars, SIGNOF0(tvars->desired_speed));
                 //ctrl2_set_tspeed(tidx, tvar, SIGNOF0(tvar->desired_speed));
             } else {
                 //tvar->desired_speed = 0;
                 if (alternate) {
-                    ctrl2_set_state(tidx, tvar, train_blk_wait);
-                    tvar->_dir = SIGNOF0(tvar->desired_speed);
+                    ctrl2_set_state(tidx, tvars, train_blk_wait);
+                    tvars->_dir = SIGNOF0(tvars->desired_speed);
                 } else {
-                    ctrl2_set_state(tidx, tvar,  train_end_of_track);
+                    ctrl2_set_state(tidx, tvars,  train_end_of_track);
                 }
             }
             break;
@@ -637,12 +677,13 @@ int ctrl2_tick_process(int tidx, train_ctrl_t *tvars, const train_config_t *tcon
 
         if (pflags & _TFLAG_C1_CHANGED) tvars->curposmm = 0;
 
-        if (flags & _TFLAG_DSPD_CHANGED) {
+        if (flags & (_TFLAG_DSPD_CHANGED|_TFLAG_MODE_CHANGED)) {
             ctrl2_check_alreadystopped(tidx, tvars);
             ctrl2_check_checkstart(tidx, tvars);
         }
         if (flags & _TFLAG_STOP_DETECTED) {
             ctrl2_stop_detected(tidx, tvars);
+            
         }
         if (flags & _TFLAG_STATE_CHANGED) {
             ctrl2_check_stop(tidx, tvars);
@@ -651,6 +692,36 @@ int ctrl2_tick_process(int tidx, train_ctrl_t *tvars, const train_config_t *tcon
             ctrl2_had_trig2(tidx, tvars);
         }
         
+        if ((tvars->_mode == train_auto) && (flags & _TFLAG_C1LSB_CHANGED)) {
+            if ((tvars->route) &&  (tvars->_dir) && (0 == (tvars->route[tvars->routeidx] & 0x80))) {
+                int nsb = tvars->route[tvars->routeidx] & 0x7F;
+                if (tvars->c1_sblk.n == nsb) {
+                    tvars->routeidx++;
+                } else {
+                    itm_debug3(DBG_AUTO|DBG_ERR, "bad c1", tidx, nsb, tvars->c1_sblk.n);
+                }
+            }
+        }
+        if ((tvars->_mode == train_auto) && (flags & (_TFLAG_DIR_CHANGED|_TFLAG_C1LSB_CHANGED))) {
+            if ((tvars->route) &&  (tvars->_dir) && (0 == (tvars->route[tvars->routeidx] & 0x80))) {
+                int nsb = tvars->route[tvars->routeidx] & 0x7F;
+                int t = cauto_update_turnouts(tidx, tvars->c1_sblk, tvars->_dir, nsb);
+                if (t>0) {
+                    flags |= _TFLAG_OCC_CHANGED;
+                } else if (t<0) {
+                    ctrl2_set_state(tidx, tvars, train_blk_wait);
+                }
+            } else if ((tvars->route) &&  (!tvars->_dir) && (0x80 == (tvars->route[tvars->routeidx] & 0x80))) {
+                if (tvars->route[tvars->routeidx]==0xFF) {
+                    ctrl2_set_mode(tidx, tvars, train_manual);
+                } else {
+                    int8_t v = ((tvars->route[tvars->routeidx] & 0x7F)<<1);
+                    tvars->desired_speed = v>>2;
+                    tvars->routeidx++;
+                    tvars->tick_flags |= _TFLAG_DSPD_CHANGED;
+                }
+            }
+        }
         if (flags & (_TFLAG_C1LSB_CHANGED|_TFLAG_DIR_CHANGED|_TFLAG_NEED_C2)) {
             ctrl2_update_c2(tidx, tvars, tconf, &pose_s0eoseg);
         }

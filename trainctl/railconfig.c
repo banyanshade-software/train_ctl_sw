@@ -255,7 +255,7 @@ static  canton_config_t Cantons[NUM_CANTONS] = {
 								120, 120		/* dec, acc */ \
 						}, \
 						vpolicy_normal,  /*vpolicy_normal, vpolicy_pure_volt, vpolicy_pure_pwm,*/ \
-						1, /* enable_inertia */		\
+						0, /* enable_inertia */		\
 						_EN, /* enabled */			\
 						1, /* enable_pid */			\
 						0, /* notify_speed */		\

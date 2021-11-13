@@ -105,16 +105,7 @@ static void ctrl_reset(void)
 
 static void ctrl_set_mode(int trnum, train_mode_t mode)
 {
-	itm_debug2(DBG_CTRL, "set mode", trnum, mode);
-	if (trctl[trnum]._mode == mode) return;
-	trctl[trnum]._mode = mode;
-	// notif UI
-	msg_64_t m;
-	m.from = MA_CONTROL_T(trnum);
-	m.to = MA_UI(UISUB_TFT);
-	m.cmd = CMD_TRMODE_NOTIF;
-	m.v1u = mode;
-	mqf_write_from_ctrl(&m);
+    ctrl2_set_mode(trnum, &trctl[trnum], mode);
 }
 
 
@@ -123,7 +114,7 @@ static void ctrl_init(void)
 {
 	memset(trctl, 0, sizeof(train_ctrl_t)*NUM_TRAINS);
 	ctrl_set_mode(0, train_manual);
-	ctrl_set_mode(1, train_auto);
+	//ctrl_set_mode(1, train_auto);
     set_turnout(0, 0);
     set_turnout(1, 0);
     lsblk_num_t s1 = {1};
@@ -131,6 +122,12 @@ static void ctrl_init(void)
     lsblk_num_t _UNUSED_ s3 = {3};
 	if ((1)) {
         ctrl2_init_train(0, &trctl[0], s1);
+        if ((1)) {
+            static uint8_t route[] = { 0xC0/* <- */, 0, 0xAF/*->*/, 1, 3, 0xC0/*<-*/, 4, 5, 0xAF/*->*/,4, 3, 0xC0/*<-*/, 1, 2, 0xFF};
+            trctl[0].routeidx = 0;
+            trctl[0].route = route;
+            // ctrl_set_mode(0, train_auto);
+        }
         
 		if ((SCEN_TWOTRAIN)) {
             ctrl2_init_train(1, &trctl[1], s2);
@@ -223,13 +220,15 @@ static void sub_presence_changed(_UNUSED_ uint32_t tick, _UNUSED_ uint8_t from_a
 
 void ctrl_run_tick(_UNUSED_ uint32_t notif_flags, uint32_t tick, _UNUSED_ uint32_t dt)
 {
-	static int first=1;
-	if (first) {
-		first = 0;
-		ctrl_init();
-		ctrl_reset();
+	
+    static int first=1;
+
+    if (first) {
+        first = 0;
+        ctrl_init();
+        ctrl_reset();
     }
-   
+    
 	check_block_delayed(tick);
 
 	/* process messages */
@@ -258,7 +257,9 @@ void ctrl_run_tick(_UNUSED_ uint32_t notif_flags, uint32_t tick, _UNUSED_ uint32
         }
         if (run_mode != runmode_normal) continue;
 
+        
        
+        
         // -----------------------------------------
         switch (m.cmd) {
             default:
@@ -315,6 +316,13 @@ void ctrl_run_tick(_UNUSED_ uint32_t notif_flags, uint32_t tick, _UNUSED_ uint32
 			itm_debug1(DBG_MSG|DBG_CTRL, "bad msg", m.to);
 		}
 	}
+    
+    static int nsk=0;
+    nsk++;
+    if ((trctl[0]._mode != train_auto) && (nsk==100)) {
+        ctrl_set_mode(0, train_auto);
+    }
+    
 	check_timers(tick);
     
     uint8_t occ = topology_or_occupency_changed;
@@ -428,6 +436,11 @@ static void set_turnout(int tn, int v)
     m.to = MA_UI(UISUB_TRACK);
     m.v2 = tn;
     mqf_write_from_ctrl(&m);
+}
+
+void ctrl2_set_turnout(int tn, int v)
+{
+    set_turnout(tn, v);
 }
 
 // ---------------------------------------------------------------

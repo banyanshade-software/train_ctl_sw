@@ -103,8 +103,10 @@ static void check_for_ctrl(int tidx, train_ctrl_t *tvars)
             return;
         }
         if (r == _AR_STPHALF) {
-        	// KO : trig is sent to spdctl before C1C2 - which reset POSE
-            ctrl2_upcmd_settrigU1_half(tidx, tvars);
+        	// cannot call ctrl2_upcmd_settrigU1_half() now
+        	// trig would b sent to spdctl before C1C2 - which reset POSE
+        	// thus we set stpmiddle and handle it in cauto_end_tick()
+        	tvars->stpmiddle = 1;
             tvars->routeidx++;
             continue;
         }
@@ -163,4 +165,12 @@ void cauto_c1_updated(int tidx, train_ctrl_t *tvars)
             route_error(tidx, tvars);
         }
     }
+}
+
+void cauto_end_tick(int tidx, train_ctrl_t *tvars)
+{
+	if (tvars->stpmiddle) {
+		tvars->stpmiddle = 0;
+        ctrl2_upcmd_settrigU1_half(tidx, tvars);
+	}
 }

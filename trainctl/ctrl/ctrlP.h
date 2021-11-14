@@ -54,6 +54,7 @@ typedef struct {
     
     uint8_t *route;
     uint8_t routeidx;
+    uint8_t stpmiddle:1;
 } train_ctrl_t;
 
 /*

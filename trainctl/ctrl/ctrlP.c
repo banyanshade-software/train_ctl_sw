@@ -615,11 +615,10 @@ int ctrl2_evt_pose_triggered(int tidx, train_ctrl_t *tvar, uint8_t ca_addr, uint
     }
     const train_config_t *tconf = get_train_cnf(tidx);
     tvar->curposmm = pose_convert_to_mm(tconf, cposd10*10);
-    itm_debug1(DBG_POSE|DBG_CTRL, "curposmm", tvar->curposmm);
+    itm_debug3(DBG_POSE|DBG_CTRL, "curposmm", tidx, tvar->curposmm, trigbits);
     if (trigbits & (1<<0)) {
         if (tvar->trig_eoseg) {
             // POSE Trig 1
-            //tvar->tick_flags |= _TFLAG_POSE_TRIG1;
             lsblk_num_t ns = next_lsblk_free(tidx, tvar,  (tvar->_dir<0), NULL);
             if (ns.n<0) {
                 itm_debug3(DBG_CTRL|DBG_ERR, "no next!", tidx, tvar->c1_sblk.n, tvar->_dir);
@@ -649,22 +648,23 @@ int ctrl2_evt_pose_triggered(int tidx, train_ctrl_t *tvar, uint8_t ca_addr, uint
             tvar->tick_flags |= _TFLAG_C1LSB_CHANGED;
             //tvar->beginposmm = (tvar->_dir >= 0) ? tvar->curposmm : tvar->curposmm + get_lsblk_len(ns)*10;
         }
-    }
-t2:
-    if (!tvar->trig_eoseg) {
-    	// POSE Trig 2
 
-    	if (!tvar->pose2_set) return 3;
-    	tvar->pose2_set = 0;
-    	tvar->tick_flags |= _TFLAG_POSE_TRIG2;
+t2:
+		if (!tvar->trig_eoseg) {
+			// POSE Trig 2
+
+			if (!tvar->pose2_set) return 3;
+			tvar->pose2_set = 0;
+			tvar->tick_flags |= _TFLAG_POSE_TRIG2;
+		}
     }
     if (trigbits & (1<<1)) {
-        itm_debug2(DBG_POSEC|DBG_CTRL|DBG_AUTO, "trig 1U", tidx, trigbits);
+        itm_debug2(DBG_POSEC|DBG_CTRL|DBG_AUTO, "trig U1", tidx, trigbits);
         cauto_had_trigU1(tidx, tvar);
-        fatal();
     }
     return retcode;
 }
+
 void ctrl2_evt_stop_detected(_UNUSED_ int tidx, train_ctrl_t *tvar, _UNUSED_ int32_t pose)
 {
     // TODO
@@ -769,5 +769,6 @@ int ctrl2_tick_process(int tidx, train_ctrl_t *tvars, const train_config_t *tcon
     if (pflags & (_TFLAG_TSPD_CHANGED)) {
         ctrl2_sendlow_tspd(tidx, tvars);
     }
+    if (tvars->_mode == train_auto) cauto_end_tick(tidx, tvars);
     return nloop;
 }

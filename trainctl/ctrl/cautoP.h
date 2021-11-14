@@ -18,7 +18,7 @@ void cauto_had_stop(int tidx, train_ctrl_t *tvars);
 lsblk_num_t cauto_peek_next_lsblk(int tidx, train_ctrl_t *tvars);
 extern void ctrl2_set_turnout(int tn, int v); // ctrl.c TODO move proto
 void cauto_had_trigU1(int tidx, train_ctrl_t *tvars);
-
+void cauto_end_tick(int tidx, train_ctrl_t *tvars);
 /*
  0 0 x x x x x x   expected lsblk
  

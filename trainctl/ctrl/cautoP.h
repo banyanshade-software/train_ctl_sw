@@ -9,15 +9,16 @@
 #ifndef cautoP_h
 #define cautoP_h
 
-int cauto_update_turnouts(int tidx, lsblk_num_t cur, int8_t dir, uint8_t next);
+int cauto_update_turnouts(int tidx, lsblk_num_t cur, uint8_t left, uint8_t next);
 
 
 void cauto_c1_updated(int tidx, train_ctrl_t *tvars);
 void cauto_check_start(int tidx, train_ctrl_t *tvars);
 void cauto_had_stop(int tidx, train_ctrl_t *tvars);
-lsblk_num_t cauto_peek_next_lsblk(int tidx, train_ctrl_t *tvars);
+lsblk_num_t cauto_peek_next_lsblk(int tidx, train_ctrl_t *tvars, uint8_t left);
 extern void ctrl2_set_turnout(int tn, int v); // ctrl.c TODO move proto
 void cauto_had_trigU1(int tidx, train_ctrl_t *tvars);
+void cauto_had_timer(int tidx, train_ctrl_t *tvars);
 void cauto_end_tick(int tidx, train_ctrl_t *tvars);
 /*
  0 0 x x x x x x   expected lsblk
@@ -28,8 +29,9 @@ void cauto_end_tick(int tidx, train_ctrl_t *tvars);
  
  1 1 0 0 0 x x x   wait event 0-7
  1 1 0 0 1 x x x   trig event 0-7
- 1 1 0 1 0 t t t   wait 4*t
+ 1 1 0 1 0 t t t   set timer 4*t
  1 1 1 1 1 0 0 1   stop at half
+ 1 1 1 1 1 0 1 0   wait timer
  1 1 1 1 1 1 1 0   loop
  1 1 1 1 1 1 1 1   end
  */
@@ -44,6 +46,7 @@ void cauto_end_tick(int tidx, train_ctrl_t *tvars);
 #define _AR_STPHALF      (0xF9)
 #define _AR_WEVENT(_e)   (0xC0 | ((_e) & 0x07))
 #define _AR_TRGEVENT(_e) (0xC8 | ((_e) & 0x07))
-#define _AR_SLEEP(_s)    (0xD0 | (((_t)>>2) & 0x07))
+#define _AR_TIMER(_t)    (0xD0 | (((_t)>>2) & 0x07))
+#define _AR_WTIMER       (0xFA)
 
 #endif /* cautoP_h */

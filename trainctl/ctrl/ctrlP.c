@@ -144,7 +144,7 @@ static lsblk_num_t next_lsblk_free(int tidx, train_ctrl_t *tvars,  uint8_t left,
 {
     lsblk_num_t nsa = {-1};
     if (tvars->_mode == train_auto) {
-        nsa = cauto_peek_next_lsblk(tidx, tvars);
+        nsa = cauto_peek_next_lsblk(tidx, tvars, left);
     }
     lsblk_num_t ns = next_lsblk(tvars->c1_sblk, left, palternate);
     if (ns.n >= 0) {
@@ -715,28 +715,8 @@ int ctrl2_tick_process(int tidx, train_ctrl_t *tvars, const train_config_t *tcon
             cauto_c1_updated(tidx, tvars);
             
         }
-        /*
-        if ((tvars->_mode == train_auto) && (flags & (_TFLAG_DIR_CHANGED|_TFLAG_C1LSB_CHANGED))) {
-            if ((tvars->route) &&  (tvars->_dir) && (0 == (tvars->route[tvars->routeidx] & 0x80))) {
-                int nsb = tvars->route[tvars->routeidx] & 0x7F;
-                int t = cauto_update_turnouts(tidx, tvars->c1_sblk, tvars->_dir, nsb);
-                if (t>0) {
-                    flags |= _TFLAG_OCC_CHANGED;
-                } else if (t<0) {
-                    ctrl2_set_state(tidx, tvars, train_blk_wait);
-                }
-            } else if ((tvars->route) &&  (!tvars->_dir) && (0x80 == (tvars->route[tvars->routeidx] & 0x80))) {
-                if (tvars->route[tvars->routeidx]==0xFF) {
-                    ctrl2_set_mode(tidx, tvars, train_manual);
-                } else {
-                	int8_t v = ((tvars->route[tvars->routeidx] & 0x7F)<<1);
-                	tvars->desired_speed = v>>2;
-                	tvars->desired_speed = SIGNOF0(tvars->desired_speed)*70;
-                	tvars->routeidx++;
-                	tvars->tick_flags |= _TFLAG_DSPD_CHANGED;
-                }
-            }
-        }*/
+
+
         if (flags & (_TFLAG_C1LSB_CHANGED|_TFLAG_DIR_CHANGED|_TFLAG_NEED_C2)) {
             ctrl2_update_c2(tidx, tvars, tconf, &pose_s0eoseg);
         }

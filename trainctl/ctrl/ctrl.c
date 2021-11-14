@@ -127,16 +127,27 @@ static void ctrl_init(void)
         if ((1)) {
             static uint8_t route[] = {
                 _AR_SPD(-40), 0, _AR_WSTOP,
-                _AR_SPD(60), 1, 3, _AR_TRGEVENT(0), _AR_WSTOP,
+                _AR_SPD(60), 1, 3, _AR_TRGEVENT(0), _AR_WSTOP, _AR_SPD(0),
+				_AR_TIMER(8), _AR_WTIMER,
                 _AR_SPD(-30), 4, 5, _AR_WSTOP,
                 _AR_SPD(30),4, 3, _AR_WSTOP,
                 _AR_SPD(-60), 1, 2, _AR_WSTOP,
-                _AR_SPD(60), 1, _AR_STPHALF, _AR_SPD(20),  _AR_WSTOP, _AR_LOOP};
+				_AR_SPD(60), 1, 3,  _AR_TRGEVENT(1), _AR_WSTOP, _AR_SPD(0),
+				_AR_TIMER(4), _AR_WTIMER,
+                _AR_SPD(-20), 1, _AR_STPHALF, _AR_SPD(20),  _AR_WSTOP,
+				_AR_TIMER(8), _AR_WTIMER,
+				_AR_LOOP};
             trctl[0].routeidx = 0;
             trctl[0].route = route;
             // ctrl_set_mode(0, train_auto);
             
-            static uint8_t route2[] = {_AR_WEVENT(0), _AR_SPD(60), 1, _AR_WSTOP, _AR_SPD(-60) , 0, _AR_WSTOP, _AR_END};
+            static uint8_t route2[] = {_AR_WEVENT(0),
+            		_AR_SPD(60), 1, _AR_STPHALF, _AR_WSTOP,
+            		_AR_SPD(-60) , 0, _AR_WSTOP,
+					_AR_WEVENT(1),
+					_AR_SPD(40), 1, _AR_STPHALF,  _AR_WSTOP,
+					_AR_SPD(-40), 2, _AR_WSTOP,
+					_AR_LOOP};
             trctl[1].routeidx = 0;
             trctl[1].route = route2;
         }
@@ -334,8 +345,8 @@ void ctrl_run_tick(_UNUSED_ uint32_t notif_flags, uint32_t tick, _UNUSED_ uint32
     if ((trctl[0]._mode != train_auto) && (nsk==100)) {
         ctrl_set_mode(0, train_auto);
     }
-    if ((trctl[1]._mode != train_auto) && (nsk==7005)) {
-        //ctrl_set_mode(1, train_auto);
+    if ((trctl[1]._mode != train_auto) && (nsk==100)) {
+        ctrl_set_mode(1, train_auto);
     }
 
 	check_timers(tick);
@@ -399,8 +410,8 @@ static void evt_timer(int tidx, train_ctrl_t *tvar, int tnum)
 	case TLEAVE_C1:
 		evt_tleave(tidx, tvar);
 		break;
-	case TBEHAVE:
-		//tvar->behaviour_flags |= BEHAVE_TBEHAVE;
+	case TAUTO:
+		cauto_had_timer(tidx, tvar);
 		break;
 	default:
 		itm_debug2(DBG_ERR|DBG_CTRL, "?TIM", tidx, tnum);

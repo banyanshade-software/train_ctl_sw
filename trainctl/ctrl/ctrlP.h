@@ -16,7 +16,7 @@
 
 // timers number
 #define TLEAVE_C1      0
-#define TBEHAVE        1
+#define TAUTO          1
 #define NUM_TIMERS     2
 
 // timers values in tick (ms)
@@ -55,6 +55,7 @@ typedef struct {
     uint8_t *route;
     uint8_t routeidx;
     uint8_t stpmiddle:1;
+    uint8_t texp:1;
 } train_ctrl_t;
 
 /*

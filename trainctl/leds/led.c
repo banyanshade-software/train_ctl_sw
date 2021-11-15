@@ -58,6 +58,14 @@ static uint32_t prog_test[] = {
     RETURN(1)
 };
 
+static uint32_t prog_dimoff[] = {
+    R(1, 0b111011101110111011101110), // 75%
+    R(1, 0b110110110110110110110110), // 66%
+    R(1, 0b110011001100110011001100), // 50%
+    R(1, 0b000100010001000100010001), // 25%
+    //R(1, 0b000000010000000100000001), // 12%
+    RETURN(0)
+};
 
 static uint32_t *progs[] = {
 	/* 0 */ prog_off,
@@ -65,7 +73,9 @@ static uint32_t *progs[] = {
 	/* 2 */ prog_50p,
 	/* 3 */ prog_on,
     /* 4 */ prog_off, // twice for easier test of prog_test
-	/* 5 */ prog_test
+    /* 5 */ prog_test,
+    /* 6 */ prog_test, // same for now
+    /* 7 */ prog_dimoff
 };
 // ---------------------------------------
 

@@ -123,6 +123,13 @@ static void check_for_ctrl(int tidx, train_ctrl_t *tvars)
         	tvars->routeidx++;
         	continue;
         }
+        if (r == _AR_LED) {
+            tvars->routeidx++;
+            uint8_t led_num = tvars->route[tvars->routeidx++];
+            uint8_t prog_num = tvars->route[tvars->routeidx++];
+            ctrl2_send_led(led_num, prog_num);
+            continue;
+        }
         if (r == _AR_STPHALF) {
         	// cannot call ctrl2_upcmd_settrigU1_half() now
         	// trig would b sent to spdctl before C1C2 - which reset POSE
@@ -190,10 +197,11 @@ void cauto_c1_updated(int tidx, train_ctrl_t *tvars)
     if ((tvars->route) &&  (tvars->_dir) && (0 == (tvars->route[tvars->routeidx] & 0xC0))) {
         int nsb = tvars->route[tvars->routeidx] & 0x7F;
         if (tvars->c1_sblk.n == nsb) {
+        	itm_debug2(DBG_AUTO, "ca.c1", tidx, nsb);
             tvars->routeidx++;
             check_for_ctrl(tidx, tvars);
         } else {
-            itm_debug3(DBG_AUTO|DBG_ERR, "bad c1", tidx, nsb, tvars->c1_sblk.n);
+            itm_debug3(DBG_AUTO|DBG_ERR, "ca.c1 bad", tidx, nsb, tvars->c1_sblk.n);
             route_error(tidx, tvars);
         }
     }
@@ -201,7 +209,7 @@ void cauto_c1_updated(int tidx, train_ctrl_t *tvars)
 
 void cauto_end_tick(int tidx, train_ctrl_t *tvars)
 {
-	itm_debug1(DBG_AUTO, "ca.tick", tidx);
+	itm_debug2(DBG_AUTO, "ca.tick", tidx, tvars->stpmiddle);
 	if (tvars->stpmiddle) {
 		tvars->stpmiddle = 0;
         ctrl2_upcmd_settrigU1_half(tidx, tvars);

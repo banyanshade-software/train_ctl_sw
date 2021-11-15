@@ -23,7 +23,7 @@ static uint8_t testerAddr;
 void led_run_tick(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_ uint32_t dt)
 {
 	itm_debug1(DBG_LED ,"------- tk", (int) notif_flags);
-	if ((1)) {
+	if ((0)) {
 		uint32_t tm = tick % 10000;
 		static int r=0;
 		static int prog = 0;

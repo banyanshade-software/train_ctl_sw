@@ -49,6 +49,8 @@
 		1BD93C732546FF44006C4D70 /* train.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BD93C582546FF42006C4D70 /* train.c */; };
 		1BD93C772546FF44006C4D70 /* readme.txt in Resources */ = {isa = PBXBuildFile; fileRef = 1BD93C652546FF42006C4D70 /* readme.txt */; };
 		1BD93C782546FF44006C4D70 /* misc.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BD93C682546FF42006C4D70 /* misc.c */; };
+		1BE8B29527418D82000A0FAD /* cautoP.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B812B3C273FA77B00924749 /* cautoP.c */; };
+		1BE8B298274191F9000A0FAD /* ledtask.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BE8B296274191F8000A0FAD /* ledtask.c */; };
 		1BEB93C72729205300508C17 /* TopologyTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B4B70A12729194F00FBDB52 /* TopologyTest.m */; };
 		1BEB93C82729205800508C17 /* topology.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B46EE542692684E00FAC813 /* topology.c */; };
 		1BEB93CA2729F10D00508C17 /* occupency.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BEB93C92729F10D00508C17 /* occupency.c */; };
@@ -145,6 +147,8 @@
 		1BD93C652546FF42006C4D70 /* readme.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = readme.txt; sourceTree = "<group>"; };
 		1BD93C662546FF42006C4D70 /* txrxcmd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = txrxcmd.h; sourceTree = "<group>"; };
 		1BD93C682546FF42006C4D70 /* misc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = misc.c; sourceTree = "<group>"; };
+		1BE8B296274191F8000A0FAD /* ledtask.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ledtask.c; sourceTree = "<group>"; };
+		1BE8B297274191F8000A0FAD /* ledtask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ledtask.h; sourceTree = "<group>"; };
 		1BEB93C92729F10D00508C17 /* occupency.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = occupency.c; sourceTree = "<group>"; };
 		1BEB93CD272B325700508C17 /* ctrlP.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ctrlP.h; sourceTree = "<group>"; };
 		1BEB93CE272B325700508C17 /* ctrlP.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ctrlP.c; sourceTree = "<group>"; };
@@ -293,6 +297,8 @@
 		1BC90303272091870087CEA7 /* leds */ = {
 			isa = PBXGroup;
 			children = (
+				1BE8B296274191F8000A0FAD /* ledtask.c */,
+				1BE8B297274191F8000A0FAD /* ledtask.h */,
 				1BC90304272092EC0087CEA7 /* led.h */,
 				1BC90305272092EC0087CEA7 /* led.c */,
 				1BC903162720AD730087CEA7 /* LedTest.m */,
@@ -500,6 +506,7 @@
 				1BEB93D2272B342500508C17 /* TestCtrlP.m in Sources */,
 				1B1C75FE27245D4E00F95111 /* itm_debug.c in Sources */,
 				1BC903172720AD730087CEA7 /* LedTest.m in Sources */,
+				1BE8B29527418D82000A0FAD /* cautoP.c in Sources */,
 				1B1C75FC27245C3F00F95111 /* inertia.c in Sources */,
 				1BA0FCB12724B0380002DF4C /* TestPid.m in Sources */,
 			);
@@ -517,6 +524,7 @@
 				1B92EA302631A0BA00558716 /* ctrl.c in Sources */,
 				1BD93C782546FF44006C4D70 /* misc.c in Sources */,
 				1B92EA2B2631A02900558716 /* spdctl.c in Sources */,
+				1BE8B298274191F9000A0FAD /* ledtask.c in Sources */,
 				1BED2AA025173D1F0080FC97 /* main.m in Sources */,
 				1BC9031D2720BFDA0087CEA7 /* ledio.c in Sources */,
 				1BD93C6D2546FF44006C4D70 /* railconfig.c in Sources */,

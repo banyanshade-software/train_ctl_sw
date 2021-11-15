@@ -20,6 +20,7 @@
 #include "ctrlP.h"
 #include "cautoP.h"
 
+#include "../leds/led.h"
 
 #define SCEN_TWOTRAIN 	0 //1
 
@@ -127,14 +128,16 @@ static void ctrl_init(void)
         if ((1)) {
             static uint8_t route[] = {
                 _AR_SPD(-40), 0, _AR_WSTOP,
-                _AR_SPD(60), 1, 3, _AR_TRGEVENT(0), _AR_WSTOP, _AR_SPD(0),
+                _AR_SPD(20), 1, 3, _AR_LED, 0, LED_PRG_NEONON,
+                _AR_TRGEVENT(0), _AR_WSTOP, _AR_SPD(0),
+                _AR_SPD(-30), 4, _AR_LED, 0, LED_PRG_DIMOFF, 5, _AR_WSTOP,
+                _AR_SPD(30),4, 3, _AR_LED, 0, LED_PRG_NEONON, _AR_WSTOP,
+                _AR_SPD(-60), 1, _AR_LED, 0, LED_PRG_DIMOFF, 2, _AR_WSTOP,
+				_AR_SPD(60), 1, 3,  _AR_LED, 0, LED_PRG_NEONON, _AR_TRGEVENT(1), _AR_WSTOP, _AR_SPD(0),
+                _AR_WEVENT(1),
+                _AR_SPD(-20), 1,_AR_LED, 0, LED_PRG_DIMOFF, _AR_STPHALF, _AR_WSTOP,
 				_AR_TIMER(8), _AR_WTIMER,
-                _AR_SPD(-30), 4, 5, _AR_WSTOP,
-                _AR_SPD(30),4, 3, _AR_WSTOP,
-                _AR_SPD(-60), 1, 2, _AR_WSTOP,
-				_AR_SPD(60), 1, 3,  _AR_TRGEVENT(1), _AR_WSTOP, _AR_SPD(0),
-				_AR_TIMER(4), _AR_WTIMER,
-                _AR_SPD(-20), 1, _AR_STPHALF, _AR_SPD(20),  _AR_WSTOP,
+				_AR_TIMER(8), _AR_WTIMER,
 				_AR_TIMER(8), _AR_WTIMER,
 				_AR_LOOP};
             trctl[0].routeidx = 0;
@@ -146,7 +149,7 @@ static void ctrl_init(void)
             		_AR_SPD(-60) , 0, _AR_WSTOP,
 					_AR_WEVENT(1),
 					_AR_SPD(40), 1, _AR_STPHALF,  _AR_WSTOP,
-					_AR_SPD(-40), 2, _AR_WSTOP,
+					_AR_SPD(-40), 2, _AR_TRGEVENT(1), _AR_WSTOP,
 					_AR_LOOP};
             trctl[1].routeidx = 0;
             trctl[1].route = route2;
@@ -450,7 +453,7 @@ static void set_turnout(int tn, int v)
 	if (tn<0) fatal();
 	if (tn>=NUM_TURNOUTS) fatal();
 	if (tn>=NUM_LOCAL_TURNOUTS) fatal(); // TODO
-	msg_64_t m;
+    msg_64_t m = {0};
 	m.from = MA_CONTROL();
 	m.to = MA_TURNOUT(0, tn); // TODO board num
 	m.cmd = v ? CMD_TURNOUT_B : CMD_TURNOUT_A;
@@ -467,6 +470,19 @@ static void set_turnout(int tn, int v)
 void ctrl2_set_turnout(int tn, int v)
 {
     set_turnout(tn, v);
+}
+
+
+void ctrl2_send_led(uint8_t led_num, uint8_t prog_num)
+{
+    msg_64_t m = {0};
+    m.from = MA_CONTROL();
+    m.to = MA_LED_B(0); // TODO board num
+    m.cmd = CMD_LED_RUN;
+    m.v1u = led_num;
+    m.v2u = prog_num;
+    
+    mqf_write_from_ctrl(&m);
 }
 
 // ---------------------------------------------------------------

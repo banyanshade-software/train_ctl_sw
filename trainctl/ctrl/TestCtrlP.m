@@ -86,6 +86,12 @@ static void purge_block_delayed(void)
 }
 
 
+void ctrl2_set_turnout(int tn, int v)
+{
+}
+
+
+
 @implementation TestCtrlP {
     train_ctrl_t tvars;
     const train_config_t *tconf;
@@ -117,7 +123,7 @@ static void purge_block_delayed(void)
     SimuTick = 1234;
     
     ctrl_set_timer(0, &tvars, TLEAVE_C1, 42);
-    ctrl_set_timer(0, &tvars, TBEHAVE, 58);
+    ctrl_set_timer(0, &tvars, TAUTO, 58);
     XCTAssert(tvars.timertick[0]==42+1234);
     XCTAssert(tvars.timertick[1]==58+1234);
     XCTAssert(mqf_len(&from_ctrl)==0);

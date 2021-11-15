@@ -64,6 +64,7 @@ static int32_t ctrl_pose_middle_c1(const train_config_t *tconf, train_ctrl_t *tv
     int mm;
     mm = tvar->beginposmm + cm*5;
     int32_t p = pose_convert_from_mm(tconf, mm);
+    itm_debug3(DBG_CTRL, "middle_c1", tvar->c1_sblk.n, cm, p);
     if (!p) p=1;
     return p;
 }
@@ -85,7 +86,7 @@ static int32_t ctrl_pose_end_c1(const train_config_t *tconf, train_ctrl_t *tvar)
 
 void ctrl_set_pose_trig(int numtrain, int32_t pose, int n)
 {
-    itm_debug2(DBG_CTRL, "set posetr", numtrain, pose);
+    itm_debug3(DBG_CTRL, "set posetr", numtrain, n, pose);
     msg_64_t m = {0};
     m.from = MA_CONTROL_T(numtrain);
     m.to =  MA_TRAIN_SC(numtrain);

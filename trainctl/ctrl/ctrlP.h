@@ -36,6 +36,7 @@ typedef struct {
     uint8_t  pose2_set:1;
     uint8_t  pose2_is_blk_wait:1;
     uint8_t trig_eoseg:1;
+    uint8_t measure_pose_percm:1;
     
     uint8_t     can1_addr;
     lsblk_num_t c1_sblk;

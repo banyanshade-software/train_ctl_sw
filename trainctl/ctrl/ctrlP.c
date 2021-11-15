@@ -575,6 +575,9 @@ void ctrl2_evt_leaved_c1(int tidx, train_ctrl_t *tvars)
     ctrl_reset_timer(tidx, tvars, TLEAVE_C1);
     tvars->c1c2 = 0;
     set_block_addr_occupency(tvars->can1_addr, BLK_OCC_FREE, 0xFF, snone);
+    if (1 == tvars->can2_addr) { // XXX Hardcoded for now
+    	tvars->measure_pose_percm = 1;
+    }
     tvars->can1_addr = tvars->can2_addr;
     tvars->c1_sblk = first_lsblk_with_canton(tvars->can2_addr, tvars->c1_sblk);
 

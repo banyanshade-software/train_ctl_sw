@@ -135,7 +135,7 @@ static void ctrl_init(void)
                 _AR_SPD(-60), 1, _AR_LED, 0, LED_PRG_DIMOFF, 2, _AR_WSTOP,
 				_AR_SPD(60), 1, 3,  _AR_LED, 0, LED_PRG_NEONON, _AR_TRGEVENT(1), _AR_WSTOP, _AR_SPD(0),
                 _AR_WEVENT(1),
-                _AR_SPD(-20), 1,_AR_LED, 0, LED_PRG_DIMOFF, _AR_STPHALF, _AR_WSTOP,
+                _AR_SPD(-40), 1, _AR_STPHALF, _AR_LED, 0, LED_PRG_DIMOFF, _AR_WSTOP,
 				_AR_TIMER(8), _AR_WTIMER,
 				_AR_TIMER(8), _AR_WTIMER,
 				_AR_TIMER(8), _AR_WTIMER,
@@ -244,6 +244,18 @@ static void sub_presence_changed(_UNUSED_ uint32_t tick, _UNUSED_ uint8_t from_a
 // ----------------------------------------------------------------------------
 
 
+static void posecm_measured(int tidx, int32_t pose, lsblk_num_t blknum)
+{
+	int cm = get_lsblk_len(blknum);
+	int32_t ppcm = pose / cm;
+	itm_debug2(DBG_POSEC, "ppcm", tidx, ppcm);
+	debug_info('P', tidx, "PPCM", ppcm, 0,0);
+
+}
+
+// ----------------------------------------------------------------------------
+
+
 void ctrl_run_tick(_UNUSED_ uint32_t notif_flags, uint32_t tick, _UNUSED_ uint32_t dt)
 {
 	
@@ -319,6 +331,11 @@ void ctrl_run_tick(_UNUSED_ uint32_t notif_flags, uint32_t tick, _UNUSED_ uint32
                     // typ. because we already switch to c2 (msg SET_C1_C2 and CMD_BEMF_DETECT_ON_C2 cross over
                     itm_debug3(DBG_CTRL, "not c2", tidx, m.v1u, tvar->can2_addr);
                     break;
+                }
+                if (tvar->measure_pose_percm) {
+                	tvar->measure_pose_percm = 0;
+                	lsblk_num_t s1 = {1};
+                	posecm_measured(tidx, m.v2*10, s1);
                 }
                 ctrl2_evt_entered_c2(tidx, tvar, 1);
                 break;

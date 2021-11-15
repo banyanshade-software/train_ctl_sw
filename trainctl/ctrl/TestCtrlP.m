@@ -89,6 +89,9 @@ static void purge_block_delayed(void)
 void ctrl2_set_turnout(int tn, int v)
 {
 }
+void ctrl2_send_led(uint8_t led_num, uint8_t prog_num)
+{
+}
 
 
 
@@ -245,7 +248,7 @@ void ctrl2_set_turnout(int tn, int v)
     //{D0, C8, 51, -840, -1},{D0, C8, 11, -256, -1},{D0, C8, 10, 70, 0}
     // CMD_POSE_SET_TRIG2
     EXPMSG({.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_C1_C2,        .vb0=0, .vb1=-1, .vb2=0xFF, .vb3=-1}
-          ,{.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_POSE_SET_TRIG0,   .v32=-840}
+          ,{.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_POSE_SET_TRIG0,   .v32=-980}
           ,{.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_TARGET_SPEED, .v1=70, .v2=0});
     XCTAssert(tvars.pose2_set);
     XCTAssert(tvars.trig_eoseg==0);
@@ -373,7 +376,7 @@ void ctrl2_set_turnout(int tn, int v)
     //{D0, C8, 11, 257, 511},{D0, 81, 26, 1, 0},{D0, C8, 51, 420, 0},{D0, C8, 10, 70, 0}
     EXPMSG({.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_C1_C2,        .vb0=1, .vb1=1, .vb2=0xFF, .vb3=1}
            ,{.to=MA_UI(UISUB_TFT), .from=0xD0, .cmd=CMD_TRSTATE_NOTIF,    .v1=1, .v2=0}
-           ,{.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_POSE_SET_TRIG0,   .v32=420}
+           ,{.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_POSE_SET_TRIG0,   .v32=450}
            ,{.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_TARGET_SPEED, .v1=70, .v2=0});
     XCTAssert(tvars.trig_eoseg==0);
     XCTAssert(tvars._state == train_running_c1);
@@ -572,8 +575,8 @@ void ctrl2_set_turnout(int tn, int v)
     int l3 = 10*get_lsblk_len(sthree);
     int l4 = 10*get_lsblk_len(sfoor);
     int l5 = 10*get_lsblk_len(sfive);
-    XCTAssert(l3==320);
-    XCTAssert(l4==800);
+    XCTAssert(l3==540);
+    XCTAssert(l4==780);
     
     //tvars.curposmm = 160;
     tvars.beginposmm = 0;
@@ -610,20 +613,20 @@ void ctrl2_set_turnout(int tn, int v)
     rc  = ctrl2_evt_pose_triggered(0, &tvars, 0x03, (1<<0), -204);
     XCTAssert(!rc);
     XCTAssert(tvars.curposmm==-1020);
-    XCTAssert(tvars.beginposmm==-1000-800);
+    XCTAssert(tvars.beginposmm==-1000-780);
     
     rc = ctrl2_tick_process(0, &tvars, &myconf, 0);
     XCTAssert(rc==2);
     s = dump_msgbuf(0);
     // {D0, C8, 11, -253, -1},{D0, 81, 26, 1, 0},{D0, C8, 50, -640, -1},{D0, C8, 10, 82, 0}
-    EXPMSG({.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_POSE_SET_TRIG0,   .v32=-3600});
+    EXPMSG({.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_POSE_SET_TRIG0,   .v32=-3560});
     XCTAssert(tvars.trig_eoseg==1);
     XCTAssert(tvars.curposmm==-1020);
-    XCTAssert(tvars.beginposmm==-1800);
+    XCTAssert(tvars.beginposmm==-1780);
     
     ctrl2_evt_stop_detected(0, &tvars, -3000);
     XCTAssert(tvars.curposmm==-1500);
-    XCTAssert(tvars.beginposmm==-1800);
+    XCTAssert(tvars.beginposmm==-1780);
 
     rc = ctrl2_tick_process(0, &tvars, &myconf, 0);
     //XCTAssert(rc==2);
@@ -645,7 +648,7 @@ void ctrl2_set_turnout(int tn, int v)
     XCTAssert(tvars.trig_eoseg==1);
 
     XCTAssert(tvars.curposmm==-1500);
-    XCTAssert(tvars.beginposmm==-1800);
+    XCTAssert(tvars.beginposmm==-1780);
     
     XCTAssert(tvars.trig_eoseg==1);
     rc  = ctrl2_evt_pose_triggered(0, &tvars, 0x03, (1<<0), -199);
@@ -657,7 +660,7 @@ void ctrl2_set_turnout(int tn, int v)
     XCTAssert(rc==2);
     s = dump_msgbuf(0);
       // {D0, C8, 11, -253, -1},{D0, 81, 26, 1, 0},{D0, C8, 50, -640, -1},{D0, C8, 10, 82, 0}
-      EXPMSG({.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_POSE_SET_TRIG0,   .v32=-1680});
+      EXPMSG({.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_POSE_SET_TRIG0,   .v32=-1460});
     XCTAssert(tvars.trig_eoseg==0);
 
       XCTAssert(tvars.curposmm==-995);
@@ -705,7 +708,7 @@ void ctrl2_set_turnout(int tn, int v)
     rc = ctrl2_tick_process(0, &tvars, tconf, 0);
     XCTAssert(rc==2);
     s = dump_msgbuf(0);
-    EXPMSG({.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_POSE_SET_TRIG0,   .v32=-1600});
+    EXPMSG({.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_POSE_SET_TRIG0,   .v32=-1560});
     XCTAssert(tvars.trig_eoseg==1);
     XCTAssert(tvars._dir==-1);
     XCTAssert(tvars._target_speed == 82);
@@ -720,7 +723,7 @@ void ctrl2_set_turnout(int tn, int v)
     s = dump_msgbuf(0);
     occupency_block_addr_info(3, NULL, &rsblk);
     XCTAssert(rsblk==5);
-    EXPMSG({.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_POSE_SET_TRIG0,   .v32=-2000}
+    EXPMSG({.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_POSE_SET_TRIG0,   .v32=-2140}
           ,{.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_TARGET_SPEED, .v1=70, .v2=0});
     XCTAssert(tvars.trig_eoseg==0);
     XCTAssert(tvars._dir==-1);

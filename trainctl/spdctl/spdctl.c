@@ -196,11 +196,20 @@ void spdctl_run_tick(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, uint
                         if (tvars->c2bemf) tvars->bemf_mv = m.v1;
                         else if (abs(m.v1) > abs(tvars->bemf_mv)+300) {
                         	itm_debug3(DBG_SPDCTL|DBG_PRES, "c2_hi", tidx, m.v1, tvars->bemf_mv);
-                        	msg_64_t m;
+                        	msg_64_t m = {0};
                         	m.from = MA_TRAIN_SC(tidx);
                         	m.to = MA_CONTROL_T(tidx);
                         	m.cmd = CMD_BEMF_DETECT_ON_C2;
                         	m.v1u = tvars->C2;
+                        	if ((1)) {
+                        		int32_t p = tvars->position_estimate / 100;
+                        		if (abs(p)>0x7FFF) {
+                        			// TODO: problem here pose is > 16bits
+                        			itm_debug1(DBG_POSEC|DBG_ERR, "L pose", p);
+                        			p = SIGNOF(p)*0x7FFF;
+                        		}
+                        		m.v2 = (int16_t) p;
+                        	}
                             mqf_write_from_spdctl(&m);
                             tvars->c2bemf = 1;
                         }

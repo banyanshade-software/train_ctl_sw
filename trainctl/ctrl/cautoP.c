@@ -118,7 +118,7 @@ static void check_for_ctrl(int tidx, train_ctrl_t *tvars)
         	return;
         }
         if ((r & 0xF8) == _AR_TIMER(0)) {
-        	int t = (r & 0x07)<<2; // in seconds
+        	int t = (1<<(r & 0x07)); // in seconds
         	ctrl_set_timer(tidx, tvars, TAUTO, t*1000);
         	tvars->routeidx++;
         	continue;

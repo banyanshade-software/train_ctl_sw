@@ -46,17 +46,17 @@
 
 static const topo_lsblk_t _Topology[] = {
     // layout 5 segs
-    //          canton         ina     len      l1    l2    tn       r1   r2   tn      graph pt
-    /* 0 */ { MA_CANTON(0, 0),  0xFF,   98,    -1,   -1, 0xFF,       1,  -1,    0       _PTS(2, {1,3}, {4,3},{5,4},{5,8})},
-    /* 1 */ { MA_CANTON(0, 1),  0xFF,   45,     0,    2,    0,      -1,   3,    1       _PTS(0, {5,9}, {5,12}, _VP, _VP)},
-    /* 2 */ { MA_CANTON(0, 2),  0xFF,   90,    -1 ,  -1, 0xFF,      -1,   1,    0       _PTS(2, {1,4}, {3,4}, {4,5}, {4,8})},
-    /* 3 */ { MA_CANTON(0, 3),  0xFF,   54, 	4,    1,    1,      -1,  -1, 0xFF       _PTS(0, {6,13}, {6,15}, {5,16}, {1,16})},
+    //          canton         ina    steep  len      l1    l2    tn       r1   r2   tn      graph pt
+    /* 0 */ { MA_CANTON(0, 0),  0xFF,   0, 98,    -1,   -1, 0xFF,       1,  -1,    0       _PTS(2, {1,3}, {4,3},{5,4},{5,8})},
+    /* 1 */ { MA_CANTON(0, 1),  0xFF,   0, 45,     0,    2,    0,      -1,   3,    1       _PTS(0, {5,9}, {5,12}, _VP, _VP)},
+    /* 2 */ { MA_CANTON(0, 2),  0xFF,   0, 90,    -1 ,  -1, 0xFF,      -1,   1,    0       _PTS(2, {1,4}, {3,4}, {4,5}, {4,8})},
+    /* 3 */ { MA_CANTON(0, 3),  0xFF,   0, 54, 	4,    1,    1,      -1,  -1, 0xFF       _PTS(0, {6,13}, {6,15}, {5,16}, {1,16})},
 #if 0
-    /* 4 */ { MA_CANTON(0, 3),  0xFF,   105,   -1 ,  -1, 0xFF,       3,  -1,    1       _PTS(2, {1,2}, {5,2}, {6,3}, {6,12} )}
+    /* 4 */ { MA_CANTON(0, 3),  0xFF,   0, 105,   -1 ,  -1, 0xFF,       3,  -1,    1       _PTS(2, {1,2}, {5,2}, {6,3}, {6,12} )}
 #else
-    /* 4 */ { MA_CANTON(0, 3),  0xFF,    78,   -1,   5,     2,       3,  -1,    1       _PTS(0, {7,4}, {7,8}, {6,10}, {6,12})},
-    /* 5 */ { MA_CANTON(0, 3),  0xFF,    58,   -1,  -1,  0xFF,       6,   4,    2       _PTS(0, {1,2}, {5,2}, {6,3}, _VP)},
-    /* 6 */ { MA_CANTON(0, 3),  0xFF,    40,    5,   -1,    2,       -1, -1, 0xFF       _PTS(0, {6,4}, {6,6}, _VP, _VP)}
+    /* 4 */ { MA_CANTON(0, 3),  0xFF,  -1, 78,   -1,   5,     2,       3,  -1,    1       _PTS(0, {7,4}, {7,8}, {6,10}, {6,12})},
+    /* 5 */ { MA_CANTON(0, 3),  0xFF,   0, 58,   -1,  -1,  0xFF,       6,   4,    2       _PTS(0, {1,2}, {5,2}, {6,3}, _VP)},
+    /* 6 */ { MA_CANTON(0, 3),  0xFF,   0, 40,    5,   -1,    2,       -1, -1, 0xFF       _PTS(0, {6,4}, {6,6}, _VP, _VP)}
 #endif
 };
 
@@ -111,9 +111,11 @@ void next_lsblk_nums(lsblk_num_t blknum, uint8_t left, lsblk_num_t *pb1, lsblk_n
     if (*tn  == 0xFF) *tn  = -1;
 }
 
-int get_lsblk_len(lsblk_num_t blknum)
+int get_lsblk_len(lsblk_num_t blknum, int8_t *psteep)
 {
-	return Topology(blknum)->length_cm;
+    const topo_lsblk_t *t = Topology(blknum);
+    if (psteep) *psteep = t->steep;
+	return t->length_cm;
 	
 }
 

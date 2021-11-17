@@ -57,10 +57,22 @@ static uint32_t pose_convert_from_mm(const train_config_t *tconf, int32_t mm)
     return pv;
 }
 
+static int32_t get_lsblk_len_steep(lsblk_num_t lsbk, const train_config_t *tconf, train_ctrl_t *tvar)
+{
+    int8_t steep = 0;
+	int cm = get_lsblk_len(lsbk, &steep);
+	itm_debug3(DBG_CTRL|DBG_POSEC, "steep?", steep, tvar->_dir, tvar->c1_sblk.n);
+	if (steep*tvar->_dir > 0) {
+		int cmold = cm;
+		cm = cm * tconf->slipping / 100;
+		itm_debug3(DBG_CTRL|DBG_POSEC, "steep!", tvar->c1_sblk.n, cmold, cm);
+	}
+	return cm;
+}
 
 static int32_t ctrl_pose_middle_c1(const train_config_t *tconf, train_ctrl_t *tvar)
 {
-    int cm = get_lsblk_len(tvar->c1_sblk);
+    int cm = get_lsblk_len_steep(tvar->c1_sblk, tconf, tvar);
     int mm;
     mm = tvar->beginposmm + cm*5;
     int32_t p = pose_convert_from_mm(tconf, mm);
@@ -72,7 +84,7 @@ static int32_t ctrl_pose_middle_c1(const train_config_t *tconf, train_ctrl_t *tv
 
 static int32_t ctrl_pose_end_c1(const train_config_t *tconf, train_ctrl_t *tvar)
 {
-    int cm = get_lsblk_len(tvar->c1_sblk);
+    int cm = get_lsblk_len_steep(tvar->c1_sblk, tconf, tvar);
     int mm;
     if (tvar->_dir<0) {
         mm = tvar->beginposmm;
@@ -581,7 +593,8 @@ void ctrl2_evt_leaved_c1(int tidx, train_ctrl_t *tvars)
     tvars->can1_addr = tvars->can2_addr;
     tvars->c1_sblk = first_lsblk_with_canton(tvars->can2_addr, tvars->c1_sblk);
 
-    int len = get_lsblk_len(tvars->c1_sblk);
+
+    int len = get_lsblk_len_steep(tvars->c1_sblk, get_train_cnf(tidx), tvars);
     if (tvars->_dir<0) {
     	tvars->beginposmm =  -len*10;
     } else {
@@ -634,8 +647,8 @@ int ctrl2_evt_pose_triggered(int tidx, train_ctrl_t *tvar, uint8_t ca_addr, uint
             }
             
             
-            int len1 = get_lsblk_len(tvar->c1_sblk);
-            int len2 = get_lsblk_len(ns);
+            int len1 = get_lsblk_len_steep(tvar->c1_sblk, get_train_cnf(tidx), tvar);
+            int len2 = get_lsblk_len_steep(ns, get_train_cnf(tidx), tvar);
             int exppose;
             tvar->c1_sblk = ns;
             if (tvar->_dir<0) {

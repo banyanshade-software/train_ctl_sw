@@ -131,7 +131,7 @@ static inline int next_sub_block_addr(uint8_t subaddr, uint8_t sub, int left, ui
 // ---------------------------------------------------------------------
 
 //int get_blk_len(int blknum);
-int get_lsblk_len(lsblk_num_t num);
+int get_lsblk_len(lsblk_num_t num, int8_t *psteep);
 
 // ---------------------------------------------------------------------
 

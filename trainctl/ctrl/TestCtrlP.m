@@ -572,9 +572,9 @@ void ctrl2_send_led(uint8_t led_num, uint8_t prog_num)
     NSString *s = dump_msgbuf(1);
     
     train_ctrl_t savtvar = tvars;
-    int l3 = 10*get_lsblk_len(sthree);
-    int l4 = 10*get_lsblk_len(sfoor);
-    int l5 = 10*get_lsblk_len(sfive);
+    int l3 = 10*get_lsblk_len(sthree, NULL);
+    int l4 = 10*get_lsblk_len(sfoor, NULL);
+    int l5 = 10*get_lsblk_len(sfive, NULL);
     XCTAssert(l3==540);
     XCTAssert(l4==780);
     

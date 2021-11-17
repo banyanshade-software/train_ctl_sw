@@ -125,7 +125,7 @@ static void ctrl_init(void)
 	if ((1)) {
         ctrl2_init_train(0, &trctl[0], s1);
         ctrl2_init_train(1, &trctl[1], s2);
-        if ((1)) {
+        if ((0)) {
             static uint8_t route[] = {
                 _AR_SPD(-40), 0, _AR_WSTOP,
                 _AR_SPD(20), 1, 3, _AR_LED, 0, LED_PRG_NEONON,
@@ -151,6 +151,57 @@ static void ctrl_init(void)
 					_AR_SPD(40), 1, _AR_STPHALF,  _AR_WSTOP,
 					_AR_SPD(-40), 2, _AR_TRGEVENT(1), _AR_WSTOP,
 					_AR_LOOP};
+            trctl[1].routeidx = 0;
+            trctl[1].route = route2;
+        }
+#define SON  _AR_LED, 0, LED_PRG_NEONON
+#define SOFF  _AR_LED, 0, LED_PRG_DIMOFF
+        
+        if ((1)) {
+            static uint8_t route[] = {
+                // T0 starts on 1
+                // 1->0->2
+                _AR_SPD(-30), 0, _AR_WSTOP, _AR_TRGEVENT(0),
+                _AR_WEVENT(1),
+                _AR_SPD(10), 1, _AR_STPHALF, _AR_WSTOP,
+                _AR_TIMER(2), _AR_WTIMER,
+                _AR_SPD(-10), 2, _AR_WSTOP,
+                // wait and 2-1-3 sleep 3-4-5
+                _AR_WEVENT(2),
+                _AR_SPD(60), 1, SON, 3, _AR_WSTOP,  _AR_TRGEVENT(3),
+                _AR_TIMER(2), _AR_WTIMER,
+                _AR_SPD(-20), 4, SOFF, 5, _AR_WSTOP,
+                _AR_TIMER(0), _AR_WTIMER,
+                // 4, 3 sleep 1
+                _AR_SPD(20), 4, 3, SON, _AR_WSTOP,
+                _AR_TIMER(2), _AR_WTIMER,
+                _AR_WEVENT(4), SOFF,
+                _AR_SPD(-30), 1, _AR_STPHALF, _AR_WSTOP, _AR_SPD(0),
+                _AR_TIMER(7), _AR_WTIMER,
+                _AR_LOOP};
+            
+            trctl[0].routeidx = 0;
+            trctl[0].route = route;
+            // ctrl_set_mode(0, train_auto);
+            
+            static uint8_t route2[] = {
+                    _AR_WEVENT(0),
+                    // 2-1-3
+                    _AR_SPD(60), 1, SON, 3, _AR_TRGEVENT(1), _AR_WSTOP,
+                    // 4-5
+                    _AR_SPD(-40) , 4, 5, _AR_WSTOP,
+                    _AR_TIMER(0), _AR_WTIMER,
+                    // 5-6
+                    _AR_SPD(40), 6, _AR_WSTOP,
+                    _AR_TIMER(0), _AR_WTIMER,
+                    _AR_SPD(-40), 5, _AR_WSTOP,
+                    _AR_SPD(40), 4, 3, SON, _AR_WSTOP,
+                    _AR_SPD(-50), SOFF, 1, 0, _AR_WSTOP, _AR_TRGEVENT(2),
+                    // 0-1-2
+                    _AR_WEVENT(3),
+                    _AR_SPD(40), 1, _AR_STPHALF, _AR_WSTOP,
+                    _AR_SPD(-40), 2, _AR_WSTOP, _AR_TRGEVENT(4), _AR_SPD(0),
+                    _AR_LOOP};
             trctl[1].routeidx = 0;
             trctl[1].route = route2;
         }
@@ -246,7 +297,7 @@ static void sub_presence_changed(_UNUSED_ uint32_t tick, _UNUSED_ uint8_t from_a
 
 static void posecm_measured(int tidx, int32_t pose, lsblk_num_t blknum)
 {
-	int cm = get_lsblk_len(blknum);
+	int cm = get_lsblk_len(blknum, NULL);
 	int32_t ppcm = pose / cm;
 	itm_debug2(DBG_POSEC, "ppcm", tidx, ppcm);
 	debug_info('P', tidx, "PPCM", ppcm, 0,0);

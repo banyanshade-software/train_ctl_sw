@@ -24,6 +24,7 @@ typedef struct {
     uint8_t canton_addr;
     uint8_t ina_segnum;
     
+    int8_t steep;
     uint8_t length_cm;
     
     int8_t left1;

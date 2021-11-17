@@ -119,6 +119,7 @@ static void check_for_ctrl(int tidx, train_ctrl_t *tvars)
         }
         if ((r & 0xF8) == _AR_TIMER(0)) {
         	int t = (1<<(r & 0x07)); // in seconds
+        	itm_debug3(DBG_AUTO, "ca.timer", tidx, r & 0x07, t);
         	ctrl_set_timer(tidx, tvars, TAUTO, t*1000);
         	tvars->routeidx++;
         	continue;

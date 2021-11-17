@@ -247,7 +247,7 @@ static  canton_config_t Cantons[NUM_CANTONS] = {
 
 
 
-#define DEFAULT_TRAIN_CFG(_EN, _R, _P)  { \
+#define DEFAULT_TRAIN_CFG(_EN, _R, _P, _S)  { \
 						{ /* pidctl_config_t*/ \
 								400, 150, -500,  /* kP, kI, kD */ \
 						}, \
@@ -266,12 +266,19 @@ static  canton_config_t Cantons[NUM_CANTONS] = {
 						0,  /*	uint8_t en_spd2pow; */\
 						20, /*	uint8_t min_power; */ \
 						_R, /* reversed */			\
-						_P, /* pose_per_cm */ \
+                        _S, /* slipping */          \
+						_P, /* pose_per_cm */       \
 				}
 
 static  train_config_t Trains[NUM_TRAINS] = {
-		DEFAULT_TRAIN_CFG(1,0, 450), DEFAULT_TRAIN_CFG(1,0, 290), DEFAULT_TRAIN_CFG(0,0,500), DEFAULT_TRAIN_CFG(0,0,500),
-		DEFAULT_TRAIN_CFG(0,0,500), DEFAULT_TRAIN_CFG(0,0,500), DEFAULT_TRAIN_CFG(0,0,500), DEFAULT_TRAIN_CFG(0,0,500),
+		DEFAULT_TRAIN_CFG(1,0, 450, 115),
+        DEFAULT_TRAIN_CFG(1,0, 300, 120),
+        DEFAULT_TRAIN_CFG(0,0, 500, 100),
+        DEFAULT_TRAIN_CFG(0,0, 500, 100),
+		DEFAULT_TRAIN_CFG(0,0, 500, 100),
+        DEFAULT_TRAIN_CFG(0,0, 500, 100),
+        DEFAULT_TRAIN_CFG(0,0, 500, 100),
+        DEFAULT_TRAIN_CFG(0,0, 500, 100),
 };
 
 

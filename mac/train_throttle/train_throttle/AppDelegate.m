@@ -95,6 +95,8 @@ typedef void (^respblk_t)(void);
     CBPeripheral *trainctlBle;
     NSTimer *connectTimeout;
     BOOL connected;
+    
+    int t0changed, t1changed, t2changed, t3changed;
 }
 
 @property (weak) IBOutlet NSWindow *window;
@@ -110,7 +112,7 @@ typedef void (^respblk_t)(void);
 }
 
 @synthesize curspeed = _curspeed;
-@synthesize targetspeed = _targetspeed;
+@synthesize dspeedT0 = _dspeedT0;
 @synthesize polarity = _polarity;
 @synthesize simTrain0 = _simTrain0;
 @synthesize recordState = _recordState;
@@ -208,8 +210,14 @@ badmsg:
     [self didChangeValueForKey:@"maxslider"];
     self.sliderTarget.numberOfTickMarks= _shunting ? 3 : 21;
     if (_shunting) {
-        if (_targetspeed<-m) self.targetspeed = -m;
-        if (_targetspeed>m) self.targetspeed = m;
+        if (_dspeedT0<-m) self.dspeedT0 = -m;
+        if (_dspeedT0>m) self.dspeedT0 = m;
+        if (_dspeedT1<-m) self.dspeedT1 = -m;
+        if (_dspeedT1>m) self.dspeedT1 = m;
+        if (_dspeedT2<-m) self.dspeedT2 = -m;
+        if (_dspeedT3>m) self.dspeedT2 = m;
+        if (_dspeedT3<-m) self.dspeedT3 = -m;
+        if (_dspeedT3>m) self.dspeedT3 = m;
     }
 }
 
@@ -221,23 +229,64 @@ badmsg:
 {
     return self.sliderTarget.maxValue;
 }
+
 - (void) setPolarity:(int)p
 {
     if (_polarity == p) return;
     _polarity = p;
     self.curspeed = - _curspeed;
-    self.targetspeed = - _targetspeed;
+    self.dspeedT0 = - _dspeedT0;
+    self.dspeedT1 = - _dspeedT1;
+    self.dspeedT2 = - _dspeedT2;
+    self.dspeedT3 = - _dspeedT3;
 }
+
 - (void) goZero:(id)sender
 {
-    [self setTargetspeed:0];
+    [self setDspeedT0:0];
+    [self setDspeedT1:0];
+    [self setDspeedT2:0];
+    [self setDspeedT3:0];
 }
-- (void) setTargetspeed:(int)v
+- (void) setDspeedT0:(int)v
 {
     if (_linkok < LINK_OK) return;
-    NSLog(@"targetspeed %d", v);
-    if (_targetspeed==v) return;
-    _targetspeed = v;
+    NSLog(@"dspeedT0 %d", v);
+    if (_dspeedT0==v) return;
+    _dspeedT0 = v;
+    t0changed = 1;
+    [self sendSpeedOrCoalesce];
+}
+- (void) setDspeedT1:(int)v
+{
+    if (_linkok < LINK_OK) return;
+    NSLog(@"dspeedT0 %d", v);
+    if (_dspeedT1==v) return;
+    _dspeedT1 = v;
+    t1changed=1;
+    [self sendSpeedOrCoalesce];
+}
+- (void) setDspeedT2:(int)v
+{
+    if (_linkok < LINK_OK) return;
+    NSLog(@"dspeedT0 %d", v);
+    if (_dspeedT2==v) return;
+    _dspeedT2 = v;
+    t2changed = 1;
+    [self sendSpeedOrCoalesce];
+}
+- (void) setDspeedT3:(int)v
+{
+    if (_linkok < LINK_OK) return;
+    NSLog(@"dspeedT0 %d", v);
+    if (_dspeedT3==v) return;
+    _dspeedT3 = v;
+    t3changed = 1;
+    [self sendSpeedOrCoalesce];
+}
+
+- (void) sendSpeedOrCoalesce
+{
     // coalesce to avoid too many command
     NSTimeInterval t = [NSDate timeIntervalSinceReferenceDate];
     if ([timSendThrottle isValid]) {
@@ -262,11 +311,18 @@ badmsg:
 - (void) sendTargetSpeed
 {
     if (_linkok < LINK_OK) return;
-    
-    int16_t v16 = (uint16_t) (_polarity * _targetspeed);
-    
+    if (t0changed) [self sendTargetSpeed:_dspeedT0 train:0];
+    if (t1changed) [self sendTargetSpeed:_dspeedT1 train:1];
+    if (t2changed) [self sendTargetSpeed:_dspeedT2 train:2];
+    if (t3changed) [self sendTargetSpeed:_dspeedT3 train:3];
+    t0changed = t1changed = t2changed = t3changed = 0;
+}
+
+- (void) sendTargetSpeed:(int)v train:(int)t
+{
+    int16_t v16 = (uint16_t) (_polarity * v);
     msg_64_t m;
-    m.to = MA_CONTROL_T(0);
+    m.to = MA_CONTROL_T(t);
     m.from = MA_UI(UISUB_USB);
     m.cmd = CMD_MDRIVE_SPEED_DIR;
     m.v1u = abs(v16);
@@ -290,9 +346,18 @@ badmsg:
             self.curspeed = 0;
         }];
     }
-    [self willChangeValueForKey:@"targetspeed"];
-    _targetspeed = 0;
-    [self didChangeValueForKey:@"targetspeed"];
+    [self willChangeValueForKey:@"dspeedT0"];
+    [self willChangeValueForKey:@"dspeedT1"];
+    [self willChangeValueForKey:@"dspeedT2"];
+    [self willChangeValueForKey:@"dspeedT3"];
+    _dspeedT0 = 0;
+    _dspeedT1 = 0;
+    _dspeedT2 = 0;
+    _dspeedT3 = 0;
+    [self didChangeValueForKey:@"dspeedT0"];
+    [self didChangeValueForKey:@"dspeedT1"];
+    [self didChangeValueForKey:@"dspeedT2"];
+    [self didChangeValueForKey:@"dspeedT3"];
 }
 
 
@@ -723,7 +788,7 @@ badmsg:
 {
     uint8_t spdfrm[] = "|xG\0K|.........";
     int l = 2+4+0;
-    uint16_t v16 = (uint16_t) (_polarity * _targetspeed);
+    uint16_t v16 = (uint16_t) (_polarity * _dspeedT0);
     if (_linkok == LINK_SIMUHI) {
         return;
     }

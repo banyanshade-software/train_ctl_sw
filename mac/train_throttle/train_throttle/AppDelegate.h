@@ -18,7 +18,10 @@
     WKUIDelegate, WKNavigationDelegate, WKScriptMessageHandler>
 
 @property (nonatomic,readonly) int curspeed;
-@property (nonatomic) int targetspeed;
+@property (nonatomic) int dspeedT0;
+@property (nonatomic) int dspeedT1;
+@property (nonatomic) int dspeedT2;
+@property (nonatomic) int dspeedT3;
 @property (nonatomic) double train_bemf;
 @property (nonatomic, readonly) int transmit;
 @property (nonatomic, readonly) int linkok;

@@ -61,8 +61,9 @@ static int32_t get_lsblk_len_steep(lsblk_num_t lsbk, const train_config_t *tconf
 {
     int8_t steep = 0;
 	int cm = get_lsblk_len(lsbk, &steep);
-	itm_debug3(DBG_CTRL|DBG_POSEC, "steep?", steep, tvar->_dir, tvar->c1_sblk.n);
+	itm_debug3(DBG_CTRL|DBG_POSEC, "steep?", steep, tvar->_dir, lsbk.n);
 	if (steep*tvar->_dir > 0) {
+        if (!tconf->slipping) fatal();
 		int cmold = cm;
 		cm = cm * tconf->slipping / 100;
 		itm_debug3(DBG_CTRL|DBG_POSEC, "steep!", tvar->c1_sblk.n, cmold, cm);

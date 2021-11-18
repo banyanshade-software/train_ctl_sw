@@ -247,7 +247,7 @@ static  canton_config_t Cantons[NUM_CANTONS] = {
 
 
 
-#define DEFAULT_TRAIN_CFG(_EN, _R, _P, _S)  { \
+#define DEFAULT_TRAIN_CFG(_EN, _R, _P, _S, _LR, _LL)  { \
 						{ /* pidctl_config_t*/ \
 								400, 150, -500,  /* kP, kI, kD */ \
 						}, \
@@ -268,17 +268,19 @@ static  canton_config_t Cantons[NUM_CANTONS] = {
 						_R, /* reversed */			\
                         _S, /* slipping */          \
 						_P, /* pose_per_cm */       \
+                        _LR, /* len right*/         \
+                        _LL, /* len left */         \
 				}
 
 static  train_config_t Trains[NUM_TRAINS] = {
-		DEFAULT_TRAIN_CFG(1,0, 450, 115), // 8821 (V221) with 2 freight cars
-        DEFAULT_TRAIN_CFG(1,0, 300, 120), // 8805 with 3 wine cars
-        DEFAULT_TRAIN_CFG(0,0, 500, 100),
-        DEFAULT_TRAIN_CFG(0,0, 500, 100),
-		DEFAULT_TRAIN_CFG(0,0, 500, 100),
-        DEFAULT_TRAIN_CFG(0,0, 500, 100),
-        DEFAULT_TRAIN_CFG(0,0, 500, 100),
-        DEFAULT_TRAIN_CFG(0,0, 500, 100),
+		DEFAULT_TRAIN_CFG(1,0, 450, 115, 12, 6), // 8821 (V221) with 2 freight cars
+        DEFAULT_TRAIN_CFG(1,0, 300, 128, 2, 17), // 8805 with 4 wine cars - 120 with 3 wine cars
+        DEFAULT_TRAIN_CFG(0,0, 500, 100, 10, 10),
+        DEFAULT_TRAIN_CFG(0,0, 500, 100, 10, 10),
+		DEFAULT_TRAIN_CFG(0,0, 500, 100, 10, 10),
+        DEFAULT_TRAIN_CFG(0,0, 500, 100, 10, 10),
+        DEFAULT_TRAIN_CFG(0,0, 500, 100, 10, 10),
+        DEFAULT_TRAIN_CFG(0,0, 500, 100, 10, 10),
 };
 
 

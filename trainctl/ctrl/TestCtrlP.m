@@ -938,14 +938,15 @@ static NSString *dump_msgbuf(int clear)
 }
 // -------------------------------------
 
-static const train_config_t tconf = {
+static const train_config_t testconf = {
     .pose_per_cm = 20,
+    .slipping = 100,
 };
 
 
 const train_config_t *get_train_cnf(int idx)
 {
-    return &tconf;
+    return &testconf;
 }
 
 @end

@@ -372,7 +372,7 @@ void ctrl2_send_led(uint8_t led_num, uint8_t prog_num)
     
     rc = ctrl2_tick_process(0, &tvars, tconf, 0);
     XCTAssert(rc==4);
-    //NSString *s = dump_msgbuf(0);
+    NSString *s = dump_msgbuf(0);
     //{D0, C8, 11, 257, 511},{D0, 81, 26, 1, 0},{D0, C8, 51, 420, 0},{D0, C8, 10, 70, 0}
     EXPMSG({.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_C1_C2,        .vb0=1, .vb1=1, .vb2=0xFF, .vb3=1}
            ,{.to=MA_UI(UISUB_TFT), .from=0xD0, .cmd=CMD_TRSTATE_NOTIF,    .v1=1, .v2=0}

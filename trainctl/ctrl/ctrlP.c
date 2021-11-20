@@ -82,6 +82,26 @@ static int32_t ctrl_pose_middle_c1(const train_config_t *tconf, train_ctrl_t *tv
     return p;
 }
 
+static int32_t ctrl_pose_limit_c1(const train_config_t *tconf, train_ctrl_t *tvar)
+{
+    int cm = get_lsblk_len_steep(tvar->c1_sblk, tconf, tvar);
+    int mm;
+    int mm1 = cm * 1; // guard 10%
+    if (mm1<120) mm1 = 120; // min guard
+    if (tvar->_dir>0) {
+        // going right
+        mm = tvar->beginposmm + (cm*10-mm1) - tconf->trainlen_right*10;
+        if (mm<=tvar->beginposmm) mm=tvar->beginposmm;
+    } else {
+        // going left
+        mm = tvar->beginposmm + mm1 + tconf->trainlen_left*10;
+        if (mm>=tvar->beginposmm+cm*10) mm=tvar->beginposmm+cm*10;
+    }
+    int32_t p = pose_convert_from_mm(tconf, mm);
+    itm_debug3(DBG_CTRL, "middle_c1", tvar->c1_sblk.n, cm, p);
+    if (!p) p=1;
+    return p;
+}
 
 static int32_t ctrl_pose_end_c1(const train_config_t *tconf, train_ctrl_t *tvar)
 {
@@ -191,6 +211,7 @@ static void set_speed_limit(train_ctrl_t *tvar, uint16_t lim)
 void ctrl2_init_train(_UNUSED_ int tidx, train_ctrl_t *tvars,
                       lsblk_num_t sblk)
 {
+	itm_debug1(DBG_CTRL, "INIT", tidx);
     tvars->c1_sblk = sblk;
     tvars->_dir = 0;
     tvars->_target_speed = 0;
@@ -222,16 +243,10 @@ void ctrl2_upcmd_set_desired_speed(_UNUSED_ int tidx, train_ctrl_t *tvars, int16
 
 void _ctrl2_upcmd_set_desired_speed(_UNUSED_ int tidx, train_ctrl_t *tvars, int16_t desired_speed)
 {
+	itm_debug2(DBG_CTRL, "DSPD", tidx, desired_speed);
     if (tvars->desired_speed != desired_speed) {
         tvars->tick_flags |= _TFLAG_DSPD_CHANGED;
-#if 0
-        int s0 = SIGNOF0(desired_speed);
-        if ((s0 && tvars->_dir) && (s0 != tvars->_dir)) {
-            // first stop
-            tvars->desired_speed = 0;
-            tvars->desired_speed2 = desired_speed;
-        }
-#endif
+
         tvars->desired_speed = desired_speed;
         //tvars->desired_speed2 = 0;
     }
@@ -242,6 +257,7 @@ void ctrl2_set_state(_UNUSED_ int tidx, train_ctrl_t *tvar, train_state_t ns)
     if (ns == tvar->_state) {
         return;
     }
+    itm_debug3(DBG_CTRL, "STATE", tidx, tvar->_state, ns),
     tvar->_state = ns;
     tvar->tick_flags |= _TFLAG_STATE_CHANGED;
 }
@@ -298,18 +314,35 @@ void ctrl2_check_alreadystopped(int tidx, train_ctrl_t *tvar)
         }
     }
 }
+
+/*
+ * $2 = {_mode = train_auto,
+ * _state = train_station,
+ * tick_flags = 0, _target_speed = 0, _dir = 0 '\000', c1c2 = 0 '\000',
+ * pose2_set = 0 '\000', pose2_is_blk_wait = 1 '\001', trig_eoseg = 0 '\000',
+ *  measure_pose_percm = 1 '\001', can1_addr = 1 '\001',
+ *   c1_sblk = {n = 1 '\001'}, can2_addr = 255 '\377', spd_limit = 100,
+ *   desired_speed = 0, timertick = {0, 0}, curposmm = 154,
+ *   beginposmm = 0, route = 0x20000234 <route> "\270", routeidx = 13 '\r', stpmiddle = 0 '\000', texp = 0 '\000'}
+ *
+ */
 void ctrl2_check_checkstart(int tidx, train_ctrl_t *tvars)
 {
     lsblk_num_t ns;
     
+    itm_debug3(DBG_CTRL, "checkstart", tidx, tvars->_dir, tvars->desired_speed);
+
     if (!tvars->desired_speed) {
         if (tvars->_mode== train_auto) {
+        	itm_debug1(DBG_CTRL, "cs cauto", tidx);
             cauto_check_start(tidx, tvars);
         }
     }
-    
     if (!tvars->desired_speed) return;
     
+    if (tvars->desired_speed == -36) {
+    	itm_debug1(DBG_AUTO, "brk here", tidx);
+    }
     switch (tvars->_state) {
         case train_station:
             ctrl2_set_dir(tidx, tvars, SIGNOF0(tvars->desired_speed));
@@ -317,19 +350,25 @@ void ctrl2_check_checkstart(int tidx, train_ctrl_t *tvars)
             //ctrl2_set_tspeed(tidx, tvars, SIGNOF0(tvars->desired_speed));
             break;
         
-        case train_end_of_track:
         case train_blk_wait:
+        	itm_debug1(DBG_CTRL, "cs blk", tidx);
+        	if (SIGNOF0(tvars->_dir) * SIGNOF0(tvars->desired_speed) < 0) {
+        		tvars->_dir = 0;
+        	}
+        	// FALLTHRU
+        case train_end_of_track:
             if (tvars->_target_speed) break; // already started
-            if (tvars->_dir) break;
+            if (tvars->_dir) break; // XXXXX
             uint8_t alternate;
             ns = next_lsblk_free(tidx, tvars,  (tvars->desired_speed<0),  &alternate);
+            itm_debug3(DBG_CTRL, "cs next", tidx, ns.n, alternate);
             if (ns.n>=0) {
                 ctrl2_set_state(tidx, tvars, train_running_c1);
                 ctrl2_set_dir(tidx, tvars, SIGNOF0(tvars->desired_speed));
                 //ctrl2_set_tspeed(tidx, tvar, SIGNOF0(tvar->desired_speed));
             } else {
-                //tvar->desired_speed = 0;
                 if (alternate) {
+                    itm_debug1(DBG_CTRL, "cs g blk", tidx);
                     ctrl2_set_state(tidx, tvars, train_blk_wait);
                     tvars->_dir = SIGNOF0(tvars->desired_speed);
                 } else {
@@ -424,9 +463,12 @@ void ctrl2_update_topo(int tidx, train_ctrl_t *tvar, const train_config_t *tconf
                     tvar->pose2_set = 1;
                     tvar->pose2_is_blk_wait = alternate ? 1 : 0;
                     set_speed_limit(tvar, SPD_LIMIT_EOT);
-                    //xxxx
-                    int32_t posetval = ctrl_pose_middle_c1(tconf, tvar);
-                    //ctrl_set_pose_trig(tidx, posetval, 1);
+                    int32_t posetval;
+                    if ((0)) {
+                        posetval = ctrl_pose_middle_c1(tconf, tvar);
+                    } else {
+                        posetval = ctrl_pose_limit_c1(tconf, tvar);
+                    }
                     *ppose1 = posetval;
                 }
                 break;
@@ -482,9 +524,11 @@ void ctrl2_update_c2(int tidx, train_ctrl_t *tvar, const train_config_t *tconf, 
             tvar->can2_addr = c2;
         }
     } else {
+    	itm_debug1(DBG_CTRL, "updc2 dir0", tidx);
         tvar->can2_addr = 0xFF;
     }
     if (tvar->can2_addr != old_c2) {
+    	itm_debug2(DBG_CTRL, "updc2 c2", tidx, tvar->can2_addr);
         tvar->tick_flags |= _TFLAG_C2_CHANGED;
         if (old_c2 != 0xFF) {
             set_block_addr_occupency(old_c2, BLK_OCC_FREE, tidx, snone);

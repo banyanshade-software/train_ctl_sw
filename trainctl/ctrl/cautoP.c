@@ -63,6 +63,7 @@ lsblk_num_t cauto_peek_next_lsblk(int tidx, train_ctrl_t *tvars, uint8_t left)
     }
     if (_AR_WSTOP == r) return sret;
     sret.n = r;
+    itm_debug1(DBG_AUTO, "ca.upd_to", tidx);
     cauto_update_turnouts(tidx, tvars->c1_sblk, left, r);
 
     return sret;
@@ -109,12 +110,12 @@ static void check_for_ctrl(int tidx, train_ctrl_t *tvars)
         }
         if (r == _AR_WTIMER) {
         	if (tvars->texp) {
-        		itm_debug1(DBG_AUTO, "ca.tim ok", tidx);
+        		itm_debug2(DBG_AUTO, "ca.tim ok", tidx, tvars->routeidx);
         		tvars->texp = 0;
         		tvars->routeidx++;
         		continue;
         	}
-    		itm_debug1(DBG_AUTO, "ca.tim w", tidx);
+    		itm_debug2(DBG_AUTO, "ca.tim w", tidx, tvars->routeidx);
         	return;
         }
         if ((r & 0xF8) == _AR_TIMER(0)) {

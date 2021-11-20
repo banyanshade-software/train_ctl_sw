@@ -172,7 +172,7 @@ static void ctrl_init(void)
                 _AR_SPD(60), 1, SON, 3, _AR_WSTOP,  _AR_TRGEVENT(3),
                 _AR_TIMER(2), _AR_WTIMER,
                 _AR_SPD(-20), 4, SOFF, 5, _AR_WSTOP,
-                _AR_TIMER(0), _AR_WTIMER,
+                _AR_TIMER(4), _AR_WTIMER,
                 // 4, 3 sleep 1
                 _AR_SPD(20), 4, 3, SON, _AR_WSTOP,
                 _AR_TIMER(2), _AR_WTIMER,
@@ -208,7 +208,7 @@ static void ctrl_init(void)
 					_AR_TIMER(1), _AR_WTIMER,
 					_AR_SPD(40), 1, _AR_WSTOP,
 					_AR_SPD(-40), 0, _AR_WSTOP,
-					_AR_TIMER(2), _AR_WTIMER,
+					_AR_TIMER(4), _AR_WTIMER,
 					_AR_SPD(40), 1, _AR_WSTOP,
 					_AR_SPD(-40), 2, _AR_WSTOP,
 					_AR_TRGEVENT(4), _AR_SPD(0),

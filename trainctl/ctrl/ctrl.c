@@ -203,8 +203,15 @@ static void ctrl_init(void)
                     _AR_SPD(-50), 1, SOFF, 0, _AR_WSTOP, _AR_TRGEVENT(2),
                     // 0-1-2
                     _AR_WEVENT(3),
-                    _AR_SPD(40), 1, /*_AR_STPHALF,*/ _AR_WSTOP,
-                    _AR_SPD(-40), 2, _AR_WSTOP, _AR_TRGEVENT(4), _AR_SPD(0),
+                    _AR_SPD(40), 1, _AR_WSTOP,
+                    _AR_SPD(-40), 2, _AR_WSTOP,
+					_AR_TIMER(1), _AR_WTIMER,
+					_AR_SPD(40), 1, _AR_WSTOP,
+					_AR_SPD(-40), 0, _AR_WSTOP,
+					_AR_TIMER(2), _AR_WTIMER,
+					_AR_SPD(40), 1, _AR_WSTOP,
+					_AR_SPD(-40), 2, _AR_WSTOP,
+					_AR_TRGEVENT(4), _AR_SPD(0),
                     _AR_LOOP};
             trctl[1].routeidx = 0;
             trctl[1].route = route2;

@@ -159,6 +159,7 @@ static void ctrl_init(void)
         
         if ((1)) {
             static uint8_t route[] = {
+   				 _AR_LED, 0, LED_PRG_FLASH, _AR_TIMER(3), _AR_WTIMER, SOFF,
                 // T0 starts on 1
                 // 1->0->2
                 _AR_SPD(-30), 0, _AR_WSTOP, _AR_TRGEVENT(0),
@@ -177,7 +178,10 @@ static void ctrl_init(void)
                 _AR_TIMER(2), _AR_WTIMER,
                 _AR_WEVENT(4), SOFF,
                 _AR_SPD(-30), 1, _AR_STPHALF, _AR_WSTOP, _AR_SPD(0),
+				_AR_TIMER(3),_AR_WTIMER,
+				_AR_LED, 0, LED_PRG_25p,
                 _AR_TIMER(7), _AR_WTIMER,
+				 _AR_LED, 0, LED_PRG_OFF, _AR_TIMER(6),_AR_WTIMER,
                 _AR_LOOP};
             
             trctl[0].routeidx = 0;
@@ -189,7 +193,7 @@ static void ctrl_init(void)
                     // 2-1-3
                     _AR_SPD(60), 1, SON, 3, _AR_TRGEVENT(1), _AR_WSTOP,
                     // 4-5
-                    _AR_SPD(-40) , 4, 5, _AR_WSTOP,
+                    _AR_SPD(-40) , 4, SOFF,  5, _AR_WSTOP,
                     _AR_TIMER(0), _AR_WTIMER,
                     // 5-6
                     _AR_SPD(40), 6, _AR_WSTOP,

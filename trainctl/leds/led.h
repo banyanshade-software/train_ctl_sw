@@ -26,6 +26,8 @@ void led_start_prog(uint8_t lednum, uint8_t prognum);
 #define LED_PRG_TST 5
 #define LED_PRG_NEONON 6
 #define LED_PRG_DIMOFF 7
+#define LED_PRG_DIMON  8
+#define LED_PRG_FLASH  9
 
 extern void led_io(uint8_t lednum, uint8_t v);
 

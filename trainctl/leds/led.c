@@ -34,19 +34,19 @@
 #define LOOP(_n)        (((0x81)<<24) | (_n))
 
 
-static uint32_t prog_on[] = {
+static const uint32_t prog_on[] = {
     RETURN(1)
 };
-static uint32_t prog_off[] = {
+static const uint32_t prog_off[] = {
     RETURN(0)
 };
-static uint32_t prog_25p[] = {
+static const uint32_t prog_25p[] = {
     INF( 0b000100010001000100010001)
 };
-static uint32_t prog_50p[] = {
+static const uint32_t prog_50p[] = {
     INF( 0b010101010101010101010101)
 };
-static uint32_t prog_test[] = {
+static const uint32_t prog_test[] = {
     R(2, 0b000100000000000110000011),
     R(3, 0b000000000011111111111111),
     R(1, 0b110000000000001000000000),
@@ -57,7 +57,7 @@ static uint32_t prog_test[] = {
     //R(0, 0b101010101010101010101010),
     RETURN(1)
 };
-static uint32_t prog_neon[] = {
+static const uint32_t prog_neon[] = {
     R(2, 0b000100000000000110000011),
     R(3, 0b000000000011111111111111),
     R(1, 0b110000000000001000000000),
@@ -70,7 +70,7 @@ static uint32_t prog_neon[] = {
     RETURN(1)
 };
 
-static uint32_t prog_dimoff[] = {
+static const uint32_t prog_dimoff[] = {
     R(1, 0b111011101110111011101110), // 75%
     R(1, 0b110110110110110110110110), // 66%
     R(1, 0b110011001100110011001100), // 50%
@@ -79,7 +79,28 @@ static uint32_t prog_dimoff[] = {
     RETURN(0)
 };
 
-static uint32_t *progs[] = {
+static const uint32_t prog_dimon[] = {
+	    R(0, 0b000100010001000100010001), // 25%
+	    R(1, 0b110011001100110011001100), // 50%
+	    R(1, 0b110110110110110110110110), // 66%
+	    R(1, 0b111011101110111011101110), // 75%
+		RETURN(1)
+};
+
+static const uint32_t prog_flash[] = {
+		R(0, 0b000100010001000100010001), // 25%
+		R(0, 0b110011001100110011001100), // 50%
+		R(0, 0b111011101110111011101110), // 75%
+	    R(0, 0b111111111111111111111111),
+		R(0, 0b111011101110111011101110), // 75%
+		R(0, 0b110011001100110011001100), // 50%
+		R(0, 0b000100010001000100010001), // 25%
+	    R(1, 0b000000000000000000000000),
+		JMP(0)
+
+};
+
+static const uint32_t *progs[] = {
 	/* 0 */ prog_off,
 	/* 1 */ prog_25p,
 	/* 2 */ prog_50p,
@@ -87,7 +108,9 @@ static uint32_t *progs[] = {
     /* 4 */ prog_off, // twice for easier test of prog_test
     /* 5 */ prog_test,
     /* 6 */ prog_neon, // same for now
-    /* 7 */ prog_dimoff
+    /* 7 */ prog_dimoff,
+	/* 8 */ prog_dimon,
+	/* 9 */ prog_flash
 };
 // ---------------------------------------
 
@@ -176,12 +199,13 @@ static uint8_t run_ledmachine(ledmachine_t *state)
 {
     if (state->prognum == 0xFF) return 0;
     uint8_t rerun;
-    uint8_t rc = _run_one(state, &rerun);
-    if (rerun) {
-        rc = _run_one(state, &rerun);
-        if (rerun) {
+    uint8_t rc;
+    for (int c=0; ; c++) {
+    	rc = _run_one(state, &rerun);
+    	if (!rerun) break;
+    	if (c>1) {
             Error_Handler();
-        }
+    	}
     }
     return rc;
 }

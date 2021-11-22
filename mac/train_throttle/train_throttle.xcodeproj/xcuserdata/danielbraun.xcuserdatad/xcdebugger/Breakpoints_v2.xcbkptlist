@@ -1396,7 +1396,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "251"
             endingLineNumber = "251"
-            landmarkName = "send_train_stopped(numtrain, tvars)"
+            landmarkName = "spdctl_run_tick(notif_flags, tick, dt)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1412,7 +1412,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "303"
             endingLineNumber = "303"
-            landmarkName = "posecm_measured(tidx, pose, blknum)"
+            landmarkName = "sub_presence_changed(tick, from_addr, lsegnum, p, ival)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -2254,7 +2254,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "535"
             endingLineNumber = "535"
-            landmarkName = "_pose_check_trig(numtrain, tvars, lastincr, pose)"
+            landmarkName = "train_set_target_speed(numtrain, target)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -3153,7 +3153,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "249"
             endingLineNumber = "249"
-            landmarkName = "sub_presence_changed(tick, from_addr, lsegnum, p, ival)"
+            landmarkName = "check_timers(tick)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>

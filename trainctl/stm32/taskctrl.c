@@ -130,7 +130,7 @@ void set_pwm_freq(int freqhz)
 {
 	// 12MHz / 200 -> 60000
 	// 50Hz = 1200
-	int ps = (60000/freqhz)-1;
+	int ps = (60000/freqhz); //-1;
 	if ((ps<1) || (ps>0xFFFF)) ps = 1200;
 	ps = ps-1;
 	cur_freqhz = 60000/(ps+1);
@@ -140,6 +140,11 @@ void set_pwm_freq(int freqhz)
 	__HAL_TIM_SET_PRESCALER(&htim2, ps);
 	__HAL_TIM_SET_PRESCALER(&htim3, ps);
 	__HAL_TIM_SET_PRESCALER(&htim8, ps);
+}
+
+int get_pwm_freq(void)
+{
+	return cur_freqhz;
 }
 
 
@@ -159,6 +164,8 @@ static void run_task_ctrl(void)
 		//m.v1u = runmode_off;
 		m.v1u = runmode_normal;
 		//m.v1u = runmode_detect1;
+		m.v1u = runmode_detect2;
+
 		mqf_write_from_nowhere(&m); // XXX it wont be sent to ctl
 	}
 

@@ -197,6 +197,12 @@ static const uint8_t layout_detect1[] = {
 		CODE_ZONE_TEXT4s, CODE_STR|31, CODE_UVAL,	 9, // VoltIdx
 		CODE_END
 };
+static const uint8_t layout_detect2[] = {
+		CODE_ZONE_STATUS, CODE_STR|32, // detect
+		CODE_ZONE_TEXT1,  CODE_STR|33, CODE_UVAL,    0, // c:xx
+		CODE_ZONE_TEXT2,  CODE_UVAL,	 1, CODE_STR|34, // ? Hz
+		CODE_END
+};
 
 
 void ihm_setlayout(int numdisp, int numlayout)
@@ -225,6 +231,9 @@ void ihm_setlayout(int numdisp, int numlayout)
 		break;
 	case LAYOUT_DETECT1:
 		p = layout_detect1;
+		break;
+	case LAYOUT_DETECT2:
+		p = layout_detect2;
 		break;
 	default:
 		itm_debug1(DBG_ERR|DBG_UI, "bad layout", numlayout);
@@ -275,6 +284,9 @@ static const char *ui_strings[] = {
 /*30*/		"W ",
 /*31*/		"Vidx=",
 
+/*32*/      "Detect",
+/*33*/      "C:",
+/*34*/		"Hz"
 };
 
 

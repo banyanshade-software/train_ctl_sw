@@ -22,6 +22,7 @@
 		1B60329726CA4C0200D5B6CA /* trkplan.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B60329626CA4BF400D5B6CA /* trkplan.c */; };
 		1B61090D256AAE1A00F1AC45 /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B61090C256AAE1900F1AC45 /* CoreBluetooth.framework */; };
 		1B67360F2531E4450063EA9A /* SimTrain.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B67360E2531E4450063EA9A /* SimTrain.m */; };
+		1B77BECA274A471200BC5230 /* detectP.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B77BEC9274A471200BC5230 /* detectP.c */; };
 		1B7A29F7262D5904004E0481 /* trainmsg.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B7A29F5262D58F6004E0481 /* trainmsg.c */; };
 		1B7A2A01262D5948004E0481 /* canton_bemf.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B7A29F9262D5947004E0481 /* canton_bemf.c */; };
 		1B7A2A02262D5948004E0481 /* turnout.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B7A29FB262D5947004E0481 /* turnout.c */; };
@@ -92,6 +93,8 @@
 		1B61090C256AAE1900F1AC45 /* CoreBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreBluetooth.framework; path = System/Library/Frameworks/CoreBluetooth.framework; sourceTree = SDKROOT; };
 		1B67360D2531E4450063EA9A /* SimTrain.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SimTrain.h; sourceTree = "<group>"; };
 		1B67360E2531E4450063EA9A /* SimTrain.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SimTrain.m; sourceTree = "<group>"; };
+		1B77BEC8274A471200BC5230 /* detectP.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = detectP.h; sourceTree = "<group>"; };
+		1B77BEC9274A471200BC5230 /* detectP.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = detectP.c; sourceTree = "<group>"; };
 		1B7A29F4262D58F6004E0481 /* notif.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = notif.h; sourceTree = "<group>"; };
 		1B7A29F5262D58F6004E0481 /* trainmsg.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = trainmsg.c; sourceTree = "<group>"; };
 		1B7A29F6262D58F6004E0481 /* trainmsg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = trainmsg.h; sourceTree = "<group>"; };
@@ -271,6 +274,8 @@
 			children = (
 				1B92EA2E2631A0BA00558716 /* ctrl.c */,
 				1B92EA2F2631A0BA00558716 /* ctrl.h */,
+				1B77BEC8274A471200BC5230 /* detectP.h */,
+				1B77BEC9274A471200BC5230 /* detectP.c */,
 				1BEB93CD272B325700508C17 /* ctrlP.h */,
 				1BEB93CE272B325700508C17 /* ctrlP.c */,
 				1B812B3B273FA77B00924749 /* cautoP.h */,
@@ -544,6 +549,7 @@
 				1B4BCB022549ADC90062961D /* statval.c in Sources */,
 				1BEB93CA2729F10D00508C17 /* occupency.c in Sources */,
 				1B18114F26BD5BA30008F21C /* uitrack.c in Sources */,
+				1B77BECA274A471200BC5230 /* detectP.c in Sources */,
 				1B7A2A01262D5948004E0481 /* canton_bemf.c in Sources */,
 				1BD93C712546FF44006C4D70 /* txrxcmd.c in Sources */,
 			);

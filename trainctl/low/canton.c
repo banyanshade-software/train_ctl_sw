@@ -139,6 +139,7 @@ static void handle_canton_cmd(int cidx, msg_64_t *m)
 static void handle_msg_normal(msg_64_t *m);
 static void handle_msg_cantontest(msg_64_t *m);
 static void handle_msg_detect1(msg_64_t *m);
+static void handle_msg_detect2(msg_64_t *m);
 
 void canton_tick(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_ uint32_t dt)
 {
@@ -179,7 +180,8 @@ void canton_tick(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_
         case runmode_detect1:
         	handle_msg_detect1(&m);
         	break;
-        case runmode_detect:
+        case runmode_detect2:
+            handle_msg_detect2(&m);
         	break;
         case runmode_testcanton:
         	handle_msg_cantontest(&m);
@@ -201,7 +203,37 @@ static void handle_msg_normal(msg_64_t *m)
 
 static void handle_msg_detect1(msg_64_t *m)
 {
-	handle_msg_normal(m);
+    handle_msg_normal(m);
+}
+
+static void handle_msg_detect2(msg_64_t *m)
+{
+    if (IS_BROADCAST(m->to)) {
+        return;
+    }
+    if (!IS_CANTON(m->to)) {
+        return;
+    }
+    int cidx = m->to & 0x07;
+    const canton_config_t *cconf = get_canton_cnf(cidx);
+    canton_vars_t *cvars = &canton_vars[cidx];
+    
+    switch (m->cmd) {
+        case CMD_START_DETECT_TRAIN:
+            canton_set_volt(cidx, cconf, cvars,  7);
+            m->cmd = CMD_BEMF_ON;
+            bemf_msg(m);
+            canton_set_pwm(cidx, cconf, cvars, 1, 20); // 20% PWM
+            break;
+        case CMD_STOP_DETECT_TRAIN:
+            m->cmd = CMD_BEMF_OFF;
+            bemf_msg(m);
+            canton_set_volt(cidx, cconf, cvars,  7);
+            canton_set_pwm(cidx, cconf, cvars, 0, 0);
+        default:
+            break;
+    }
+   
 }
 
 static void handle_msg_cantontest(msg_64_t *m)

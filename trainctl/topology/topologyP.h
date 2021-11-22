@@ -42,6 +42,5 @@ typedef struct {
 
 
 const topo_lsblk_t *topology_get_sblkd(int lsblk);
-int topology_num_sblkd(void);
 
 #endif /* topologyP_h */

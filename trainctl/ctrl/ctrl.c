@@ -19,6 +19,7 @@
 
 #include "ctrlP.h"
 #include "cautoP.h"
+#include "detectP.h"
 
 #include "../leds/led.h"
 
@@ -317,7 +318,6 @@ static void posecm_measured(int tidx, int32_t pose, lsblk_num_t blknum)
 
 // ----------------------------------------------------------------------------
 
-
 void ctrl_run_tick(_UNUSED_ uint32_t notif_flags, uint32_t tick, _UNUSED_ uint32_t dt)
 {
 	
@@ -349,11 +349,16 @@ void ctrl_run_tick(_UNUSED_ uint32_t notif_flags, uint32_t tick, _UNUSED_ uint32
             		run_mode = m.v1u;
             		testerAddr = m.from;
             		first = 1;
+                    if (run_mode==runmode_detect2) detect2_init();
             	}
                 continue;
                 break;
             default:
             	break;
+        }
+        if (run_mode == runmode_detect2) {
+            detect2_process_msg(&m);
+            continue;
         }
         if (run_mode != runmode_normal) continue;
 
@@ -421,7 +426,15 @@ void ctrl_run_tick(_UNUSED_ uint32_t notif_flags, uint32_t tick, _UNUSED_ uint32
 			itm_debug1(DBG_MSG|DBG_CTRL, "bad msg", m.to);
 		}
 	}
-    
+    switch (run_mode) {
+        case runmode_normal: break;
+        case runmode_detect2:
+            detect2_process_tick(tick);
+            return;
+            break;
+        default:
+            return;
+    }
     static int nsk=0;
     nsk++;
     if ((trctl[0]._mode != train_auto) && (nsk==100)) {
@@ -656,8 +669,6 @@ static void check_behaviour(_UNUSED_ uint32_t tick)
     // TODO abort();
 #endif
 }
-
-
 
 
 

@@ -115,7 +115,7 @@ typedef enum {
 	runmode_normal,
 	runmode_testcanton,
 	runmode_detect1,
-	runmode_detect
+	runmode_detect2
 } runmode_t;
 
 /* general command */
@@ -237,6 +237,12 @@ void purge_all_queue(void);
 
 LFMQUEUE_DEF_H(from_nowhere, msg_64_t)
 
+/*
+ mode_detect2 commands
+ */
 
+#define CMD_START_DETECT_TRAIN    0x81
+#define CMD_STOP_DETECT_TRAIN     0x82
+#define CMD_UI_DETECT			  0x83
 
 #endif /* MSG_TRAINMSG_H_ */

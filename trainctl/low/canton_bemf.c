@@ -43,11 +43,11 @@ void bemf_msg(msg_64_t *m)
 	int idx = m->to & 0x07;
 	switch(m->cmd) {
 	case CMD_BEMF_OFF:
-		itm_debug1(DBG_SPDCTL|DBG_CTRL, "BEMF OFF", idx);
+		itm_debug1(DBG_SPDCTL|DBG_CTRL|DBG_DETECT, "BEMF OFF", idx);
 		bemf_to[idx] = 0xFF;
 		break;
 	case CMD_BEMF_ON:
-		itm_debug2(DBG_SPDCTL|DBG_CTRL, "BEMF ON", idx, m->from);
+		itm_debug2(DBG_SPDCTL|DBG_CTRL|DBG_DETECT, "BEMF ON", idx, m->from);
 		bemf_to[idx] = m->from;
 		break;
 	default:
@@ -212,7 +212,7 @@ static void process_adc(volatile adc_buf_t *buf, _UNUSED_ uint32_t deltaticks)
 				mqf_write(&from_canton, &m);
 			}
 		}
-		msg_64_t m;
+		msg_64_t m = {0};
 		m.from = MA_CANTON(localBoardNum, i);
 		m.to = bemf_to[i];
 		m.cmd = CMD_BEMF_NOTIF;

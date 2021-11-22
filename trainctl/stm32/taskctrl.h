@@ -34,7 +34,7 @@ void StartCtrlTask(void *argument);
 
 
 void set_pwm_freq(int freqhz);
-
-extern int cur_freqhz;
+int get_pwm_freq(void);
+//extern int cur_freqhz;
 
 #endif /* STM32_TASKCTRL_H_ */

@@ -50,7 +50,7 @@ void detect2_init(void)
     save_freq = get_pwm_freq();
 }
 
-#define MEAS_DURATION 30000 //tick = ms
+#define MEAS_DURATION 500 //tick = ms
 
 static  void analyse_bemf(void)
 {
@@ -112,6 +112,16 @@ void detect2_process_tick(uint32_t tick)
 		        m.v2 = 0;
 		        m.to = MA_UI(UISUB_TFT);
 		        mqf_write_from_ctrl(&m);
+
+		        if ((1)) {
+		        	msg_64_t m;
+		        	m.from = MA_BROADCAST;
+		        	m.to = MA_BROADCAST;
+		        	m.cmd = CMD_SETRUN_MODE;
+		        	m.v1u = runmode_normal;
+
+		        	mqf_write_from_nowhere(&m); // XXX it wont be sent to ctl
+		        }
 
 		        return;
             }

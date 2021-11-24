@@ -10,6 +10,11 @@
 
 #include "main.h"
 
+
+#ifdef HAL_UART_ERROR_NONE
+// UART included in .ioc file
+
+
 void RunBleTask(UART_HandleTypeDef *_uart, DMA_HandleTypeDef *_hdma_uart_rx, DMA_HandleTypeDef *_hdma_uart_tx,
 		osMessageQueueId_t hbleRespQueue);
 
@@ -23,5 +28,7 @@ extern volatile int num_cmd;
 extern volatile int num_rx;
 extern volatile int8_t ble_spd1;
 extern volatile int8_t ble_spd2;
+
+#endif
 
 #endif /* BLETASK_H_ */

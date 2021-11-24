@@ -58,10 +58,10 @@
 /* External variables --------------------------------------------------------*/
 extern PCD_HandleTypeDef hpcd_USB_OTG_FS;
 extern DMA_HandleTypeDef hdma_adc1;
+extern CAN_HandleTypeDef hcan1;
 extern I2C_HandleTypeDef hi2c1;
 extern I2C_HandleTypeDef hi2c3;
 extern TIM_HandleTypeDef htim1;
-extern UART_HandleTypeDef huart4;
 extern TIM_HandleTypeDef htim7;
 
 /* USER CODE BEGIN EV */
@@ -165,6 +165,62 @@ void DebugMon_Handler(void)
 /******************************************************************************/
 
 /**
+  * @brief This function handles CAN1 TX interrupts.
+  */
+void CAN1_TX_IRQHandler(void)
+{
+  /* USER CODE BEGIN CAN1_TX_IRQn 0 */
+
+  /* USER CODE END CAN1_TX_IRQn 0 */
+  HAL_CAN_IRQHandler(&hcan1);
+  /* USER CODE BEGIN CAN1_TX_IRQn 1 */
+
+  /* USER CODE END CAN1_TX_IRQn 1 */
+}
+
+/**
+  * @brief This function handles CAN1 RX0 interrupts.
+  */
+void CAN1_RX0_IRQHandler(void)
+{
+  /* USER CODE BEGIN CAN1_RX0_IRQn 0 */
+
+  /* USER CODE END CAN1_RX0_IRQn 0 */
+  HAL_CAN_IRQHandler(&hcan1);
+  /* USER CODE BEGIN CAN1_RX0_IRQn 1 */
+
+  /* USER CODE END CAN1_RX0_IRQn 1 */
+}
+
+/**
+  * @brief This function handles CAN1 RX1 interrupt.
+  */
+void CAN1_RX1_IRQHandler(void)
+{
+  /* USER CODE BEGIN CAN1_RX1_IRQn 0 */
+
+  /* USER CODE END CAN1_RX1_IRQn 0 */
+  HAL_CAN_IRQHandler(&hcan1);
+  /* USER CODE BEGIN CAN1_RX1_IRQn 1 */
+
+  /* USER CODE END CAN1_RX1_IRQn 1 */
+}
+
+/**
+  * @brief This function handles CAN1 SCE interrupt.
+  */
+void CAN1_SCE_IRQHandler(void)
+{
+  /* USER CODE BEGIN CAN1_SCE_IRQn 0 */
+
+  /* USER CODE END CAN1_SCE_IRQn 0 */
+  HAL_CAN_IRQHandler(&hcan1);
+  /* USER CODE BEGIN CAN1_SCE_IRQn 1 */
+
+  /* USER CODE END CAN1_SCE_IRQn 1 */
+}
+
+/**
   * @brief This function handles TIM1 update interrupt and TIM10 global interrupt.
   */
 void TIM1_UP_TIM10_IRQHandler(void)
@@ -204,20 +260,6 @@ void I2C1_ER_IRQHandler(void)
   /* USER CODE BEGIN I2C1_ER_IRQn 1 */
 
   /* USER CODE END I2C1_ER_IRQn 1 */
-}
-
-/**
-  * @brief This function handles UART4 global interrupt.
-  */
-void UART4_IRQHandler(void)
-{
-  /* USER CODE BEGIN UART4_IRQn 0 */
-
-  /* USER CODE END UART4_IRQn 0 */
-  HAL_UART_IRQHandler(&huart4);
-  /* USER CODE BEGIN UART4_IRQn 1 */
-
-  /* USER CODE END UART4_IRQn 1 */
 }
 
 /**

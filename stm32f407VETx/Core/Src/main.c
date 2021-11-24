@@ -62,6 +62,8 @@ typedef StaticQueue_t osStaticMessageQDef_t;
 ADC_HandleTypeDef hadc1;
 DMA_HandleTypeDef hdma_adc1;
 
+CAN_HandleTypeDef hcan1;
+
 I2C_HandleTypeDef hi2c1;
 I2C_HandleTypeDef hi2c3;
 
@@ -73,8 +75,6 @@ TIM_HandleTypeDef htim3;
 TIM_HandleTypeDef htim4;
 TIM_HandleTypeDef htim8;
 TIM_HandleTypeDef htim12;
-
-UART_HandleTypeDef huart4;
 
 /* Definitions for uiTask */
 osThreadId_t uiTaskHandle;
@@ -161,11 +161,11 @@ static void MX_TIM1_Init(void);
 static void MX_TIM2_Init(void);
 static void MX_TIM3_Init(void);
 static void MX_RTC_Init(void);
-static void MX_UART4_Init(void);
 static void MX_TIM4_Init(void);
 static void MX_TIM8_Init(void);
 static void MX_I2C3_Init(void);
 static void MX_TIM12_Init(void);
+static void MX_CAN1_Init(void);
 void StartUiTask(void *argument);
 extern void StartCtrlTask(void *argument);
 extern void StartTxRxFrameTask(void *argument);
@@ -232,11 +232,11 @@ int main(void)
   MX_TIM2_Init();
   MX_TIM3_Init();
   MX_RTC_Init();
-  MX_UART4_Init();
   MX_TIM4_Init();
   MX_TIM8_Init();
   MX_I2C3_Init();
   MX_TIM12_Init();
+  MX_CAN1_Init();
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
@@ -487,6 +487,43 @@ static void MX_ADC1_Init(void)
 	    Error_Handler();
   }
   /* USER CODE END ADC1_Init 2 */
+
+}
+
+/**
+  * @brief CAN1 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_CAN1_Init(void)
+{
+
+  /* USER CODE BEGIN CAN1_Init 0 */
+
+  /* USER CODE END CAN1_Init 0 */
+
+  /* USER CODE BEGIN CAN1_Init 1 */
+
+  /* USER CODE END CAN1_Init 1 */
+  hcan1.Instance = CAN1;
+  hcan1.Init.Prescaler = 16;
+  hcan1.Init.Mode = CAN_MODE_LOOPBACK;
+  hcan1.Init.SyncJumpWidth = CAN_SJW_1TQ;
+  hcan1.Init.TimeSeg1 = CAN_BS1_1TQ;
+  hcan1.Init.TimeSeg2 = CAN_BS2_2TQ;
+  hcan1.Init.TimeTriggeredMode = DISABLE;
+  hcan1.Init.AutoBusOff = ENABLE;
+  hcan1.Init.AutoWakeUp = ENABLE;
+  hcan1.Init.AutoRetransmission = ENABLE;
+  hcan1.Init.ReceiveFifoLocked = DISABLE;
+  hcan1.Init.TransmitFifoPriority = DISABLE;
+  if (HAL_CAN_Init(&hcan1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN CAN1_Init 2 */
+
+  /* USER CODE END CAN1_Init 2 */
 
 }
 
@@ -1015,39 +1052,6 @@ static void MX_TIM12_Init(void)
 }
 
 /**
-  * @brief UART4 Initialization Function
-  * @param None
-  * @retval None
-  */
-static void MX_UART4_Init(void)
-{
-
-  /* USER CODE BEGIN UART4_Init 0 */
-
-  /* USER CODE END UART4_Init 0 */
-
-  /* USER CODE BEGIN UART4_Init 1 */
-
-  /* USER CODE END UART4_Init 1 */
-  huart4.Instance = UART4;
-  huart4.Init.BaudRate = 9600;
-  huart4.Init.WordLength = UART_WORDLENGTH_8B;
-  huart4.Init.StopBits = UART_STOPBITS_1;
-  huart4.Init.Parity = UART_PARITY_NONE;
-  huart4.Init.Mode = UART_MODE_TX_RX;
-  huart4.Init.HwFlowCtl = UART_HWCONTROL_NONE;
-  huart4.Init.OverSampling = UART_OVERSAMPLING_16;
-  if (HAL_UART_Init(&huart4) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /* USER CODE BEGIN UART4_Init 2 */
-
-  /* USER CODE END UART4_Init 2 */
-
-}
-
-/**
   * Enable DMA controller clock
   */
 static void MX_DMA_Init(void)
@@ -1086,12 +1090,12 @@ static void MX_GPIO_Init(void)
                           |TURN2A_Pin|TURN2B_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, LED1_Pin|LED0_Pin|GPIO_PIN_9|GPIO_PIN_10
+  HAL_GPIO_WritePin(GPIOA, LED1_Pin|LED0_Pin|TURN1A_Pin|TURN1B_Pin
                           |GPIO_PIN_15, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_2|GPIO_PIN_12|GPIO_PIN_13|GPIO_PIN_4
-                          |GPIO_PIN_5|TURN1A_Pin|TURN1B_Pin, GPIO_PIN_RESET);
+                          |GPIO_PIN_5, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOD, VOLT_2_SEL2_Pin|VOLT_3_SEL0_Pin|VOLT_3_SEL1_Pin|VOLT_3_SEL2_Pin
@@ -1118,9 +1122,9 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_PULLUP;
   HAL_GPIO_Init(USER_BTN_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : LED1_Pin LED0_Pin PA9 PA10
+  /*Configure GPIO pins : LED1_Pin LED0_Pin TURN1A_Pin TURN1B_Pin
                            PA15 */
-  GPIO_InitStruct.Pin = LED1_Pin|LED0_Pin|GPIO_PIN_9|GPIO_PIN_10
+  GPIO_InitStruct.Pin = LED1_Pin|LED0_Pin|TURN1A_Pin|TURN1B_Pin
                           |GPIO_PIN_15;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
@@ -1128,9 +1132,9 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
   /*Configure GPIO pins : PB2 PB12 PB13 PB4
-                           PB5 TURN1A_Pin TURN1B_Pin */
+                           PB5 */
   GPIO_InitStruct.Pin = GPIO_PIN_2|GPIO_PIN_12|GPIO_PIN_13|GPIO_PIN_4
-                          |GPIO_PIN_5|TURN1A_Pin|TURN1B_Pin;
+                          |GPIO_PIN_5;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;

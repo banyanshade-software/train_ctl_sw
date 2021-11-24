@@ -10,6 +10,9 @@
 #include "cmsis_os.h"
 #include "bletask.h"
 
+#ifdef HAL_UART_ERROR_NONE
+// UART defined in .ioc file
+
 static UART_HandleTypeDef *huart;
 static DMA_HandleTypeDef  *hdma_uart_rx;
 static DMA_HandleTypeDef  *hdma_uart_tx;
@@ -282,3 +285,4 @@ void HAL_UART_AbortReceiveCpltCallback(UART_HandleTypeDef *huart)
 	bh();
 }
 
+#endif

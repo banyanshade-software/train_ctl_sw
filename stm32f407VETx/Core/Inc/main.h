@@ -140,6 +140,10 @@ void Error_Handler(void);
 #define PWM_3_1_GPIO_Port GPIOC
 #define PWM_4_0_Pin GPIO_PIN_8
 #define PWM_4_0_GPIO_Port GPIOC
+#define TURN1A_Pin GPIO_PIN_9
+#define TURN1A_GPIO_Port GPIOA
+#define TURN1B_Pin GPIO_PIN_10
+#define TURN1B_GPIO_Port GPIOA
 #define VOLT_0_SEL0_Pin GPIO_PIN_0
 #define VOLT_0_SEL0_GPIO_Port GPIOD
 #define VOLT_0_SEL1_Pin GPIO_PIN_1
@@ -156,10 +160,6 @@ void Error_Handler(void);
 #define VOLT_2_SEL0_GPIO_Port GPIOD
 #define VOLT_2_SEL1_Pin GPIO_PIN_7
 #define VOLT_2_SEL1_GPIO_Port GPIOD
-#define TURN1A_Pin GPIO_PIN_8
-#define TURN1A_GPIO_Port GPIOB
-#define TURN1B_Pin GPIO_PIN_9
-#define TURN1B_GPIO_Port GPIOB
 #define TURN2A_Pin GPIO_PIN_0
 #define TURN2A_GPIO_Port GPIOE
 #define TURN2B_Pin GPIO_PIN_1

@@ -118,6 +118,9 @@ typedef enum {
 	runmode_detect2
 } runmode_t;
 
+LFMQUEUE_DEF_H(to_canbus, msg_64_t)
+LFMQUEUE_DEF_H(from_canbus, msg_64_t)
+
 /* general command */
 #define CMD_RESET 			0xFF
 #define CMD_EMERGENCY_STOP 	0xFE
@@ -169,6 +172,9 @@ LFMQUEUE_DEF_H(from_ctrl, msg_64_t)
 //#define CMD_MDRIVE_SPEED 			0x15
 //#define	CMD_MDRIVE_DIR			0x16
 #define CMD_MDRIVE_SPEED_DIR 		0x17
+
+
+#define CMD_NOOP					0x19 // for test purpose
 
 /* to UI */
 #define CMD_INA3221_REPORT 		 	0x20

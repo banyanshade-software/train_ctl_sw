@@ -46,6 +46,8 @@
 #include "trainctl_config.h"
 #include "low/canton_bemf.h"
 #include "leds/ledtask.h"
+#include "cantask.h"
+
 /*
 #define NUM_VAL_PER_CANTON (sizeof(adc_buffer_t)/sizeof(uint16_t))
 #define ADC_HALF_BUFFER (NUM_LOCAL_CANTONS_HW * NUM_VAL_PER_CANTON)
@@ -120,7 +122,7 @@ void StartCtrlTask(_UNUSED_ void *argument)
 	itm_debug1(DBG_ERR, "tcycl", GetCycleCount64()-k);
 	*/
 
-	if ((1)) {
+	if ((0)) {
 		void CanTest(void);
 		CanTest();
 	}
@@ -234,6 +236,7 @@ static void run_task_ctrl(void)
 		itm_debug1(DBG_LOWCTRL, "--ctrl", dt);
 		ctrl_run_tick(notif, t, dt);
 		_UNUSED_ uint32_t e1 = HAL_GetTick() - t;
+		CAN_Tasklet(notif, t, dt);
 #if USE_NOTIF_TIM
 #else
 		//if (cnt>20) {

@@ -65,7 +65,7 @@ typedef struct {
 	mqf_t *from;
 } qdef_t;
 
-#define NQDEF 11
+#define NQDEF 12
 static const qdef_t qdef[NQDEF] = {
 		/* 0*/ { &to_turnout, &from_turnout },
 		/* 1*/ { &to_canton,  &from_canton},
@@ -77,7 +77,8 @@ static const qdef_t qdef[NQDEF] = {
 		/* 7*/ { &to_ina3221, &from_ina3221},
         /* 8*/ { &to_ui_track, &from_ui_track},
         /* 9*/ { &to_led, &from_led},
-		/*10*/ { NULL, &from_nowhere}
+		/*10*/ { &to_canbus, &from_canbus},
+		/*11*/ { NULL, &from_nowhere}
 };
 
 typedef struct {

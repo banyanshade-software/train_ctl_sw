@@ -46,7 +46,7 @@
 #include "trainctl_config.h"
 #include "low/canton_bemf.h"
 #include "leds/ledtask.h"
-#include "cantask.h"
+#include <stm32/canmsg.h>
 
 /*
 #define NUM_VAL_PER_CANTON (sizeof(adc_buffer_t)/sizeof(uint16_t))

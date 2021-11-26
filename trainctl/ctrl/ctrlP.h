@@ -55,8 +55,9 @@ typedef struct {
     
     uint8_t *route;
     uint8_t routeidx;
-    uint8_t stpmiddle:1;
-    uint8_t texp:1;
+    uint8_t trigu1:4;
+    uint8_t got_texp:1;
+    uint8_t got_u1:1;
 } train_ctrl_t;
 
 /*
@@ -85,7 +86,7 @@ void ctrl2_init_train(int tidx, train_ctrl_t *tvars,
 
 void ctrl2_upcmd_set_desired_speed(int tidx, train_ctrl_t *tvars, int16_t desired_speed);
 void _ctrl2_upcmd_set_desired_speed(int tidx, train_ctrl_t *tvars, int16_t desired_speed);
-void ctrl2_upcmd_settrigU1_half(int tidx, train_ctrl_t *tvars);
+void ctrl2_upcmd_settrigU1(int tidx, train_ctrl_t *tvars, uint8_t t);
 
 void ctrl2_set_mode(int tidx, train_ctrl_t *tvar, train_mode_t mode);
 

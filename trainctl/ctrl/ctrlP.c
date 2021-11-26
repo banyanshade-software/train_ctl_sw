@@ -71,22 +71,12 @@ static int32_t get_lsblk_len_steep(lsblk_num_t lsbk, const train_config_t *tconf
 	return cm;
 }
 
-static int32_t ctrl_pose_middle_c1(const train_config_t *tconf, train_ctrl_t *tvar)
-{
-    int cm = get_lsblk_len_steep(tvar->c1_sblk, tconf, tvar);
-    int mm;
-    mm = tvar->beginposmm + cm*5;
-    int32_t p = pose_convert_from_mm(tconf, mm);
-    itm_debug3(DBG_CTRL, "middle_c1", tvar->c1_sblk.n, cm, p);
-    if (!p) p=1;
-    return p;
-}
 
-static int32_t ctrl_pose_limit_c1(const train_config_t *tconf, train_ctrl_t *tvar)
+static int32_t ctrl_pose_percent_c1(const train_config_t *tconf, train_ctrl_t *tvar, int percent)
 {
     int cm = get_lsblk_len_steep(tvar->c1_sblk, tconf, tvar);
     int mm;
-    int mm1 = cm * 1; // guard 10%
+    int mm1 = cm * (100-percent) / 10; // 10%
     if (mm1<120) mm1 = 120; // min guard
     if (tvar->_dir>0) {
         // going right
@@ -102,6 +92,19 @@ static int32_t ctrl_pose_limit_c1(const train_config_t *tconf, train_ctrl_t *tva
     if (!p) p=1;
     return p;
 }
+
+
+static int32_t ctrl_pose_middle_c1(const train_config_t *tconf, train_ctrl_t *tvar)
+{
+    return ctrl_pose_percent_c1(tconf, tvar, 50);
+}
+
+static int32_t ctrl_pose_limit_c1(const train_config_t *tconf, train_ctrl_t *tvar)
+{
+    return ctrl_pose_percent_c1(tconf, tvar, 90);
+}
+
+
 
 static int32_t ctrl_pose_end_c1(const train_config_t *tconf, train_ctrl_t *tvar)
 {
@@ -130,10 +133,23 @@ void ctrl_set_pose_trig(int numtrain, int32_t pose, int n)
     mqf_write_from_ctrl(&m);
 }
 
-void ctrl2_upcmd_settrigU1_half(int tidx, train_ctrl_t *tvars)
+void ctrl2_upcmd_settrigU1(int tidx, train_ctrl_t *tvars, uint8_t t)
 {
     if (!tvars->_dir) return;
-    int32_t p = ctrl_pose_middle_c1(get_train_cnf(tidx), tvars);
+    int32_t p;
+    switch (t) {
+        default:
+            //FALLTHRU
+        case 1:
+            p = ctrl_pose_middle_c1(get_train_cnf(tidx), tvars);
+            break;
+        case 2:
+            p = ctrl_pose_end_c1(get_train_cnf(tidx), tvars);
+            break;
+        case 3:
+            p = ctrl_pose_percent_c1(get_train_cnf(tidx), tvars, 10);
+            break;
+    }
     ctrl_set_pose_trig(tidx, p, 1);
 }
 

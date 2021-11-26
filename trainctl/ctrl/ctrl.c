@@ -136,7 +136,7 @@ static void ctrl_init(void)
                 _AR_SPD(-60), 1, _AR_LED, 0, LED_PRG_DIMOFF, 2, _AR_WSTOP,
 				_AR_SPD(60), 1, 3,  _AR_LED, 0, LED_PRG_NEONON, _AR_TRGEVENT(1), _AR_WSTOP, _AR_SPD(0),
                 _AR_WEVENT(1),
-                _AR_SPD(-40), 1, _AR_STPHALF, _AR_LED, 0, LED_PRG_DIMOFF, _AR_WSTOP,
+                _AR_SPD(-40), 1, _AR_TRG_HALF, _AR_WTRG_U1, _AR_LED, 0, LED_PRG_DIMOFF, _AR_WSTOP,
 				_AR_TIMER(8), _AR_WTIMER,
 				_AR_TIMER(8), _AR_WTIMER,
 				_AR_TIMER(8), _AR_WTIMER,
@@ -146,10 +146,10 @@ static void ctrl_init(void)
             // ctrl_set_mode(0, train_auto);
             
             static uint8_t route2[] = {_AR_WEVENT(0),
-            		_AR_SPD(60), 1, _AR_STPHALF, _AR_WSTOP,
+            		_AR_SPD(60), 1, _AR_TRG_HALF, _AR_WTRG_U1, _AR_WSTOP,
             		_AR_SPD(-60) , 0, _AR_WSTOP,
 					_AR_WEVENT(1),
-					_AR_SPD(40), 1, _AR_STPHALF,  _AR_WSTOP,
+					_AR_SPD(40), 1, _AR_TRG_HALF, _AR_WTRG_U1,  _AR_WSTOP,
 					_AR_SPD(-40), 2, _AR_TRGEVENT(1), _AR_WSTOP,
 					_AR_LOOP};
             trctl[1].routeidx = 0;
@@ -178,7 +178,7 @@ static void ctrl_init(void)
                 _AR_SPD(20), 4, 3, SON, _AR_WSTOP,
                 _AR_TIMER(2), _AR_WTIMER,
                 _AR_WEVENT(4), SOFF,
-                _AR_SPD(-30), 1, _AR_STPHALF, _AR_WSTOP, _AR_SPD(0),
+                _AR_SPD(-30), 1, _AR_TRG_HALF, _AR_WTRG_U1, _AR_SPD(0),
 				_AR_TIMER(3),_AR_WTIMER,
 				_AR_LED, 0, LED_PRG_25p,
                 _AR_TIMER(7), _AR_WTIMER,

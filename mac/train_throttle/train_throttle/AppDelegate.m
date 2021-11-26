@@ -1619,7 +1619,10 @@ void txframe_send(frame_msg_t *m, int discardable)
 int cur_freqhz = 50;
 void set_pwm_freq(int freqhz)
 {
-    
+}
+int get_pwm_freq(void)
+{
+    return cur_freqhz;
 }
 /*
 

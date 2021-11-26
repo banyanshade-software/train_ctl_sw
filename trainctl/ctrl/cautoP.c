@@ -78,7 +78,7 @@ static void check_for_ctrl(int tidx, train_ctrl_t *tvars)
     for (;;) {
         uint8_t r = tvars->route[tvars->routeidx];
         if (0==(r & 0xC0)) return;
-        if ((r & 0xC0)==0x80) {
+        if (IS_AR_SPD(r)) {
             // speed
             int8_t v = ((tvars->route[tvars->routeidx] & 0x3F)<<2);
     		itm_debug2(DBG_AUTO, "ca.spd", tidx, v);
@@ -109,14 +109,24 @@ static void check_for_ctrl(int tidx, train_ctrl_t *tvars)
             return;
         }
         if (r == _AR_WTIMER) {
-        	if (tvars->texp) {
+        	if (tvars->got_texp) {
         		itm_debug2(DBG_AUTO, "ca.tim ok", tidx, tvars->routeidx);
-        		tvars->texp = 0;
+        		tvars->got_texp = 0;
         		tvars->routeidx++;
         		continue;
         	}
     		itm_debug2(DBG_AUTO, "ca.tim w", tidx, tvars->routeidx);
         	return;
+        }
+        if (r == _AR_WTRG_U1) {
+            if (tvars->got_u1) {
+                itm_debug2(DBG_AUTO, "ca.wu1 ok", tidx, tvars->routeidx);
+                tvars->got_u1 = 0;
+                tvars->routeidx++;
+                continue;
+            }
+            itm_debug2(DBG_AUTO, "ca.wu1 w", tidx, tvars->routeidx);
+            return;
         }
         if ((r & 0xF8) == _AR_TIMER(0)) {
         	int t = (1<<(r & 0x07)); // in seconds
@@ -132,12 +142,18 @@ static void check_for_ctrl(int tidx, train_ctrl_t *tvars)
             ctrl2_send_led(led_num, prog_num);
             continue;
         }
-        if (r == _AR_STPHALF) {
-        	// cannot call ctrl2_upcmd_settrigU1_half() now
+        if (r == _AR_TRG_HALF) {
+        	// cannot call ctrl2_upcmd_settrigU1() now
         	// trig would b sent to spdctl before C1C2 - which reset POSE
         	// thus we set stpmiddle and handle it in cauto_end_tick()
-    		itm_debug1(DBG_AUTO, "ca.stphlf", tidx);
-        	tvars->stpmiddle = 1;
+    		itm_debug1(DBG_AUTO, "ca.trghlf", tidx);
+        	tvars->trigu1 = 1;
+            tvars->routeidx++;
+            continue;
+        }
+        if (r == _AR_TRG_END) {
+            itm_debug1(DBG_AUTO, "ca.trgend", tidx);
+            tvars->trigu1 = 2;
             tvars->routeidx++;
             continue;
         }
@@ -153,6 +169,7 @@ static void check_for_ctrl(int tidx, train_ctrl_t *tvars)
         }
         itm_debug3(DBG_ERR|DBG_AUTO, "ca.unkn", tidx, tvars->routeidx, r);
         route_error(tidx, tvars);
+        break;
     }
 }
 
@@ -176,15 +193,18 @@ void cauto_had_stop(int tidx, train_ctrl_t *tvars)
 void cauto_had_trigU1(int tidx, train_ctrl_t *tvars)
 {
 	itm_debug1(DBG_AUTO, "ca.trigU1", tidx);
-    _ctrl2_upcmd_set_desired_speed(tidx, tvars, 0);
+    //_ctrl2_upcmd_set_desired_speed(tidx, tvars, 0);
+    tvars->got_u1 = 1;
+    topology_or_occupency_changed = 1;
 }
 
 void cauto_had_timer(_UNUSED_ int tidx, train_ctrl_t *tvars)
 {
 	itm_debug1(DBG_AUTO, "ca.had_tim", tidx);
-	tvars->texp = 1;
+	tvars->got_texp = 1;
     topology_or_occupency_changed = 1;
 }
+
 
 void cauto_check_start(int tidx, train_ctrl_t *tvars)
 {
@@ -211,10 +231,10 @@ void cauto_c1_updated(int tidx, train_ctrl_t *tvars)
 
 void cauto_end_tick(int tidx, train_ctrl_t *tvars)
 {
-	itm_debug2(DBG_AUTO, "ca.tick", tidx, tvars->stpmiddle);
-	if (tvars->stpmiddle) {
-		tvars->stpmiddle = 0;
-        ctrl2_upcmd_settrigU1_half(tidx, tvars);
+	itm_debug2(DBG_AUTO, "ca.tick", tidx, tvars->trigu1);
+	if (tvars->trigu1) {
+        ctrl2_upcmd_settrigU1(tidx, tvars, tvars->trigu1);
+        tvars->trigu1 = 0;
 	}
 	check_for_ctrl(tidx, tvars);
 }

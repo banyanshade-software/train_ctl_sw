@@ -33,29 +33,48 @@ extern void ctrl2_send_led(uint8_t led_num, uint8_t prog_num);
  
  1 0 s s s s s s   speed
  
+ 
  1 1 . . . . . .   ctrl
  
  1 1 0 0 0 x x x   wait event 0-7
- 1 1 0 0 1 x x x   trig event 0-7
- 1 1 0 1 0 t t t   set timer 2^t
- 1 1 1 1 1 0 0 1   stop at half _AR_STPHALF
- 1 1 1 1 1 0 1 0   wait timer _AR_WTIMER
+ 1 1 0 0 1 0 0 0   wait trig U1
+ 1 1 0 0 1 0 0 1   wait timer  _AR_WTIMER
+
+ 
+ 1 1 0 1 0 x x x   trig event 0-7
+ 1 1 0 1 1 t t t   set timer 2^t
+ 1 1 1 0 0 0 0 0  trig half _AR_TRG_HALF
+ 1 1 1 0 0 0 0 1   trig before end
+
+
+ 1 1 1 1 1 0 0 0
  1 1 1 1 1 0 1 1   + led num + prog num : _AR_LED
+ 1 1 1 1 1 1 0 1   eXtended cmd
  1 1 1 1 1 1 1 0   loop
  1 1 1 1 1 1 1 1   end
  */
 
 
-#define _AR_SPD(_s) (0x80 | ((((int8_t)(_s))>>2) & 0x3F))
-#define _AR_LOOP 0xFE
-#define _AR_END  0xFF
+#define _AR_SPD(_s)     (0x80 | ((((int8_t)(_s))>>2) & 0x3F))
+#define IS_AR_SPD(_b)   (((_b) & 0xC0)==0x80)
 
 #define _AR_WSTOP 0x3F  // special case of lsblk
 
-#define _AR_STPHALF      (0xF9)
+// wait inst
+
 #define _AR_WEVENT(_e)   (0xC0 | ((_e) & 0x07))
-#define _AR_TRGEVENT(_e) (0xC8 | ((_e) & 0x07))
-#define _AR_TIMER(_t)    (0xD0 | ((_t) & 0x07))
-#define _AR_WTIMER       (0xFA)
+#define _AR_WTRG_U1      (0xC8)
+#define _AR_WTIMER       (0xC9)
+
+#define _AR_TRGEVENT(_e) (0xD0 | ((_e) & 0x07))
+#define _AR_TIMER(_t)    (0xD8 | ((_t) & 0x07))
+#define _AR_TRG_HALF     (0xF9)
+#define _AR_TRG_END      (0xF8)
+
 #define _AR_LED          (0xFB)
+
+#define _AR_EXT  0xFD
+#define _AR_LOOP 0xFE
+#define _AR_END  0xFF
+ 
 #endif /* cautoP_h */

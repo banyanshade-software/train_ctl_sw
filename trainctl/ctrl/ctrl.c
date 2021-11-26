@@ -314,6 +314,17 @@ static void posecm_measured(int tidx, int32_t pose, lsblk_num_t blknum)
 	itm_debug2(DBG_POSEC, "ppcm", tidx, ppcm);
 	debug_info('P', tidx, "PPCM", ppcm, 0,0);
 
+	if (ppcm<250) {
+		itm_debug2(DBG_ERR, "sucp PPCM", tidx, ppcm);
+		return;
+	}
+	const train_config_t *tconf = get_train_cnf(tidx);
+	train_config_t *wconf = (train_config_t *)tconf; // writable
+	const int alpha = 80; //0.80
+	ppcm = abs(ppcm);
+	wconf->pose_per_cm = (tconf->pose_per_cm * alpha + (100-alpha) * ppcm)/100;
+	itm_debug2(DBG_CTRL, "PPCM updated", tidx, wconf->pose_per_cm);
+
 }
 
 // ----------------------------------------------------------------------------

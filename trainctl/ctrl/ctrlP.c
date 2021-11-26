@@ -290,6 +290,7 @@ void ctrl2_stop_detected(int tidx, train_ctrl_t *tvars)
     }
     if (tvars->_mode == train_auto) cauto_had_stop(tidx, tvars);
     ctrl2_set_dir(tidx, tvars, 0);
+    tvars->measure_pose_percm = 0;
 }
 
 
@@ -316,15 +317,7 @@ void ctrl2_check_alreadystopped(int tidx, train_ctrl_t *tvar)
 }
 
 /*
- * $2 = {_mode = train_auto,
- * _state = train_station,
- * tick_flags = 0, _target_speed = 0, _dir = 0 '\000', c1c2 = 0 '\000',
- * pose2_set = 0 '\000', pose2_is_blk_wait = 1 '\001', trig_eoseg = 0 '\000',
- *  measure_pose_percm = 1 '\001', can1_addr = 1 '\001',
- *   c1_sblk = {n = 1 '\001'}, can2_addr = 255 '\377', spd_limit = 100,
- *   desired_speed = 0, timertick = {0, 0}, curposmm = 154,
- *   beginposmm = 0, route = 0x20000234 <route> "\270", routeidx = 13 '\r', stpmiddle = 0 '\000', texp = 0 '\000'}
- *
+
  */
 void ctrl2_check_checkstart(int tidx, train_ctrl_t *tvars)
 {

@@ -274,7 +274,7 @@ static  canton_config_t Cantons[NUM_CANTONS] = {
 
 static  train_config_t Trains[NUM_TRAINS] = {
 		//DEFAULT_TRAIN_CFG(1,0, 450, 115, 12, 6), // 8821 (V221) with 2 freight cars
-		DEFAULT_TRAIN_CFG(1,0, 450, 110, 18, 6), // 8821 (V221) with 3 freight cars
+		DEFAULT_TRAIN_CFG(1,0, 450, 120, 18, 6), // 8821 (V221) with 3 freight cars
         DEFAULT_TRAIN_CFG(1,0, 310, 130, 2, 17), // 8805 with 4 wine cars - 120 with 3 wine cars
         DEFAULT_TRAIN_CFG(0,0, 500, 100, 10, 10),
         DEFAULT_TRAIN_CFG(0,0, 500, 100, 10, 10),

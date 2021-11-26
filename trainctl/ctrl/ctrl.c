@@ -314,7 +314,7 @@ static void posecm_measured(int tidx, int32_t pose, lsblk_num_t blknum)
 	itm_debug2(DBG_POSEC, "ppcm", tidx, ppcm);
 	debug_info('P', tidx, "PPCM", ppcm, 0,0);
 
-	if (ppcm<250) {
+	if (abs(ppcm)<250) {
 		itm_debug2(DBG_ERR, "sucp PPCM", tidx, ppcm);
 		return;
 	}
@@ -438,7 +438,8 @@ void ctrl_run_tick(_UNUSED_ uint32_t notif_flags, uint32_t tick, _UNUSED_ uint32
 		}
 	}
     switch (run_mode) {
-        case runmode_normal: break;
+        case runmode_normal:
+        	break;
         case runmode_detect2:
             detect2_process_tick(tick);
             return;

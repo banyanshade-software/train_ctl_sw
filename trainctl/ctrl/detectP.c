@@ -52,7 +52,16 @@ void detect2_init(void)
 
 #define MEAS_DURATION 500 //tick = ms
 
-static  void analyse_bemf(void)
+typedef struct {
+	int16_t avg_von;
+	int16_t avg_bemf;
+	int16_t min_bemf;
+	int16_t max_bemf;
+} bemf_anal_t;
+
+static bemf_anal_t bemf_anal[4][10] = {0};
+
+static  void analyse_bemf(int cnum, int frequi)
 {
     if (!detect_count_bemf) {
         itm_debug1(DBG_DETECT|DBG_ERR, "no bemf", detect_canton);
@@ -65,10 +74,22 @@ static  void analyse_bemf(void)
     itm_debug2(DBG_DETECT, "Z b min max", detect_min_bemf, detect_max_bemf);
     itm_debug3(DBG_DETECT, "Z von  --", detect_canton, freq, detect_sum_von/detect_count_bemf);
     itm_debug2(DBG_DETECT, "Z v min max", detect_min_von, detect_max_von);
+    if (cnum>=4) return;
+    if (frequi>=10) return;
+    bemf_anal_t *p = &bemf_anal[cnum][frequi];
+    p->avg_von = detect_sum_von/detect_count_bemf;
+    p->avg_bemf =  detect_sum_bemf/detect_count_bemf;
+    p->min_bemf = detect_min_bemf;
+    p->max_bemf = detect_max_bemf;
 }
 
+void analyse_bemf_final(void)
+{
+	itm_debug1(DBG_CTRL, "job here", 0);
+}
 void detect2_process_tick(uint32_t tick)
 {
+	static int freqi = 0;
 	if (0) {
 	} else if (-1 == detect_state) {
 		return;
@@ -82,28 +103,39 @@ void detect2_process_tick(uint32_t tick)
             itm_debug1(DBG_DETECT, "done freq", freq);
             if (0) {
             } else if (freq<= 100) {
-            	freq = 20000;
+            	freqi=1;
+            	freq = 200;
             } else if (freq<= 200) {
+            	freqi=2;
             	freq = 500;
             } else if (freq<= 504) {
+            	freqi=3;
             	freq = 1000;
             } else if (freq<= 1224) {
+            	freqi=4;
             	freq = 2000;
             } else if (freq<= 2500) {
+            	freqi=5;
             	freq = 3000;
             } else if (freq<= 2700) {
+            	freqi=6;
             	freq = 4000;
             } else if (freq<= 4000) {
+            	freqi=7;
             	freq = 8000;
             } else if (freq<= 9000) {
+            	freqi=8;
             	freq = 10000;
             } else if (freq<= 16000) {
+            	freqi=9;
                  freq = 20000;
             } else {
             	// all done
                 detect_state = -1;
 				set_pwm_freq(save_freq);
 				itm_debug2(DBG_DETECT, "ALL DONE", 0, 0);
+
+				analyse_bemf_final();
 
 		        msg_64_t m = {0};
 
@@ -160,7 +192,7 @@ void detect2_process_tick(uint32_t tick)
             detect_ltick = tick;
             detect_state = 2;
 
-            analyse_bemf();
+            analyse_bemf(detect_canton, freqi);
         }
     } else if (detect_state==2) {
         if (tick > detect_ltick + 100) {

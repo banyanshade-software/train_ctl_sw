@@ -51,8 +51,8 @@ typedef struct train_config {
 	uint8_t reversed; // if train motor is mounted in the wrong way
     uint8_t slipping;
 	uint16_t pose_per_cm;
-    uint8_t trainlen_right;
     uint8_t trainlen_left;
+    uint8_t trainlen_right;
 } train_config_t;
 
 //void train_reset(const train_config_t *c, train_vars_t *v);

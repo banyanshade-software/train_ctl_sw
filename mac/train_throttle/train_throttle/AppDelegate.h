@@ -117,5 +117,6 @@
 
 - (IBAction) startBLE:(id)sender;
 
+- (IBAction) startAuto:(id)sender;
 @end
 

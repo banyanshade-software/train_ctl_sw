@@ -87,6 +87,13 @@ const param_t train_params[] = {
 		{"volt_policy",NULL, offsetof(train_config_t,volt_policy),      NULL,NULL, sizeof(uint8_t), 0, 1, 2 /*0*/},
 		{"en_spd2pow", NULL, offsetof(train_config_t,en_spd2pow),       NULL,NULL, sizeof(uint8_t), 0, 1, 0 /*1*/},
 		{"min_power",  NULL, offsetof(train_config_t,min_power),        NULL,NULL, sizeof(uint8_t), 0, 80, 40},
+		{"min_power",  NULL, offsetof(train_config_t,min_power),        NULL,NULL, sizeof(uint8_t), 0, 80, 40},
+
+		{"reversed",  NULL, offsetof(train_config_t,reversed),        NULL,NULL, sizeof(uint8_t), 0, 80, 40},
+		{"slipping",  NULL, offsetof(train_config_t,slipping),        NULL,NULL, sizeof(uint8_t), 0, 80, 40},
+		{"pose_per_cm",  NULL, offsetof(train_config_t,pose_per_cm),        NULL,NULL, sizeof(uint16_t), 0, 80, 40},
+		{"trainlen_left",  NULL, offsetof(train_config_t,trainlen_left),        NULL,NULL, sizeof(uint8_t), 0, 80, 40},
+		{"trainlen_right",  NULL, offsetof(train_config_t,trainlen_right),        NULL,NULL, sizeof(uint8_t), 0, 80, 40},
 
 		{ NULL,     NULL,0,    NULL,NULL, 0, 0, 0,   0}
 };

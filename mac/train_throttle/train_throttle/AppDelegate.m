@@ -200,15 +200,19 @@ badmsg:
     _shunting = s;
     
     int m = _shunting ? 30 : 100;
-    self.sliderCur.minValue = -m;
-    self.sliderCur.maxValue = m;
     [self willChangeValueForKey:@"minslider"];
     [self willChangeValueForKey:@"maxslider"];
-    self.sliderTarget.minValue = -m;
-    self.sliderTarget.maxValue = m;
+    self.sliderTarget1.minValue = -m;
+    self.sliderTarget1.maxValue = m;
+    self.sliderTarget2.minValue = -m;
+    self.sliderTarget2.maxValue = m;
+    self.sliderTarget3.minValue = -m;
+    self.sliderTarget3.maxValue = m;
     [self didChangeValueForKey:@"minslider"];
     [self didChangeValueForKey:@"maxslider"];
-    self.sliderTarget.numberOfTickMarks= _shunting ? 3 : 21;
+    self.sliderTarget1.numberOfTickMarks= _shunting ? 7 : 21;
+    self.sliderTarget2.numberOfTickMarks= _shunting ? 7 : 21;
+    self.sliderTarget3.numberOfTickMarks= _shunting ? 7 : 21;
     if (_shunting) {
         if (_dspeedT0<-m) self.dspeedT0 = -m;
         if (_dspeedT0>m) self.dspeedT0 = m;
@@ -223,11 +227,11 @@ badmsg:
 
 - (int) minslider
 {
-    return  self.sliderTarget.minValue;
+    return  self.sliderTarget1.minValue;
 }
 - (int) maxslider
 {
-    return self.sliderTarget.maxValue;
+    return self.sliderTarget1.maxValue;
 }
 
 - (void) setPolarity:(int)p

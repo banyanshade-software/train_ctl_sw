@@ -36,8 +36,9 @@
 - (IBAction) stopAll:(id)sender;
 - (IBAction) goZero:(id)sender;
 
-@property (nonatomic, weak) IBOutlet NSSlider *sliderTarget;
-@property (nonatomic, weak) IBOutlet NSSlider *sliderCur;
+@property (nonatomic, weak) IBOutlet NSSlider *sliderTarget1;
+@property (nonatomic, weak) IBOutlet NSSlider *sliderTarget2;
+@property (nonatomic, weak) IBOutlet NSSlider *sliderTarget3;
 
 @property (nonatomic, weak) IBOutlet NSView *paramView;
 @property (nonatomic, weak) IBOutlet NSTableView *cantonTableView;

@@ -192,6 +192,9 @@ LFMQUEUE_DEF_H(from_ctrl, msg_64_t)
 #define CMD_STOP_DETECTED           0x53
 
 
+#define CMD_START_AUTO              0x60
+
+
 LFMQUEUE_DEF_H(to_forward, msg_64_t)
 LFMQUEUE_DEF_H(from_forward, msg_64_t)
 

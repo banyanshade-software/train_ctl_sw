@@ -111,7 +111,143 @@ static void ctrl_set_mode(int trnum, train_mode_t mode)
     ctrl2_set_mode(trnum, &trctl[trnum], mode);
 }
 
+// ----------------------------------------------------------------------------
 
+#define SON  _AR_LED, 0, LED_PRG_NEONON
+#define SOFF  _AR_LED, 0, LED_PRG_DIMOFF
+// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
+
+static const uint8_t route_0_T0[] = {
+    _AR_SPD(-40), 0, _AR_WSTOP,
+    _AR_SPD(28), 1, 3, _AR_LED, 0, LED_PRG_NEONON,
+    _AR_TRGEVENT(0), _AR_WSTOP, _AR_SPD(0),
+    _AR_SPD(-30), 4, _AR_LED, 0, LED_PRG_DIMOFF, 5, _AR_WSTOP,
+    _AR_SPD(30),4, 3, _AR_LED, 0, LED_PRG_NEONON, _AR_WSTOP,
+    _AR_SPD(-60), 1, _AR_LED, 0, LED_PRG_DIMOFF, 2, _AR_WSTOP,
+    _AR_SPD(60), 1, 3,  _AR_LED, 0, LED_PRG_NEONON, _AR_TRGEVENT(1), _AR_WSTOP, _AR_SPD(0),
+    _AR_WEVENT(1),
+    _AR_SPD(-40), 1, _AR_TRG_HALF, _AR_WTRG_U1, _AR_LED, 0, LED_PRG_DIMOFF, _AR_WSTOP,
+    _AR_TIMER(8), _AR_WTIMER,
+    _AR_TIMER(8), _AR_WTIMER,
+    _AR_TIMER(8), _AR_WTIMER,
+    _AR_LOOP
+};
+
+static const uint8_t route_0_T1[] = {_AR_WEVENT(0),
+    _AR_SPD(60), 1, _AR_TRG_HALF, _AR_WTRG_U1, _AR_WSTOP,
+    _AR_SPD(-60) , 0, _AR_WSTOP,
+    _AR_WEVENT(1),
+    _AR_SPD(40), 1, _AR_TRG_HALF, _AR_WTRG_U1,  _AR_WSTOP,
+    _AR_SPD(-40), 2, _AR_TRGEVENT(1), _AR_WSTOP,
+    _AR_LOOP
+    
+};
+// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
+
+static const uint8_t route_1_T0[] = {
+    _AR_LED, 0, LED_PRG_FLASH, _AR_TIMER(3), _AR_WTIMER, SOFF,
+    // T0 starts on 1
+    // 1->0->2
+    _AR_SPD(-30), 0, _AR_WSTOP, _AR_TRGEVENT(0),
+    _AR_WEVENT(1),
+    _AR_SPD(15), 1, /*_AR_STPHALF */ _AR_WSTOP, //_AR_SPD(0),
+    _AR_TIMER(3), _AR_WTIMER,
+    _AR_SPD(-35),  2, _AR_WSTOP,
+    // wait and 2-1-3 sleep 3-4-5
+    _AR_WEVENT(2),
+    _AR_SPD(60), 1, SON, 3, _AR_WSTOP,  _AR_TRGEVENT(3),
+    _AR_TIMER(2), _AR_WTIMER,
+    _AR_SPD(-20), 4, SOFF, 5, _AR_WSTOP,
+    _AR_TIMER(4), _AR_WTIMER,
+    // 4, 3 sleep 1
+    _AR_SPD(20), 4, 3, SON, _AR_WSTOP,
+    _AR_TIMER(2), _AR_WTIMER,
+    _AR_WEVENT(4), SOFF,
+    _AR_SPD(-30), 1, _AR_TRG_HALF, _AR_WTRG_U1, _AR_SPD(0),
+    _AR_TIMER(3),_AR_WTIMER,
+    _AR_LED, 0, LED_PRG_25p,
+    _AR_TIMER(7), _AR_WTIMER,
+    _AR_LED, 0, LED_PRG_OFF, _AR_TIMER(6),_AR_WTIMER,
+    _AR_LOOP
+};
+
+static const uint8_t route_1_T1[] = {
+    _AR_WEVENT(0),
+    // 2-1-3
+    _AR_SPD(60), 1, SON, 3, _AR_TRGEVENT(1), _AR_WSTOP,
+    // 4-5
+    _AR_SPD(-40) , 4, SOFF,  5, _AR_WSTOP,
+    _AR_TIMER(0), _AR_WTIMER,
+    // 5-6
+    _AR_SPD(40), 6, _AR_WSTOP,
+    _AR_TIMER(0), _AR_WTIMER,
+    _AR_SPD(-40), 5, _AR_WSTOP,
+    _AR_SPD(40), 4, 3, SON, _AR_WSTOP,
+    _AR_SPD(-50), 1, SOFF, 0, _AR_WSTOP, _AR_TRGEVENT(2),
+    // 0-1-2
+    _AR_WEVENT(3),
+    _AR_SPD(40), 1, _AR_WSTOP,
+    _AR_SPD(-40), 2, _AR_WSTOP,
+    _AR_TIMER(1), _AR_WTIMER,
+    _AR_SPD(40), 1, _AR_WSTOP,
+    _AR_SPD(-40), 0, _AR_WSTOP,
+    _AR_TIMER(4), _AR_WTIMER,
+    _AR_SPD(40), 1, _AR_WSTOP,
+    _AR_SPD(-40), 2, _AR_WSTOP,
+    _AR_TRGEVENT(4), _AR_SPD(0),
+    _AR_LOOP
+};
+// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
+
+static const uint8_t route_2_T1[] = {
+    _AR_WEVENT(1),
+    _AR_SPD(40), 1, _AR_WSTOP,
+    _AR_SPD(-40), 0, _AR_WSTOP,
+    _AR_WEVENT(0), _AR_TIMER(2), _AR_WTIMER,
+    _AR_SPD(40), 1, _AR_WSTOP,
+    _AR_SPD(-40), 2, _AR_WSTOP,
+    _AR_WEVENT(2),
+    _AR_SPD(40), 1, _AR_TRGEVENT(5), 3, _AR_WSTOP,
+    _AR_WEVENT(3),
+    _AR_SPD(-30), 4, 5, _AR_WSTOP,
+    _AR_SPD(30), 6, _AR_WSTOP,
+    _AR_TIMER(0), _AR_WTIMER,
+    _AR_TRGEVENT(4),
+    _AR_SPD(-30), 5, _AR_WSTOP,
+    _AR_SPD(40), 4, 3, _AR_WSTOP,
+    _AR_SPD(-40), 1, 2, _AR_WSTOP,
+    _AR_LOOP
+};
+static const uint8_t route_2_T0[] = {
+    _AR_TRGEVENT(1),
+    _AR_SPD(20), 3, _AR_TRG_HALF, _AR_WTRG_U1, _AR_SPD(0),
+    _AR_TIMER(3), _AR_WTIMER, _AR_SPD(20), _AR_WSTOP,
+    _AR_SPD(-20), 4,  5, _AR_WSTOP,
+    _AR_TIMER(2), _AR_WTIMER, _AR_TRGEVENT(0),
+    _AR_SPD(20), 4, 3, _AR_WSTOP,
+    _AR_SPD(-20), 1, 0, _AR_WSTOP, //_AR_TRG_HALF, _AR_WTRG_U1, _AR_SPD(0),
+    _AR_TRGEVENT(2),
+    _AR_WEVENT(5),
+    _AR_SPD(30), 1,
+    _AR_TRGEVENT(3),
+    _AR_WEVENT(4),
+    _AR_SPD(-30), 0, _AR_WSTOP,
+    _AR_SPD(20), 1, _AR_WSTOP,
+    _AR_TIMER(2), _AR_WTIMER,
+    _AR_SPD(-50), 0, _AR_WSTOP,
+    _AR_SPD(30), 1, _AR_TRG_END, _AR_WTRG_U1,
+    _AR_TIMER(5), _AR_WTIMER,
+    _AR_LOOP
+};
+
+// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
 
 static void ctrl_init(void)
 {
@@ -127,95 +263,26 @@ static void ctrl_init(void)
         ctrl2_init_train(0, &trctl[0], s1);
         ctrl2_init_train(1, &trctl[1], s2);
         if ((0)) {
-            static uint8_t route[] = {
-                _AR_SPD(-40), 0, _AR_WSTOP,
-                _AR_SPD(28), 1, 3, _AR_LED, 0, LED_PRG_NEONON,
-                _AR_TRGEVENT(0), _AR_WSTOP, _AR_SPD(0),
-                _AR_SPD(-30), 4, _AR_LED, 0, LED_PRG_DIMOFF, 5, _AR_WSTOP,
-                _AR_SPD(30),4, 3, _AR_LED, 0, LED_PRG_NEONON, _AR_WSTOP,
-                _AR_SPD(-60), 1, _AR_LED, 0, LED_PRG_DIMOFF, 2, _AR_WSTOP,
-				_AR_SPD(60), 1, 3,  _AR_LED, 0, LED_PRG_NEONON, _AR_TRGEVENT(1), _AR_WSTOP, _AR_SPD(0),
-                _AR_WEVENT(1),
-                _AR_SPD(-40), 1, _AR_TRG_HALF, _AR_WTRG_U1, _AR_LED, 0, LED_PRG_DIMOFF, _AR_WSTOP,
-				_AR_TIMER(8), _AR_WTIMER,
-				_AR_TIMER(8), _AR_WTIMER,
-				_AR_TIMER(8), _AR_WTIMER,
-				_AR_LOOP};
+            
             trctl[0].routeidx = 0;
-            trctl[0].route = route;
+            trctl[0].route = route_0_T0;
             // ctrl_set_mode(0, train_auto);
             
-            static uint8_t route2[] = {_AR_WEVENT(0),
-            		_AR_SPD(60), 1, _AR_TRG_HALF, _AR_WTRG_U1, _AR_WSTOP,
-            		_AR_SPD(-60) , 0, _AR_WSTOP,
-					_AR_WEVENT(1),
-					_AR_SPD(40), 1, _AR_TRG_HALF, _AR_WTRG_U1,  _AR_WSTOP,
-					_AR_SPD(-40), 2, _AR_TRGEVENT(1), _AR_WSTOP,
-					_AR_LOOP};
+            
             trctl[1].routeidx = 0;
-            trctl[1].route = route2;
+            trctl[1].route = route_0_T1;
         }
-#define SON  _AR_LED, 0, LED_PRG_NEONON
-#define SOFF  _AR_LED, 0, LED_PRG_DIMOFF
         
         if ((1)) {
-            static uint8_t route[] = {
-   				 _AR_LED, 0, LED_PRG_FLASH, _AR_TIMER(3), _AR_WTIMER, SOFF,
-                // T0 starts on 1
-                // 1->0->2
-                _AR_SPD(-30), 0, _AR_WSTOP, _AR_TRGEVENT(0),
-                _AR_WEVENT(1),
-                _AR_SPD(15), 1, /*_AR_STPHALF */ _AR_WSTOP, //_AR_SPD(0),
-                _AR_TIMER(3), _AR_WTIMER,
-                _AR_SPD(-35),  2, _AR_WSTOP,
-                // wait and 2-1-3 sleep 3-4-5
-                _AR_WEVENT(2),
-                _AR_SPD(60), 1, SON, 3, _AR_WSTOP,  _AR_TRGEVENT(3),
-                _AR_TIMER(2), _AR_WTIMER,
-                _AR_SPD(-20), 4, SOFF, 5, _AR_WSTOP,
-                _AR_TIMER(4), _AR_WTIMER,
-                // 4, 3 sleep 1
-                _AR_SPD(20), 4, 3, SON, _AR_WSTOP,
-                _AR_TIMER(2), _AR_WTIMER,
-                _AR_WEVENT(4), SOFF,
-                _AR_SPD(-30), 1, _AR_TRG_HALF, _AR_WTRG_U1, _AR_SPD(0),
-				_AR_TIMER(3),_AR_WTIMER,
-				_AR_LED, 0, LED_PRG_25p,
-                _AR_TIMER(7), _AR_WTIMER,
-				 _AR_LED, 0, LED_PRG_OFF, _AR_TIMER(6),_AR_WTIMER,
-                _AR_LOOP};
+            
             
             trctl[0].routeidx = 0;
-            trctl[0].route = route;
+            trctl[0].route = route_1_T0;
             // ctrl_set_mode(0, train_auto);
             
-            static uint8_t route2[] = {
-                    _AR_WEVENT(0),
-                    // 2-1-3
-                    _AR_SPD(60), 1, SON, 3, _AR_TRGEVENT(1), _AR_WSTOP,
-                    // 4-5
-                    _AR_SPD(-40) , 4, SOFF,  5, _AR_WSTOP,
-                    _AR_TIMER(0), _AR_WTIMER,
-                    // 5-6
-                    _AR_SPD(40), 6, _AR_WSTOP,
-                    _AR_TIMER(0), _AR_WTIMER,
-                    _AR_SPD(-40), 5, _AR_WSTOP,
-                    _AR_SPD(40), 4, 3, SON, _AR_WSTOP,
-                    _AR_SPD(-50), 1, SOFF, 0, _AR_WSTOP, _AR_TRGEVENT(2),
-                    // 0-1-2
-                    _AR_WEVENT(3),
-                    _AR_SPD(40), 1, _AR_WSTOP,
-                    _AR_SPD(-40), 2, _AR_WSTOP,
-					_AR_TIMER(1), _AR_WTIMER,
-					_AR_SPD(40), 1, _AR_WSTOP,
-					_AR_SPD(-40), 0, _AR_WSTOP,
-					_AR_TIMER(4), _AR_WTIMER,
-					_AR_SPD(40), 1, _AR_WSTOP,
-					_AR_SPD(-40), 2, _AR_WSTOP,
-					_AR_TRGEVENT(4), _AR_SPD(0),
-                    _AR_LOOP};
+            
             trctl[1].routeidx = 0;
-            trctl[1].route = route2;
+            trctl[1].route = route_1_T1;
         }
         
 		if ((SCEN_TWOTRAIN)) {
@@ -257,7 +324,7 @@ static void check_timers(uint32_t tick)
 
 static void sub_presence_changed(_UNUSED_ uint32_t tick, _UNUSED_ uint8_t from_addr, _UNUSED_ uint8_t lsegnum, _UNUSED_ uint16_t p, _UNUSED_ int16_t ival)
 {
-    abort();
+    //abort();
 #if 0
     xxxx
     
@@ -396,7 +463,28 @@ void ctrl_run_tick(_UNUSED_ uint32_t notif_flags, uint32_t tick, _UNUSED_ uint32
 			int tidx = m.to & 0x7;
 			train_ctrl_t *tvar = &trctl[tidx];
 
-            switch (m.cmd) {
+			switch (m.cmd) {
+			case CMD_START_AUTO:
+				switch (m.v1u) {
+				case 0:
+					trctl[0].route = route_0_T0;
+					trctl[1].route = route_0_T1;
+					break;
+				default:
+				case 1:
+					trctl[0].route = route_1_T0;
+					trctl[1].route = route_1_T1;
+					break;
+				case 2:
+					trctl[0].route = route_2_T0;
+					trctl[1].route = route_2_T1;
+					break;
+				}
+                trctl[0].routeidx = 0;
+                trctl[1].routeidx = 0;
+                ctrl_set_mode(0, train_auto);
+                ctrl_set_mode(1, train_auto);
+                break;
             case CMD_PRESENCE_SUB_CHANGE:
                 if (ignore_ina_presence) break;
                 sub_presence_changed(tick, m.from, m.subc, m.v1u, m.v2);

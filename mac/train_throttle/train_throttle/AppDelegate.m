@@ -364,7 +364,7 @@ badmsg:
     [self didChangeValueForKey:@"dspeedT3"];
 }
 
-
+/*
 - (IBAction) startAuto:(id)sender
 {
     uint8_t spdfrm[] = "|zT\0A|....";
@@ -381,6 +381,16 @@ badmsg:
        [self sendFrame:spdfrm len:l blen:sizeof(spdfrm) then:^{
            self.isAuto = 0;
        }];
+}
+ */
+- (IBAction) startAuto:(id)sender
+{
+    msg_64_t m = {0};
+    m.to = MA_CONTROL();
+    m.from = MA_UI(0);
+    m.cmd = CMD_START_AUTO;
+    m.v1u = _autoNum;
+    [self sendMsg64:m];
 }
 
 - (IBAction) turnoutA:(id)sender

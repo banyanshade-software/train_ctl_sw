@@ -53,7 +53,7 @@ typedef struct {
     int32_t curposmm;
     int32_t beginposmm; // left side is 0, mm of right side
     
-    uint8_t *route;
+    const uint8_t *route;
     uint8_t routeidx;
     uint8_t trigu1:4;
     uint8_t got_texp:1;

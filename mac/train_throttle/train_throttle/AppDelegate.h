@@ -85,6 +85,7 @@
 @property (nonatomic) int train0_auto_spd;
 @property (nonatomic) int train0_auto_state;
 
+@property (nonatomic) int autoNum;
 
 // turnout is identified by tag
 - (IBAction) turnoutA:(id)sender;

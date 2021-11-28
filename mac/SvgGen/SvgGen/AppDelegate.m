@@ -10,6 +10,7 @@
 #import "AppDelegate.h"
 
 #include "topologyP.h"
+#include "topology.h"
 
 @interface AppDelegate ()
 
@@ -78,6 +79,10 @@
     int n = topology_num_sblkd();
     for (int i=0; i<n; i++) {
         const topo_lsblk_t *s = topology_get_sblkd(i);
+        int fut = 0;
+        if (s->canton_addr == 0xFF) {
+            fut=1;
+        }
         if (!s) break;
         [resG appendString:[self generateSblkPoly:s num:i]];
         int cx = ((s->points[s->p0].c + s->points[s->p0+1].c) * SCL_X / 2);
@@ -96,10 +101,13 @@
             rx = cx - 25;
             ry = cy - 19;
         }
+        
         [resT appendFormat:@"<text x=\"%dpx\" y=\"%dpx\" class=\"label\" Font-family=\"Helvetica\" fill=\"#8080A0\" font-size=\"12px\" %s>b%d (c%d)</text>\n",
          tx, ty, v ? "writing-mode=vertical-rl" : "",
             i, s->canton_addr];
         
+        if (fut) continue;
+
         [resT appendFormat:@"<rect class=\"trinfo trinfo_s%d trinfo_c%d\" x=\"%d\" y=\"%d\" width=\"%d\" height=\"%d\" fill=\"#E0FFE0\" stroke=\"#80A080\" stroke-width=\"2px\" />\n",
          i, s->canton_addr,
          rx,ry, v ? 16 : 50, v ? 50 : 16];
@@ -113,9 +121,18 @@
 
 - (NSString *) generateSblkPoly:(const topo_lsblk_t *)seg num:(int)segnum
 {
+    int fut = 0;
+    if (seg->canton_addr == 0xFF) {
+        fut=1;
+    }
     NSMutableString *res = [[NSMutableString alloc]init];
-    [res appendFormat:@"<polyline id=\"SBLK%2.2d\" class=\"track CANTON%d\" stroke=\"#000000\" stroke-width=\"5px\" fill=\"none\" points=\"",
-     segnum, seg->canton_addr];
+    if (!fut) {
+        [res appendFormat:@"<polyline id=\"SBLK%2.2d\" class=\"track CANTON%d\" stroke=\"#000000\" stroke-width=\"5px\" fill=\"none\" points=\"",
+            segnum, seg->canton_addr];
+    } else {
+        [res appendFormat:@"<polyline id=\"SBLK%2.2d\" class=\"track future\" stroke=\"#353585\" stroke-width=\"3px\" stroke-dasharray=\"8 2 2\" fill=\"none\" points=\"",
+            segnum];
+    }
     for (int i=0; i<MAX_POINTS; i++) {
         coord_t pt = seg->points[i];
         if (pt.l<0) break;

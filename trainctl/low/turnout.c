@@ -103,6 +103,8 @@ static turnout_vars_t tvars[NUM_LOCAL_TURNOUTS]={0};
 #define ST_RESETB	4
 // #define ST_TEST		10
 
+#define DBG_MSG_TURNOUT 0
+
 
 #define USE_TURNOUT(_idx) \
 		const turnout_config_t *aconf = get_turnout_cnf(_idx); \
@@ -117,7 +119,7 @@ static void process_turnout_cmd(msg_64_t *m, _UNUSED_ uint32_t tick, _UNUSED_ ui
 		turnout_error(ERR_BAD_PARAM, "bad idx");
 		return;
 	}
-	debug_info('A', 0, "CMD", tidx, m->cmd, avars->value);
+	if ((DBG_MSG_TURNOUT)) debug_info('A', 0, "CMD", tidx, m->cmd, avars->value);
 #ifndef TRAIN_SIMU
 	if (!aconf->cmd_port) return;
 #endif
@@ -181,7 +183,6 @@ int turnout_state(int tidx)
 
 
 
-
 static void process_turnout_timers(_UNUSED_ uint32_t tick, _UNUSED_ uint32_t dt)
 {
 	for (int i=0; i<NUM_LOCAL_TURNOUTS; i++) {
@@ -200,7 +201,7 @@ static void process_turnout_timers(_UNUSED_ uint32_t tick, _UNUSED_ uint32_t dt)
 #endif
 			avars->st = ST_RESETA;
 			itm_debug1(DBG_TURNOUT, "A/SETA", i);
-			debug_info('A', 0, "A0/SETA", 0, 0,0);
+			if ((DBG_MSG_TURNOUT)) debug_info('A', 0, "A0/SETA", 0, 0,0);
 			break;
 		case ST_SETB:
 #ifndef TRAIN_SIMU
@@ -208,7 +209,7 @@ static void process_turnout_timers(_UNUSED_ uint32_t tick, _UNUSED_ uint32_t dt)
 #endif
 			avars->st = ST_RESETB;
 			itm_debug1(DBG_TURNOUT, "A/SETB", i);
-			debug_info('A', 0, "A0/SETB", 0, 0,0);
+			if ((DBG_MSG_TURNOUT)) debug_info('A', 0, "A0/SETB", 0, 0,0);
 			break;
 		case ST_RESETA:
 #ifndef TRAIN_SIMU
@@ -216,7 +217,7 @@ static void process_turnout_timers(_UNUSED_ uint32_t tick, _UNUSED_ uint32_t dt)
 #endif
 			avars->st = ST_IDLE;
 			itm_debug1(DBG_TURNOUT, "A/RESETA", i);
-			debug_info('A', 0, "A0/RESETA", 0, 0,0);
+			if ((DBG_MSG_TURNOUT)) debug_info('A', 0, "A0/RESETA", 0, 0,0);
 			break;
 		case ST_RESETB:
 #ifndef TRAIN_SIMU
@@ -224,7 +225,7 @@ static void process_turnout_timers(_UNUSED_ uint32_t tick, _UNUSED_ uint32_t dt)
 #endif
 			avars->st = ST_IDLE;
 			itm_debug1(DBG_TURNOUT, "A/RESETB", i);
-			debug_info('A', 0, "A0/RESETB", 0, 0,0);
+			if ((DBG_MSG_TURNOUT)) debug_info('A', 0, "A0/RESETB", 0, 0,0);
 			break;
 			/*
 		case ST_TEST:

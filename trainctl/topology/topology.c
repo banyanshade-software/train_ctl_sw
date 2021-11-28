@@ -44,20 +44,40 @@
 #define _PTS(...)
 #endif
 
+#define FUTURE_CANTON 0xFF
+
 static const topo_lsblk_t _Topology[] = {
+#ifdef UNIT_TEST
     // layout 5 segs
     //          canton         ina    steep  len      l1    l2    tn       r1   r2   tn      graph pt
     /* 0 */ { MA_CANTON(0, 0),  0xFF,   0, 98,    -1,   -1, 0xFF,       1,  -1,    0       _PTS(2, {1,3}, {4,3},{5,4},{5,8})},
     /* 1 */ { MA_CANTON(0, 1),  0xFF,   0, 45,     0,    2,    0,      -1,   3,    1       _PTS(0, {5,9}, {5,12}, _VP, _VP)},
     /* 2 */ { MA_CANTON(0, 2),  0xFF,   0, 90,    -1 ,  -1, 0xFF,      -1,   1,    0       _PTS(2, {1,4}, {3,4}, {4,5}, {4,8})},
     /* 3 */ { MA_CANTON(0, 3),  0xFF,   0, 54, 	4,    1,    1,      -1,  -1, 0xFF       _PTS(0, {6,13}, {6,15}, {5,16}, {1,16})},
-#if 0
-    /* 4 */ { MA_CANTON(0, 3),  0xFF,   0, 105,   -1 ,  -1, 0xFF,       3,  -1,    1       _PTS(2, {1,2}, {5,2}, {6,3}, {6,12} )}
-#else
     /* 4 */ { MA_CANTON(0, 3),  0xFF,  -1, 80,   -1,   5,     2,       3,  -1,    1       _PTS(0, {7,4}, {7,8}, {6,10}, {6,12})},
     /* 5 */ { MA_CANTON(0, 3),  0xFF,   0, 58,   -1,  -1,  0xFF,       6,   4,    2       _PTS(0, {1,2}, {5,2}, {6,3}, _VP)},
-    /* 6 */ { MA_CANTON(0, 3),  0xFF,   0, 36,    5,   -1,    2,       -1, -1, 0xFF       _PTS(0, {6,4}, {6,6}, _VP, _VP)}
+    /* 6 */ { MA_CANTON(0, 3),  0xFF,   0, 36,    5,   -1,    2,       7, -1, 0xFF       _PTS(0, {6,4}, {6,6}, _VP, _VP)},
+    /* 7*/  { FUTURE_CANTON,    0xFF,   0, 60,    6,  -1,  0xFF,       8,   -1, 0xFF      _PTS(3, {6,6}, {6,8}, {7,10} ,{7, 14}) },
+    /* 8*/  { FUTURE_CANTON,    0xFF,   0, 60,    7,  -1,  0xFF,       -1,  -1, 0xFF      _PTS(1, {7,14}, {7,16}, {6,17}, {1, 17})}
+#else
+    //          canton         ina    steep  len      l1    l2    tn       r1   r2   tn      graph pt
+       /* 0 */ { MA_CANTON(0, 0),  0xFF,   0, 98,    -1,   -1, 0xFF,       1,  -1,    0       _PTS(2, {1,3}, {4,3},{5,4},{5,9})},
+    /* 1 */ { MA_CANTON(0, 1),  0xFF,   0, 23,     0,    3,    0,       4,  12 ,   5       _PTS(0, {5,10}, {5,11}, _VP, _VP)},
+       /* 2 */ { MA_CANTON(0, 2),  0xFF,   0, 70,    -1 ,  -1, 0xFF,       3,  11,    4       _PTS(2, {1,4}, {3,4}, {4,5}, {4,7})},
+       /* 3 */ { MA_CANTON(0, 2),  0xFF,   0, 20,     2,   -1,    4,      -1,   1,    0       _PTS(0, {4,8}, {4, 9}, _VP, _VP)},
+       /* 4 */ { MA_CANTON(0, 1),  0xFF,   0, 22,     1,   -1,    5,      -1,   5,    1       _PTS(0, {5, 12}, {5, 14}, _VP, _VP)},
+       
+       /* 5 */ { MA_CANTON(0, 3),  0xFF,   0, 54,     6,    4,    1,      -1,   -1, 0xFF       _PTS(0, {6,15}, {6,17}, {5,18}, {1,18})},
+       /* 6 */ { MA_CANTON(0, 3),  0xFF,  -1, 80,   -1,    7,     2,       5,   -1,    1       _PTS(0, {7,4}, {7,8}, {6,10}, {6,14})},
+       /* 7 */ { MA_CANTON(0, 3),  0xFF,   0, 58,   -1,  -1,   0xFF,       8,    6,    2       _PTS(0, {1,2}, {5,2}, {6,3}, _VP)},
+       /* 8 */ { MA_CANTON(0, 3),  0xFF,   0, 36,    7,   -1,     2,       9,   -1, 0xFF       _PTS(0, {6,4}, {6,6}, _VP, _VP)},
+       /* 9*/  { FUTURE_CANTON,    0xFF,   0, 60,    8,  -1,   0xFF,       10,  -1, 0xFF       _PTS(3, {6,6}, {6,8}, {7,10} ,{7, 14}) },
+       /* 10*/ { FUTURE_CANTON,    0xFF,   0, 60,    9,  -1,   0xFF,       -1,  -1, 0xFF       _PTS(0, {7,14}, {7,18}, {6,19}, {1, 19}) },
+                                                      
+       /* 11*/ { FUTURE_CANTON,    0xFF,   0, 20,    -1,  2,      4,       -1,  -1, 0xFF       _PTS(1, {3,8}, {2,9}, {2,11}, _VP) },
+       /* 12*/ { FUTURE_CANTON,    0xFF,   0, 20,    -1,  1,      5,       -1,  -1, 0xFF       _PTS(1, {4,12}, {3, 13}, {3,15}, _VP) }
 #endif
+    
 };
 
 
@@ -80,6 +100,10 @@ const topo_lsblk_t *topology_get_sblkd(int lsblk)
     lsblk_num_t n;
     n.n = lsblk;
     return Topology(n);
+}
+uint8_t get_lsblk_ina3221(lsblk_num_t num)
+{
+    return topology_get_sblkd(num.n)->ina_segnum;
 }
 
 
@@ -106,8 +130,12 @@ void next_lsblk_nums(lsblk_num_t blknum, uint8_t left, lsblk_num_t *pb1, lsblk_n
         pb2->n = Topology(blknum)->right2;
         *tn =  Topology(blknum)->rtn;
     }
-    //if (pb1->n == 0xFF) pb1->n = -1;
-    //if (pb2->n == 0xFF) pb2->n = -1;
+    if ((pb1->n>=0) && (Topology(*pb1)->canton_addr == 0xFF)) {
+        pb1->n = -1; // inactive/future lsblk
+    }
+    if ((pb2->n>=0) && (Topology(*pb2)->canton_addr == 0xFF)) {
+        pb2->n = -1; // inactive/future lsblk
+    }
     if (*tn  == 0xFF) *tn  = -1;
 }
 

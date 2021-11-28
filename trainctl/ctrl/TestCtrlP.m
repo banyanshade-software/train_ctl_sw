@@ -581,7 +581,7 @@ void ctrl2_send_led(uint8_t led_num, uint8_t prog_num)
     int l4 = 10*get_lsblk_len(sfoor, NULL);
     int l5 = 10*get_lsblk_len(sfive, NULL);
     XCTAssert(l3==540);
-    XCTAssert(l4==780);
+    XCTAssert(l4==800);
     
     //tvars.curposmm = 160;
     tvars.beginposmm = 0;
@@ -618,13 +618,13 @@ void ctrl2_send_led(uint8_t led_num, uint8_t prog_num)
     rc  = ctrl2_evt_pose_triggered(0, &tvars, 0x03, (1<<0), -204);
     XCTAssert(!rc);
     XCTAssert(tvars.curposmm==-1020);
-    XCTAssert(tvars.beginposmm==-1000-780);
+    XCTAssert(tvars.beginposmm==-1000-800);
     
     rc = ctrl2_tick_process(0, &tvars, &myconf, 0);
     XCTAssert(rc==2);
     s = dump_msgbuf(0);
     // {D0, C8, 11, -253, -1},{D0, 81, 26, 1, 0},{D0, C8, 50, -640, -1},{D0, C8, 10, 82, 0}
-    EXPMSG({.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_POSE_SET_TRIG0,   .v32=-3560});
+    EXPMSG({.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_POSE_SET_TRIG0,   .v32=-3600});
     XCTAssert(tvars.trig_eoseg==1);
     XCTAssert(tvars.curposmm==-1020);
     XCTAssert(tvars.beginposmm==-1780);

@@ -486,7 +486,10 @@ void ctrl_run_tick(_UNUSED_ uint32_t notif_flags, uint32_t tick, _UNUSED_ uint32
                 ctrl_set_mode(1, train_auto);
                 break;
             case CMD_PRESENCE_SUB_CHANGE:
-                if (ignore_ina_presence) break;
+            	if ((1)) {
+        			debug_info('I', m.subc, "INA", m.v1u, m.v2, 0);
+            	}
+            	if (ignore_ina_presence) break;
                 sub_presence_changed(tick, m.from, m.subc, m.v1u, m.v2);
                 break;
         
@@ -579,7 +582,7 @@ void ctrl_run_tick(_UNUSED_ uint32_t notif_flags, uint32_t tick, _UNUSED_ uint32
 
 static void evt_tleave(int tidx, train_ctrl_t *tvars)
 {
-    if (ignore_ina_presence) {
+    if (ignore_ina_presence || (get_lsblk_ina3221(tvars->c1_sblk) == 0xFF)) {
         itm_debug2(DBG_ERR|DBG_CTRL, "TLeave", tidx, tvars->_state);
         ctrl2_evt_leaved_c1(tidx, tvars);
     } else if (tvars->c1c2){

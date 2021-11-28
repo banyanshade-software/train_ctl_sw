@@ -72,7 +72,7 @@
 
 
 #define SCL_X 40
-#define SCL_Y 50
+#define SCL_Y 40
 
 - (void)generateSblksInG:(NSMutableString *)resG T:(NSMutableString *)resT
 {
@@ -194,7 +194,7 @@ static int rec_is_left(trec_t *rec)
     int nr=0;
     for (int i=0; i<3; i++) {
         int n = rec->rec[i].n;
-        if (n!=1) abort();
+        //if (n!=1) abort();
         nt += n;
         nl += rec->rec[i].l;
         nr += rec->rec[i].r;

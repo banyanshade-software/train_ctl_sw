@@ -64,8 +64,8 @@ static const topo_lsblk_t _Topology[] = {
     //          canton         ina    steep  len      l1    l2    tn       r1   r2   tn      graph pt
        /* 0 */ { MA_CANTON(0, 0),  0xFF,   0, 98,    -1,   -1, 0xFF,       1,  -1,    0    _PTS(2, {L0+1,3}, {L0+4,3},{L0+5,4},{L0+5,9})},
     /* 1 */ { MA_CANTON(0, 1),  0xFF,   0, 23,     0,    3,    0,       4,  12 ,   5       _PTS(0, {L0+5,10}, {L0+5,11}, _VP, _VP)},
-       /* 2 */ { MA_CANTON(0, 2),  0xFF,   0, 70,    -1 ,  -1, 0xFF,       3,  11,    4    _PTS(2, {L0+1,4}, {L0+3,4}, {L0+4,5}, {L0+4,7})},
-       /* 3 */ { MA_CANTON(0, 2),  0xFF,   0, 20,     2,   -1,    4,      -1,   1,    0    _PTS(0, {L0+4,8}, {L0+4, 9}, _VP, _VP)},
+       /* 2 */ { MA_CANTON(0, 2),  0xFF,   0, 70,    -1 ,  -1, 0xFF,       3,  11,    4    _PTS(2, {L0+1,4}, {L0+3,4}, {L0+4,5}, {L0+4,6})},
+       /* 3 */ { MA_CANTON(0, 2),  0xFF,   0, 20,     2,   -1,    4,      -1,   1,    0    _PTS(0, {L0+4,7}, {L0+4, 9}, _VP, _VP)},
        /* 4 */ { MA_CANTON(0, 1),  0xFF,   0, 22,     1,   -1,    5,      -1,   5,    1    _PTS(0, {L0+5, 12}, {L0+5, 14}, _VP, _VP)},
        
        /* 5 */ { MA_CANTON(0, 3),  0xFF,   0, 54,     6,    4,    1,      -1,   -1, 0xFF   _PTS(0, {L0+6,15}, {L0+6,17}, {L0+5,18}, {L0+1,18})},
@@ -75,13 +75,19 @@ static const topo_lsblk_t _Topology[] = {
        /* 9*/  { FUTURE_CANTON,    0xFF,   0, 60,    8,  -1,   0xFF,       10,  -1, 0xFF   _PTS(3, {L0+6,6}, {L0+6,8}, {L0+7,10} ,{L0+7, 14}) },
        /* 10*/ { FUTURE_CANTON,    0xFF,   0, 60,    9,  -1,   0xFF,       -1,  -1, 0xFF   _PTS(0, {L0+7,14}, {L0+7,18}, {L0+6,19}, {L0+1, 19}) },
                                                       
-       /* 11*/ { FUTURE_CANTON,    0xFF,   0, 20,    -1,  2,      4,       -1,  -1, 0xFF   _PTS(0, {L0+3,8}, {L0+2,9}, _VP, _VP) },
+       /* 11*/ { FUTURE_CANTON,    0xFF,   0, 20,    -1,  2,      4,       -1,  -1, 0xFF   _PTS(0, {L0+3,7}, {L0+2,8}, _VP, _VP) },
        /* 12*/ { FUTURE_CANTON,    0xFF,   0, 20,    -1,  1,      5,       13,  -1,    6   _PTS(0, {L0+4,12}, {L0+3, 13}, _VP, _VP) },
        /* 13*/ { FUTURE_CANTON,    0xFF,   0, 20,    12, 15,      6,       14,  -1,    7   _PTS(0, {L0+2,14}, {L0+1, 15}, _VP, _VP) },
        /* 14*/ { FUTURE_CANTON,    0xFF,   0, 20,    13, 16,      7,       -1,  -1, 0xFF   _PTS(0, {L0+0,16}, {L0-1, 17}, _VP, _VP) },
     
        /* 15*/ { FUTURE_CANTON,    0xFF,   0, 20,    -1, -1,   0xFF,       -1,  -1,    6   _PTS(0, {L0+2,10}, {L0+2, 13}, _VP, _VP) },
-       /* 16*/ { FUTURE_CANTON,    0xFF,   0, 20,    -1, -1,   0xFF,       -1,  -1,    7   _PTS(0, {L0+0,13}, {L0+0, 15}, _VP, _VP) },
+       /* 16*/ { FUTURE_CANTON,    0xFF,   0, 20,    17, 19,     8,       -1,  -1,    7    _PTS(0, {L0+0,14}, {L0+0, 15}, _VP, _VP) },
+    
+       /* 17*/ { FUTURE_CANTON,    0xFF,   0, 20,    18, 20,      9,       16,  -1,    8   _PTS(0, {L0+0, 11}, {L0+0, 13}, _VP, _VP) },
+       /* 18*/ { FUTURE_CANTON,    0xFF,   0, 20,    -1, -1,   0xFF,       17,  -1,    9   _PTS(0, {L0+0, 4}, {L0+0, 10}, _VP, _VP)},
+    
+       /* 19*/ { FUTURE_CANTON,    0xFF,   0, 20,    -1, -1,   0xFF,       -1,  16,    8   _PTS(0, {L0-1,4}, {L0-1, 13}, _VP, _VP)},
+       /* 20*/ { FUTURE_CANTON,    0xFF,   0, 20,    -1, -1,   0xFF,       -1,  17,    9   _PTS(0, {L0+1,8}, {L0+1, 10}, _VP, _VP)},
 
 #endif
     

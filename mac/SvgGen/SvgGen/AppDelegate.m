@@ -102,10 +102,15 @@
             ry = cy - 19;
         }
         
-        [resT appendFormat:@"<text x=\"%dpx\" y=\"%dpx\" class=\"label\" Font-family=\"Helvetica\" fill=\"#8080A0\" font-size=\"12px\" %s>b%d (c%d)</text>\n",
-         tx, ty, v ? "writing-mode=vertical-rl" : "",
-            i, s->canton_addr];
-        
+        if (fut) {
+            [resT appendFormat:@"<text x=\"%dpx\" y=\"%dpx\" class=\"label\" Font-family=\"Helvetica\" fill=\"#8080A0\" font-size=\"12px\" %s>f%d </text>\n",
+             tx, ty, v ? "writing-mode=vertical-rl" : "",
+             i];
+        } else {
+            [resT appendFormat:@"<text x=\"%dpx\" y=\"%dpx\" class=\"label\" Font-family=\"Helvetica\" fill=\"#8080A0\" font-size=\"12px\" %s>b%d (c%d)</text>\n",
+            tx, ty, v ? "writing-mode=vertical-rl" : "",
+               i, s->canton_addr];
+        }
         if (fut) continue;
 
         [resT appendFormat:@"<rect class=\"trinfo trinfo_s%d trinfo_c%d\" x=\"%d\" y=\"%d\" width=\"%d\" height=\"%d\" fill=\"#E0FFE0\" stroke=\"#80A080\" stroke-width=\"2px\" />\n",
@@ -194,7 +199,7 @@ static int rec_is_left(trec_t *rec)
     int nr=0;
     for (int i=0; i<3; i++) {
         int n = rec->rec[i].n;
-        //if (n!=1) abort();
+        if (n!=1) abort();
         nt += n;
         nl += rec->rec[i].l;
         nr += rec->rec[i].r;

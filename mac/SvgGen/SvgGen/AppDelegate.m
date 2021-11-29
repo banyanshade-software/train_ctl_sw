@@ -62,7 +62,7 @@
 
 - (NSString *) generateHeader
 {
-    return @"<html><body style=\"background-color:lightgrey;\">hello<br/><svg height=\"500px\" id=\"svg_document\" width=\"800px\" version=\"1.1\" preserveAspectRatio=\"xMidYMid meet\" viewBox=\"0 0 800 500\">\n";
+    return @"<html><body style=\"background-color:lightgrey;\"><svg height=\"500px\" id=\"svg_document\" width=\"800px\" version=\"1.1\" preserveAspectRatio=\"xMidYMid meet\" viewBox=\"0 0 800 500\">\n";
 
 }
 - (NSString *) generateFooter

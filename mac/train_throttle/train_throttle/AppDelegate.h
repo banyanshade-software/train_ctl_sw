@@ -80,7 +80,7 @@
 - (IBAction) defaultPwmMinMax:(id)sender;
 
 - (IBAction) startAuto:(id)sender;
-- (IBAction) stopAuto:(id)sender;
+//- (IBAction) stopAuto:(id)sender;
 @property (nonatomic) int isAuto;
 @property (nonatomic) int train0_auto_spd;
 @property (nonatomic) int train0_auto_state;
@@ -119,6 +119,5 @@
 
 - (IBAction) startBLE:(id)sender;
 
-- (IBAction) startAuto:(id)sender;
 @end
 

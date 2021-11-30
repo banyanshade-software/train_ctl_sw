@@ -587,6 +587,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
+					UNIT_TEST,
 				);
 				INFOPLIST_FILE = trainctlTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -607,6 +608,11 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = "";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					TRAIN_SIMU,
+					HOST_SIDE,
+					UNIT_TEST,
+				);
 				INFOPLIST_FILE = trainctlTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -664,7 +670,6 @@
 					"$(inherited)",
 					TRAIN_SIMU,
 					HOST_SIDE,
-					UNIT_TEST,
 				);
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
@@ -722,7 +727,6 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					TRAIN_SIMU,
 					HOST_SIDE,
-					UNIT_TEST,
 				);
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;

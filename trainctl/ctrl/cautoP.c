@@ -50,12 +50,12 @@ int cauto_update_turnouts(_UNUSED_ int tidx, lsblk_num_t cur, uint8_t left, uint
     return -1;
 }
 
-lsblk_num_t cauto_peek_next_lsblk(int tidx, train_ctrl_t *tvars, uint8_t left)
+lsblk_num_t cauto_peek_next_lsblk(int tidx, train_ctrl_t *tvars, uint8_t left, int nstep)
 {
     lsblk_num_t sret = {-1};
     if (tvars->_mode != train_auto) return sret;
     
-    uint8_t r = tvars->route[tvars->routeidx];
+    uint8_t r = tvars->route[tvars->routeidx+nstep];
     if (r & 0xC0) {
         // control should have been consumed already
         //route_error(tidx, tvars);

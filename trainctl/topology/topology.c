@@ -49,6 +49,7 @@
 
 static const topo_lsblk_t _Topology[] = {
 #ifdef UNIT_TEST
+#error he
     // layout 5 segs
     //          canton         ina    steep  len      l1    l2    tn       r1   r2   tn      graph pt
     /* 0 */ { MA_CANTON(0, 0),  0xFF,   0, 98,    -1,   -1, 0xFF,       1,  -1,    0       _PTS(2, {1,3}, {4,3},{5,4},{5,8})},
@@ -152,6 +153,7 @@ void next_lsblk_nums(lsblk_num_t blknum, uint8_t left, lsblk_num_t *pb1, lsblk_n
     if ((pb2->n>=0) && (Topology(*pb2)->canton_addr == 0xFF)) {
         pb2->n = -1; // inactive/future lsblk
     }
+    if (*tn>=4) *tn = -1; // XXX
     if (*tn  == 0xFF) *tn  = -1;
 }
 
@@ -192,7 +194,7 @@ uint8_t canton_for_lsblk(lsblk_num_t n)
     return Topology(n)->canton_addr;
 }
 
-lsblk_num_t first_lsblk_with_canton(uint8_t ca,  lsblk_num_t fromblk)
+static lsblk_num_t _first_lsblk_with_canton(uint8_t ca,  lsblk_num_t fromblk)
 {
     if (0xFF == ca) {
         lsblk_num_t n = {-1};
@@ -212,6 +214,36 @@ lsblk_num_t first_lsblk_with_canton(uint8_t ca,  lsblk_num_t fromblk)
     lsblk_num_t n = {-1};
     return n;
 }
+
+static inline lsblk_num_t _lsblk(int n)
+{
+    lsblk_num_t r;
+    r.n = n;
+    return r;
+}
+
+lsblk_num_t first_lsblk_with_canton(uint8_t ca,  lsblk_num_t fromblk)
+{
+    lsblk_num_t rs = _first_lsblk_with_canton(ca, fromblk);
+    if (rs.n >= 0) return rs;
+    // try with canton num
+    uint8_t fc = canton_for_lsblk(fromblk);
+    for (int i=0; i<numTopology(); i++) {
+        lsblk_num_t n;
+        n.n = i;
+        const topo_lsblk_t *t = Topology(n);
+        if (t->canton_addr != ca) continue;
+        if ((canton_for_lsblk(_lsblk(t->left1)) != fc)
+            && (canton_for_lsblk(_lsblk(t->left2))  != fc)
+            && (canton_for_lsblk(_lsblk(t->right1)) != fc)
+            && (canton_for_lsblk(_lsblk(t->right2)) != fc)) continue;
+        return n;
+    }
+    lsblk_num_t n = {-1};
+    return n;
+    
+}
+
 lsblk_num_t any_lsblk_with_canton(uint8_t ca)
 {
     if (0xFF == ca) {

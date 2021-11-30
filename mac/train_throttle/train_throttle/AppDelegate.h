@@ -87,6 +87,9 @@
 
 @property (nonatomic) int autoNum;
 
+@property (nonatomic) int ledProg;
+- (IBAction) sendLed:(id)sender;
+
 // turnout is identified by tag
 - (IBAction) turnoutA:(id)sender;
 - (IBAction) turnoutB:(id)sender;

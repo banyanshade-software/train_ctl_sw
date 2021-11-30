@@ -393,6 +393,18 @@ badmsg:
     [self sendMsg64:m];
 }
 
+- (IBAction) sendLed:(id)sender
+{
+    int ledNum = [sender tag];
+    msg_64_t m = {0};
+    m.to = MA_LED_B(0);
+    m.from = MA_UI(0);
+    m.cmd = CMD_LED_RUN;
+    m.v1u = ledNum;
+    m.v2u = _ledProg;
+    [self sendMsg64:m];
+}
+
 - (IBAction) turnoutA:(id)sender
 {
     NSControl *c = (NSControl *)sender;

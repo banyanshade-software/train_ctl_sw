@@ -38,14 +38,12 @@ int cauto_update_turnouts(_UNUSED_ int tidx, lsblk_num_t cur, uint8_t left, uint
     if (ta.n == next) {
         int v = topology_get_turnout(tn);
         if (!v) return 0;
-        ctrl2_set_turnout(tn, 0);
-        return 1;
+        return ctrl2_set_turnout(tn, 0, tidx);
     }
     if (tb.n == next) {
         int v = topology_get_turnout(tn);
         if (v) return 0;
-        ctrl2_set_turnout(tn, 1);
-        return 1;
+        return ctrl2_set_turnout(tn, 1, tidx);
     }
     return -1;
 }
@@ -70,8 +68,12 @@ lsblk_num_t cauto_peek_next_lsblk(int tidx, train_ctrl_t *tvars, uint8_t left, i
     if (_AR_WSTOP == r) return sret;
     sret.n = r;
     itm_debug3(DBG_AUTO, "ca.upd_to", tidx, nstep, r);
-    cauto_update_turnouts(tidx, cur, left, r);
-
+    int rc = cauto_update_turnouts(tidx, cur, left, r);
+    if (0 && rc) {
+    	// still return possible next lsblk, it will just be detected as alternate
+    	lsblk_num_t snone = {-1};
+    	return snone;
+    }
     return sret;
 }
 

@@ -274,11 +274,11 @@ uint8_t next_block_addr(uint8_t blkaddr, uint8_t left)
 static volatile uint32_t turnoutvals = 0; // bit field
 uint8_t topology_or_occupency_changed = 0;
 
-void topolgy_set_turnout(int tn, int v)
+int topolgy_set_turnout(int tn, int v, int numtrain)
 {
-	if (tn >= NUM_TURNOUTS) return;
-	if (tn<0) return;
-	if (tn>31) return;
+	if (tn >= NUM_TURNOUTS) return -1;
+	if (tn<0) return -1;
+	if (tn>31) return -1;
 
 	if (v) {
 		__sync_fetch_and_or(&turnoutvals, (1<<tn));
@@ -287,6 +287,7 @@ void topolgy_set_turnout(int tn, int v)
 	}
     topology_or_occupency_changed = 1;
 	itm_debug3(DBG_TURNOUT, "tt",tn,v, topology_get_turnout(tn));
+	return 0;
 }
 int topology_get_turnout(int tn)
 {

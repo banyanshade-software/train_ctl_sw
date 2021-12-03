@@ -86,8 +86,9 @@ static void purge_block_delayed(void)
 }
 
 
-void ctrl2_set_turnout(int tn, int v)
+int ctrl2_set_turnout(int tn, int v, int tn)
 {
+	return 0;
 }
 void ctrl2_send_led(uint8_t led_num, uint8_t prog_num)
 {

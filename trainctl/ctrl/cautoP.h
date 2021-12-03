@@ -20,9 +20,6 @@ void cauto_had_trigU1(int tidx, train_ctrl_t *tvars);
 void cauto_had_timer(int tidx, train_ctrl_t *tvars);
 void cauto_end_tick(int tidx, train_ctrl_t *tvars);
 
-// provided by ctrl.h
-extern void ctrl2_set_turnout(int tn, int v); // ctrl.c TODO move proto
-extern void ctrl2_send_led(uint8_t led_num, uint8_t prog_num);
 
 
 /*

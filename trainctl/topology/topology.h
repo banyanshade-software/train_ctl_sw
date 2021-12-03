@@ -84,7 +84,7 @@ uint8_t get_lsblk_ina3221(lsblk_num_t num);
 // the turnout. ctrl.c does this
 // 0=straight (TURNOUT_A), 1=turn (TURNOUT_B)
 
-void topolgy_set_turnout(int tn, int v);
-int  topology_get_turnout(int tn);
+int topolgy_set_turnout(int tn, int v, int numtrain);
+int topology_get_turnout(int tn);
 
 #endif /* TOPOLOGY_TOPOLOGY_H_ */

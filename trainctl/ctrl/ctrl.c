@@ -89,7 +89,7 @@ static void sub_presence_changed(uint32_t tick, uint8_t from_addr, uint8_t segnu
 
 // ----------------------------------------------------------------------------
 // turnouts
-static void set_turnout(int tn, int v);
+static int set_turnout(int tn, int v, int train);
 
 // ----------------------------------------------------------------------------
 // behaviour
@@ -225,8 +225,8 @@ static void ctrl_init(void)
 	memset(trctl, 0, sizeof(train_ctrl_t)*NUM_TRAINS);
 	ctrl_set_mode(0, train_manual);
 	//ctrl_set_mode(1, train_auto);
-    set_turnout(0, 0);
-    set_turnout(1, 0);
+    set_turnout(0, 0, -1);
+    set_turnout(1, 0, -1);
     lsblk_num_t s0 = {0};
     lsblk_num_t s2 = {2};
     lsblk_num_t _UNUSED_ s3 = {3};
@@ -428,13 +428,13 @@ void ctrl_run_tick(_UNUSED_ uint32_t notif_flags, uint32_t tick, _UNUSED_ uint32
             default:
                 break;
             case CMD_TURNOUT_HI_A:
-                set_turnout(m.v1u, 0);
+                set_turnout(m.v1u, 0, -1);
                 break;
             case CMD_TURNOUT_HI_B:
-                set_turnout(m.v1u, 1);
+                set_turnout(m.v1u, 1, -1);
                 break;
             case CMD_TURNOUT_HI_TOG:
-                set_turnout(m.v1u, topology_get_turnout(m.v1u) ? 0 : 1);
+                set_turnout(m.v1u, topology_get_turnout(m.v1u) ? 0 : 1, -1);
                 break;
         }
         // -----------------------------------------
@@ -634,29 +634,36 @@ static void evt_timer(int tidx, train_ctrl_t *tvar, int tnum)
 // - updates topology
 // - sends info to UI (cto)
 
-static void set_turnout(int tn, int v)
+static int set_turnout(int tn, int v, int train)
 {
 	itm_debug2(DBG_CTRL, "TURN", tn, v);
 	if (tn<0) fatal();
 	if (tn>=NUM_TURNOUTS) fatal();
 	if (tn>=NUM_LOCAL_TURNOUTS) fatal(); // TODO
+
+	int rc = topolgy_set_turnout(tn, v, train);
+    if (rc) {
+    	itm_debug3(DBG_CTRL, "tn busy", train, tn, rc);
+    	return rc;
+    }
+
+	// send to turnout
     msg_64_t m = {0};
 	m.from = MA_CONTROL();
 	m.to = MA_TURNOUT(0, tn); // TODO board num
 	m.cmd = v ? CMD_TURNOUT_B : CMD_TURNOUT_A;
-
 	mqf_write_from_ctrl(&m);
-	topolgy_set_turnout(tn, v);
-    
-    // forward to CTO
+
+    // forward to UI/CTO
     m.to = MA_UI(UISUB_TRACK);
     m.v2 = tn;
     mqf_write_from_ctrl(&m);
+    return 0;
 }
 
-void ctrl2_set_turnout(int tn, int v)
+int ctrl2_set_turnout(int tn, int v, int train)
 {
-    set_turnout(tn, v);
+    return set_turnout(tn, v, train);
 }
 
 

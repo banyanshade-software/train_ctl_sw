@@ -73,8 +73,12 @@ extern void ctrl2_send_led(uint8_t led_num, uint8_t prog_num);
 
 #define _AR_LED          (0xFB)
 
+#define _AR_DBG  0xFC
 #define _AR_EXT  0xFD
 #define _AR_LOOP 0xFE
 #define _AR_END  0xFF
  
+
+#define _ARX_CLR_EVENT 0x01
+
 #endif /* cautoP_h */

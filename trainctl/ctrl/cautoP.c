@@ -53,8 +53,14 @@ int cauto_update_turnouts(_UNUSED_ int tidx, lsblk_num_t cur, uint8_t left, uint
 lsblk_num_t cauto_peek_next_lsblk(int tidx, train_ctrl_t *tvars, uint8_t left, int nstep)
 {
     lsblk_num_t sret = {-1};
+    lsblk_num_t cur = tvars->c1_sblk;
     if (tvars->_mode != train_auto) return sret;
     
+    if (nstep) cur.n = tvars->route[tvars->routeidx+nstep-1];
+    if (cur.n & 0xC0) {
+    	route_error(tidx, tvars);
+    	return sret;
+    }
     uint8_t r = tvars->route[tvars->routeidx+nstep];
     if (r & 0xC0) {
         // control should have been consumed already
@@ -63,13 +69,26 @@ lsblk_num_t cauto_peek_next_lsblk(int tidx, train_ctrl_t *tvars, uint8_t left, i
     }
     if (_AR_WSTOP == r) return sret;
     sret.n = r;
-    itm_debug1(DBG_AUTO, "ca.upd_to", tidx);
-    cauto_update_turnouts(tidx, tvars->c1_sblk, left, r);
+    itm_debug3(DBG_AUTO, "ca.upd_to", tidx, nstep, r);
+    cauto_update_turnouts(tidx, cur, left, r);
 
     return sret;
 }
 
 static uint8_t events[8] = {0};
+
+//extern train_ctrl_t *tvars;
+
+static void ar_ext(_UNUSED_ int tidx, _UNUSED_ train_ctrl_t *tvars, uint8_t c1, _UNUSED_ uint8_t c2)
+{
+	switch (c1) {
+	case _ARX_CLR_EVENT:
+		memset(events, 0, sizeof(events));
+		break;
+	default:
+		break;
+	}
+}
 
 static void check_for_ctrl(int tidx, train_ctrl_t *tvars)
 {
@@ -167,6 +186,16 @@ static void check_for_ctrl(int tidx, train_ctrl_t *tvars)
             tvars->routeidx = 0;
             continue;
         }
+        if (r == _AR_DBG) {
+        	itm_debug1(DBG_AUTO, "heho", tidx);
+            tvars->routeidx++;
+            continue;
+        }
+        if (r == _AR_EXT) {
+        	ar_ext(tidx, tvars, tvars->route[tvars->routeidx+1], tvars->route[tvars->routeidx+2]);
+        	tvars->routeidx += 3;
+        	continue;
+        }
         itm_debug3(DBG_ERR|DBG_AUTO, "ca.unkn", tidx, tvars->routeidx, r);
         route_error(tidx, tvars);
         break;
@@ -216,17 +245,31 @@ void cauto_c1_updated(int tidx, train_ctrl_t *tvars)
 {
 	itm_debug1(DBG_AUTO, "ca.c1", tidx);
     if (tvars->_mode != train_auto) return;
-    if ((tvars->route) &&  (tvars->_dir) && (0 == (tvars->route[tvars->routeidx] & 0xC0))) {
-        int nsb = tvars->route[tvars->routeidx] & 0x7F;
-        if (tvars->c1_sblk.n == nsb) {
-        	itm_debug2(DBG_AUTO, "ca.c1", tidx, nsb);
-            tvars->routeidx++;
-            check_for_ctrl(tidx, tvars);
-        } else {
-            itm_debug3(DBG_AUTO|DBG_ERR, "ca.c1 bad", tidx, nsb, tvars->c1_sblk.n);
-            route_error(tidx, tvars);
-        }
+    if (!tvars->route) return;
+    if (!tvars->_dir) return;
+    if (0 != (tvars->route[tvars->routeidx] & 0xC0)) return;
+
+    /*
+    int nsb = tvars->route[tvars->routeidx] & 0x7F;
+    if (tvars->c1_sblk.n == nsb) {
+    	// normal case : new c1 is what we expected
+    	itm_debug2(DBG_AUTO, "ca.c1", tidx, nsb);
+    	tvars->routeidx++;
+    	check_for_ctrl(tidx, tvars);
+    	return;
+    }*/
+    for (int i=0; i<3; i++) {
+    	if (0 != (tvars->route[tvars->routeidx+i] & 0xC0)) break;
+    	int nsb = tvars->route[tvars->routeidx+i] & 0x7F;
+    	if (tvars->c1_sblk.n == nsb) {
+    		tvars->routeidx += i+1;
+    		check_for_ctrl(tidx, tvars);
+    		return;
+    	}
     }
+    itm_debug2(DBG_AUTO|DBG_ERR, "ca.c1 bad", tidx, tvars->c1_sblk.n);
+    route_error(tidx, tvars);
+
 }
 
 void cauto_end_tick(int tidx, train_ctrl_t *tvars)

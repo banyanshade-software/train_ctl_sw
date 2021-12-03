@@ -135,17 +135,19 @@ static const uint8_t route_0_T1[] = {_AR_WEVENT(0),
 // ----------------------------------------------------------------------------
 
 static const uint8_t route_1_T0[] = {
-    _AR_LED, 0, LED_PRG_FLASH, _AR_TIMER(3), _AR_WTIMER, SOFF,
-    // T0 starts on 1
+	_AR_EXT, _ARX_CLR_EVENT, 0,
+    _AR_LED, 0, LED_PRG_FLASH, _AR_TIMER(2), _AR_WTIMER, SOFF,
+    // T0 starts on 0 now
     // 1->0->2
-    _AR_SPD(-30), 0, _AR_WSTOP, _AR_TRGEVENT(0),
+    /*_AR_SPD(-30), 0, _AR_WSTOP,*/
+	_AR_TRGEVENT(0),
     _AR_WEVENT(1),
     _AR_SPD(15), 1, 4,  _AR_WSTOP,
     _AR_TIMER(3), _AR_WTIMER,
-    _AR_SPD(-35), 1, 2, _AR_WSTOP,
+    _AR_SPD(-35), 1, 3, 2, _AR_WSTOP,  _AR_SPD(0),
     // wait and 2-1-3 sleep 3-4-5
-    _AR_WEVENT(2),
-    _AR_SPD(60), 1, 4, SON, 5, _AR_WSTOP,  _AR_TRGEVENT(3),
+    _AR_WEVENT(2), _AR_DBG,
+    _AR_SPD(50), 3, 1, 4, 5, SON,_AR_WSTOP,  _AR_TRGEVENT(3),
     _AR_TIMER(2), _AR_WTIMER,
     _AR_SPD(-20), 6, SOFF, 7, _AR_WSTOP,
     _AR_TIMER(4), _AR_WTIMER,
@@ -153,7 +155,7 @@ static const uint8_t route_1_T0[] = {
     _AR_SPD(20), 6, 5, SON, _AR_WSTOP,
     _AR_TIMER(2), _AR_WTIMER,
     _AR_WEVENT(4), SOFF,
-    _AR_SPD(-30), 4, 1, _AR_TRG_HALF, _AR_WTRG_U1, _AR_SPD(0),
+    _AR_SPD(-30), 4, 1, 0, /* _AR_TRG_HALF, _AR_WTRG_U1, _AR_SPD(0),*/ _AR_WSTOP,
     _AR_TIMER(3),_AR_WTIMER,
     _AR_LED, 0, LED_PRG_25p,
     _AR_TIMER(7), _AR_WTIMER,
@@ -164,7 +166,7 @@ static const uint8_t route_1_T0[] = {
 static const uint8_t route_1_T1[] = {
     _AR_WEVENT(0),
     // 2-1-3
-    _AR_SPD(60), 1, 4, SON, 5, _AR_TRGEVENT(1), _AR_WSTOP,
+    _AR_SPD(60), 3, 1, 4, SON, 5, _AR_TRGEVENT(1), _AR_WSTOP,
     // 4-5
     _AR_SPD(-40) , 6, SOFF,  7, _AR_WSTOP,
     _AR_TIMER(0), _AR_WTIMER,
@@ -173,17 +175,17 @@ static const uint8_t route_1_T1[] = {
     _AR_TIMER(0), _AR_WTIMER,
     _AR_SPD(-40), 7, _AR_WSTOP,
     _AR_SPD(40), 6, 5, SON, _AR_WSTOP,
-    _AR_SPD(-50), 4, SOFF, 1,  0, _AR_WSTOP, _AR_TRGEVENT(2),
+    _AR_SPD(-50), SOFF, 4, 1,  0, _AR_WSTOP, _AR_TRGEVENT(2),
     // 0-1-2
     _AR_WEVENT(3),
     _AR_SPD(40), 1, 4, _AR_WSTOP,
-    _AR_SPD(-40), 1, 2, _AR_WSTOP,
+    _AR_SPD(-40), 1, 3, 2, _AR_WSTOP,
     _AR_TIMER(1), _AR_WTIMER,
-    _AR_SPD(40), 1, 4, _AR_WSTOP,
+    _AR_SPD(40), 3, 1, 4, _AR_WSTOP,
     _AR_SPD(-40), 1, 0, _AR_WSTOP,
     _AR_TIMER(4), _AR_WTIMER,
     _AR_SPD(40), 1, 4, _AR_WSTOP,
-    _AR_SPD(-40), 1, 2, _AR_WSTOP,
+    _AR_SPD(-40), 1, 3,  2, _AR_WSTOP,
     _AR_TRGEVENT(4), _AR_SPD(0),
     _AR_LOOP
 };
@@ -191,11 +193,24 @@ static const uint8_t route_1_T1[] = {
 // ----------------------------------------------------------------------------
 
 static const uint8_t route_2_T1[] = {
-    _AR_WEVENT(1),
+		_AR_WEVENT(1),
+		_AR_SPD(50), 3, 1, 4, _AR_SPD(0), _AR_SPD(-50), 1, 3, 2, _AR_WSTOP,
+		_AR_TIMER(2), _AR_WTIMER,
+		_AR_SPD(50), 3, 1, 4, _AR_SPD(0), _AR_SPD(-50), 1, 3, 2, _AR_WSTOP,
+		_AR_TIMER(2), _AR_WTIMER,
+		_AR_SPD(50), 3, 1, 4, _AR_SPD(0), _AR_SPD(-50), 1, 3, 2, _AR_WSTOP,
+		_AR_TIMER(2), _AR_WTIMER,
+
     _AR_LOOP
 };
 static const uint8_t route_2_T0[] = {
+    _AR_LED, 0, LED_PRG_FLASH, _AR_TIMER(2), _AR_WTIMER, SOFF,
     _AR_TRGEVENT(1),
+	_AR_SPD(50), 1, 4, _AR_SPD(0), _AR_SPD(-50), 1, 0, _AR_WSTOP,
+	_AR_TIMER(2), _AR_WTIMER,
+	_AR_SPD(50), 1, 4, _AR_SPD(0), _AR_SPD(-50), 1, 0, _AR_WSTOP,
+	_AR_TIMER(2), _AR_WTIMER,
+	_AR_SPD(50), 1, 4, _AR_SPD(0), _AR_SPD(-50), 1, 0, _AR_WSTOP,
     _AR_TIMER(5), _AR_WTIMER,
     _AR_LOOP
 };
@@ -212,7 +227,7 @@ static void ctrl_init(void)
 	//ctrl_set_mode(1, train_auto);
     set_turnout(0, 0);
     set_turnout(1, 0);
-    lsblk_num_t s1 = {1};
+    lsblk_num_t s0 = {0};
     lsblk_num_t s2 = {2};
     lsblk_num_t _UNUSED_ s3 = {3};
 	if ((1)) {
@@ -220,7 +235,7 @@ static void ctrl_init(void)
         ctrl2_init_train(0, &trctl[0], s2);
         ctrl_set_mode(0, train_manual);
 #else
-        ctrl2_init_train(0, &trctl[0], s1);
+        ctrl2_init_train(0, &trctl[0], s0);
         ctrl2_init_train(1, &trctl[1], s2);
         ctrl_set_mode(0, train_manual);
         ctrl_set_mode(1, train_manual);
@@ -341,7 +356,7 @@ static void sub_presence_changed(_UNUSED_ uint32_t tick, _UNUSED_ uint8_t from_a
 static void posecm_measured(int tidx, int32_t pose, lsblk_num_t blk1, lsblk_num_t blk2)
 {
 	int cm = get_lsblk_len(blk1, NULL);
-	if (blk2.n >= 0) cm += get_lsblk_len(blk2);
+	if (blk2.n >= 0) cm += get_lsblk_len(blk2, NULL);
 	int32_t ppcm = pose / cm;
 	itm_debug2(DBG_POSEC, "ppcm", tidx, ppcm);
 	debug_info('P', tidx, "PPCM", ppcm, 0,0);
@@ -446,7 +461,13 @@ void ctrl_run_tick(_UNUSED_ uint32_t notif_flags, uint32_t tick, _UNUSED_ uint32
 					break;
 				}
                 trctl[0].routeidx = 0;
+                trctl[0].got_u1 = 0;
+                trctl[0].trigu1 = 0;
+                trctl[0].got_texp = 0;
                 trctl[1].routeidx = 0;
+                trctl[1].got_u1 = 0;
+                trctl[1].trigu1 = 0;
+                trctl[1].got_texp = 0;
                 ctrl_set_mode(0, train_auto);
                 ctrl_set_mode(1, train_auto);
                 break;

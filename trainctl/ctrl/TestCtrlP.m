@@ -86,7 +86,7 @@ static void purge_block_delayed(void)
 }
 
 
-int ctrl2_set_turnout(int tn, int v, int tn)
+int ctrl2_set_turnout(int tn, int v, int trn)
 {
 	return 0;
 }
@@ -109,8 +109,8 @@ void ctrl2_send_led(uint8_t led_num, uint8_t prog_num)
     occupency_clear();
     mqf_clear(&from_ctrl);
     memset(&tvars, 0, sizeof(tvars));
-    topolgy_set_turnout(0, 0);
-    topolgy_set_turnout(1, 0);
+    topology_set_turnout(0, 0, -1);
+    topology_set_turnout(1, 0, -1);
 
 
     tvars._mode = train_manual;
@@ -325,16 +325,17 @@ void ctrl2_send_led(uint8_t led_num, uint8_t prog_num)
     // {D0, C8, 11, 0, 255},{D0, 81, 26, 2, 0}
     EXPMSG({.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_C1_C2,        .vb0=0, .vb1=0, .vb2=0xFF, .vb3=0});
     
-    // do NOT delayed free for block1
+    // do NOT delayed free for block1 (delayed free is activated, but no tick)
     // thus going right will be forbidden due to block occupied
-    //    purge_block_delayed();
-
+    
+    // Since train number is not cleared until actual free, reset it manually
+    set_block_addr_occupency(1, BLK_OCC_FREE, -1, snone);
 
     // now go right
     ctrl2_upcmd_set_desired_speed(0, &tvars, 90);
     rc = ctrl2_tick_process(0, &tvars, tconf, 0);
     XCTAssert(rc==2);
-    //NSString *s = dump_msgbuf(0);
+    NSString *s = dump_msgbuf(0);
     // {D0, C8, 11, 256, 257},{D0, 81, 26, 1, 0},{D0, C8, 10, 70, 0}
     EXPMSG({.to=MA_UI(UISUB_TFT), .from=0xD0, .cmd=CMD_TRSTATE_NOTIF,    .v1=3, .v2=0});
     XCTAssert(tvars._dir==1);
@@ -413,7 +414,7 @@ void ctrl2_send_led(uint8_t led_num, uint8_t prog_num)
     XCTAssert(0==check_occupency(1, -1));
     //XCTAssert(tvars.spd_limit == 0);
     
-    topolgy_set_turnout(1, 1);
+    topology_set_turnout(1, 1, -1);
     rc = ctrl2_tick_process(0, &tvars, tconf, 1);
     XCTAssert(rc==3);
     s = dump_msgbuf(0);
@@ -458,7 +459,7 @@ void ctrl2_send_led(uint8_t led_num, uint8_t prog_num)
     XCTAssert(0==check_occupency(1, -1));
 
     
-    topolgy_set_turnout(1, 1);
+    topology_set_turnout(1, 1, -1);
     rc = ctrl2_tick_process(0, &tvars, tconf, 1);
     XCTAssert(rc==3);
     s = dump_msgbuf(0);
@@ -477,7 +478,7 @@ void ctrl2_send_led(uint8_t led_num, uint8_t prog_num)
 {
     [self testTrainStartRight];
     
-    topolgy_set_turnout(1, 1);
+    topology_set_turnout(1, 1, -1);
     int rc = ctrl2_tick_process(0, &tvars, tconf, 1);
     XCTAssert(rc==3);
     //NSString *s = dump_msgbuf(0);
@@ -506,8 +507,8 @@ void ctrl2_send_led(uint8_t led_num, uint8_t prog_num)
 
 - (void) testTrainStartC2RightBlk
 {
-    topolgy_set_turnout(0, 0);
-    topolgy_set_turnout(1, 1); // route from c0-c1-c3
+    topology_set_turnout(0, 0, -1);
+    topology_set_turnout(1, 1, -1); // route from c0-c1-c3
     tvars.c1_sblk = szero;
     tvars.can1_addr = 0x00;
     int rc = ctrl2_tick_process(0, &tvars, tconf, 0);
@@ -570,8 +571,8 @@ void ctrl2_send_led(uint8_t led_num, uint8_t prog_num)
     memcpy(&myconf, tconf, sizeof(myconf));
     myconf.pose_per_cm = 20;
     
-    topolgy_set_turnout(1, 0);
-    topolgy_set_turnout(2, 1);
+    topology_set_turnout(1, 0, -1);
+    topology_set_turnout(2, 1, -1);
     ctrl2_init_train(0, &tvars, sthree);
     int rc = ctrl2_tick_process(0, &tvars, &myconf, 0);
     XCTAssert(rc==1);
@@ -580,7 +581,7 @@ void ctrl2_send_led(uint8_t led_num, uint8_t prog_num)
     train_ctrl_t savtvar = tvars;
     int l3 = 10*get_lsblk_len(sthree, NULL);
     int l4 = 10*get_lsblk_len(sfoor, NULL);
-    int l5 = 10*get_lsblk_len(sfive, NULL);
+    //int l5 = 10*get_lsblk_len(sfive, NULL);
     XCTAssert(l3==540);
     XCTAssert(l4==800);
     
@@ -628,11 +629,11 @@ void ctrl2_send_led(uint8_t led_num, uint8_t prog_num)
     EXPMSG({.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_POSE_SET_TRIG0,   .v32=-3600});
     XCTAssert(tvars.trig_eoseg==1);
     XCTAssert(tvars.curposmm==-1020);
-    XCTAssert(tvars.beginposmm==-1780);
+    XCTAssert(tvars.beginposmm==-1800);
     
     ctrl2_evt_stop_detected(0, &tvars, -3000);
     XCTAssert(tvars.curposmm==-1500);
-    XCTAssert(tvars.beginposmm==-1780);
+    XCTAssert(tvars.beginposmm==-1800);
 
     rc = ctrl2_tick_process(0, &tvars, &myconf, 0);
     //XCTAssert(rc==2);
@@ -654,7 +655,7 @@ void ctrl2_send_led(uint8_t led_num, uint8_t prog_num)
     XCTAssert(tvars.trig_eoseg==1);
 
     XCTAssert(tvars.curposmm==-1500);
-    XCTAssert(tvars.beginposmm==-1780);
+    XCTAssert(tvars.beginposmm==-1800);
     
     XCTAssert(tvars.trig_eoseg==1);
     rc  = ctrl2_evt_pose_triggered(0, &tvars, 0x03, (1<<0), -199);
@@ -677,8 +678,8 @@ void ctrl2_send_led(uint8_t led_num, uint8_t prog_num)
 
 - (void) testSub1
 {
-    topolgy_set_turnout(1, 0);
-    topolgy_set_turnout(2, 1);
+    topology_set_turnout(1, 0, -1);
+    topology_set_turnout(2, 1, -1);
     ctrl2_init_train(0, &tvars, sthree);
     int rc = ctrl2_tick_process(0, &tvars, tconf, 0);
     XCTAssert(rc==1);
@@ -714,7 +715,7 @@ void ctrl2_send_led(uint8_t led_num, uint8_t prog_num)
     rc = ctrl2_tick_process(0, &tvars, tconf, 0);
     XCTAssert(rc==2);
     s = dump_msgbuf(0);
-    EXPMSG({.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_POSE_SET_TRIG0,   .v32=-1560});
+    EXPMSG({.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_POSE_SET_TRIG0,   .v32=-1600});
     XCTAssert(tvars.trig_eoseg==1);
     XCTAssert(tvars._dir==-1);
     XCTAssert(tvars._target_speed == 82);
@@ -729,7 +730,7 @@ void ctrl2_send_led(uint8_t led_num, uint8_t prog_num)
     s = dump_msgbuf(0);
     occupency_block_addr_info(3, NULL, &rsblk);
     XCTAssert(rsblk==5);
-    EXPMSG({.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_POSE_SET_TRIG0,   .v32=-2140}
+    EXPMSG({.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_POSE_SET_TRIG0,   .v32=-2520}
           ,{.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_TARGET_SPEED, .v1=70, .v2=0});
     XCTAssert(tvars.trig_eoseg==0);
     XCTAssert(tvars._dir==-1);
@@ -805,8 +806,8 @@ void ctrl2_send_led(uint8_t led_num, uint8_t prog_num)
 }
 - (void) test_update_c2
 {
-    topolgy_set_turnout(0, 0);
-    topolgy_set_turnout(1, 0);
+    topology_set_turnout(0, 0, -1);
+    topology_set_turnout(1, 0, -1);
     tvars._dir = 1;
     tvars._target_speed = 90;
     tvars.desired_speed = 90;
@@ -839,7 +840,7 @@ void ctrl2_send_led(uint8_t led_num, uint8_t prog_num)
            {.to=MA_TRAIN_SC(0), .from=0xD0, .cmd=CMD_SET_C1_C2, .vb0=1, .vb1=1, .vb2=0xFF, .vb3=1});
 
     // train should restart after turnout change
-    topolgy_set_turnout(1, 1);
+    topology_set_turnout(1, 1, -1);
     ctrl_update_c2_state_limits(0, &tvars, tconf, upd_check);
     XCTAssert(tvars.can2_addr == 0x03);
     XCTAssert(tvars.spd_limit == 100);

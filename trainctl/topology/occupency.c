@@ -152,6 +152,16 @@ void check_block_delayed(_UNUSED_ uint32_t tick)
 static volatile uint8_t  lockedby[NUM_TURNOUTS] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
 
 
+static  void _notify_chg_owner(uint8_t turnout, int8_t numtrain)
+{
+    msg_64_t m = {0};
+    m.cmd = CMD_TN_RESER_NOTIF;
+    m.v1 = turnout;
+    m.v2 = numtrain;
+    m.to = MA_UI(UISUB_TRACK);
+    m.cmd = CMD_BLK_CHG_NOTIF;
+    mqf_write_from_ctrl(&m);
+}
 int occupency_turnout_reserve(uint8_t turnout, int8_t numtrain)
 {
 	if (turnout >= NUM_TURNOUTS) return -1;
@@ -164,6 +174,7 @@ int occupency_turnout_reserve(uint8_t turnout, int8_t numtrain)
 		if (!ok) {
 			expected = 0xFF;
 			ok = __atomic_compare_exchange_n(&lockedby[turnout], &expected, numtrain, 0 /*weak*/, __ATOMIC_ACQUIRE/*success memorder*/, __ATOMIC_ACQUIRE/*fail memorder*/ );
+            _notify_chg_owner(turnout, numtrain);
 		}
 		if (!ok) {
 			return -1;
@@ -175,7 +186,11 @@ int occupency_turnout_reserve(uint8_t turnout, int8_t numtrain)
 
 void occupency_turnout_release(uint8_t turnout, _UNUSED_ int8_t train)
 {
+    int l = lockedby[turnout];
 	lockedby[turnout] = 0xFF;
+    if (l != 0xFF) {
+        _notify_chg_owner(turnout, -1);
+    }
 }
 
 static void occupency_turnout_release_for_train_canton(int8_t train, uint8_t canton)

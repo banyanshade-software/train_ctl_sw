@@ -49,7 +49,7 @@
 
 static const topo_lsblk_t _Topology[] = {
 #ifdef UNIT_TEST
-#error he
+//#error he
     // layout 5 segs
     //          canton         ina    steep  len      l1    l2    tn       r1   r2   tn      graph pt
     /* 0 */ { MA_CANTON(0, 0),  0xFF,   0, 98,    -1,   -1, 0xFF,       1,  -1,    0       _PTS(2, {1,3}, {4,3},{5,4},{5,8})},

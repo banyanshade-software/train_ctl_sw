@@ -364,25 +364,8 @@ badmsg:
     [self didChangeValueForKey:@"dspeedT3"];
 }
 
-/*
-- (IBAction) startAuto:(id)sender
-{
-    uint8_t spdfrm[] = "|zT\0A|....";
-    int l = 2+4+0;
-    [self sendFrame:spdfrm len:l blen:sizeof(spdfrm) then:^{
-        self.isAuto = 1;
-    }];
 
-}
-- (IBAction) stopAuto:(id)sender
-{
-    uint8_t spdfrm[] = "|zT\0a|....";
-       int l = 2+4+0;
-       [self sendFrame:spdfrm len:l blen:sizeof(spdfrm) then:^{
-           self.isAuto = 0;
-       }];
-}
- */
+
 - (IBAction) startAuto:(id)sender
 {
     msg_64_t m = {0};
@@ -395,7 +378,7 @@ badmsg:
 
 - (IBAction) sendLed:(id)sender
 {
-    int ledNum = [sender tag];
+    int ledNum = (int) [sender tag];
     msg_64_t m = {0};
     m.to = MA_LED_B(0);
     m.from = MA_UI(0);
@@ -2100,6 +2083,32 @@ didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic
 
 #pragma mark -
 
+static int _dim(int col, int dim)
+{
+    col = col/(dim+1);
+    col = col + 40 * dim;
+    if (col>255) col = 255;
+    return col;
+}
+
+
+- (NSString *) colorForTrain:(int)train dim:(int)dim
+{
+    int r,g,b;
+    switch (train) {
+        case 0: r=60; b=255; g=10; break;
+        case 1: r=20; b=200; g=200; break;
+        case 2: r=200; b=0; g=200; break;
+        case 3: r=200; b=255; g=0; break;
+        default: r=50; b=50; g=50; break;
+    }
+    r = _dim(r, dim);
+    g = _dim(g, dim);
+    b = _dim(b, dim);
+    return [NSString stringWithFormat:@"#%2.2X%2.2X%2.2X", r, g, b ];
+}
+
+
 void impl_uitrack_change_blk(int blk, int v, int trn, int sblk)
 {
     [theDelegate uitrac_change_blk:blk val:v train:trn sblk:sblk];
@@ -2122,12 +2131,31 @@ void impl_uitrack_change_tn(int tn, int v)
 
 }
 
+void impl_uitrack_change_tn_reserv(int tn, int train)
+{
+    [theDelegate uitrac_change_tn_reser:tn train:train];
+}
+
+- (void) uitrac_change_tn_reser:(int)tn train:(int)train
+{
+    NSString *circle = [NSString stringWithFormat:@"c%d", tn];
+    NSString *col = (tn>=0) ? [self colorForTrain:tn dim:0] : @"darkgray";
+    NSString *js = [NSString stringWithFormat:@"document.getElementById('%@').style.color=\"%@\"",
+                    circle, col];
+    [_ctoWebView evaluateJavaScript:js completionHandler:^(id v, NSError *err) {
+           if (err) {
+               NSLog(@"js error : %@\n", err);
+           }
+       }];
+}
+
 - (void) uitrac_change_blk:(int) blk val:(int)v train:(int)trn sblk:(int)sblk
 {
     NSString *js;
     //NSString *nblk = [NSString stringWithFormat:@"BLK%d", blk];
     NSString *col = @"white";
     NSString *strn = (trn == 0xFF) ? nil : [NSString stringWithFormat:@"(T%d", trn];
+    /*
     switch (v) {
         case BLK_OCC_FREE: // BLK_OCC_FREE:
             col = @"darkgray";
@@ -2154,6 +2182,22 @@ void impl_uitrack_change_tn(int tn, int v)
                 strn = [strn stringByAppendingString:@")"];
             }
             break;
+    }
+     */
+    int d;
+    if (v==BLK_OCC_FREE) col = @"darkgray";
+    else {
+        switch (v) {
+            case BLK_OCC_STOP:  d=1; strn = [strn stringByAppendingString:@"--)"]; break;
+            case BLK_OCC_C2:    d=2; strn = [strn stringByAppendingString:@"..)"]; break;
+            case BLK_OCC_LEFT:  d=0; strn = [strn stringByAppendingString:@" <)"]; break;
+            case BLK_OCC_RIGHT: d=0; strn = [strn stringByAppendingString:@" >)"]; break;
+            default:
+                strn = [strn stringByAppendingString:@")"];
+                d = 5;
+                break;
+        }
+        col = [self colorForTrain:trn dim:d];
     }
     //js = [NSString stringWithFormat:@"document.getElementById('%@').style.stroke = '%@';", nblk, col];
     js = [NSString stringWithFormat:@"segs = document.getElementsByClassName('CANTON%d');\nArray.from(segs, el => el.style.stroke = '%@');", blk, col];

@@ -15,6 +15,7 @@
 static void uitrack_reset(void);
 static void uitrack_change_blk(int blk, int v, int trn, int sblk);
 static void uitrack_change_tn(int tn, int v);
+static void uitrack_change_tn_reserv(int tn, int train);
 
 void uitrack_run_tick(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_ uint32_t dt)
 {
@@ -34,6 +35,9 @@ void uitrack_run_tick(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UN
         	sblk = (int8_t) m.vbytes[3];
         	uitrack_change_blk(blk, v, trn, sblk);
         	break;
+        case CMD_TN_RESER_NOTIF:
+            uitrack_change_tn_reserv(m.v1, m.v2);
+            break;
         case CMD_TURNOUT_A:
         	uitrack_change_tn(m.v2, 0);
         	break;
@@ -59,12 +63,24 @@ static void uitrack_change_tn(int tn, int v)
     impl_uitrack_change_tn(tn, v);
 }
 
+static void uitrack_change_tn_reserv(int tn, int train)
+{
+    impl_uitrack_change_tn_reserv(tn, train);
+}
+
+
 void  __attribute__((weak))  impl_uitrack_change_blk(_UNUSED_ int blk, _UNUSED_ int v, _UNUSED_ int trn, _UNUSED_ int sblk)
 {
     
 }
 
 void  __attribute__((weak))  impl_uitrack_change_tn(_UNUSED_ int tn, _UNUSED_ int v)
+{
+    
+}
+
+
+void  __attribute__((weak))  impl_uitrack_change_tn_reserv(_UNUSED_ int tn, _UNUSED_ int v)
 {
     
 }

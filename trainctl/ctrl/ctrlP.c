@@ -435,6 +435,7 @@ void ctrl2_check_stop(int tidx, train_ctrl_t *tvar)
             }
             ctrl2_set_tspeed(tidx, tvar, 0);
             tvar->can2_addr = 0xFF;
+            set_block_addr_occupency(tvar->can1_addr, occupied(tvar->_dir), tidx, tvar->c1_sblk);
             break;
             
             

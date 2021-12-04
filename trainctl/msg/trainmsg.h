@@ -217,6 +217,7 @@ LFMQUEUE_DEF_H(from_ina3221, msg_64_t)
 #define CMD_UI_MSG			0xA1	// obsolete?
 
 #define CMD_BLK_CHG_NOTIF      0xA2
+#define CMD_TN_RESER_NOTIF     0xA3
 
 #include "../IHM/ihm_messages.h"
 
@@ -226,9 +227,6 @@ static inline void ui_msg(int dispnum,uint8_t msgnum, msg_64_t *m, uint8_t from)
 	m->from = from;
 	m->cmd = CMD_UI_MSG;
 	m->v1u = msgnum;
-	//int n = strlen(txt);
-	//n = (n>5) ? 5 : n;
-	//memcpy(m->rbytes+1, txt, n);
 }
 
 

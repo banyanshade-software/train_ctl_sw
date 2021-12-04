@@ -11,6 +11,8 @@
 #import <WebKit/WebKit.h>
 
 @class SimTrain;
+@class CTCManager;
+
 
 @interface AppDelegate : NSObject <NSApplicationDelegate,
     CBCentralManagerDelegate,CBPeripheralDelegate,
@@ -45,7 +47,7 @@
 @property (nonatomic, weak) IBOutlet NSTableView *trainTableView;
 
 
-@property (nonatomic, weak) IBOutlet WKWebView *ctoWebView;
+@property (nonatomic, weak) IBOutlet CTCManager *ctcManager;
 
 @property (nonatomic) double target_bemf;
 
@@ -121,6 +123,9 @@
 @property (nonatomic) NSInteger testPWM;
 
 - (IBAction) startBLE:(id)sender;
+
+
+- (void) toggleTurnout:(int)tn;
 
 @end
 

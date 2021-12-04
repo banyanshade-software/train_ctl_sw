@@ -17,7 +17,7 @@
         <customObject id="Voe-Tx-rLC" customClass="AppDelegate">
             <connections>
                 <outlet property="cantonTableView" destination="gBS-dQ-Fjb" id="WIS-7b-JuY"/>
-                <outlet property="ctoWebView" destination="aNE-Ec-y32" id="k3e-uW-C2o"/>
+                <outlet property="ctcManager" destination="wzl-W6-NAl" id="HZ7-38-pTe"/>
                 <outlet property="logView" destination="YXl-3q-GOv" id="4k0-Qy-nvZ"/>
                 <outlet property="paramView" destination="eW8-Bh-GGe" id="Khg-Og-CnG"/>
                 <outlet property="sliderTarget1" destination="hKn-Uc-u5t" id="m08-k7-XV7"/>
@@ -25,6 +25,12 @@
                 <outlet property="sliderTarget3" destination="0Q4-va-RcS" id="xhF-0c-A7b"/>
                 <outlet property="trainTableView" destination="nU3-yp-xkd" id="wKe-T8-m9b"/>
                 <outlet property="window" destination="QvC-M9-y7g" id="gIp-Ho-8D9"/>
+            </connections>
+        </customObject>
+        <customObject id="wzl-W6-NAl" userLabel="CTCManager" customClass="CTCManager">
+            <connections>
+                <outlet property="appDelegate" destination="Voe-Tx-rLC" id="ScB-0P-h6X"/>
+                <outlet property="ctoWebView" destination="aNE-Ec-y32" id="5c2-aJ-heS"/>
             </connections>
         </customObject>
         <customObject id="YLy-65-1bz" customClass="NSFontManager"/>
@@ -1611,18 +1617,18 @@
                             </tabViewItem>
                             <tabViewItem label="CTC" identifier="" id="Emq-bm-k11">
                                 <view key="view" id="5QP-cq-eLn">
-                                    <rect key="frame" x="10" y="33" width="836" height="370"/>
+                                    <rect key="frame" x="10" y="33" width="889" height="490"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <wkWebView wantsLayer="YES" translatesAutoresizingMaskIntoConstraints="NO" id="aNE-Ec-y32">
-                                            <rect key="frame" x="8" y="8" width="820" height="354"/>
+                                            <rect key="frame" x="8" y="8" width="873" height="474"/>
                                             <wkWebViewConfiguration key="configuration">
                                                 <audiovisualMediaTypes key="mediaTypesRequiringUserActionForPlayback" none="YES"/>
                                                 <wkPreferences key="preferences"/>
                                             </wkWebViewConfiguration>
                                             <connections>
-                                                <outlet property="UIDelegate" destination="Voe-Tx-rLC" id="laW-NI-a4m"/>
-                                                <outlet property="navigationDelegate" destination="Voe-Tx-rLC" id="YSo-oi-2Zy"/>
+                                                <outlet property="UIDelegate" destination="wzl-W6-NAl" id="WOc-zb-DDn"/>
+                                                <outlet property="navigationDelegate" destination="wzl-W6-NAl" id="Cmt-cV-hgG"/>
                                             </connections>
                                         </wkWebView>
                                     </subviews>
@@ -1799,7 +1805,7 @@
                                     <rect key="frame" x="6" y="34" width="90" height="25"/>
                                     <popUpButtonCell key="cell" type="push" title="Off" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="rZI-tR-AtI" id="ggg-3B-Wu3">
                                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                                        <font key="font" metaFont="system"/>
+                                        <font key="font" metaFont="menu"/>
                                         <menu key="menu" id="OSM-Od-2nS">
                                             <items>
                                                 <menuItem title="Off" state="on" id="rZI-tR-AtI"/>

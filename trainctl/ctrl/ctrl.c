@@ -641,7 +641,7 @@ static int set_turnout(int tn, int v, int train)
 	if (tn>=NUM_TURNOUTS) fatal();
 	if (tn>=NUM_LOCAL_TURNOUTS) fatal(); // TODO
 
-	int rc = topolgy_set_turnout(tn, v, train);
+	int rc = topology_set_turnout(tn, v, train);
     if (rc) {
     	itm_debug3(DBG_CTRL, "tn busy", train, tn, rc);
     	return rc;

@@ -46,4 +46,10 @@ static inline uint8_t occupied(int dir)
     if (dir>0) return BLK_OCC_RIGHT;
     return BLK_OCC_STOP;
 }
+
+
+int occupency_turnout_reserve(uint8_t turnout, int8_t train);
+void occupency_turnout_release(uint8_t turnout, int8_t train);
+
+
 #endif /* occupency_h */

@@ -24,6 +24,8 @@ typedef struct {
 
 static  canton_occ_t canton_occ[0x40] = {0};
 
+static void occupency_turnout_release_for_train_canton(int8_t train, uint8_t canton);
+
 
 //uint8_t occupency_changed = 0; replaced by topology_or_occupency_changed
 static uint32_t lastcheck = 0;
@@ -33,6 +35,12 @@ void occupency_clear(void)
     lastcheck = 0;
     memset(canton_occ, 0, sizeof(canton_occ));
 }
+
+static void _block_freed(int cnum, canton_occ_t *co)
+{
+	occupency_turnout_release_for_train_canton(co->trnum, cnum);
+}
+
 
 static inline uint8_t addr_to_num(uint8_t addr)
 {
@@ -64,6 +72,7 @@ void set_block_addr_occupency(uint8_t blkaddr, uint8_t v, uint8_t trnum, lsblk_n
 {
     int chg = 0;
     if (0xFF == blkaddr) Error_Handler();
+    int blknum = addr_to_num(blkaddr);
     canton_occ_t *co = &canton_occ[addr_to_num(blkaddr)];
     if (co->occ != v) {
         if (USE_BLOCK_DELAY_FREE && (v==BLK_OCC_FREE)) {
@@ -74,6 +83,7 @@ void set_block_addr_occupency(uint8_t blkaddr, uint8_t v, uint8_t trnum, lsblk_n
             co->occ = v;
             chg = 1;
             if (BLK_OCC_FREE == co->occ) {
+            	_block_freed(blknum, co);
                 // non delayed free, untested
                 trnum = -1;
                 lsb.n = -1;
@@ -126,6 +136,7 @@ void check_block_delayed(_UNUSED_ uint32_t tick)
     for (int i=0; i<0x40; i++) {
         if (canton_occ[i].occ == BLK_OCC_DELAY1) {
             itm_debug1(DBG_CTRL, "FREE(d)", i);
+        	_block_freed(i, &canton_occ[i]);
             canton_occ[i].occ = BLK_OCC_FREE;
             canton_occ[i].trnum = 0xFF;
             canton_occ[i].lsblk.n = -1;
@@ -135,5 +146,48 @@ void check_block_delayed(_UNUSED_ uint32_t tick)
             canton_occ[i].occ --;
         }
     }
+}
+
+
+static volatile uint8_t  lockedby[NUM_TURNOUTS] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
+
+
+int occupency_turnout_reserve(uint8_t turnout, int8_t numtrain)
+{
+	if (turnout >= NUM_TURNOUTS) return -1;
+	//if (turnout<0) return -1;
+	if (turnout>31) return -1;
+
+	if (numtrain>=0) {
+		uint8_t expected = numtrain;
+		int ok = __atomic_compare_exchange_n(&lockedby[turnout], &expected, numtrain, 0 /*weak*/, __ATOMIC_ACQUIRE/*success memorder*/, __ATOMIC_ACQUIRE/*fail memorder*/ );
+		if (!ok) {
+			expected = 0xFF;
+			ok = __atomic_compare_exchange_n(&lockedby[turnout], &expected, numtrain, 0 /*weak*/, __ATOMIC_ACQUIRE/*success memorder*/, __ATOMIC_ACQUIRE/*fail memorder*/ );
+		}
+		if (!ok) {
+			return -1;
+		}
+	}
+	return 0;
+}
+
+
+void occupency_turnout_release(uint8_t turnout, _UNUSED_ int8_t train)
+{
+	lockedby[turnout] = 0xFF;
+}
+
+static void occupency_turnout_release_for_train_canton(int8_t train, uint8_t canton)
+{
+	if (train<0) Error_Handler();
+	for (int tn = 0; tn<NUM_TURNOUTS; tn++) {
+		if (lockedby[tn] != train) continue;
+		uint8_t ca1, ca2, ca3;
+		topology_get_cantons_for_turnout(tn, &ca1, &ca2, &ca3);
+		if ((ca1 == canton) || (ca2 == canton) || (ca3 == canton)) {
+			occupency_turnout_release(tn, train);
+		}
+	}
 }
 

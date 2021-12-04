@@ -189,6 +189,23 @@ void ctrl2_set_mode(int tidx, train_ctrl_t *tvar, train_mode_t mode)
 
 // ----------------------
 
+static void free_block_c1(_UNUSED_ int tidx, train_ctrl_t *tvars)
+{
+	set_block_addr_occupency(tvars->can1_addr, BLK_OCC_FREE, tidx, snone);
+}
+
+static void free_block_c2(_UNUSED_ int tidx, train_ctrl_t *tvars)
+{
+	set_block_addr_occupency(tvars->can2_addr, BLK_OCC_FREE, tidx, snone);
+}
+
+static void free_block_other(_UNUSED_ int tidx, train_ctrl_t *tvars, uint8_t ca)
+{
+	set_block_addr_occupency(ca, BLK_OCC_FREE, tidx, snone);
+}
+
+// ----------------------
+
 
 static lsblk_num_t next_lsblk_free(int tidx, train_ctrl_t *tvars,  uint8_t left, uint8_t *palternate, uint8_t *pcan)
 {
@@ -411,8 +428,12 @@ void ctrl2_check_stop(int tidx, train_ctrl_t *tvar)
             //FALLTHRU
         case train_blk_wait:
         case train_end_of_track:
+            if (tvar->can2_addr != 0xFF) {
+            	// dir might be 0 here
+            	free_block_c2(tidx, tvar);
+            	//set_block_addr_occupency(tvar->can2_addr, BLK_OCC_FREE, 0xFF, snone);
+            }
             ctrl2_set_tspeed(tidx, tvar, 0);
-            if (tvar->can2_addr != 0xFF) set_block_addr_occupency(tvar->can2_addr, BLK_OCC_FREE, 0xFF, snone);
             tvar->can2_addr = 0xFF;
             break;
             
@@ -554,7 +575,8 @@ void ctrl2_update_c2(int tidx, train_ctrl_t *tvar, const train_config_t *tconf, 
     	itm_debug2(DBG_CTRL, "updc2 c2", tidx, tvar->can2_addr);
         tvar->tick_flags |= _TFLAG_C2_CHANGED;
         if (old_c2 != 0xFF) {
-            set_block_addr_occupency(old_c2, BLK_OCC_FREE, tidx, snone);
+        	free_block_other(tidx, tvar, old_c2);
+            //set_block_addr_occupency(old_c2, BLK_OCC_FREE, tidx, snone);
         }
         if (tvar->can2_addr != 0xFF) {
             set_block_addr_occupency(tvar->can2_addr, BLK_OCC_C2, tidx, ns);
@@ -654,7 +676,8 @@ void ctrl2_evt_leaved_c1(int tidx, train_ctrl_t *tvars)
     
     ctrl_reset_timer(tidx, tvars, TLEAVE_C1);
     tvars->c1c2 = 0;
-    set_block_addr_occupency(tvars->can1_addr, BLK_OCC_FREE, 0xFF, snone);
+    free_block_c1(tidx, tvars);
+    //set_block_addr_occupency(tvars->can1_addr, BLK_OCC_FREE, 0xFF, snone);
     if (1 == tvars->can2_addr) { // XXX Hardcoded for now
     	tvars->measure_pose_percm = 1;
     }

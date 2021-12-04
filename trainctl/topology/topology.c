@@ -35,7 +35,7 @@
 
 #include "topology.h"
 #include "topologyP.h"
-
+#include "occupency.h"
 
 #ifdef TOPOLOGY_SVG
 #define _PTS(pi, ...)  ,pi,{__VA_ARGS__}
@@ -272,23 +272,33 @@ uint8_t next_block_addr(uint8_t blkaddr, uint8_t left)
 // --------------------------------------------------------------------------------------
 
 static volatile uint32_t turnoutvals = 0; // bit field
+
 uint8_t topology_or_occupency_changed = 0;
 
-int topolgy_set_turnout(int tn, int v, int numtrain)
+int topology_set_turnout(int tn, int v, int numtrain)
 {
 	if (tn >= NUM_TURNOUTS) return -1;
 	if (tn<0) return -1;
 	if (tn>31) return -1;
 
+	if (numtrain>=0) {
+		int rc = occupency_turnout_reserve(tn, numtrain);
+		if (rc) {
+			return -1;
+		}
+	}
 	if (v) {
-		__sync_fetch_and_or(&turnoutvals, (1<<tn));
+		__sync_fetch_and_or(&turnoutvals, (1U<<tn));
 	} else {
-		__sync_fetch_and_and(&turnoutvals, ~(1<<tn));
+		__sync_fetch_and_and(&turnoutvals, ~(1U<<tn));
 	}
     topology_or_occupency_changed = 1;
 	itm_debug3(DBG_TURNOUT, "tt",tn,v, topology_get_turnout(tn));
 	return 0;
 }
+
+
+
 int topology_get_turnout(int tn)
 {
 	if (tn >= NUM_TURNOUTS) return 0;
@@ -297,6 +307,33 @@ int topology_get_turnout(int tn)
 
 	uint32_t b = turnoutvals;
 	return (b & (1<<tn)) ? 1 : 0;
+}
+
+void topology_get_cantons_for_turnout(uint8_t turnout, uint8_t *head, uint8_t *straight, uint8_t *turn)
+{
+	*head = 0xFF;
+	*straight = 0xFF;
+	*turn = 0xFF;
+
+	int n=0;
+	for (int i=0; i<numTopology(); i++) {
+		lsblk_num_t b = {i};
+		const topo_lsblk_t *t = Topology(b);
+		uint8_t fc = t->canton_addr;
+		if (t->ltn == turnout) {
+			n++;
+			if (t->left2 == -1) *straight = fc;
+			else if (t->left1 == -1) *turn = fc;
+			else *head = fc;
+		}
+		if (t->rtn == turnout) {
+			n++;
+			if (t->right2 == -1) *straight = fc;
+			else if (t->right1 == -1) *turn = fc;
+			else *head = fc;
+		}
+		if (n==3) return;
+	}
 }
 
 

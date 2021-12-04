@@ -25,6 +25,7 @@
 #define DBG_TURNOUTS 1
 #define itm_debug3(_fl, _msg, _a, _b, _c) do {printf(_msg  "%d %d %d", _a, _b, _c);} while(0)
 #define itm_debug2(_fl, _msg, _a, _b) do {printf(_msg  "%d %d", _a, _b);} while(0)
+#define _UNUSED_ __attribute__((unused))
 #endif
 // -------------------------------------------------------------------------
 
@@ -34,6 +35,7 @@ void next_blocks_nums(_UNUSED_ int blknum, _UNUSED_ uint8_t left, _UNUSED_ int *
     abort();
     // for compilation, trkplan will need major update
 }
+
 
 
 //-------------------------------------------------------------------------

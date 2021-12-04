@@ -2160,9 +2160,9 @@ void impl_uitrack_change_tn_reserv(int tn, int train)
 - (void) uitrac_change_tn_reser:(int)tn train:(int)train
 {
     NSString *circle = [NSString stringWithFormat:@"c%d", tn];
-    NSString *col = (tn>=0) ? [self colorForTrain:tn dim:0] : @"darkgray";
-    NSString *js = [NSString stringWithFormat:@"document.getElementById('%@').style.color=\"%@\"",
-                    circle, col];
+    NSString *col = (train>=0) ? [self colorForTrain:tn dim:0] : @"darkgray";
+    NSString *js = [NSString stringWithFormat:@"el=document.getElementById('%@'); el.style.stroke=\"%@\";  el.style['stroke-width']=\"%dpx\";",
+                    circle, col , train==0xFF ? 1 : 2];
     [_ctoWebView evaluateJavaScript:js completionHandler:^(id v, NSError *err) {
            if (err) {
                NSLog(@"js error : %@\n", err);

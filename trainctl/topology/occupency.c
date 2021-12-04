@@ -159,7 +159,7 @@ static  void _notify_chg_owner(uint8_t turnout, int8_t numtrain)
     m.v1 = turnout;
     m.v2 = numtrain;
     m.to = MA_UI(UISUB_TRACK);
-    m.cmd = CMD_BLK_CHG_NOTIF;
+    m.from = MA_CONTROL();
     mqf_write_from_ctrl(&m);
 }
 int occupency_turnout_reserve(uint8_t turnout, int8_t numtrain)

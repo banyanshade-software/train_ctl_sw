@@ -97,6 +97,10 @@ typedef void (^respblk_t)(void);
     BOOL connected;
     
     int t0changed, t1changed, t2changed, t3changed;
+    
+    // avoid exception in KVC
+    BOOL processingStatFrame;
+    BOOL undefinedKey;
 }
 
 @property (weak) IBOutlet NSWindow *window;
@@ -1215,6 +1219,14 @@ static int frm_unescape(uint8_t *buf, int len)
 }
 
 
+- (void) setValue:(id)value forUndefinedKey:(NSString *)key
+{
+    if (processingStatFrame) {
+        undefinedKey = YES;
+        return;
+    }
+    [super setValue:value forUndefinedKey:key];
+}
 - (void) processStatFrame
 {
     if (frm.pidx<8) return; // TODO
@@ -1274,12 +1286,21 @@ static int frm_unescape(uint8_t *buf, int len)
         }
         if (![unhandled_key containsObject:nkey]) {
             //NSLog(@"---- %@\n", key);
+            processingStatFrame = YES;
+            undefinedKey = NO;
+            [self setValue:nsv forKey:nkey];
+            if (undefinedKey) {
+                [unhandled_key addObject:nkey];
+            }
+            processingStatFrame = NO;
+
+            /*
             @try {
                 [self setValue:nsv forKey:nkey];
             } @catch (NSException *exception) {
                 NSLog(@"key %@ (%@) not ok: %@", nkey, key, exception);
                 [unhandled_key addObject:nkey];
-            }
+            }*/
         }
         
         if (_recordState == 1) {

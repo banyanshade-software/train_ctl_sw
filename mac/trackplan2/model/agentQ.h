@@ -18,4 +18,6 @@ void agentq_restart(void);
 
 int q_step(int *retstate);
 
+void q_dump_state(int st);
+
 #endif /* agentQ_h */

@@ -72,7 +72,7 @@ int occupency_turnout_reserve(uint8_t turnout, int8_t numtrain)
     lsblk_num_t oldlsb, newlsb;
     oldlsb.n = oldblk;
     newlsb.n = newblk;
-    [_ctcManager uitrac_change_blk:canton_for_lsblk(oldlsb) val:0 train:-1 sblk:oldblk];
+    [_ctcManager uitrac_change_blk:canton_for_lsblk(oldlsb) val:0 train:0xFF sblk:-1];
     [_ctcManager uitrac_change_blk:canton_for_lsblk(newlsb) val:1 train:train sblk:newblk ];
 }
 
@@ -86,12 +86,16 @@ int occupency_turnout_reserve(uint8_t turnout, int8_t numtrain)
     if (_T0_from<0) return;
     
     model_setup(nt);
+    [self setupModelDest];
+}
+
+
+- (void) setupModelDest
+{
     model_set_from_to(0, _T0_from, _T0_to);
     if (_T1_from>=0) model_set_from_to(1, _T1_from, _T1_to);
     if (_T2_from>=0) model_set_from_to(2, _T2_from, _T2_to);
     if (_T3_from>=0) model_set_from_to(3, _T3_from, _T3_to);
-    
-   
 }
 - (IBAction) initQ:(id)sender
 {
@@ -113,13 +117,29 @@ int occupency_turnout_reserve(uint8_t turnout, int8_t numtrain)
 
 - (IBAction) runQ:(id)sender
 {
-    for (int i=0; i<100; i++) {
-        BOOL ok = [self _runQ];
-        //if (ok) break;
+    if ((1)) {
+        for (int i=0; i<10; i++) {
+            BOOL ok = [self _runQ];
+            if (ok) break;
+        }
+    } else {
+        [self _runQdisplay];
+    }
+    if ((0)) {
+        int st = model_initial_state();
+        int act = 0;
+        for (int i=0; i<1; i++) {
+            q_dump_state(st);
+            printf("act %d -> ", act);
+            int badmove; double reward;
+            st = model_new_state(st, act, &reward, &badmove);
+            printf(" st%d (%sreward %2.2f\n", st, badmove ? "BAD ":"", reward);
+        }
     }
 }
 - (BOOL) _runQ
 {
+    [self setupModelDest];
     agentq_restart();
     agentq_setparams(_q_alpha, _q_gamma, _q_epsilon, _q_noise);
     int i;
@@ -138,12 +158,12 @@ int occupency_turnout_reserve(uint8_t turnout, int8_t numtrain)
         nact++;
         
         // display
-        if ((1)) {
+        if ((0)) {
             int t[4];
             model_positions_for_state(ns, &t[0], &t[1], &t[2], &t[3]);
             for (int i=0; i<4; i++) {
-                if (t[i] != curst[i]) {
-                    //[self move:i from:curst[i] to:t[i]];
+                if ((1) || (t[i] != curst[i])) {
+                    [self move:i from:curst[i] to:t[i]];
                     curst[i] = t[i];
                     nm++;
                 }
@@ -160,4 +180,46 @@ int occupency_turnout_reserve(uint8_t turnout, int8_t numtrain)
     }
     return NO;
 }
+
+- (void) _runQdisplay
+{
+    agentq_restart();
+    agentq_setparams(_q_alpha, _q_gamma, _q_epsilon, _q_noise);
+    
+    __block int done = 0;
+    
+    __block void(^stepnext)(int);
+    
+    void (^stepblk)(int) = ^(int iter){
+        if (iter>80000) {
+            NSLog(@"fail iter=%d", iter);
+            return;
+        }
+        int ns;
+        int ok = q_step(&ns);
+        if ((1)) {
+            int t[4];
+            model_positions_for_state(ns, &t[0], &t[1], &t[2], &t[3]);
+            for (int i=0; i<4; i++) {
+                if (t[i] != self->curst[i]) {
+                    [self move:i from:self->curst[i] to:t[i]];
+                    self->curst[i] = t[i];
+                }
+            }
+        }
+        if (ok) {
+            NSLog(@"done iter=%d", iter);
+            done = 1;
+            return;
+        }
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(500 * NSEC_PER_MSEC)), dispatch_get_main_queue(), ^{
+            stepnext(iter+1);
+        });
+    };
+    stepnext = stepblk;
+    
+    stepblk(1);
+    
+}
+
 @end

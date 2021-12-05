@@ -14,7 +14,7 @@
 #include "topologyP.h"
 
 #define LIMIT_TWO_TRAINS 0
-
+#define LIMIT_LSBLK_NUM 9
 
 static int numtrain=0;
 static int numblk=0;
@@ -28,6 +28,8 @@ void model_setup(int numtrains)
 {
     numtrain = numtrains;
     numblk = topology_num_sblkd();
+    if (LIMIT_LSBLK_NUM) numblk=LIMIT_LSBLK_NUM;
+    
     if (numtrain>4) numtrain = 4;
 #if LIMIT_TWO_TRAINS
     if (numtrain>2) numtrain = 2;
@@ -109,36 +111,48 @@ void model_actions_for_num(int actionnum, int *ptrain, model_elem_action_t *pact
     *ptrain = actionnum / _NUM_ELEM_ACTIONS;
 }
 
+static int ckf(int lsblk)
+{
+    if (!LIMIT_LSBLK_NUM) return lsblk;
+    if (lsblk >= LIMIT_LSBLK_NUM) return -1;
+    return lsblk;
+}
+
+
 // transitions
-int model_new_state(int statenum, int actionnum)
+int model_new_state(int statenum, int actionnum, double *preward, int *badmove)
 {
     int p[4];
     int atrn;
     model_elem_action_t act;
 
+    if (badmove) *badmove = 0;
     model_actions_for_num(actionnum, &atrn, &act);
     model_positions_for_state(statenum, &p[0], &p[1], &p[2], &p[3]);
     if (atrn<0) abort();
     if (atrn>=numtrain) abort();
   
+    double r1 = -0.1;
+    
     const topo_lsblk_t *co = topology_get_sblkd(p[atrn]);
     switch (act) {
         case action_dont_move:
+            r1 = -0.2;
             break;
         case action_left_straight:
-            if (co->left1 == -1) break;
+            if (ckf(co->left1) == -1) goto badmove;
             p[atrn] = co->left1;
             break;
         case action_left_turn:
-            if (co->left2 == -1) break;
+            if (ckf(co->left2) == -1) goto badmove;
             p[atrn] = co->left2;
             break;
         case action_right_straight:
-            if (co->right1 == -1) break;
+            if (ckf(co->right1) == -1) goto badmove;
             p[atrn] = co->right1;
             break;
         case action_right_turn:
-            if (co->right2 == -1) break;
+            if (ckf(co->right2) == -1) goto badmove;
             p[atrn] = co->right2;
             break;
         default:
@@ -146,22 +160,60 @@ int model_new_state(int statenum, int actionnum)
             break;
     }
     int ns = model_state_num(p[0], p[1], p[2], p[3]);
+    if (preward) {
+        *preward = model_reward(ns)+r1;
+    }
+    // sanity
+    if (act == action_dont_move) {
+        if (ns != statenum) abort();
+    }
     return ns;
+badmove:
+    if (badmove) *badmove = 1;
+    if ((1)) {
+        if (preward) *preward = -10.0;
+    } else {
+        if (preward) *preward = model_reward(statenum);
+    }
+    return statenum;
 }
 
 // reward
 double model_reward(int statenum)
 {
-    if (statenum == finalstate) return 1.0;
+    if (statenum == finalstate) return 10.0;
     int p[4];
+    int f[4];
     model_positions_for_state(statenum, &p[0], &p[1], &p[2], &p[3]);
+    model_positions_for_state(finalstate, &f[0], &f[1], &f[2], &f[3]);
 
     int r = 0;
     for (int i=0; i<numtrain; i++) {
         for (int j=0; j<numtrain; j++) {
             if (j==i) continue;
-            if (p[i]==p[j]) r -= 0.5;
+            if (p[i]==p[j]) r -= 3;
         }
     }
+    for (int i=0; i<numtrain; i++) {
+        if (p[i]==f[i]) r += 1;
+    }
+    r -= 0.5;
     return r;
+}
+
+
+const char *model_descr_action(model_elem_action_t a)
+{
+    switch (a) {
+        case action_dont_move:      return "stp";
+        case action_left_straight:  return "L -";
+        case action_left_turn:      return "L \\";
+        case action_right_straight: return "R -";
+        case action_right_turn:     return "R \\";
+        
+        default:
+            abort();
+            return "???";
+            break;
+    }
 }

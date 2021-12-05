@@ -20,7 +20,7 @@ static double q_epsilon = 0.0;
 static double q_noise = 0.0;
 
 static int curstate = 0;
-
+static int final_state = 0;
 
 static int q_idx(int state, int action)
 {
@@ -42,7 +42,7 @@ void agentq_init(void)
     int na = model_num_actions();
     qmatrix = malloc(na*ns*sizeof(double));
     memset(qmatrix, 0, na*ns*sizeof(double));
-    if ((1)) {
+    if ((0)) {
         for (int i=0; i<na*ns; i++) {
             qmatrix[i] = (rand01()-.5)/4.0;
         }
@@ -66,18 +66,20 @@ void agentq_setparams(double _alpha, double _gamma, double _epsilon, double _noi
 void agentq_restart(void)
 {
     curstate = model_initial_state();
-
+    final_state = model_final_state();
 }
 
 double q_maxa(int state, int *pact)
 {
     int na = model_num_actions();
-    double m = -99999999999.0;
+    double m=0;
+    int first = 1;
     for (int a=0; a<na; a++) {
         double noise = rand01()*q_noise;
         // adding noise here allow random choice when same values
         double q = qmatrix[q_idx(state, a)]+noise;
-        if (q>=m) {
+        if (first || (q>=m)) {
+            first = 0;
             m = q;
             if (pact) *pact = a;
         }
@@ -105,21 +107,52 @@ int q_step(int *retstate)
     if (action<0) abort();
     if (action>=model_num_actions()) abort();
     
-    int newstate = model_new_state(curstate, action);
-    double reward = model_reward(newstate);
+    double reward = 0.0;
+    int badmove = 0;
+    int newstate = model_new_state(curstate, action, &reward, &badmove);
+    //double reward = model_reward(newstate);
     
     if (newstate < 0) {
-        newstate = model_new_state(curstate, action);
+        newstate = model_new_state(curstate, action, &reward, &badmove);
         abort();
     }
-    int newidx = q_idx(newstate, action);
     
-    double v = q_alpha * (reward + q_gamma*(q_maxa(curstate, NULL)-qmatrix[newidx]));
-    qmatrix[newidx] += v;
+    //int newidx = q_idx(newstate, action);
+    //double v = q_alpha * (reward + q_gamma*(q_maxa(curstate, NULL)-qmatrix[newidx]));
+    //qmatrix[newidx] += v;
+    
+    q_dump_state(curstate);
+
+    if (0 && badmove) {
+        int curidx = q_idx(curstate, action);
+        qmatrix[curidx] = -1.0;
+    } else {
+        int curidx = q_idx(curstate, action);
+        double v = q_alpha * (reward + q_gamma*(q_maxa(newstate, NULL)-qmatrix[curidx]));
+        qmatrix[curidx] += v;
+    }
+    printf(" act %d -> new %d (rew %2.2f bad=%d)\n\n", action, newstate, reward, badmove);
+  
     curstate = newstate;
     if (retstate) *retstate = newstate;
-    if (reward==1) {
+    if (newstate==final_state) {
         return 1;
     }
     return 0;
+}
+
+void q_dump_state(int st)
+{
+    int p[4];
+    model_positions_for_state(st, &p[0], &p[1], &p[2], &p[3]);
+    
+    printf("st %d (T0:%d T1:%d   T2:%d T3:%d)\n", st, p[0], p[1], p[2], p[3]);
+    for (int a=0; a<model_num_actions(); a++) {
+        int train;
+        model_elem_action_t eact;
+        model_actions_for_num(a, &train, &eact);
+        int idx = q_idx(st, a);
+        double q = qmatrix[idx];
+        printf("  act%d T%d %s : %2.2f\n", a, train, model_descr_action(eact), q);
+    }
 }

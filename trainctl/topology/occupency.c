@@ -9,11 +9,13 @@
 //#include <stdio.h>
 
 #include "misc.h"
+#ifndef TRACKPLAN_TESTPGM
 #include "../msg/trainmsg.h"
+#include "railconfig.h"
+#endif
+
 #include "topology.h"
 #include "occupency.h"
-#include "railconfig.h"
-
 
 
 typedef struct {

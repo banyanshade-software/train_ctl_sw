@@ -20,10 +20,11 @@
 - (void) loadHtml
 {
     NSURL *u = [[NSBundle mainBundle] URLForResource:@"uitrack" withExtension:@"html"];
+    NSAssert(u, @"uitrack.html missing");
     NSError *err;
     NSString *ctohtml = [NSString stringWithContentsOfURL:u encoding:NSUTF8StringEncoding error:&err];
-    [_ctoWebView loadHTMLString:ctohtml baseURL:nil];
-    
+    WKNavigation *nv = [_ctoWebView loadHTMLString:ctohtml baseURL:nil];
+    NSAssert(nv, @"load failed");
     
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         // hide all info from this blk
@@ -204,14 +205,14 @@ static int _dim(int col, int dim)
 - (void)userContentController:(nonnull WKUserContentController *)userContentController didReceiveScriptMessage:(nonnull WKScriptMessage *)message
 {
     NSString *s = message.body;
-        if ([s length] < 3) goto badmsg;
-        s = [s substringFromIndex:2];
-        int n = [s intValue];
-        [_appDelegate toggleTurnout:n];
-        return;
-        
-    badmsg:
-        NSLog(@"ho");
+    if ([s length] < 3) goto badmsg;
+    s = [s substringFromIndex:2];
+    int n = [s intValue];
+    [_appDelegate toggleTurnout:n];
+    return;
+    
+badmsg:
+    NSLog(@"ho");
 }
 
 @end

@@ -1,0 +1,402 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 50;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		1B3657CA275BF99C0042491A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3657C9275BF99C0042491A /* AppDelegate.m */; };
+		1B3657CC275BF9DB0042491A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1B3657CB275BF9DB0042491A /* Assets.xcassets */; };
+		1B3657CF275BF9DB0042491A /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1B3657CD275BF9DB0042491A /* MainMenu.xib */; };
+		1B3657D2275BF9DB0042491A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3657D1275BF9DB0042491A /* main.m */; };
+		1B3657DB275C02650042491A /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B3657DA275C02650042491A /* WebKit.framework */; };
+		1B3657DE275C06E70042491A /* CTCManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3657DC275C06E70042491A /* CTCManager.m */; };
+		1B3657F0275C20C50042491A /* topology.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B3657EF275C20C50042491A /* topology.c */; };
+		1B3657F5275C216F0042491A /* uitrack.html in Resources */ = {isa = PBXBuildFile; fileRef = 1B3657F4275C216F0042491A /* uitrack.html */; };
+		1BF03EF6275CA921009D0149 /* model.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BF03EF5275CA921009D0149 /* model.c */; };
+		1BF03EF9275CB9AC009D0149 /* agentQ.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BF03EF8275CB9AC009D0149 /* agentQ.c */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		1B3657C5275BF99C0042491A /* trackplan2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = trackplan2.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		1B3657C8275BF99C0042491A /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		1B3657C9275BF99C0042491A /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		1B3657CB275BF9DB0042491A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		1B3657CE275BF9DB0042491A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		1B3657D0275BF9DB0042491A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		1B3657D1275BF9DB0042491A /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		1B3657D3275BF9DB0042491A /* trackplan2.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = trackplan2.entitlements; sourceTree = "<group>"; };
+		1B3657DA275C02650042491A /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
+		1B3657DC275C06E70042491A /* CTCManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CTCManager.m; path = ../../train_throttle/train_throttle/CTCManager.m; sourceTree = "<group>"; };
+		1B3657DD275C06E70042491A /* CTCManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CTCManager.h; path = ../../train_throttle/train_throttle/CTCManager.h; sourceTree = "<group>"; };
+		1B3657ED275C20B50042491A /* misc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = misc.h; sourceTree = "<group>"; };
+		1B3657EE275C20C50042491A /* topology.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = topology.h; path = ../../trainctl/topology/topology.h; sourceTree = "<group>"; };
+		1B3657EF275C20C50042491A /* topology.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = topology.c; path = ../../trainctl/topology/topology.c; sourceTree = "<group>"; };
+		1B3657F1275C210A0042491A /* occupency.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = occupency.c; path = ../../trainctl/topology/occupency.c; sourceTree = "<group>"; };
+		1B3657F2275C210A0042491A /* occupency.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = occupency.h; path = ../../trainctl/topology/occupency.h; sourceTree = "<group>"; };
+		1B3657F4275C216F0042491A /* uitrack.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; name = uitrack.html; path = ../../trainctl/uitrack/uitrack.html; sourceTree = "<group>"; };
+		1BF03EF4275CA90C009D0149 /* model.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = model.h; sourceTree = "<group>"; };
+		1BF03EF5275CA921009D0149 /* model.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = model.c; sourceTree = "<group>"; };
+		1BF03EF7275CB9AC009D0149 /* agentQ.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = agentQ.h; sourceTree = "<group>"; };
+		1BF03EF8275CB9AC009D0149 /* agentQ.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = agentQ.c; sourceTree = "<group>"; };
+		1BF03EFA275CCAD2009D0149 /* topologyP.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = topologyP.h; path = ../../trainctl/topology/topologyP.h; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		1B3657C2275BF99C0042491A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1B3657DB275C02650042491A /* WebKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		1B3657BC275BF99B0042491A = {
+			isa = PBXGroup;
+			children = (
+				1BF03EF3275CA7E2009D0149 /* model */,
+				1B3657ED275C20B50042491A /* misc.h */,
+				1B3657EC275C20720042491A /* imported */,
+				1B3657C7275BF99C0042491A /* trackplan2 */,
+				1B3657C6275BF99C0042491A /* Products */,
+				1B3657D9275C02650042491A /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		1B3657C6275BF99C0042491A /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				1B3657C5275BF99C0042491A /* trackplan2.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		1B3657C7275BF99C0042491A /* trackplan2 */ = {
+			isa = PBXGroup;
+			children = (
+				1B3657C8275BF99C0042491A /* AppDelegate.h */,
+				1B3657C9275BF99C0042491A /* AppDelegate.m */,
+				1B3657DD275C06E70042491A /* CTCManager.h */,
+				1B3657DC275C06E70042491A /* CTCManager.m */,
+				1B3657CB275BF9DB0042491A /* Assets.xcassets */,
+				1B3657CD275BF9DB0042491A /* MainMenu.xib */,
+				1B3657D0275BF9DB0042491A /* Info.plist */,
+				1B3657D1275BF9DB0042491A /* main.m */,
+				1B3657D3275BF9DB0042491A /* trackplan2.entitlements */,
+			);
+			path = trackplan2;
+			sourceTree = "<group>";
+		};
+		1B3657D9275C02650042491A /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				1B3657DA275C02650042491A /* WebKit.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		1B3657EC275C20720042491A /* imported */ = {
+			isa = PBXGroup;
+			children = (
+				1B3657F4275C216F0042491A /* uitrack.html */,
+				1B3657F1275C210A0042491A /* occupency.c */,
+				1B3657F2275C210A0042491A /* occupency.h */,
+				1B3657EF275C20C50042491A /* topology.c */,
+				1B3657EE275C20C50042491A /* topology.h */,
+				1BF03EFA275CCAD2009D0149 /* topologyP.h */,
+			);
+			name = imported;
+			sourceTree = "<group>";
+		};
+		1BF03EF3275CA7E2009D0149 /* model */ = {
+			isa = PBXGroup;
+			children = (
+				1BF03EF4275CA90C009D0149 /* model.h */,
+				1BF03EF5275CA921009D0149 /* model.c */,
+				1BF03EF7275CB9AC009D0149 /* agentQ.h */,
+				1BF03EF8275CB9AC009D0149 /* agentQ.c */,
+			);
+			path = model;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		1B3657C4275BF99C0042491A /* trackplan2 */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1B3657D6275BF9DB0042491A /* Build configuration list for PBXNativeTarget "trackplan2" */;
+			buildPhases = (
+				1B3657C1275BF99C0042491A /* Sources */,
+				1B3657C2275BF99C0042491A /* Frameworks */,
+				1B3657C3275BF99C0042491A /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = trackplan2;
+			productName = trackplan2;
+			productReference = 1B3657C5275BF99C0042491A /* trackplan2.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		1B3657BD275BF99B0042491A /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 1130;
+				ORGANIZATIONNAME = "Daniel BRAUN";
+				TargetAttributes = {
+					1B3657C4275BF99C0042491A = {
+						CreatedOnToolsVersion = 11.3;
+					};
+				};
+			};
+			buildConfigurationList = 1B3657C0275BF99B0042491A /* Build configuration list for PBXProject "trackplan2" */;
+			compatibilityVersion = "Xcode 9.3";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 1B3657BC275BF99B0042491A;
+			productRefGroup = 1B3657C6275BF99C0042491A /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				1B3657C4275BF99C0042491A /* trackplan2 */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		1B3657C3275BF99C0042491A /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1B3657CC275BF9DB0042491A /* Assets.xcassets in Resources */,
+				1B3657CF275BF9DB0042491A /* MainMenu.xib in Resources */,
+				1B3657F5275C216F0042491A /* uitrack.html in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		1B3657C1275BF99C0042491A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1B3657F0275C20C50042491A /* topology.c in Sources */,
+				1BF03EF9275CB9AC009D0149 /* agentQ.c in Sources */,
+				1BF03EF6275CA921009D0149 /* model.c in Sources */,
+				1B3657DE275C06E70042491A /* CTCManager.m in Sources */,
+				1B3657D2275BF9DB0042491A /* main.m in Sources */,
+				1B3657CA275BF99C0042491A /* AppDelegate.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		1B3657CD275BF9DB0042491A /* MainMenu.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				1B3657CE275BF9DB0042491A /* Base */,
+			);
+			name = MainMenu.xib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		1B3657D4275BF9DB0042491A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"TRAIN_SIMU=1",
+					DEBUG,
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		1B3657D5275BF9DB0042491A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = "TRAIN_SIMU=1";
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		1B3657D7275BF9DB0042491A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = trackplan2/trackplan2.entitlements;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = 86FRVQ49X4;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"TRAIN_SIMU=1",
+					DEBUG,
+					"TRACKPLAN_TESTPGM=1",
+				);
+				INFOPLIST_FILE = trackplan2/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.banyanshade-software.trackplan2";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		1B3657D8275BF9DB0042491A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = trackplan2/trackplan2.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = 86FRVQ49X4;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"TRAIN_SIMU=1",
+					"TRACKPLAN_TESTPGM=1",
+				);
+				INFOPLIST_FILE = trackplan2/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.banyanshade-software.trackplan2";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1B3657C0275BF99B0042491A /* Build configuration list for PBXProject "trackplan2" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1B3657D4275BF9DB0042491A /* Debug */,
+				1B3657D5275BF9DB0042491A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1B3657D6275BF9DB0042491A /* Build configuration list for PBXNativeTarget "trackplan2" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1B3657D7275BF9DB0042491A /* Debug */,
+				1B3657D8275BF9DB0042491A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 1B3657BD275BF99B0042491A /* Project object */;
+}

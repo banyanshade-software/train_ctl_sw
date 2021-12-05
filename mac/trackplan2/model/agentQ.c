@@ -17,6 +17,7 @@ static double *qmatrix = NULL;
 static double q_alpha = 0.0;
 static double q_gamma = 0.0;
 static double q_epsilon = 0.0;
+static double q_noise = 0.0;
 
 static int curstate = 0;
 
@@ -34,7 +35,7 @@ double rand01(void)
     return x;
 }
 
-void agentq_init(double _alpha, double _gamma, double _epsilon)
+void agentq_init(void)
 {
     if (qmatrix) free(qmatrix);
     int ns = model_num_states();
@@ -50,13 +51,18 @@ void agentq_init(double _alpha, double _gamma, double _epsilon)
     for (int a=0; a<na; a++) {
         qmatrix[q_idx(fs, a)] = 0.0;
     }
-    q_alpha = _alpha;
-    q_gamma = _gamma;
-    q_epsilon = _epsilon;
+    
     
     agentq_restart();
 }
 
+void agentq_setparams(double _alpha, double _gamma, double _epsilon, double _noise)
+{
+    q_alpha = _alpha;
+    q_gamma = _gamma;
+    q_epsilon = _epsilon;
+    q_noise = _noise;
+}
 void agentq_restart(void)
 {
     curstate = model_initial_state();
@@ -66,9 +72,9 @@ void agentq_restart(void)
 double q_maxa(int state, int *pact)
 {
     int na = model_num_actions();
-    double m = 0.0;
+    double m = -99999999999.0;
     for (int a=0; a<na; a++) {
-        double noise = rand01()*.001;
+        double noise = rand01()*q_noise;
         // adding noise here allow random choice when same values
         double q = qmatrix[q_idx(state, a)]+noise;
         if (q>=m) {
@@ -87,13 +93,8 @@ int agent_action(int curstate)
         int r = (rand() % (na-1))+1;
         return r;
     } else {
-        int a;
+        int a = action_dont_move;
         q_maxa(curstate, &a);
-        if (!a) {
-            int r = (rand() % (na-1))+1;
-            return r;
-            
-        }
         return a;
     }
 }
@@ -101,7 +102,9 @@ int agent_action(int curstate)
 int q_step(int *retstate)
 {
     int action = agent_action(curstate);
-    if (!action) abort();
+    if (action<0) abort();
+    if (action>=model_num_actions()) abort();
+    
     int newstate = model_new_state(curstate, action);
     double reward = model_reward(newstate);
     

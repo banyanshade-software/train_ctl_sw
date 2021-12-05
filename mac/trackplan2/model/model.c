@@ -93,66 +93,57 @@ int model_final_state(void)
 
 int model_num_actions(void)
 {
-    return NUM_ELEM_ACTIONS*numtrain;
+    return _NUM_ELEM_ACTIONS*numtrain;
 }
 
 // action_num <-> actions
-int model_action_num(model_elem_action_t T0act, model_elem_action_t T1act, model_elem_action_t T2act, model_elem_action_t T3act)
+int model_action_num(int train, model_elem_action_t act)
 {
-    int a;
-    int na = model_num_actions();
-    a =  T0act;
-    a += T1act * na;
-    a += T2act * na * na;
-    a += T3act * na * na;
+    int a = train * _NUM_ELEM_ACTIONS + act;
     return a;
 }
-void model_actions_for_num(int actionnum, model_elem_action_t *T0act, model_elem_action_t *T1act, model_elem_action_t *T2act, model_elem_action_t *T3act)
+
+void model_actions_for_num(int actionnum, int *ptrain, model_elem_action_t *pact)
 {
-    //int na = model_num_actions();
-    *T0act = actionnum % NUM_ELEM_ACTIONS;
-    actionnum /= NUM_ELEM_ACTIONS;
-    *T1act = actionnum % NUM_ELEM_ACTIONS;
-    actionnum /= NUM_ELEM_ACTIONS;
-    *T2act = actionnum % NUM_ELEM_ACTIONS;
-    actionnum /= NUM_ELEM_ACTIONS;
-    *T3act = actionnum % NUM_ELEM_ACTIONS;
-    actionnum /= NUM_ELEM_ACTIONS;
+    *pact = actionnum % _NUM_ELEM_ACTIONS;
+    *ptrain = actionnum / _NUM_ELEM_ACTIONS;
 }
 
 // transitions
 int model_new_state(int statenum, int actionnum)
 {
-    model_elem_action_t a[4];
     int p[4];
-    model_actions_for_num(actionnum, &a[0], &a[1], &a[2], &a[3]);
+    int atrn;
+    model_elem_action_t act;
+
+    model_actions_for_num(actionnum, &atrn, &act);
     model_positions_for_state(statenum, &p[0], &p[1], &p[2], &p[3]);
-    for (int i = 0; i<3; i++) {
-        if (i>=numtrain) break;
-        const topo_lsblk_t *co = topology_get_sblkd(p[i]);
-        switch (a[i]) {
-            case action_dont_move:
-                break;
-            case action_left_straight:
-                if (co->left1 == -1) break;
-                p[i] = co->left1;
-                break;
-            case action_left_turn:
-                if (co->left2 == -1) break;
-                p[i] = co->left2;
-                break;
-            case action_right_straight:
-                if (co->right1 == -1) break;
-                p[i] = co->right1;
-                break;
-            case action_right_turn:
-                if (co->right2 == -1) break;
-                p[i] = co->right2;
-                break;
-            default:
-                abort();
-                break;
-        }
+    if (atrn<0) abort();
+    if (atrn>=numtrain) abort();
+  
+    const topo_lsblk_t *co = topology_get_sblkd(p[atrn]);
+    switch (act) {
+        case action_dont_move:
+            break;
+        case action_left_straight:
+            if (co->left1 == -1) break;
+            p[atrn] = co->left1;
+            break;
+        case action_left_turn:
+            if (co->left2 == -1) break;
+            p[atrn] = co->left2;
+            break;
+        case action_right_straight:
+            if (co->right1 == -1) break;
+            p[atrn] = co->right1;
+            break;
+        case action_right_turn:
+            if (co->right2 == -1) break;
+            p[atrn] = co->right2;
+            break;
+        default:
+            abort();
+            break;
     }
     int ns = model_state_num(p[0], p[1], p[2], p[3]);
     return ns;

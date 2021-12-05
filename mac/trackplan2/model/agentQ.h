@@ -11,7 +11,8 @@
 
 #include <stdio.h>
 
-void agentq_init(double alpha, double gamma, double epsilon);
+void agentq_init(void);
+void agentq_setparams(double _alpha, double _gamma, double _epsilon, double _noise);
 void agentq_restart(void);
 
 

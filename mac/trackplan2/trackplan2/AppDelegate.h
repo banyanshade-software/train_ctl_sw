@@ -27,6 +27,7 @@
 @property (nonatomic) double q_alpha;
 @property (nonatomic) double q_gamma;
 @property (nonatomic) double q_epsilon;
+@property (nonatomic) double q_noise;
 
 @property (nonatomic, weak) IBOutlet CTCManager *ctcManager;
 

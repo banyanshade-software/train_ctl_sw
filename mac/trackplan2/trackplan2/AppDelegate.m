@@ -31,6 +31,7 @@
     self.q_alpha = 0.1;
     self.q_gamma = 0.9;
     self.q_epsilon = 0.1;
+    self.q_noise = 0.001;
 }
 
 
@@ -106,20 +107,21 @@ int occupency_turnout_reserve(uint8_t turnout, int8_t numtrain)
     model_positions_for_state(s, &p0, &p1, &p2, &p3);
     NSLog(@"..");
     
-    agentq_init(_q_alpha, _q_gamma, _q_epsilon);
+    agentq_init();
 }
 
 
 - (IBAction) runQ:(id)sender
 {
-    for (int i=0; i<10000; i++) {
-        [self _runQ];
+    for (int i=0; i<100; i++) {
+        BOOL ok = [self _runQ];
+        //if (ok) break;
     }
 }
-- (void) _runQ
+- (BOOL) _runQ
 {
     agentq_restart();
-    
+    agentq_setparams(_q_alpha, _q_gamma, _q_epsilon, _q_noise);
     int i;
     int done=0;
     int nm=0;
@@ -152,5 +154,10 @@ int occupency_turnout_reserve(uint8_t turnout, int8_t numtrain)
         }
     }
     NSLog(@"done %d (i=%d, nact %d nm %d)", done, i, nact, nm);
+    if (done) {
+        NSLog(@"youpla");
+        return YES;
+    }
+    return NO;
 }
 @end

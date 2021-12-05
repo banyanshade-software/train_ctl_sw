@@ -1044,7 +1044,7 @@
                                                         </connections>
                                                     </textField>
                                                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="9rg-qv-zTV">
-                                                        <rect key="frame" x="6" y="231" width="65" height="32"/>
+                                                        <rect key="frame" x="6" y="186" width="65" height="32"/>
                                                         <buttonCell key="cell" type="push" title="INIT" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="IIh-rp-slh">
                                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                             <font key="font" metaFont="system"/>
@@ -1053,8 +1053,8 @@
                                                             <action selector="initQ:" target="Voe-Tx-rLC" id="sxz-jc-OuR"/>
                                                         </connections>
                                                     </button>
-                                                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="GBF-Sr-PV4">
-                                                        <rect key="frame" x="6" y="202" width="68" height="32"/>
+                                                    <button verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="GBF-Sr-PV4">
+                                                        <rect key="frame" x="7" y="158" width="68" height="32"/>
                                                         <buttonCell key="cell" type="push" title="RUN" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="a0Y-C4-s35">
                                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                             <font key="font" metaFont="system"/>
@@ -1063,10 +1063,35 @@
                                                             <action selector="runQ:" target="Voe-Tx-rLC" id="iZ5-Y0-Bxf"/>
                                                         </connections>
                                                     </button>
+                                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Pul-Qx-E4S">
+                                                        <rect key="frame" x="22" y="252" width="37" height="16"/>
+                                                        <textFieldCell key="cell" lineBreakMode="clipping" title="noise" id="8UO-kd-Fjg">
+                                                            <font key="font" usesAppearanceFont="YES"/>
+                                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                        </textFieldCell>
+                                                    </textField>
+                                                    <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="XWk-i3-fob">
+                                                        <rect key="frame" x="65" y="249" width="47" height="19"/>
+                                                        <constraints>
+                                                            <constraint firstAttribute="width" constant="47" id="74V-UH-Pco"/>
+                                                        </constraints>
+                                                        <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" drawsBackground="YES" id="Ejn-0y-NIz">
+                                                            <font key="font" metaFont="smallSystem"/>
+                                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                        </textFieldCell>
+                                                        <connections>
+                                                            <binding destination="Voe-Tx-rLC" name="value" keyPath="q_noise" id="7h2-FC-rAc"/>
+                                                        </connections>
+                                                    </textField>
                                                 </subviews>
                                                 <constraints>
                                                     <constraint firstItem="eDe-ze-24N" firstAttribute="top" secondItem="yMd-a0-BEH" secondAttribute="top" constant="12" id="3vz-Zh-123"/>
                                                     <constraint firstItem="bfb-Cu-IEt" firstAttribute="firstBaseline" secondItem="xAs-Uk-axc" secondAttribute="firstBaseline" id="5dP-er-xTp"/>
+                                                    <constraint firstItem="9rg-qv-zTV" firstAttribute="top" secondItem="Pul-Qx-E4S" secondAttribute="bottom" constant="38" id="7pf-vv-Foe"/>
+                                                    <constraint firstItem="XWk-i3-fob" firstAttribute="firstBaseline" secondItem="Pul-Qx-E4S" secondAttribute="firstBaseline" id="B4i-i5-nKY"/>
+                                                    <constraint firstItem="XWk-i3-fob" firstAttribute="top" secondItem="bfb-Cu-IEt" secondAttribute="bottom" constant="8" id="FbJ-Zy-9zE"/>
                                                     <constraint firstItem="wGS-z8-knU" firstAttribute="leading" secondItem="Mg7-zi-hp9" secondAttribute="leading" id="L2H-K5-jAY"/>
                                                     <constraint firstItem="eDe-ze-24N" firstAttribute="firstBaseline" secondItem="Mg7-zi-hp9" secondAttribute="firstBaseline" id="O82-Wb-9L1"/>
                                                     <constraint firstItem="eDe-ze-24N" firstAttribute="leading" secondItem="Mg7-zi-hp9" secondAttribute="trailing" constant="8" id="QJs-EO-hJ4"/>
@@ -1075,8 +1100,9 @@
                                                     <constraint firstItem="R0C-kC-JHO" firstAttribute="leading" secondItem="eDe-ze-24N" secondAttribute="leading" id="XvX-Ox-mFW"/>
                                                     <constraint firstItem="R0C-kC-JHO" firstAttribute="leading" secondItem="wGS-z8-knU" secondAttribute="trailing" constant="8" id="Zvt-gw-INb"/>
                                                     <constraint firstItem="bfb-Cu-IEt" firstAttribute="leading" secondItem="xAs-Uk-axc" secondAttribute="trailing" constant="8" id="dmz-kw-JdZ"/>
-                                                    <constraint firstItem="9rg-qv-zTV" firstAttribute="top" secondItem="xAs-Uk-axc" secondAttribute="bottom" constant="20" id="fQb-kQ-OdE"/>
+                                                    <constraint firstItem="XWk-i3-fob" firstAttribute="leading" secondItem="Pul-Qx-E4S" secondAttribute="trailing" constant="8" id="gs8-Vo-07L"/>
                                                     <constraint firstItem="bfb-Cu-IEt" firstAttribute="leading" secondItem="R0C-kC-JHO" secondAttribute="leading" id="hts-JO-qfe"/>
+                                                    <constraint firstItem="XWk-i3-fob" firstAttribute="leading" secondItem="bfb-Cu-IEt" secondAttribute="leading" id="iEv-K9-1JN"/>
                                                     <constraint firstItem="bfb-Cu-IEt" firstAttribute="top" secondItem="R0C-kC-JHO" secondAttribute="bottom" constant="8" id="nig-lt-Cyh"/>
                                                     <constraint firstItem="R0C-kC-JHO" firstAttribute="top" secondItem="eDe-ze-24N" secondAttribute="bottom" constant="12" id="oCh-Rc-bWs"/>
                                                     <constraint firstItem="GBF-Sr-PV4" firstAttribute="top" secondItem="9rg-qv-zTV" secondAttribute="bottom" constant="8" id="qOS-t5-dIw"/>

@@ -111,13 +111,13 @@
             tx, ty, v ? "writing-mode=vertical-rl" : "",
                i, s->canton_addr];
         }
-        if (fut) continue;
+        //if (fut) continue;
 
-        [resT appendFormat:@"<rect class=\"trinfo trinfo_s%d trinfo_c%d\" x=\"%d\" y=\"%d\" width=\"%d\" height=\"%d\" fill=\"#E0FFE0\" stroke=\"#80A080\" stroke-width=\"2px\" />\n",
-         i, s->canton_addr,
+        [resT appendFormat:@"<rect class=\"trinfo %s rectinfo%d trinfo_s%d trinfo_c%d\" x=\"%d\" y=\"%d\" width=\"%d\" height=\"%d\" fill=\"#E0FFE0\" stroke=\"#80A080\" stroke-width=\"2px\" />\n",
+         fut ? "fut" : "", i, i, s->canton_addr,
          rx,ry, v ? 16 : 50, v ? 50 : 16];
-        [resT appendFormat:@"<text id=\"tr%d\" class=\"trinfo trinfo_s%d trinfo_c%d\" x=\"%dpx\" y=\"%dpx\"  Font-family=\"Helvetica\" fill=\"#8080A0\" font-size=\"10px\" %s>TRINFO</text>\n",
-         i, i, s->canton_addr,
+        [resT appendFormat:@"<text id=\"tr%d\" class=\"trinfo %s trinfo_s%d trinfo_c%d\" x=\"%dpx\" y=\"%dpx\"  Font-family=\"Helvetica\" fill=\"#8080A0\" font-size=\"10px\" %s>TRINFO</text>\n",
+         i, fut ? "fut" : "", i, s->canton_addr,
          rx + (v? 8: 2), ry + (v ? 3 : 12), v ? "writing-mode=vertical-rl" : ""
          ];
     }
@@ -363,5 +363,13 @@ static int rec_left_is_straight_ep(trec_t *rec, int n)
     if (!ok) {
         NSLog(@"write error : %@", err);
     }
+}
+
+
+
+
+int occupency_turnout_reserve(uint8_t turnout, int8_t numtrain)
+{
+    return 0;
 }
 @end

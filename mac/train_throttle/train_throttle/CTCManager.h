@@ -28,6 +28,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void) uitrac_change_blk:(int) blk val:(int)v train:(int)trn sblk:(int)sblk;
 
+
+// for trackplan2
+- (void) uitrac_change_sblk:(int) sblk val:(int)v train:(int)trn;
+- (void) hideTrainInfos;
+
 @end
 
 NS_ASSUME_NONNULL_END

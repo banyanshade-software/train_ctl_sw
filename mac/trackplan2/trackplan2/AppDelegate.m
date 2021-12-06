@@ -48,32 +48,32 @@ int occupency_turnout_reserve(uint8_t turnout, int8_t numtrain)
 
 - (void) placeOrigins
 {
-    lsblk_num_t lsb;
+    [_ctcManager hideTrainInfos];
     if (_T0_from >= 0) {
-        lsb.n = _T0_from;
-        [_ctcManager uitrac_change_blk:canton_for_lsblk(lsb) val:1 train:0 sblk:_T0_from];
+        [self move:0 from:_T0_from to:_T0_from];
     }
     if (_T1_from >= 0) {
-        lsb.n = _T1_from;
-        [_ctcManager uitrac_change_blk:canton_for_lsblk(lsb) val:1 train:1 sblk:_T1_from];
+        [self move:1 from:_T1_from to:_T1_from];
+        
     }
     if (_T2_from >= 0) {
-        lsb.n = _T2_from;
-        [_ctcManager uitrac_change_blk:canton_for_lsblk(lsb) val:1 train:2 sblk:_T2_from];
+        [self move:2 from:_T2_from to:_T2_from];
+        
     }
     if (_T3_from >= 0) {
-        lsb.n = _T3_from;
-        [_ctcManager uitrac_change_blk:canton_for_lsblk(lsb) val:1 train:3 sblk:_T3_from];
+        [self move:2 from:_T2_from to:_T2_from];
     }
 }
 
 - (void) move:(int)train from:(int)oldblk to:(int)newblk
 {
-    lsblk_num_t oldlsb, newlsb;
-    oldlsb.n = oldblk;
-    newlsb.n = newblk;
-    [_ctcManager uitrac_change_blk:canton_for_lsblk(oldlsb) val:0 train:0xFF sblk:-1];
-    [_ctcManager uitrac_change_blk:canton_for_lsblk(newlsb) val:1 train:train sblk:newblk ];
+    
+    //- (void) uitrac_change_sblk:(int) sblk val:(int)v train:(int)trn
+    [_ctcManager uitrac_change_sblk:oldblk val:0 train:train];
+    [_ctcManager uitrac_change_sblk:newblk val:1 train:train];
+
+    //[_ctcManager uitrac_change_blk:canton_for_lsblk(oldlsb) val:0 train:0xFF sblk:-1];
+    //[_ctcManager uitrac_change_blk:canton_for_lsblk(newlsb) val:1 train:train sblk:newblk ];
 }
 
 - (void) setupModel
@@ -137,6 +137,13 @@ int occupency_turnout_reserve(uint8_t turnout, int8_t numtrain)
         }
     }
 }
+- (IBAction) runQanim:(id)sender
+{
+    [self placeOrigins];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [self _runQdisplay];
+    });
+}
 - (BOOL) _runQ
 {
     [self setupModelDest];
@@ -162,7 +169,7 @@ int occupency_turnout_reserve(uint8_t turnout, int8_t numtrain)
             int t[4];
             model_positions_for_state(ns, &t[0], &t[1], &t[2], &t[3]);
             for (int i=0; i<4; i++) {
-                if ((1) || (t[i] != curst[i])) {
+                if ((0) || (t[i] != curst[i])) {
                     [self move:i from:curst[i] to:t[i]];
                     curst[i] = t[i];
                     nm++;

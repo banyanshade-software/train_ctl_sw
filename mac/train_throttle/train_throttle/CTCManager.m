@@ -115,35 +115,8 @@ static int _dim(int col, int dim)
     //NSString *nblk = [NSString stringWithFormat:@"BLK%d", blk];
     NSString *col = @"white";
     NSString *strn = (trn == 0xFF) ? nil : [NSString stringWithFormat:@"(T%d", trn];
-    /*
-    switch (v) {
-        case BLK_OCC_FREE: // BLK_OCC_FREE:
-            col = @"darkgray";
-            break;
-        case BLK_OCC_STOP:
-            col = @"brown";
-            strn = [strn stringByAppendingString:@"--)"];
-            break;
-        case BLK_OCC_LEFT:
-            col = @"orange";
-            strn = [strn stringByAppendingString:@"<<)"];
-            break;
-        case BLK_OCC_RIGHT:
-            col = @"red";
-            strn = [strn stringByAppendingString:@">>)"];
-            break;
-        case BLK_OCC_C2:
-            col = @"yellow";
-            strn = [strn stringByAppendingString:@"••)"];
-            break;
-        default:
-            if ((v>=BLK_OCC_DELAY1) && (v<=BLK_OCC_DELAYM)) {
-                col = @"salmon";
-                strn = [strn stringByAppendingString:@")"];
-            }
-            break;
-    }
-     */
+   
+    
     int d;
     if (v==BLK_OCC_FREE) col = @"darkgray";
     else {
@@ -189,17 +162,55 @@ static int _dim(int col, int dim)
     } else {
         NSLog(@"no sblk info");
     }
+}
+
+
+
+- (void) uitrac_change_sblk:(int) sblk val:(int)v train:(int)trn
+{
+    if (trn<0) trn=0xFF;
+    if (sblk<0) return;
+    NSString *js;
+    //NSString *nblk = [NSString stringWithFormat:@"BLK%d", blk];
+    NSString *col = @"white";
+    NSString *strn = (trn == 0xFF) ? nil : [NSString stringWithFormat:@"   T%d", trn];
+   
     
-    /*
-    js = [NSString stringWithFormat:@"document.getElementById('txtc%d').textContent = '%@'; document.getElementById('txtc%d').style.visibility = '%@';",
-          blk, strn ? strn : @"",
-          blk, strn ? @"visible" : @"hidden"];
+    if (v==BLK_OCC_FREE) col = @"darkgray";
+    else {
+        col = [self colorForTrain:trn dim:4];
+        //col = [col stringByAppendingString:@"55"]; // alpha
+    }
+    
+    
+  
+    
+    if (!v) {
+        js = [NSString stringWithFormat:@"Array.from(document.getElementsByClassName('trinfo_s%d'), el => el.style.visibility = 'hidden');", sblk];
+        [_ctoWebView evaluateJavaScript:js completionHandler:^(id v, NSError *err) {
+            if (err) {
+                NSLog(@"js error : %@\n", err);
+            }
+        }];
+    } else {
+        js = [NSString stringWithFormat:@"Array.from(document.getElementsByClassName('trinfo_s%d'), el => el.style.visibility = 'visible');  Array.from(document.getElementsByClassName('rectinfo%d'), el => el.style.fill='%@'); document.getElementById('tr%d').textContent = '%@';", sblk, sblk, col, sblk,
+              strn ? strn : @""];
+        [_ctoWebView evaluateJavaScript:js completionHandler:^(id v, NSError *err) {
+            if (err) {
+                NSLog(@"js error : %@\n", err);
+            }
+        }];
+    }
+}
+
+- (void) hideTrainInfos
+{
+    NSString *js = [NSString stringWithFormat:@"Array.from(document.getElementsByClassName('trinfo'), el => el.style.visibility = 'hidden');"];
     [_ctoWebView evaluateJavaScript:js completionHandler:^(id v, NSError *err) {
         if (err) {
             NSLog(@"js error : %@\n", err);
         }
     }];
-    */
 }
 
 - (void)userContentController:(nonnull WKUserContentController *)userContentController didReceiveScriptMessage:(nonnull WKScriptMessage *)message

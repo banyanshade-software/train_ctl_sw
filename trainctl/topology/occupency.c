@@ -164,6 +164,8 @@ static  void _notify_chg_owner(uint8_t turnout, int8_t numtrain)
     m.from = MA_CONTROL();
     mqf_write_from_ctrl(&m);
 }
+
+
 int occupency_turnout_reserve(uint8_t turnout, int8_t numtrain)
 {
 	if (turnout >= NUM_TURNOUTS) return -1;

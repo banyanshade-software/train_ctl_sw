@@ -82,7 +82,7 @@ static const topo_lsblk_t _Topology[] = {
        /* 14*/ { FUTURE_CANTON,    0xFF,   0, 20,    13, 16,      7,       -1,  -1, 0xFF   _PTS(0, {L0+0,16}, {L0-1, 17}, _VP, _VP) },
     
        /* 15*/ { FUTURE_CANTON,    0xFF,   0, 20,    21, -1,    10,       -1,  -1,    6   _PTS(0, {L0+2,10}, {L0+2, 13}, _VP, _VP) },
-       /* 16*/ { FUTURE_CANTON,    0xFF,   0, 20,    17, 19,     8,       -1,  -1,    7    _PTS(0, {L0+0,14}, {L0+0, 15}, _VP, _VP) },
+       /* 16*/ { FUTURE_CANTON,    0xFF,   0, 20,    17, 19,     8,       -1,  14,    7    _PTS(0, {L0+0,14}, {L0+0, 15}, _VP, _VP) },
     
        /* 17*/ { FUTURE_CANTON,    0xFF,   0, 20,    18, 20,      9,       16,  -1,    8   _PTS(0, {L0+0, 12}, {L0+0, 13}, _VP, _VP) },
        /* 18*/ { FUTURE_CANTON,    0xFF,   0, 20,    -1, -1,   0xFF,       17,  -1,    9   _PTS(0, {L0+0, 4}, {L0+0, 11}, _VP, _VP)},

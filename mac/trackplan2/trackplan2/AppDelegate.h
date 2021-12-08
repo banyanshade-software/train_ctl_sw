@@ -35,5 +35,10 @@
 - (IBAction) runQ:(id)sender;
 - (IBAction) runQanim:(id)sender;
 
+
+- (IBAction) initD:(id)sender;
+- (IBAction) runD:(id)sender;
+- (IBAction) runDanim:(id)sender;
+
 @end
 

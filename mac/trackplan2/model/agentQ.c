@@ -7,17 +7,34 @@
 //
 
 #include <stdlib.h>
+#include <stdio.h>
 #include <memory.h>
 #include <math.h>
+#include "agent.h"
 #include "agentQ.h"
 #include "model.h"
 
+
+static void agentq_init(void);
+static void agentq_setparams(double _alpha, double _gamma, double _epsilon, double _noise);
+static void q_param(double,double,double,double,double,double,double,double);
+static void agentq_restart(void);
+static int q_step(int *retstate);
+
+
+agent_def_t q_agent = {
+    .init =     agentq_init,
+    .restart =  agentq_restart,
+    .step =     q_step,
+    .setparam = q_param,
+};
+
 static double *qmatrix = NULL;
 
-static double q_alpha = 0.0;
-static double q_gamma = 0.0;
+static double q_alpha   = 0.0;
+static double q_gamma   = 0.0;
 static double q_epsilon = 0.0;
-static double q_noise = 0.0;
+static double q_noise   = 0.0;
 
 static int curstate = 0;
 static int final_state = 0;
@@ -35,7 +52,7 @@ double rand01(void)
     return x;
 }
 
-void agentq_init(void)
+static void agentq_init(void)
 {
     if (qmatrix) free(qmatrix);
     int ns = model_num_states();
@@ -56,20 +73,26 @@ void agentq_init(void)
     agentq_restart();
 }
 
-void agentq_setparams(double _alpha, double _gamma, double _epsilon, double _noise)
+static void agentq_setparams(double _alpha, double _gamma, double _epsilon, double _noise)
 {
     q_alpha = _alpha;
     q_gamma = _gamma;
     q_epsilon = _epsilon;
     q_noise = _noise;
 }
-void agentq_restart(void)
+
+static void q_param(double _alpha, double _gamma, double _epsilon, double _noise, double  u1, double u2, double u3, double u4)
+{
+    agentq_setparams(_alpha, _gamma, _epsilon, _noise);
+}
+
+static void agentq_restart(void)
 {
     curstate = model_initial_state();
     final_state = model_final_state();
 }
 
-double q_maxa(int state, int *pact)
+static double q_maxa(int state, int *pact)
 {
     int na = model_num_actions();
     double m=0;
@@ -87,7 +110,7 @@ double q_maxa(int state, int *pact)
     return m;
 }
 
-int agent_action(int curstate)
+static int agent_action(int curstate)
 {
     int na = model_num_actions();
     double r = rand01();
@@ -101,7 +124,7 @@ int agent_action(int curstate)
     }
 }
 
-int q_step(int *retstate)
+static int q_step(int *retstate)
 {
     int action = agent_action(curstate);
     if (action<0) abort();
@@ -109,11 +132,11 @@ int q_step(int *retstate)
     
     double reward = 0.0;
     int badmove = 0;
-    int newstate = model_new_state(curstate, action, &reward, &badmove);
+    int newstate = model_new_state(curstate, action, &reward, &badmove, NULL);
     //double reward = model_reward(newstate);
     
     if (newstate < 0) {
-        newstate = model_new_state(curstate, action, &reward, &badmove);
+        newstate = model_new_state(curstate, action, &reward, &badmove, NULL);
         abort();
     }
     
@@ -123,7 +146,7 @@ int q_step(int *retstate)
     
     q_dump_state(curstate);
 
-    if (0 && badmove) {
+    if ((0) && badmove) {
         int curidx = q_idx(curstate, action);
         qmatrix[curidx] = -1.0;
     } else {

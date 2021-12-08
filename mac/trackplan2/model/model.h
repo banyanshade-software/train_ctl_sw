@@ -51,10 +51,10 @@ void model_actions_for_num(int actionnum, int *ptrain, model_elem_action_t *pact
 
 
 // transitions
-int model_new_state(int statenum, int actionnum, double *preward, int *badmove);
+int model_new_state(int statenum, int actionnum, double *preward, int *badmove, int *col);
 
 // reward
-double model_reward(int statenum);
+double model_reward(int statenum, int *colision);
 
 
 const char *model_descr_action(model_elem_action_t a);

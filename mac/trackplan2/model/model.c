@@ -14,7 +14,8 @@
 #include "topologyP.h"
 
 #define LIMIT_TWO_TRAINS 0
-#define LIMIT_LSBLK_NUM 9
+//#define LIMIT_LSBLK_NUM 9
+#define LIMIT_LSBLK_NUM 0
 
 static int numtrain=0;
 static int numblk=0;
@@ -120,13 +121,14 @@ static int ckf(int lsblk)
 
 
 // transitions
-int model_new_state(int statenum, int actionnum, double *preward, int *badmove)
+int model_new_state(int statenum, int actionnum, double *preward, int *badmove, int *col)
 {
     int p[4];
     int atrn;
     model_elem_action_t act;
 
     if (badmove) *badmove = 0;
+    if (col)     *col = 0;
     model_actions_for_num(actionnum, &atrn, &act);
     model_positions_for_state(statenum, &p[0], &p[1], &p[2], &p[3]);
     if (atrn<0) abort();
@@ -160,8 +162,9 @@ int model_new_state(int statenum, int actionnum, double *preward, int *badmove)
             break;
     }
     int ns = model_state_num(p[0], p[1], p[2], p[3]);
+    
     if (preward) {
-        *preward = model_reward(ns)+r1;
+        *preward = model_reward(ns, col)+r1;
     }
     // sanity
     if (act == action_dont_move) {
@@ -173,14 +176,15 @@ badmove:
     if ((1)) {
         if (preward) *preward = -10.0;
     } else {
-        if (preward) *preward = model_reward(statenum);
+        if (preward) *preward = model_reward(statenum, col);
     }
     return statenum;
 }
 
 // reward
-double model_reward(int statenum)
+double model_reward(int statenum, int *colision)
 {
+    if (colision) *colision = 0;
     if (statenum == finalstate) return 10.0;
     int p[4];
     int f[4];
@@ -191,7 +195,10 @@ double model_reward(int statenum)
     for (int i=0; i<numtrain; i++) {
         for (int j=0; j<numtrain; j++) {
             if (j==i) continue;
-            if (p[i]==p[j]) r -= 3;
+            if (p[i]==p[j]) {
+                if (colision) (*colision)++;
+                r -= 3;
+            }
         }
     }
     for (int i=0; i<numtrain; i++) {

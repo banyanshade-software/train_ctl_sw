@@ -10,7 +10,9 @@
 #import "CTCManager.h"
 #include "topology.h"
 #include "model.h"
+#include "agent.h"
 #include "agentQ.h"
+#include "agentD.h"
 
 @interface AppDelegate ()
 
@@ -19,6 +21,7 @@
 
 @implementation AppDelegate {
     int curst[4];
+    agent_def_t *curagent;
 }
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
@@ -97,7 +100,10 @@ int occupency_turnout_reserve(uint8_t turnout, int8_t numtrain)
     if (_T2_from>=0) model_set_from_to(2, _T2_from, _T2_to);
     if (_T3_from>=0) model_set_from_to(3, _T3_from, _T3_to);
 }
-- (IBAction) initQ:(id)sender
+
+#pragma mark -
+
+- (void) agentInit
 {
     [self setupModel];
     int ns = model_num_states();
@@ -111,44 +117,12 @@ int occupency_turnout_reserve(uint8_t turnout, int8_t numtrain)
     model_positions_for_state(s, &p0, &p1, &p2, &p3);
     NSLog(@"..");
     
-    agentq_init();
+    curagent->init();
 }
 
 
-- (IBAction) runQ:(id)sender
+- (BOOL) agentRun
 {
-    if ((1)) {
-        for (int i=0; i<10; i++) {
-            BOOL ok = [self _runQ];
-            if (ok) break;
-        }
-    } else {
-        [self _runQdisplay];
-    }
-    if ((0)) {
-        int st = model_initial_state();
-        int act = 0;
-        for (int i=0; i<1; i++) {
-            q_dump_state(st);
-            printf("act %d -> ", act);
-            int badmove; double reward;
-            st = model_new_state(st, act, &reward, &badmove);
-            printf(" st%d (%sreward %2.2f\n", st, badmove ? "BAD ":"", reward);
-        }
-    }
-}
-- (IBAction) runQanim:(id)sender
-{
-    [self placeOrigins];
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        [self _runQdisplay];
-    });
-}
-- (BOOL) _runQ
-{
-    [self setupModelDest];
-    agentq_restart();
-    agentq_setparams(_q_alpha, _q_gamma, _q_epsilon, _q_noise);
     int i;
     int done=0;
     int nm=0;
@@ -156,7 +130,7 @@ int occupency_turnout_reserve(uint8_t turnout, int8_t numtrain)
     int ps = model_initial_state();
     for (i=0; i<80000; i++) {
         int ns;
-        done = q_step(&ns);
+        done = curagent->step(&ns);
         
         if (ns==ps) {
             continue;
@@ -188,11 +162,9 @@ int occupency_turnout_reserve(uint8_t turnout, int8_t numtrain)
     return NO;
 }
 
-- (void) _runQdisplay
+
+- (void) agentRunDisplay
 {
-    agentq_restart();
-    agentq_setparams(_q_alpha, _q_gamma, _q_epsilon, _q_noise);
-    
     __block int done = 0;
     
     __block void(^stepnext)(int);
@@ -203,7 +175,7 @@ int occupency_turnout_reserve(uint8_t turnout, int8_t numtrain)
             return;
         }
         int ns;
-        int ok = q_step(&ns);
+        int ok = self->curagent->step(&ns);
         if ((1)) {
             int t[4];
             model_positions_for_state(ns, &t[0], &t[1], &t[2], &t[3]);
@@ -229,4 +201,88 @@ int occupency_turnout_reserve(uint8_t turnout, int8_t numtrain)
     
 }
 
+#pragma mark -
+
+- (IBAction) initQ:(id)sender
+{
+    curagent = &q_agent;
+    [self agentInit];
+}
+
+
+- (IBAction) runQ:(id)sender
+{
+    for (int i=0; i<10; i++) {
+        BOOL ok = [self _runQ];
+        if (ok) break;
+    }
+}
+- (IBAction) runQanim:(id)sender
+{
+    [self placeOrigins];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [self _runQdisplay];
+    });
+}
+- (BOOL) _runQ
+{
+    [self setupModelDest];
+    curagent = &q_agent;
+    curagent->restart();
+    curagent->setparam(_q_alpha, _q_gamma, _q_epsilon, _q_noise, 0,0,0,0);
+    return [self agentRun];
+}
+
+
+
+- (void) _runQdisplay
+{
+    curagent = &q_agent;
+    curagent->restart();
+    curagent->setparam(_q_alpha, _q_gamma, _q_epsilon, _q_noise, 0,0,0,0);
+    [self agentRunDisplay];
+}
+
+#pragma mark -
+
+
+- (IBAction) initD:(id)sender
+{
+    curagent = &d_agent;
+    [self agentInit];
+}
+
+
+- (IBAction) runD:(id)sender
+{
+    for (int i=0; i<10; i++) {
+        BOOL ok = [self _runD];
+        if (ok) break;
+    }
+}
+- (IBAction) runDanim:(id)sender
+{
+    [self placeOrigins];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [self _runDdisplay];
+    });
+}
+- (BOOL) _runD
+{
+    [self setupModelDest];
+    curagent = &d_agent;
+    curagent->restart();
+    //curagent->setparam(_q_alpha, _q_gamma, _q_epsilon, _q_noise, 0,0,0,0);
+    return [self agentRun];
+}
+
+
+
+- (void) _runDdisplay
+{
+    curagent = &d_agent;
+    curagent->restart();
+    //curagent->setparam(0,0,0,0, 0,0,0,0);
+    [self agentRunDisplay];
+}
 @end

@@ -28,12 +28,12 @@
 #include "turnout.h"
 #include "turnout_config.h"
 
-#include "misc.h"
+#include "../misc.h"
 #include "../msg/trainmsg.h"
 
 
-#include "railconfig.h"
-#include "trainctl_iface.h"
+#include "../railconfig.h"
+#include "../trainctl_iface.h"
 #ifndef TRAIN_SIMU
 #ifdef STM32_F4
 #include "stm32f4xx_hal.h"
@@ -44,8 +44,13 @@
 #include "train_simu.h"
 #endif
 
-#include "statval.h"
+#include "../statval.h"
 
+
+
+#ifndef BOARD_HAS_TURNOUTS
+#error BOARD_HAS_TURNOUTS not defined, remove this file from build
+#endif
 
 static void turnout_reset(void);
 static void process_turnout_timers(uint32_t tick, uint32_t dt);

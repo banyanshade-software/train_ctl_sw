@@ -15,6 +15,13 @@
 
 #include "txrxtask.h"
 
+
+
+#ifndef BOARD_HAS_USB
+#error BOARD_HAS_USB not defined, remove this file from build
+#endif
+
+
 #include "cmsis_os.h"
 //#include "usb_device.h"
 //#include "usbd_cdc.h"

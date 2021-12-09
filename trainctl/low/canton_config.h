@@ -8,7 +8,7 @@
 #ifndef LOW_CANTON_CONFIG_H_
 #define LOW_CANTON_CONFIG_H_
 
-#include "misc.h"
+#include "../misc.h"
 
 #ifndef TRAIN_SIMU
 #ifdef STM32_F4

@@ -9,7 +9,7 @@
 #ifndef ctrlP_h
 #define ctrlP_h
 
-#include "railconfig.h"
+#include "../railconfig.h"
 // -----------------------------------------------------------
 //per train stucture
 

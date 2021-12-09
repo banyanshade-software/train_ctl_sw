@@ -18,6 +18,9 @@
 
 
 
+#ifndef BOARD_HAS_CTRL
+#error BOARD_HAS_CTRL not defined, remove this file from build
+#endif
 
 /*
  train detection

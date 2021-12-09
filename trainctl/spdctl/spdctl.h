@@ -20,7 +20,8 @@
 #define SPDCONTROL_H_
 
 //#include "railconfig.h"
-#include "trainctl_iface.h"
+#include "../misc.h"
+//#include "trainctl_iface.h"
 
 
 void spdctl_run_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt);

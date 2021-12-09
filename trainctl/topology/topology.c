@@ -22,7 +22,7 @@
 
 
 #ifndef TRACKPLAN_TESTPGM
-#include "railconfig.h"
+#include "../railconfig.h"
 #else
 
 #include <stdio.h>
@@ -32,6 +32,13 @@
 #define DBG_TURNOUTS 1
 #define itm_debug3(_fl, _msg, _a, _b, _c) do {printf(_msg  "%d %d %d", _a, _b, _c);} while(0)
 #endif
+
+
+
+#ifndef BOARD_HAS_TOPOLOGY
+#error BOARD_HAS_TOPOLOGY not defined, remove this file from build
+#endif
+
 
 #include "topology.h"
 #include "topologyP.h"

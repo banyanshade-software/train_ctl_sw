@@ -12,9 +12,9 @@
 #include "task.h"
 #include "taskled.h"
 
-#include "misc.h"
-#include "leds/ledtask.h"
-#include "msg/notif.h"
+#include "../misc.h"
+#include "../leds/ledtask.h"
+#include "../msg/notif.h"
 
 void start_led_task(_UNUSED_ void *argument)
 {

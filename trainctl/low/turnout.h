@@ -26,7 +26,7 @@
 #ifndef TURNOUT_H_
 #define TURNOUT_H_
 
-#include "misc.h"
+#include "../misc.h"
 
 #ifndef TRAIN_SIMU
 #include "main.h"

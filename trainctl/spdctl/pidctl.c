@@ -29,7 +29,12 @@
 #include <stddef.h>
 #include <memory.h>
 #include "pidctl.h"
-#include "misc.h"
+#include "../misc.h"
+
+
+#ifndef BOARD_HAS_CTRL
+#error BOARD_HAS_CTRL not defined, remove this file from build
+#endif
 
 void pidctl_reset(_UNUSED_ const pidctl_config_t *c, pidctl_vars_t *v)
 {

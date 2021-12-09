@@ -18,6 +18,11 @@
 #include "misc.h"
 #include "../../trainctl/msg/trainmsg.h"
 
+
+
+#ifndef BOARD_HAS_INA3221
+#error BOARD_HAS_INA3221 not defined, remove this file from build
+#endif
 // ----------------------------------------------------------------------------------
 // global run mode, each tasklet implement this
 static runmode_t run_mode = 0;

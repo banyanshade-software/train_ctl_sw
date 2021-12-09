@@ -13,12 +13,12 @@
 #include "../IHM/disp.h"
 #include "../IHM/ihm.h"
 
-#ifndef TFT_DISP
-#error TFT_DISP not defined
+
+#ifndef BOARD_HAS_TFT
+#error BOARD_HAS_TFT not defined, remove this file from build
 #endif
 
 
-#if TFT_DISP
 
 #ifdef STM32_F4
 #include "stm32f4xx_hal.h"
@@ -546,4 +546,3 @@ static void disp_clock(void)
 #endif
 
 
-#endif 	// TFT_DISP

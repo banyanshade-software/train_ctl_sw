@@ -10,7 +10,7 @@
 
 
 #include <stdint.h>
-#include "misc.h"
+#include "../misc.h"
 
 #ifndef TRAIN_SIMU
 #include "main.h"

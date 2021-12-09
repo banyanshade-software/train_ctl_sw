@@ -11,12 +11,20 @@
 
 
 #include <stddef.h>
-#include "misc.h"
+#include "../misc.h"
 
 #include "ihm.h"
 #include "disp.h"
 #include "../utils/itm_debug.h"
 #include "../msg/trainmsg.h"
+
+
+
+#ifndef BOARD_HAS_IHM
+#error BOARD_HAS_IHM not defined, remove this file from build
+#endif
+
+
 
 #ifndef TRAIN_SIMU
 #ifdef STM32_F4

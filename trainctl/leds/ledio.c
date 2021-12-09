@@ -8,9 +8,13 @@
 
 #include "ledio.h"
 #include "led.h"
-#include "misc.h"
-#include "trainctl_iface.h"
-#include "railconfig.h"
+#include "../misc.h"
+//#include "trainctl_iface.h"
+#include "../railconfig.h"
+
+#ifndef BOARD_HAS_LED
+#error BOARD_HAS_LED not defined, remove this file from build
+#endif
 
 void led_io(uint8_t lednum, uint8_t v)
 {

@@ -8,14 +8,18 @@
 
 #include <stddef.h>
 #include <memory.h>
-#include "misc.h"
+#include "../misc.h"
 
 #include "presence_detection.h"
 
-#include "msg/trainmsg.h"
+#include "../msg/trainmsg.h"
 #include "../../stm32dev/ina3221/ina3221.h"
-#include "railconfig.h"
+#include "../railconfig.h"
 
+
+#ifndef BOARD_HAS_CANTON
+#error BOARD_HAS_CANTON not defined, remove this file from build
+#endif
 
 #if INA3221_TASK
 void presdect_tick(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_ uint32_t dt)

@@ -132,7 +132,14 @@
 #endif
 
 
+// -----------------------------------------
+// -----------------------------------------
+// Canton config
+// -----------------------------------------
+// -----------------------------------------
 
+
+#ifdef TRN_BOARD_MAIN
 
 static  canton_config_t Cantons[NUM_CANTONS] = {
     // C0
@@ -244,6 +251,31 @@ static  canton_config_t Cantons[NUM_CANTONS] = {
 #endif
 
 };
+
+#endif // TRN_BOARD_MAIN
+
+#ifdef TRN_BOARD_DISPATCHER
+
+static  canton_config_t Cantons[NUM_CANTONS] = {
+    // C0
+		{//CANTON_TYPE_PROTO1,
+				//  0    1    2    3    4    5    6    7    8    9    10   11  12    13   14   15
+				//{ 1000, 874, 770, 699, 621, 578, 538, 507, 451, 432, 413, 398, 379, 367, 355, 345}, // volts[16]
+				{ 1000, 770, 621,  538, 451, 413, 379, 355}, // volts[8]
+                //{ 1000, 0,    0, 0, 0, 621, 0,   0, 0, 0, 0, 0, 0, 0, 0, 0}, // volts[16]  V2
+                //{ 1000, 874,  0, 0, 0, 621, 538, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // volts[16]  V4
+
+				VOLT_0_SEL0_GPIO_Port,VOLT_0_SEL1_GPIO_Port, VOLT_0_SEL2_GPIO_Port, //0/*VOLT_0_SEL3_GPIO_Port*/,
+				VOLT_0_SEL0_Pin, VOLT_0_SEL1_Pin, VOLT_0_SEL2_Pin,// 0/*VOLT_0_SEL3_Pin*/,
+				2, TIM_CHANNEL_3, TIM_CHANNEL_4,  // TIM_HandleTypeDef
+				0, /*notif BEMF */
+				1, /* reverse BEMF*/
+		},
+};
+
+
+#endif
+
 
 
 

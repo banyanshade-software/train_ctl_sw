@@ -13,7 +13,7 @@
  */
 
 
-#error obsolete
+#error obsolete, exclude from build
 
 #include "cmsis_os.h"
 #include "main.h"

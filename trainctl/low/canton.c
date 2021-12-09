@@ -30,8 +30,8 @@
 
 #include <stddef.h>
 #include <memory.h>
-#include "misc.h"
-#include "trainctl_iface.h"
+#include "../misc.h"
+#include "../trainctl_iface.h"
 #include "canton.h"
 #include "canton_bemf.h"
 #ifndef TRAIN_SIMU
@@ -43,9 +43,13 @@
 #else
 #include "train_simu.h"
 #endif
-#include "railconfig.h"
-#include "statval.h"
+#include "../railconfig.h"
+#include "../statval.h"
 
+
+#ifndef BOARD_HAS_CANTON
+#error BOARD_HAS_CANTON not defined, remove this file from build
+#endif
 
 #ifndef TRAIN_SIMU
 TIM_HandleTypeDef *CantonTimerHandles[8] = {NULL};

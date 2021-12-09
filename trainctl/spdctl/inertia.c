@@ -24,8 +24,15 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-#include "misc.h"
+#include "../misc.h"
 #include "inertia.h"
+
+
+
+#ifndef BOARD_HAS_CTRL
+#error BOARD_HAS_CTRL not defined, remove this file from build
+#endif
+
 
 void inertia_reset(int tidx, _UNUSED_ const inertia_config_t *cnf, inertia_vars_t *vars)
 {

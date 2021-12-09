@@ -8,7 +8,8 @@
 
 //#include <stdio.h>
 
-#include "misc.h"
+#include "../misc.h"
+
 #ifndef TRACKPLAN_TESTPGM
 #include "../msg/trainmsg.h"
 #include "railconfig.h"
@@ -16,6 +17,11 @@
 
 #include "topology.h"
 #include "occupency.h"
+
+
+#ifndef BOARD_HAS_TOPOLOGY
+#error BOARD_HAS_TOPOLOGY not defined, remove this file from build
+#endif
 
 
 typedef struct {

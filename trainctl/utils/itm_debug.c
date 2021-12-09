@@ -12,7 +12,7 @@
 #include <stdint.h>
 #include <memory.h>
 #include <stdlib.h>
-#include "misc.h"
+#include "../misc.h"
 #ifndef TRAIN_SIMU
 #include "cmsis_os2.h"
 #include "trainctl_config.h"

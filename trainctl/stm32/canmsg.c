@@ -1,5 +1,5 @@
 /*
- * cantask.c
+ * canmsg.c
  *
  *  Created on: Nov 22, 2021
  *      Author: danielbraun
@@ -7,12 +7,19 @@
 
 
 
-#include <stm32/canmsg.h>
+#include "canmsg.h"
 #include "cmsis_os.h"
 
 #include "../txrxcmd.h"
 //#include "main.h"
-#include "misc.h"
+#include "../misc.h"
+
+
+
+#ifndef BOARD_HAS_CAN
+#error BOARD_HAS_CAN not defined, remove this file from build
+#endif
+
 #ifdef STM32_F4
 #include "stm32f4xx_hal.h"
 #else
@@ -22,7 +29,7 @@
 
 #include "canmsg.h"
 
-extern CAN_HandleTypeDef hcan1;
+extern CAN_HandleTypeDef CAN_DEVICE;
 
 void can_init(void)
 {
@@ -40,19 +47,19 @@ void can_init(void)
 	canfil.FilterActivation = ENABLE;
 	canfil.SlaveStartFilterBank = 14;
 
-	if (HAL_CAN_ConfigFilter(&hcan1, &canfil)) {
+	if (HAL_CAN_ConfigFilter(&CAN_DEVICE, &canfil)) {
 		Error_Handler();
 	}
 
 
 
-	if (HAL_CAN_Start(&hcan1) != HAL_OK) {
+	if (HAL_CAN_Start(&CAN_DEVICE) != HAL_OK) {
 		/* Start Error */
 		Error_Handler();
 	}
 
 	/* Activate CAN RX notification */
-	if (HAL_CAN_ActivateNotification(&hcan1,
+	if (HAL_CAN_ActivateNotification(&CAN_DEVICE,
 			 CAN_IT_RX_FIFO0_MSG_PENDING
 			|CAN_IT_RX_FIFO0_FULL
 			|CAN_IT_RX_FIFO0_OVERRUN
@@ -105,7 +112,7 @@ static int _can_send_msg(msg_64_t *msg, int f)
 
 	txHeader.StdId = arbitration_id(msg); // Arbitration id
 
-	if (HAL_CAN_AddTxMessage(&hcan1, &txHeader, (uint8_t *)msg, &TxMailbox) != HAL_OK) {
+	if (HAL_CAN_AddTxMessage(&CAN_DEVICE, &txHeader, (uint8_t *)msg, &TxMailbox) != HAL_OK) {
 		//printf("Error: CAN can't send msg.\r\n");
 		Error_Handler();
 		return 1;
@@ -131,7 +138,7 @@ void CanTest(void)
 
 	int i;
 	for (i=0; i<100; i++) {
-		if (HAL_CAN_IsTxMessagePending(&hcan1, TxMailbox)) {
+		if (HAL_CAN_IsTxMessagePending(&CAN_DEVICE, TxMailbox)) {
 			itm_debug2(DBG_CAN, "sent", TxMailbox, i);
 			break;
 		}
@@ -146,7 +153,7 @@ void CanTest(void)
 static void _send_msg_if_any(int fromirq)
 {
 	for (int i = 0; i<3; i++) {
-		if (!HAL_CAN_GetTxMailboxesFreeLevel(&hcan1)) return;
+		if (!HAL_CAN_GetTxMailboxesFreeLevel(&CAN_DEVICE)) return;
 		msg_64_t m;
 		int rc = mqf_read_to_canbus(&m);
 		if (rc) return;
@@ -157,7 +164,7 @@ static void _send_msg_if_any(int fromirq)
 static void send_messages_if_any(void)
 {
 	if (!mqf_len(&to_canbus)) return;
-	if (!HAL_CAN_GetTxMailboxesFreeLevel(&hcan1)) return;
+	if (!HAL_CAN_GetTxMailboxesFreeLevel(&CAN_DEVICE)) return;
 
 	HAL_NVIC_DisableIRQ(CAN1_TX_IRQn);
 	_send_msg_if_any(0);

@@ -10,7 +10,12 @@
 #include "canton_bemf.h"
 #include "canton_config.h"
 #include "../msg/trainmsg.h"
-#include "railconfig.h"
+#include "../railconfig.h"
+
+
+#ifndef BOARD_HAS_CANTON
+#error BOARD_HAS_CANTON not defined, remove this file from build
+#endif
 
 
 volatile adc_buf_t train_adc_buf[2]; // double buffer
@@ -18,7 +23,12 @@ volatile adc_buf_t train_adc_buf[2]; // double buffer
 runmode_t bemf_run_mode = runmode_off;
 uint8_t bemf_test_all = 0;
 
+#if NUM_LOCAL_CANTONS_SW == 1
+static uint8_t bemf_to[NUM_LOCAL_CANTONS_SW] = {0xFF};
+#else
 static uint8_t bemf_to[NUM_LOCAL_CANTONS_SW] = {0xFF, 0xFF, 0xFF, 0xFF,  0xFF, 0xFF, 0xFF, 0xFF};
+#endif
+
 static void process_adc(volatile adc_buf_t *buf, uint32_t deltaticks);
 
 

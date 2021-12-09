@@ -6,7 +6,7 @@
 //  Copyright © 2021 Daniel BRAUN. All rights reserved.
 //
 
-#include "misc.h"
+#include "../misc.h"
 #include "../msg/trainmsg.h"
 
 #include "../topology/topology.h"
@@ -15,6 +15,11 @@
 #include "ctrl.h"
 #include "ctrlP.h"
 #include "cautoP.h"
+
+
+#ifndef BOARD_HAS_CTRL
+#error BOARD_HAS_CTRL not defined, remove this file from build
+#endif
 
 
 static void route_error(int tidx, train_ctrl_t *tvars)

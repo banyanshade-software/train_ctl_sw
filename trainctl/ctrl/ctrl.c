@@ -7,13 +7,13 @@
 
 
 
-#include "misc.h"
+#include "../misc.h"
 #include "../msg/trainmsg.h"
 #include "ctrl.h"
 
 #include "../topology/topology.h"
-#include "railconfig.h"
-#include "statval.h"
+#include "../railconfig.h"
+#include "../statval.h"
 
 #include "../topology/occupency.h"
 
@@ -22,6 +22,13 @@
 #include "detectP.h"
 
 #include "../leds/led.h"
+
+
+
+#ifndef BOARD_HAS_CTRL
+#error BOARD_HAS_CTRL not defined, remove this file from build
+#endif
+
 
 #define SCEN_TWOTRAIN 	0 //1
 

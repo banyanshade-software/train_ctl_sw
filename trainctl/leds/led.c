@@ -7,8 +7,13 @@
 //
 
 #include "led.h"
-#include "railconfig.h"
-#include "misc.h"
+#include "../railconfig.h"
+#include "../misc.h"
+
+
+#ifndef BOARD_HAS_LED
+#error BOARD_HAS_LED not defined, remove this file from build
+#endif
 
 /*
  LED bytecode is a sequence of 32 bits words

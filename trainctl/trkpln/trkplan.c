@@ -15,7 +15,7 @@
 
 
 #ifndef TRACKPLAN_TESTPGM
-#include "railconfig.h"
+#include "../railconfig.h"
 #else
 
 #include <stdio.h>
@@ -27,6 +27,14 @@
 #define itm_debug2(_fl, _msg, _a, _b) do {printf(_msg  "%d %d", _a, _b);} while(0)
 #define _UNUSED_ __attribute__((unused))
 #endif
+
+
+
+
+#ifndef BOARD_HAS_TRKPLN
+#error BOARD_HAS_TRKPLN not defined, remove this file from build
+#endif
+
 // -------------------------------------------------------------------------
 
 

@@ -9,18 +9,24 @@
 #include <stdint.h>
 
 
-#include "misc.h"
+#include "../misc.h"
 #include "../msg/trainmsg.h"
 
 #include "../topology/topology.h"
 #include "../topology/occupency.h"
 
-#include "misc.h"
-#include "railconfig.h"
+#include "../railconfig.h"
 
 #include "ctrl.h"
 #include "ctrlP.h"
 #include "cautoP.h"
+
+
+
+#ifndef BOARD_HAS_CTRL
+#error BOARD_HAS_CTRL not defined, remove this file from build
+#endif
+
 
 static lsblk_num_t snone = {-1};
 

@@ -10,7 +10,14 @@
 #include "uitrack.h"
 
 #include "../msg/trainmsg.h"
-#include "misc.h"
+#include "../misc.h"
+
+
+
+#ifndef BOARD_HAS_IHM
+#error BOARD_HAS_IHM not defined, remove this file from build
+#endif
+
 
 static void uitrack_reset(void);
 static void uitrack_change_blk(int blk, int v, int trn, int sblk);

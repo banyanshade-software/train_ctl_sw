@@ -20,8 +20,13 @@
 #include <stdint.h>
 #include <memory.h>
 
-#include "misc.h"
+#include "../misc.h"
 #include "../msg/trainmsg.h"
+
+
+#ifndef BOARD_HAS_CTRL
+#error BOARD_HAS_CTRL not defined, remove this file from build
+#endif
 
 #include "../low/canton.h"
 #include "inertia.h"
@@ -33,6 +38,8 @@
 //#include "auto1.h"
 //#include "txrxcmd.h"
 #include "statval.h"
+
+
 
 // ----------------------------------------------------------------------------------
 // global run mode, each tasklet implement this

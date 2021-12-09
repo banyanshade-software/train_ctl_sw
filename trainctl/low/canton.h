@@ -29,7 +29,7 @@
 #define CANTON_H_
 
 #include <stdint.h>
-#include "misc.h"
+#include "../misc.h"
 
 #ifndef TRAIN_SIMU
 #ifdef STM32_F4

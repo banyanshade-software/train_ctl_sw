@@ -7,11 +7,15 @@
 
 
 
-#include "misc.h"
+#include "../misc.h"
 #include "../msg/trainmsg.h"
 
 #include "ledtask.h"
 #include "led.h"
+
+#ifndef BOARD_HAS_LED
+#error BOARD_HAS_LED not defined, remove this file from build
+#endif
 
 // ----------------------------------------------------------------------------------
 // global run mode, each tasklet implement this

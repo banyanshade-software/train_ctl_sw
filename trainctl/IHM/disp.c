@@ -13,6 +13,11 @@
 #include "../msg/trainmsg.h"
 
 
+
+#ifndef BOARD_HAS_TFT
+#error BOARD_HAS_TFT not defined, remove this file from build
+#endif
+
 #ifndef TRAIN_SIMU
 #ifdef STM32_F4
 #include "stm32f4xx_hal.h"
@@ -33,12 +38,11 @@
 
 
 
-#ifndef TFT_DISP
-#error TFT_DISP not defined
+#ifndef BOARD_HAS_TFT
+#error BOARD_HAS_TFT not defined, remove this file from build
 #endif
 
 
-#if TFT_DISP
 
 #ifdef STM32_F4
 #include "stm32f4xx_hal.h"
@@ -645,4 +649,3 @@ static void write_sbargraph(int16_t v, int16_t min, int16_t max)
 }
 
 
-#endif // TFT_DISP

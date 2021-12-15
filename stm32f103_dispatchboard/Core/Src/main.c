@@ -428,14 +428,12 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4|RELAY0_0_Pin|RELAY0_1_Pin|RELAY1_0_Pin
-                          |VOLT_0_SEL2_Pin|VOLT_0_SEL1_Pin|VOLT_0_SEL0_Pin|LED3_Pin
-                          |LED4_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOA, RELAY0_0_Pin|RELAY0_1_Pin|RELAY1_0_Pin|VOLT_0_SEL2_Pin
+                          |VOLT_0_SEL1_Pin|VOLT_0_SEL0_Pin|LED3_Pin|LED4_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOB, RELAY1_1_Pin|TURN1A_Pin|TURN1B_Pin|TURN2A_Pin
-                          |TURN2B_Pin|TURN3A_Pin|TURN3B_Pin|LED0_Pin
-                          |LED1_Pin|LED5_Pin|LED6_Pin, GPIO_PIN_RESET);
+                          |TURN2B_Pin|LED0_Pin|LED1_Pin|LED5_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin : LED_Pin */
   GPIO_InitStruct.Pin = LED_Pin;
@@ -444,23 +442,19 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(LED_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : PA4 RELAY0_0_Pin RELAY0_1_Pin RELAY1_0_Pin
-                           VOLT_0_SEL2_Pin VOLT_0_SEL1_Pin VOLT_0_SEL0_Pin LED3_Pin
-                           LED4_Pin */
-  GPIO_InitStruct.Pin = GPIO_PIN_4|RELAY0_0_Pin|RELAY0_1_Pin|RELAY1_0_Pin
-                          |VOLT_0_SEL2_Pin|VOLT_0_SEL1_Pin|VOLT_0_SEL0_Pin|LED3_Pin
-                          |LED4_Pin;
+  /*Configure GPIO pins : RELAY0_0_Pin RELAY0_1_Pin RELAY1_0_Pin VOLT_0_SEL2_Pin
+                           VOLT_0_SEL1_Pin VOLT_0_SEL0_Pin LED3_Pin LED4_Pin */
+  GPIO_InitStruct.Pin = RELAY0_0_Pin|RELAY0_1_Pin|RELAY1_0_Pin|VOLT_0_SEL2_Pin
+                          |VOLT_0_SEL1_Pin|VOLT_0_SEL0_Pin|LED3_Pin|LED4_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
   /*Configure GPIO pins : RELAY1_1_Pin TURN1A_Pin TURN1B_Pin TURN2A_Pin
-                           TURN2B_Pin TURN3A_Pin TURN3B_Pin LED0_Pin
-                           LED1_Pin LED5_Pin LED6_Pin */
+                           TURN2B_Pin LED0_Pin LED1_Pin LED5_Pin */
   GPIO_InitStruct.Pin = RELAY1_1_Pin|TURN1A_Pin|TURN1B_Pin|TURN2A_Pin
-                          |TURN2B_Pin|TURN3A_Pin|TURN3B_Pin|LED0_Pin
-                          |LED1_Pin|LED5_Pin|LED6_Pin;
+                          |TURN2B_Pin|LED0_Pin|LED1_Pin|LED5_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;

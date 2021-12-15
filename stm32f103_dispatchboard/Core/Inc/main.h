@@ -70,18 +70,14 @@ void Error_Handler(void);
 #define RELAY1_0_GPIO_Port GPIOA
 #define RELAY1_1_Pin GPIO_PIN_0
 #define RELAY1_1_GPIO_Port GPIOB
-#define TURN1A_Pin GPIO_PIN_1
+#define TURN1A_Pin GPIO_PIN_10
 #define TURN1A_GPIO_Port GPIOB
-#define TURN1B_Pin GPIO_PIN_2
+#define TURN1B_Pin GPIO_PIN_11
 #define TURN1B_GPIO_Port GPIOB
-#define TURN2A_Pin GPIO_PIN_10
+#define TURN2A_Pin GPIO_PIN_12
 #define TURN2A_GPIO_Port GPIOB
-#define TURN2B_Pin GPIO_PIN_11
+#define TURN2B_Pin GPIO_PIN_13
 #define TURN2B_GPIO_Port GPIOB
-#define TURN3A_Pin GPIO_PIN_12
-#define TURN3A_GPIO_Port GPIOB
-#define TURN3B_Pin GPIO_PIN_13
-#define TURN3B_GPIO_Port GPIOB
 #define LED0_Pin GPIO_PIN_14
 #define LED0_GPIO_Port GPIOB
 #define LED1_Pin GPIO_PIN_15
@@ -98,8 +94,6 @@ void Error_Handler(void);
 #define LED4_GPIO_Port GPIOA
 #define LED5_Pin GPIO_PIN_4
 #define LED5_GPIO_Port GPIOB
-#define LED6_Pin GPIO_PIN_5
-#define LED6_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */

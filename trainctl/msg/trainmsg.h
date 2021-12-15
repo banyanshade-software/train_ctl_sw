@@ -160,6 +160,7 @@ LFMQUEUE_DEF_H(from_spdctl, msg_64_t)
 #define CMD_SET_C1_C2		 0x11
 
 
+
 LFMQUEUE_DEF_H(to_ctrl, msg_64_t)
 LFMQUEUE_DEF_H(from_ctrl, msg_64_t)
 
@@ -193,6 +194,7 @@ LFMQUEUE_DEF_H(from_ctrl, msg_64_t)
 
 
 #define CMD_START_AUTO              0x60
+#define CMD_SET_TRAIN_MODE          0x61
 
 
 LFMQUEUE_DEF_H(to_forward, msg_64_t)

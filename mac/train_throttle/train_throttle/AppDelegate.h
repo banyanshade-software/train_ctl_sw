@@ -124,6 +124,7 @@
 
 - (IBAction) startBLE:(id)sender;
 
+- (IBAction) setTrainMode:(id)sender;
 
 - (void) toggleTurnout:(int)tn;
 

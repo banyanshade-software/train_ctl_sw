@@ -398,6 +398,19 @@ typedef void (^respblk_t)(void);
     }];
 }
 
+- (IBAction) setTrainMode:(id)sender
+{
+    NSControl *ct = (NSControl *)sender;
+    int tr = (int) ct.tag;
+    int v = ct.intValue;
+    msg_64_t m = {0};
+    m.cmd = CMD_SET_TRAIN_MODE;
+    m.v1u = tr;
+    m.v2u = v;
+    m.from = MA_UI(0);
+    m.to = MA_CONTROL();
+    [self sendMsg64:m];
+}
 #pragma mark -
 - (void) addLog:(NSString *)msg important:(BOOL)b error:(BOOL)e
 {

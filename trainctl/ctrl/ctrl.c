@@ -30,7 +30,6 @@
 #endif
 
 
-#define SCEN_TWOTRAIN 	0 //1
 
 
 
@@ -166,7 +165,7 @@ static const uint8_t route_1_T0[] = {
     _AR_TIMER(3),_AR_WTIMER,
     _AR_LED, 0, LED_PRG_25p,
     _AR_TIMER(7), _AR_WTIMER,
-    _AR_LED, 0, LED_PRG_OFF, _AR_TIMER(6),_AR_WTIMER,
+    _AR_LED, 0, LED_PRG_OFF, _AR_TIMER(6), _AR_WTIMER,
     _AR_LOOP
 };
 
@@ -264,22 +263,17 @@ static void ctrl_init(void)
             
             trctl[0].routeidx = 0;
             trctl[0].route = route_1_T0;
-            // ctrl_set_mode(0, train_auto);
-            
             
             trctl[1].routeidx = 0;
             trctl[1].route = route_1_T1;
         }
         
-		if ((SCEN_TWOTRAIN)) {
-            ctrl2_init_train(1, &trctl[1], s2);
 
-			if ((1)) {
-                ctrl2_upcmd_set_desired_speed(1, &trctl[1], 30);
-			}
-		} else {
-			ctrl_set_mode(1, train_notrunning);
-		}
+	} else {
+        ctrl2_init_train(0, &trctl[0], s0);
+        //ctrl2_init_train(1, &trctl[1], s2);
+        ctrl_set_mode(0, train_manual);
+        ctrl_set_mode(1, train_notrunning);
 	}
 }
 
@@ -451,6 +445,9 @@ void ctrl_run_tick(_UNUSED_ uint32_t notif_flags, uint32_t tick, _UNUSED_ uint32
 			train_ctrl_t *tvar = &trctl[tidx];
 
 			switch (m.cmd) {
+            case CMD_SET_TRAIN_MODE:
+                ctrl_set_mode(m.v1u, m.v2u);
+                break;
 			case CMD_START_AUTO:
 				switch (m.v1u) {
 				case 0:

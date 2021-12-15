@@ -188,6 +188,17 @@ void ctrl2_set_mode(int tidx, train_ctrl_t *tvar, train_mode_t mode)
     m.cmd = CMD_TRMODE_NOTIF;
     m.v1u = mode;
     mqf_write_from_ctrl(&m);
+
+    if (mode == train_notrunning) {
+    	 tvar->_dir = 0;
+         tvar->_target_speed = 0;
+         tvar->desired_speed = 0;
+         tvar->_state = train_off;
+         tvar->c1c2 = 0;
+    	ctrl2_sendlow_c1c2(tidx, tvar);
+        if (tvar->can2_addr != 0xFF) set_block_addr_occupency(tvar->can2_addr, BLK_OCC_FREE, tidx, snone);
+        if (tvar->can1_addr != 0xFF) set_block_addr_occupency(tvar->can1_addr, BLK_OCC_FREE, tidx, tvar->c1_sblk);
+    }
 }
 
 
@@ -205,7 +216,7 @@ static void free_block_c2(_UNUSED_ int tidx, train_ctrl_t *tvars)
 	set_block_addr_occupency(tvars->can2_addr, BLK_OCC_FREE, tidx, snone);
 }
 
-static void free_block_other(_UNUSED_ int tidx, train_ctrl_t *tvars, uint8_t ca)
+static void free_block_other(int tidx, _UNUSED_ train_ctrl_t *tvars, uint8_t ca)
 {
 	set_block_addr_occupency(ca, BLK_OCC_FREE, tidx, snone);
 }

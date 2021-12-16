@@ -350,8 +350,8 @@ static void ui_process_msg(void)
 				}
 				return;
 				break;
-			case CMD_UI_MSG:
-				break; // see below
+			//case CMD_UI_MSG:
+			//	break; // see below
 			default:
 				itm_debug1(DBG_UI, "unk ctl", m.cmd);
 				return;
@@ -365,8 +365,8 @@ static void ui_process_msg(void)
 				continue;
 			}
 			switch (m.cmd) {
-			case CMD_UI_MSG:
-				//ui_msg5(dn, (char *) m.rbytes+1);
+			//case CMD_UI_MSG:
+			//	//ui_msg5(dn, (char *) m.rbytes+1);
 				break;
 			case CMD_INA3221_REPORT:
 				if (ihm_dispmode == mode_ina_val) {

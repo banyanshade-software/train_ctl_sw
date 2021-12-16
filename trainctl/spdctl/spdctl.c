@@ -387,7 +387,7 @@ static void train_periodic_control(int numtrain, uint32_t dt)
 
     if (changed) {
     	_set_speed(numtrain, tconf, tvars);
-        if ((1)) { // TODO remove
+        if ((0)) { // TODO remove
             msg_64_t m;
             m.from = MA_TRAIN_SC(numtrain);
             m.to = MA_UI(UISUB_TFT);

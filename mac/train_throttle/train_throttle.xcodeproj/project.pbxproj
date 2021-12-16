@@ -119,6 +119,7 @@
 		1B7A2A12262D599E004E0481 /* lf_mqueue.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = lf_mqueue.c; sourceTree = "<group>"; };
 		1B812B3B273FA77B00924749 /* cautoP.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = cautoP.h; sourceTree = "<group>"; };
 		1B812B3C273FA77B00924749 /* cautoP.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = cautoP.c; sourceTree = "<group>"; };
+		1B82CBE6276A96FB000304A8 /* trainmsgdef.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = trainmsgdef.h; sourceTree = "<group>"; };
 		1B92EA292631A02900558716 /* spdctl.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = spdctl.c; sourceTree = "<group>"; };
 		1B92EA2A2631A02900558716 /* spdctl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = spdctl.h; sourceTree = "<group>"; };
 		1B92EA2E2631A0BA00558716 /* ctrl.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ctrl.c; sourceTree = "<group>"; };
@@ -226,6 +227,7 @@
 				1B7A29F4262D58F6004E0481 /* notif.h */,
 				1B7A29F5262D58F6004E0481 /* trainmsg.c */,
 				1B7A29F6262D58F6004E0481 /* trainmsg.h */,
+				1B82CBE6276A96FB000304A8 /* trainmsgdef.h */,
 			);
 			path = msg;
 			sourceTree = "<group>";

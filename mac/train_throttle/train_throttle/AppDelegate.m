@@ -307,11 +307,18 @@ typedef void (^respblk_t)(void);
     if (_linkok == LINK_SIMUHI) {
         //train_stop_all();
     } else {
+#if 0
         uint8_t spdfrm[] = "|zG\0S|....";
         int l = 2+4+0;
         [self sendFrame:spdfrm len:l blen:sizeof(spdfrm) then:^{
             self.curspeed = 0;
         }];
+#endif
+        msg_64_t m = {0};
+        m.from = MA_UI(0);
+        m.to = MA_BROADCAST;
+        m.cmd = CMD_EMERGENCY_STOP;
+        [self sendMsg64:m];
     }
     [self willChangeValueForKey:@"dspeedT0"];
     [self willChangeValueForKey:@"dspeedT1"];

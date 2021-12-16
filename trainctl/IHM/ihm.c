@@ -296,16 +296,6 @@ static void ui_process_msg(void)
 			int trnum = m.from & 0x07;
 			if (trnum != 0) break; // TODO
 			switch (m.cmd) {
-			case CMD_TRSTATUS_NOTIF:
-				// unused
-				// TODO trnum -> display num
-				if (ihm_dispmode == mode_auto) {
-					//TODO
-					//ihm_setvar(0, 2, m.v1u);
-					SET_NEEDSREFRESH(0);
-				}
-				return;
-				break;
 			case CMD_TRTSPD_NOTIF:
 				itm_debug2(DBG_UI|DBG_CTRL, "rx tspd notif", trnum, m.v1u);
 				// TODO trnum -> display num
@@ -316,13 +306,6 @@ static void ui_process_msg(void)
 				return;
 				break;
 
-			case CMD_TRDIR_NOTIF:
-				if (!is_special_dispmode()) {
-					ihm_setvar(0, 4, m.v1);
-					SET_NEEDSREFRESH(0);
-				}
-				return;
-				break;
 			case CMD_TRMODE_NOTIF:
 				// TODO
 				if (!is_special_dispmode()) {

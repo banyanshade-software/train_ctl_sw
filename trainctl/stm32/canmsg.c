@@ -83,6 +83,42 @@ void StartCanTask(_UNUSED_ void *argument)
 	can_init();
 }
 
+
+static int boardForAddr(uint8_t addr)
+{
+	if (0==(addr & 0x80)) {
+		return MA_2_BOARD(addr);
+	}
+	if ((addr & MA_ADDR_MASK_5) == MA_ADDR_5_LED) {
+		return (addr & 0x07);
+	}
+	return 0;
+}
+
+/*
+ * arbitration id (11 bit)
+ * - it is mandatory that 2 stations never send msg with same id at the same time
+ * - lower id have priority over higher id in CAN contention resolution
+ *
+ * id is form with msg priority (3 high bits of msg cmd) and sender/receiver board num
+ *
+ * msg sent by slave board to board 0 (main board) uses their board number
+ * 		p p p  0 1 b b b b x x
+ * msg sent from board 0 (main board) to slave board uses slave board number
+ *      p p p  0 0 b b b b x x
+ * msg sent to UI (since UI may be implemented by multiple board)
+ *      p p p  1 0 1 s  s s x x
+ * msg sent from UI
+ *      p p p  1 1 0 s s s x x
+ *
+ * reserved:
+ * 		p p p  1 1 1 ...
+ * 		p p p  1 1 1 1 b b b b    broadcast
+ *
+ * 	x x is a 2 bits counter maintained by sender
+ */
+
+
 static uint32_t arbitration_id(msg_64_t *m)
 {
 	// 0x7FF 11 bits
@@ -91,11 +127,39 @@ static uint32_t arbitration_id(msg_64_t *m)
 	// 2 bits counter
 	// p p p  0 0 b b b 0 n n
 
-	static uint8_t cnt = 0;
+	// prio from msg
 	uint32_t aid = (m->cmd & 0xE0) >> 3;
-	aid |= (m->to & MA_ADDR_MASK_BOARD) << 1;
+
+	int lb = localBoardNum;
+
+	if ((0)) {
+	} else if (m->to == 0xFF) {
+		aid |= 0xF0;
+		aid |= lb;
+		return aid;
+	} else if (IS_UI(m->to) && !lb) {
+		// Master -> UI
+		aid |= 0xA0;
+		aid |= (m->to & 0x7)<<2;
+	} else if (IS_UI(m->from) & lb) {
+		aid |= 0xE0;
+		aid |= (m->from & 0x7)<<2;
+	} else if (lb) {
+		// from slave board, assumed to be to master
+		aid |= 0x40;
+		aid |= (lb<<2);
+	} else {
+		// master->slave
+		aid |= 0x00;
+		int rb = boardForAddr(m->to);
+		if (!rb) {
+			itm_debug2(DBG_ERR | DBG_CAN, "bad rb", m->to, m->cmd);
+		}
+		aid |= (rb<<2);
+	}
+	static uint8_t cnt = 0;
 	aid |= cnt & 0x03;
-	cnt ++;
+	cnt++;
 	return aid;
 }
 
@@ -431,7 +495,8 @@ void CAN_Tasklet(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_
 		can_init();
 	}
 	send_messages_if_any();
-	if ((1)) {
+
+	if ((0)) {
 		static int lt = 0;
 		if (!lt) {
 			lt = tick;

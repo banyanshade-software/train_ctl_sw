@@ -11,6 +11,8 @@
 
 #define TRN_BOARD_MAIN
 
+#define BOARD_NUMBER 0
+
 #define BOARD_HAS_CANTON
 #define BOARD_HAS_TURNOUTS
 //#define BOARD_HAS_INA3221

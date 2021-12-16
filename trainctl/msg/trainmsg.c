@@ -7,11 +7,12 @@
 
 
 #include "trainmsg.h"
+#include "../misc.h"
 #include "../utils/itm_debug.h"
 
 #define _UNUSED_ __attribute__((unused))
 
-uint8_t localBoardNum = 0; // TODO move to config
+uint8_t localBoardNum = BOARD_NUMBER; // TODO move to config
 
 
 // LFMQUEUE_DEF_C(_name, _type,_num, _sil)
@@ -28,8 +29,8 @@ LFMQUEUE_DEF_C(from_canton, msg_64_t, 	8, 0)
 LFMQUEUE_DEF_C(to_spdctl, msg_64_t, 	16, 0)
 LFMQUEUE_DEF_C(from_spdctl, msg_64_t, 	16, 0)
 
-LFMQUEUE_DEF_C(to_forward, msg_64_t, 	8, 1) // XXX should not have silent drop
-LFMQUEUE_DEF_C(from_forward, msg_64_t, 	8, 0)
+//LFMQUEUE_DEF_C(to_forward, msg_64_t, 	8, 1) // XXX should not have silent drop
+//LFMQUEUE_DEF_C(from_forward, msg_64_t, 	8, 0)
 
 LFMQUEUE_DEF_C(to_forward_usb, msg_64_t,	8, 1)
 LFMQUEUE_DEF_C(from_forward_usb, msg_64_t,  16, 0)
@@ -65,30 +66,30 @@ typedef struct {
 	mqf_t *from;
 } qdef_t;
 
-#define NQDEF 12
+#define NQDEF 11
 static const qdef_t qdef[NQDEF] = {
 		/* 0*/ { &to_turnout, &from_turnout },
 		/* 1*/ { &to_canton,  &from_canton},
 		/* 2*/ { &to_spdctl,  &from_spdctl},
-        /* 3*/ { &to_forward, &from_forward},
+		/* 3*/ { &to_canbus, &from_canbus},
         /* 4*/ { &to_forward_usb, &from_forward_usb},
         /* 5*/ { &to_ctrl, &from_ctrl},
         /* 6*/ { &to_ui, &from_ui},
 		/* 7*/ { &to_ina3221, &from_ina3221},
         /* 8*/ { &to_ui_track, &from_ui_track},
         /* 9*/ { &to_led, &from_led},
-		/*10*/ { &to_canbus, &from_canbus},
-		/*11*/ { NULL, &from_nowhere}
+		/*10*/ { NULL, &from_nowhere}
 };
 
 typedef struct {
 	uint8_t mask; uint8_t value; uint8_t destq;
 } qroute_t;
 
-#define NROUTES 10
+#define NROUTES 11
 static const qroute_t routes[NROUTES] = {
 		{MA_ADDR_MASK_2|MA_ADDR_MASK_BOARD,		MA_ADDR_2_TURNOUT|0,	0},
 		{MA_ADDR_MASK_2|MA_ADDR_MASK_BOARD,		MA_ADDR_2_CANTON|0,		1},
+
 		{MA_ADDR_MASK_2,						MA_ADDR_2_TURNOUT,		3},
 		{MA_ADDR_MASK_2,						MA_ADDR_2_CANTON,		3},
         {MA_ADDR_MASK_3|0x1F,                   MA_ADDR_3_UI|1,         6},
@@ -100,7 +101,8 @@ static const qroute_t routes[NROUTES] = {
         {MA_ADDR_MASK_3,                        MA_ADDR_3_UI,           4},
 		{MA_ADDR_MASK_5,						MA_ADDR_5_TRSC,			2},
 		{MA_ADDR_MASK_5,						MA_ADDR_5_CTRL,			5},
-		{MA_ADDR_MASK_8,						MA_ADDR_5_LED|0,		9} //TODO: route to other brd
+		{MA_ADDR_MASK_8,						MA_ADDR_5_LED|0,		9},
+		{MA_ADDR_MASK_5,						MA_ADDR_5_LED,			3}
 
 };
 

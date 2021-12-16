@@ -319,10 +319,16 @@ static  train_config_t Trains[NUM_TRAINS] = {
 
 static const turnout_config_t Turnouts[NUM_TURNOUTS] = {
 #ifndef TRAIN_SIMU
+#ifdef TRN_BOARD_MAIN
         {TURN1A_GPIO_Port, TURN1A_Pin, TURN1B_Pin},
         {TURN2A_GPIO_Port, TURN2A_Pin, TURN2B_Pin},
         {TURN3A_GPIO_Port, TURN3A_Pin, TURN3B_Pin},
         //{TURN4A_GPIO_Port, TURN4A_Pin, TURN4B_Pin},
+#endif // TRN_BOARD_MAIN
+#ifdef TRN_BOARD_DISPATCHER
+		{TURN1A_GPIO_Port, TURN1A_Pin, TURN1B_Pin},
+		{TURN2A_GPIO_Port, TURN2A_Pin, TURN2B_Pin},
+#endif  // TRN_BOARD_DISPATCHER
 #else
         {NULL, 1, 2}
 #endif

@@ -20,6 +20,7 @@
 #ifdef TRN_BOARD_MAIN
 #define STM32_F4
 
+#define BOARD_NUMBER 0
 #define BOARD_HAS_CANTON
 #define BOARD_HAS_TURNOUTS
 #define BOARD_HAS_INA3221
@@ -53,6 +54,8 @@
 
 #ifdef TRN_BOARD_DISPATCHER
 #define STM32_F103
+
+#define BOARD_NUMBER 1 //xxx
 
 #define BOARD_HAS_CANTON
 #define BOARD_HAS_TURNOUTS

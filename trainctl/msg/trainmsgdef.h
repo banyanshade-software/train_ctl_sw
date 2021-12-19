@@ -43,7 +43,7 @@ typedef enum {
     CMD_TURNOUT_HI_TOG,				// ui->ctrl			v1=tn					toggle turnout pos
     
     // 100 xxxxx = 0x80
-    CMD_START_DETECT_TRAIN,			// [detect2] ctrl->canton					start train detection
+    CMD_START_DETECT_TRAIN = 0x80,			// [detect2] ctrl->canton					start train detection
     CMD_STOP_DETECT_TRAIN,			// [detect2] ctrl->canton					stop train detection
     CMD_UI_DETECT,					// [detect2] ctrl->ui						detection info
     

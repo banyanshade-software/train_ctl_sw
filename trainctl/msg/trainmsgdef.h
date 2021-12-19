@@ -13,6 +13,7 @@
 typedef enum {
     // highest prio   000 xxxxx
     CMD_EMERGENCY_STOP = 0,			// ui,any->(all)							stop/reset all tasklet
+    CMD_TIM_SYNC,                   //
     CMD_RESET,						// ui,any->(all)							reset all tasklet, currently do same as CMD_EMERGENCY_STOP, but could do more, e.g. resetting some params
     CMD_SETRUN_MODE,				// ui,any->(all)	v1u=mode				start given runmode
     
@@ -62,6 +63,7 @@ typedef enum {
     
     // 111 xxxxx = 0xE0 debug and misc low prio
     CMD_NOOP = 0xE0,				// ?->can									msg intended for CAN testing, do nothing
+    CMD_TIM_SYNC_ACK,               //                                          slave->master ack synchro
     CMD_LED_RUN,					// auto,ui->led		v1u=lednum v2u=prg		run led program
     CMD_INA3221_REPORT,				// ina->ui (debug)
     CMD_VOFF_NOTIF,					// canton->ui (debug)						used if NOTIF_VOFF=1

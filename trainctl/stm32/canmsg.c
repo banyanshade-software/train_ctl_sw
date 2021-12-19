@@ -370,6 +370,7 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
 		  itm_debug3(DBG_CAN, "other", m.cmd, m.v1, m.v2);
 	  }
   }
+  flash_led();
   mqf_write_from_canbus(&m);
 
 
@@ -496,8 +497,9 @@ void CAN_Tasklet(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_
 	}
 	send_messages_if_any();
 
-	if ((0)) {
-		static int lt = 0;
+#ifdef TRN_BOARD_DISPATCHER
+	if ((1)) {
+		static uint32_t lt = 0;
 		if (!lt) {
 			lt = tick;
 			return;
@@ -515,6 +517,7 @@ void CAN_Tasklet(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_
 			mqf_write_to_canbus(&m);
 		}
 	}
+#endif
 }
 
 

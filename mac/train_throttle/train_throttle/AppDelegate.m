@@ -348,9 +348,20 @@ typedef void (^respblk_t)(void);
 
 - (IBAction) sendLed:(id)sender
 {
-    int ledNum = (int) [sender tag];
+    int tag = (int) [sender tag];
+    int ledNum = 0;
+    int brdNum = 0;
+    switch (tag) {
+        default:
+        case 0:
+            ledNum = 0; brdNum = 0;
+            break;
+        case 1:
+            ledNum = 0; brdNum = 1;
+            break;
+    }
     msg_64_t m = {0};
-    m.to = MA_LED_B(0);
+    m.to = MA_LED_B(brdNum);
     m.from = MA_UI(0);
     m.cmd = CMD_LED_RUN;
     m.v1u = ledNum;

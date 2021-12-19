@@ -66,6 +66,11 @@ typedef struct {
 	mqf_t *from;
 } qdef_t;
 
+typedef struct {
+    uint8_t mask; uint8_t value; uint8_t destq;
+} qroute_t;
+
+#ifdef TRN_BOARD_MAIN
 #define NQDEF 11
 static const qdef_t qdef[NQDEF] = {
 		/* 0*/ { &to_turnout, &from_turnout },
@@ -80,10 +85,6 @@ static const qdef_t qdef[NQDEF] = {
         /* 9*/ { &to_led, &from_led},
 		/*10*/ { NULL, &from_nowhere}
 };
-
-typedef struct {
-	uint8_t mask; uint8_t value; uint8_t destq;
-} qroute_t;
 
 #define NROUTES 11
 static const qroute_t routes[NROUTES] = {
@@ -105,6 +106,31 @@ static const qroute_t routes[NROUTES] = {
 		{MA_ADDR_MASK_5,						MA_ADDR_5_LED,			3}
 
 };
+
+#endif // TRN_BOARD_MAIN
+
+#ifdef TRN_BOARD_DISPATCHER
+#define NQDEF 6
+static const qdef_t qdef[NQDEF] = {
+        /* 0*/ { &to_turnout, &from_turnout },
+        /* 1*/ { &to_canton,  &from_canton},
+        /* 2*/ { &to_canbus, &from_canbus},
+        /* 3*/ { &to_ina3221, &from_ina3221},
+        /* 4*/ { &to_led, &from_led},
+        /* 5*/ { NULL, &from_nowhere}
+};
+#define NROUTES 6
+static const qroute_t routes[NROUTES] = {
+        {MA_ADDR_MASK_2|MA_ADDR_MASK_BOARD,        MA_ADDR_2_TURNOUT|1,    0},
+        {MA_ADDR_MASK_2|MA_ADDR_MASK_BOARD,        MA_ADDR_2_CANTON|1,     1},
+
+        {MA_ADDR_MASK_2,                        MA_ADDR_2_TURNOUT,         2},
+        {MA_ADDR_MASK_2,                        MA_ADDR_2_CANTON,          2},
+        {MA_ADDR_MASK_8,                        MA_ADDR_5_LED|0,           4},
+        {MA_ADDR_MASK_5,                        MA_ADDR_5_LED,             2}
+
+};
+#endif
 
 static void msg_error(_UNUSED_ const char *msg)
 {

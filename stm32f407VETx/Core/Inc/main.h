@@ -88,8 +88,8 @@ void Error_Handler(void);
 #define ADC_2_V0_GPIO_Port GPIOA
 #define ADC_2_V1_Pin GPIO_PIN_5
 #define ADC_2_V1_GPIO_Port GPIOA
-#define LED1_Pin GPIO_PIN_6
-#define LED1_GPIO_Port GPIOA
+#define BOARD_LED_Pin GPIO_PIN_6
+#define BOARD_LED_GPIO_Port GPIOA
 #define LED0_Pin GPIO_PIN_7
 #define LED0_GPIO_Port GPIOA
 #define ADC_5_V1_Pin GPIO_PIN_4

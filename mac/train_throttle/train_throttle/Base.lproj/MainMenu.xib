@@ -1802,7 +1802,7 @@
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
                                 <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="zmV-ts-69t">
-                                    <rect key="frame" x="6" y="34" width="90" height="25"/>
+                                    <rect key="frame" x="6" y="34" width="99" height="25"/>
                                     <popUpButtonCell key="cell" type="push" title="Off" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="rZI-tR-AtI" id="ggg-3B-Wu3">
                                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                         <font key="font" metaFont="menu"/>
@@ -1840,8 +1840,8 @@
                                     </connections>
                                 </popUpButton>
                                 <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="go4-ET-1Uh">
-                                    <rect key="frame" x="2" y="1" width="97" height="32"/>
-                                    <buttonCell key="cell" type="push" title="Gare" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="U3D-0d-dsO">
+                                    <rect key="frame" x="2" y="1" width="58" height="32"/>
+                                    <buttonCell key="cell" type="push" title="G0" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="U3D-0d-dsO">
                                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                         <font key="font" metaFont="system"/>
                                     </buttonCell>
@@ -1849,15 +1849,27 @@
                                         <action selector="sendLed:" target="Voe-Tx-rLC" id="0eS-8Z-PyV"/>
                                     </connections>
                                 </button>
+                                <button verticalHuggingPriority="750" tag="1" translatesAutoresizingMaskIntoConstraints="NO" id="cM6-FG-veN">
+                                    <rect key="frame" x="54" y="1" width="56" height="32"/>
+                                    <buttonCell key="cell" type="push" title="G1" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="0i8-pN-4hu">
+                                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                        <font key="font" metaFont="system"/>
+                                    </buttonCell>
+                                    <connections>
+                                        <action selector="sendLed:" target="Voe-Tx-rLC" id="Psu-Gt-bv7"/>
+                                    </connections>
+                                </button>
                             </subviews>
                             <constraints>
                                 <constraint firstItem="zmV-ts-69t" firstAttribute="leading" secondItem="9au-X2-ook" secondAttribute="leading" constant="8" id="0SK-Ll-ROr"/>
                                 <constraint firstItem="go4-ET-1Uh" firstAttribute="leading" secondItem="zmV-ts-69t" secondAttribute="leading" id="63L-Yg-Qm1"/>
+                                <constraint firstItem="cM6-FG-veN" firstAttribute="leading" secondItem="go4-ET-1Uh" secondAttribute="trailing" constant="6" id="8gK-oW-rFG"/>
+                                <constraint firstAttribute="trailing" secondItem="cM6-FG-veN" secondAttribute="trailing" constant="6" id="DOy-dq-NcK"/>
                                 <constraint firstItem="zmV-ts-69t" firstAttribute="top" secondItem="9au-X2-ook" secondAttribute="top" constant="8" id="Gyw-iE-M4G"/>
-                                <constraint firstAttribute="trailing" secondItem="go4-ET-1Uh" secondAttribute="trailing" constant="8" id="QIA-MF-8Sx"/>
                                 <constraint firstItem="go4-ET-1Uh" firstAttribute="top" secondItem="zmV-ts-69t" secondAttribute="bottom" constant="8" id="Vcp-6Z-3c5"/>
                                 <constraint firstAttribute="trailing" secondItem="zmV-ts-69t" secondAttribute="trailing" constant="8" id="Xbb-bz-qFU"/>
                                 <constraint firstAttribute="bottom" secondItem="go4-ET-1Uh" secondAttribute="bottom" constant="8" id="XfA-D8-fS3"/>
+                                <constraint firstItem="cM6-FG-veN" firstAttribute="firstBaseline" secondItem="go4-ET-1Uh" secondAttribute="firstBaseline" id="cSm-Kj-ahZ"/>
                             </constraints>
                         </view>
                     </box>

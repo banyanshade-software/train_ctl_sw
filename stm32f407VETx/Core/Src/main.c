@@ -507,7 +507,7 @@ static void MX_CAN1_Init(void)
   /* USER CODE END CAN1_Init 1 */
   hcan1.Instance = CAN1;
   hcan1.Init.Prescaler = 2;
-  hcan1.Init.Mode = CAN_MODE_LOOPBACK;
+  hcan1.Init.Mode = CAN_MODE_NORMAL;
   hcan1.Init.SyncJumpWidth = CAN_SJW_4TQ;
   hcan1.Init.TimeSeg1 = CAN_BS1_10TQ;
   hcan1.Init.TimeSeg2 = CAN_BS2_2TQ;
@@ -1090,7 +1090,7 @@ static void MX_GPIO_Init(void)
                           |TURN2A_Pin|TURN2B_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, LED1_Pin|LED0_Pin|TURN1A_Pin|TURN1B_Pin
+  HAL_GPIO_WritePin(GPIOA, BOARD_LED_Pin|LED0_Pin|TURN1A_Pin|TURN1B_Pin
                           |GPIO_PIN_15, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
@@ -1122,9 +1122,9 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_PULLUP;
   HAL_GPIO_Init(USER_BTN_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : LED1_Pin LED0_Pin TURN1A_Pin TURN1B_Pin
+  /*Configure GPIO pins : BOARD_LED_Pin LED0_Pin TURN1A_Pin TURN1B_Pin
                            PA15 */
-  GPIO_InitStruct.Pin = LED1_Pin|LED0_Pin|TURN1A_Pin|TURN1B_Pin
+  GPIO_InitStruct.Pin = BOARD_LED_Pin|LED0_Pin|TURN1A_Pin|TURN1B_Pin
                           |GPIO_PIN_15;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;

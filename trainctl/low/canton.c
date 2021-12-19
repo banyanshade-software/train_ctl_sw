@@ -110,7 +110,7 @@ static void canton_reset(void)
 
 static void handle_canton_cmd(int cidx, msg_64_t *m)
 {
-	if (m->cmd & 0x40) {
+	if ((m->cmd == CMD_BEMF_OFF) || (m->cmd==CMD_BEMF_ON)) {
 		itm_debug1(DBG_LOWCTRL, "msg-bemf", m->to);
 		bemf_msg(m);
 		return;

@@ -40,7 +40,10 @@
 
 #ifndef NUM_LOCAL_CANTONS_SW
 #define NUM_LOCAL_CANTONS_SW 1
-#error ops
+
+#  ifdef BOARD_HAS_CANTON
+#     error ops
+#   endif
 #endif
 
 
@@ -60,7 +63,9 @@
 
 #ifndef NUM_LOCAL_TURNOUTS
 #define NUM_LOCAL_TURNOUTS 1
-#error oops
+#  ifdef BOARD_HAS_TURNOUTS
+#    error oops
+#  endif
 #endif
 
 #define NUM_TURNOUTS (NUM_LOCAL_TURNOUTS)

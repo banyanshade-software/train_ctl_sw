@@ -139,6 +139,10 @@
 // -----------------------------------------
 
 
+static int setup_done = 1;
+
+#ifdef BOARD_HAS_CANTON
+
 #ifdef TRN_BOARD_MAIN
 
 static  canton_config_t Cantons[NUM_CANTONS] = {
@@ -279,6 +283,19 @@ static  canton_config_t Cantons[NUM_CANTONS] = {
 
 
 
+const canton_config_t *get_canton_cnf(int idx)
+{
+	if (!setup_done) return config_error(ERR_SETUP_KO, "railconfig_setup_default not called");
+	if ((idx<0) || (idx>= NUM_CANTONS)) return NULL;
+	return &Cantons[idx];
+}
+
+
+#endif // BOARD_HAS_CANTON
+
+
+#ifdef BOARD_HAS_CTRL
+
 #define DEFAULT_TRAIN_CFG(_EN, _R, _P, _S, _LL, _LR)  { \
 						{ /* pidctl_config_t*/ \
 								500, 180, 500,  /* kP, kI, kD */ \
@@ -317,6 +334,18 @@ static  train_config_t Trains[NUM_TRAINS] = {
 };
 
 
+
+const train_config_t *get_train_cnf(int idx)
+{
+	if (!setup_done) return config_error(ERR_SETUP_KO, "railconfig_setup_default not called");
+	if ((idx<0) || (idx>= NUM_TRAINS)) return NULL;
+	return &Trains[idx];
+}
+
+#endif // BOARD_HAS_CTRL
+
+#ifdef BOARD_HAS_TURNOUTS
+
 static const turnout_config_t Turnouts[NUM_TURNOUTS] = {
 #ifndef TRAIN_SIMU
 #ifdef TRN_BOARD_MAIN
@@ -335,27 +364,6 @@ static const turnout_config_t Turnouts[NUM_TURNOUTS] = {
 
 };
 
-
-
-
-static int setup_done = 1;
-
-const canton_config_t *get_canton_cnf(int idx)
-{
-	if (!setup_done) return config_error(ERR_SETUP_KO, "railconfig_setup_default not called");
-	if ((idx<0) || (idx>= NUM_CANTONS)) return NULL;
-	return &Cantons[idx];
-}
-
-
-const train_config_t *get_train_cnf(int idx)
-{
-	if (!setup_done) return config_error(ERR_SETUP_KO, "railconfig_setup_default not called");
-	if ((idx<0) || (idx>= NUM_TRAINS)) return NULL;
-	return &Trains[idx];
-}
-
-
 const turnout_config_t  *get_turnout_cnf(int idx)
 {
 	if (!setup_done) return config_error(ERR_SETUP_KO, "railconfig_setup_default not called");
@@ -363,7 +371,15 @@ const turnout_config_t  *get_turnout_cnf(int idx)
 	return &Turnouts[idx];
 }
 
+#endif // BOARD_HAS_TURNOUTS
 
+
+
+
+
+
+
+#ifdef BOARD_HAS_LED
 
 static const led_config_t _led_conf[CONFIG_NLED] = {
 #ifndef TRAIN_SIMU
@@ -379,3 +395,5 @@ const led_config_t *get_led_cnf(int idx)
     if (idx>CONFIG_NLED) return NULL;
     return &_led_conf[idx];
 }
+
+#endif // BOARD_HAS_LED

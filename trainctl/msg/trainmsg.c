@@ -132,6 +132,31 @@ static const qroute_t routes[NROUTES] = {
 };
 #endif
 
+
+#ifdef TRN_BOARD_UI
+#define NQDEF 4
+static const qdef_t qdef[NQDEF] = {
+		/* 0*/ { &to_canbus, &from_canbus},
+        /* 1*/ { &to_ui, &from_ui},
+        /* 2*/ { &to_forward_usb, &from_forward_usb},
+		/* 3*/ { NULL, &from_nowhere}
+};
+
+#define NROUTES 3
+static const qroute_t routes[NROUTES] = {
+        {MA_ADDR_MASK_3|0x1F,                   MA_ADDR_3_UI|1,         1},
+#ifdef TRAIN_SIMU
+        {MA_ADDR_MASK_3|0x1F,                   MA_ADDR_3_UI|2,         1},
+#else
+        {MA_ADDR_MASK_3|0x1F,                   MA_ADDR_3_UI|2,         2},
+#endif
+        {0,                        				0,           0}, // default to canbu
+
+};
+#endif // TRN_BOARD_UI
+
+
+
 static void msg_error(_UNUSED_ const char *msg)
 {
 

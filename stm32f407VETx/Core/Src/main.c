@@ -1333,6 +1333,28 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 #endif
 		  }
 	  }
+
+	  if ((1)) {
+		  static uint32_t lasttick = 0;
+		  if (t >= lasttick+5000) { // not faster than 20Hz, whatever the frequency is
+			  lasttick = t;
+			  uint32_t t1 = __HAL_TIM_GET_COUNTER(&htim1);
+			  uint32_t t2 = __HAL_TIM_GET_COUNTER(&htim2);
+			  uint32_t t3 = __HAL_TIM_GET_COUNTER(&htim3);
+			  uint32_t t4 = __HAL_TIM_GET_COUNTER(&htim4);
+			  uint32_t t8 = __HAL_TIM_GET_COUNTER(&htim8);
+			  uint32_t t12 = __HAL_TIM_GET_COUNTER(&htim12);
+			  HAL_TIM_StateTypeDef s1 = HAL_TIM_PWM_GetState(&htim1);
+			  HAL_TIM_StateTypeDef s2 = HAL_TIM_PWM_GetState(&htim2);
+			  HAL_TIM_StateTypeDef s3 = HAL_TIM_PWM_GetState(&htim3);
+			  HAL_TIM_StateTypeDef s4 = HAL_TIM_PWM_GetState(&htim4);
+			  HAL_TIM_StateTypeDef s8 = HAL_TIM_PWM_GetState(&htim8);
+			  HAL_TIM_StateTypeDef s12 = HAL_TIM_PWM_GetState(&htim12);
+
+			  itm_debug3(DBG_TIM,"tim", t1, t2, t3);
+		  }
+	  }
+
   }
   /* USER CODE END Callback 1 */
 }

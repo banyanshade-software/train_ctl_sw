@@ -24,7 +24,7 @@
 #include "stm32f4xx_hal.h"
 #else
 #include "stm32f1xx_hal.h"
-#error bin non
+//#error bin non
 #endif
 #include "taskdisp.h"
 
@@ -33,7 +33,7 @@
 
 #include "../../stm32dev/disp_tft/ssd1306_tests.h"
 #include "../../stm32dev/disp_tft/ssd1306.h"
-#include "../BLE/bletask.h"
+//#include "../BLE/bletask.h"
 
 extern int num_train_periodic_control;
 
@@ -448,6 +448,8 @@ static void disp_hop(void)
 	ssd1306_SetCursor(0,16);
 	ssd1306_WriteString("16", Font_11x18, White);
 }
+
+extern RTC_HandleTypeDef hrtc; // from main.c
 
 static void disp_clock(void)
 {

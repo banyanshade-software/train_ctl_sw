@@ -32,7 +32,7 @@
 #include "stm32f4xx_hal_tim.h"
 #else
 #include "stm32f1xx_hal.h"
-#error not tested
+//#error not tested
 #endif
 #else
 #error should not be used in simu
@@ -40,7 +40,9 @@
 #endif
 
 #include "../ctrl/ctrl.h"
+#ifdef BOARD_HAS_INA3221
 #include "../stm32dev/ina3221/ina3221.h"
+#endif
 
 //#include "railconfig.h"
 
@@ -241,7 +243,8 @@ void ihm_runtick_normal(int init)
 
 	// scan buttons ------------------
 
-	// mode test hook
+	// mode test hoo
+#ifdef BOARD_HAS_INA3221
 	if (ihm_dispmode==mode_ina_detect) {
 		// ina3221 detection
 		for (int i=0; i<4; i++) {
@@ -249,6 +252,7 @@ void ihm_runtick_normal(int init)
 		}
 		SET_NEEDSREFRESH(0);
 	}
+#endif
 	// process messages --------------
 	ui_process_msg();
 

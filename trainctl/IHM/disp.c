@@ -24,7 +24,7 @@
 #include "stm32f4xx_hal_tim.h"
 #else
 #include "stm32f1xx_hal.h"
-#error not tested
+//#error not tested
 #endif
 #else
 #error should not be used in simu
@@ -33,7 +33,7 @@
 
 
 
-#include "misc.h"
+#include "../misc.h"
 #include "main.h"
 
 
@@ -48,7 +48,7 @@
 #include "stm32f4xx_hal.h"
 #else
 #include "stm32f1xx_hal.h"
-#error bin non
+//#error bin non
 #endif
 
 #include "../../stm32dev/disp_tft/ssd1306.h"

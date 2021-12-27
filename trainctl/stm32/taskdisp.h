@@ -11,7 +11,6 @@
 void taskdisp(void);
 
 
-extern RTC_HandleTypeDef hrtc; // from main.c
 
 
 #endif /* STM32_TASKDISP_H_ */

@@ -76,9 +76,11 @@ void bemf_tick(uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_ uint32_t d
 			itm_debug1(DBG_ERR|DBG_LOWCTRL|DBG_TIM, "both", (int) notif_flags);
 			runtime_error(ERR_DMA, "both NEW_ADC1 and NEW_ADC2");
 		}
+		if ((0)) itm_debug1(DBG_TIM, "adc", 0);
 		process_adc(&train_adc_buf[0], dt);
 	}
 	if (notif_flags & NOTIF_NEW_ADC_2) {
+		if ((0)) itm_debug1(DBG_TIM, "adc", 1);
 		process_adc(&train_adc_buf[1], dt);
 	}
 }
@@ -192,7 +194,7 @@ static void process_adc(volatile adc_buf_t *buf, _UNUSED_ uint32_t deltaticks)
 			von = -von;
 		}
 		if ((1)) {
-			if (!(cnt % 50)) {
+			if ((i<4) || !(cnt % 50)) {
 				itm_debug3(DBG_ADC|DBG_LOWCTRL, "ADC/Vof", i, voffa, voffb);
 				itm_debug3(DBG_ADC|DBG_LOWCTRL, "ADC/Von",  i, vona, vonb);
 				itm_debug3(DBG_ADC|DBG_LOWCTRL, "ADC/V01", i,  voff, von);
@@ -222,6 +224,7 @@ static void process_adc(volatile adc_buf_t *buf, _UNUSED_ uint32_t deltaticks)
 				mqf_write(&from_canton, &m);
 			}
 		}
+		if ((0)) continue; // use this to disable BEMF reporting (and C1/C2 canton switch) when debugging timers
 		msg_64_t m = {0};
 		m.from = MA_CANTON(localBoardNum, i);
 		m.to = bemf_to[i];

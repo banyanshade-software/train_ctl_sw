@@ -55,9 +55,57 @@
 */
 
 
+
+
+
+static void TIM_ResetCounter(TIM_HandleTypeDef *htim)
+{
+	TIM_TypeDef* TIMx = htim->Instance;
+  /* Check the parameters */
+  assert_param(IS_TIM_ALL_PERIPH(TIMx));
+
+  /* Reset the Counter Register value */
+  TIMx->CNT = 0;
+}
+
+
+int cur_freqhz = 50;
+extern TIM_HandleTypeDef htim1;
+
+// #define __HAL_TIM_SET_PRESCALER(__HANDLE__, __PRESC__)       ((__HANDLE__)->Instance->PSC = (__PRESC__))
+void set_pwm_freq(int freqhz)
+{
+	// 12MHz / 200 -> 60000
+	// 50Hz = 1200
+	int ps = (60000/freqhz); //-1;
+	if ((ps<1) || (ps>0xFFFF)) ps = 1200;
+	ps = ps-1;
+	cur_freqhz = 60000/(ps+1);
+	// not an error but we want it in the log
+	itm_debug3(DBG_ERR|DBG_CTRL, "FREQ", freqhz, ps, cur_freqhz);
+	portENTER_CRITICAL();
+	__HAL_TIM_SET_PRESCALER(&htim1, ps);
+	__HAL_TIM_SET_PRESCALER(&htim2, ps);
+	__HAL_TIM_SET_PRESCALER(&htim3, ps);
+	__HAL_TIM_SET_PRESCALER(&htim8, ps);
+	TIM_ResetCounter(&htim8);
+	TIM_ResetCounter(&htim1);
+	TIM_ResetCounter(&htim2);
+	TIM_ResetCounter(&htim3);
+	portEXIT_CRITICAL();
+}
+
+int get_pwm_freq(void)
+{
+	return cur_freqhz;
+}
+
+
+
 static void run_task_ctrl(void);
 extern DMA_HandleTypeDef hdma_i2c3_rx;
 extern DMA_HandleTypeDef hdma_i2c3_tx;
+
 
 void StartCtrlTask(_UNUSED_ void *argument)
 {
@@ -100,11 +148,18 @@ void StartCtrlTask(_UNUSED_ void *argument)
 	HAL_TIM_PWM_Stop(&htim12, TIM_CHANNEL_1);
 	HAL_TIM_PWM_Stop(&htim12, TIM_CHANNEL_2);
 
+	portENTER_CRITICAL();
 	//HAL_TIM_Base_Start_IT(&htim8);
+	TIM_ResetCounter(&htim8);
+	TIM_ResetCounter(&htim1);
+	TIM_ResetCounter(&htim2);
+	TIM_ResetCounter(&htim3);
 	HAL_TIM_Base_Start_IT(&htim1);
 	HAL_TIM_Base_Start(&htim2);
 	HAL_TIM_Base_Start(&htim3);
+	HAL_TIM_Base_Start(&htim8);
 	HAL_TIM_Base_Start(&htim12);
+	portEXIT_CRITICAL();
 
 	HAL_ADC_Start_DMA(&hadc1,(uint32_t *)train_adc_buf, nsmpl);
 	//HAL_ADC_Start_DMA(&hadc1,(uint32_t *)train_adc_buffer, NUM_ADC_SAMPLES);
@@ -129,30 +184,6 @@ void StartCtrlTask(_UNUSED_ void *argument)
 	run_task_ctrl();
 }
 
-int cur_freqhz = 350;
-extern TIM_HandleTypeDef htim1;
-
-// #define __HAL_TIM_SET_PRESCALER(__HANDLE__, __PRESC__)       ((__HANDLE__)->Instance->PSC = (__PRESC__))
-void set_pwm_freq(int freqhz)
-{
-	// 12MHz / 200 -> 60000
-	// 50Hz = 1200
-	int ps = (60000/freqhz); //-1;
-	if ((ps<1) || (ps>0xFFFF)) ps = 1200;
-	ps = ps-1;
-	cur_freqhz = 60000/(ps+1);
-	// not an error but we want it in the log
-	itm_debug3(DBG_ERR|DBG_CTRL, "FREQ", freqhz, ps, cur_freqhz);
-	__HAL_TIM_SET_PRESCALER(&htim1, ps);
-	__HAL_TIM_SET_PRESCALER(&htim2, ps);
-	__HAL_TIM_SET_PRESCALER(&htim3, ps);
-	__HAL_TIM_SET_PRESCALER(&htim8, ps);
-}
-
-int get_pwm_freq(void)
-{
-	return cur_freqhz;
-}
 
 
 #define USE_NOTIF_TIM 0

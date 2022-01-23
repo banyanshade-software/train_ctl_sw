@@ -19,6 +19,8 @@
 
 #include <sys/types.h>
 
+#define REDUCE_STAT 1
+
 typedef struct statiteraror {
     int midx;
     int tidx;

@@ -59,6 +59,15 @@ static void run_task_ctrl(void);
 extern DMA_HandleTypeDef hdma_i2c3_rx;
 extern DMA_HandleTypeDef hdma_i2c3_tx;
 
+static void TIM_ResetCounter(TIM_TypeDef* TIMx)
+{
+  /* Check the parameters */
+  assert_param(IS_TIM_ALL_PERIPH(TIMx));
+
+  /* Reset the Counter Register value */
+  TIMx->CNT = 0;
+}
+
 void StartCtrlTask(_UNUSED_ void *argument)
 {
 	int nsmpl = sizeof(train_adc_buf)/sizeof(uint16_t);
@@ -72,7 +81,7 @@ void StartCtrlTask(_UNUSED_ void *argument)
 	//if (NUM_VAL_PER_CANTON != 4) Error_Handler();
 	//if (ADC_HALF_BUFFER != 10*2) Error_Handler();
 
-	if ((1)) set_pwm_freq(100);
+	if ((0)) set_pwm_freq(100);
 	CantonTimerHandles[1]=&htim1;
 	CantonTimerHandles[2]=&htim2;
 	CantonTimerHandles[3]=&htim3;
@@ -100,14 +109,25 @@ void StartCtrlTask(_UNUSED_ void *argument)
 	HAL_TIM_PWM_Stop(&htim12, TIM_CHANNEL_1);
 	HAL_TIM_PWM_Stop(&htim12, TIM_CHANNEL_2);
 
+	portENTER_CRITICAL();
 	//HAL_TIM_Base_Start_IT(&htim8);
+	TIM_ResetCounter(&htim8);
+	TIM_ResetCounter(&htim1);
+	TIM_ResetCounter(&htim2);
+	TIM_ResetCounter(&htim3);
 	HAL_TIM_Base_Start_IT(&htim1);
 	HAL_TIM_Base_Start(&htim2);
 	HAL_TIM_Base_Start(&htim3);
+	HAL_TIM_Base_Start_IT(&htim8);
 	HAL_TIM_Base_Start(&htim12);
+
+	HAL_TIM_OC_Start(&htim8, TIM_CHANNEL_1);
+	portEXIT_CRITICAL();
 
 	HAL_ADC_Start_DMA(&hadc1,(uint32_t *)train_adc_buf, nsmpl);
 	//HAL_ADC_Start_DMA(&hadc1,(uint32_t *)train_adc_buffer, NUM_ADC_SAMPLES);
+    __HAL_ADC_ENABLE_IT(&hadc1, ADC_IT_EOC);
+
 
 	startCycleCounter();
 	/*
@@ -129,12 +149,13 @@ void StartCtrlTask(_UNUSED_ void *argument)
 	run_task_ctrl();
 }
 
-int cur_freqhz = 350;
+int cur_freqhz = 50;
 extern TIM_HandleTypeDef htim1;
 
 // #define __HAL_TIM_SET_PRESCALER(__HANDLE__, __PRESC__)       ((__HANDLE__)->Instance->PSC = (__PRESC__))
 void set_pwm_freq(int freqhz)
 {
+	if ((1)) return;
 	// 12MHz / 200 -> 60000
 	// 50Hz = 1200
 	int ps = (60000/freqhz); //-1;
@@ -143,10 +164,17 @@ void set_pwm_freq(int freqhz)
 	cur_freqhz = 60000/(ps+1);
 	// not an error but we want it in the log
 	itm_debug3(DBG_ERR|DBG_CTRL, "FREQ", freqhz, ps, cur_freqhz);
+	portENTER_CRITICAL();
 	__HAL_TIM_SET_PRESCALER(&htim1, ps);
 	__HAL_TIM_SET_PRESCALER(&htim2, ps);
 	__HAL_TIM_SET_PRESCALER(&htim3, ps);
 	__HAL_TIM_SET_PRESCALER(&htim8, ps);
+	TIM_ResetCounter(&htim8);
+	TIM_ResetCounter(&htim1);
+	TIM_ResetCounter(&htim2);
+	TIM_ResetCounter(&htim3);
+
+	portEXIT_CRITICAL();
 }
 
 int get_pwm_freq(void)
@@ -154,6 +182,10 @@ int get_pwm_freq(void)
 	return cur_freqhz;
 }
 
+void ADC_IRQ_UserHandler(void)
+{
+	itm_debug1(DBG_TIM, "ADC compl", 0);
+}
 
 #define USE_NOTIF_TIM 0
 
@@ -175,6 +207,7 @@ static void run_task_ctrl(void)
 		mqf_write_from_nowhere(&m); // XXX it wont be sent to ctl
 	}
 
+
 	for (;;) {
 		uint32_t notif;
 		xTaskNotifyWait(0, 0xFFFFFFFF, &notif, portMAX_DELAY);
@@ -188,6 +221,22 @@ static void run_task_ctrl(void)
 				if ((1)) continue; // skip this tick
 			}
 		}
+		if ((1)) {
+			static int n=0;
+			n++;
+			if (n==233) {
+				n = 0;
+
+				uint32_t t1 = __HAL_TIM_GET_COUNTER(&htim1);
+				uint32_t t2 = __HAL_TIM_GET_COUNTER(&htim2);
+				//uint32_t t3 = __HAL_TIM_GET_COUNTER(&htim3);
+				//uint32_t t4 = __HAL_TIM_GET_COUNTER(&htim4);
+				uint32_t t8 = __HAL_TIM_GET_COUNTER(&htim8);
+				//uint32_t t12 = __HAL_TIM_GET_COUNTER(&htim12);
+				itm_debug3(DBG_TIM, "T128", t1,t2,t8);
+			}
+		}
+
 		cnt++;
 		t0ctrl = HAL_GetTick();
 #if USE_NOTIF_TIM
@@ -273,7 +322,7 @@ void HAL_ADC_ConvCpltCallback(_UNUSED_ ADC_HandleTypeDef* AdcHandle)
 {
 	nfull++;
 	BaseType_t higher=0;
-	if ((0)) itm_debug1(DBG_TIM, "conv/f", HAL_GetTick());
+	if ((1)) itm_debug1(DBG_TIM, "conv/f2", HAL_GetTick());
 	xTaskNotifyFromISR(ctrlTaskHandle, NOTIF_NEW_ADC_2, eSetBits, &higher);
 	portYIELD_FROM_ISR(higher);
 }
@@ -282,7 +331,7 @@ void HAL_ADC_ConvHalfCpltCallback(_UNUSED_ ADC_HandleTypeDef* hadc)
 {
 	nhalf++;
 	BaseType_t higher=0;
-	if ((0)) itm_debug1(DBG_TIM, "conv/h", HAL_GetTick());
+	if ((1)) itm_debug1(DBG_TIM, "conv/h1", HAL_GetTick());
 	xTaskNotifyFromISR(ctrlTaskHandle, NOTIF_NEW_ADC_1, eSetBits, &higher);
 	portYIELD_FROM_ISR(higher);
 }

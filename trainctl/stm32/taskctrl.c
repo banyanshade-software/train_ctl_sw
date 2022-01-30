@@ -59,13 +59,16 @@ static void run_task_ctrl(void);
 extern DMA_HandleTypeDef hdma_i2c3_rx;
 extern DMA_HandleTypeDef hdma_i2c3_tx;
 
-static void TIM_ResetCounter(TIM_TypeDef* TIMx)
+
+static void TIM_ResetCounter(TIM_HandleTypeDef *htim)
 {
+	TIM_TypeDef* TIMx = htim->Instance;
   /* Check the parameters */
   assert_param(IS_TIM_ALL_PERIPH(TIMx));
 
   /* Reset the Counter Register value */
   TIMx->CNT = 0;
+  TIMx->CR1 &= ~(TIM_CR1_DIR);
 }
 
 void StartCtrlTask(_UNUSED_ void *argument)
@@ -81,7 +84,7 @@ void StartCtrlTask(_UNUSED_ void *argument)
 	//if (NUM_VAL_PER_CANTON != 4) Error_Handler();
 	//if (ADC_HALF_BUFFER != 10*2) Error_Handler();
 
-	if ((0)) set_pwm_freq(100);
+	if ((1)) set_pwm_freq(100);
 	CantonTimerHandles[1]=&htim1;
 	CantonTimerHandles[2]=&htim2;
 	CantonTimerHandles[3]=&htim3;
@@ -124,9 +127,10 @@ void StartCtrlTask(_UNUSED_ void *argument)
 	HAL_TIM_OC_Start(&htim8, TIM_CHANNEL_1);
 	portEXIT_CRITICAL();
 
+	// XXX XXX XXX XXX
 	HAL_ADC_Start_DMA(&hadc1,(uint32_t *)train_adc_buf, nsmpl);
 	//HAL_ADC_Start_DMA(&hadc1,(uint32_t *)train_adc_buffer, NUM_ADC_SAMPLES);
-    __HAL_ADC_ENABLE_IT(&hadc1, ADC_IT_EOC);
+    //__HAL_ADC_ENABLE_IT(&hadc1, ADC_IT_EOC);
 
 
 	startCycleCounter();
@@ -155,7 +159,7 @@ extern TIM_HandleTypeDef htim1;
 // #define __HAL_TIM_SET_PRESCALER(__HANDLE__, __PRESC__)       ((__HANDLE__)->Instance->PSC = (__PRESC__))
 void set_pwm_freq(int freqhz)
 {
-	if ((1)) return;
+	if ((0)) return;
 	// 12MHz / 200 -> 60000
 	// 50Hz = 1200
 	int ps = (60000/freqhz); //-1;
@@ -317,9 +321,22 @@ extern osThreadId_t ctrlTaskHandle;
 static int nhalf=0;
 static int nfull=0;
 
-
-void HAL_ADC_ConvCpltCallback(_UNUSED_ ADC_HandleTypeDef* AdcHandle)
+__weak void HAL_ADC_ConvCpltCallback2(_UNUSED_ ADC_HandleTypeDef* hadc)
 {
+}
+__weak void HAL_ADC_ConvHalfCpltCallback2(_UNUSED_ ADC_HandleTypeDef* hadc)
+{
+}
+__weak void HAL_ADC_ErrorCallback2(_UNUSED_ ADC_HandleTypeDef* hadc)
+{
+}
+
+void HAL_ADC_ConvCpltCallback(_UNUSED_ ADC_HandleTypeDef* hadc)
+{
+	if (hadc != &hadc1) {
+		HAL_ADC_ConvCpltCallback2(hadc);
+		return;
+	}
 	nfull++;
 	BaseType_t higher=0;
 	if ((1)) itm_debug1(DBG_TIM, "conv/f2", HAL_GetTick());
@@ -329,6 +346,11 @@ void HAL_ADC_ConvCpltCallback(_UNUSED_ ADC_HandleTypeDef* AdcHandle)
 
 void HAL_ADC_ConvHalfCpltCallback(_UNUSED_ ADC_HandleTypeDef* hadc)
 {
+	//ADC_DMAHalfConvCplt
+	if (hadc != &hadc1) {
+		HAL_ADC_ConvHalfCpltCallback2(hadc);
+		return;
+	}
 	nhalf++;
 	BaseType_t higher=0;
 	if ((1)) itm_debug1(DBG_TIM, "conv/h1", HAL_GetTick());
@@ -342,6 +364,10 @@ void HAL_ADC_LevelOutOfWindowCallback(_UNUSED_ ADC_HandleTypeDef* hadc)
 }
 void  HAL_ADC_ErrorCallback(_UNUSED_ ADC_HandleTypeDef *hadc)
 {
+	if (hadc != &hadc1) {
+		HAL_ADC_ErrorCallback2(hadc);
+		return;
+	}
 	itm_debug1(DBG_ERR|DBG_TIM, "ADC ERR", 0);
 }
 

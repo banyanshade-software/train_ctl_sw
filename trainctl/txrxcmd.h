@@ -34,6 +34,8 @@ void txrx_process_char(uint8_t c, uint8_t *respbuf, int *replen);
 
 void frame_send_notif(uint8_t sel, uint8_t num, uint8_t cmd, uint8_t *dta, int dtalen);
 
+int txrx_frm_escape2(uint8_t *buf,  uint8_t *org, int len, int maxlen);
+
 
 
 static inline void txframe_send_response(frame_msg_t *m, int len)
@@ -69,5 +71,6 @@ int frame_gather_stat(stat_iterator_t *step, uint8_t *buf);
  * frame header and end delimiter are NOT sent by frame_send_stat
  */
 void frame_send_stat(void(*cb)(uint8_t *d, int l), uint32_t tick);
+void frame_send_oscilo(void(*cb)(uint8_t *d, int l));
 
 #endif /* TXRXCMD_H_ */

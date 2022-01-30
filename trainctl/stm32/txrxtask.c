@@ -88,6 +88,15 @@ void StartTxRxFrameTask(_UNUSED_ void *argument)
 			_send_bytes((uint8_t *)"|", 1);
 			continue;
 		}
+		if (m.t == TXFRAME_TYPE_OSCILO) {
+			uint32_t t = HAL_GetTick();   // XXX t0
+			uint8_t b[]="|_NG\000Y"; //
+			//memcpy(b+6, &t, 4);
+			_send_bytes(b, 6);
+			frame_send_oscilo(_send_bytes);
+			_send_bytes((uint8_t *)"|", 1);
+			continue;
+		}
 		_send_bytes(m.frm, m.len);
 
 	}

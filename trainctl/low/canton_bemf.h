@@ -57,14 +57,19 @@ typedef struct {
 extern volatile adc_buffer_t train_adc_buffer[2*NUM_LOCAL_CANTONS_HW];
 */
 typedef struct {
-	// uint16_t I;
 	uint16_t vA;
 	uint16_t vB;
 } adc_per_blk_t;
 
 typedef struct {
+#if 1
 	adc_per_blk_t off[NUM_LOCAL_CANTONS_HW];
 	adc_per_blk_t on[NUM_LOCAL_CANTONS_HW];
+#else
+	// reversed
+	adc_per_blk_t on[NUM_LOCAL_CANTONS_HW];
+	adc_per_blk_t off[NUM_LOCAL_CANTONS_HW];
+#endif
 } adc_buf_t;
 
 

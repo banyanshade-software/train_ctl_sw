@@ -87,6 +87,11 @@ static int _frm_escape2(uint8_t *buf,  uint8_t *org, int len, int maxlen)
     }
     return ne;
 }
+int txrx_frm_escape2(uint8_t *buf,  uint8_t *org, int len, int maxlen)
+{
+	return _frm_escape2(buf, org, len, maxlen);
+}
+
 static int frm_escape(uint8_t *buf, int len, int maxlen)
 {
 	//configASSERT(buf[0]==FRAME_DELIM);
@@ -482,15 +487,25 @@ int frame_gather_stat(stat_iterator_t *step, uint8_t *buf)
 
 volatile int stat_on_progress = 0;
 
+__weak int oscilo_running(void)
+{
+	return 0;
+}
+
 void txframe_send_stat(void)
 {
 	if (stat_on_progress) return;
+	if (oscilo_running()) return;
     frame_msg_t m;
     m.t = TXFRAME_TYPE_STAT;
     txframe_send(&m, 1);
 }
 
 uint32_t gtick = 0;
+
+__weak void frame_send_oscilo(void(*cb)(uint8_t *d, int l))
+{
+}
 
 void frame_send_stat(void(*cb)(uint8_t *d, int l), uint32_t tick)
 {

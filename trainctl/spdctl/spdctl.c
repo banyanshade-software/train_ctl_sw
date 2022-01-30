@@ -200,7 +200,7 @@ void spdctl_run_tick(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, uint
                         itm_debug3(DBG_PID, "st bemf", tidx, m.v1, m.from);
                         if (!tvars->c2bemf) tvars->bemf_mv = m.v1;
                         break;
-                    } else if (m.from == tvars->C2) {
+                    } else if (1 && (m.from == tvars->C2)) {
                         itm_debug3(DBG_PID|DBG_CTRL, "c2 bemf", tidx, m.v1, m.from);
                         if (tvars->c2bemf) tvars->bemf_mv = m.v1;
                         else if (abs(m.v1) > abs(tvars->bemf_mv)+300) {
@@ -230,6 +230,10 @@ void spdctl_run_tick(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, uint
                     break;
                 case CMD_SET_TARGET_SPEED:
                     itm_debug1(DBG_SPDCTL, "set_t_spd", m.v1u);
+                    if (!tvars->target_speed && (m.v1u > 10)) {
+                    	extern int oscillo_trigger_start;
+                    	oscillo_trigger_start = 1;
+                    }
                     tvars->target_speed = (int16_t) m.v1u;
                     break;
                 case CMD_SET_C1_C2:

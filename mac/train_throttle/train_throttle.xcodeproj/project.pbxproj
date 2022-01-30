@@ -140,6 +140,7 @@
 		1BC903192720B4E60087CEA7 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Platforms/MacOSX.platform/Developer/Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		1BC9031B2720BFDA0087CEA7 /* ledio.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ledio.h; sourceTree = "<group>"; };
 		1BC9031C2720BFDA0087CEA7 /* ledio.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ledio.c; sourceTree = "<group>"; };
+		1BD3F61627A3C0CD0007521D /* oscilo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = oscilo.h; sourceTree = "<group>"; };
 		1BD7CD33273686E30035CF0A /* topologyP.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = topologyP.h; sourceTree = "<group>"; };
 		1BD93C4B2546FF42006C4D70 /* param.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = param.c; sourceTree = "<group>"; };
 		1BD93C4D2546FF42006C4D70 /* train.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = train.h; sourceTree = "<group>"; };
@@ -327,9 +328,18 @@
 			path = trainctlTests;
 			sourceTree = "<group>";
 		};
+		1BD3F61327A3C0460007521D /* oscillo */ = {
+			isa = PBXGroup;
+			children = (
+				1BD3F61627A3C0CD0007521D /* oscilo.h */,
+			);
+			path = oscillo;
+			sourceTree = "<group>";
+		};
 		1BD93C4A2546FF42006C4D70 /* trainctl */ = {
 			isa = PBXGroup;
 			children = (
+				1BD3F61327A3C0460007521D /* oscillo */,
 				1BC90303272091870087CEA7 /* leds */,
 				1B60329426CA4BF400D5B6CA /* trkpln */,
 				1B18114C26BD5BA30008F21C /* uitrack */,

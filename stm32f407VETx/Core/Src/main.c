@@ -1059,7 +1059,7 @@ static void MX_TIM5_Init(void)
   htim5.Instance = TIM5;
   htim5.Init.Prescaler = 0;
   htim5.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim5.Init.Period = 300;
+  htim5.Init.Period = 1200;
   htim5.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim5.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_ENABLE;
   if (HAL_TIM_Base_Init(&htim5) != HAL_OK)
@@ -1082,7 +1082,7 @@ static void MX_TIM5_Init(void)
     Error_Handler();
   }
   sConfigOC.OCMode = TIM_OCMODE_ACTIVE;
-  sConfigOC.Pulse = 250;
+  sConfigOC.Pulse = 1100;
   sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
   sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
   if (HAL_TIM_OC_ConfigChannel(&htim5, &sConfigOC, TIM_CHANNEL_1) != HAL_OK)
@@ -1525,7 +1525,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 		  //xTaskNotifyFromISR(ctrlTaskHandle, NOTIF_TIM8, eSetBits, &higher);
 		  //portYIELD_FROM_ISR(higher);
 	  } else {
-		  //itm_debug1(DBG_TIM, "tim8",0);
+		  if ((0)) itm_debug1(DBG_TIM, "tim8",0);
 	  }
   }
   if (htim->Instance == TIM1) {

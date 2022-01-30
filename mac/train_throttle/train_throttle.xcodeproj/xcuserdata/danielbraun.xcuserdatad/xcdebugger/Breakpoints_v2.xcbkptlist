@@ -1278,7 +1278,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "2096"
             endingLineNumber = "2096"
-            landmarkName = "-peripheral:didUpdateValueForCharacteristic:error:"
+            landmarkName = "-peripheral:didDiscoverCharacteristicsForService:error:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1294,7 +1294,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "2161"
             endingLineNumber = "2161"
-            landmarkName = "-setTestCanton:"
+            landmarkName = "-setTestMode:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1691,7 +1691,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "2154"
             endingLineNumber = "2154"
-            landmarkName = "-setTestCanton:"
+            landmarkName = "-setTestMode:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -3619,7 +3619,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1909"
             endingLineNumber = "1909"
-            landmarkName = "-gnuplot:x:file:items:"
+            landmarkName = "-buildGnuplotCmd:x:file:items:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -3635,7 +3635,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1880"
             endingLineNumber = "1880"
-            landmarkName = "-_buildGnuplotCurves:x:file:items:"
+            landmarkName = "-plotWithGnuplot:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

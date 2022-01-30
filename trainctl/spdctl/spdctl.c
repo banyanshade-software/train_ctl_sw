@@ -146,6 +146,8 @@ static void spdctl_reset(void)
 	}
 }
 
+volatile int16_t oscilo_t0bemf = 0;
+volatile int16_t oscilo_t1bemf = 0;
 
 void spdctl_run_tick(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, uint32_t dt)
 {
@@ -197,6 +199,10 @@ void spdctl_run_tick(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, uint
             switch (m.cmd) {
                 case CMD_BEMF_NOTIF:
                     if (m.from == tvars->C1) {
+                    	if (!tidx) oscilo_t0bemf = m.v1;
+                    	else if (1==tidx) oscilo_t1bemf = m.v1;
+
+
                         itm_debug3(DBG_PID, "st bemf", tidx, m.v1, m.from);
                         if (!tvars->c2bemf) tvars->bemf_mv = m.v1;
                         break;

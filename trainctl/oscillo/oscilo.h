@@ -15,18 +15,29 @@ typedef struct {
     int16_t tim1cnt;
     int16_t tim2cnt;
     int16_t tim8cnt;
+
+    int16_t t0bemf;
+    int16_t t1bemf;
+
     uint8_t valt1ch1:1;
     uint8_t valt1ch2:1;
     uint8_t valt1ch3:1;
     uint8_t valt1ch4:1;
+
     uint8_t valt2ch1:1;
     uint8_t valt2ch2:1;
     uint8_t valt2ch3:1;
     uint8_t valt2ch4:1;
+
+    uint8_t evtadc:1;
 } osc_values_t;
 
 #define OSC_NUM_SAMPLES 1024
 
 extern int oscillo_trigger_start;
+
+extern volatile int16_t oscilo_t0bemf;
+extern volatile int16_t oscilo_t1bemf;
+extern volatile uint8_t oscilo_evtadc;
 
 #endif /* oscilo_h */

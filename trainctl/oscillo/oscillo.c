@@ -26,6 +26,7 @@
 #include "../msg/trainmsg.h"
 
 #include "txrxcmd.h"
+#include "railconfig.h"
 #include "oscilo.h"
 
 
@@ -108,6 +109,7 @@ static void oscilo_start(void)
 	memset(oscilo_buf, 0, sizeof(oscilo_buf));
 	oscilo_index = 0;
 	oscilo_run = 1;
+	itm_debug1(DBG_TIM, "osc start", 0);
 	HAL_TIM_Base_Start_IT(&htim5);
 }
 
@@ -127,10 +129,7 @@ void tim5_elapsed(void)
 {
 	//itm_debug1(DBG_TIM, "tim5", 0);
 	if (!oscilo_run) return;
-	if (adc_in_progress) {
-		itm_debug1(DBG_TIM, "ADC  pgrs", adc_in_progress);
-		return;
-	}
+
 
 	oscilo_buf[oscilo_index].tim1cnt =  __HAL_TIM_GET_COUNTER(&htim1);
 	oscilo_buf[oscilo_index].tim2cnt =  __HAL_TIM_GET_COUNTER(&htim2);
@@ -155,10 +154,22 @@ void tim5_elapsed(void)
 	oscilo_buf[oscilo_index].valt2ch3 = HAL_GPIO_ReadPin(PWM_3_0_GPIO_Port, PWM_3_0_Pin);
 	oscilo_buf[oscilo_index].valt2ch4 = HAL_GPIO_ReadPin(PWM_3_1_GPIO_Port, PWM_3_1_Pin);
 
+	oscilo_buf[oscilo_index].t0bemf = oscilo_t0bemf;
+	oscilo_buf[oscilo_index].t1bemf = oscilo_t1bemf;
+
+	oscilo_buf[oscilo_index].evtadc = oscilo_evtadc;
+	if (oscilo_evtadc) {
+		itm_debug1(DBG_TIM, "osc evtadc", oscilo_evtadc);
+		oscilo_evtadc = 0;
+	}
  	oscilo_index++;
 	if (oscilo_index >= OSC_NUM_SAMPLES) {
 		oscilo_end();
 	} else {
+		if (adc_in_progress) {
+			itm_debug1(DBG_TIM, "ADC  pgrs", adc_in_progress);
+			return;
+		}
 		adc_in_progress = 1;
 		if ((0)) {
 			HAL_ADC_Start_DMA(&hadc2,(uint32_t *)(&oscilo_buf[oscilo_index-1].vadc[0]), 4);
@@ -174,7 +185,7 @@ void tim5_elapsed(void)
 static void conv_done(int f)
 {
 	if (f) adc_in_progress = 0;
-	itm_debug1(DBG_TIM, "CONV", f);
+	//itm_debug1(DBG_TIM, "CONV", f);
 }
 
 void HAL_ADC_ConvCpltCallback2(_UNUSED_ ADC_HandleTypeDef* hadc)

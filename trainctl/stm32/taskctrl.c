@@ -331,6 +331,10 @@ __weak void HAL_ADC_ErrorCallback2(_UNUSED_ ADC_HandleTypeDef* hadc)
 {
 }
 
+
+
+volatile uint8_t oscilo_evtadc;
+
 void HAL_ADC_ConvCpltCallback(_UNUSED_ ADC_HandleTypeDef* hadc)
 {
 	if (hadc != &hadc1) {
@@ -338,6 +342,7 @@ void HAL_ADC_ConvCpltCallback(_UNUSED_ ADC_HandleTypeDef* hadc)
 		return;
 	}
 	nfull++;
+	oscilo_evtadc = 1;
 	BaseType_t higher=0;
 	if ((1)) itm_debug1(DBG_TIM, "conv/f2", HAL_GetTick());
 	xTaskNotifyFromISR(ctrlTaskHandle, NOTIF_NEW_ADC_2, eSetBits, &higher);
@@ -352,6 +357,7 @@ void HAL_ADC_ConvHalfCpltCallback(_UNUSED_ ADC_HandleTypeDef* hadc)
 		return;
 	}
 	nhalf++;
+	oscilo_evtadc = 1;
 	BaseType_t higher=0;
 	if ((1)) itm_debug1(DBG_TIM, "conv/h1", HAL_GetTick());
 	xTaskNotifyFromISR(ctrlTaskHandle, NOTIF_NEW_ADC_1, eSetBits, &higher);

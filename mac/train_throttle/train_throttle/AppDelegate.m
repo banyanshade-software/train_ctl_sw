@@ -30,7 +30,7 @@
  * notif format
  * |s'N'SNCvv..|
  */
-#define MAX_DATA_LEN (1024*16)
+#define MAX_DATA_LEN (1024*24)
 typedef struct {
     uint8_t state;
     uint8_t escape;
@@ -1325,7 +1325,6 @@ int convert_to_mv(int m)
     return ((m * 4545 * 33) / (4096*10));
 }
 
-int oscillo_trigger_start = 0;
 
 - (NSURL *) createTempCsvFile:(NSString *)basename second:(NSString *)secname retfile:(NSFileHandle **)retfile
 {
@@ -1350,6 +1349,8 @@ int oscillo_trigger_start = 0;
     return fu;
 }
 
+int oscillo_trigger_start = 0;
+
 - (void) processOsciloFrame
 {
     if (frm.pidx<8) return; // TODO
@@ -1372,7 +1373,7 @@ int oscillo_trigger_start = 0;
     
     for (int i=0; i<ns; i++) {
         osc_values_t *v = &samples[i];
-        NSString *s = [NSString stringWithFormat:@"%d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d\n",
+        NSString *s = [NSString stringWithFormat:@"%d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d\n",
                        i,
                        convert_to_mv(v->vadc[0]-v->vadc[1])+10000*5,
                        convert_to_mv(v->vadc[2]-v->vadc[3])+10000*4,
@@ -1390,10 +1391,13 @@ int oscillo_trigger_start = 0;
                        v->valt2ch1 ? W1(4) : W0(4),
                        v->valt2ch2 ? W1(5) : W0(5),
                        v->valt2ch3 ? W1(6) : W0(6),
-                       v->valt2ch4 ? W1(7) : W0(7)
+                       v->valt2ch4 ? W1(7) : W0(7),
+                       convert_to_mv(v->t0bemf) -50000,
+                       convert_to_mv(v->t1bemf) -60000,
+                       v->evtadc ? -30000 : -35000
                        ];
         [recordFileGp writeData:[s dataUsingEncoding:NSUTF8StringEncoding]];
-        s = [NSString stringWithFormat:@"%d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d\n",
+        s = [NSString stringWithFormat:@"%d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d\n",
                        i,
                        convert_to_mv(v->vadc[0]-v->vadc[1]),
                        convert_to_mv(v->vadc[2]-v->vadc[3]),
@@ -1411,21 +1415,28 @@ int oscillo_trigger_start = 0;
                        v->valt2ch1,
                        v->valt2ch2,
                        v->valt2ch3,
-                       v->valt2ch4
+                       v->valt2ch4,
+                       convert_to_mv(v->t0bemf),
+                       convert_to_mv(v->t1bemf),
+                       v->evtadc
                        ];
         [recordFileRaw writeData:[s dataUsingEncoding:NSUTF8StringEncoding]];
     }
     [recordFileGp closeFile];
     [recordFileRaw closeFile];
     NSArray *cols=@[@"V0", @"V1", @"V0a", @"V0b", @"V1a", @"V1b",
-    @"tim1", @"tim2", @"tim8",
-    @"T1ch1", @"T1ch2", @"T1ch3", @"T1ch4",
-                    @"T2ch1", @"T2ch2", @"T2ch3", @"T2ch4"];
+                    @"tim1", @"tim2", @"tim8",
+                    @"T1ch1", @"T1ch2", @"T1ch3", @"T1ch4",
+                    @"T2ch1", @"T2ch2", @"T2ch3", @"T2ch4",
+                    @"t0bemf", @"t1bemf", @"evtadc"];
     NSDictionary *itms = @{ @"i" : @0,  @"V0" : @1 , @"V1" : @2 ,
                             @"V0a" : @3 , @"V0b" : @4 , @"V1a" : @5, @"V1b" : @6,
                             @"tim1" : @7, @"tim2" : @8, @"tim8" : @9,
         @"T1ch1" : @10, @"T1ch2" : @11, @"T1ch3" : @12, @"T1ch4" : @13,
-        @"T2ch1" : @14, @"T2ch2" : @15, @"T2ch3" : @16, @"T2ch4" : @17};
+        @"T2ch1" : @14, @"T2ch2" : @15, @"T2ch3" : @16, @"T2ch4" : @17,
+        @"t0bemf" : @18, @"t1bemf" : @19, @"evtadc" : @20
+
+    };
     [self gnuplot:cols x:@"i" file:[fugp path] items:itms];
     NSLog(@"RAW file : %@", furaw);
 }

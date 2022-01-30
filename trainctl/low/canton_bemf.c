@@ -193,7 +193,7 @@ static void process_adc(volatile adc_buf_t *buf, _UNUSED_ uint32_t deltaticks)
 			voff = -voff;
 			von = -von;
 		}
-		if ((1)) {
+		if ((0)) {
 			if ((i<4) || !(cnt % 50)) {
 				itm_debug3(DBG_ADC|DBG_LOWCTRL, "ADC/Vof", i, voffa, voffb);
 				itm_debug3(DBG_ADC|DBG_LOWCTRL, "ADC/Von",  i, vona, vonb);

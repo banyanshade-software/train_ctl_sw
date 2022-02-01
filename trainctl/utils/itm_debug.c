@@ -146,19 +146,19 @@ void _itm_debug3(const char *msg, int32_t v1, int32_t v2, int32_t v3, int n)
     uint32_t tck = HAL_GetTick();
 	write_num(buf, tck, 7);
 	buf[7]=':';
-	strncpy((char *)buf+8, msg, 12);
+	strncpy((char *)buf+8, msg, 12);  // 8+12
 	uint8_t *p = buf+strlen((char *)buf);
 	if (!n--) goto done;
-	*p = '/';
-	itoa(v1, (char *)p+1, 10);
+	*p = '/';							//21
+	itoa(v1, (char *)p+1, 10);			//31
 	p = buf+strlen((char *)buf);
 	if (!n--) goto done;
-	*p = '/';
-	itoa(v2, (char *)p+1, 10);
+	*p = '/';							//32
+	itoa(v2, (char *)p+1, 10);			//42
 	p = buf+strlen((char *)buf);
 	if (!n--) goto done;
-	*p = '/';
-	itoa(v3, (char *)p+1, 10);
+	*p = '/';							//43
+	itoa(v3, (char *)p+1, 10);			//53
 done:
 	p = buf+strlen((char *)buf);
 #ifndef TRAIN_SIMU

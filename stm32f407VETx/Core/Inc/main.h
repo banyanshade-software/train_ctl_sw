@@ -76,8 +76,6 @@ void Error_Handler(void);
 #define ADC_4_V1_GPIO_Port GPIOC
 #define ADC_5_V0_Pin GPIO_PIN_3
 #define ADC_5_V0_GPIO_Port GPIOC
-#define ADC_2_V0_Pin GPIO_PIN_4
-#define ADC_2_V0_GPIO_Port GPIOA
 #define ADC_2_V1_Pin GPIO_PIN_5
 #define ADC_2_V1_GPIO_Port GPIOA
 #define BOARD_LED_Pin GPIO_PIN_6

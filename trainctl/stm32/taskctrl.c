@@ -344,7 +344,7 @@ void HAL_ADC_ConvCpltCallback(_UNUSED_ ADC_HandleTypeDef* hadc)
 	nfull++;
 	oscilo_evtadc = 1;
 	BaseType_t higher=0;
-	if ((1)) itm_debug1(DBG_TIM, "conv/f2", HAL_GetTick());
+	if ((0)) itm_debug1(DBG_TIM, "conv/f2", HAL_GetTick());
 	xTaskNotifyFromISR(ctrlTaskHandle, NOTIF_NEW_ADC_2, eSetBits, &higher);
 	portYIELD_FROM_ISR(higher);
 }
@@ -359,7 +359,7 @@ void HAL_ADC_ConvHalfCpltCallback(_UNUSED_ ADC_HandleTypeDef* hadc)
 	nhalf++;
 	oscilo_evtadc = 1;
 	BaseType_t higher=0;
-	if ((1)) itm_debug1(DBG_TIM, "conv/h1", HAL_GetTick());
+	if ((0)) itm_debug1(DBG_TIM, "conv/h1", HAL_GetTick());
 	xTaskNotifyFromISR(ctrlTaskHandle, NOTIF_NEW_ADC_1, eSetBits, &higher);
 	portYIELD_FROM_ISR(higher);
 }
@@ -377,3 +377,11 @@ void  HAL_ADC_ErrorCallback(_UNUSED_ ADC_HandleTypeDef *hadc)
 	itm_debug1(DBG_ERR|DBG_TIM, "ADC ERR", 0);
 }
 
+
+void vApplicationStackOverflowHook(_UNUSED_ xTaskHandle xTask, _UNUSED_ signed char *pcTaskName)
+{
+	itm_debug1(DBG_ERR, "STK OVF", 1);
+	for (;;) {
+
+	}
+}

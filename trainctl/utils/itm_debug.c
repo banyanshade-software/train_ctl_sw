@@ -139,13 +139,13 @@ int _write(_UNUSED_ int32_t file, uint8_t *ptr, int32_t len)
 #endif
 
 
-void _itm_debug3(const char *msg, int32_t v1, int32_t v2, int32_t v3, int n)
+void _itm_debug3(int err, const char *msg, int32_t v1, int32_t v2, int32_t v3, int n)
 {
 	uint8_t buf[64];
 	memset(buf, 0, sizeof(buf));
     uint32_t tck = HAL_GetTick();
 	write_num(buf, tck, 7);
-	buf[7]=':';
+	buf[7] = err ? '@' : ':';
 	strncpy((char *)buf+8, msg, 12);  // 8+12
 	uint8_t *p = buf+strlen((char *)buf);
 	if (!n--) goto done;

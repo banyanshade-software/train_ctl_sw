@@ -54,10 +54,55 @@
 #define NUM_ADC_SAMPLES (2*ADC_HALF_BUFFER)
 */
 
+#define GUARD_SAMPLING 2
+static volatile adc_buf_t train_adc_buf[MAX_NUM_SAMPLING+GUARD_SAMPLING]; // double buffer
+
 
 static void run_task_ctrl(void);
 extern DMA_HandleTypeDef hdma_i2c3_rx;
 extern DMA_HandleTypeDef hdma_i2c3_tx;
+
+
+// ADC/Vof   NOTIF_  conv/f2/  "osc evtadc "tim"  unk b3 "tx trunc"
+
+
+int cur_freqhz = 50;
+static int numsampling = 0;
+
+/*
+ *  max pwm is 90% : min off time in µs = (1000000/pwmhz)*.1
+ *  	pwmhz       offtime
+ *  	 50			2000 µs
+ *  	100			1000 µs (1ms)
+ *  	200 		 500 µs
+ *  	300		 	 333 µs
+ *
+ * one ADC sampling and conversiont (12 bits):
+ * 		12+3 = 15 ADCCLK
+ * sampling a full adc_buf_t (12 conversions), at 12 bits :
+ * 		15*12 ADCCLK
+ * with ABP2 at 12MHz, PCLK2=12MHz (timers at 24MHz)
+ * prescale : 2 -> 6MHz, 1 ADCCLK = 0.16 µs
+ * one full adc_buf_t : 30 µS
+ *
+ * 		pwmhz		offtime		max NUM_SAMPLING
+ * 		 50			2000 µs		66
+ * 		100			1000		33
+ * 		200			 500		16.6
+ * 		300			 333		11.1
+ *
+ * 	https://electronics.stackexchange.com/questions/311326/stm32f20x-adc-sampling-time-rate
+ */
+
+static int num_sampling(void)
+{
+	if (numsampling) return numsampling;
+	if (!cur_freqhz) Error_Handler();
+	numsampling = 3300/cur_freqhz;
+	if (numsampling > MAX_NUM_SAMPLING) numsampling = MAX_NUM_SAMPLING;
+	if (numsampling<5) Error_Handler();
+	return numsampling;
+}
 
 
 static void TIM_ResetCounter(TIM_HandleTypeDef *htim)
@@ -68,15 +113,19 @@ static void TIM_ResetCounter(TIM_HandleTypeDef *htim)
 
   /* Reset the Counter Register value */
   TIMx->CNT = 0;
-  TIMx->CR1 &= ~(TIM_CR1_DIR);
+  // TIMx->CR1 &= ~(TIM_CR1_DIR);
 }
+
+static int adc_nsmpl = 0;
 
 void StartCtrlTask(_UNUSED_ void *argument)
 {
-	int nsmpl = sizeof(train_adc_buf)/sizeof(uint16_t);
+	int adc_maxsmpl = sizeof(train_adc_buf)/sizeof(uint16_t);
+	if (sizeof(adc_buf_t) != NUM_LOCAL_CANTONS_HW*2*2) Error_Handler();
+	adc_nsmpl = NUM_LOCAL_CANTONS_HW*num_sampling()*2;
 
-	if (sizeof(train_adc_buf) != sizeof(uint16_t)*NUM_LOCAL_CANTONS_HW*8) Error_Handler();
-	if (nsmpl != NUM_LOCAL_CANTONS_HW*2*4) Error_Handler();
+ 	if (sizeof(train_adc_buf) < sizeof(uint16_t)*NUM_LOCAL_CANTONS_HW*2*MAX_NUM_SAMPLING) Error_Handler();
+	//if (adc_nsmpl != NUM_LOCAL_CANTONS_HW*2*NUM_SAMPLING) Error_Handler();
 	if (NUM_LOCAL_CANTONS_HW != 6) Error_Handler();
 	//__HAL_DMA_ENABLE_IT(&hdma_i2c3_rx, DMA_IT_TC);
 	//__HAL_DMA_ENABLE_IT(&hdma_i2c3_tx, DMA_IT_TC);
@@ -128,7 +177,8 @@ void StartCtrlTask(_UNUSED_ void *argument)
 	portEXIT_CRITICAL();
 
 	// XXX XXX XXX XXX
-	HAL_ADC_Start_DMA(&hadc1,(uint32_t *)train_adc_buf, nsmpl);
+	memset((void *)train_adc_buf, 0, sizeof(train_adc_buf));
+	HAL_ADC_Start_DMA(&hadc1,(uint32_t *)train_adc_buf, adc_nsmpl);
 	//HAL_ADC_Start_DMA(&hadc1,(uint32_t *)train_adc_buffer, NUM_ADC_SAMPLES);
     //__HAL_ADC_ENABLE_IT(&hadc1, ADC_IT_EOC);
 
@@ -153,13 +203,15 @@ void StartCtrlTask(_UNUSED_ void *argument)
 	run_task_ctrl();
 }
 
-int cur_freqhz = 50;
 extern TIM_HandleTypeDef htim1;
 
 // #define __HAL_TIM_SET_PRESCALER(__HANDLE__, __PRESC__)       ((__HANDLE__)->Instance->PSC = (__PRESC__))
 void set_pwm_freq(int freqhz)
 {
 	if ((0)) return;
+	if (!freqhz) {
+		return;
+	}
 	// 12MHz / 200 -> 60000
 	// 50Hz = 1200
 	int ps = (60000/freqhz); //-1;
@@ -169,6 +221,7 @@ void set_pwm_freq(int freqhz)
 	// not an error but we want it in the log
 	itm_debug3(DBG_ERR|DBG_CTRL, "FREQ", freqhz, ps, cur_freqhz);
 	portENTER_CRITICAL();
+	numsampling = 0;
 	__HAL_TIM_SET_PRESCALER(&htim1, ps);
 	__HAL_TIM_SET_PRESCALER(&htim2, ps);
 	__HAL_TIM_SET_PRESCALER(&htim3, ps);
@@ -318,7 +371,7 @@ static void run_task_ctrl(void)
 extern osThreadId_t ctrlTaskHandle;
 
 
-static int nhalf=0;
+//static int nhalf=0;
 static int nfull=0;
 
 __weak void HAL_ADC_ConvCpltCallback2(_UNUSED_ ADC_HandleTypeDef* hadc)
@@ -332,8 +385,15 @@ __weak void HAL_ADC_ErrorCallback2(_UNUSED_ ADC_HandleTypeDef* hadc)
 }
 
 
+static int convert_to_mv(int m)
+{
+    return ((m * 4545 * 33) / (4096*10));
+}
+
 
 volatile uint8_t oscilo_evtadc;
+static int numresult = 0;
+#define ADC_AVERAGE 0
 
 void HAL_ADC_ConvCpltCallback(_UNUSED_ ADC_HandleTypeDef* hadc)
 {
@@ -343,10 +403,80 @@ void HAL_ADC_ConvCpltCallback(_UNUSED_ ADC_HandleTypeDef* hadc)
 	}
 	nfull++;
 	oscilo_evtadc = 1;
-	BaseType_t higher=0;
 	if ((0)) itm_debug1(DBG_TIM, "conv/f2", HAL_GetTick());
-	xTaskNotifyFromISR(ctrlTaskHandle, NOTIF_NEW_ADC_2, eSetBits, &higher);
+	//HAL_ADC_Stop(hadc);
+	for (int i=0; i<adc_nsmpl; i++) {
+		uint16_t *t = (uint16_t *)train_adc_buf;
+		if (0x4242==t[i]) {
+			itm_debug3(DBG_TIM, "BAD", i, t[i], t[i+1]);
+		}
+	}
+	if ((GUARD_SAMPLING)) {
+		for (int i=0; i<GUARD_SAMPLING; i++) {
+			for (int j=0; j<NUM_LOCAL_CANTONS_HW; j++) {
+				if (train_adc_buf[MAX_NUM_SAMPLING+i].meas[j].vA || train_adc_buf[MAX_NUM_SAMPLING+i].meas[j].vB) {
+					itm_debug1(DBG_ERR, "overflow", 0);
+					Error_Handler();
+				}
+			}
+		}
+	}
+	adc_result_t *r = &adc_result[numresult];
+	for (int j=0; j<NUM_LOCAL_CANTONS_HW; j++) {
+		r->meas[j].vA = 0;
+		r->meas[j].vB = 0;
+	}
+	int nspl = num_sampling();
+	for (int j=0; j<NUM_LOCAL_CANTONS_HW; j++) {
+        int maxia = -1;
+        int maxib = -1;
+#if ADC_AVERAGE
+        for (int i=2; i<nspl-2; i++) {
+        	r->meas[j].vA += train_adc_buf[i].meas[j].vA;
+        	r->meas[j].vB += train_adc_buf[i].meas[j].vB;
+        }
+        r->meas[j].vA /= nspl-4;
+        r->meas[j].vB /= nspl-4;
+#else
+		for (int i=2; i<nspl-2; i++) {
+			if (train_adc_buf[i].meas[j].vA > r->meas[j].vA) {
+				r->meas[j].vA = train_adc_buf[i].meas[j].vA;
+				maxia = i;
+				if ((0==j) && (train_adc_buf[i].meas[j].vA>800)) {
+					itm_debug2(DBG_ADC, "hi", i, j);
+				}
+				//itm_debug3(DBG_TIM, "  maxA", i,j,train_adc_buf[i].meas[j].vA);
+			}
+			if (train_adc_buf[i].meas[j].vB > r->meas[j].vB) {
+				r->meas[j].vB = train_adc_buf[i].meas[j].vB;
+				maxib = i;
+				//itm_debug3(DBG_TIM, "  maxB", i,j,train_adc_buf[i].meas[j].vB);
+			}
+		}
+		if (!j) {
+			itm_debug2(DBG_ADC, "maxi0A", maxia, r->meas[j].vA);
+			itm_debug2(DBG_ADC, "maxi0B", maxib, r->meas[j].vB);
+		}
+#endif
+	}
+	if ((0)) {
+		for (int j=0; j<NUM_LOCAL_CANTONS_HW; j++) {
+			itm_debug3(DBG_TIM, "ADCmaxAB", j, r->meas[j].vA, r->meas[j].vB);
+			itm_debug3(DBG_TIM, "ADCmax", j, r->meas[j].vB - r->meas[j].vA, convert_to_mv(r->meas[j].vB - r->meas[j].vA));
+		}
+	}
+	if ((1)) { //xxx
+		memset((void *)train_adc_buf, 0, sizeof(train_adc_buf));
+		HAL_ADC_Stop_DMA(&hadc1);
+		HAL_ADC_Start_DMA(&hadc1,(uint32_t *)train_adc_buf, adc_nsmpl);
+	}
+	int notif = numresult ? NOTIF_NEW_ADC_2 : NOTIF_NEW_ADC_1;
+	numresult = numresult ? 0 : 1;
+
+	BaseType_t higher=0;
+	xTaskNotifyFromISR(ctrlTaskHandle, notif, eSetBits, &higher);
 	portYIELD_FROM_ISR(higher);
+
 }
 
 void HAL_ADC_ConvHalfCpltCallback(_UNUSED_ ADC_HandleTypeDef* hadc)
@@ -356,20 +486,31 @@ void HAL_ADC_ConvHalfCpltCallback(_UNUSED_ ADC_HandleTypeDef* hadc)
 		HAL_ADC_ConvHalfCpltCallback2(hadc);
 		return;
 	}
+#if 0
+
 	nhalf++;
-	oscilo_evtadc = 1;
+
+	//oscilo_evtadc = 1;
 	BaseType_t higher=0;
-	if ((0)) itm_debug1(DBG_TIM, "conv/h1", HAL_GetTick());
+	if ((1)) itm_debug1(DBG_TIM, "conv/h1", HAL_GetTick());
 	xTaskNotifyFromISR(ctrlTaskHandle, NOTIF_NEW_ADC_1, eSetBits, &higher);
 	portYIELD_FROM_ISR(higher);
+	// ADC_CR2_SWSTART
+#endif
 }
 
+static void adc_err(void)
+{
+	itm_debug1(DBG_TIM, "adc_err", 0);
+}
 void HAL_ADC_LevelOutOfWindowCallback(_UNUSED_ ADC_HandleTypeDef* hadc)
 {
-	itm_debug1(DBG_ERR|DBG_TIM, "ADC ERR", 1);
+	adc_err();
+	itm_debug1(DBG_ERR|DBG_TIM, "ADC out", 1);
 }
 void  HAL_ADC_ErrorCallback(_UNUSED_ ADC_HandleTypeDef *hadc)
 {
+	adc_err();
 	if (hadc != &hadc1) {
 		HAL_ADC_ErrorCallback2(hadc);
 		return;

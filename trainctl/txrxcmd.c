@@ -214,7 +214,7 @@ void txrx_process_char(uint8_t c, uint8_t *respbuf, int *replen)
 		frm.pidx ++;
 		break;
 	}
-        frm.escape = 0;
+	frm.escape = 0;
 }
 
 
@@ -261,12 +261,17 @@ static uint8_t process_frame_cmd(uint8_t sel, uint8_t num,  uint8_t cmd, uint8_t
 	int32_t v,d,min,max;
 	int rc=-1;
 
+	itm_debug3(DBG_TIM, "frm", sel, cmd, num);
 	switch(sel) {
     case '6': {
         msg_64_t m;
         m.to = num;
         m.from = cmd;
+
         memcpy(m.rbytes, param, 6);
+        if (128==cmd) {
+        	itm_debug2(DBG_ERR, "hop?", cmd, num);
+        }
         mqf_write_from_forward_usb(&m);
         }
         break;
@@ -364,6 +369,7 @@ static uint8_t process_frame_cmd(uint8_t sel, uint8_t num,  uint8_t cmd, uint8_t
 		}
 
 		default:
+			itm_debug1(DBG_ERR, "frm33", 0);
 			return 33;
 		}
 		break;
@@ -503,7 +509,7 @@ void txframe_send_stat(void)
 
 uint32_t gtick = 0;
 
-__weak void frame_send_oscilo(void(*cb)(uint8_t *d, int l))
+__weak void frame_send_oscilo(_UNUSED_ void(*cb)(uint8_t *d, int l))
 {
 }
 

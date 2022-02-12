@@ -105,6 +105,9 @@ void StartTxRxFrameTask(_UNUSED_ void *argument)
 
 static void _send_bytes(uint8_t *b, int len)
 {
+	if (len>512) {
+		itm_debug1(DBG_ERR, "too long", len);
+	}
 	for (;;) {
 		uint8_t rc = CDC_Transmit_FS(b, len);
 		if (rc != USBD_BUSY) break;
@@ -118,6 +121,7 @@ void txframe_send(frame_msg_t *m, int discardable)
 {
 	int s = osMessageQueueGetSpace(frameQueueHandle);
 	if (s<=0) {
+		itm_debug1(DBG_ERR, "tx full", discardable);
 		txframe_queue_full++;
 		if (discardable) return;
 	}
@@ -125,10 +129,14 @@ void txframe_send(frame_msg_t *m, int discardable)
 		// we use a single queue, and no priority available with freertos
 		// so we just keep some space for non discardable frames
 		txframe_queue_full++;
+		itm_debug1(DBG_ERR, "tx ful2", discardable);
 		return;
 	}
 	uint32_t t = discardable ? 0 : portMAX_DELAY;
-	if (m->len>FRM_MAX_LEN) m->len=FRM_MAX_LEN;
+	if (m->len>FRM_MAX_LEN) {
+		//itm_debug1(DBG_ERR, "tx trunc", m->len);
+		m->len=FRM_MAX_LEN;
+	}
 	num_msg_put++;
 	osMessageQueuePut(frameQueueHandle, m, 0, t);
 }
@@ -147,12 +155,7 @@ static void handleRxChars(frame_msg_t *m)
 		int rlen = FRM_MAX_LEN;
 		txrx_process_char(m->frm[i], frresp.frm, &rlen);
 		if (rlen>0) {
-			//debug_info('G', 0, "RESP", rlen,0, 0);
-			// would deadlock if we send (non discardable) through the queue
-			//txframe_send_response(&frresp, rlen);
 			_send_bytes(frresp.frm, rlen);
-			//frresp.len = rlen;
-			//_send_frm(&frresp);
 		}
 	}
 }

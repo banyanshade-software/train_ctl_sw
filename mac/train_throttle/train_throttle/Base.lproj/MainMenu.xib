@@ -1873,6 +1873,17 @@
                             </constraints>
                         </view>
                     </box>
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="aAb-iR-Shy">
+                        <rect key="frame" x="153" y="540" width="69" height="16"/>
+                        <buttonCell key="cell" type="push" title="Force Cnx" bezelStyle="rounded" alignment="center" controlSize="mini" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="MRY-Y7-F9M">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="miniSystem"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="forceLinkOk:" target="Voe-Tx-rLC" id="NmQ-4o-uoX"/>
+                            <binding destination="Voe-Tx-rLC" name="enabled" keyPath="linkok" id="9ci-hZ-6Ry"/>
+                        </connections>
+                    </button>
                 </subviews>
                 <constraints>
                     <constraint firstItem="6XJ-qb-ztK" firstAttribute="centerX" secondItem="bUt-k0-TMM" secondAttribute="centerX" id="0U0-Nv-T4w"/>
@@ -1898,6 +1909,7 @@
                     <constraint firstItem="hKn-Uc-u5t" firstAttribute="bottom" secondItem="0Q4-va-RcS" secondAttribute="bottom" id="J0g-dO-KqP"/>
                     <constraint firstItem="YOa-Qa-Mw7" firstAttribute="centerX" secondItem="zel-gZ-UMO" secondAttribute="centerX" id="LEC-ym-lpf"/>
                     <constraint firstAttribute="bottom" secondItem="NEf-Jx-eCJ" secondAttribute="bottom" constant="20" id="LQi-0x-F4O"/>
+                    <constraint firstItem="aAb-iR-Shy" firstAttribute="leading" secondItem="CHp-cN-u7U" secondAttribute="leading" id="LXz-qs-ZxM"/>
                     <constraint firstItem="YOa-Qa-Mw7" firstAttribute="bottom" secondItem="5yk-fR-vAL" secondAttribute="bottom" id="OQp-uI-ecN"/>
                     <constraint firstItem="tdC-eC-MRV" firstAttribute="top" secondItem="hKn-Uc-u5t" secondAttribute="bottom" constant="8" id="PQf-yj-aln"/>
                     <constraint firstItem="NEf-Jx-eCJ" firstAttribute="trailing" secondItem="ZAS-Xg-SGX" secondAttribute="trailing" id="PZk-CA-ZUZ"/>
@@ -1913,6 +1925,7 @@
                     <constraint firstItem="ZGl-Sq-t0e" firstAttribute="leading" secondItem="YOa-Qa-Mw7" secondAttribute="leading" id="WoP-pn-wfR"/>
                     <constraint firstItem="iNk-2g-g3g" firstAttribute="top" secondItem="5yk-fR-vAL" secondAttribute="bottom" constant="8" id="bNH-Mg-BWF"/>
                     <constraint firstItem="tdC-eC-MRV" firstAttribute="centerX" secondItem="hKn-Uc-u5t" secondAttribute="centerX" id="bgs-ld-Co8"/>
+                    <constraint firstItem="aAb-iR-Shy" firstAttribute="top" secondItem="CHp-cN-u7U" secondAttribute="bottom" constant="8" id="c2l-Me-qJ6"/>
                     <constraint firstItem="0Q4-va-RcS" firstAttribute="leading" secondItem="EiT-Mj-1SZ" secondAttribute="leading" constant="10" id="dFv-Qe-Xbc"/>
                     <constraint firstItem="bUf-Lh-0CM" firstAttribute="top" secondItem="meg-8k-fj4" secondAttribute="bottom" constant="13" id="den-g3-lei"/>
                     <constraint firstItem="bUt-k0-TMM" firstAttribute="leading" secondItem="0Q4-va-RcS" secondAttribute="trailing" constant="10" id="eX8-br-IMP"/>

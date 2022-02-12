@@ -132,6 +132,7 @@ typedef void (^respblk_t)(void);
     self.shunting = 0;
     self.transmit = 0;
     self.linkok = 0;
+    nparam = 0;
     [self forAllParamsDo:^(NSControl *c){
         c.enabled = NO;
         self->nparam++;
@@ -218,6 +219,7 @@ typedef void (^respblk_t)(void);
 }
 - (void) setDspeedT0:(int)v
 {
+    if (!_linkok) return;
     if (_linkok < LINK_OK) return;
     NSLog(@"dspeedT0 %d", v);
     if (_dspeedT0==v) return;
@@ -557,14 +559,30 @@ typedef void (^respblk_t)(void);
     return @[ [pa objectAtIndex:0], [pa objectAtIndex:1], s2 ];
 }
 
-
 - (void) getParams
 {
     nparamresp = 0;
+
+    [self getParams:0];
+}
+
+- (void) getParams:(int)np1
+{
+    int np2 = np1+20;
     static uint8_t gpfrm[80] = "|xT\0p......";
-    int __block n = 0;
+    int __block numparam = -1;
     [self forAllParamsDo:^(NSControl *c){
-        n++;
+        numparam++;
+        if (numparam < np1) return;
+        NSLog(@"getParam %d", numparam);
+        if (numparam==np2) {
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                [self getParams:np2];
+            });
+            return;
+        } else if (numparam>np2) {
+            return;
+        }
         /*if (0 && (n % 7)) {
             usleep(500*1000); // XXX to be fixed
         }*/
@@ -593,15 +611,16 @@ typedef void (^respblk_t)(void);
         gpfrm[4] = 'p';
         memcpy(gpfrm+5, cpn, nl+1);
         gpfrm[5+nl+1] = '|';
-        NSLog(@"get param %c%c '%s'\n",  cpsel[0], cpsel[1], cpn);
+        NSLog(@"N=%d get param %c%c '%s'\n",  n, cpsel[0], cpsel[1], cpn);
     
-        if ((1) & (0==(n%10))) {
+        if ((0) && (0==(numparam%5))) {
             //sleep(1);
-            usleep(200);
+            usleep(800);
         }
         [self sendFrame:gpfrm len:(int)(5+nl+2) blen:sizeof(gpfrm) then:^{
             // handle response
             self->nparamresp++;
+            NSLog(@"param %d resp %d", self->nparam, self->nparamresp);
             if (self->nparamresp==self->nparam) {
                 if (self.linkok<LINK_OK) self.linkok = LINK_OK;
             }
@@ -870,7 +889,7 @@ typedef void (^respblk_t)(void);
 {
     NSData *d;
     @try {
-        d = [usb availableData];
+            d = [usb availableData];
     } @catch (NSException *exception) {
         NSLog(@"exception %@", exception);
         d = nil;
@@ -892,7 +911,12 @@ typedef void (^respblk_t)(void);
     NSLog(@"exceptionUsbTty:");
 }
 
-
+- (IBAction)forceLinkOk:(id)sender
+{
+    if (!_linkok) return;
+    if (_linkok == LINK_OK) return;
+    self.linkok = LINK_OK;
+}
 
 #define FRAME_DELIM '|'
 #define FRAME_ESC   '\\'
@@ -1324,7 +1348,10 @@ int convert_to_mv(int m)
 {
     return ((m * 4545 * 33) / (4096*10));
 }
-
+int convert_to_mv_raw(int m)
+{
+    return m; // dont convert for raw file
+}
 
 - (NSURL *) createTempCsvFile:(NSString *)basename second:(NSString *)secname retfile:(NSFileHandle **)retfile
 {
@@ -1368,6 +1395,28 @@ int oscillo_trigger_start = 0;
         return;
     }
     NSURL *furaw = [self createTempCsvFile:@"oscilo" second:@"raw" retfile:&recordFileRaw];
+    
+    
+    NSArray *cols=@[@"V0", @"V1", @"V0a", @"V0b", @"V1a", @"V1b",
+                    @"tim1", @"tim2", @"tim8",
+                    @"T1ch1", @"T1ch2", @"T1ch3", @"T1ch4",
+                    @"T2ch1", @"T2ch2", @"T2ch3", @"T2ch4",
+                    @"t0bemf", @"t1bemf", @"evtadc"];
+    NSDictionary *itms = @{ @"i" : @0,  @"V0" : @1 , @"V1" : @2 ,
+                            @"V0a" : @3 , @"V0b" : @4 , @"V1a" : @5, @"V1b" : @6,
+                            @"tim1" : @7, @"tim2" : @8, @"tim8" : @9,
+        @"T1ch1" : @10, @"T1ch2" : @11, @"T1ch3" : @12, @"T1ch4" : @13,
+        @"T2ch1" : @14, @"T2ch2" : @15, @"T2ch3" : @16, @"T2ch4" : @17,
+        @"t0bemf" : @18, @"t1bemf" : @19, @"evtadc" : @20
+    };
+    
+    [recordFileRaw writeData:[@"i" dataUsingEncoding:NSUTF8StringEncoding]];
+    for (NSString *c in cols) {
+        NSString *s = [NSString stringWithFormat:@", %@", c];
+        [recordFileRaw writeData:[s dataUsingEncoding:NSUTF8StringEncoding]];
+    }
+    [recordFileRaw writeData:[@"\n" dataUsingEncoding:NSUTF8StringEncoding]];
+
 #define W0(_n) (-6000-(_n)*1000)
 #define W1(_n) (-6000-(_n)*1000+700)
     
@@ -1397,14 +1446,15 @@ int oscillo_trigger_start = 0;
                        v->evtadc ? -30000 : -35000
                        ];
         [recordFileGp writeData:[s dataUsingEncoding:NSUTF8StringEncoding]];
+        
         s = [NSString stringWithFormat:@"%d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d\n",
                        i,
-                       convert_to_mv(v->vadc[0]-v->vadc[1]),
-                       convert_to_mv(v->vadc[2]-v->vadc[3]),
-                       convert_to_mv(v->vadc[0]),
-                       convert_to_mv(v->vadc[1]),
-                       convert_to_mv(v->vadc[2]),
-                       convert_to_mv(v->vadc[3]),
+                       convert_to_mv_raw(v->vadc[0]-v->vadc[1]),
+                       convert_to_mv_raw(v->vadc[2]-v->vadc[3]),
+                       convert_to_mv_raw(v->vadc[0]),
+                       convert_to_mv_raw(v->vadc[1]),
+                       convert_to_mv_raw(v->vadc[2]),
+                       convert_to_mv_raw(v->vadc[3]),
                        v->tim1cnt,
                        v->tim2cnt,
                        v->tim8cnt,
@@ -1416,27 +1466,15 @@ int oscillo_trigger_start = 0;
                        v->valt2ch2,
                        v->valt2ch3,
                        v->valt2ch4,
-                       convert_to_mv(v->t0bemf),
-                       convert_to_mv(v->t1bemf),
+                       convert_to_mv_raw(v->t0bemf),
+                       convert_to_mv_raw(v->t1bemf),
                        v->evtadc
                        ];
         [recordFileRaw writeData:[s dataUsingEncoding:NSUTF8StringEncoding]];
     }
     [recordFileGp closeFile];
     [recordFileRaw closeFile];
-    NSArray *cols=@[@"V0", @"V1", @"V0a", @"V0b", @"V1a", @"V1b",
-                    @"tim1", @"tim2", @"tim8",
-                    @"T1ch1", @"T1ch2", @"T1ch3", @"T1ch4",
-                    @"T2ch1", @"T2ch2", @"T2ch3", @"T2ch4",
-                    @"t0bemf", @"t1bemf", @"evtadc"];
-    NSDictionary *itms = @{ @"i" : @0,  @"V0" : @1 , @"V1" : @2 ,
-                            @"V0a" : @3 , @"V0b" : @4 , @"V1a" : @5, @"V1b" : @6,
-                            @"tim1" : @7, @"tim2" : @8, @"tim8" : @9,
-        @"T1ch1" : @10, @"T1ch2" : @11, @"T1ch3" : @12, @"T1ch4" : @13,
-        @"T2ch1" : @14, @"T2ch2" : @15, @"T2ch3" : @16, @"T2ch4" : @17,
-        @"t0bemf" : @18, @"t1bemf" : @19, @"evtadc" : @20
-
-    };
+    
     [self gnuplot:cols x:@"i" file:[fugp path] items:itms];
     NSLog(@"RAW file : %@", furaw);
 }
@@ -1608,7 +1646,7 @@ uint32_t SimuTick = 0;
 
     
     for (int i =0; i<2; i++) {
-        memset((void*)&(train_adc_buf[i]), 0, sizeof(adc_buf_t));
+        memset((void*)&(adc_result[i]), 0, sizeof(adc_result));
     }
     
     [_simTrain0 computeTrainsAfter:mdt sinceStart:mt];
@@ -1617,8 +1655,8 @@ uint32_t SimuTick = 0;
         // xxxx
         int bemfi = -(bemf/4.545) * 3.3 *4096;
         //NSLog(@"bemf %f -> %d\n", bemf, bemfi);
-        train_adc_buf[0].off[nc].vA = (bemfi>0) ? 0 : -bemfi;
-        train_adc_buf[0].off[nc].vB = (bemfi>0) ? bemfi : 0;
+        adc_result[0].meas[nc].vA = (bemfi>0) ? 0 : -bemfi;
+        adc_result[0].meas[nc].vB = (bemfi>0) ? bemfi : 0;
     }
     
 

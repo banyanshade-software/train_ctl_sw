@@ -306,6 +306,16 @@ HAL_StatusTypeDef my_HAL_TIM_PWM_Stop(TIM_HandleTypeDef *htim, uint32_t Channel)
 /*
  * it seems that output goes to high impedence when we stop pwm ????
  */
+
+#if 0
+#define CNT_OFF 0
+#define CNT_ON(_v) (_v)
+#else
+	// with polarity low on channels
+#define CNT_OFF 200
+#define CNT_ON(_v) (200-(_v))
+#endif
+
 static void canton_set_pwm(int cidx, const canton_config_t *c, canton_vars_t *v,  int8_t dir, int duty)
 {
 	itm_debug3(DBG_LOWCTRL, "c/set_pwm", cidx, dir, duty);
@@ -359,23 +369,24 @@ static void canton_set_pwm(int cidx, const canton_config_t *c, canton_vars_t *v,
 		chon = c->ch1;
 		choff = c->ch0;
 	}
+
 	if (!USE_PWM_STOP) {
 		switch (choff) {
 		case TIM_CHANNEL_1:
 			itm_debug1(DBG_LOWCTRL|DBG_TIM, "CH1/CCR1", 0);
-			pwm_timer->Instance->CCR1 = 0;
+			pwm_timer->Instance->CCR1 = CNT_OFF;
 			break;
 		case TIM_CHANNEL_2:
 			itm_debug1(DBG_LOWCTRL|DBG_TIM, "CH2/CCR1", 0);
-			pwm_timer->Instance->CCR2 = 0;
+			pwm_timer->Instance->CCR2 = CNT_OFF;
 			break;
 		case TIM_CHANNEL_3:
 			itm_debug1(DBG_LOWCTRL|DBG_TIM, "CH3/CCR1", 0);
-			pwm_timer->Instance->CCR3 = 0;
+			pwm_timer->Instance->CCR3 = CNT_OFF;
 			break;
 		case TIM_CHANNEL_4:
 			itm_debug1(DBG_LOWCTRL|DBG_TIM, "CH4/CCR1", 0);
-			pwm_timer->Instance->CCR4 = 0;
+			pwm_timer->Instance->CCR4 = CNT_OFF;
 			break;
 		default:
 			canton_error(ERR_BAD_PARAM_TIM, "bad timer channel");
@@ -385,19 +396,19 @@ static void canton_set_pwm(int cidx, const canton_config_t *c, canton_vars_t *v,
 	switch (chon) {
 	case TIM_CHANNEL_1:
 		itm_debug1(DBG_LOWCTRL|DBG_TIM, "CH1/CCR1", t);
-		pwm_timer->Instance->CCR1 = t;
+		pwm_timer->Instance->CCR1 = CNT_ON(t);
 		break;
 	case TIM_CHANNEL_2:
 		itm_debug1(DBG_LOWCTRL|DBG_TIM, "CH2/CCR1", t);
-		pwm_timer->Instance->CCR2 = t;
+		pwm_timer->Instance->CCR2 = CNT_ON(t);
 		break;
 	case TIM_CHANNEL_3:
 		itm_debug1(DBG_LOWCTRL|DBG_TIM, "CH3/CCR1", t);
-		pwm_timer->Instance->CCR3 = t;
+		pwm_timer->Instance->CCR3 = CNT_ON(t);
 		break;
 	case TIM_CHANNEL_4:
 		itm_debug1(DBG_LOWCTRL|DBG_TIM, "CH4/CCR1", t);
-		pwm_timer->Instance->CCR4 = t;
+		pwm_timer->Instance->CCR4 = CNT_ON(t);
 		break;
 	default:
 		canton_error(ERR_BAD_PARAM_TIM, "bad timer channel");

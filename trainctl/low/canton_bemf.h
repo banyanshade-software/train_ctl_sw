@@ -62,18 +62,26 @@ typedef struct {
 } adc_per_blk_t;
 
 typedef struct {
-#if 1
+#if 0
 	adc_per_blk_t off[NUM_LOCAL_CANTONS_HW];
 	adc_per_blk_t on[NUM_LOCAL_CANTONS_HW];
 #else
-	// reversed
-	adc_per_blk_t on[NUM_LOCAL_CANTONS_HW];
-	adc_per_blk_t off[NUM_LOCAL_CANTONS_HW];
+	adc_per_blk_t meas[NUM_LOCAL_CANTONS_HW];
 #endif
 } adc_buf_t;
 
+#define MAX_NUM_SAMPLING 32
 
-extern volatile adc_buf_t train_adc_buf[2]; // double buffer
+typedef struct {
+	uint32_t vA;
+	uint32_t vB;
+} adc_per_blk_32_t;
+
+typedef struct {
+	adc_per_blk_32_t meas[NUM_LOCAL_CANTONS_HW];
+} adc_result_t;
+
+extern volatile adc_result_t adc_result[2]; // double buffer
 
 extern runmode_t bemf_run_mode;
 

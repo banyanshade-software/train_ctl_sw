@@ -58,6 +58,7 @@ int oscilo_running(void)
 	return 0;
 }
 
+int ocillo_enable = 0;
 int oscillo_trigger_start = 0;
 
 void StartOscilo(_UNUSED_ void *argument)
@@ -82,7 +83,7 @@ void StartOscilo(_UNUSED_ void *argument)
 			oscilo_did_end = 0;
 			// TODO
 		}
-		if (oscillo_trigger_start) {
+		if (ocillo_enable &&  oscillo_trigger_start) {
 			oscillo_trigger_start = 0;
 			oscilo_start();
 		}
@@ -159,7 +160,7 @@ void tim5_elapsed(void)
 
 	oscilo_buf[oscilo_index].evtadc = oscilo_evtadc;
 	if (oscilo_evtadc) {
-		itm_debug1(DBG_TIM, "osc evtadc", oscilo_evtadc);
+		//itm_debug1(DBG_TIM, "osc evtadc", oscilo_evtadc);
 		oscilo_evtadc = 0;
 	}
  	oscilo_index++;

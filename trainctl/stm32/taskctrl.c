@@ -48,6 +48,8 @@
 #include "../leds/ledtask.h"
 #include "canmsg.h"
 
+#include "../utils/adc_mean.h"
+
 /*
 #define NUM_VAL_PER_CANTON (sizeof(adc_buffer_t)/sizeof(uint16_t))
 #define ADC_HALF_BUFFER (NUM_LOCAL_CANTONS_HW * NUM_VAL_PER_CANTON)
@@ -55,7 +57,7 @@
 */
 
 #define GUARD_SAMPLING 2
-static volatile adc_buf_t train_adc_buf[MAX_NUM_SAMPLING+GUARD_SAMPLING]; // double buffer
+static volatile adc_buf_t train_adc_buf[MAX_NUM_SAMPLING+GUARD_SAMPLING] __attribute__ ((aligned(32))); // double buffer
 
 
 static void run_task_ctrl(void);
@@ -63,14 +65,14 @@ extern DMA_HandleTypeDef hdma_i2c3_rx;
 extern DMA_HandleTypeDef hdma_i2c3_tx;
 
 
-// ADC/Vof   NOTIF_  conv/f2/  "osc evtadc "tim"  unk b3 "tx trunc"
+// ADC/Vof   NOTIF_  conv/f2/  "osc evtadc "tim"  unk b3 "tx trunc" pwmfreq
 
 
 int cur_freqhz = 50;
 static int numsampling = 0;
 
 /*
- *  max pwm is 90% : min off time in µs = (1000000/pwmhz)*.1
+ *  max pwm (MAX_PWM) is 90% : min off time in µs = (1000000/pwmhz)*.1
  *  	pwmhz       offtime
  *  	 50			2000 µs
  *  	100			1000 µs (1ms)
@@ -80,7 +82,7 @@ static int numsampling = 0;
  * one ADC sampling and conversiont (12 bits):
  * 		12+3 = 15 ADCCLK
  * sampling a full adc_buf_t (12 conversions), at 12 bits :
- * 		15*12 ADCCLK
+ * 		15*12 ADCCLK = 180 ADCCLK
  * with ABP2 at 12MHz, PCLK2=12MHz (timers at 24MHz)
  * prescale : 2 -> 6MHz, 1 ADCCLK = 0.16 µs
  * one full adc_buf_t : 30 µS
@@ -94,13 +96,19 @@ static int numsampling = 0;
  * 	https://electronics.stackexchange.com/questions/311326/stm32f20x-adc-sampling-time-rate
  */
 
+static int skip_begin = 8;
+static int skip_end = 2;
+#define ADC_AVERAGE 0
+static int skip_div = 2;
+
 static int num_sampling(void)
 {
 	if (numsampling) return numsampling;
 	if (!cur_freqhz) Error_Handler();
 	numsampling = 3300/cur_freqhz;
+	numsampling /= skip_div; // why ????
 	if (numsampling > MAX_NUM_SAMPLING) numsampling = MAX_NUM_SAMPLING;
-	if (numsampling<5) Error_Handler();
+	if (numsampling < (skip_begin+skip_end+1)) Error_Handler();
 	return numsampling;
 }
 
@@ -393,7 +401,38 @@ static int convert_to_mv(int m)
 
 volatile uint8_t oscilo_evtadc;
 static int numresult = 0;
-#define ADC_AVERAGE 0
+
+int dump_adc = 0; // for debug
+
+
+
+static void write_num(uint8_t *buf, uint32_t v, int ndigit)
+{
+	for (;ndigit>0; ndigit--) {
+		buf[ndigit-1] = '0'+ (v % 10);
+		v = v/10;
+	}
+}
+
+#ifndef TRAIN_SIMU
+int _write(_UNUSED_ int32_t file, uint8_t *ptr, int32_t len);
+#endif
+
+static uint8_t _buf[32] = "";
+static void dbg_dump_adc(int j, int nspl, int skip_begin, int skip_end)
+{
+	for (int i=0; i<nspl; i++) {
+		if ((i==skip_begin) || (i==nspl-skip_end)) {
+			_write(1, "------\n", 7);
+		}
+		write_num(_buf, i, 4); _write(1, _buf, 2);
+		_write(1, " :  ", 4);
+		write_num(_buf, train_adc_buf[i].meas[j].vA, 5);  _write(1, _buf, 5);
+		_write(1, "    ", 4);
+		write_num(_buf, train_adc_buf[i].meas[j].vB, 5);  _write(1, _buf, 5);
+		_write(1, "\n", 1);
+	}
+}
 
 void HAL_ADC_ConvCpltCallback(_UNUSED_ ADC_HandleTypeDef* hadc)
 {
@@ -421,7 +460,7 @@ void HAL_ADC_ConvCpltCallback(_UNUSED_ ADC_HandleTypeDef* hadc)
 			}
 		}
 	}
-	adc_result_t *r = &adc_result[numresult];
+	volatile adc_result_t *r = &adc_result[numresult];
 	for (int j=0; j<NUM_LOCAL_CANTONS_HW; j++) {
 		r->meas[j].vA = 0;
 		r->meas[j].vB = 0;
@@ -431,14 +470,38 @@ void HAL_ADC_ConvCpltCallback(_UNUSED_ ADC_HandleTypeDef* hadc)
         int maxia = -1;
         int maxib = -1;
 #if ADC_AVERAGE
-        for (int i=2; i<nspl-2; i++) {
+        for (int i=skip_begin; i<nspl-skip_end; i++) {
         	r->meas[j].vA += train_adc_buf[i].meas[j].vA;
         	r->meas[j].vB += train_adc_buf[i].meas[j].vB;
         }
-        r->meas[j].vA /= nspl-4;
-        r->meas[j].vB /= nspl-4;
+        r->meas[j].vA /= nspl-skip_begin-skip_end;
+        r->meas[j].vB /= nspl-skip_begin-skip_end;
 #else
-		for (int i=2; i<nspl-2; i++) {
+        adc_mean_ctx_t mca;
+        adc_mean_ctx_t mcb;
+        adc_mean_init(&mca);
+        adc_mean_init(&mcb);
+		for (int i=skip_begin; i<nspl-skip_end; i++) {
+			if (dump_adc) {
+				dbg_dump_adc(j, nspl, skip_begin, skip_end);
+			}
+			adc_mean_add_value(&mca, train_adc_buf[i].meas[j].vA);
+			adc_mean_add_value(&mcb, train_adc_buf[i].meas[j].vB);
+		}
+		r->meas[j].vA = adc_mean_get_mean(&mca);
+		r->meas[j].vB = adc_mean_get_mean(&mcb);
+		if (!j) {
+			int16_t v = r->meas[j].vA - r->meas[j].vB;
+			if ((r->meas[j].vA>3000) || (r->meas[j].vB>3000) || (v>3000) || (v<-3000)) {
+				itm_debug3(DBG_ERR, "hival", r->meas[j].vA, r->meas[j].vB, v);
+			}
+		}
+
+#if 0
+		for (int i=skip_begin; i<nspl-skip_end; i++) {
+			if (dump_adc) {
+				dbg_dump_adc(j, nspl, skip_begin, skip_end);
+			}
 			if (train_adc_buf[i].meas[j].vA > r->meas[j].vA) {
 				r->meas[j].vA = train_adc_buf[i].meas[j].vA;
 				maxia = i;
@@ -453,10 +516,12 @@ void HAL_ADC_ConvCpltCallback(_UNUSED_ ADC_HandleTypeDef* hadc)
 				//itm_debug3(DBG_TIM, "  maxB", i,j,train_adc_buf[i].meas[j].vB);
 			}
 		}
+		if ((1)) r->meas[j].vB = 0; ///XXXXXX
 		if (!j) {
 			itm_debug2(DBG_ADC, "maxi0A", maxia, r->meas[j].vA);
 			itm_debug2(DBG_ADC, "maxi0B", maxib, r->meas[j].vB);
 		}
+#endif
 #endif
 	}
 	if ((0)) {

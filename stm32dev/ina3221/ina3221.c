@@ -35,7 +35,7 @@ uint8_t ina3221_devices[4] = {0, 0, 0, 0};  // 1 if device is present
 //static uint16_t ina_conf_val = 0;
 
 uint16_t ina3221_errors = 0;
-static uint8_t disable_ina3221 = 0;
+static uint8_t disable_ina3221 = 1;
 static int ina3221_init_done = 0;
 static int ina_conf_val = 0;
 
@@ -126,7 +126,7 @@ static void run_ina_task(void)
 	for (;;) {
 		uint32_t notif = 0;
 		xTaskNotifyWait(0, 0xFFFFFFFF, &notif, portMAX_DELAY);
-		handle_ina_notif(notif);
+		if (!disable_ina3221) handle_ina_notif(notif);
 
 		for (;;) {
 			msg_64_t m;
@@ -492,7 +492,7 @@ void HAL_I2C_ErrorCallback(_UNUSED_ I2C_HandleTypeDef *hi2c)
 
 //#include "railconfig.h" // for ugly hack
 
- int disable_ina3221 = 0; // global disable (when debugging something else)
+ int disable_ina3221 = 1; // global disable (when debugging something else)
 
 extern uint32_t GetCurrentMicro(void);
 

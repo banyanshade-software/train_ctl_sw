@@ -2189,7 +2189,7 @@
                                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
                                                     </textField>
-                                                    <textField identifier="par_T0_kp" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="8hT-4m-Qwr">
+                                                    <textField identifier="par_T0_kp__" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="8hT-4m-Qwr">
                                                         <rect key="frame" x="50" y="74" width="96" height="21"/>
                                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="4aM-m2-6K8">
                                                             <numberFormatter key="formatter" formatterBehavior="default10_4" numberStyle="decimal" minimumIntegerDigits="1" maximumIntegerDigits="2000000000" maximumFractionDigits="3" id="4eC-fT-yBE">
@@ -2204,7 +2204,7 @@
                                                             <action selector="changeParam:" target="Voe-Tx-rLC" id="4hV-Jl-68V"/>
                                                         </connections>
                                                     </textField>
-                                                    <textField identifier="par_T0_ki" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="BE3-Y7-mnn">
+                                                    <textField identifier="par_T0_ki__" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="BE3-Y7-mnn">
                                                         <rect key="frame" x="50" y="45" width="96" height="21"/>
                                                         <constraints>
                                                             <constraint firstAttribute="width" constant="96" id="mvA-r0-a5S"/>
@@ -2222,7 +2222,7 @@
                                                             <action selector="changeParam:" target="Voe-Tx-rLC" id="WNm-nI-48K"/>
                                                         </connections>
                                                     </textField>
-                                                    <textField identifier="par_T0_kd" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="7O8-oz-lcr">
+                                                    <textField identifier="par_T0_kd__" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="7O8-oz-lcr">
                                                         <rect key="frame" x="50" y="16" width="96" height="21"/>
                                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="xO0-kx-NbI">
                                                             <font key="font" metaFont="system"/>
@@ -2233,7 +2233,7 @@
                                                             <action selector="changeParam:" target="Voe-Tx-rLC" id="oqY-x0-yMp"/>
                                                         </connections>
                                                     </textField>
-                                                    <button identifier="par_T0_en_pid" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="lDh-X7-hmd">
+                                                    <button identifier="par_T0_en_pid__" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="lDh-X7-hmd">
                                                         <rect key="frame" x="14" y="161" width="134" height="18"/>
                                                         <buttonCell key="cell" type="check" title="enable" bezelStyle="regularSquare" imagePosition="left" inset="2" id="6qX-nX-rWC">
                                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -2243,7 +2243,7 @@
                                                             </connections>
                                                         </buttonCell>
                                                     </button>
-                                                    <button identifier="par_T0_bemfIIR" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ycJ-te-FiV">
+                                                    <button identifier="par_T0_bemfIIR__" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ycJ-te-FiV">
                                                         <rect key="frame" x="13" y="120" width="135" height="18"/>
                                                         <buttonCell key="cell" type="check" title="BEMF pre IIR" bezelStyle="regularSquare" imagePosition="left" controlSize="small" inset="2" id="TXT-3V-WFT">
                                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -2264,7 +2264,7 @@
                                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
                                                     </textField>
-                                                    <button identifier="par_T0_postIIR" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="HzW-L6-ynz">
+                                                    <button identifier="par_T0_postIIR__" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="HzW-L6-ynz">
                                                         <rect key="frame" x="13" y="100" width="135" height="18"/>
                                                         <buttonCell key="cell" type="check" title="Cmd post IIR" bezelStyle="regularSquare" imagePosition="left" controlSize="small" inset="2" id="3Yc-T7-6OM">
                                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -2274,7 +2274,7 @@
                                                             </connections>
                                                         </buttonCell>
                                                     </button>
-                                                    <button identifier="par_T0_fix_bemf" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="FXQ-VI-2LF">
+                                                    <button identifier="par_T0_fix_bemf__" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="FXQ-VI-2LF">
                                                         <rect key="frame" x="13" y="140" width="135" height="18"/>
                                                         <buttonCell key="cell" type="check" title="BEMF correct w/ cal" bezelStyle="regularSquare" imagePosition="left" controlSize="small" inset="2" id="mgc-JB-jhn">
                                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -2317,7 +2317,7 @@
                                                 </constraints>
                                             </view>
                                         </box>
-                                        <textField identifier="par_G0_pwmfreq" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="23m-14-Hyr">
+                                        <textField identifier="par_G0_pwmfreq__" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="23m-14-Hyr">
                                             <rect key="frame" x="17" y="437" width="96" height="21"/>
                                             <constraints>
                                                 <constraint firstAttribute="width" constant="96" id="2Pc-2p-wvq"/>
@@ -2357,7 +2357,7 @@
                                                 <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
                                         </textField>
-                                        <button identifier="par_G0_test_mode" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Zj0-BG-zBp">
+                                        <button identifier="par_G0_test_mode__" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Zj0-BG-zBp">
                                             <rect key="frame" x="20" y="551" width="83" height="18"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <buttonCell key="cell" type="check" title="test mode" bezelStyle="regularSquare" imagePosition="left" inset="2" id="ggf-pg-m1r">
@@ -3709,20 +3709,109 @@
                                                 </constraints>
                                             </view>
                                         </box>
+                                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="7k1-lj-XgL">
+                                            <rect key="frame" x="18" y="107" width="56" height="14"/>
+                                            <constraints>
+                                                <constraint firstAttribute="width" constant="52" id="jIp-Gj-pOw"/>
+                                            </constraints>
+                                            <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" title="PWM freq" id="dfJ-92-9ps">
+                                                <font key="font" metaFont="smallSystem"/>
+                                                <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                            </textFieldCell>
+                                        </textField>
+                                        <textField identifier="par_G0_pwmfreq" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Un0-ZA-bOn">
+                                            <rect key="frame" x="20" y="78" width="96" height="21"/>
+                                            <constraints>
+                                                <constraint firstAttribute="width" constant="96" id="wwP-WF-XDb"/>
+                                            </constraints>
+                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="53H-4K-WUJ">
+                                                <numberFormatter key="formatter" formatterBehavior="default10_4" numberStyle="decimal" minimumIntegerDigits="1" maximumIntegerDigits="2000000000" maximumFractionDigits="3" id="id7-Ti-ROf">
+                                                    <real key="minimum" value="0.0"/>
+                                                    <real key="maximum" value="100"/>
+                                                </numberFormatter>
+                                                <font key="font" metaFont="system"/>
+                                                <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                            </textFieldCell>
+                                            <connections>
+                                                <action selector="changeParam:" target="Voe-Tx-rLC" id="lX0-fv-oE3"/>
+                                            </connections>
+                                        </textField>
+                                        <button identifier="par_G0_test_mode" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="rWv-kb-O7x">
+                                            <rect key="frame" x="18" y="139" width="83" height="18"/>
+                                            <buttonCell key="cell" type="check" title="test mode" bezelStyle="regularSquare" imagePosition="left" inset="2" id="14R-UD-ApS">
+                                                <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                <font key="font" metaFont="system"/>
+                                            </buttonCell>
+                                            <connections>
+                                                <action selector="changeParam:" target="Voe-Tx-rLC" id="EIm-Yd-rA8"/>
+                                            </connections>
+                                        </button>
+                                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="o8P-UI-vvO">
+                                            <rect key="frame" x="18" y="51" width="98" height="11"/>
+                                            <textFieldCell key="cell" controlSize="mini" lineBreakMode="clipping" title="Volt policy" id="nXl-r7-6eF">
+                                                <font key="font" metaFont="miniSystem"/>
+                                                <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                            </textFieldCell>
+                                        </textField>
+                                        <button identifier="par_G0_oscilo" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="LP2-6K-CoP">
+                                            <rect key="frame" x="158" y="83" width="61" height="18"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <buttonCell key="cell" type="check" title="oscillo" bezelStyle="regularSquare" imagePosition="left" inset="2" id="fQk-rG-J1f">
+                                                <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                <font key="font" metaFont="system"/>
+                                            </buttonCell>
+                                            <connections>
+                                                <action selector="changeParam:" target="Voe-Tx-rLC" id="ctn-e0-twJ"/>
+                                            </connections>
+                                        </button>
+                                        <popUpButton identifier="par_T0_volt_policy" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="IMZ-2K-HBT">
+                                            <rect key="frame" x="18" y="21" width="99" height="25"/>
+                                            <popUpButtonCell key="cell" type="push" title="Normal" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="BVj-ui-P6c" id="XJT-cG-UKZ">
+                                                <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                                <font key="font" metaFont="menu"/>
+                                                <menu key="menu" id="ddv-7O-iU1">
+                                                    <items>
+                                                        <menuItem title="Normal" state="on" id="BVj-ui-P6c"/>
+                                                        <menuItem title="PWM only" tag="1" id="L6F-Xe-LGu"/>
+                                                        <menuItem title="Volt only" tag="2" id="Aje-SF-gxq"/>
+                                                        <menuItem title="2 level V" tag="3" id="i3u-Fg-ZsJ"/>
+                                                        <menuItem title="4 level V" tag="4" id="aiW-sE-V4u" userLabel="2 level V"/>
+                                                    </items>
+                                                </menu>
+                                            </popUpButtonCell>
+                                            <connections>
+                                                <action selector="changeParam:" target="Voe-Tx-rLC" id="4sH-ec-IMn"/>
+                                            </connections>
+                                        </popUpButton>
                                     </subviews>
                                     <constraints>
                                         <constraint firstItem="oSf-pS-IpB" firstAttribute="top" secondItem="tgY-qA-yhS" secondAttribute="bottom" constant="8" id="3jX-NI-ceN"/>
+                                        <constraint firstItem="IMZ-2K-HBT" firstAttribute="leading" secondItem="Un0-ZA-bOn" secondAttribute="leading" id="5Wf-ni-XGL"/>
                                         <constraint firstItem="tgY-qA-yhS" firstAttribute="leading" secondItem="VRW-rr-p3f" secondAttribute="leading" constant="8" id="C0a-mp-ihG"/>
                                         <constraint firstAttribute="trailing" secondItem="oSf-pS-IpB" secondAttribute="trailing" constant="8" id="Goc-rY-ixy"/>
                                         <constraint firstAttribute="trailing" secondItem="LPi-ba-aVR" secondAttribute="trailing" constant="8" id="JQf-nY-IJa"/>
+                                        <constraint firstItem="o8P-UI-vvO" firstAttribute="top" secondItem="Un0-ZA-bOn" secondAttribute="bottom" constant="16" id="JRF-ag-YbS"/>
                                         <constraint firstItem="tgY-qA-yhS" firstAttribute="top" secondItem="LPi-ba-aVR" secondAttribute="bottom" constant="8" id="JS8-Zf-4kP"/>
                                         <constraint firstAttribute="trailing" secondItem="tgY-qA-yhS" secondAttribute="trailing" constant="8" id="OCV-K1-NP5"/>
+                                        <constraint firstItem="Un0-ZA-bOn" firstAttribute="top" secondItem="7k1-lj-XgL" secondAttribute="bottom" constant="8" symbolic="YES" id="S1c-eF-G2L"/>
+                                        <constraint firstItem="7k1-lj-XgL" firstAttribute="top" secondItem="rWv-kb-O7x" secondAttribute="bottom" constant="20" id="Tgn-iN-4Qt"/>
+                                        <constraint firstItem="IMZ-2K-HBT" firstAttribute="leading" secondItem="VRW-rr-p3f" secondAttribute="leading" constant="20" id="UQX-P4-DuH"/>
                                         <constraint firstItem="aSu-7Z-EKE" firstAttribute="leading" secondItem="VRW-rr-p3f" secondAttribute="leading" constant="8" id="X9o-JK-Uve"/>
+                                        <constraint firstItem="Un0-ZA-bOn" firstAttribute="leading" secondItem="7k1-lj-XgL" secondAttribute="leading" id="Zn6-bg-HyX"/>
+                                        <constraint firstItem="rWv-kb-O7x" firstAttribute="top" relation="greaterThanOrEqual" secondItem="aSu-7Z-EKE" secondAttribute="bottom" constant="20" id="dmQ-5f-wZZ"/>
+                                        <constraint firstItem="IMZ-2K-HBT" firstAttribute="top" secondItem="o8P-UI-vvO" secondAttribute="bottom" constant="6" id="ge2-iK-fr5"/>
                                         <constraint firstItem="aSu-7Z-EKE" firstAttribute="top" secondItem="oSf-pS-IpB" secondAttribute="bottom" constant="8" id="hbY-Uq-eux"/>
+                                        <constraint firstItem="o8P-UI-vvO" firstAttribute="leading" secondItem="IMZ-2K-HBT" secondAttribute="leading" id="i0C-md-EVm"/>
+                                        <constraint firstAttribute="bottom" secondItem="IMZ-2K-HBT" secondAttribute="bottom" constant="24" id="lVi-dB-Kb3"/>
                                         <constraint firstItem="oSf-pS-IpB" firstAttribute="leading" secondItem="VRW-rr-p3f" secondAttribute="leading" constant="8" id="mhg-mM-6R1"/>
+                                        <constraint firstItem="o8P-UI-vvO" firstAttribute="trailing" secondItem="IMZ-2K-HBT" secondAttribute="trailing" id="p9B-bg-CKA"/>
                                         <constraint firstItem="LPi-ba-aVR" firstAttribute="top" secondItem="VRW-rr-p3f" secondAttribute="top" constant="8" id="r7t-de-ubs"/>
                                         <constraint firstAttribute="trailing" secondItem="aSu-7Z-EKE" secondAttribute="trailing" constant="8" id="xBU-Ga-uAo"/>
                                         <constraint firstItem="LPi-ba-aVR" firstAttribute="leading" secondItem="VRW-rr-p3f" secondAttribute="leading" constant="8" id="xF8-y6-4q5"/>
+                                        <constraint firstItem="7k1-lj-XgL" firstAttribute="leading" secondItem="rWv-kb-O7x" secondAttribute="leading" id="z73-d6-bY2"/>
                                     </constraints>
                                 </view>
                             </tabViewItem>

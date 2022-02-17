@@ -1376,7 +1376,8 @@ int convert_to_mv_raw(int m)
     return fu;
 }
 
-int oscillo_trigger_start = 0;
+volatile int oscillo_trigger_start = 0;
+volatile int ocillo_enable = 0;
 
 - (void) processOsciloFrame
 {
@@ -1441,8 +1442,8 @@ int oscillo_trigger_start = 0;
                        v->valt2ch2 ? W1(5) : W0(5),
                        v->valt2ch3 ? W1(6) : W0(6),
                        v->valt2ch4 ? W1(7) : W0(7),
-                       convert_to_mv(v->t0bemf) -50000,
-                       convert_to_mv(v->t1bemf) -60000,
+                       v->t0bemf +50000,
+                       v->t1bemf -50000,
                        v->evtadc ? -30000 : -35000
                        ];
         [recordFileGp writeData:[s dataUsingEncoding:NSUTF8StringEncoding]];
@@ -1466,8 +1467,8 @@ int oscillo_trigger_start = 0;
                        v->valt2ch2,
                        v->valt2ch3,
                        v->valt2ch4,
-                       convert_to_mv_raw(v->t0bemf),
-                       convert_to_mv_raw(v->t1bemf),
+                       v->t0bemf,
+                       v->t1bemf,
                        v->evtadc
                        ];
         [recordFileRaw writeData:[s dataUsingEncoding:NSUTF8StringEncoding]];

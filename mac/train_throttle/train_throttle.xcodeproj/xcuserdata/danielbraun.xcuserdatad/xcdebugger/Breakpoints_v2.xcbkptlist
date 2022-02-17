@@ -1278,8 +1278,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "2125"
             endingLineNumber = "2125"
-            landmarkName = "AppDelegate"
-            landmarkType = "3">
+            landmarkName = "-peripheral:didDiscoverServices:"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -1342,8 +1342,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "589"
             endingLineNumber = "589"
-            landmarkName = "pose_check_trig(numtrain, tvars, lastincr)"
-            landmarkType = "9">
+            landmarkName = "unknown"
+            landmarkType = "0">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -1627,7 +1627,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "535"
             endingLineNumber = "535"
-            landmarkName = "train_set_target_speed(numtrain, target)"
+            landmarkName = "_set_speed(tidx, cnf, vars)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1643,7 +1643,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "554"
             endingLineNumber = "554"
-            landmarkName = "_pose_check_trig(numtrain, tvars, lastincr, pose)"
+            landmarkName = "train_set_target_speed(numtrain, target)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1659,7 +1659,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "552"
             endingLineNumber = "552"
-            landmarkName = "_pose_check_trig(numtrain, tvars, lastincr, pose)"
+            landmarkName = "train_set_target_speed(numtrain, target)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1941,8 +1941,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "2202"
             endingLineNumber = "2202"
-            landmarkName = "AppDelegate"
-            landmarkType = "3">
+            landmarkName = "-setTestMode:"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -3251,7 +3251,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "587"
             endingLineNumber = "587"
-            landmarkName = "pose_check_trig(numtrain, tvars, lastincr)"
+            landmarkName = "_pose_check_trig(numtrain, tvars, lastincr, pose)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -3299,7 +3299,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "583"
             endingLineNumber = "583"
-            landmarkName = "pose_check_trig(numtrain, tvars, lastincr)"
+            landmarkName = "_pose_check_trig(numtrain, tvars, lastincr, pose)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -3315,7 +3315,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "580"
             endingLineNumber = "580"
-            landmarkName = "pose_check_trig(numtrain, tvars, lastincr)"
+            landmarkName = "_pose_check_trig(numtrain, tvars, lastincr, pose)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -3331,7 +3331,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "275"
             endingLineNumber = "275"
-            landmarkName = "train_periodic_control(numtrain, dt)"
+            landmarkName = "send_train_stopped(numtrain, tvars)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -3395,7 +3395,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "551"
             endingLineNumber = "551"
-            landmarkName = "_pose_check_trig(numtrain, tvars, lastincr, pose)"
+            landmarkName = "train_set_target_speed(numtrain, target)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -3619,8 +3619,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1938"
             endingLineNumber = "1938"
-            landmarkName = "AppDelegate"
-            landmarkType = "3">
+            landmarkName = "-_buildGnuplotCurves:x:file:items:"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -3876,6 +3876,84 @@
             endingLineNumber = "219"
             landmarkName = "-userContentController:didReceiveScriptMessage:"
             landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "566689DB-24FE-4138-BD48-B3D68D2BE273"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../trainctl/utils/TestAdcMean.m"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "61"
+            endingLineNumber = "61"
+            landmarkName = "-test1"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "566689DB-24FE-4138-BD48-B3D68D2BE273 - 1a181811aacab988"
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "-[TestAdcMean test1]"
+                  moduleName = "trainctlTests"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/danielbraun/devel/train/sw/trainctl/utils/TestAdcMean.m"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "61"
+                  endingLineNumber = "61"
+                  offsetFromSymbolStart = "2046">
+               </Location>
+               <Location
+                  uuid = "566689DB-24FE-4138-BD48-B3D68D2BE273 - 1a181811aacab988"
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "-[TestAdcMean test1]"
+                  moduleName = "trainctlTests"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/danielbraun/devel/train/sw/trainctl/utils/TestAdcMean.m"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "61"
+                  endingLineNumber = "61"
+                  offsetFromSymbolStart = "3481">
+               </Location>
+               <Location
+                  uuid = "566689DB-24FE-4138-BD48-B3D68D2BE273 - 1a181811aacab988"
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "-[TestAdcMean test1]"
+                  moduleName = "trainctlTests"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/danielbraun/devel/train/sw/trainctl/utils/TestAdcMean.m"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "61"
+                  endingLineNumber = "61"
+                  offsetFromSymbolStart = "3987">
+               </Location>
+               <Location
+                  uuid = "566689DB-24FE-4138-BD48-B3D68D2BE273 - 1a181811aacab988"
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "-[TestAdcMean test1]"
+                  moduleName = "trainctlTests"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/danielbraun/devel/train/sw/trainctl/utils/TestAdcMean.m"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "61"
+                  endingLineNumber = "61"
+                  offsetFromSymbolStart = "4105">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

@@ -39,7 +39,7 @@ extern TIM_HandleTypeDef htim8;
 
 //#define OSC_NUM_SAMPLES 32
 
-static osc_values_t oscilo_buf[OSC_NUM_SAMPLES];
+static osc_values_t oscilo_buf[OSC_NUM_SAMPLES] __attribute__ ((aligned(32)));
 static int oscilo_index = 0;
 
 static volatile int oscilo_run = 0;
@@ -58,8 +58,8 @@ int oscilo_running(void)
 	return 0;
 }
 
-int ocillo_enable = 0;
-int oscillo_trigger_start = 0;
+volatile int ocillo_enable = 0;
+volatile int oscillo_trigger_start = 0;
 
 void StartOscilo(_UNUSED_ void *argument)
 {
@@ -158,6 +158,10 @@ void tim5_elapsed(void)
 	oscilo_buf[oscilo_index].t0bemf = oscilo_t0bemf;
 	oscilo_buf[oscilo_index].t1bemf = oscilo_t1bemf;
 
+	if (oscilo_buf[oscilo_index].t0bemf > 7000) {
+		extern void bemf_hi(void);
+		bemf_hi();
+	}
 	oscilo_buf[oscilo_index].evtadc = oscilo_evtadc;
 	if (oscilo_evtadc) {
 		//itm_debug1(DBG_TIM, "osc evtadc", oscilo_evtadc);

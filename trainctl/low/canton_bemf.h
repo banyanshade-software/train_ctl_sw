@@ -70,7 +70,7 @@ typedef struct {
 #endif
 } adc_buf_t;
 
-#define MAX_NUM_SAMPLING 32
+#define MAX_NUM_SAMPLING 64
 
 typedef struct {
 	uint32_t vA;

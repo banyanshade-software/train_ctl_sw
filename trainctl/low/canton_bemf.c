@@ -160,6 +160,10 @@ static inline int32_t bemf_convert_to_millivolt(_UNUSED_ const canton_config_t *
 
 /// ---------------------------------------------------------------------------------------
 
+void bemf_hi(void)
+{
+	itm_debug1(DBG_ERR, "bemf_hi", 0);
+}
 static void process_adc(volatile adc_result_t *buf, _UNUSED_ uint32_t deltaticks)
 {
 	static int cnt=0;
@@ -196,6 +200,9 @@ static void process_adc(volatile adc_result_t *buf, _UNUSED_ uint32_t deltaticks
 		if (cconf->reverse_bemf) {
 			voff = -voff;
 			//von = -von;
+		}
+		if ((voff>5000)||(voff<-5000)) {
+			bemf_hi();
 		}
 		if ((0)) {
 			if ((i<4) || !(cnt % 50)) {

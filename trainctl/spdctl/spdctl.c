@@ -198,6 +198,10 @@ void spdctl_run_tick(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, uint
             USE_TRAIN(tidx)
             switch (m.cmd) {
                 case CMD_BEMF_NOTIF:
+                	if ((m.v1 > 5000) || (m.v1<-5000)) {
+                		extern void bemf_hi(void);
+                		bemf_hi();
+                	}
                     if (m.from == tvars->C1) {
                     	if (!tidx) oscilo_t0bemf = m.v1;
                     	else if (1==tidx) oscilo_t1bemf = m.v1;
@@ -206,9 +210,13 @@ void spdctl_run_tick(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, uint
                         itm_debug3(DBG_PID, "st bemf", tidx, m.v1, m.from);
                         if (!tvars->c2bemf) tvars->bemf_mv = m.v1;
                         break;
-                    } else if (1 && (m.from == tvars->C2)) {
+                    } else if ((1) && (m.from == tvars->C2)) { // disable to debug bemf on a single canton
                         itm_debug3(DBG_PID|DBG_CTRL, "c2 bemf", tidx, m.v1, m.from);
-                        if (tvars->c2bemf) tvars->bemf_mv = m.v1;
+                        if (tvars->c2bemf) {
+                        	tvars->bemf_mv = m.v1;
+                        	if (!tidx) oscilo_t0bemf = m.v1;
+                        	else if (1==tidx) oscilo_t1bemf = m.v1;
+                        }
                         else if (abs(m.v1) > abs(tvars->bemf_mv)+300) {
                         	itm_debug3(DBG_SPDCTL|DBG_PRES, "c2_hi", tidx, m.v1, tvars->bemf_mv);
                         	msg_64_t m = {0};

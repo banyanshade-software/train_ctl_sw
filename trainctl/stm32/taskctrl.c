@@ -222,10 +222,10 @@ void set_pwm_freq(int freqhz)
 	}
 	// 12MHz / 200 -> 60000
 	// 50Hz = 1200
-	int ps = (60000/freqhz); //-1;
+	int ps = (2*60000/freqhz); //-1;
 	if ((ps<1) || (ps>0xFFFF)) ps = 1200;
 	ps = ps-1;
-	cur_freqhz = 60000/(ps+1);
+	cur_freqhz = 2*60000/(ps+1);
 	// not an error but we want it in the log
 	itm_debug3(DBG_ERR|DBG_CTRL, "FREQ", freqhz, ps, cur_freqhz);
 	portENTER_CRITICAL();
@@ -494,6 +494,8 @@ void HAL_ADC_ConvCpltCallback(_UNUSED_ ADC_HandleTypeDef* hadc)
 			int16_t v = r->meas[j].vA - r->meas[j].vB;
 			if ((r->meas[j].vA>3000) || (r->meas[j].vB>3000) || (v>3000) || (v<-3000)) {
 				itm_debug3(DBG_ERR, "hival", r->meas[j].vA, r->meas[j].vB, v);
+				void bemf_hi(void);
+				bemf_hi();
 			}
 		}
 

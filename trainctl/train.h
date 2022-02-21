@@ -42,8 +42,8 @@ typedef struct train_config {
 	uint8_t enable_pid;
 	uint8_t notify_speed;
 	uint8_t notify_pose;
-	uint8_t bemfIIR;
-    uint8_t postIIR;
+	uint8_t bemfIIR; // 0-99
+    uint8_t postIIR; // 0-99
 	uint8_t fix_bemf;
 	uint8_t en_spd2pow;
 	uint8_t min_power;

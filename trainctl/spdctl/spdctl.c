@@ -105,11 +105,11 @@ static train_vars_t trspc_vars[NUM_TRAINS]={0};
 const stat_val_t statval_spdctrl[] = {
     { trspc_vars, offsetof(train_vars_t, target_speed), 2       _P("T#_spd_target_speed")},
     { trspc_vars, offsetof(train_vars_t, bemf_mv), 4            _P("T#_bemf_mv")},
-#ifndef REDUCE_STAT
     { trspc_vars, offsetof(train_vars_t, pidvars.target_v), 4   _P("T#_pid_target_v")},
     { trspc_vars, offsetof(train_vars_t, pidvars.last_err), 4   _P("T#_pid_last_err")},
     { trspc_vars, offsetof(train_vars_t, pidvars.sume), 4       _P("T#_pid_sum_e")},
     { trspc_vars, offsetof(train_vars_t, pidvars.target_v), 4   _P("T#_pid_target")},
+#ifndef REDUCE_STAT
     { trspc_vars, offsetof(train_vars_t, inertiavars.target), 2 _P("T#_ine_t")},
     { trspc_vars, offsetof(train_vars_t, inertiavars.cur100), 2    _P("T#_ine_c")},
     { trspc_vars, offsetof(train_vars_t, last_speed), 2         _P("T#_spd_curspeed")},
@@ -331,7 +331,7 @@ static void train_periodic_control(int numtrain, uint32_t dt)
 
     int32_t bemf_mv = tvars->bemf_mv;
     if (tconf->bemfIIR) {
-    	tvars->bemfiir = (80*tvars->bemfiir + 20*bemf_mv)/100;
+    	tvars->bemfiir = (tconf->bemfIIR*tvars->bemfiir + (100-tconf->bemfIIR)*bemf_mv)/100;
     	bemf_mv = tvars->bemfiir;
     }
     if (tconf->enable_pid) {
@@ -369,7 +369,7 @@ static void train_periodic_control(int numtrain, uint32_t dt)
         }
     }
     if (tconf->postIIR) {
-        tvars->v_iir = (80*tvars->v_iir+20*v)/100;
+        tvars->v_iir = (tconf->postIIR*tvars->v_iir+(100-tconf->postIIR)*v)/100;
         v = tvars->v_iir;
     }
     // or inertia after PID

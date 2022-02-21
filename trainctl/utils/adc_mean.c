@@ -35,10 +35,10 @@ uint16_t adc_mean_get_mean(adc_mean_ctx_t *m)
 void adc_mean_add_value(adc_mean_ctx_t *m, uint16_t v)
 {
     if (v >= m->val) {
-        m->val = (m->val + 1*v)/2;
+        m->val = (m->val + 7*v)/8;
     } else {
         uint16_t vn = m->val-v;
-        if (vn > m->val/8) vn = m->val/8;
+        if (vn > m->val/16) vn = m->val/16;
         m->val = m->val-vn;
     }
 }

@@ -20,6 +20,7 @@
 #include "occupency.h"
 
 #import "CTCManager.h"
+#include "oscilo.h"
 
 #define HIGHLEVEL_SIMU_CNX 0
 
@@ -29,7 +30,7 @@
  * notif format
  * |s'N'SNCvv..|
  */
-#define MAX_DATA_LEN 512
+#define MAX_DATA_LEN (1024*24)
 typedef struct {
     uint8_t state;
     uint8_t escape;
@@ -131,6 +132,7 @@ typedef void (^respblk_t)(void);
     self.shunting = 0;
     self.transmit = 0;
     self.linkok = 0;
+    nparam = 0;
     [self forAllParamsDo:^(NSControl *c){
         c.enabled = NO;
         self->nparam++;
@@ -217,6 +219,7 @@ typedef void (^respblk_t)(void);
 }
 - (void) setDspeedT0:(int)v
 {
+    if (!_linkok) return;
     if (_linkok < LINK_OK) return;
     NSLog(@"dspeedT0 %d", v);
     if (_dspeedT0==v) return;
@@ -556,14 +559,30 @@ typedef void (^respblk_t)(void);
     return @[ [pa objectAtIndex:0], [pa objectAtIndex:1], s2 ];
 }
 
-
 - (void) getParams
 {
     nparamresp = 0;
+
+    [self getParams:0];
+}
+
+- (void) getParams:(int)np1
+{
+    int np2 = np1+20;
     static uint8_t gpfrm[80] = "|xT\0p......";
-    int __block n = 0;
+    int __block numparam = -1;
     [self forAllParamsDo:^(NSControl *c){
-        n++;
+        numparam++;
+        if (numparam < np1) return;
+        NSLog(@"getParam %d", numparam);
+        if (numparam==np2) {
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                [self getParams:np2];
+            });
+            return;
+        } else if (numparam>np2) {
+            return;
+        }
         /*if (0 && (n % 7)) {
             usleep(500*1000); // XXX to be fixed
         }*/
@@ -592,15 +611,16 @@ typedef void (^respblk_t)(void);
         gpfrm[4] = 'p';
         memcpy(gpfrm+5, cpn, nl+1);
         gpfrm[5+nl+1] = '|';
-        NSLog(@"get param %c%c '%s'\n",  cpsel[0], cpsel[1], cpn);
+        NSLog(@"N=%d get param %c%c '%s'\n",  n, cpsel[0], cpsel[1], cpn);
     
-        if ((1) & (0==(n%10))) {
+        if ((0) && (0==(numparam%5))) {
             //sleep(1);
-            usleep(200);
+            usleep(800);
         }
         [self sendFrame:gpfrm len:(int)(5+nl+2) blen:sizeof(gpfrm) then:^{
             // handle response
             self->nparamresp++;
+            NSLog(@"param %d resp %d", self->nparam, self->nparamresp);
             if (self->nparamresp==self->nparam) {
                 if (self.linkok<LINK_OK) self.linkok = LINK_OK;
             }
@@ -869,7 +889,7 @@ typedef void (^respblk_t)(void);
 {
     NSData *d;
     @try {
-        d = [usb availableData];
+            d = [usb availableData];
     } @catch (NSException *exception) {
         NSLog(@"exception %@", exception);
         d = nil;
@@ -891,7 +911,12 @@ typedef void (^respblk_t)(void);
     NSLog(@"exceptionUsbTty:");
 }
 
-
+- (IBAction)forceLinkOk:(id)sender
+{
+    if (!_linkok) return;
+    if (_linkok == LINK_OK) return;
+    self.linkok = LINK_OK;
+}
 
 #define FRAME_DELIM '|'
 #define FRAME_ESC   '\\'
@@ -1143,6 +1168,11 @@ static int frm_unescape(uint8_t *buf, int len)
                     [self processStatFrame];
                     return;
                 }
+                case 'Y': {
+                    // oscilo frame
+                    [self processOsciloFrame];
+                    return;
+                }
             }
             break;
         case 'C':
@@ -1314,7 +1344,141 @@ done:
     [self.trainTableView reloadData];
 }
 
+int convert_to_mv(int m)
+{
+    return ((m * 4545 * 33) / (4096*10));
+}
+int convert_to_mv_raw(int m)
+{
+    return m; // dont convert for raw file
+}
 
+- (NSURL *) createTempCsvFile:(NSString *)basename second:(NSString *)secname retfile:(NSFileHandle **)retfile
+{
+    if (retfile) *retfile = nil;
+    NSURL * tdir = [[NSFileManager defaultManager]temporaryDirectory];
+    NSString *s = basename;
+    if (secname) {
+        s = [s stringByAppendingFormat:@".%@", secname];
+    }
+    s = [s stringByAppendingString:@".csv"];
+    NSURL *fu = [tdir URLByAppendingPathComponent:s];
+    NSLog(@"file : %@", fu);
+    if (retfile) {
+        NSError *err;
+        [[NSFileManager defaultManager]createFileAtPath:[fu path] contents:nil attributes:nil];
+        recordFile = [NSFileHandle fileHandleForWritingToURL:fu error:&err];
+        if (!recordFile) {
+            NSLog(@"error creating file : %@", err);
+        }
+        *retfile = recordFile;
+    }
+    return fu;
+}
+
+volatile int oscillo_trigger_start = 0;
+volatile int ocillo_enable = 0;
+
+- (void) processOsciloFrame
+{
+    if (frm.pidx<8) return; // TODO
+    NSAssert(frm.pidx>8, @"short stat frame");
+    int rs = frm.pidx % sizeof(osc_values_t);
+    NSAssert(!rs, @"bad size");
+    int ns = frm.pidx / sizeof(osc_values_t);
+    NSAssert(ns == OSC_NUM_SAMPLES, @"bad size 2");
+    osc_values_t *samples = (osc_values_t *) frm.param;
+    
+    NSFileHandle *recordFileGp;
+    NSFileHandle *recordFileRaw;
+    NSURL *fugp = [self createTempCsvFile:@"oscilo" second:@"gnup" retfile:&recordFileGp];
+     if (!recordFileGp) {
+        return;
+    }
+    NSURL *furaw = [self createTempCsvFile:@"oscilo" second:@"raw" retfile:&recordFileRaw];
+    
+    
+    NSArray *cols=@[@"V0", @"V1", @"V0a", @"V0b", @"V1a", @"V1b",
+                    @"tim1", @"tim2", @"tim8",
+                    @"T1ch1", @"T1ch2", @"T1ch3", @"T1ch4",
+                    @"T2ch1", @"T2ch2", @"T2ch3", @"T2ch4",
+                    @"t0bemf", @"t1bemf", @"evtadc"];
+    NSDictionary *itms = @{ @"i" : @0,  @"V0" : @1 , @"V1" : @2 ,
+                            @"V0a" : @3 , @"V0b" : @4 , @"V1a" : @5, @"V1b" : @6,
+                            @"tim1" : @7, @"tim2" : @8, @"tim8" : @9,
+        @"T1ch1" : @10, @"T1ch2" : @11, @"T1ch3" : @12, @"T1ch4" : @13,
+        @"T2ch1" : @14, @"T2ch2" : @15, @"T2ch3" : @16, @"T2ch4" : @17,
+        @"t0bemf" : @18, @"t1bemf" : @19, @"evtadc" : @20
+    };
+    
+    [recordFileRaw writeData:[@"i" dataUsingEncoding:NSUTF8StringEncoding]];
+    for (NSString *c in cols) {
+        NSString *s = [NSString stringWithFormat:@", %@", c];
+        [recordFileRaw writeData:[s dataUsingEncoding:NSUTF8StringEncoding]];
+    }
+    [recordFileRaw writeData:[@"\n" dataUsingEncoding:NSUTF8StringEncoding]];
+
+#define W0(_n) (-6000-(_n)*1000)
+#define W1(_n) (-6000-(_n)*1000+700)
+    
+    for (int i=0; i<ns; i++) {
+        osc_values_t *v = &samples[i];
+        NSString *s = [NSString stringWithFormat:@"%d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d\n",
+                       i,
+                       convert_to_mv(v->vadc[0]-v->vadc[1])+10000*5,
+                       convert_to_mv(v->vadc[2]-v->vadc[3])+10000*4,
+                       convert_to_mv(v->vadc[0])+10000*3,
+                       convert_to_mv(v->vadc[1])+10000*2,
+                       convert_to_mv(v->vadc[2])+10000*1,
+                       convert_to_mv(v->vadc[3])+10000*0,
+                       v->tim1cnt*8 - 2000*2,
+                       v->tim2cnt*8 - 2000*4,
+                       v->tim8cnt*8 - 2000*8,
+                       v->valt1ch1 ? W1(0) : W0(0),
+                       v->valt1ch2 ? W1(1) : W0(1),
+                       v->valt1ch3 ? W1(2) : W0(2),
+                       v->valt1ch4 ? W1(3) : W0(3),
+                       v->valt2ch1 ? W1(4) : W0(4),
+                       v->valt2ch2 ? W1(5) : W0(5),
+                       v->valt2ch3 ? W1(6) : W0(6),
+                       v->valt2ch4 ? W1(7) : W0(7),
+                       v->t0bemf +50000,
+                       v->t1bemf -50000,
+                       v->evtadc ? -30000 : -35000
+                       ];
+        [recordFileGp writeData:[s dataUsingEncoding:NSUTF8StringEncoding]];
+        
+        s = [NSString stringWithFormat:@"%d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d\n",
+                       i,
+                       convert_to_mv_raw(v->vadc[0]-v->vadc[1]),
+                       convert_to_mv_raw(v->vadc[2]-v->vadc[3]),
+                       convert_to_mv_raw(v->vadc[0]),
+                       convert_to_mv_raw(v->vadc[1]),
+                       convert_to_mv_raw(v->vadc[2]),
+                       convert_to_mv_raw(v->vadc[3]),
+                       v->tim1cnt,
+                       v->tim2cnt,
+                       v->tim8cnt,
+                       v->valt1ch1,
+                       v->valt1ch2,
+                       v->valt1ch3,
+                       v->valt1ch4,
+                       v->valt2ch1,
+                       v->valt2ch2,
+                       v->valt2ch3,
+                       v->valt2ch4,
+                       v->t0bemf,
+                       v->t1bemf,
+                       v->evtadc
+                       ];
+        [recordFileRaw writeData:[s dataUsingEncoding:NSUTF8StringEncoding]];
+    }
+    [recordFileGp closeFile];
+    [recordFileRaw closeFile];
+    
+    [self gnuplot:cols x:@"i" file:[fugp path] items:itms];
+    NSLog(@"RAW file : %@", furaw);
+}
 - (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView
 {
     return self.numcantons;
@@ -1483,7 +1647,7 @@ uint32_t SimuTick = 0;
 
     
     for (int i =0; i<2; i++) {
-        memset((void*)&(train_adc_buf[i]), 0, sizeof(adc_buf_t));
+        memset((void*)&(adc_result[i]), 0, sizeof(adc_result));
     }
     
     [_simTrain0 computeTrainsAfter:mdt sinceStart:mt];
@@ -1492,8 +1656,8 @@ uint32_t SimuTick = 0;
         // xxxx
         int bemfi = -(bemf/4.545) * 3.3 *4096;
         //NSLog(@"bemf %f -> %d\n", bemf, bemfi);
-        train_adc_buf[0].off[nc].vA = (bemfi>0) ? 0 : -bemfi;
-        train_adc_buf[0].off[nc].vB = (bemfi>0) ? bemfi : 0;
+        adc_result[0].meas[nc].vA = (bemfi>0) ? 0 : -bemfi;
+        adc_result[0].meas[nc].vB = (bemfi>0) ? bemfi : 0;
     }
     
 
@@ -1659,17 +1823,10 @@ void notif_target_bemf(const train_config_t *cnf, train_vars_t *vars, int32_t va
 - (IBAction) startRecord:(id)sender
 {
     if (_recordState) return;
-    NSURL * tdir = [[NSFileManager defaultManager]temporaryDirectory];
-    NSString *s = self.recordName;
-    if (!s) s = @"record";
-    s = [s stringByAppendingString:@".csv"];
-    NSURL *fu = [tdir URLByAppendingPathComponent:s];
-    NSLog(@"file : %@", fu);
-    NSError *err;
-    [[NSFileManager defaultManager]createFileAtPath:[fu path] contents:nil attributes:nil];
-    recordFile = [NSFileHandle fileHandleForWritingToURL:fu error:&err];
+    NSFileHandle *r;
+    NSURL *fu = [self createTempCsvFile:@"record" second:nil retfile:&r];
+    recordFile = r;
     if (!recordFile) {
-        NSLog(@"error creating file : %@", err);
         return;
     }
     self.recordState=1;
@@ -1765,7 +1922,7 @@ void notif_target_bemf(const train_config_t *cnf, train_vars_t *vars, int32_t va
     [gnuplotStdinFh writeData:[gnuplotCmd dataUsingEncoding:NSUTF8StringEncoding]];
 }
 
-- (NSString *) _buildGnuplotCurves:(NSArray *)col x:(int)numx file:(NSString *)file
+- (NSString *) _buildGnuplotCurves:(NSArray *)col x:(int)numx file:(NSString *)file items:(NSDictionary *)recordItems
 {
     NSMutableString *res = [[NSMutableString alloc]initWithCapacity:400];
     BOOL wl = numx ? NO : YES;
@@ -1780,7 +1937,7 @@ void notif_target_bemf(const train_config_t *cnf, train_vars_t *vars, int32_t va
     return res;
 }
 
-- (NSString *) buildGnuplotCmd:(NSArray *)col x:(NSString *)colx file:(NSString *)file
+- (NSString *) buildGnuplotCmd:(NSArray *)col x:(NSString *)colx file:(NSString *)file items:(NSDictionary *)recordItems
 {
     int numx = 0;
     NSString *namex = @"t";
@@ -1790,15 +1947,15 @@ void notif_target_bemf(const train_config_t *cnf, train_vars_t *vars, int32_t va
     }
     NSMutableString *res = [[NSMutableString alloc]initWithCapacity:400];
     [res appendFormat:@"set terminal aqua\r\nset xlabel \"%@\"\r\n", namex];
-    [res appendString:[self _buildGnuplotCurves:col x:numx file:file]];
+    [res appendString:[self _buildGnuplotCurves:col x:numx file:file items:recordItems]];
     [res appendString:@"\r\n"];
     NSLog(@"gnuplot command :\n%@\n", res);
     return res;
 }
 
-- (void) gnuplot:(NSArray *)col x:(NSString *)colx file:(NSString *)file
+- (void) gnuplot:(NSArray *)col x:(NSString *)colx file:(NSString *)file items:(NSDictionary *)recordItems
 {
-    NSString *cmd = [self buildGnuplotCmd:col x:colx file:file];
+    NSString *cmd = [self buildGnuplotCmd:col x:colx file:file items:recordItems];
     [self plotWithGnuplot:cmd];
     
 }
@@ -1842,7 +1999,7 @@ void notif_target_bemf(const train_config_t *cnf, train_vars_t *vars, int32_t va
     NSString *colx = [t objectAtIndex:0];
     if (![colx length]) colx = nil;
     NSString *f = [self.fileURL path];
-    [self gnuplot:[t subarrayWithRange:NSMakeRange(1, [t count]-1)] x:colx file:f];
+    [self gnuplot:[t subarrayWithRange:NSMakeRange(1, [t count]-1)] x:colx file:f items:recordItems];
     
 }
 - (IBAction) plotRecord:(id)sender

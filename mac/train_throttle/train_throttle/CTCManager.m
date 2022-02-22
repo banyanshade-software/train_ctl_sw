@@ -26,7 +26,7 @@
     WKNavigation *nv = [_ctoWebView loadHTMLString:ctohtml baseURL:nil];
     NSAssert(nv, @"load failed");
     
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         // hide all info from this blk
         NSString *js = @"Array.from(document.getElementsByClassName('trinfo'), el => el.style.visibility = 'hidden')";
         [self->_ctoWebView evaluateJavaScript:js completionHandler:^(id v, NSError *err) {

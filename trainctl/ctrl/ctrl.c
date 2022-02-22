@@ -533,7 +533,7 @@ void ctrl_run_tick(_UNUSED_ uint32_t notif_flags, uint32_t tick, _UNUSED_ uint32
     }
     
 #ifndef TRAIN_SIMU
-    if ((0)) {
+    if ((1)) {
         static int nsk=0;
         nsk++;
         if ((trctl[0]._mode != train_auto) && (nsk==100)) {

@@ -87,6 +87,11 @@ static int _frm_escape2(uint8_t *buf,  uint8_t *org, int len, int maxlen)
     }
     return ne;
 }
+int txrx_frm_escape2(uint8_t *buf,  uint8_t *org, int len, int maxlen)
+{
+	return _frm_escape2(buf, org, len, maxlen);
+}
+
 static int frm_escape(uint8_t *buf, int len, int maxlen)
 {
 	//configASSERT(buf[0]==FRAME_DELIM);
@@ -209,7 +214,7 @@ void txrx_process_char(uint8_t c, uint8_t *respbuf, int *replen)
 		frm.pidx ++;
 		break;
 	}
-        frm.escape = 0;
+	frm.escape = 0;
 }
 
 
@@ -236,10 +241,13 @@ static int32_t param_get_numcantons(param_t *p)
 	return NUM_CANTONS;
 }
 
+extern int ocillo_enable;
+
 static const param_t glob_params[] = {
 		{ "pwmfreq",    &cur_freqhz, 0, NULL, param_set_pwm, sizeof(int), 0, 60000,  50},
 		{ "numtrains",   NULL, 0, 	    param_get_numtrains,  NULL, sizeof(uint32_t), 1, 1, 10},
 		{ "numcantons",  NULL, 0, 	    param_get_numcantons, NULL, sizeof(uint32_t), 2, 1, 50},
+		{ "oscilo",     &ocillo_enable, 0, 	   NULL, NULL, sizeof(int), 0, 1, 0},
 		//{ "test_mode",   &trainctl_test_mode, 0, 	    NULL, NULL, sizeof(uint8_t), 2, 1, 50},
 
 		{ NULL,     NULL,0,    NULL,NULL, 0, 0, 0,   0}
@@ -482,15 +490,25 @@ int frame_gather_stat(stat_iterator_t *step, uint8_t *buf)
 
 volatile int stat_on_progress = 0;
 
+__weak int oscilo_running(void)
+{
+	return 0;
+}
+
 void txframe_send_stat(void)
 {
 	if (stat_on_progress) return;
+	if (oscilo_running()) return;
     frame_msg_t m;
     m.t = TXFRAME_TYPE_STAT;
     txframe_send(&m, 1);
 }
 
 uint32_t gtick = 0;
+
+__weak void frame_send_oscilo(_UNUSED_ void(*cb)(uint8_t *d, int l))
+{
+}
 
 void frame_send_stat(void(*cb)(uint8_t *d, int l), uint32_t tick)
 {

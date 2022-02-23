@@ -88,6 +88,15 @@ void StartTxRxFrameTask(_UNUSED_ void *argument)
 			_send_bytes((uint8_t *)"|", 1);
 			continue;
 		}
+		if (m.t == TXFRAME_TYPE_OSCILO) {
+			uint32_t t = HAL_GetTick();   // XXX t0
+			uint8_t b[]="|_NG\000Y"; //
+			//memcpy(b+6, &t, 4);
+			_send_bytes(b, 6);
+			frame_send_oscilo(_send_bytes);
+			_send_bytes((uint8_t *)"|", 1);
+			continue;
+		}
 		_send_bytes(m.frm, m.len);
 
 	}
@@ -116,10 +125,14 @@ void txframe_send(frame_msg_t *m, int discardable)
 		// we use a single queue, and no priority available with freertos
 		// so we just keep some space for non discardable frames
 		txframe_queue_full++;
+		itm_debug1(DBG_ERR, "tx ful2", discardable);
 		return;
 	}
 	uint32_t t = discardable ? 0 : portMAX_DELAY;
-	if (m->len>FRM_MAX_LEN) m->len=FRM_MAX_LEN;
+	if (m->len>FRM_MAX_LEN) {
+		//itm_debug1(DBG_ERR, "tx trunc", m->len);
+		m->len=FRM_MAX_LEN;
+	}
 	num_msg_put++;
 	osMessageQueuePut(frameQueueHandle, m, 0, t);
 }
@@ -138,12 +151,7 @@ static void handleRxChars(frame_msg_t *m)
 		int rlen = FRM_MAX_LEN;
 		txrx_process_char(m->frm[i], frresp.frm, &rlen);
 		if (rlen>0) {
-			//debug_info('G', 0, "RESP", rlen,0, 0);
-			// would deadlock if we send (non discardable) through the queue
-			//txframe_send_response(&frresp, rlen);
 			_send_bytes(frresp.frm, rlen);
-			//frresp.len = rlen;
-			//_send_frm(&frresp);
 		}
 	}
 }

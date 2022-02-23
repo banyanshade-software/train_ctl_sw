@@ -37,19 +37,19 @@ extern uint32_t debug_flags;
 
 //void _itm_debug1(const char *msg, int v);
 //void _itm_debug2(const char *msg, int v1, int v2);
-void _itm_debug3(const char *msg, int32_t v1, int32_t v2, int32_t v3, int n);
+void _itm_debug3(int err, const char *msg, int32_t v1, int32_t v2, int32_t v3, int n);
 
 static inline void itm_debug1(uint32_t f, const char *msg, int32_t v)
 {
-	if (f & debug_flags) _itm_debug3(msg, v, 0, 0, 1);
+	if (f & debug_flags) _itm_debug3(f & DBG_ERR, msg, v, 0, 0, 1);
 }
 static inline void itm_debug2(uint32_t f, const char *msg, int32_t v1, int32_t v2)
 {
-	if (f & debug_flags) _itm_debug3(msg, v1, v2, 0, 2);
+	if (f & debug_flags) _itm_debug3(f & DBG_ERR, msg, v1, v2, 0, 2);
 }
 static inline void itm_debug3(uint32_t f, const char *msg, int32_t v1, int32_t v2, int32_t v3)
 {
-	if (f & debug_flags) _itm_debug3(msg, v1, v2, v3, 3);
+	if (f & debug_flags) _itm_debug3(f & DBG_ERR, msg, v1, v2, v3, 3);
 }
 
 #endif /* UTILS_ITM_DEBUG_H_ */

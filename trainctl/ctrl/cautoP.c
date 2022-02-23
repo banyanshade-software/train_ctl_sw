@@ -74,7 +74,7 @@ lsblk_num_t cauto_peek_next_lsblk(int tidx, train_ctrl_t *tvars, uint8_t left, i
     sret.n = r;
     itm_debug3(DBG_AUTO, "ca.upd_to", tidx, nstep, r);
     int rc = cauto_update_turnouts(tidx, cur, left, r);
-    if (0 && rc) {
+    if ((0) && rc) {
     	// still return possible next lsblk, it will just be detected as alternate
     	lsblk_num_t snone = {-1};
     	return snone;

@@ -105,11 +105,11 @@ static train_vars_t trspc_vars[NUM_TRAINS]={0};
 const stat_val_t statval_spdctrl[] = {
     { trspc_vars, offsetof(train_vars_t, target_speed), 2       _P("T#_spd_target_speed")},
     { trspc_vars, offsetof(train_vars_t, bemf_mv), 4            _P("T#_bemf_mv")},
-#ifndef REDUCE_STAT
     { trspc_vars, offsetof(train_vars_t, pidvars.target_v), 4   _P("T#_pid_target_v")},
     { trspc_vars, offsetof(train_vars_t, pidvars.last_err), 4   _P("T#_pid_last_err")},
     { trspc_vars, offsetof(train_vars_t, pidvars.sume), 4       _P("T#_pid_sum_e")},
     { trspc_vars, offsetof(train_vars_t, pidvars.target_v), 4   _P("T#_pid_target")},
+#ifndef REDUCE_STAT
     { trspc_vars, offsetof(train_vars_t, inertiavars.target), 2 _P("T#_ine_t")},
     { trspc_vars, offsetof(train_vars_t, inertiavars.cur100), 2    _P("T#_ine_c")},
     { trspc_vars, offsetof(train_vars_t, last_speed), 2         _P("T#_spd_curspeed")},
@@ -146,6 +146,8 @@ static void spdctl_reset(void)
 	}
 }
 
+volatile int16_t oscilo_t0bemf = 0;
+volatile int16_t oscilo_t1bemf = 0;
 
 void spdctl_run_tick(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, uint32_t dt)
 {
@@ -197,12 +199,20 @@ void spdctl_run_tick(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, uint
             switch (m.cmd) {
                 case CMD_BEMF_NOTIF:
                     if (m.from == tvars->C1) {
+                    	if (!tidx) oscilo_t0bemf = m.v1;
+                    	else if (1==tidx) oscilo_t1bemf = m.v1;
+
+
                         itm_debug3(DBG_PID, "st bemf", tidx, m.v1, m.from);
                         if (!tvars->c2bemf) tvars->bemf_mv = m.v1;
                         break;
                     } else if (m.from == tvars->C2) {
                         itm_debug3(DBG_PID|DBG_CTRL, "c2 bemf", tidx, m.v1, m.from);
-                        if (tvars->c2bemf) tvars->bemf_mv = m.v1;
+                        if (tvars->c2bemf) {
+                        	tvars->bemf_mv = m.v1;
+                        	if (!tidx) oscilo_t0bemf = m.v1;
+                        	else if (1==tidx) oscilo_t1bemf = m.v1;
+                        }
                         else if (abs(m.v1) > abs(tvars->bemf_mv)+300) {
                         	itm_debug3(DBG_SPDCTL|DBG_PRES, "c2_hi", tidx, m.v1, tvars->bemf_mv);
                         	msg_64_t m = {0};
@@ -230,6 +240,10 @@ void spdctl_run_tick(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, uint
                     break;
                 case CMD_SET_TARGET_SPEED:
                     itm_debug1(DBG_SPDCTL, "set_t_spd", m.v1u);
+                    if (!tvars->target_speed && (m.v1u > 10)) {
+                    	extern volatile int oscillo_trigger_start;
+                    	oscillo_trigger_start = 1;
+                    }
                     tvars->target_speed = (int16_t) m.v1u;
                     break;
                 case CMD_SET_C1_C2:
@@ -313,7 +327,7 @@ static void train_periodic_control(int numtrain, uint32_t dt)
 
     int32_t bemf_mv = tvars->bemf_mv;
     if (tconf->bemfIIR) {
-    	tvars->bemfiir = (80*tvars->bemfiir + 20*bemf_mv)/100;
+    	tvars->bemfiir = (tconf->bemfIIR*tvars->bemfiir + (100-tconf->bemfIIR)*bemf_mv)/100;
     	bemf_mv = tvars->bemfiir;
     }
     if (tconf->enable_pid) {
@@ -351,7 +365,7 @@ static void train_periodic_control(int numtrain, uint32_t dt)
         }
     }
     if (tconf->postIIR) {
-        tvars->v_iir = (80*tvars->v_iir+20*v)/100;
+        tvars->v_iir = (tconf->postIIR*tvars->v_iir+(100-tconf->postIIR)*v)/100;
         v = tvars->v_iir;
     }
     // or inertia after PID

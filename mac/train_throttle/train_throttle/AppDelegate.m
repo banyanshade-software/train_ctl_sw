@@ -1444,7 +1444,7 @@ volatile int ocillo_enable = 0;
                        v->valt2ch4 ? W1(7) : W0(7),
                        v->t0bemf +50000,
                        v->t1bemf -50000,
-                       v->evtadc ? -30000 : -35000
+                       v->evtadc*2000 - 35000
                        ];
         [recordFileGp writeData:[s dataUsingEncoding:NSUTF8StringEncoding]];
         
@@ -1647,7 +1647,9 @@ uint32_t SimuTick = 0;
 
     
     for (int i =0; i<2; i++) {
-        memset((void*)&(adc_result[i]), 0, sizeof(adc_result));
+        //memset((void*)&(adc_result[i]), 0, sizeof(adc_result));
+        memset((void*)&(train_adc_buf[i]), 0, sizeof(adc_buf_t));
+
     }
     
     [_simTrain0 computeTrainsAfter:mdt sinceStart:mt];
@@ -1656,8 +1658,10 @@ uint32_t SimuTick = 0;
         // xxxx
         int bemfi = -(bemf/4.545) * 3.3 *4096;
         //NSLog(@"bemf %f -> %d\n", bemf, bemfi);
-        adc_result[0].meas[nc].vA = (bemfi>0) ? 0 : -bemfi;
-        adc_result[0].meas[nc].vB = (bemfi>0) ? bemfi : 0;
+        //adc_result[0].meas[nc].vA = (bemfi>0) ? 0 : -bemfi;
+        //adc_result[0].meas[nc].vB = (bemfi>0) ? bemfi : 0;
+        train_adc_buf[0].off[nc].vA = (bemfi>0) ? 0 : -bemfi;
+        train_adc_buf[0].off[nc].vB = (bemfi>0) ? bemfi : 0;
     }
     
 

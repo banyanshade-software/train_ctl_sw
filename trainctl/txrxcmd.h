@@ -70,4 +70,6 @@ int frame_gather_stat(stat_iterator_t *step, uint8_t *buf);
  */
 void frame_send_stat(void(*cb)(uint8_t *d, int l), uint32_t tick);
 
+int txrx_frm_escape2(uint8_t *buf,  uint8_t *org, int len, int maxlen);
+
 #endif /* TXRXCMD_H_ */

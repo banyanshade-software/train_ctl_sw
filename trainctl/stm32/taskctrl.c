@@ -48,58 +48,16 @@
 #include "../leds/ledtask.h"
 #include "canmsg.h"
 
+#include "../utils/adc_mean.h"
+
 /*
 #define NUM_VAL_PER_CANTON (sizeof(adc_buffer_t)/sizeof(uint16_t))
 #define ADC_HALF_BUFFER (NUM_LOCAL_CANTONS_HW * NUM_VAL_PER_CANTON)
 #define NUM_ADC_SAMPLES (2*ADC_HALF_BUFFER)
 */
 
-
-
-
-
-static void TIM_ResetCounter(TIM_HandleTypeDef *htim)
-{
-	TIM_TypeDef* TIMx = htim->Instance;
-  /* Check the parameters */
-  assert_param(IS_TIM_ALL_PERIPH(TIMx));
-
-  /* Reset the Counter Register value */
-  TIMx->CNT = 0;
-}
-
-
-int cur_freqhz = 50;
-extern TIM_HandleTypeDef htim1;
-
-// #define __HAL_TIM_SET_PRESCALER(__HANDLE__, __PRESC__)       ((__HANDLE__)->Instance->PSC = (__PRESC__))
-void set_pwm_freq(int freqhz)
-{
-	// 12MHz / 200 -> 60000
-	// 50Hz = 1200
-	int ps = (60000/freqhz); //-1;
-	if ((ps<1) || (ps>0xFFFF)) ps = 1200;
-	ps = ps-1;
-	cur_freqhz = 60000/(ps+1);
-	// not an error but we want it in the log
-	itm_debug3(DBG_ERR|DBG_CTRL, "FREQ", freqhz, ps, cur_freqhz);
-	portENTER_CRITICAL();
-	__HAL_TIM_SET_PRESCALER(&htim1, ps);
-	__HAL_TIM_SET_PRESCALER(&htim2, ps);
-	__HAL_TIM_SET_PRESCALER(&htim3, ps);
-	__HAL_TIM_SET_PRESCALER(&htim8, ps);
-	TIM_ResetCounter(&htim8);
-	TIM_ResetCounter(&htim1);
-	TIM_ResetCounter(&htim2);
-	TIM_ResetCounter(&htim3);
-	portEXIT_CRITICAL();
-}
-
-int get_pwm_freq(void)
-{
-	return cur_freqhz;
-}
-
+#define GUARD_SAMPLING 2
+//static volatile adc_buf_t train_adc_buf[MAX_NUM_SAMPLING+GUARD_SAMPLING] __attribute__ ((aligned(32))); // double buffer
 
 
 static void run_task_ctrl(void);
@@ -107,18 +65,63 @@ extern DMA_HandleTypeDef hdma_i2c3_rx;
 extern DMA_HandleTypeDef hdma_i2c3_tx;
 
 
+// ADC/Vof   NOTIF_  conv/f2/  "osc evtadc "tim"  unk b3 "tx trunc" pwmfreq
+
+
+int cur_freqhz = 50;
+static int numsampling = 0;
+
+/*
+ *  max pwm (MAX_PWM) is 90% : min off time in µs = (1000000/pwmhz)*.1
+ *  	pwmhz       offtime
+ *  	 50			2000 µs
+ *  	100			1000 µs (1ms)
+ *  	200 		 500 µs
+ *  	300		 	 333 µs
+ *
+ * one ADC sampling and conversiont (12 bits):
+ * 		12+3 = 15 ADCCLK
+ * sampling a full adc_buf_t (12 conversions), at 12 bits :
+ * 		15*12 ADCCLK = 180 ADCCLK
+ * with ABP2 at 12MHz, PCLK2=12MHz (timers at 24MHz)
+ * prescale : 2 -> 6MHz, 1 ADCCLK = 0.16 µs
+ * one full adc_buf_t : 30 µS
+ *
+ * 		pwmhz		offtime		max NUM_SAMPLING
+ * 		 50			2000 µs		66
+ * 		100			1000		33
+ * 		200			 500		16.6
+ * 		300			 333		11.1
+ *
+ * 	https://electronics.stackexchange.com/questions/311326/stm32f20x-adc-sampling-time-rate
+ */
+
+
+
+
+
+static void TIM_ResetCounter(TIM_HandleTypeDef *htim)
+{
+	if ((1)) return;
+	TIM_TypeDef* TIMx = htim->Instance;
+	/* Check the parameters */
+	assert_param(IS_TIM_ALL_PERIPH(TIMx));
+
+	/* Reset the Counter Register value */
+	TIMx->CNT = 0;
+	// TIMx->CR1 &= ~(TIM_CR1_DIR);
+}
+
+static int adc_nsmpl = 0;
+
 void StartCtrlTask(_UNUSED_ void *argument)
 {
-	int nsmpl = sizeof(train_adc_buf)/sizeof(uint16_t);
+	adc_nsmpl = sizeof(train_adc_buf)/sizeof(uint16_t);
 
 	if (sizeof(train_adc_buf) != sizeof(uint16_t)*NUM_LOCAL_CANTONS_HW*8) Error_Handler();
-	if (nsmpl != NUM_LOCAL_CANTONS_HW*2*4) Error_Handler();
+	if (adc_nsmpl != NUM_LOCAL_CANTONS_HW*2*4) Error_Handler();
 	if (NUM_LOCAL_CANTONS_HW != 6) Error_Handler();
-	//__HAL_DMA_ENABLE_IT(&hdma_i2c3_rx, DMA_IT_TC);
-	//__HAL_DMA_ENABLE_IT(&hdma_i2c3_tx, DMA_IT_TC);
 
-	//if (NUM_VAL_PER_CANTON != 4) Error_Handler();
-	//if (ADC_HALF_BUFFER != 10*2) Error_Handler();
 
 	if ((1)) set_pwm_freq(100);
 	CantonTimerHandles[1]=&htim1;
@@ -159,10 +162,16 @@ void StartCtrlTask(_UNUSED_ void *argument)
 	HAL_TIM_Base_Start(&htim3);
 	HAL_TIM_Base_Start(&htim8);
 	HAL_TIM_Base_Start(&htim12);
+
+	//HAL_TIM_OC_Start(&htim8, TIM_CHANNEL_1);
 	portEXIT_CRITICAL();
 
-	HAL_ADC_Start_DMA(&hadc1,(uint32_t *)train_adc_buf, nsmpl);
+	// XXX XXX XXX XXX
+	memset((void *)train_adc_buf, 0, sizeof(train_adc_buf));
+	HAL_ADC_Start_DMA(&hadc1,(uint32_t *)train_adc_buf, adc_nsmpl);
 	//HAL_ADC_Start_DMA(&hadc1,(uint32_t *)train_adc_buffer, NUM_ADC_SAMPLES);
+    //__HAL_ADC_ENABLE_IT(&hadc1, ADC_IT_EOC);
+
 
 	startCycleCounter();
 	/*
@@ -184,7 +193,46 @@ void StartCtrlTask(_UNUSED_ void *argument)
 	run_task_ctrl();
 }
 
+extern TIM_HandleTypeDef htim1;
 
+// #define __HAL_TIM_SET_PRESCALER(__HANDLE__, __PRESC__)       ((__HANDLE__)->Instance->PSC = (__PRESC__))
+void set_pwm_freq(int freqhz)
+{
+	if ((0)) return;
+	if (!freqhz) {
+		return;
+	}
+	// 12MHz / 200 -> 60000
+	// 50Hz = 1200
+	int ps = (2*60000/freqhz); //-1;
+	if ((ps<1) || (ps>0xFFFF)) ps = 1200;
+	ps = ps-1;
+	cur_freqhz = 2*60000/(ps+1);
+	// not an error but we want it in the log
+	itm_debug3(DBG_ERR|DBG_CTRL, "FREQ", freqhz, ps, cur_freqhz);
+	portENTER_CRITICAL();
+	numsampling = 0;
+	__HAL_TIM_SET_PRESCALER(&htim1, ps);
+	__HAL_TIM_SET_PRESCALER(&htim2, ps);
+	__HAL_TIM_SET_PRESCALER(&htim3, ps);
+	__HAL_TIM_SET_PRESCALER(&htim8, ps);
+	TIM_ResetCounter(&htim8);
+	TIM_ResetCounter(&htim1);
+	TIM_ResetCounter(&htim2);
+	TIM_ResetCounter(&htim3);
+
+	portEXIT_CRITICAL();
+}
+
+int get_pwm_freq(void)
+{
+	return cur_freqhz;
+}
+
+void ADC_IRQ_UserHandler(void)
+{
+	itm_debug1(DBG_TIM, "ADC compl", 0);
+}
 
 #define USE_NOTIF_TIM 0
 
@@ -205,6 +253,7 @@ static void run_task_ctrl(void)
 
 		mqf_write_from_nowhere(&m); // XXX it wont be sent to ctl
 	}
+
 
 	for (;;) {
 		uint32_t notif;
@@ -299,31 +348,93 @@ extern osThreadId_t ctrlTaskHandle;
 static int nhalf=0;
 static int nfull=0;
 
-
-void HAL_ADC_ConvCpltCallback(_UNUSED_ ADC_HandleTypeDef* AdcHandle)
+__weak void HAL_ADC_ConvCpltCallback2(_UNUSED_ ADC_HandleTypeDef* hadc)
 {
+}
+__weak void HAL_ADC_ConvHalfCpltCallback2(_UNUSED_ ADC_HandleTypeDef* hadc)
+{
+}
+__weak void HAL_ADC_ErrorCallback2(_UNUSED_ ADC_HandleTypeDef* hadc)
+{
+}
+
+
+static int convert_to_mv(int m)
+{
+    return ((m * 4545 * 33) / (4096*10));
+}
+
+
+volatile uint8_t oscilo_evtadc;
+static int numresult = 0;
+
+int dump_adc = 0; // for debug
+
+
+
+static void write_num(uint8_t *buf, uint32_t v, int ndigit)
+{
+	for (;ndigit>0; ndigit--) {
+		buf[ndigit-1] = '0'+ (v % 10);
+		v = v/10;
+	}
+}
+
+
+
+void HAL_ADC_ConvCpltCallback(_UNUSED_ ADC_HandleTypeDef* hadc)
+{
+	if (hadc != &hadc1) {
+		HAL_ADC_ConvCpltCallback2(hadc);
+		return;
+	}
 	nfull++;
-	BaseType_t higher=0;
+	oscilo_evtadc = 2;
 	if ((0)) itm_debug1(DBG_TIM, "conv/f", HAL_GetTick());
+	BaseType_t higher=0;
 	xTaskNotifyFromISR(ctrlTaskHandle, NOTIF_NEW_ADC_2, eSetBits, &higher);
 	portYIELD_FROM_ISR(higher);
 }
 
 void HAL_ADC_ConvHalfCpltCallback(_UNUSED_ ADC_HandleTypeDef* hadc)
 {
+	if (hadc != &hadc1) {
+		HAL_ADC_ConvHalfCpltCallback2(hadc);
+		return;
+	}
 	nhalf++;
+
+	oscilo_evtadc = 1;
 	BaseType_t higher=0;
-	if ((0)) itm_debug1(DBG_TIM, "conv/h", HAL_GetTick());
+	if ((1)) itm_debug1(DBG_TIM, "conv/h", HAL_GetTick());
 	xTaskNotifyFromISR(ctrlTaskHandle, NOTIF_NEW_ADC_1, eSetBits, &higher);
 	portYIELD_FROM_ISR(higher);
 }
 
+static void adc_err(void)
+{
+	itm_debug1(DBG_TIM, "adc_err", 0);
+}
 void HAL_ADC_LevelOutOfWindowCallback(_UNUSED_ ADC_HandleTypeDef* hadc)
 {
-	itm_debug1(DBG_ERR|DBG_TIM, "ADC ERR", 1);
+	adc_err();
+	itm_debug1(DBG_ERR|DBG_TIM, "ADC out", 1);
 }
 void  HAL_ADC_ErrorCallback(_UNUSED_ ADC_HandleTypeDef *hadc)
 {
+	adc_err();
+	if (hadc != &hadc1) {
+		HAL_ADC_ErrorCallback2(hadc);
+		return;
+	}
 	itm_debug1(DBG_ERR|DBG_TIM, "ADC ERR", 0);
 }
 
+
+void vApplicationStackOverflowHook(_UNUSED_ xTaskHandle xTask, _UNUSED_ signed char *pcTaskName)
+{
+	itm_debug1(DBG_ERR, "STK OVF", 1);
+	for (;;) {
+
+	}
+}

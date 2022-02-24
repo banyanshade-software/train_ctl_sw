@@ -323,8 +323,8 @@ const canton_config_t *get_canton_cnf(int idx)
 
 static  train_config_t Trains[NUM_TRAINS] = {
 		//DEFAULT_TRAIN_CFG(1,0, 450, 115, 12, 6), // 8821 (V221) with 2 freight cars
-		DEFAULT_TRAIN_CFG(1,0, 450, 120, 6,  18), // 8821 (V221) with 3 freight cars
-        DEFAULT_TRAIN_CFG(1,0, 310, 120, 15,  2), // 8805 with 4 wine cars - 120 with 3 wine cars
+		DEFAULT_TRAIN_CFG(1,0, 398, 120, 6,  18), // 8821 (V221) with 3 freight cars
+        DEFAULT_TRAIN_CFG(1,0, 307, 120, 15,  2), // 8805 with 4 wine cars - 120 with 3 wine cars
         DEFAULT_TRAIN_CFG(0,0, 500, 100, 10, 10),
         DEFAULT_TRAIN_CFG(0,0, 500, 100, 10, 10),
 		DEFAULT_TRAIN_CFG(0,0, 500, 100, 10, 10),

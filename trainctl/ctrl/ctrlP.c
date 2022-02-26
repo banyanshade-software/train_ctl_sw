@@ -413,7 +413,13 @@ void ctrl2_check_checkstart(int tidx, train_ctrl_t *tvars)
         	// FALLTHRU
         case train_end_of_track:
             if (tvars->_target_speed) break; // already started
-            if (tvars->_dir) break; // XXXXX
+            if (tvars->_dir) {
+            	// this may occurs if stop detection fails
+            	if (tvars->_dir == SIGNOF(tvars->desired_speed)) {
+            		break;
+            	}
+            	itm_debug3(DBG_ERR|DBG_CTRL, "miss stp?", tidx, tvars->_dir, tvars->desired_speed);
+            }
             uint8_t alternate;
             ns = next_lsblk_free(tidx, tvars,  (tvars->desired_speed<0),  &alternate, NULL);
             itm_debug3(DBG_CTRL, "cs next", tidx, ns.n, alternate);

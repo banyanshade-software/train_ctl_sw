@@ -102,7 +102,7 @@ static int numsampling = 0;
 
 static void TIM_ResetCounter(TIM_HandleTypeDef *htim)
 {
-	if ((1)) return;
+	//if ((1)) return;
 	TIM_TypeDef* TIMx = htim->Instance;
 	/* Check the parameters */
 	assert_param(IS_TIM_ALL_PERIPH(TIMx));
@@ -132,7 +132,6 @@ void StartCtrlTask(_UNUSED_ void *argument)
 	//XXX railconfig_setup_default();
 
 
-
 	//HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
 	//HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2);
 	HAL_TIM_PWM_Stop(&htim1, TIM_CHANNEL_1);
@@ -157,8 +156,8 @@ void StartCtrlTask(_UNUSED_ void *argument)
 	TIM_ResetCounter(&htim1);
 	TIM_ResetCounter(&htim2);
 	TIM_ResetCounter(&htim3);
-	//HAL_TIM_Base_Start_IT(&htim1);
-	HAL_TIM_Base_Start(&htim1);
+	HAL_TIM_Base_Start_IT(&htim1);
+	//HAL_TIM_Base_Start(&htim1);
 	HAL_TIM_Base_Start(&htim2);
 	HAL_TIM_Base_Start(&htim3);
 	HAL_TIM_Base_Start(&htim8);
@@ -167,11 +166,11 @@ void StartCtrlTask(_UNUSED_ void *argument)
 	//HAL_TIM_OC_Start(&htim8, TIM_CHANNEL_1);
 	portEXIT_CRITICAL();
 
+
 	// XXX XXX XXX XXX
 	memset((void *)train_adc_buf, 0, sizeof(train_adc_buf));
 	HAL_ADC_Start_DMA(&hadc1,(uint32_t *)train_adc_buf, adc_nsmpl);
-	//HAL_ADC_Start_DMA(&hadc1,(uint32_t *)train_adc_buffer, NUM_ADC_SAMPLES);
-    //__HAL_ADC_ENABLE_IT(&hadc1, ADC_IT_EOC);
+
 
 
 	startCycleCounter();
@@ -194,21 +193,21 @@ void StartCtrlTask(_UNUSED_ void *argument)
 	run_task_ctrl();
 }
 
-extern TIM_HandleTypeDef htim1;
+//extern TIM_HandleTypeDef htim1;
 
 // #define __HAL_TIM_SET_PRESCALER(__HANDLE__, __PRESC__)       ((__HANDLE__)->Instance->PSC = (__PRESC__))
 void set_pwm_freq(int freqhz)
 {
-	if ((1)) return;
 	if (!freqhz) {
 		return;
 	}
 	// 12MHz / 200 -> 60000
 	// 50Hz = 1200
-	int ps = (2*60000/freqhz); //-1;
+#define FRQ_MULT 1 // 1 : for 24 MHz (ABP prescaler = /8) ; 2 : 48MHz, ABP prescaler = /4
+	int ps = (FRQ_MULT*60000/freqhz); //-1;
 	if ((ps<1) || (ps>0xFFFF)) ps = 1200;
 	ps = ps-1;
-	cur_freqhz = 2*60000/(ps+1);
+	cur_freqhz = FRQ_MULT*60000/(ps+1);
 	// not an error but we want it in the log
 	itm_debug3(DBG_ERR|DBG_CTRL, "FREQ", freqhz, ps, cur_freqhz);
 	portENTER_CRITICAL();

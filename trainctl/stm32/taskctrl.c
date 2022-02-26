@@ -100,7 +100,7 @@ static int numsampling = 0;
 
 
 
-static void TIM_ResetCounter(TIM_HandleTypeDef *htim)
+static void TIM_ResetCounter(int tn, TIM_HandleTypeDef *htim)
 {
 	//if ((1)) return;
 	TIM_TypeDef* TIMx = htim->Instance;
@@ -109,6 +109,10 @@ static void TIM_ResetCounter(TIM_HandleTypeDef *htim)
 
 	/* Reset the Counter Register value */
 	TIMx->CNT = 0;
+	if (tn==8) return;
+	// #define __HAL_TIM_IS_TIM_COUNTING_DOWN(__HANDLE__)    (((__HANDLE__)->Instance->CR1 &(TIM_CR1_DIR)) == (TIM_CR1_DIR))
+
+	itm_debug2(DBG_TIM, "CR1 : ", tn, (TIMx->CR1 & TIM_CR1_DIR) ? 1 : 0);
 	// TIMx->CR1 &= ~(TIM_CR1_DIR);
 }
 
@@ -152,19 +156,22 @@ void StartCtrlTask(_UNUSED_ void *argument)
 
 	portENTER_CRITICAL();
 	//HAL_TIM_Base_Start_IT(&htim8);
-	TIM_ResetCounter(&htim8);
-	TIM_ResetCounter(&htim1);
-	TIM_ResetCounter(&htim2);
-	TIM_ResetCounter(&htim3);
-	HAL_TIM_Base_Start_IT(&htim1);
-	//HAL_TIM_Base_Start(&htim1);
+	TIM_ResetCounter(8, &htim8);
+	TIM_ResetCounter(2, &htim2);
+	TIM_ResetCounter(3, &htim3);
+	TIM_ResetCounter(1, &htim1);
+
 	HAL_TIM_Base_Start(&htim2);
 	HAL_TIM_Base_Start(&htim3);
 	HAL_TIM_Base_Start(&htim8);
 	HAL_TIM_Base_Start(&htim12);
+	HAL_TIM_Base_Start_IT(&htim1);
+	//HAL_TIM_Base_Start(&htim1);
 
 	//HAL_TIM_OC_Start(&htim8, TIM_CHANNEL_1);
 	portEXIT_CRITICAL();
+
+
 
 
 	// XXX XXX XXX XXX
@@ -203,7 +210,7 @@ void set_pwm_freq(int freqhz)
 	}
 	// 12MHz / 200 -> 60000
 	// 50Hz = 1200
-#define FRQ_MULT 1 // 1 : for 24 MHz (ABP prescaler = /8) ; 2 : 48MHz, ABP prescaler = /4
+#define FRQ_MULT (2)							// 1 : for 24 MHz (ABP prescaler = /8) ; 2 : 48MHz, ABP prescaler = /4
 	int ps = (FRQ_MULT*60000/freqhz); //-1;
 	if ((ps<1) || (ps>0xFFFF)) ps = 1200;
 	ps = ps-1;
@@ -212,16 +219,18 @@ void set_pwm_freq(int freqhz)
 	itm_debug3(DBG_ERR|DBG_CTRL, "FREQ", freqhz, ps, cur_freqhz);
 	portENTER_CRITICAL();
 	numsampling = 0;
-	__HAL_TIM_SET_PRESCALER(&htim1, ps);
 	__HAL_TIM_SET_PRESCALER(&htim2, ps);
 	__HAL_TIM_SET_PRESCALER(&htim3, ps);
 	__HAL_TIM_SET_PRESCALER(&htim8, ps);
-	TIM_ResetCounter(&htim8);
-	TIM_ResetCounter(&htim1);
-	TIM_ResetCounter(&htim2);
-	TIM_ResetCounter(&htim3);
+	__HAL_TIM_SET_PRESCALER(&htim1, ps);
+	TIM_ResetCounter(8, &htim8);
+	TIM_ResetCounter(2, &htim2);
+	TIM_ResetCounter(3, &htim3);
+	TIM_ResetCounter(1, &htim1);
+
 
 	portEXIT_CRITICAL();
+	itm_debug1(DBG_TIM|DBG_ERR, "freq ", cur_freqhz); // not an error but it is importanrt
 }
 
 int get_pwm_freq(void)
@@ -268,6 +277,15 @@ static void run_task_ctrl(void)
 				if ((1)) continue; // skip this tick
 			}
 		}
+		if ((1)) {
+			static int d = 0;
+			static int cnt=0;
+			if (!d && (cnt++ == 10)) {
+				d = 1;
+				set_pwm_freq(100);
+			}
+		}
+
 		cnt++;
 		t0ctrl = HAL_GetTick();
 #if USE_NOTIF_TIM

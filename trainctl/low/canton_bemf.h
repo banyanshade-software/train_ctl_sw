@@ -63,8 +63,13 @@ typedef struct {
 } adc_per_blk_t;
 
 typedef struct {
+#if 0
 	adc_per_blk_t off[NUM_LOCAL_CANTONS_HW];
 	adc_per_blk_t on[NUM_LOCAL_CANTONS_HW];
+#else
+	adc_per_blk_t on[NUM_LOCAL_CANTONS_HW];
+	adc_per_blk_t off[NUM_LOCAL_CANTONS_HW];
+#endif
 } adc_buf_t;
 
 

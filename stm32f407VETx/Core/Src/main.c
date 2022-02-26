@@ -85,10 +85,10 @@ uint32_t defaultTaskBuffer[ 256 ];
 osStaticThreadDef_t defaultTaskControlBlock;
 const osThreadAttr_t uiTask_attributes = {
   .name = "uiTask",
-  .stack_mem = &defaultTaskBuffer[0],
-  .stack_size = sizeof(defaultTaskBuffer),
   .cb_mem = &defaultTaskControlBlock,
   .cb_size = sizeof(defaultTaskControlBlock),
+  .stack_mem = &defaultTaskBuffer[0],
+  .stack_size = sizeof(defaultTaskBuffer),
   .priority = (osPriority_t) osPriorityLow6,
 };
 /* Definitions for ctrlTask */
@@ -97,10 +97,10 @@ uint32_t ctrlTaskBuffer[ 256 ];
 osStaticThreadDef_t ctrlTaskControlBlock;
 const osThreadAttr_t ctrlTask_attributes = {
   .name = "ctrlTask",
-  .stack_mem = &ctrlTaskBuffer[0],
-  .stack_size = sizeof(ctrlTaskBuffer),
   .cb_mem = &ctrlTaskControlBlock,
   .cb_size = sizeof(ctrlTaskControlBlock),
+  .stack_mem = &ctrlTaskBuffer[0],
+  .stack_size = sizeof(ctrlTaskBuffer),
   .priority = (osPriority_t) osPriorityRealtime1,
 };
 /* Definitions for txrxFrameTask */
@@ -109,10 +109,10 @@ uint32_t txrxFrameTaskBuffer[ 384 ];
 osStaticThreadDef_t txrxFrameTaskControlBlock;
 const osThreadAttr_t txrxFrameTask_attributes = {
   .name = "txrxFrameTask",
-  .stack_mem = &txrxFrameTaskBuffer[0],
-  .stack_size = sizeof(txrxFrameTaskBuffer),
   .cb_mem = &txrxFrameTaskControlBlock,
   .cb_size = sizeof(txrxFrameTaskControlBlock),
+  .stack_mem = &txrxFrameTaskBuffer[0],
+  .stack_size = sizeof(txrxFrameTaskBuffer),
   .priority = (osPriority_t) osPriorityLow3,
 };
 /* Definitions for ina3221_task */
@@ -121,10 +121,10 @@ uint32_t ina3221_taskBuffer[ 172 ];
 osStaticThreadDef_t ina3221_taskControlBlock;
 const osThreadAttr_t ina3221_task_attributes = {
   .name = "ina3221_task",
-  .stack_mem = &ina3221_taskBuffer[0],
-  .stack_size = sizeof(ina3221_taskBuffer),
   .cb_mem = &ina3221_taskControlBlock,
   .cb_size = sizeof(ina3221_taskControlBlock),
+  .stack_mem = &ina3221_taskBuffer[0],
+  .stack_size = sizeof(ina3221_taskBuffer),
   .priority = (osPriority_t) osPriorityRealtime,
 };
 /* Definitions for ledTask */
@@ -133,10 +133,10 @@ uint32_t ledTaskBuffer[ 128 ];
 osStaticThreadDef_t ledTaskControlBlock;
 const osThreadAttr_t ledTask_attributes = {
   .name = "ledTask",
-  .stack_mem = &ledTaskBuffer[0],
-  .stack_size = sizeof(ledTaskBuffer),
   .cb_mem = &ledTaskControlBlock,
   .cb_size = sizeof(ledTaskControlBlock),
+  .stack_mem = &ledTaskBuffer[0],
+  .stack_size = sizeof(ledTaskBuffer),
   .priority = (osPriority_t) osPriorityRealtime4,
 };
 /* Definitions for oscilo */
@@ -145,10 +145,10 @@ uint32_t osciloBuffer[ 128 ];
 osStaticThreadDef_t osciloControlBlock;
 const osThreadAttr_t oscilo_attributes = {
   .name = "oscilo",
-  .stack_mem = &osciloBuffer[0],
-  .stack_size = sizeof(osciloBuffer),
   .cb_mem = &osciloControlBlock,
   .cb_size = sizeof(osciloControlBlock),
+  .stack_mem = &osciloBuffer[0],
+  .stack_size = sizeof(osciloBuffer),
   .priority = (osPriority_t) osPriorityRealtime1,
 };
 /* Definitions for frameQueue */
@@ -311,6 +311,10 @@ int main(void)
   /* add threads, ... */
   /* USER CODE END RTOS_THREADS */
 
+  /* USER CODE BEGIN RTOS_EVENTS */
+  /* add events, ... */
+  /* USER CODE END RTOS_EVENTS */
+
   /* Start scheduler */
   osKernelStart();
 
@@ -334,7 +338,6 @@ void SystemClock_Config(void)
 {
   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
   RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
-  RCC_PeriphCLKInitTypeDef PeriphClkInitStruct = {0};
 
   /** Configure the main internal regulator output voltage
   */
@@ -362,16 +365,10 @@ void SystemClock_Config(void)
                               |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
   RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
-  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV4;
-  RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV4;
+  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV8;
+  RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV8;
 
   if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_3) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_RTC;
-  PeriphClkInitStruct.RTCClockSelection = RCC_RTCCLKSOURCE_LSE;
-  if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct) != HAL_OK)
   {
     Error_Handler();
   }
@@ -797,7 +794,7 @@ static void MX_TIM1_Init(void)
   {
     Error_Handler();
   }
-  sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
+  sMasterConfig.MasterOutputTrigger = TIM_TRGO_UPDATE;
   sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_ENABLE;
   if (HAL_TIMEx_MasterConfigSynchronization(&htim1, &sMasterConfig) != HAL_OK)
   {
@@ -857,6 +854,7 @@ static void MX_TIM2_Init(void)
   /* USER CODE END TIM2_Init 0 */
 
   TIM_ClockConfigTypeDef sClockSourceConfig = {0};
+  TIM_SlaveConfigTypeDef sSlaveConfig = {0};
   TIM_MasterConfigTypeDef sMasterConfig = {0};
   TIM_OC_InitTypeDef sConfigOC = {0};
 
@@ -879,6 +877,12 @@ static void MX_TIM2_Init(void)
     Error_Handler();
   }
   if (HAL_TIM_PWM_Init(&htim2) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sSlaveConfig.SlaveMode = TIM_SLAVEMODE_TRIGGER;
+  sSlaveConfig.InputTrigger = TIM_TS_ITR0;
+  if (HAL_TIM_SlaveConfigSynchro(&htim2, &sSlaveConfig) != HAL_OK)
   {
     Error_Handler();
   }
@@ -1566,4 +1570,3 @@ void assert_failed(uint8_t *file, uint32_t line)
 }
 #endif /* USE_FULL_ASSERT */
 
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="15702" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="15505" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="15702"/>
-        <plugIn identifier="com.apple.WebKit2IBPlugin" version="15702"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="15505"/>
+        <plugIn identifier="com.apple.WebKit2IBPlugin" version="15505"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -714,7 +714,7 @@
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="119" y="326" width="1198" height="647"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1280" height="800"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1440"/>
             <view key="contentView" id="EiT-Mj-1SZ">
                 <rect key="frame" x="0.0" y="0.0" width="1198" height="647"/>
                 <autoresizingMask key="autoresizingMask"/>
@@ -856,7 +856,7 @@
                                     <rect key="frame" x="6" y="5" width="90" height="25"/>
                                     <popUpButtonCell key="cell" type="push" title="Normal" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="e3f-QH-Vfu" id="UaB-Te-bXP">
                                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                                        <font key="font" metaFont="menu"/>
+                                        <font key="font" metaFont="system"/>
                                         <menu key="menu" id="Ztf-jE-exO">
                                             <items>
                                                 <menuItem title="Normal" state="on" id="e3f-QH-Vfu"/>
@@ -1222,7 +1222,7 @@
                                             <rect key="frame" x="122" y="207" width="93" height="25"/>
                                             <popUpButtonCell key="cell" type="push" title="power0" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="DgP-sL-kcM" id="XP9-nh-ts4">
                                                 <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                                                <font key="font" metaFont="menu"/>
+                                                <font key="font" metaFont="system"/>
                                                 <menu key="menu" id="9zT-1A-LqK">
                                                     <items>
                                                         <menuItem title="power0" state="on" id="DgP-sL-kcM" userLabel="power"/>
@@ -1281,7 +1281,7 @@
                                                         <tableColumns>
                                                             <tableColumn identifier="canton_num" width="54" minWidth="40" maxWidth="1000" id="420-cn-npo">
                                                                 <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" title="Num">
-                                                                    <font key="font" metaFont="smallSystem"/>
+                                                                    <font key="font" metaFont="message" size="11"/>
                                                                     <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                                     <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
                                                                 </tableHeaderCell>
@@ -1294,7 +1294,7 @@
                                                             </tableColumn>
                                                             <tableColumn identifier="C#_vidx" width="68" minWidth="40" maxWidth="1000" id="iRH-Zw-IWk">
                                                                 <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" title="VoltIDX">
-                                                                    <font key="font" metaFont="smallSystem"/>
+                                                                    <font key="font" metaFont="message" size="11"/>
                                                                     <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                                     <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
                                                                 </tableHeaderCell>
@@ -1307,7 +1307,7 @@
                                                             </tableColumn>
                                                             <tableColumn identifier="C#_pwm" width="66" minWidth="10" maxWidth="3.4028234663852886e+38" id="wmd-cg-L6s">
                                                                 <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="PWM">
-                                                                    <font key="font" metaFont="smallSystem"/>
+                                                                    <font key="font" metaFont="message" size="11"/>
                                                                     <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                 </tableHeaderCell>
@@ -1320,7 +1320,7 @@
                                                             </tableColumn>
                                                             <tableColumn identifier="C#_dir" width="64" minWidth="10" maxWidth="3.4028234663852886e+38" id="8fs-jI-DTg">
                                                                 <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Dir">
-                                                                    <font key="font" metaFont="smallSystem"/>
+                                                                    <font key="font" metaFont="message" size="11"/>
                                                                     <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                 </tableHeaderCell>
@@ -1333,7 +1333,7 @@
                                                             </tableColumn>
                                                             <tableColumn width="62" minWidth="10" maxWidth="3.4028234663852886e+38" id="kON-vu-UWa">
                                                                 <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Intensity">
-                                                                    <font key="font" metaFont="smallSystem"/>
+                                                                    <font key="font" metaFont="message" size="11"/>
                                                                     <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                 </tableHeaderCell>
@@ -1346,7 +1346,7 @@
                                                             </tableColumn>
                                                             <tableColumn width="80" minWidth="10" maxWidth="3.4028234663852886e+38" id="zEv-EL-8SQ">
                                                                 <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Ioff">
-                                                                    <font key="font" metaFont="smallSystem"/>
+                                                                    <font key="font" metaFont="message" size="11"/>
                                                                     <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                 </tableHeaderCell>
@@ -1359,7 +1359,7 @@
                                                             </tableColumn>
                                                             <tableColumn width="64" minWidth="10" maxWidth="3.4028234663852886e+38" id="iRI-YY-QgN">
                                                                 <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left">
-                                                                    <font key="font" metaFont="smallSystem"/>
+                                                                    <font key="font" metaFont="message" size="11"/>
                                                                     <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                 </tableHeaderCell>
@@ -1372,7 +1372,7 @@
                                                             </tableColumn>
                                                             <tableColumn width="320" minWidth="10" maxWidth="3.4028234663852886e+38" id="A1X-N6-kcs">
                                                                 <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left">
-                                                                    <font key="font" metaFont="smallSystem"/>
+                                                                    <font key="font" metaFont="message" size="11"/>
                                                                     <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                 </tableHeaderCell>
@@ -1432,7 +1432,7 @@
                                                         <tableColumns>
                                                             <tableColumn identifier="train_num" width="54" minWidth="40" maxWidth="1000" id="e7D-Vv-UKv">
                                                                 <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" title="Num">
-                                                                    <font key="font" metaFont="smallSystem"/>
+                                                                    <font key="font" metaFont="message" size="11"/>
                                                                     <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                                     <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
                                                                 </tableHeaderCell>
@@ -1445,7 +1445,7 @@
                                                             </tableColumn>
                                                             <tableColumn identifier="T#_ctrl_dir" width="50" minWidth="10" maxWidth="3.4028234663852886e+38" id="R6F-qe-ADj">
                                                                 <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Dir">
-                                                                    <font key="font" metaFont="smallSystem"/>
+                                                                    <font key="font" metaFont="message" size="11"/>
                                                                     <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                 </tableHeaderCell>
@@ -1458,7 +1458,7 @@
                                                             </tableColumn>
                                                             <tableColumn identifier="T#_ctrl_desired_speed" width="70" minWidth="40" maxWidth="1000" id="NIP-Xy-Cmj">
                                                                 <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" title="desired spd">
-                                                                    <font key="font" metaFont="smallSystem"/>
+                                                                    <font key="font" metaFont="message" size="11"/>
                                                                     <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                                     <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
                                                                 </tableHeaderCell>
@@ -1471,7 +1471,7 @@
                                                             </tableColumn>
                                                             <tableColumn identifier="T#_ctrl_target_speed" width="66" minWidth="10" maxWidth="3.4028234663852886e+38" id="X4m-6s-P2z">
                                                                 <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="target_spd">
-                                                                    <font key="font" metaFont="smallSystem"/>
+                                                                    <font key="font" metaFont="message" size="11"/>
                                                                     <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                 </tableHeaderCell>
@@ -1484,7 +1484,7 @@
                                                             </tableColumn>
                                                             <tableColumn identifier="T#_ctrl_state" width="64" minWidth="10" maxWidth="3.4028234663852886e+38" id="eQS-PZ-9LZ">
                                                                 <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="state">
-                                                                    <font key="font" metaFont="smallSystem"/>
+                                                                    <font key="font" metaFont="message" size="11"/>
                                                                     <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                 </tableHeaderCell>
@@ -1497,7 +1497,7 @@
                                                             </tableColumn>
                                                             <tableColumn identifier="T#_ctrl_canton1_addr" width="38" minWidth="10" maxWidth="3.4028234663852886e+38" id="Y8I-uD-Tx6">
                                                                 <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="C1">
-                                                                    <font key="font" metaFont="smallSystem"/>
+                                                                    <font key="font" metaFont="message" size="11"/>
                                                                     <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                 </tableHeaderCell>
@@ -1510,7 +1510,7 @@
                                                             </tableColumn>
                                                             <tableColumn identifier="T#_ctrl_canton2_addr" width="34" minWidth="10" maxWidth="3.4028234663852886e+38" id="zhj-qF-FCN" userLabel="C2">
                                                                 <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="C2">
-                                                                    <font key="font" metaFont="smallSystem"/>
+                                                                    <font key="font" metaFont="message" size="11"/>
                                                                     <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                 </tableHeaderCell>
@@ -1523,7 +1523,7 @@
                                                             </tableColumn>
                                                             <tableColumn identifier="T#_ctrl_spd_limit" width="59" minWidth="10" maxWidth="3.4028234663852886e+38" id="NXx-bG-yti">
                                                                 <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="spd limit">
-                                                                    <font key="font" metaFont="smallSystem"/>
+                                                                    <font key="font" metaFont="message" size="11"/>
                                                                     <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                 </tableHeaderCell>
@@ -1536,7 +1536,7 @@
                                                             </tableColumn>
                                                             <tableColumn identifier="T#_bemf_mv" width="66" minWidth="10" maxWidth="3.4028234663852886e+38" id="6l3-9J-Jwr">
                                                                 <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="bemf_mv">
-                                                                    <font key="font" metaFont="smallSystem"/>
+                                                                    <font key="font" metaFont="message" size="11"/>
                                                                     <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                 </tableHeaderCell>
@@ -1549,7 +1549,7 @@
                                                             </tableColumn>
                                                             <tableColumn identifier="T#_pid_target_v" width="77" minWidth="10" maxWidth="3.4028234663852886e+38" id="F0k-rT-Utc">
                                                                 <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="target_bemf">
-                                                                    <font key="font" metaFont="smallSystem"/>
+                                                                    <font key="font" metaFont="message" size="11"/>
                                                                     <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                 </tableHeaderCell>
@@ -1562,7 +1562,7 @@
                                                             </tableColumn>
                                                             <tableColumn identifier="T#_pose" width="60" minWidth="10" maxWidth="3.4028234663852886e+38" id="yJ8-8H-nUq">
                                                                 <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Pose">
-                                                                    <font key="font" metaFont="smallSystem"/>
+                                                                    <font key="font" metaFont="message" size="11"/>
                                                                     <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                 </tableHeaderCell>
@@ -1575,7 +1575,7 @@
                                                             </tableColumn>
                                                             <tableColumn identifier="T#_pose_trig1" width="128" minWidth="10" maxWidth="3.4028234663852886e+38" id="rrQ-Q2-fGx">
                                                                 <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Pose Trg">
-                                                                    <font key="font" metaFont="smallSystem"/>
+                                                                    <font key="font" metaFont="message" size="11"/>
                                                                     <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                 </tableHeaderCell>
@@ -1645,15 +1645,15 @@
                     <scrollView borderType="none" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Oda-jb-qBx">
                         <rect key="frame" x="283" y="8" width="895" height="91"/>
                         <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="GXn-x7-4go">
-                            <rect key="frame" x="0.0" y="0.0" width="895" height="91"/>
+                            <rect key="frame" x="0.0" y="0.0" width="880" height="91"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
                                 <textView editable="NO" importsGraphics="NO" richText="NO" verticallyResizable="YES" smartInsertDelete="YES" id="YXl-3q-GOv">
-                                    <rect key="frame" x="0.0" y="0.0" width="895" height="91"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="880" height="91"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                    <size key="minSize" width="895" height="91"/>
+                                    <size key="minSize" width="880" height="91"/>
                                     <size key="maxSize" width="895" height="10000000"/>
                                     <color key="insertionPointColor" name="textColor" catalog="System" colorSpace="catalog"/>
                                 </textView>
@@ -1667,7 +1667,7 @@
                             <autoresizingMask key="autoresizingMask"/>
                         </scroller>
                         <scroller key="verticalScroller" wantsLayer="YES" verticalHuggingPriority="750" horizontal="NO" id="9q2-xn-bbQ">
-                            <rect key="frame" x="879" y="0.0" width="16" height="91"/>
+                            <rect key="frame" x="880" y="0.0" width="15" height="91"/>
                             <autoresizingMask key="autoresizingMask"/>
                         </scroller>
                     </scrollView>
@@ -1805,7 +1805,7 @@
                                     <rect key="frame" x="6" y="34" width="99" height="25"/>
                                     <popUpButtonCell key="cell" type="push" title="Off" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="rZI-tR-AtI" id="ggg-3B-Wu3">
                                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                                        <font key="font" metaFont="menu"/>
+                                        <font key="font" metaFont="system"/>
                                         <menu key="menu" id="OSM-Od-2nS">
                                             <items>
                                                 <menuItem title="Off" state="on" id="rZI-tR-AtI"/>
@@ -1961,7 +1961,7 @@
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="109" y="138" width="708" height="600"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1280" height="800"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1440"/>
             <view key="contentView" id="eW8-Bh-GGe">
                 <rect key="frame" x="0.0" y="0.0" width="708" height="600"/>
                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
@@ -1981,7 +1981,7 @@
                                                 <constraint firstAttribute="width" constant="52" id="5db-lV-NAA"/>
                                             </constraints>
                                             <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" title="PWM freq" id="ZSs-mL-lqQ">
-                                                <font key="font" metaFont="smallSystem"/>
+                                                <font key="font" metaFont="message" size="11"/>
                                                 <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
@@ -2046,7 +2046,7 @@
                                                         </constraints>
                                                         <buttonCell key="cell" type="push" title="default" bezelStyle="rounded" alignment="center" controlSize="small" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="cKV-Mb-tSN">
                                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                                            <font key="font" metaFont="smallSystem"/>
+                                                            <font key="font" metaFont="message" size="11"/>
                                                         </buttonCell>
                                                         <connections>
                                                             <action selector="defaultInertia:" target="Voe-Tx-rLC" id="dyH-i2-bnB"/>
@@ -2073,7 +2073,7 @@
                                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="fpO-vV-0vK">
                                                         <rect key="frame" x="14" y="142" width="100" height="14"/>
                                                         <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" title="acceleration" id="gqN-wc-ttQ">
-                                                            <font key="font" metaFont="smallSystem"/>
+                                                            <font key="font" metaFont="message" size="11"/>
                                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
@@ -2096,7 +2096,7 @@
                                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Opi-ph-Qro">
                                                         <rect key="frame" x="14" y="85" width="100" height="14"/>
                                                         <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" title="deceleration" id="g85-er-H2Z">
-                                                            <font key="font" metaFont="smallSystem"/>
+                                                            <font key="font" metaFont="message" size="11"/>
                                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
@@ -2105,7 +2105,7 @@
                                                         <rect key="frame" x="11" y="14" width="49" height="27"/>
                                                         <buttonCell key="cell" type="push" title="zero" bezelStyle="rounded" alignment="center" controlSize="small" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="A9u-VX-QQ5">
                                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                                            <font key="font" metaFont="smallSystem"/>
+                                                            <font key="font" metaFont="message" size="11"/>
                                                         </buttonCell>
                                                         <connections>
                                                             <action selector="zeroInertia:" target="Voe-Tx-rLC" id="PnQ-gh-LdN"/>
@@ -2115,7 +2115,7 @@
                                                         <rect key="frame" x="14" y="169" width="101" height="25"/>
                                                         <popUpButtonCell key="cell" type="push" title="disable" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="dtn-d3-lif" id="p96-M5-dhc">
                                                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                                                            <font key="font" metaFont="menu"/>
+                                                            <font key="font" metaFont="system"/>
                                                             <menu key="menu" id="uGO-Hy-dbN">
                                                                 <items>
                                                                     <menuItem title="disable" state="on" id="dtn-d3-lif"/>
@@ -2173,7 +2173,7 @@
                                                             <constraint firstAttribute="width" constant="24" id="46A-RR-PqL"/>
                                                         </constraints>
                                                         <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" title="kP" id="oHa-AJ-LgD">
-                                                            <font key="font" metaFont="smallSystem"/>
+                                                            <font key="font" metaFont="message" size="11"/>
                                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
@@ -2184,7 +2184,7 @@
                                                             <constraint firstAttribute="width" constant="24" id="bqd-bW-vuW"/>
                                                         </constraints>
                                                         <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" title="kD" id="ukZ-fl-lYT">
-                                                            <font key="font" metaFont="smallSystem"/>
+                                                            <font key="font" metaFont="message" size="11"/>
                                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
@@ -2247,7 +2247,7 @@
                                                         <rect key="frame" x="13" y="120" width="135" height="18"/>
                                                         <buttonCell key="cell" type="check" title="BEMF pre IIR" bezelStyle="regularSquare" imagePosition="left" controlSize="small" inset="2" id="TXT-3V-WFT">
                                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                                            <font key="font" metaFont="smallSystem"/>
+                                                            <font key="font" metaFont="message" size="11"/>
                                                             <connections>
                                                                 <action selector="changeParam:" target="Voe-Tx-rLC" id="GRd-b0-KZp"/>
                                                             </connections>
@@ -2259,7 +2259,7 @@
                                                             <constraint firstAttribute="width" constant="24" id="r6W-Kb-OSt"/>
                                                         </constraints>
                                                         <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" title="kI" id="apA-uN-TeI">
-                                                            <font key="font" metaFont="smallSystem"/>
+                                                            <font key="font" metaFont="message" size="11"/>
                                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
@@ -2268,7 +2268,7 @@
                                                         <rect key="frame" x="13" y="100" width="135" height="18"/>
                                                         <buttonCell key="cell" type="check" title="Cmd post IIR" bezelStyle="regularSquare" imagePosition="left" controlSize="small" inset="2" id="3Yc-T7-6OM">
                                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                                            <font key="font" metaFont="smallSystem"/>
+                                                            <font key="font" metaFont="message" size="11"/>
                                                             <connections>
                                                                 <action selector="changeParam:" target="Voe-Tx-rLC" id="wBA-4Y-NcN"/>
                                                             </connections>
@@ -2278,7 +2278,7 @@
                                                         <rect key="frame" x="13" y="140" width="135" height="18"/>
                                                         <buttonCell key="cell" type="check" title="BEMF correct w/ cal" bezelStyle="regularSquare" imagePosition="left" controlSize="small" inset="2" id="mgc-JB-jhn">
                                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                                            <font key="font" metaFont="smallSystem"/>
+                                                            <font key="font" metaFont="message" size="11"/>
                                                             <connections>
                                                                 <action selector="changeParam:" target="Voe-Tx-rLC" id="j5o-4a-FmQ"/>
                                                             </connections>
@@ -2411,7 +2411,7 @@
                                                         <rect key="frame" x="240" y="25" width="99" height="25"/>
                                                         <popUpButtonCell key="cell" type="push" title="Normal" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="YZs-cM-1gR" id="bM7-6n-IMl">
                                                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                                                            <font key="font" metaFont="menu"/>
+                                                            <font key="font" metaFont="system"/>
                                                             <menu key="menu" id="lFd-MQ-UL0">
                                                                 <items>
                                                                     <menuItem title="Normal" state="on" id="YZs-cM-1gR"/>
@@ -3715,7 +3715,7 @@
                                                 <constraint firstAttribute="width" constant="52" id="jIp-Gj-pOw"/>
                                             </constraints>
                                             <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" title="PWM freq" id="dfJ-92-9ps">
-                                                <font key="font" metaFont="smallSystem"/>
+                                                <font key="font" metaFont="message" size="11"/>
                                                 <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
@@ -3771,7 +3771,7 @@
                                             <rect key="frame" x="18" y="21" width="99" height="25"/>
                                             <popUpButtonCell key="cell" type="push" title="Normal" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="BVj-ui-P6c" id="XJT-cG-UKZ">
                                                 <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                                                <font key="font" metaFont="menu"/>
+                                                <font key="font" metaFont="system"/>
                                                 <menu key="menu" id="ddv-7O-iU1">
                                                     <items>
                                                         <menuItem title="Normal" state="on" id="BVj-ui-P6c"/>
@@ -3831,13 +3831,13 @@
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="109" y="138" width="480" height="270"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1280" height="800"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1440"/>
             <view key="contentView" id="NAU-Et-RMZ">
                 <rect key="frame" x="0.0" y="0.0" width="480" height="270"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <segmentedControl verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="1yj-3d-cOG">
-                        <rect key="frame" x="18" y="227" width="369" height="24"/>
+                        <rect key="frame" x="18" y="227" width="353" height="24"/>
                         <segmentedCell key="cell" borderStyle="border" alignment="left" style="rounded" trackingMode="selectOne" id="HZj-IR-VWO">
                             <font key="font" metaFont="system"/>
                             <segments>
@@ -3877,7 +3877,7 @@
                         </connections>
                     </textField>
                     <stepper horizontalHuggingPriority="750" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="E2K-gG-0P1">
-                        <rect key="frame" x="133" y="175" width="19" height="27"/>
+                        <rect key="frame" x="133" y="175" width="19" height="28"/>
                         <stepperCell key="cell" continuous="YES" alignment="left" maxValue="4" id="HYz-uq-rNO"/>
                         <connections>
                             <binding destination="Voe-Tx-rLC" name="value" keyPath="testCanton" id="76b-xX-a9e"/>
@@ -3902,7 +3902,7 @@
                         </connections>
                     </textField>
                     <stepper horizontalHuggingPriority="750" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="hkq-zl-uU1">
-                        <rect key="frame" x="133" y="97" width="19" height="27"/>
+                        <rect key="frame" x="133" y="97" width="19" height="28"/>
                         <stepperCell key="cell" continuous="YES" alignment="left" maxValue="7" id="7iE-Vf-qfm"/>
                         <connections>
                             <binding destination="Voe-Tx-rLC" name="value" keyPath="testVoltIdx" id="bek-FC-o5m"/>

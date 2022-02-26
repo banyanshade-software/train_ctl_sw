@@ -1900,6 +1900,7 @@ void notif_target_bemf(const train_config_t *cnf, train_vars_t *vars, int32_t va
     [gnuplotTask launchAndReturnError:&err];
     if (err) {
         NSLog(@"launch error : %@\n", err);
+        gnuplotTask = nil;
     }
 }
 

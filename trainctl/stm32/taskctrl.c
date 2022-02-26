@@ -68,7 +68,7 @@ extern DMA_HandleTypeDef hdma_i2c3_tx;
 // ADC/Vof   NOTIF_  conv/f2/  "osc evtadc "tim"  unk b3 "tx trunc" pwmfreq
 
 
-int cur_freqhz = 50;
+int cur_freqhz = 100;
 static int numsampling = 0;
 
 /*
@@ -157,7 +157,8 @@ void StartCtrlTask(_UNUSED_ void *argument)
 	TIM_ResetCounter(&htim1);
 	TIM_ResetCounter(&htim2);
 	TIM_ResetCounter(&htim3);
-	HAL_TIM_Base_Start_IT(&htim1);
+	//HAL_TIM_Base_Start_IT(&htim1);
+	HAL_TIM_Base_Start(&htim1);
 	HAL_TIM_Base_Start(&htim2);
 	HAL_TIM_Base_Start(&htim3);
 	HAL_TIM_Base_Start(&htim8);
@@ -198,7 +199,7 @@ extern TIM_HandleTypeDef htim1;
 // #define __HAL_TIM_SET_PRESCALER(__HANDLE__, __PRESC__)       ((__HANDLE__)->Instance->PSC = (__PRESC__))
 void set_pwm_freq(int freqhz)
 {
-	if ((0)) return;
+	if ((1)) return;
 	if (!freqhz) {
 		return;
 	}

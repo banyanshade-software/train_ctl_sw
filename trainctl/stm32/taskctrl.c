@@ -110,6 +110,7 @@ static void TIM_ResetCounter(int tn, TIM_HandleTypeDef *htim)
 	/* Reset the Counter Register value */
 	TIMx->CNT = 0;
 	if (tn==8) return;
+	if (tn==5) return;
 	// #define __HAL_TIM_IS_TIM_COUNTING_DOWN(__HANDLE__)    (((__HANDLE__)->Instance->CR1 &(TIM_CR1_DIR)) == (TIM_CR1_DIR))
 
 	itm_debug2(DBG_TIM, "CR1 : ", tn, (TIMx->CR1 & TIM_CR1_DIR) ? 1 : 0);

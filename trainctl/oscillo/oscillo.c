@@ -39,7 +39,7 @@ extern TIM_HandleTypeDef htim8;
 
 //#define OSC_NUM_SAMPLES 32
 
-static osc_values_t oscilo_buf[OSC_NUM_SAMPLES] __attribute__ ((aligned(32)));
+static osc_values_t oscilo_buf[OSC_NUM_SAMPLES];// __attribute__ ((aligned(32)));
 static int oscilo_index = 0;
 
 static volatile int oscilo_run = 0;
@@ -173,23 +173,24 @@ void tim5_elapsed(void)
 	} else {
 		if (adc_in_progress) {
 			itm_debug1(DBG_TIM, "ADC  pgrs", adc_in_progress);
+			for (int i= 0; i<4; i++) {
+				oscilo_buf[oscilo_index-1].vadc[i] = 42; // marker for detection
+			}
 			return;
 		}
 		adc_in_progress = 1;
-		if ((0)) {
-			HAL_ADC_Start_DMA(&hadc2,(uint32_t *)(&oscilo_buf[oscilo_index-1].vadc[0]), 4);
-		} else {
-			memcpy(&oscilo_buf[oscilo_index-1].vadc[0],adcbuf, 2*4);
-			memset(adcbuf, 0, sizeof(adcbuf));
-			HAL_ADC_Start_DMA(&hadc2,(uint32_t *)adcbuf, 4);
 
-		}
+		memcpy(&oscilo_buf[oscilo_index-1].vadc[0],adcbuf, 2*4);
+		memset(adcbuf, 0, sizeof(adcbuf));
+		HAL_ADC_Start_DMA(&hadc2,(uint32_t *)adcbuf, 4);
+
+
 	}
 }
 
 static void conv_done(int f)
 {
-	if (f) adc_in_progress = 0;
+	if (f==1) adc_in_progress = 0;
 	//itm_debug1(DBG_TIM, "CONV", f);
 }
 

@@ -27,6 +27,7 @@ void bemf_reset(void);
 void bemf_msg(msg_64_t *m);
 void bemf_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt);
 
+#define NEW_ADC_AVG 0
 
 typedef struct {
 	// uint16_t I;
@@ -44,7 +45,8 @@ typedef struct {
 #endif
 } adc_buf_t;
 
-
+#if NEW_ADC_AVG
+#else
 typedef adc_buf_t adc_result_t;
 
 
@@ -52,6 +54,7 @@ typedef adc_buf_t adc_result_t;
 
 extern volatile adc_buf_t train_adc_buf[2]; // double buffer
 #define adc_result train_adc_buf
+#endif // NEW_ADC_AVG
 
 extern runmode_t bemf_run_mode;
 

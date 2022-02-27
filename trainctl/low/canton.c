@@ -307,13 +307,13 @@ HAL_StatusTypeDef my_HAL_TIM_PWM_Stop(TIM_HandleTypeDef *htim, uint32_t Channel)
  * it seems that output goes to high impedence when we stop pwm ????
  */
 
-#if 1
-#define CNT_OFF 0
-#define CNT_ON(_v) (_v)
-#else
-	// with polarity low on channels
+#if NEW_ADC_AVG
+// with polarity low on channels
 #define CNT_OFF 200
 #define CNT_ON(_v) (200-(_v))
+#else
+#define CNT_OFF 0
+#define CNT_ON(_v) (_v)
 #endif
 
 static void canton_set_pwm(int cidx, const canton_config_t *c, canton_vars_t *v,  int8_t dir, int duty)

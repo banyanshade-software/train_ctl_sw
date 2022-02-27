@@ -29,7 +29,7 @@ static uint8_t bemf_to[NUM_LOCAL_CANTONS_SW] = {0xFF};
 static uint8_t bemf_to[NUM_LOCAL_CANTONS_SW] = {0xFF, 0xFF, 0xFF, 0xFF,  0xFF, 0xFF, 0xFF, 0xFF};
 #endif
 
-static void process_adc(volatile adc_buf_t *buf, uint32_t deltaticks);
+static void process_adc(volatile adc_result_t *buf, uint32_t deltaticks);
 
 
 #define USE_CANTON(_idx) \
@@ -76,10 +76,10 @@ void bemf_tick(uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_ uint32_t d
 			itm_debug1(DBG_ERR|DBG_LOWCTRL|DBG_TIM, "both", (int) notif_flags);
 			runtime_error(ERR_DMA, "both NEW_ADC1 and NEW_ADC2");
 		}
-		process_adc(&train_adc_buf[0], dt);
+		process_adc(&adc_result[0], dt);
 	}
 	if (notif_flags & NOTIF_NEW_ADC_2) {
-		process_adc(&train_adc_buf[1], dt);
+		process_adc(&adc_result[1], dt);
 	}
 }
 
@@ -158,7 +158,7 @@ static inline int32_t bemf_convert_to_millivolt(_UNUSED_ const canton_config_t *
 
 /// ---------------------------------------------------------------------------------------
 
-static void process_adc(volatile adc_buf_t *buf, _UNUSED_ uint32_t deltaticks)
+static void process_adc(volatile adc_result_t *buf, _UNUSED_ uint32_t deltaticks)
 {
 	static int cnt=0;
 	cnt++; // for debug, allow us to print msg every x adc conversiont

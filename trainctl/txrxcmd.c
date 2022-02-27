@@ -284,6 +284,8 @@ static uint8_t process_frame_cmd(uint8_t sel, uint8_t num,  uint8_t cmd, uint8_t
 		case 'W':
 			//rc = turnout_test(num);
 			break;
+		default:
+			break;
 		}
 		break;
 	case 'G':

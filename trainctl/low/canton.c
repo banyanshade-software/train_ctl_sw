@@ -307,7 +307,7 @@ HAL_StatusTypeDef my_HAL_TIM_PWM_Stop(TIM_HandleTypeDef *htim, uint32_t Channel)
  * it seems that output goes to high impedence when we stop pwm ????
  */
 
-#if 0
+#if 1
 #define CNT_OFF 0
 #define CNT_ON(_v) (_v)
 #else

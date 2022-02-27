@@ -16,7 +16,7 @@
 #include "txrxtask.h"
 
 
-
+// APP_RX_DATA_SIZE
 #ifndef BOARD_HAS_USB
 #error BOARD_HAS_USB not defined, remove this file from build
 #endif
@@ -37,7 +37,7 @@
 #else
 #include "stm32f1xx_hal.h"
 #endif
-
+#include "../oscillo/oscilo.h"
 
 
 uint32_t num_msg_get = 0;
@@ -89,7 +89,7 @@ void StartTxRxFrameTask(_UNUSED_ void *argument)
 			continue;
 		}
 		if (m.t == TXFRAME_TYPE_OSCILO) {
-			uint32_t t = HAL_GetTick();   // XXX t0
+			_UNUSED_ uint32_t t = HAL_GetTick();   // XXX t0
 			uint8_t b[]="|_NG\000Y"; //
 			//memcpy(b+6, &t, 4);
 			_send_bytes(b, 6);

@@ -1647,21 +1647,25 @@ uint32_t SimuTick = 0;
 
     
     for (int i =0; i<2; i++) {
-        //memset((void*)&(adc_result[i]), 0, sizeof(adc_result));
+#if NEW_ADC_AVG
+        memset((void*)&(adc_result[i]), 0, sizeof(adc_result));
+#else
         memset((void*)&(train_adc_buf[i]), 0, sizeof(adc_buf_t));
+#endif
 
     }
     
     [_simTrain0 computeTrainsAfter:mdt sinceStart:mt];
     for (int nc = 0; nc < NUM_LOCAL_CANTONS_HW; nc++) {
         double bemf = [_simTrain0 bemfForCantonNum:nc];
-        // xxxx
         int bemfi = -(bemf/4.545) * 3.3 *4096;
-        //NSLog(@"bemf %f -> %d\n", bemf, bemfi);
-        //adc_result[0].meas[nc].vA = (bemfi>0) ? 0 : -bemfi;
-        //adc_result[0].meas[nc].vB = (bemfi>0) ? bemfi : 0;
+#if NEW_ADC_AVG
+        adc_result[0].meas[nc].vA = (bemfi>0) ? 0 : -bemfi;
+        adc_result[0].meas[nc].vB = (bemfi>0) ? bemfi : 0;
+#else
         train_adc_buf[0].off[nc].vA = (bemfi>0) ? 0 : -bemfi;
         train_adc_buf[0].off[nc].vB = (bemfi>0) ? bemfi : 0;
+#endif
     }
     
 

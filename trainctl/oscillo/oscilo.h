@@ -42,4 +42,8 @@ extern volatile uint8_t oscilo_evtadc;
 
 extern volatile int ocillo_enable;
 
+
+void frame_send_oscilo(void(*cb)(uint8_t *d, int l));
+
+
 #endif /* oscilo_h */

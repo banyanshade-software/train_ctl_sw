@@ -18,7 +18,17 @@
 #endif
 
 
+#if NEW_ADC_AVG
+
+volatile adc_result_t adc_result[2]; // double buffer
+
+#else
+
 volatile adc_buf_t train_adc_buf[2]; // double buffer
+
+#endif
+
+
 
 runmode_t bemf_run_mode = runmode_off;
 uint8_t bemf_test_all = 0;
@@ -179,11 +189,17 @@ static void process_adc(volatile adc_result_t *buf, _UNUSED_ uint32_t deltaticks
 
 		const canton_config_t *c = get_canton_cnf(i);
 
+#if NEW_ADC_AVG
+		int32_t voffa = bemf_convert_to_millivolt(c, buf->meas[i].vA);
+		int32_t voffb = bemf_convert_to_millivolt(c, buf->meas[i].vB);
+		int32_t vona = 0; // not available with NEW_ADC_AVG
+		int32_t vonb = 0;
+#else
 		int32_t voffa = bemf_convert_to_millivolt(c, buf->off[i].vA);
 		int32_t voffb = bemf_convert_to_millivolt(c, buf->off[i].vB);
 		int32_t vona =  bemf_convert_to_millivolt(c, buf->on[i].vA);
 		int32_t vonb =  bemf_convert_to_millivolt(c, buf->on[i].vB);
-
+#endif
 		int16_t voff = (int16_t)(voffb-voffa);
 		int16_t von  = (int16_t)(vonb-vona);
 

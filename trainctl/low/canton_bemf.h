@@ -27,7 +27,35 @@ void bemf_reset(void);
 void bemf_msg(msg_64_t *m);
 void bemf_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt);
 
-#define NEW_ADC_AVG 0
+#define NEW_ADC_AVG 1
+
+
+#if NEW_ADC_AVG
+typedef struct {
+        uint16_t vA;
+        uint16_t vB;
+} adc_per_blk_t;
+
+typedef struct {
+        uint32_t vA;
+        uint32_t vB;
+} adc_per_blk_32_t;
+
+typedef struct {
+        adc_per_blk_t meas[NUM_LOCAL_CANTONS_HW];
+} adc_buf_t;
+
+
+typedef struct {
+        adc_per_blk_32_t meas[NUM_LOCAL_CANTONS_HW];
+} adc_result_t;
+
+
+extern volatile adc_result_t adc_result[2]; // double buffer
+
+#else
+
+
 
 typedef struct {
 	// uint16_t I;
@@ -35,18 +63,13 @@ typedef struct {
 	uint16_t vB;
 } adc_per_blk_t;
 
+
 typedef struct {
-#if 0
-	adc_per_blk_t off[NUM_LOCAL_CANTONS_HW];
-	adc_per_blk_t on[NUM_LOCAL_CANTONS_HW];
-#else
 	adc_per_blk_t on[NUM_LOCAL_CANTONS_HW];
 	adc_per_blk_t off[NUM_LOCAL_CANTONS_HW];
-#endif
 } adc_buf_t;
 
-#if NEW_ADC_AVG
-#else
+
 typedef adc_buf_t adc_result_t;
 
 

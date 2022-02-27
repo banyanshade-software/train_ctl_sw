@@ -1520,15 +1520,15 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 			  uint32_t t1 = __HAL_TIM_GET_COUNTER(&htim1);
 			  uint32_t t2 = __HAL_TIM_GET_COUNTER(&htim2);
 			  uint32_t t3 = __HAL_TIM_GET_COUNTER(&htim3);
-			  uint32_t t4 = __HAL_TIM_GET_COUNTER(&htim4);
-			  uint32_t t8 = __HAL_TIM_GET_COUNTER(&htim8);
-			  uint32_t t12 = __HAL_TIM_GET_COUNTER(&htim12);
-			  HAL_TIM_StateTypeDef s1 = HAL_TIM_PWM_GetState(&htim1);
-			  HAL_TIM_StateTypeDef s2 = HAL_TIM_PWM_GetState(&htim2);
-			  HAL_TIM_StateTypeDef s3 = HAL_TIM_PWM_GetState(&htim3);
-			  HAL_TIM_StateTypeDef s4 = HAL_TIM_PWM_GetState(&htim4);
-			  HAL_TIM_StateTypeDef s8 = HAL_TIM_PWM_GetState(&htim8);
-			  HAL_TIM_StateTypeDef s12 = HAL_TIM_PWM_GetState(&htim12);
+			  _UNUSED_ uint32_t t4 = __HAL_TIM_GET_COUNTER(&htim4);
+			  _UNUSED_ uint32_t t8 = __HAL_TIM_GET_COUNTER(&htim8);
+			  _UNUSED_ uint32_t t12 = __HAL_TIM_GET_COUNTER(&htim12);
+			  _UNUSED_ HAL_TIM_StateTypeDef s1 = HAL_TIM_PWM_GetState(&htim1);
+			  _UNUSED_ HAL_TIM_StateTypeDef s2 = HAL_TIM_PWM_GetState(&htim2);
+			  _UNUSED_ HAL_TIM_StateTypeDef s3 = HAL_TIM_PWM_GetState(&htim3);
+			  _UNUSED_ HAL_TIM_StateTypeDef s4 = HAL_TIM_PWM_GetState(&htim4);
+			  _UNUSED_ HAL_TIM_StateTypeDef s8 = HAL_TIM_PWM_GetState(&htim8);
+			  _UNUSED_ HAL_TIM_StateTypeDef s12 = HAL_TIM_PWM_GetState(&htim12);
 
 			  itm_debug3(DBG_TIM,"tim", t1, t2, t3);
 		  }

@@ -153,9 +153,10 @@ void StartCtrlTask(_UNUSED_ void *argument)
 #else
 	adc_nsmpl = sizeof(train_adc_buf)/sizeof(uint16_t);
 	if (sizeof(train_adc_buf) != sizeof(uint16_t)*NUM_LOCAL_CANTONS_HW*8) Error_Handler();
+	if (adc_nsmpl != NUM_LOCAL_CANTONS_HW*2*4) Error_Handler();
 #endif
 
-	if (adc_nsmpl != NUM_LOCAL_CANTONS_HW*2*4) Error_Handler();
+
 	if (NUM_LOCAL_CANTONS_HW != 6) Error_Handler();
 
 
@@ -206,7 +207,7 @@ void StartCtrlTask(_UNUSED_ void *argument)
 
 
 
-	// XXX XXX XXX XXX
+	if (!adc_nsmpl) Error_Handler();
 	memset((void *)train_adc_buf, 0, sizeof(train_adc_buf));
 	HAL_ADC_Start_DMA(&hadc1,(uint32_t *)train_adc_buf, adc_nsmpl);
 
@@ -303,7 +304,7 @@ static void run_task_ctrl(void)
 			int n = 0;
 			if (notif & NOTIF_NEW_ADC_1)  n = 1;
 			if (notif & NOTIF_NEW_ADC_2)  n |= 2;
-			itm_debug2(DBG_LOWCTRL, "-----", 0 /*(notif & NOTIF_TIM8) ? 1 : 0*/, n);
+			itm_debug2(DBG_LOWCTRL|DBG_TIM, "-----", 0 /*(notif & NOTIF_TIM8) ? 1 : 0*/, n);
 			if (n==3) {
 				itm_debug1(DBG_LOWCTRL|DBG_ERR, "both", n);
 				if ((1)) continue; // skip this tick

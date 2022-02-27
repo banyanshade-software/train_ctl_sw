@@ -24,7 +24,8 @@ void mqf_clear(mqf_t *m)
 	m->maxuse = 0;
 }
 
-int mqf_len(mqf_t *m)
+
+static inline int _mqf_len(mqf_t *m)
 {
 	int l;
 	if (m->head >= m->tail) {
@@ -38,6 +39,11 @@ int mqf_len(mqf_t *m)
 	}
 	return l;
 }
+int mqf_len(mqf_t *m)
+{
+	return _mqf_len(m);
+}
+
 
 void dump_msg(mqf_t *mq, int n);
 
@@ -48,7 +54,7 @@ void mqf_qfull(mqf_t *m, _UNUSED_ int t)
 		static uint8_t dmp = 0;
 		if (dmp) {
 			dmp = 0;
-			for (int i=0; i<mqf_len(m); i++) {
+			for (int i=0; i<_mqf_len(m); i++) {
 				dump_msg(m, i);
 			}
 		}
@@ -56,7 +62,7 @@ void mqf_qfull(mqf_t *m, _UNUSED_ int t)
 }
 int mqf_write(mqf_t *m, void *ptr)
 {
-	int l = mqf_len(m);
+	int l = _mqf_len(m);
 	void Error_Handler(void);
 	if (l<0) Error_Handler();
 	if (l > m->maxuse) m->maxuse = (int8_t) l;
@@ -85,7 +91,7 @@ int mqf_write(mqf_t *m, void *ptr)
 
 int mqf_read(mqf_t *m, void *ptr)
 {
-	if (!mqf_len(m)) return -1;
+	if (!_mqf_len(m)) return -1;
     void *p = &(m->msgbuf[m->tail*m->msgsiz]);
     memcpy(ptr, p, m->msgsiz);
     //__barrier();

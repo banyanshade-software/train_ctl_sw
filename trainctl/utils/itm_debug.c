@@ -119,14 +119,14 @@ char* itoa ( int32_t  value,  char str[],  int radix)
 
 
 
-static void write_num(uint8_t *buf, uint32_t v, int ndigit)
+static void write_num(char *buf, uint32_t v, int ndigit)
 {
 	for (;ndigit>0; ndigit--) {
 		buf[ndigit-1] = '0'+ (v % 10);
 		v = v/10;
 	}
 }
-
+#if 0
 #ifndef TRAIN_SIMU
 int _write(_UNUSED_ int32_t file, uint8_t *ptr, int32_t len)
 {
@@ -137,8 +137,22 @@ int _write(_UNUSED_ int32_t file, uint8_t *ptr, int32_t len)
 	return len;
 }
 #endif
+#endif
 
+static inline void mywrite(const char *ptr, int32_t len)
+{
+#ifndef TRAIN_SIMU
+	for (int i = 0; i < len; i++)
+	{
+		ITM_SendChar(*ptr++);
+	}
+#else
+    ssize_t  write(int fildes, const void *buf, size_t nbyte);
+    write(0, ptr, len);
+#endif
+}
 
+#if 0
 void _itm_debug3(int err, const char *msg, int32_t v1, int32_t v2, int32_t v3, int n)
 {
 	uint8_t buf[64];
@@ -168,4 +182,44 @@ done:
     puts((char*)buf);
     //write(0, buf, strlen((char *)buf));
 #endif
+}
+
+#endif
+
+/*
+ * before: StartCtrlTask max 858
+ */
+
+void _itm_debug3(int err, const char *msg, int32_t v1, int32_t v2, int32_t v3, int n)
+{
+	char buf[12];
+	memset(buf, 0, sizeof(buf));
+    uint32_t tck = HAL_GetTick();
+	write_num(buf, tck, 7);
+	buf[7] = err ? '@' : ':';
+	mywrite(buf, 8);
+	int l = MIN(12, strlen(msg));
+	mywrite(msg, l);
+	if (!n--) goto done;
+
+	buf[0] = '/';
+	itoa(v1, buf+1, 10);
+    l = MIN(12, strlen(buf));
+    mywrite(buf, l);
+	if (!n--) goto done;
+
+	buf[0] = '/';
+	itoa(v2, buf+1, 10);
+    l = MIN(12, strlen(buf));
+    mywrite(buf, l);
+	if (!n--) goto done;
+
+	buf[0] = '/';
+	itoa(v3, buf+1, 10);
+    l = MIN(12, strlen(buf));
+    mywrite(buf, l);
+	if (!n--) goto done;
+
+done:
+	mywrite("\n", 1);
 }

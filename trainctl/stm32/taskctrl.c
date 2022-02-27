@@ -425,7 +425,7 @@ void HAL_ADC_ConvHalfCpltCallback(_UNUSED_ ADC_HandleTypeDef* hadc)
 
 	oscilo_evtadc = 1;
 	BaseType_t higher=0;
-	if ((1)) itm_debug1(DBG_TIM, "conv/h", HAL_GetTick());
+	if ((0)) itm_debug1(DBG_TIM, "conv/h", HAL_GetTick());
 	xTaskNotifyFromISR(ctrlTaskHandle, NOTIF_NEW_ADC_1, eSetBits, &higher);
 	portYIELD_FROM_ISR(higher);
 }

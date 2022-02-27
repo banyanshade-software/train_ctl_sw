@@ -471,7 +471,7 @@ void trkpln_process(void)
         }
         m /= NUM_POPULATION;
         //printf("average score : %f\n", m);
-        printf("average score : %d\n", m);
+        printf("average score : %d\n", (int) m);
         int nkill = 0;
         for (int pop = 0; pop<NUM_POPULATION; pop++) {
             if (population[pop].score<m) {

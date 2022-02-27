@@ -147,7 +147,8 @@ static inline void mywrite(const char *ptr, int32_t len)
 		ITM_SendChar(*ptr++);
 	}
 #else
-	write(0, ptr, len)
+    ssize_t  write(int fildes, const void *buf, size_t nbyte);
+    write(0, ptr, len);
 #endif
 }
 

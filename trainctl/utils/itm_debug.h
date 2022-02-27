@@ -39,6 +39,7 @@ extern uint32_t debug_flags;
 //void _itm_debug2(const char *msg, int v1, int v2);
 void _itm_debug3(int err, const char *msg, int32_t v1, int32_t v2, int32_t v3, int n);
 
+#if 1
 static inline void itm_debug1(uint32_t f, const char *msg, int32_t v)
 {
 	if (f & debug_flags) _itm_debug3(f & DBG_ERR, msg, v, 0, 0, 1);
@@ -51,5 +52,13 @@ static inline void itm_debug3(uint32_t f, const char *msg, int32_t v1, int32_t v
 {
 	if (f & debug_flags) _itm_debug3(f & DBG_ERR, msg, v1, v2, v3, 3);
 }
+#else
+
+#define itm_debug1(_flags, _msg, _v1)           do { _itm_debug3((_flags) & DBG_ERR, _msg, _v1,   0,   0, 1); } while(0)
+#define itm_debug2(_flags, _msg, _v1, _v2)      do { _itm_debug3((_flags) & DBG_ERR, _msg, _v1, _v2,   0, 2); } while(0)
+#define itm_debug3(_flags, _msg, _v1, _v2, _v3) do { _itm_debug3((_flags) & DBG_ERR, _msg, _v1, _v2, _v3, 3); } while(0)
+
+#endif
+
 
 #endif /* UTILS_ITM_DEBUG_H_ */

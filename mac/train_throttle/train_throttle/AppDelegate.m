@@ -2257,6 +2257,19 @@ didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic
     [self sendMsg64:m];
 }
 
+#pragma mark -
+
+- (IBAction) triggerOscillo:(id)sender
+{
+    msg_64_t m;
+    m.to = MA_TRAIN_SC(0);
+    m.from = MA_UI(UISUB_USB);
+    m.cmd = CMD_TRIG_OSCILLO;
+    m.v1u = 0;
+    m.v2 = 9;
+    [self sendMsg64:m];
+}
+
 
 #pragma mark -
 
@@ -2275,6 +2288,7 @@ void impl_uitrack_change_tn_reserv(int tn, int train)
 {
     [theDelegate.ctcManager uitrac_change_tn_reser:tn train:train];
 }
+
 
 
 

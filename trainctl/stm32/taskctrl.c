@@ -98,16 +98,16 @@ static int numsampling = 0;
 
 #if NEW_ADC_AVG
 
-#define MAX_NUM_SAMPLING 64
+#define MAX_NUM_SAMPLING 128
 #define GUARD_SAMPLING 2
 
 static volatile adc_buf_t train_adc_buf[MAX_NUM_SAMPLING+GUARD_SAMPLING]; // __attribute__ ((aligned(32)));
 
 
-static int skip_begin = 8;
+static int skip_begin = 2;
 static int skip_end = 2;
 #define ADC_AVERAGE 0
-static int skip_div = 2;
+static int skip_div = 1;
 
 static int num_sampling(void)
 {
@@ -296,7 +296,7 @@ static void run_task_ctrl(void)
 		mqf_write_from_nowhere(&m); // XXX it wont be sent to ctl
 	}
 
-
+	// "-----"
 	for (;;) {
 		uint32_t notif;
 		xTaskNotifyWait(0, 0xFFFFFFFF, &notif, portMAX_DELAY);
@@ -304,7 +304,7 @@ static void run_task_ctrl(void)
 			int n = 0;
 			if (notif & NOTIF_NEW_ADC_1)  n = 1;
 			if (notif & NOTIF_NEW_ADC_2)  n |= 2;
-			itm_debug2(DBG_LOWCTRL|DBG_TIM, "-----", 0 /*(notif & NOTIF_TIM8) ? 1 : 0*/, n);
+			if ((1)) itm_debug2(DBG_LOWCTRL|DBG_TIM, "-----", 0 /*(notif & NOTIF_TIM8) ? 1 : 0*/, n);
 			if (n==3) {
 				itm_debug1(DBG_LOWCTRL|DBG_ERR, "both", n);
 				if ((1)) continue; // skip this tick
@@ -442,6 +442,7 @@ void HAL_ADC_ConvCpltCallback(_UNUSED_ ADC_HandleTypeDef* hadc)
 		return;
 	}
 	nfull++;
+	//uint64_t t0 = GetCycleCount64();
 	oscilo_evtadc = 2;
 #if NEW_ADC_AVG
 
@@ -489,18 +490,16 @@ void HAL_ADC_ConvCpltCallback(_UNUSED_ ADC_HandleTypeDef* hadc)
 		}
 		r->meas[j].vA = adc_mean_get_mean(&mca);
 		r->meas[j].vB = adc_mean_get_mean(&mcb);
-#if 0
-		if (!j) {
-			int16_t v = r->meas[j].vA - r->meas[j].vB;
-			if ((r->meas[j].vA>3000) || (r->meas[j].vB>3000) || (v>3000) || (v<-3000)) {
-				itm_debug3(DBG_ERR, "hival", r->meas[j].vA, r->meas[j].vB, v);
-				void bemf_hi(void);
-				bemf_hi();
-			}
-		}
-#endif
-	}
 
+	}
+	// cycle uint64_t GetCycleCount64(void); "---
+	//uint64_t t1 = GetCycleCount64() - t0;
+	/* 96MHz : 1ms = 96000 cycles
+	 * long = 500us 48000 cycles
+	 * average : around 6700 cycles around 70 microseconds
+	 *
+	 */
+	//itm_debug1(DBG_TIM, "cycl", (uint32_t) t1);
 	// prepare for new DMA
 	memset((void *)train_adc_buf, 0, sizeof(train_adc_buf));
 	HAL_ADC_Stop_DMA(&hadc1);

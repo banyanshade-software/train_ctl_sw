@@ -70,6 +70,7 @@ void StartOscilo(_UNUSED_ void *argument)
 	//HAL_ADC_Start_IT(&hadc2);
     //__HAL_ADC_ENABLE_IT(&hadc2, ADC_IT_EOC);
 
+	// DMAContinuousRequests
 
 	if ((0)) oscilo_start();
 	for(;;) {
@@ -124,7 +125,9 @@ void oscilo_end(void)
 	oscilo_did_end = 1;
 }
 
-static uint16_t adcbuf[16];
+static uint16_t adcbuf[8];
+
+int dmalen=4;
 
 void tim5_elapsed(void)
 {
@@ -172,7 +175,7 @@ void tim5_elapsed(void)
 		oscilo_end();
 	} else {
 		if (adc_in_progress) {
-			itm_debug1(DBG_TIM, "ADC  pgrs", adc_in_progress);
+			itm_debug2(DBG_TIM, "ADC  pgrs", adc_in_progress, hadc2.DMA_Handle->Instance->NDTR);
 			for (int i= 0; i<4; i++) {
 				oscilo_buf[oscilo_index-1].vadc[i] = 42; // marker for detection
 			}
@@ -180,9 +183,14 @@ void tim5_elapsed(void)
 		}
 		adc_in_progress = 1;
 
-		memcpy(&oscilo_buf[oscilo_index-1].vadc[0],adcbuf, 2*4);
-		memset(adcbuf, 0, sizeof(adcbuf));
-		HAL_ADC_Start_DMA(&hadc2,(uint32_t *)adcbuf, 4);
+		memcpy(&oscilo_buf[oscilo_index-1].vadc[0], adcbuf, 2*4);
+		memset(adcbuf, 0xff, sizeof(adcbuf));
+		//HAL_ADC_Start_DMA(&hadc2,(uint32_t *)adcbuf, 4);
+		HAL_StatusTypeDef rc = HAL_ADC_Start_DMA(&hadc2,(uint32_t *)adcbuf, dmalen);
+		if (rc != HAL_OK) {
+			itm_debug1(DBG_ERR, "DMA st err", rc);
+			adc_in_progress = 0;
+		}
 
 
 	}
@@ -191,18 +199,22 @@ void tim5_elapsed(void)
 static void conv_done(int f)
 {
 	if (f==1) adc_in_progress = 0;
-	//itm_debug1(DBG_TIM, "CONV", f);
+	//tm_debug1(DBG_TIM, "CONV", f);
 }
 
 void HAL_ADC_ConvCpltCallback2(_UNUSED_ ADC_HandleTypeDef* hadc)
 {
+	//itm_debug1(DBG_TIM, "FULL", hadc->DMA_Handle->Instance->NDTR);
 	conv_done(1);
 }
 void HAL_ADC_ConvHalfCpltCallback2(_UNUSED_ ADC_HandleTypeDef* hadc)
 {
+	return;
+	itm_debug1(DBG_TIM, "HALF", hadc->DMA_Handle->Instance->NDTR);
 	conv_done(0);
 }
 void HAL_ADC_ErrorCallback2(_UNUSED_ ADC_HandleTypeDef* hadc)
 {
+	itm_debug1(DBG_TIM, "ERR", hadc->DMA_Handle->Instance->NDTR);
 	conv_done(-1);
 }

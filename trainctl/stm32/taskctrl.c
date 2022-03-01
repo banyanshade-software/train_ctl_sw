@@ -254,7 +254,7 @@ void set_pwm_freq(int freqhz)
 	int ps = (FRQ_MULT*FRQ_MULT2*60000/freqhz); //-1;
 	if ((ps<1) || (ps>0xFFFF)) ps = 1200;
 	ps = ps-1;
-	cur_freqhz = FRQ_MULT*60000/(ps+1);
+	cur_freqhz = FRQ_MULT*FRQ_MULT2*60000/(ps+1);
 	// not an error but we want it in the log
 	itm_debug3(DBG_ERR|DBG_CTRL, "FREQ", freqhz, ps, cur_freqhz);
 	portENTER_CRITICAL();
@@ -456,6 +456,9 @@ static void write_num(uint8_t *buf, uint32_t v, int ndigit)
 volatile uint8_t oscilo_evtadc;
 static int numresult = 0;
 
+adc_mean_ctx_t mca[NUM_LOCAL_CANTONS_HW] = {0};
+adc_mean_ctx_t mcb[NUM_LOCAL_CANTONS_HW] = {0};
+int new_modulo = 2;
 
 void HAL_ADC_ConvCpltCallback(_UNUSED_ ADC_HandleTypeDef* hadc)
 {
@@ -465,7 +468,9 @@ void HAL_ADC_ConvCpltCallback(_UNUSED_ ADC_HandleTypeDef* hadc)
 	}
 	nfull++;
 	//uint64_t t0 = GetCycleCount64();
-	oscilo_evtadc = 2;
+	int done = 0;
+	if (0 == nfull % new_modulo) done = 1;
+	oscilo_evtadc = done ? 4 : 2;
 #if NEW_ADC_AVG
 
 	// sanity check
@@ -478,7 +483,7 @@ void HAL_ADC_ConvCpltCallback(_UNUSED_ ADC_HandleTypeDef* hadc)
 			}
 		}
 	}
-	if ((GUARD_SAMPLING)) {
+	if (0 && (GUARD_SAMPLING)) {
 		for (int i=0; i<GUARD_SAMPLING; i++) {
 			for (int j=0; j<NUM_LOCAL_CANTONS_HW; j++) {
 				if (train_adc_buf[MAX_NUM_SAMPLING+i].meas[j].vA || train_adc_buf[MAX_NUM_SAMPLING+i].meas[j].vB) {
@@ -489,30 +494,24 @@ void HAL_ADC_ConvCpltCallback(_UNUSED_ ADC_HandleTypeDef* hadc)
 		}
 	}
 
-	// prepare result
-	volatile adc_result_t *r = &adc_result[numresult];
-	for (int j=0; j<NUM_LOCAL_CANTONS_HW; j++) {
-		r->meas[j].vA = 0;
-		r->meas[j].vB = 0;
-	}
+
 
 	// parse adc_buf, average according to adc_mean policy, and fill result
 	int nspl = num_sampling();
 	for (int j=0; j<NUM_LOCAL_CANTONS_HW; j++) {
-		adc_mean_ctx_t mca;
-		adc_mean_ctx_t mcb;
-		adc_mean_init(&mca);
-		adc_mean_init(&mcb);
 		for (int i=skip_begin; i<nspl-skip_end; i++) {
-			//if (dump_adc) {
-			//	dbg_dump_adc(j, nspl, skip_begin, skip_end);
-			//}
-			adc_mean_add_value(&mca, train_adc_buf[i].meas[j].vA);
-			adc_mean_add_value(&mcb, train_adc_buf[i].meas[j].vB);
+			adc_mean_add_value(&mca[j], train_adc_buf[i].meas[j].vA);
+			adc_mean_add_value(&mcb[j], train_adc_buf[i].meas[j].vB);
 		}
-		r->meas[j].vA = adc_mean_get_mean(&mca);
-		r->meas[j].vB = adc_mean_get_mean(&mcb);
-
+	}
+	if (done) {
+		volatile adc_result_t *r = &adc_result[numresult];
+		for (int j=0; j<NUM_LOCAL_CANTONS_HW; j++) {
+			r->meas[j].vA = adc_mean_get_mean(&mca[j]);
+			r->meas[j].vB = adc_mean_get_mean(&mcb[j]);
+			adc_mean_init(&mca[j]);
+			adc_mean_init(&mcb[j]);
+		}
 	}
 	// cycle uint64_t GetCycleCount64(void); "---
 	//uint64_t t1 = GetCycleCount64() - t0;
@@ -527,13 +526,15 @@ void HAL_ADC_ConvCpltCallback(_UNUSED_ ADC_HandleTypeDef* hadc)
 	HAL_ADC_Stop_DMA(&hadc1);
 	HAL_ADC_Start_DMA(&hadc1,(uint32_t *)train_adc_buf, adc_nsmpl);
 
-	// send notif, and swap double buffer for result
-	int notif = numresult ? NOTIF_NEW_ADC_2 : NOTIF_NEW_ADC_1;
-	numresult = numresult ? 0 : 1;
+	if (done) {
+		// send notif, and swap double buffer for result
+		int notif = numresult ? NOTIF_NEW_ADC_2 : NOTIF_NEW_ADC_1;
+		numresult = numresult ? 0 : 1;
 
-	BaseType_t higher=0;
-	xTaskNotifyFromISR(ctrlTaskHandle, notif, eSetBits, &higher);
-	portYIELD_FROM_ISR(higher);
+		BaseType_t higher=0;
+		xTaskNotifyFromISR(ctrlTaskHandle, notif, eSetBits, &higher);
+		portYIELD_FROM_ISR(higher);
+	}
 
 
 

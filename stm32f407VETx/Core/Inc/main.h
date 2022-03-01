@@ -76,14 +76,6 @@ void Error_Handler(void);
 #define ADC_4_V1_GPIO_Port GPIOC
 #define ADC_5_V0_Pin GPIO_PIN_3
 #define ADC_5_V0_GPIO_Port GPIOC
-#define ADC_0_V0_Pin GPIO_PIN_0
-#define ADC_0_V0_GPIO_Port GPIOA
-#define ADC_0_V1_Pin GPIO_PIN_1
-#define ADC_0_V1_GPIO_Port GPIOA
-#define ADC_1_V0_Pin GPIO_PIN_2
-#define ADC_1_V0_GPIO_Port GPIOA
-#define ADC_1_V1_Pin GPIO_PIN_3
-#define ADC_1_V1_GPIO_Port GPIOA
 #define ADC_2_V0_Pin GPIO_PIN_4
 #define ADC_2_V0_GPIO_Port GPIOA
 #define ADC_2_V1_Pin GPIO_PIN_5

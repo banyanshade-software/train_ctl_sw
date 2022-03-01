@@ -396,13 +396,13 @@ static void MX_ADC1_Init(void)
   hadc1.Init.ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV2;
   hadc1.Init.Resolution = ADC_RESOLUTION_12B;
   hadc1.Init.ScanConvMode = ENABLE;
-  hadc1.Init.ContinuousConvMode = DISABLE;
+  hadc1.Init.ContinuousConvMode = ENABLE;
   hadc1.Init.DiscontinuousConvMode = DISABLE;
   hadc1.Init.ExternalTrigConvEdge = ADC_EXTERNALTRIGCONVEDGE_RISING;
   hadc1.Init.ExternalTrigConv = ADC_EXTERNALTRIGCONV_T8_TRGO;
   hadc1.Init.DataAlign = ADC_DATAALIGN_RIGHT;
   hadc1.Init.NbrOfConversion = 12;
-  hadc1.Init.DMAContinuousRequests = ENABLE;
+  hadc1.Init.DMAContinuousRequests = DISABLE;
   hadc1.Init.EOCSelection = ADC_EOC_SEQ_CONV;
   if (HAL_ADC_Init(&hadc1) != HAL_OK)
   {
@@ -542,7 +542,7 @@ static void MX_ADC2_Init(void)
   hadc2.Init.ExternalTrigConv = ADC_SOFTWARE_START;
   hadc2.Init.DataAlign = ADC_DATAALIGN_RIGHT;
   hadc2.Init.NbrOfConversion = 4;
-  hadc2.Init.DMAContinuousRequests = ENABLE;
+  hadc2.Init.DMAContinuousRequests = DISABLE;
   hadc2.Init.EOCSelection = ADC_EOC_SEQ_CONV;
   if (HAL_ADC_Init(&hadc2) != HAL_OK)
   {
@@ -776,7 +776,7 @@ static void MX_TIM1_Init(void)
   /* USER CODE END TIM1_Init 1 */
   htim1.Instance = TIM1;
   htim1.Init.Prescaler = 1199;
-  htim1.Init.CounterMode = TIM_COUNTERMODE_CENTERALIGNED3;
+  htim1.Init.CounterMode = TIM_COUNTERMODE_UP;
   htim1.Init.Period = 200;
   htim1.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim1.Init.RepetitionCounter = 0;
@@ -802,7 +802,7 @@ static void MX_TIM1_Init(void)
   }
   sConfigOC.OCMode = TIM_OCMODE_PWM1;
   sConfigOC.Pulse = 0;
-  sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
+  sConfigOC.OCPolarity = TIM_OCPOLARITY_LOW;
   sConfigOC.OCNPolarity = TIM_OCNPOLARITY_HIGH;
   sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
   sConfigOC.OCIdleState = TIM_OCIDLESTATE_RESET;
@@ -863,7 +863,7 @@ static void MX_TIM2_Init(void)
   /* USER CODE END TIM2_Init 1 */
   htim2.Instance = TIM2;
   htim2.Init.Prescaler = 1199;
-  htim2.Init.CounterMode = TIM_COUNTERMODE_CENTERALIGNED3;
+  htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
   htim2.Init.Period = 200;
   htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim2.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_ENABLE;
@@ -894,7 +894,7 @@ static void MX_TIM2_Init(void)
   }
   sConfigOC.OCMode = TIM_OCMODE_PWM1;
   sConfigOC.Pulse = 0;
-  sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
+  sConfigOC.OCPolarity = TIM_OCPOLARITY_LOW;
   sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
   if (HAL_TIM_PWM_ConfigChannel(&htim2, &sConfigOC, TIM_CHANNEL_3) != HAL_OK)
   {
@@ -933,7 +933,7 @@ static void MX_TIM3_Init(void)
   /* USER CODE END TIM3_Init 1 */
   htim3.Instance = TIM3;
   htim3.Init.Prescaler = 1199;
-  htim3.Init.CounterMode = TIM_COUNTERMODE_CENTERALIGNED3;
+  htim3.Init.CounterMode = TIM_COUNTERMODE_UP;
   htim3.Init.Period = 200;
   htim3.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim3.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_ENABLE;
@@ -964,7 +964,7 @@ static void MX_TIM3_Init(void)
   }
   sConfigOC.OCMode = TIM_OCMODE_PWM1;
   sConfigOC.Pulse = 0;
-  sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
+  sConfigOC.OCPolarity = TIM_OCPOLARITY_LOW;
   sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
   if (HAL_TIM_PWM_ConfigChannel(&htim3, &sConfigOC, TIM_CHANNEL_1) != HAL_OK)
   {
@@ -1189,7 +1189,7 @@ static void MX_TIM12_Init(void)
   }
   sConfigOC.OCMode = TIM_OCMODE_PWM1;
   sConfigOC.Pulse = 0;
-  sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
+  sConfigOC.OCPolarity = TIM_OCPOLARITY_LOW;
   sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
   if (HAL_TIM_PWM_ConfigChannel(&htim12, &sConfigOC, TIM_CHANNEL_1) != HAL_OK)
   {

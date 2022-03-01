@@ -104,8 +104,8 @@ static int numsampling = 0;
 static volatile adc_buf_t train_adc_buf[MAX_NUM_SAMPLING+GUARD_SAMPLING]; // __attribute__ ((aligned(32)));
 
 
-static int skip_begin = 2;
-static int skip_end = 2;
+ int skip_begin = 7;
+ int skip_end = 2;
 #define ADC_AVERAGE 0
 static int skip_div = 1;
 
@@ -243,8 +243,15 @@ void set_pwm_freq(int freqhz)
 	}
 	// 12MHz / 200 -> 60000
 	// 50Hz = 1200
+
 #define FRQ_MULT (2)							// 1 : for 24 MHz (ABP prescaler = /8) ; 2 : 48MHz, ABP prescaler = /4
-	int ps = (FRQ_MULT*60000/freqhz); //-1;
+
+#if NEW_ADC_AVG
+#define FRQ_MULT2 (2)			// cycle were twice longer with up/down counting
+#else
+#define FRQ_MULT2 (1)
+#endif
+	int ps = (FRQ_MULT*FRQ_MULT2*60000/freqhz); //-1;
 	if ((ps<1) || (ps>0xFFFF)) ps = 1200;
 	ps = ps-1;
 	cur_freqhz = FRQ_MULT*60000/(ps+1);
@@ -298,13 +305,27 @@ static void run_task_ctrl(void)
 
 	// "-----"
 	for (;;) {
+		if ((1)) { // measure actual frequency
+			static int cnt = 0;
+			static uint32_t t0 = 0;
+			cnt ++;
+			uint32_t t1 = HAL_GetTick();
+			if (!t0) {
+				t0 = t1;
+				cnt = 0;
+			} else  if (t1-t0 >= 10000) {
+				itm_debug2(DBG_TIM, "FREQ", cnt/10, cnt%10);
+				cnt = 0;
+				t0 = t1;
+			}
+		}
 		uint32_t notif;
 		xTaskNotifyWait(0, 0xFFFFFFFF, &notif, portMAX_DELAY);
 		if ((1)) {
 			int n = 0;
 			if (notif & NOTIF_NEW_ADC_1)  n = 1;
 			if (notif & NOTIF_NEW_ADC_2)  n |= 2;
-			if ((1)) itm_debug2(DBG_LOWCTRL|DBG_TIM, "-----", 0 /*(notif & NOTIF_TIM8) ? 1 : 0*/, n);
+			if ((0)) itm_debug2(DBG_LOWCTRL|DBG_TIM, "-----", 0 /*(notif & NOTIF_TIM8) ? 1 : 0*/, n);
 			if (n==3) {
 				itm_debug1(DBG_LOWCTRL|DBG_ERR, "both", n);
 				if ((1)) continue; // skip this tick
@@ -318,6 +339,7 @@ static void run_task_ctrl(void)
 				set_pwm_freq(100);
 			}
 		}
+
 
 		cnt++;
 		t0ctrl = HAL_GetTick();

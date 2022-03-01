@@ -48,3 +48,15 @@ uint16_t adc_mean_get_mean(adc_mean_ctx_t *m)
 }
 
 #endif
+
+
+#ifdef    AVG_MEAN_MAX
+void adc_mean_add_value(adc_mean_ctx_t *m, uint16_t v)
+{
+	if (v > m->max) m->max = v;
+}
+uint16_t adc_mean_get_mean(adc_mean_ctx_t *m)
+{
+	return m->max;
+}
+#endif

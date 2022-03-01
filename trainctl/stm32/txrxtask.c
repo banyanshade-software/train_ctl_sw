@@ -107,7 +107,11 @@ static void _send_bytes(uint8_t *b, int len)
 {
 	for (;;) {
 		uint8_t rc = CDC_Transmit_FS(b, len);
-		if (rc != USBD_BUSY) break;
+		if (!rc) break; // no error
+		if (rc != USBD_BUSY) {
+			itm_debug2(DBG_ERR, "CDC ERR", len, rc);
+			break;
+		}
 		osDelay(1);
 	}
 }

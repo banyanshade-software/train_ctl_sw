@@ -1647,21 +1647,26 @@ uint32_t SimuTick = 0;
 
     
     for (int i =0; i<2; i++) {
-        //memset((void*)&(adc_result[i]), 0, sizeof(adc_result));
+#if NEW_ADC_AVG
+        memset((void*)&(adc_result[i]), 0, sizeof(adc_result));
+#else
         memset((void*)&(train_adc_buf[i]), 0, sizeof(adc_buf_t));
+#endif
 
     }
     
     [_simTrain0 computeTrainsAfter:mdt sinceStart:mt];
     for (int nc = 0; nc < NUM_LOCAL_CANTONS_HW; nc++) {
         double bemf = [_simTrain0 bemfForCantonNum:nc];
-        // xxxx
         int bemfi = -(bemf/4.545) * 3.3 *4096;
-        //NSLog(@"bemf %f -> %d\n", bemf, bemfi);
+#if NEW_ADC_AVG
         //adc_result[0].meas[nc].vA = (bemfi>0) ? 0 : -bemfi;
         //adc_result[0].meas[nc].vB = (bemfi>0) ? bemfi : 0;
+        adc_result[0].meas[nc].vBA = bemfi;
+#else
         train_adc_buf[0].off[nc].vA = (bemfi>0) ? 0 : -bemfi;
         train_adc_buf[0].off[nc].vB = (bemfi>0) ? bemfi : 0;
+#endif
     }
     
 
@@ -2253,6 +2258,19 @@ didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic
     [self sendMsg64:m];
 }
 
+#pragma mark -
+
+- (IBAction) triggerOscillo:(id)sender
+{
+    msg_64_t m;
+    m.to = MA_TRAIN_SC(0);
+    m.from = MA_UI(UISUB_USB);
+    m.cmd = CMD_TRIG_OSCILLO;
+    m.v1u = 0;
+    m.v2 = 9;
+    [self sendMsg64:m];
+}
+
 
 #pragma mark -
 
@@ -2271,6 +2289,7 @@ void impl_uitrack_change_tn_reserv(int tn, int train)
 {
     [theDelegate.ctcManager uitrac_change_tn_reser:tn train:train];
 }
+
 
 
 

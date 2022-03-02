@@ -69,6 +69,7 @@ typedef enum {
     CMD_VOFF_NOTIF,					// canton->ui (debug)						used if NOTIF_VOFF=1
     CMD_INA3221_VAL1,
     CMD_NOTIF_SPEED,				// spdctl->ui	(debug)
+	CMD_TRIG_OSCILLO,				// any -> spdctl
 } cmd_msg_t;
 
 #endif /* trainmsgdef_h */

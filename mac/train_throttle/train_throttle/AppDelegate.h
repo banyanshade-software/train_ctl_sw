@@ -103,7 +103,7 @@
 
 - (IBAction) connectSimu:(id)sender;
 
-
+- (IBAction) triggerOscillo:(id)sender;
 
 - (IBAction) startRecord:(id)sender;
 - (IBAction) markRecord:(id)sender;

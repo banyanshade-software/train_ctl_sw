@@ -1294,8 +1294,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "2191"
             endingLineNumber = "2191"
-            landmarkName = "-setTestMode:"
-            landmarkType = "7">
+            landmarkName = "AppDelegate"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -3635,7 +3635,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1910"
             endingLineNumber = "1910"
-            landmarkName = "-readStdout:"
+            landmarkName = "-startGnuplot"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -3968,8 +3968,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1861"
             endingLineNumber = "1861"
-            landmarkName = "-startGnuplot"
-            landmarkType = "7">
+            landmarkName = "AppDelegate"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy

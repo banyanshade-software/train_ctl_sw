@@ -148,6 +148,7 @@ static void spdctl_reset(void)
 
 volatile int16_t oscilo_t0bemf = 0;
 volatile int16_t oscilo_t1bemf = 0;
+extern volatile int oscillo_trigger_start;
 
 void spdctl_run_tick(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, uint32_t dt)
 {
@@ -168,6 +169,9 @@ void spdctl_run_tick(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, uint
 		if (rc) break;
         
         switch (m.cmd) {
+        case CMD_TRIG_OSCILLO:
+        	oscillo_trigger_start = 1;
+        	break;
         case CMD_RESET:
         	// FALLTHRU
         case CMD_EMERGENCY_STOP:
@@ -241,7 +245,6 @@ void spdctl_run_tick(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, uint
                 case CMD_SET_TARGET_SPEED:
                     itm_debug1(DBG_SPDCTL, "set_t_spd", m.v1u);
                     if (!tvars->target_speed && (m.v1u > 10)) {
-                    	extern volatile int oscillo_trigger_start;
                     	oscillo_trigger_start = 1;
                     }
                     tvars->target_speed = (int16_t) m.v1u;

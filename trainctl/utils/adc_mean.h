@@ -11,17 +11,17 @@
 
 #include <stdint.h>
 
-//#define AVG_MEAN_AVERAGE
+#define AVG_MEAN_AVERAGE
 //#define AVG_MEAN_MAX
-#define AVG_MEAN_CUSTOM
+//#define AVG_MEAN_CUSTOM
 
 typedef struct {
 #ifdef AVG_MEAN_AVERAGE
     int n;
-    uint32_t sum;
+    int32_t sum;
 #endif
 #ifdef AVG_MEAN_CUSTOM
-    uint16_t val;
+    int16_t val;
 #endif
 #ifdef AVG_MEAN_MAX
     uint16_t max;
@@ -29,7 +29,7 @@ typedef struct {
 } adc_mean_ctx_t;
 
 void adc_mean_init(adc_mean_ctx_t *);
-void adc_mean_add_value(adc_mean_ctx_t *, uint16_t);
-uint16_t adc_mean_get_mean(adc_mean_ctx_t *);
+void adc_mean_add_value(adc_mean_ctx_t *, uint16_t va, uint16_t vb);
+int16_t adc_mean_get_mean(adc_mean_ctx_t *);
 
 #endif /* adc_mean_h */

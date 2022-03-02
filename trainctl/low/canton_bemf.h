@@ -37,8 +37,8 @@ typedef struct {
 } adc_per_blk_t;
 
 typedef struct {
-        uint32_t vA;
-        uint32_t vB;
+        int32_t vBA;
+        //uint32_t vB;
 } adc_per_blk_32_t;
 
 typedef struct {

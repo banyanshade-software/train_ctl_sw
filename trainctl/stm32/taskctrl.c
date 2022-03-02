@@ -457,7 +457,7 @@ volatile uint8_t oscilo_evtadc;
 static int numresult = 0;
 
 adc_mean_ctx_t mca[NUM_LOCAL_CANTONS_HW] = {0};
-adc_mean_ctx_t mcb[NUM_LOCAL_CANTONS_HW] = {0};
+//adc_mean_ctx_t mcb[NUM_LOCAL_CANTONS_HW] = {0};
 int new_modulo = 2;
 
 void HAL_ADC_ConvCpltCallback(_UNUSED_ ADC_HandleTypeDef* hadc)
@@ -500,17 +500,16 @@ void HAL_ADC_ConvCpltCallback(_UNUSED_ ADC_HandleTypeDef* hadc)
 	int nspl = num_sampling();
 	for (int j=0; j<NUM_LOCAL_CANTONS_HW; j++) {
 		for (int i=skip_begin; i<nspl-skip_end; i++) {
-			adc_mean_add_value(&mca[j], train_adc_buf[i].meas[j].vA);
-			adc_mean_add_value(&mcb[j], train_adc_buf[i].meas[j].vB);
+			adc_mean_add_value(&mca[j], train_adc_buf[i].meas[j].vA, train_adc_buf[i].meas[j].vB);
 		}
 	}
 	if (done) {
 		volatile adc_result_t *r = &adc_result[numresult];
 		for (int j=0; j<NUM_LOCAL_CANTONS_HW; j++) {
-			r->meas[j].vA = adc_mean_get_mean(&mca[j]);
-			r->meas[j].vB = adc_mean_get_mean(&mcb[j]);
+			r->meas[j].vBA = adc_mean_get_mean(&mca[j]);
+			//r->meas[j].vB = adc_mean_get_mean(&mcb[j]);
 			adc_mean_init(&mca[j]);
-			adc_mean_init(&mcb[j]);
+			//adc_mean_init(&mcb[j]);
 		}
 	}
 	// cycle uint64_t GetCycleCount64(void); "---

@@ -1660,8 +1660,9 @@ uint32_t SimuTick = 0;
         double bemf = [_simTrain0 bemfForCantonNum:nc];
         int bemfi = -(bemf/4.545) * 3.3 *4096;
 #if NEW_ADC_AVG
-        adc_result[0].meas[nc].vA = (bemfi>0) ? 0 : -bemfi;
-        adc_result[0].meas[nc].vB = (bemfi>0) ? bemfi : 0;
+        //adc_result[0].meas[nc].vA = (bemfi>0) ? 0 : -bemfi;
+        //adc_result[0].meas[nc].vB = (bemfi>0) ? bemfi : 0;
+        adc_result[0].meas[nc].vBA = bemfi;
 #else
         train_adc_buf[0].off[nc].vA = (bemfi>0) ? 0 : -bemfi;
         train_adc_buf[0].off[nc].vB = (bemfi>0) ? bemfi : 0;

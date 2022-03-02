@@ -17,12 +17,14 @@ void adc_mean_init(adc_mean_ctx_t *m)
 }
 
 #ifdef AVG_MEAN_AVERAGE
-void adc_mean_add_value(adc_mean_ctx_t *m, uint16_t v)
+void adc_mean_add_value(adc_mean_ctx_t *m, uint16_t va, uint16_t vb)
 {
+	int16_t v = vb-va;
     m->n++;
     m->sum += v;
 }
-uint16_t adc_mean_get_mean(adc_mean_ctx_t *m)
+
+int16_t adc_mean_get_mean(adc_mean_ctx_t *m)
 {
     if (!m->n) return 0;
     return (uint16_t) (m->sum / m->n);
@@ -32,8 +34,9 @@ uint16_t adc_mean_get_mean(adc_mean_ctx_t *m)
 
 
 #ifdef AVG_MEAN_CUSTOM
-void adc_mean_add_value(adc_mean_ctx_t *m, uint16_t v)
+void adc_mean_add_value(adc_mean_ctx_t *m, uint16_t va, uint16_t vb)
 {
+	int16_t v = vb - va;
     if (v >= m->val) {
         m->val = (m->val + 7*v)/8;
     } else {
@@ -42,7 +45,7 @@ void adc_mean_add_value(adc_mean_ctx_t *m, uint16_t v)
         m->val = m->val-vn;
     }
 }
-uint16_t adc_mean_get_mean(adc_mean_ctx_t *m)
+int16_t adc_mean_get_mean(adc_mean_ctx_t *m)
 {
     return m->val;
 }
@@ -51,7 +54,7 @@ uint16_t adc_mean_get_mean(adc_mean_ctx_t *m)
 
 
 #ifdef    AVG_MEAN_MAX
-void adc_mean_add_value(adc_mean_ctx_t *m, uint16_t v)
+void adc_mean_add_value(adc_mean_ctx_t *m, uint16_t va, uint16_t vb)
 {
 	if (v > m->max) m->max = v;
 }

@@ -3411,7 +3411,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "163"
             endingLineNumber = "163"
-            landmarkName = "process_adc(buf, deltaticks)"
+            landmarkName = "bemf_convert_to_millivolt(c, m)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -3635,8 +3635,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1910"
             endingLineNumber = "1910"
-            landmarkName = "AppDelegate"
-            landmarkType = "3">
+            landmarkName = "-startGnuplot"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy

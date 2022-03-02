@@ -37,17 +37,33 @@ int16_t adc_mean_get_mean(adc_mean_ctx_t *m)
 void adc_mean_add_value(adc_mean_ctx_t *m, uint16_t va, uint16_t vb)
 {
 	int16_t v = vb - va;
-    if (v >= m->val) {
-        m->val = (m->val + 7*v)/8;
-    } else {
-        uint16_t vn = m->val-v;
-        if (vn > m->val/16) vn = m->val/16;
-        m->val = m->val-vn;
-    }
+	if (v>=0) {
+		m->np++;
+		if (v >= m->valp) {
+			m->valp = (m->valp + 7*v)/8;
+		} else {
+			uint16_t vn = m->valp-v;
+			if (vn > m->valp/16) vn = m->valp/16;
+			m->valp = m->valp-vn;
+		}
+	}
+	if (v<=0) {
+		m->nn++;
+		v = -v;
+		if (v >= m->valn) {
+			m->valn = (m->valn + 7*v)/8;
+		} else {
+			uint16_t vn = m->valn-v;
+			if (vn > m->valn/16) vn = m->valn/16;
+			m->valn = m->valn-vn;
+		}
+	}
 }
+
 int16_t adc_mean_get_mean(adc_mean_ctx_t *m)
 {
-    return m->val;
+	if (m->np>=m->nn) return m->valp;
+	return -m->valn;
 }
 
 #endif

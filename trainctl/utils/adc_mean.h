@@ -11,9 +11,9 @@
 
 #include <stdint.h>
 
-#define AVG_MEAN_AVERAGE
+//#define AVG_MEAN_AVERAGE
 //#define AVG_MEAN_MAX
-//#define AVG_MEAN_CUSTOM
+#define AVG_MEAN_CUSTOM
 
 typedef struct {
 #ifdef AVG_MEAN_AVERAGE
@@ -21,7 +21,10 @@ typedef struct {
     int32_t sum;
 #endif
 #ifdef AVG_MEAN_CUSTOM
-    int16_t val;
+    int16_t valp;
+    int16_t valn;
+    uint16_t np;
+    uint16_t nn;
 #endif
 #ifdef AVG_MEAN_MAX
     uint16_t max;

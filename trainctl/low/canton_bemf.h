@@ -27,60 +27,60 @@ void bemf_reset(void);
 void bemf_msg(msg_64_t *m);
 void bemf_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt);
 
-/*
+#define NEW_ADC_AVG 0
 
-// notif_flags
-#ifndef USE_INA3221
+
+#if NEW_ADC_AVG
 typedef struct {
-	uint16_t intOff; // XXX
-	uint16_t voffA;
-	uint16_t voffB;
-	uint16_t intOn; // XXX
-	uint16_t vonA;
-	uint16_t vonB;
+        uint16_t vA;
+        uint16_t vB;
+} adc_per_blk_t;
 
-} adc_buffer_t;
-#error ohla
+typedef struct {
+        int32_t vBA;
+        //uint32_t vB;
+} adc_per_blk_32_t;
+
+typedef struct {
+        adc_per_blk_t meas[NUM_LOCAL_CANTONS_HW];
+} adc_buf_t;
+
+
+typedef struct {
+        adc_per_blk_32_t meas[NUM_LOCAL_CANTONS_HW];
+} adc_result_t;
+
+
+extern volatile adc_result_t adc_result[2]; // double buffer
+
 #else
-typedef struct {
-	//uint16_t intOff; // XXX
-	uint16_t voffA;
-	uint16_t voffB;
-	//uint16_t intOn; // XXX
-	uint16_t vonA;
-	uint16_t vonB;
-
-} adc_buffer_t;
-#endif
 
 
-extern volatile adc_buffer_t train_adc_buffer[2*NUM_LOCAL_CANTONS_HW];
-*/
+
 typedef struct {
 	// uint16_t I;
 	uint16_t vA;
 	uint16_t vB;
 } adc_per_blk_t;
 
+
 typedef struct {
-#if 0
-	adc_per_blk_t off[NUM_LOCAL_CANTONS_HW];
-	adc_per_blk_t on[NUM_LOCAL_CANTONS_HW];
-#else
 	adc_per_blk_t on[NUM_LOCAL_CANTONS_HW];
 	adc_per_blk_t off[NUM_LOCAL_CANTONS_HW];
-#endif
 } adc_buf_t;
 
 
+typedef adc_buf_t adc_result_t;
+
+
+//extern volatile adc_result_t *adc_result; // double buffer
+
 extern volatile adc_buf_t train_adc_buf[2]; // double buffer
+#define adc_result train_adc_buf
+#endif // NEW_ADC_AVG
 
 extern runmode_t bemf_run_mode;
 
-/*
-#define NUM_VAL_PER_CANTON (sizeof(adc_buffer_t)/sizeof(uint16_t))
-#define ADC_HALF_BUFFER (NUM_LOCAL_CANTONS_HW * NUM_VAL_PER_CANTON)
-#define NUM_ADC_SAMPLES (2*ADC_HALF_BUFFER)
-*/
+
 
 #endif /* LOW_CANTON_BEMF_H_ */

@@ -18,7 +18,17 @@
 #endif
 
 
+#if NEW_ADC_AVG
+
+volatile adc_result_t adc_result[2]; // double buffer
+
+#else
+
 volatile adc_buf_t train_adc_buf[2]; // double buffer
+
+#endif
+
+
 
 runmode_t bemf_run_mode = runmode_off;
 uint8_t bemf_test_all = 0;
@@ -29,7 +39,7 @@ static uint8_t bemf_to[NUM_LOCAL_CANTONS_SW] = {0xFF};
 static uint8_t bemf_to[NUM_LOCAL_CANTONS_SW] = {0xFF, 0xFF, 0xFF, 0xFF,  0xFF, 0xFF, 0xFF, 0xFF};
 #endif
 
-static void process_adc(volatile adc_buf_t *buf, uint32_t deltaticks);
+static void process_adc(volatile adc_result_t *buf, uint32_t deltaticks);
 
 
 #define USE_CANTON(_idx) \
@@ -76,10 +86,10 @@ void bemf_tick(uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_ uint32_t d
 			itm_debug1(DBG_ERR|DBG_LOWCTRL|DBG_TIM, "both", (int) notif_flags);
 			runtime_error(ERR_DMA, "both NEW_ADC1 and NEW_ADC2");
 		}
-		process_adc(&train_adc_buf[0], dt);
+		process_adc(&adc_result[0], dt);
 	}
 	if (notif_flags & NOTIF_NEW_ADC_2) {
-		process_adc(&train_adc_buf[1], dt);
+		process_adc(&adc_result[1], dt);
 	}
 }
 
@@ -158,7 +168,7 @@ static inline int32_t bemf_convert_to_millivolt(_UNUSED_ const canton_config_t *
 
 /// ---------------------------------------------------------------------------------------
 
-static void process_adc(volatile adc_buf_t *buf, _UNUSED_ uint32_t deltaticks)
+static void process_adc(volatile adc_result_t *buf, _UNUSED_ uint32_t deltaticks)
 {
 	static int cnt=0;
 	cnt++; // for debug, allow us to print msg every x adc conversiont
@@ -179,25 +189,32 @@ static void process_adc(volatile adc_buf_t *buf, _UNUSED_ uint32_t deltaticks)
 
 		const canton_config_t *c = get_canton_cnf(i);
 
+#if NEW_ADC_AVG
+		int32_t voff = bemf_convert_to_millivolt(c, buf->meas[i].vBA);
+		//int32_t voffa = bemf_convert_to_millivolt(c, buf->meas[i].vA);
+		//int32_t voffb = bemf_convert_to_millivolt(c, buf->meas[i].vB);
+		//int32_t vona = 0; // not available with NEW_ADC_AVG
+		int16_t von = 0;
+#else
 		int32_t voffa = bemf_convert_to_millivolt(c, buf->off[i].vA);
 		int32_t voffb = bemf_convert_to_millivolt(c, buf->off[i].vB);
 		int32_t vona =  bemf_convert_to_millivolt(c, buf->on[i].vA);
 		int32_t vonb =  bemf_convert_to_millivolt(c, buf->on[i].vB);
-
 		int16_t voff = (int16_t)(voffb-voffa);
 		int16_t von  = (int16_t)(vonb-vona);
+#endif
 
 		if (cconf->reverse_bemf) {
 			voff = -voff;
 			von = -von;
 		}
-		if ((1)) {
+		/*if ((1)) {
 			if (!(cnt % 50)) {
 				itm_debug3(DBG_ADC|DBG_LOWCTRL, "ADC/Vof", i, voffa, voffb);
 				itm_debug3(DBG_ADC|DBG_LOWCTRL, "ADC/Von",  i, vona, vonb);
 				itm_debug3(DBG_ADC|DBG_LOWCTRL, "ADC/V01", i,  voff, von);
 			}
-		}
+		}*/
 
 		/* only send bemf for canton that are active (expecting bemf)
 		 * this could be (and was) done before millivolt conversion,
@@ -217,7 +234,7 @@ static void process_adc(volatile adc_buf_t *buf, _UNUSED_ uint32_t deltaticks)
 				m.from = MA_CANTON(localBoardNum, i);
 				m.to = MA_UI(UISUB_TFT);
 				m.cmd = CMD_VOFF_NOTIF;
-				m.v1 = voff;
+				m.v1 = (int16_t) voff;
 				m.v2 = von;
 				mqf_write(&from_canton, &m);
 			}

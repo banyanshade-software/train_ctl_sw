@@ -419,7 +419,7 @@ void HAL_I2C_MspInit(I2C_HandleTypeDef* hi2c)
     /* Peripheral clock enable */
     __HAL_RCC_I2C3_CLK_ENABLE();
     /* I2C3 interrupt Init */
-    HAL_NVIC_SetPriority(I2C3_EV_IRQn, 6, 0);
+    HAL_NVIC_SetPriority(I2C3_EV_IRQn, 8, 0);
     HAL_NVIC_EnableIRQ(I2C3_EV_IRQn);
     HAL_NVIC_SetPriority(I2C3_ER_IRQn, 6, 0);
     HAL_NVIC_EnableIRQ(I2C3_ER_IRQn);
@@ -556,6 +556,9 @@ void HAL_TIM_Base_MspInit(TIM_HandleTypeDef* htim_base)
   /* USER CODE END TIM1_MspInit 0 */
     /* Peripheral clock enable */
     __HAL_RCC_TIM1_CLK_ENABLE();
+    /* TIM1 interrupt Init */
+    HAL_NVIC_SetPriority(TIM1_UP_TIM10_IRQn, 5, 0);
+    HAL_NVIC_EnableIRQ(TIM1_UP_TIM10_IRQn);
   /* USER CODE BEGIN TIM1_MspInit 1 */
 
   /* USER CODE END TIM1_MspInit 1 */
@@ -603,6 +606,9 @@ void HAL_TIM_Base_MspInit(TIM_HandleTypeDef* htim_base)
   /* USER CODE END TIM8_MspInit 0 */
     /* Peripheral clock enable */
     __HAL_RCC_TIM8_CLK_ENABLE();
+    /* TIM8 interrupt Init */
+    HAL_NVIC_SetPriority(TIM8_UP_TIM13_IRQn, 5, 0);
+    HAL_NVIC_EnableIRQ(TIM8_UP_TIM13_IRQn);
   /* USER CODE BEGIN TIM8_MspInit 1 */
 
   /* USER CODE END TIM8_MspInit 1 */
@@ -776,6 +782,9 @@ void HAL_TIM_Base_MspDeInit(TIM_HandleTypeDef* htim_base)
   /* USER CODE END TIM1_MspDeInit 0 */
     /* Peripheral clock disable */
     __HAL_RCC_TIM1_CLK_DISABLE();
+
+    /* TIM1 interrupt DeInit */
+    HAL_NVIC_DisableIRQ(TIM1_UP_TIM10_IRQn);
   /* USER CODE BEGIN TIM1_MspDeInit 1 */
 
   /* USER CODE END TIM1_MspDeInit 1 */
@@ -823,6 +832,9 @@ void HAL_TIM_Base_MspDeInit(TIM_HandleTypeDef* htim_base)
   /* USER CODE END TIM8_MspDeInit 0 */
     /* Peripheral clock disable */
     __HAL_RCC_TIM8_CLK_DISABLE();
+
+    /* TIM8 interrupt DeInit */
+    HAL_NVIC_DisableIRQ(TIM8_UP_TIM13_IRQn);
   /* USER CODE BEGIN TIM8_MspDeInit 1 */
 
   /* USER CODE END TIM8_MspDeInit 1 */

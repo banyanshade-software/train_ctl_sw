@@ -41,7 +41,7 @@
 
 #include "../ctrl/ctrl.h"
 #ifdef BOARD_HAS_INA3221
-#include "../stm32dev/ina3221/ina3221.h"
+#include "../stm32/ina3221/ina3221.h"
 #endif
 
 //#include "railconfig.h"

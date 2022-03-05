@@ -37,7 +37,7 @@ const stat_val_t statval_glob[] = {
     { NULL,  0, 0 _P(NULL)}
 };
 
-#define NUM_META 4
+#define NUM_META 5
 static meta_stat_t meta[NUM_META+1] = {
     {statval_glob, 0, 0, 1},
     // stats only on first 3 trains and first 4 blocks
@@ -48,7 +48,7 @@ static meta_stat_t meta[NUM_META+1] = {
 #ifdef BOARD_HAS_CANTON
     {statval_canton, 0, 0, MIN(4,NUM_LOCAL_CANTONS_HW)},
 #endif
-    //{statval_ina3221, 0, 0, 12},
+    {statval_ina3221, 0, 0, 1},
     {NULL, 0, 0, 0}
 };
 

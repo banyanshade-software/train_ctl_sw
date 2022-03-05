@@ -17,7 +17,8 @@
 
 #include "misc.h"
 #include "../../msg/trainmsg.h"
-#include "../../oscillo/oscillo.h""
+#include "../../oscillo/oscillo.h"
+#include "../../statval.h"
 
 
 #ifndef BOARD_HAS_INA3221
@@ -40,6 +41,18 @@ static uint8_t disable_ina3221 = 0;
 static int ina3221_init_done = 0;
 static int ina_conf_val = 0;
 
+static uint16_t values[INA3221_NUM_VALS] = {0};
+
+
+
+
+const stat_val_t statval_ina3221[] = {
+	    { values, 0, 2       _P("ina0")},
+	    { values, 2, 2       _P("ina1")},
+	    { values, 4, 2       _P("ina2")},
+	    { NULL, 0, 0 _P(NULL)}
+};
+
 #ifndef INA3221_TASKRD
 #error hu?
 #endif
@@ -59,12 +72,11 @@ static void ina3221_init_and_configure(void);
 
 
 
-static uint16_t values[INA3221_NUM_VALS*2] = {0};
 volatile uint16_t *cur_values = values;
 
 extern osThreadId_t ina3221_taskHandle;
 static int lastErr = 0;
-static int cvrf_dev = 0;
+//static int cvrf_dev = 0;
 
 typedef enum {
 	state_idle,
@@ -89,7 +101,7 @@ typedef enum {
 
 } ina_state_t;
 
-static int _trig(int dev);
+//static int _trig(int dev);
 static void _reg_read(int dev, int reg);
 static void _read_complete(int err);
 static int _next_dev(int d);

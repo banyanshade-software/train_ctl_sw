@@ -22,6 +22,16 @@
 #import "CTCManager.h"
 #include "oscillo.h"
 
+
+uint16_t dummy[3];
+
+const stat_val_t statval_ina3221[] = {
+        { dummy, 0, 2       _P("ina0")},
+        { dummy, 2, 2       _P("ina1")},
+        { dummy, 4, 2       _P("ina2")},
+        { NULL, 0, 0 _P(NULL)}
+};
+
 #define HIGHLEVEL_SIMU_CNX 0
 
 /*
@@ -1994,7 +2004,8 @@ void notif_target_bemf(const train_config_t *cnf, train_vars_t *vars, int32_t va
 
        @"inertia": @[@"tick", @"T0_ine_t", @"T0_ine_c", @"T1_ine_t", @"T1_ine_c"],
        @"pose"   : @[@"tick", @"T0_spd_curspeed", @"T0_bemf_mv", @"T0_ctrl_dir", @"T0_pose", @"T0_pose_trig1",@"T0_pose_trig2", @"T0_curposmm", @"T0_beginposmm"],
-       @"pose2"   : @[@"tick", @"T0_spd_curspeed", @"T0_bemf_mv", @"T0_ctrl_dir", @"T0_curposmm", @"T0_beginposmm"]
+       @"pose2"   : @[@"tick", @"T0_spd_curspeed", @"T0_bemf_mv", @"T0_ctrl_dir", @"T0_curposmm", @"T0_beginposmm"],
+       @"INA3221"   : @[ @"tick", @"ina0", @"ina1", @"ina2", @"T0_bemf_mv" ],
     };
     NSString *k = nil;
     switch (ngraph) {
@@ -2007,6 +2018,7 @@ void notif_target_bemf(const train_config_t *cnf, train_vars_t *vars, int32_t va
         case 6: k=@"inertia"; break;
         case 7: k=@"pose"; break;
         case 8: k=@"pose2"; break;
+        case 9: k=@"INA3221"; break;
         default:
             return;
     }

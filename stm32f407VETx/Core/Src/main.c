@@ -149,7 +149,7 @@ const osThreadAttr_t oscilo_attributes = {
   .cb_size = sizeof(osciloControlBlock),
   .stack_mem = &osciloBuffer[0],
   .stack_size = sizeof(osciloBuffer),
-  .priority = (osPriority_t) osPriorityRealtime1,
+  .priority = (osPriority_t) osPriorityNormal,
 };
 /* Definitions for frameQueue */
 osMessageQueueId_t frameQueueHandle;

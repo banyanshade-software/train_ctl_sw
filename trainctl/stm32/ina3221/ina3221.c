@@ -6,7 +6,6 @@
  */
 
 
-#include <oscillo/oscillo.h>
 #include "stm32f4xx_hal.h"
 #include "stm32f4xx_hal_gpio.h"
 #include "cmsis_os2.h"
@@ -18,6 +17,7 @@
 
 #include "misc.h"
 #include "../../msg/trainmsg.h"
+#include "../../oscillo/oscillo.h""
 
 
 #ifndef BOARD_HAS_INA3221

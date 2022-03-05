@@ -31,8 +31,8 @@ extern uint8_t ina3221_devices[4];
 
 
 
-extern volatile uint16_t *cur_values;
-extern volatile uint16_t *prev_values;
+//extern volatile uint16_t *cur_values;
+//extern volatile uint16_t *prev_values;
 
 
 

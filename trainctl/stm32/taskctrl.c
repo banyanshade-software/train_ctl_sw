@@ -61,8 +61,8 @@
 
 
 static void run_task_ctrl(void);
-extern DMA_HandleTypeDef hdma_i2c3_rx;
-extern DMA_HandleTypeDef hdma_i2c3_tx;
+//extern DMA_HandleTypeDef hdma_i2c3_rx;
+//extern DMA_HandleTypeDef hdma_i2c3_tx;
 
 
 // ADC/Vof   NOTIF_  conv/f2/  "osc evtadc "tim"  unk b3 "tx trunc" pwmfreq
@@ -113,14 +113,16 @@ static void TIM_ResetCounter(int tn, TIM_HandleTypeDef *htim)
 	if (tn==5) return;
 	// #define __HAL_TIM_IS_TIM_COUNTING_DOWN(__HANDLE__)    (((__HANDLE__)->Instance->CR1 &(TIM_CR1_DIR)) == (TIM_CR1_DIR))
 
-	itm_debug2(DBG_TIM, "CR1 : ", tn, (TIMx->CR1 & TIM_CR1_DIR) ? 1 : 0);
-	// TIMx->CR1 &= ~(TIM_CR1_DIR);
+	//itm_debug2(DBG_TIM, "CR1 : ", tn, (TIMx->CR1 & TIM_CR1_DIR) ? 1 : 0);
+	//TIMx->CR1 &= ~(TIM_CR1_DIR);
+	//itm_debug2(DBG_TIM, "CR1b : ", tn, (TIMx->CR1 & TIM_CR1_DIR) ? 1 : 0);
 }
 
 static int adc_nsmpl = 0;
 
 void StartCtrlTask(_UNUSED_ void *argument)
 {
+
 	adc_nsmpl = sizeof(train_adc_buf)/sizeof(uint16_t);
 
 	if (sizeof(train_adc_buf) != sizeof(uint16_t)*NUM_LOCAL_CANTONS_HW*8) Error_Handler();
@@ -128,13 +130,15 @@ void StartCtrlTask(_UNUSED_ void *argument)
 	if (NUM_LOCAL_CANTONS_HW != 6) Error_Handler();
 
 
-	if ((1)) set_pwm_freq(100);
+
 	CantonTimerHandles[1]=&htim1;
 	CantonTimerHandles[2]=&htim2;
 	CantonTimerHandles[3]=&htim3;
 	CantonTimerHandles[4]=&htim12;
 	//CantonTimerHandles[3]=&htim3;
 	//XXX railconfig_setup_default();
+
+	//osDelay(2000);	// 1000 ok, 500 ko, 100 ko
 
 
 	//HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
@@ -155,6 +159,9 @@ void StartCtrlTask(_UNUSED_ void *argument)
 	HAL_TIM_PWM_Stop(&htim12, TIM_CHANNEL_1);
 	HAL_TIM_PWM_Stop(&htim12, TIM_CHANNEL_2);
 
+	set_pwm_freq(100);
+
+	/*
 	portENTER_CRITICAL();
 	//HAL_TIM_Base_Start_IT(&htim8);
 	TIM_ResetCounter(8, &htim8);
@@ -171,7 +178,7 @@ void StartCtrlTask(_UNUSED_ void *argument)
 
 	//HAL_TIM_OC_Start(&htim8, TIM_CHANNEL_1);
 	portEXIT_CRITICAL();
-
+	*/
 
 
 
@@ -206,6 +213,7 @@ void StartCtrlTask(_UNUSED_ void *argument)
 // #define __HAL_TIM_SET_PRESCALER(__HANDLE__, __PRESC__)       ((__HANDLE__)->Instance->PSC = (__PRESC__))
 void set_pwm_freq(int freqhz)
 {
+	//if ((1)) return;
 	if (!freqhz) {
 		return;
 	}
@@ -218,18 +226,35 @@ void set_pwm_freq(int freqhz)
 	cur_freqhz = FRQ_MULT*60000/(ps+1);
 	// not an error but we want it in the log
 	itm_debug3(DBG_ERR|DBG_CTRL, "FREQ", freqhz, ps, cur_freqhz);
+
 	portENTER_CRITICAL();
 	numsampling = 0;
+	HAL_TIM_Base_Stop(&htim1);
+	HAL_TIM_Base_Stop(&htim2);
+	HAL_TIM_Base_Stop(&htim3);
+	HAL_TIM_Base_Stop(&htim8);
+
 	__HAL_TIM_SET_PRESCALER(&htim2, ps);
 	__HAL_TIM_SET_PRESCALER(&htim3, ps);
 	__HAL_TIM_SET_PRESCALER(&htim8, ps);
 	__HAL_TIM_SET_PRESCALER(&htim1, ps);
+
 	TIM_ResetCounter(8, &htim8);
 	TIM_ResetCounter(2, &htim2);
 	TIM_ResetCounter(3, &htim3);
 	TIM_ResetCounter(1, &htim1);
 
 
+
+	htim8.Instance->EGR = TIM_EGR_UG;
+	htim2.Instance->EGR = TIM_EGR_UG;
+	htim3.Instance->EGR = TIM_EGR_UG;
+	htim1.Instance->EGR = TIM_EGR_UG;
+
+	HAL_TIM_Base_Start(&htim2);
+	HAL_TIM_Base_Start(&htim3);
+	HAL_TIM_Base_Start(&htim8);
+	HAL_TIM_Base_Start_IT(&htim1);
 	portEXIT_CRITICAL();
 	itm_debug1(DBG_TIM|DBG_ERR, "freq ", cur_freqhz); // not an error but it is importanrt
 }
@@ -252,6 +277,7 @@ static void run_task_ctrl(void)
 	int cnt = 0;
 	//if ((0))   calibrate_bemf(); //XXX
 
+
 	if ((1)) {
 		msg_64_t m;
 		m.from = MA_BROADCAST;
@@ -263,7 +289,6 @@ static void run_task_ctrl(void)
 
 		mqf_write_from_nowhere(&m); // XXX it wont be sent to ctl
 	}
-
 
 	for (;;) {
 		uint32_t notif;
@@ -278,7 +303,7 @@ static void run_task_ctrl(void)
 				if ((1)) continue; // skip this tick
 			}
 		}
-		if ((1)) {
+		if ((0)) {
 			static int d = 0;
 			static int cnt=0;
 			if (!d && (cnt++ == 10)) {

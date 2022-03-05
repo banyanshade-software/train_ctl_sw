@@ -3,6 +3,7 @@
 *.bin
 *.map
 *.list
+*.swp
 *.cproject
 .settings
 *.project
@@ -15,3 +16,4 @@ stm32f407VET_TestPins/Debug/
 stm32f407VETx/Release/
 mac/layoutexport/layoutexport.xcodeproj/xcuserdata/danielbraun.xcuserdatad/xcdebugger/
 mac/train_throttle/train_throttle.xcodeproj/xcshareddata/
+.DS_Store

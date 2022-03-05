@@ -183,7 +183,7 @@ void canton_tick(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_
         case runmode_normal:
         	handle_msg_normal(&m);
         	break;
-        case runmode_detect1:
+        case runmode_detect_experiment:
         	handle_msg_detect1(&m);
         	break;
         case runmode_detect2:
@@ -328,7 +328,7 @@ static void canton_set_pwm(int cidx, const canton_config_t *c, canton_vars_t *v,
 
 	TIM_HandleTypeDef *pwm_timer = CantonTimerHandles[c->pwm_timer_num];
 	if (!pwm_timer) {
-		itm_debug1(DBG_LOWCTRL|DBG_ERR, "c/notim", c->pwm_timer_num);
+		itm_debug2(DBG_LOWCTRL|DBG_ERR, "c/notim", cidx, c->pwm_timer_num);
 		return;
 	}
 	if (v->cur_dir != dir) {

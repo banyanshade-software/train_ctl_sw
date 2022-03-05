@@ -125,7 +125,7 @@ void ihm_runtick(void)
 	case runmode_normal:	ihm_runtick_normal(performInit); 	break;
 	case runmode_off:		ihm_runtick_off(performInit); 		break;
 	case runmode_testcanton:ihm_runtick_testcanton(performInit); break;
-	case runmode_detect1:	ihm_runtick_detect1(performInit);	break;
+	case runmode_detect_experiment:	ihm_runtick_detect1(performInit);	break;
 	case runmode_detect2:	ihm_runtick_detect2(performInit);	break;
 	default:				ihm_runtick_off(performInit);		break;
 	}

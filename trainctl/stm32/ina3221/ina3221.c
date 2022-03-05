@@ -17,7 +17,7 @@
 
 #include "misc.h"
 #include "../../msg/trainmsg.h"
-
+#include "../../oscillo/oscilo.h"
 
 
 #ifndef BOARD_HAS_INA3221
@@ -101,6 +101,9 @@ static void run_ina_task(void);
 static volatile uint16_t mask_en_val = 0;
 static 	ina_state_t state = state_idle;
 
+volatile int16_t oscillo_ina0;
+volatile int16_t oscillo_ina1;
+volatile int16_t oscillo_ina2;
 
 
 void ina3221_task_start(_UNUSED_ void *argument)
@@ -150,7 +153,7 @@ static void run_ina_task(void)
 
 static void handle_ina_notif(uint32_t notif)
 {
-	int rc;
+	//int rc;
 	if (notif & NOTIF_INA_TRIG) {
 		// just ignore (INA3221_CONTIUNOUS)
 	}
@@ -362,6 +365,10 @@ static void _read_complete(_UNUSED_ int err)
 	}
 	msg_64_t m;
 
+	oscillo_ina0 = vals[0];
+	oscillo_ina1 = vals[1];
+	oscillo_ina2 = vals[2];
+
 	switch (run_mode) {
 	default:
 		break;
@@ -376,7 +383,7 @@ static void _read_complete(_UNUSED_ int err)
 		break;
 	case runmode_normal:
 		for (int i = 0; i<INA3221_NUM_VALS; i++) {
-			itm_debug2(DBG_INA3221, "ina val", i, vals[i]);
+			if ((i<=2)) itm_debug2(DBG_INA3221, "ina val", i, vals[i]);
 			int p = (abs(vals[i])>1000) ? 1 : 0;
 			if (p == presence[i]) continue;
 			presence[i] = p;

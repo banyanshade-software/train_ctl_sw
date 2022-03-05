@@ -30,16 +30,24 @@ typedef struct {
     uint8_t valt2ch4:1;
 
     uint8_t evtadc:4;
+
+    int16_t ina0;
+    int16_t ina1;
+    int16_t ina2;
 } osc_values_t;
 
 #define OSC_NUM_SAMPLES 1024
 
 extern volatile int oscillo_trigger_start;
 
-extern volatile int16_t oscilo_t0bemf;
-extern volatile int16_t oscilo_t1bemf;
-extern volatile uint8_t oscilo_evtadc;
+extern volatile int16_t oscillo_t0bemf;
+extern volatile int16_t oscillo_t1bemf;
+extern volatile uint8_t oscillo_evtadc;
 
 extern volatile int ocillo_enable;
+
+extern volatile int16_t oscillo_ina0;
+extern volatile int16_t oscillo_ina1;
+extern volatile int16_t oscillo_ina2;
 
 #endif /* oscilo_h */

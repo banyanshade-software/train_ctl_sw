@@ -1060,7 +1060,7 @@ static void MX_TIM5_Init(void)
   htim5.Instance = TIM5;
   htim5.Init.Prescaler = 0;
   htim5.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim5.Init.Period = 5000;
+  htim5.Init.Period = 10000;
   htim5.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim5.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_ENABLE;
   if (HAL_TIM_Base_Init(&htim5) != HAL_OK)
@@ -1504,7 +1504,8 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 			  cnt++;
 #if INA3221_TASK
 			  BaseType_t higher=0;
-			  xTaskNotifyFromISR(ina3221_taskHandle, ((cnt+0)%2) ? NOTIF_INA_READ : NOTIF_INA_TRIG, eSetBits, &higher);
+			  //xTaskNotifyFromISR(ina3221_taskHandle, ((cnt+0)%2) ? NOTIF_INA_READ : NOTIF_INA_TRIG, eSetBits, &higher);
+			  xTaskNotifyFromISR(ina3221_taskHandle, NOTIF_INA_READ, eSetBits, &higher);
 			  portYIELD_FROM_ISR(higher);
 #else
 			  void ina3221_trigger_conversion(void);

@@ -1278,8 +1278,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "2126"
             endingLineNumber = "2126"
-            landmarkName = "-peripheral:didDiscoverServices:"
-            landmarkType = "7">
+            landmarkName = "AppDelegate"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -1294,8 +1294,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "2191"
             endingLineNumber = "2191"
-            landmarkName = "AppDelegate"
-            landmarkType = "3">
+            landmarkName = "-sendMsg64:"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -1675,8 +1675,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "2196"
             endingLineNumber = "2196"
-            landmarkName = "-setTestMode:"
-            landmarkType = "7">
+            landmarkName = "AppDelegate"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -3603,7 +3603,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1470"
             endingLineNumber = "1470"
-            landmarkName = "-processOsciloFrame"
+            landmarkName = "-processOscilloFrame"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -3619,7 +3619,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1939"
             endingLineNumber = "1939"
-            landmarkName = "-_buildGnuplotCurves:x:file:items:"
+            landmarkName = "-plotWithGnuplot:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -3651,7 +3651,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1471"
             endingLineNumber = "1471"
-            landmarkName = "-processOsciloFrame"
+            landmarkName = "-processOscilloFrame"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -3976,7 +3976,7 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "546CD986-CA1B-440C-B24B-A1D3990EECC0"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "train_throttle/AppDelegate.m"
@@ -3992,7 +3992,7 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "1667AC5C-E057-401B-B4F4-F42DCCF2CB39"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "train_throttle/AppDelegate.m"
@@ -4001,6 +4001,22 @@
             startingLineNumber = "1902"
             endingLineNumber = "1902"
             landmarkName = "-startGnuplot"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "EB2F1062-E592-4A3C-86D2-051CB077B490"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "train_throttle/AppDelegate.m"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1384"
+            endingLineNumber = "1384"
+            landmarkName = "-processOscilloFrame"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

@@ -27,7 +27,7 @@
 
 #include "txrxcmd.h"
 #include "railconfig.h"
-#include "oscilo.h"
+#include <oscillo/oscillo.h>
 
 
 extern ADC_HandleTypeDef hadc2;

@@ -20,7 +20,7 @@
 #include "occupency.h"
 
 #import "CTCManager.h"
-#include "oscilo.h"
+#include "oscillo.h"
 
 #define HIGHLEVEL_SIMU_CNX 0
 

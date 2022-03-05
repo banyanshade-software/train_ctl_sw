@@ -148,7 +148,6 @@
 		1BC903192720B4E60087CEA7 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Platforms/MacOSX.platform/Developer/Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		1BC9031B2720BFDA0087CEA7 /* ledio.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ledio.h; sourceTree = "<group>"; };
 		1BC9031C2720BFDA0087CEA7 /* ledio.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ledio.c; sourceTree = "<group>"; };
-		1BD3F61627A3C0CD0007521D /* oscilo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = oscilo.h; sourceTree = "<group>"; };
 		1BD7CD33273686E30035CF0A /* topologyP.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = topologyP.h; sourceTree = "<group>"; };
 		1BD93C4B2546FF42006C4D70 /* param.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = param.c; sourceTree = "<group>"; };
 		1BD93C4D2546FF42006C4D70 /* train.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = train.h; sourceTree = "<group>"; };
@@ -165,6 +164,7 @@
 		1BD93C682546FF42006C4D70 /* misc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = misc.c; sourceTree = "<group>"; };
 		1BE8B296274191F8000A0FAD /* ledtask.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ledtask.c; sourceTree = "<group>"; };
 		1BE8B297274191F8000A0FAD /* ledtask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ledtask.h; sourceTree = "<group>"; };
+		1BEAC1C927D3563A0044FFC5 /* oscillo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = oscillo.h; sourceTree = "<group>"; };
 		1BEB93C92729F10D00508C17 /* occupency.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = occupency.c; sourceTree = "<group>"; };
 		1BEB93CD272B325700508C17 /* ctrlP.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ctrlP.h; sourceTree = "<group>"; };
 		1BEB93CE272B325700508C17 /* ctrlP.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ctrlP.c; sourceTree = "<group>"; };
@@ -342,7 +342,7 @@
 		1BD3F61327A3C0460007521D /* oscillo */ = {
 			isa = PBXGroup;
 			children = (
-				1BD3F61627A3C0CD0007521D /* oscilo.h */,
+				1BEAC1C927D3563A0044FFC5 /* oscillo.h */,
 			);
 			path = oscillo;
 			sourceTree = "<group>";

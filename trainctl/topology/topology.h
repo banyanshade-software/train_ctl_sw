@@ -75,7 +75,6 @@ lsblk_num_t any_lsblk_with_canton(uint8_t ca);
 
 //int get_blk_len(int blknum);
 int get_lsblk_len(lsblk_num_t num, int8_t *psteep);
-uint8_t get_lsblk_ina3221(lsblk_num_t num);
 
 // ---------------------------------------------------------------------
 
@@ -89,5 +88,11 @@ int topology_get_turnout(int tn);
 
 
 void topology_get_cantons_for_turnout(uint8_t turnout, uint8_t *head, uint8_t *straight, uint8_t *turn);
+
+// ---------------------------------------------------------------------
+
+uint8_t get_lsblk_ina3221(lsblk_num_t num);
+uint16_t get_ina_bitfield_for_canton(int cnum);
+
 
 #endif /* TOPOLOGY_TOPOLOGY_H_ */

@@ -54,6 +54,13 @@
 
 #define FUTURE_CANTON 0xFF
 
+/*
+ * current set up :
+ * ina0 on C2 (B2 and B3)
+ * ina1 on C1 (B1, B4)
+ * ina2 on C0 (B0)
+ */
+
 static const topo_lsblk_t _Topology[] = {
 #ifdef UNIT_TEST
 //#error he
@@ -70,11 +77,11 @@ static const topo_lsblk_t _Topology[] = {
     /* 8*/  { FUTURE_CANTON,    0xFF,   0, 60,    7,  -1,  0xFF,       -1,  -1, 0xFF       _PTS(1, {7,14}, {7,16}, {6,17}, {1, 17})}
 #else
     //          canton         ina    steep  len      l1    l2    tn       r1   r2   tn      graph pt
-       /* 0 */ { MA_CANTON(0, 0),  0xFF,   0, 98,    -1,   -1, 0xFF,       1,  -1,    0    _PTS(2, {L0+1,2}, {L0+4,2}, {L0+5,3}, {L0+5,9})},
-       /* 1 */ { MA_CANTON(0, 1),  0xFF,   0, 23,     0,    3,    0,       4,  12 ,   5    _PTS(0, {L0+5,10}, {L0+5,11}, _VP, _VP)},
-       /* 2 */ { MA_CANTON(0, 2),  0xFF,   0, 70,    -1 ,  -1, 0xFF,       3,  11,    4    _PTS(2, {L0+1,3}, {L0+3,3}, {L0+4,4}, {L0+4,5})},
-       /* 3 */ { MA_CANTON(0, 2),  0xFF,   0, 20,     2,   -1,    4,      -1,   1,    0    _PTS(0, {L0+4,6}, {L0+4, 9}, _VP, _VP)},
-       /* 4 */ { MA_CANTON(0, 1),  0xFF,   0, 22,     1,   -1,    5,      -1,   5,    1    _PTS(0, {L0+5, 12}, {L0+5, 14}, _VP, _VP)},
+       /* 0 */ { MA_CANTON(0, 0),     2,   0, 98,    -1,   -1, 0xFF,       1,  -1,    0    _PTS(2, {L0+1,2}, {L0+4,2}, {L0+5,3}, {L0+5,9})},
+       /* 1 */ { MA_CANTON(0, 1),     1,   0, 23,     0,    3,    0,       4,  12 ,   5    _PTS(0, {L0+5,10}, {L0+5,11}, _VP, _VP)},
+       /* 2 */ { MA_CANTON(0, 2),     0,   0, 70,    -1 ,  -1, 0xFF,       3,  11,    4    _PTS(2, {L0+1,3}, {L0+3,3}, {L0+4,4}, {L0+4,5})},
+       /* 3 */ { MA_CANTON(0, 2),     0,   0, 20,     2,   -1,    4,      -1,   1,    0    _PTS(0, {L0+4,6}, {L0+4, 9}, _VP, _VP)},
+       /* 4 */ { MA_CANTON(0, 1),     1,   0, 22,     1,   -1,    5,      -1,   5,    1    _PTS(0, {L0+5, 12}, {L0+5, 14}, _VP, _VP)},
        
        /* 5 */ { MA_CANTON(0, 3),  0xFF,   0, 54,     6,    4,    1,      -1,   -1, 0xFF   _PTS(0, {L0+6,15}, {L0+6,17}, {L0+5,18}, {L0+1,18})},
        /* 6 */ { MA_CANTON(0, 3),  0xFF,  -1, 80,   -1,    7,     2,       5,   -1,    1   _PTS(0, {L0+7,4}, {L0+7,8}, {L0+6,10}, {L0+6,14})},
@@ -220,6 +227,21 @@ static lsblk_num_t _first_lsblk_with_canton(uint8_t ca,  lsblk_num_t fromblk)
     }
     lsblk_num_t n = {-1};
     return n;
+}
+
+
+uint16_t get_ina_bitfield_for_canton(int cnum)
+{
+	uint16_t r = 0;
+    for (int i=0; i<numTopology(); i++) {
+        lsblk_num_t n;
+        n.n = i;
+        const topo_lsblk_t *t = Topology(n);
+        if (t->canton_addr != cnum) continue;
+        if (t->ina_segnum == 0xFF) continue;
+        r |= (1<<t->ina_segnum);
+    }
+    return r;
 }
 
 static inline lsblk_num_t _lsblk(int n)

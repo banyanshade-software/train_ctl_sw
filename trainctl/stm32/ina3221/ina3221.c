@@ -116,6 +116,7 @@ volatile int16_t oscillo_ina0;
 volatile int16_t oscillo_ina1;
 volatile int16_t oscillo_ina2;
 
+static uint16_t detect2_monitor = 0;
 
 void ina3221_task_start(_UNUSED_ void *argument)
 {
@@ -151,11 +152,20 @@ static void run_ina_task(void)
 			case CMD_SETRUN_MODE:
 				if (run_mode != m.v1u) {
 					run_mode = m.v1u;
+					itm_debug1(DBG_INA3221, "mode", run_mode);
 					testerAddr = m.from;
 				}
 				continue;
 				break;
+			case CMD_START_INA_MONITOR:
+				if (run_mode != runmode_detect2) {
+					itm_debug1(DBG_ERR|DBG_INA3221, "bad rmode", run_mode);
+					continue;
+				}
+				detect2_monitor = m.v1u;
+				continue;
 			default:
+				itm_debug2(DBG_INA3221|DBG_DETECT, "unk msg", m.cmd, run_mode);
 				break;
 			}
 		}
@@ -373,7 +383,7 @@ static void _read_complete(_UNUSED_ int err)
 	for (int i = 0; i<INA3221_NUM_VALS; i++) {
 		ina_svalues[i] = (int16_t) __builtin_bswap16(ina_uvalues[i]);
 	}
-	msg_64_t m;
+	msg_64_t m = {0};
 
 	oscillo_ina0 = ina_svalues[0];
 	oscillo_ina1 = ina_svalues[1];
@@ -382,7 +392,7 @@ static void _read_complete(_UNUSED_ int err)
 	switch (run_mode) {
 	default:
 		break;
-	case runmode_detect1:
+	case runmode_detect_experiment:
 		itm_debug1(DBG_INA3221, "D/1", ina_svalues[1]);
 		m.from =  MA_CANTON(localBoardNum, 0);
 		m.to = MA_UI(1);
@@ -390,6 +400,19 @@ static void _read_complete(_UNUSED_ int err)
 		m.subc = 1;
 		m.v1 = ina_svalues[1];
 		mqf_write_from_ina3221(&m);
+		break;
+	case runmode_detect2:
+		//itm_debug1(DBG_DETECT, "rdcplD", detect2_monitor);
+		for (int i = 0; i<INA3221_NUM_VALS; i++) {
+			if (0 == (detect2_monitor & (1<<i))) continue;
+			m.from = MA_INA3221_B(localBoardNum);
+			m.to = MA_CONTROL();
+			m.cmd = CMD_INA_REPORT;
+			m.subc = i;
+			m.v1 = ina_svalues[i];
+			itm_debug2(DBG_DETECT, "report", i, ina_svalues[i]);
+			mqf_write_from_ina3221(&m);
+		}
 		break;
 	case runmode_normal:
 		for (int i = 0; i<INA3221_NUM_VALS; i++) {
@@ -399,7 +422,7 @@ static void _read_complete(_UNUSED_ int err)
 			presence[i] = p;
 			itm_debug3(DBG_INA3221|DBG_PRES, "PRSCH", i,p, ina_svalues[i]);
 			// notify change
-			m.from = MA_CANTON(localBoardNum, 0);
+			m.from = MA_CANTON(localBoardNum, 0); // change to MA_INA3221_B ?
 			m.to = MA_CONTROL();
 			m.cmd = CMD_PRESENCE_SUB_CHANGE;
 			m.subc = i;

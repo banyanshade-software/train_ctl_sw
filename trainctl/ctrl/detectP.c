@@ -53,7 +53,8 @@ void detect2_init(void)
     save_freq = get_pwm_freq();
 }
 
-#define MEAS_DURATION 500 //tick = ms
+#define MEAS_DURATION  1000 //tick = ms
+#define RELAX_DURATION 1000
 
 typedef struct {
 	int16_t avg_von;
@@ -92,6 +93,8 @@ void analyse_bemf_final(void)
 }
 void detect2_process_tick(uint32_t tick)
 {
+	if (tick<6000) return;
+
 	static int freqi = 0;
 	if (0) {
 	} else if (-1 == detect_state) {
@@ -99,6 +102,7 @@ void detect2_process_tick(uint32_t tick)
 	} else if (0 == detect_state) {
         detect_canton++;
         lsblk_num_t lsb = any_lsblk_with_canton(detect_canton);
+
         if (lsb.n<0) {
             detect_state = -1;
             // done
@@ -165,14 +169,30 @@ void detect2_process_tick(uint32_t tick)
             detect_canton = 0;
 
         }
+
+        // start detection on new canton
         detect_ltick = tick;
+        itm_debug1(DBG_DETECT, "DETECT", detect_canton);
+
+        if ((1)) {
+        	// start monitoring current (INA3221) on concerned sub blocks
+        	uint16_t inas = get_ina_bitfield_for_canton(detect_canton);
+            msg_64_t m = {0};
+            m.from = MA_CONTROL_T(0);
+            m.to = MA_INA3221_B(localBoardNum); // XXX board to be added
+            m.cmd = CMD_START_INA_MONITOR;
+            m.v1u = inas;
+            mqf_write_from_ctrl(&m);
+        }
+
+        // start monitoring BEMF
         msg_64_t m = {0};
         m.from = MA_CONTROL_T(0);
         m.to = detect_canton; //MA_CANTON(0, canton);
-        itm_debug1(DBG_DETECT, "DETECT", detect_canton);
         m.cmd = CMD_START_DETECT_TRAIN;
         mqf_write_from_ctrl(&m);
 
+        // notify UI
         m.cmd = CMD_UI_DETECT;
         m.v1 = detect_canton;
         m.v2u = get_pwm_freq();;
@@ -186,19 +206,34 @@ void detect2_process_tick(uint32_t tick)
         
     }  else if (detect_state==1) {
         if (tick >= detect_ltick+MEAS_DURATION) {
+        	// stop monitoring BEMF
             msg_64_t m = {0};
             m.to = detect_canton; //MA_CANTON(0, canton);
             m.from = MA_CONTROL_T(0);
             m.cmd = CMD_STOP_DETECT_TRAIN;
             mqf_write_from_ctrl(&m);
-            itm_debug1(DBG_DETECT, "END", detect_canton);
+            itm_debug2(DBG_DETECT, "END", detect_canton, detect_ltick);
             detect_ltick = tick;
             detect_state = 2;
 
+            if ((1)) {
+            	// stop monitoring current (INA3221)
+            	uint16_t inas = get_ina_bitfield_for_canton(detect_canton);
+            	msg_64_t m = {0};
+            	m.from = MA_CONTROL_T(0);
+            	m.to = MA_INA3221_B(localBoardNum); // XXX board to be added
+            	m.cmd = CMD_START_INA_MONITOR;
+            	m.v1u = 0;
+            	mqf_write_from_ctrl(&m);
+            }
+            // analyse results
             analyse_bemf(detect_canton, freqi);
         }
     } else if (detect_state==2) {
-        if (tick > detect_ltick + 100) {
+    	// relax time
+        if (tick > detect_ltick + RELAX_DURATION) {
+            detect_ltick = tick;
+            // start again
             detect_state = 0;
         }
     }
@@ -206,7 +241,9 @@ void detect2_process_tick(uint32_t tick)
 
 void detect2_process_msg(msg_64_t *m)
 {
-    if (!IS_CANTON(m->from)) return;
+    /*if (!IS_CANTON(m->from) ) {
+    	return;
+    } */
     switch (m->cmd) {
         case CMD_BEMF_NOTIF:
             if (detect_state != 1) {
@@ -234,7 +271,13 @@ void detect2_process_msg(msg_64_t *m)
                 detect_min_von  = MIN(detect_min_von, v);
             }
             break;
-
+        case CMD_INA_REPORT:
+        	if (detect_state != 1) {
+        		itm_debug2(DBG_DETECT, "bad stat", detect_state, m->from);
+        		break;
+        	}
+        	itm_debug2(DBG_DETECT, "currrent", m->subc, m->v1);
+        	break;
         default:
             break;
     }

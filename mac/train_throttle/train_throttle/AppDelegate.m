@@ -1259,7 +1259,9 @@ static int frm_unescape(uint8_t *buf, int len)
 }
 - (void) processStatFrame
 {
-    if (frm.pidx<8) return; // TODO
+    if (frm.pidx<8) {
+        return; // TODO
+    }
     NSAssert(frm.pidx>8, @"short stat frame");
     //if ((1)) return;
     
@@ -1377,11 +1379,11 @@ int convert_to_mv_raw(int m)
     if (retfile) {
         NSError *err;
         [[NSFileManager defaultManager]createFileAtPath:[fu path] contents:nil attributes:nil];
-        recordFile = [NSFileHandle fileHandleForWritingToURL:fu error:&err];
-        if (!recordFile) {
+        NSFileHandle *ref = [NSFileHandle fileHandleForWritingToURL:fu error:&err];
+        if (!ref) {
             NSLog(@"error creating file : %@", err);
         }
-        *retfile = recordFile;
+        *retfile = ref;
     }
     return fu;
 }
@@ -1866,6 +1868,7 @@ void notif_target_bemf(const train_config_t *cnf, train_vars_t *vars, int32_t va
 {
     if (!_recordState) return;
     [recordFile closeFile];
+    recordFile = nil;
     self.recordState = 0;
 }
 //@property (nonatomic, strong) NSString *recordName;
@@ -2222,7 +2225,7 @@ didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic
         case 0: m.v1u = runmode_normal; break;
         case 1: m.v1u = runmode_testcanton; break;
         case 2: m.v1u = runmode_testcanton; break;
-        case 3: m.v1u = runmode_detect1; break;
+        case 3: m.v1u = runmode_detect_experiment; break;
         default:
             break;
     }

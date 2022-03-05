@@ -49,7 +49,7 @@ LFMQUEUE_DEF_C(from_ui_track, msg_64_t, 2, 0)
 LFMQUEUE_DEF_C(from_nowhere, msg_64_t, 	4, 0)
 
 
-LFMQUEUE_DEF_C(to_ina3221, msg_64_t, 	4, 0)
+LFMQUEUE_DEF_C(to_ina3221, msg_64_t, 	5, 0)
 LFMQUEUE_DEF_C(from_ina3221, msg_64_t, 	64,  1)
 
 
@@ -86,7 +86,7 @@ static const qdef_t qdef[NQDEF] = {
 		/*10*/ { NULL, &from_nowhere}
 };
 
-#define NROUTES 11
+#define NROUTES 12
 static const qroute_t routes[NROUTES] = {
 		{MA_ADDR_MASK_2|MA_ADDR_MASK_BOARD,		MA_ADDR_2_TURNOUT|0,	0},
 		{MA_ADDR_MASK_2|MA_ADDR_MASK_BOARD,		MA_ADDR_2_CANTON|0,		1},
@@ -103,8 +103,8 @@ static const qroute_t routes[NROUTES] = {
 		{MA_ADDR_MASK_5,						MA_ADDR_5_TRSC,			2},
 		{MA_ADDR_MASK_5,						MA_ADDR_5_CTRL,			5},
 		{MA_ADDR_MASK_8,						MA_ADDR_5_LED|0,		9},
-		{MA_ADDR_MASK_5,						MA_ADDR_5_LED,			3}
-
+		{MA_ADDR_MASK_5,						MA_ADDR_5_LED,			3},
+		{MA_ADDR_MASK_8,						MA_ADDR_5_INA|0,		7},
 };
 
 #endif // TRN_BOARD_MAIN

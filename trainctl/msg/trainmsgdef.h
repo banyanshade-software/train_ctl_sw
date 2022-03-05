@@ -45,6 +45,8 @@ typedef enum {
     // 100 xxxxx = 0x80
     CMD_START_DETECT_TRAIN = 0x80,			// [detect2] ctrl->canton					start train detection
     CMD_STOP_DETECT_TRAIN,			// [detect2] ctrl->canton					stop train detection
+	CMD_START_INA_MONITOR,			// [detect2] ctrl->ina3221					start monitoring current
+	CMD_INA_REPORT,					// [detect2] ina3221->ctrl					report measured current
     CMD_UI_DETECT,					// [detect2] ctrl->ui						detection info
     
     // 101 xxxxx = 0xA0

@@ -20,7 +20,7 @@ typedef uint8_t  msg_addr_t;
 // first 2 bits :
 // M2:  0 x : (6bits) bbb xxx		CANTON (00) and TURNOUT (01)
 // M3   1 0 x : (5bits)				UI
-// M5   1 1 0 x x : (3 bits)		SPD_CTL (110 01) + trn,  CTRL (110 10) + trn , LED (110 11)+brd
+// M5   1 1 0 x x : (3 bits)		SPD_CTL (110 01) + trn,  CTRL (110 10) + trn , LED (110 11)+brd, INA (110 00)+brd
 // M8   1 1 1 x x x x x
 
 #define MA_ADDR_MASK_2		0xC0
@@ -73,6 +73,13 @@ typedef uint8_t  msg_addr_t;
 #define MA_LED_B(_b) (MA_ADDR_5_LED  | (((_b)& 0x07)))
 #define IS_LED_B(_b) (MA_ADDR_5_LED == ((_b) & MA_ADDR_MASK_5))
 
+// ina3221 (per board)
+#define MA_ADDR_5_INA 0xC0
+#define MA_INA3221_B(_b) (MA_ADDR_5_INA  | (((_b)& 0x07)))
+#define IS_INA3221_B(_b) (MA_ADDR_5_INA == ((_b) & MA_ADDR_MASK_5))
+
+
+
 #define IS_BROADCAST(_addr) (0xFF == (_addr))
 #define MA_BROADCAST 0xFF
 
@@ -111,11 +118,11 @@ typedef union {
 } msg_64_t;
 
 typedef enum {
-	runmode_off,		// when switching mode
+	runmode_off,				// when switching mode
 	runmode_normal,
 	runmode_testcanton,
-	runmode_detect1,
-	runmode_detect2
+	runmode_detect_experiment,	// obsolete, used for experimentation
+	runmode_detect2				// auto detect trains
 } runmode_t;
 
 LFMQUEUE_DEF_H(to_canbus, msg_64_t)

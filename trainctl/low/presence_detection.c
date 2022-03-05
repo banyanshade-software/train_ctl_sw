@@ -13,7 +13,7 @@
 #include "presence_detection.h"
 
 #include "../msg/trainmsg.h"
-#include "../../stm32dev/ina3221/ina3221.h"
+#include "../stm32/ina3221/ina3221.h"
 #include "../railconfig.h"
 
 

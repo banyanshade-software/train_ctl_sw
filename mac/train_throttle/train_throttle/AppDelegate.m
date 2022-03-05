@@ -20,7 +20,17 @@
 #include "occupency.h"
 
 #import "CTCManager.h"
-#include "oscilo.h"
+#include "oscillo.h"
+
+
+uint16_t dummy[3];
+
+const stat_val_t statval_ina3221[] = {
+        { dummy, 0, 2       _P("ina0")},
+        { dummy, 2, 2       _P("ina1")},
+        { dummy, 4, 2       _P("ina2")},
+        { NULL, 0, 0 _P(NULL)}
+};
 
 #define HIGHLEVEL_SIMU_CNX 0
 
@@ -30,7 +40,7 @@
  * notif format
  * |s'N'SNCvv..|
  */
-#define MAX_DATA_LEN (1024*24)
+#define MAX_DATA_LEN (1024*32)
 typedef struct {
     uint8_t state;
     uint8_t escape;
@@ -1170,7 +1180,7 @@ static int frm_unescape(uint8_t *buf, int len)
                 }
                 case 'Y': {
                     // oscilo frame
-                    [self processOsciloFrame];
+                    [self processOscilloFrame];
                     return;
                 }
             }
@@ -1379,7 +1389,7 @@ int convert_to_mv_raw(int m)
 volatile int oscillo_trigger_start = 0;
 volatile int ocillo_enable = 0;
 
-- (void) processOsciloFrame
+- (void) processOscilloFrame
 {
     if (frm.pidx<8) return; // TODO
     NSAssert(frm.pidx>8, @"short stat frame");
@@ -1402,13 +1412,15 @@ volatile int ocillo_enable = 0;
                     @"tim1", @"tim2", @"tim8",
                     @"T1ch1", @"T1ch2", @"T1ch3", @"T1ch4",
                     @"T2ch1", @"T2ch2", @"T2ch3", @"T2ch4",
-                    @"t0bemf", @"t1bemf", @"evtadc"];
+                    @"t0bemf", @"t1bemf", @"evtadc",
+                    @"ina0", @"ina1", @"ina2"];
     NSDictionary *itms = @{ @"i" : @0,  @"V0" : @1 , @"V1" : @2 ,
                             @"V0a" : @3 , @"V0b" : @4 , @"V1a" : @5, @"V1b" : @6,
                             @"tim1" : @7, @"tim2" : @8, @"tim8" : @9,
         @"T1ch1" : @10, @"T1ch2" : @11, @"T1ch3" : @12, @"T1ch4" : @13,
         @"T2ch1" : @14, @"T2ch2" : @15, @"T2ch3" : @16, @"T2ch4" : @17,
-        @"t0bemf" : @18, @"t1bemf" : @19, @"evtadc" : @20
+        @"t0bemf" : @18, @"t1bemf" : @19, @"evtadc" : @20,
+        @"ina0" : @21, @"ina1" : @22, @"ina2" : @23
     };
     
     [recordFileRaw writeData:[@"i" dataUsingEncoding:NSUTF8StringEncoding]];
@@ -1423,7 +1435,7 @@ volatile int ocillo_enable = 0;
     
     for (int i=0; i<ns; i++) {
         osc_values_t *v = &samples[i];
-        NSString *s = [NSString stringWithFormat:@"%d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d\n",
+        NSString *s = [NSString stringWithFormat:@"%d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d\n",
                        i,
                        convert_to_mv(v->vadc[0]-v->vadc[1])+10000*5,
                        convert_to_mv(v->vadc[2]-v->vadc[3])+10000*4,
@@ -1444,11 +1456,14 @@ volatile int ocillo_enable = 0;
                        v->valt2ch4 ? W1(7) : W0(7),
                        v->t0bemf +50000,
                        v->t1bemf -50000,
-                       v->evtadc*2000 - 35000
+                       v->evtadc*2000 - 35000,
+                       v->ina0+70000,
+                       v->ina1+70000,
+                       v->ina2+70000
                        ];
         [recordFileGp writeData:[s dataUsingEncoding:NSUTF8StringEncoding]];
         
-        s = [NSString stringWithFormat:@"%d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d\n",
+        s = [NSString stringWithFormat:@"%d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d\n",
                        i,
                        convert_to_mv_raw(v->vadc[0]-v->vadc[1]),
                        convert_to_mv_raw(v->vadc[2]-v->vadc[3]),
@@ -1469,7 +1484,8 @@ volatile int ocillo_enable = 0;
                        v->valt2ch4,
                        v->t0bemf,
                        v->t1bemf,
-                       v->evtadc
+                       v->evtadc,
+                       v->ina0, v->ina1, v->ina2
                        ];
         [recordFileRaw writeData:[s dataUsingEncoding:NSUTF8StringEncoding]];
     }
@@ -1647,21 +1663,26 @@ uint32_t SimuTick = 0;
 
     
     for (int i =0; i<2; i++) {
-        //memset((void*)&(adc_result[i]), 0, sizeof(adc_result));
+#if NEW_ADC_AVG
+        memset((void*)&(adc_result[i]), 0, sizeof(adc_result));
+#else
         memset((void*)&(train_adc_buf[i]), 0, sizeof(adc_buf_t));
+#endif
 
     }
     
     [_simTrain0 computeTrainsAfter:mdt sinceStart:mt];
     for (int nc = 0; nc < NUM_LOCAL_CANTONS_HW; nc++) {
         double bemf = [_simTrain0 bemfForCantonNum:nc];
-        // xxxx
         int bemfi = -(bemf/4.545) * 3.3 *4096;
-        //NSLog(@"bemf %f -> %d\n", bemf, bemfi);
+#if NEW_ADC_AVG
         //adc_result[0].meas[nc].vA = (bemfi>0) ? 0 : -bemfi;
         //adc_result[0].meas[nc].vB = (bemfi>0) ? bemfi : 0;
+        adc_result[0].meas[nc].vBA = bemfi;
+#else
         train_adc_buf[0].off[nc].vA = (bemfi>0) ? 0 : -bemfi;
         train_adc_buf[0].off[nc].vB = (bemfi>0) ? bemfi : 0;
+#endif
     }
     
 
@@ -1983,7 +2004,8 @@ void notif_target_bemf(const train_config_t *cnf, train_vars_t *vars, int32_t va
 
        @"inertia": @[@"tick", @"T0_ine_t", @"T0_ine_c", @"T1_ine_t", @"T1_ine_c"],
        @"pose"   : @[@"tick", @"T0_spd_curspeed", @"T0_bemf_mv", @"T0_ctrl_dir", @"T0_pose", @"T0_pose_trig1",@"T0_pose_trig2", @"T0_curposmm", @"T0_beginposmm"],
-       @"pose2"   : @[@"tick", @"T0_spd_curspeed", @"T0_bemf_mv", @"T0_ctrl_dir", @"T0_curposmm", @"T0_beginposmm"]
+       @"pose2"   : @[@"tick", @"T0_spd_curspeed", @"T0_bemf_mv", @"T0_ctrl_dir", @"T0_curposmm", @"T0_beginposmm"],
+       @"INA3221"   : @[ @"tick", @"ina0", @"ina1", @"ina2", @"T0_bemf_mv" ],
     };
     NSString *k = nil;
     switch (ngraph) {
@@ -1996,6 +2018,7 @@ void notif_target_bemf(const train_config_t *cnf, train_vars_t *vars, int32_t va
         case 6: k=@"inertia"; break;
         case 7: k=@"pose"; break;
         case 8: k=@"pose2"; break;
+        case 9: k=@"INA3221"; break;
         default:
             return;
     }
@@ -2253,6 +2276,19 @@ didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic
     [self sendMsg64:m];
 }
 
+#pragma mark -
+
+- (IBAction) triggerOscillo:(id)sender
+{
+    msg_64_t m;
+    m.to = MA_TRAIN_SC(0);
+    m.from = MA_UI(UISUB_USB);
+    m.cmd = CMD_TRIG_OSCILLO;
+    m.v1u = 0;
+    m.v2 = 9;
+    [self sendMsg64:m];
+}
+
 
 #pragma mark -
 
@@ -2271,6 +2307,7 @@ void impl_uitrack_change_tn_reserv(int tn, int train)
 {
     [theDelegate.ctcManager uitrac_change_tn_reser:tn train:train];
 }
+
 
 
 

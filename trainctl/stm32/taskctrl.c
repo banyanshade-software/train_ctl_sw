@@ -272,7 +272,7 @@ static void run_task_ctrl(void)
 			int n = 0;
 			if (notif & NOTIF_NEW_ADC_1)  n = 1;
 			if (notif & NOTIF_NEW_ADC_2)  n |= 2;
-			itm_debug2(DBG_LOWCTRL, "-----", 0 /*(notif & NOTIF_TIM8) ? 1 : 0*/, n);
+			itm_debug2(DBG_LOWCTRL|DBG_TIM, "-----", 0 /*(notif & NOTIF_TIM8) ? 1 : 0*/, n);
 			if (n==3) {
 				itm_debug1(DBG_LOWCTRL|DBG_ERR, "both", n);
 				if ((1)) continue; // skip this tick
@@ -384,7 +384,7 @@ static int convert_to_mv(int m)
 }
 
 
-volatile uint8_t oscilo_evtadc;
+volatile uint8_t oscillo_evtadc;
 static int numresult = 0;
 
 int dump_adc = 0; // for debug
@@ -408,7 +408,7 @@ void HAL_ADC_ConvCpltCallback(_UNUSED_ ADC_HandleTypeDef* hadc)
 		return;
 	}
 	nfull++;
-	oscilo_evtadc = 2;
+	oscillo_evtadc = 2;
 	if ((0)) itm_debug1(DBG_TIM, "conv/f", HAL_GetTick());
 	BaseType_t higher=0;
 	xTaskNotifyFromISR(ctrlTaskHandle, NOTIF_NEW_ADC_2, eSetBits, &higher);
@@ -423,7 +423,7 @@ void HAL_ADC_ConvHalfCpltCallback(_UNUSED_ ADC_HandleTypeDef* hadc)
 	}
 	nhalf++;
 
-	oscilo_evtadc = 1;
+	oscillo_evtadc = 1;
 	BaseType_t higher=0;
 	if ((0)) itm_debug1(DBG_TIM, "conv/h", HAL_GetTick());
 	xTaskNotifyFromISR(ctrlTaskHandle, NOTIF_NEW_ADC_1, eSetBits, &higher);

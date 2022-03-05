@@ -146,8 +146,9 @@ static void spdctl_reset(void)
 	}
 }
 
-volatile int16_t oscilo_t0bemf = 0;
-volatile int16_t oscilo_t1bemf = 0;
+volatile int16_t oscillo_t0bemf = 0;
+volatile int16_t oscillo_t1bemf = 0;
+extern volatile int oscillo_trigger_start;
 
 void spdctl_run_tick(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, uint32_t dt)
 {
@@ -168,6 +169,9 @@ void spdctl_run_tick(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, uint
 		if (rc) break;
         
         switch (m.cmd) {
+        case CMD_TRIG_OSCILLO:
+        	oscillo_trigger_start = 1;
+        	break;
         case CMD_RESET:
         	// FALLTHRU
         case CMD_EMERGENCY_STOP:
@@ -199,8 +203,8 @@ void spdctl_run_tick(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, uint
             switch (m.cmd) {
                 case CMD_BEMF_NOTIF:
                     if (m.from == tvars->C1) {
-                    	if (!tidx) oscilo_t0bemf = m.v1;
-                    	else if (1==tidx) oscilo_t1bemf = m.v1;
+                    	if (!tidx) oscillo_t0bemf = m.v1;
+                    	else if (1==tidx) oscillo_t1bemf = m.v1;
 
 
                         itm_debug3(DBG_PID, "st bemf", tidx, m.v1, m.from);
@@ -210,8 +214,8 @@ void spdctl_run_tick(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, uint
                         itm_debug3(DBG_PID|DBG_CTRL, "c2 bemf", tidx, m.v1, m.from);
                         if (tvars->c2bemf) {
                         	tvars->bemf_mv = m.v1;
-                        	if (!tidx) oscilo_t0bemf = m.v1;
-                        	else if (1==tidx) oscilo_t1bemf = m.v1;
+                        	if (!tidx) oscillo_t0bemf = m.v1;
+                        	else if (1==tidx) oscillo_t1bemf = m.v1;
                         }
                         else if (abs(m.v1) > abs(tvars->bemf_mv)+300) {
                         	itm_debug3(DBG_SPDCTL|DBG_PRES, "c2_hi", tidx, m.v1, tvars->bemf_mv);
@@ -241,7 +245,6 @@ void spdctl_run_tick(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, uint
                 case CMD_SET_TARGET_SPEED:
                     itm_debug1(DBG_SPDCTL, "set_t_spd", m.v1u);
                     if (!tvars->target_speed && (m.v1u > 10)) {
-                    	extern volatile int oscillo_trigger_start;
                     	oscillo_trigger_start = 1;
                     }
                     tvars->target_speed = (int16_t) m.v1u;

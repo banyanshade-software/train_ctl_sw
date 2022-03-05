@@ -21,23 +21,18 @@ extern uint32_t ina3221_inter_dur;
 
 // normally upper layer dont need to know this
 // but ina3221_devices array (contains 1 if device detected, 0 otherwise)
-// is made public so we can display/check presence
+// is made public so we can display/check presence by IHM
+
+
 extern uint8_t ina3221_devices[4];
 
 #define INA3221_NUM_DEVICES 4
 #define INA3221_NUM_VALS (INA3221_NUM_DEVICES * 3)
 
 
-#if INA3221_TASK
 
-extern volatile uint16_t *cur_values;
-extern volatile uint16_t *prev_values;
-
-#else
-void ina3221_init(int continuous);
-void ina3221_trigger_conversion(void);
-void ina3221_start_read(int16_t *vals, uint8_t *flagdone);
-#endif
+//extern volatile uint16_t *cur_values;
+//extern volatile uint16_t *prev_values;
 
 
 

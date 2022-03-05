@@ -27,7 +27,7 @@
 
 #include "txrxcmd.h"
 #include "railconfig.h"
-#include "oscilo.h"
+#include <oscillo/oscillo.h>
 
 
 extern ADC_HandleTypeDef hadc2;
@@ -39,7 +39,7 @@ extern TIM_HandleTypeDef htim8;
 
 //#define OSC_NUM_SAMPLES 32
 
-static osc_values_t oscilo_buf[OSC_NUM_SAMPLES] __attribute__ ((aligned(32)));
+static osc_values_t oscillo_buf[OSC_NUM_SAMPLES] __attribute__ ((aligned(32)));
 static int oscilo_index = 0;
 
 static volatile int oscilo_run = 0;
@@ -98,7 +98,7 @@ void frame_send_oscilo(void(*cb)(uint8_t *d, int l))
 {
 	for (int i=0; i<OSC_NUM_SAMPLES; i++) {
 		uint8_t buf[32];
-		int l = txrx_frm_escape2(buf, (uint8_t *)&oscilo_buf[i], sizeof(osc_values_t), sizeof(buf));
+		int l = txrx_frm_escape2(buf, (uint8_t *)&oscillo_buf[i], sizeof(osc_values_t), sizeof(buf));
 		cb(buf, l);
 	}
 	oscilo_postprocess = 0;
@@ -107,7 +107,7 @@ void frame_send_oscilo(void(*cb)(uint8_t *d, int l))
 static void oscilo_start(void)
 {
 	if (oscilo_postprocess || oscilo_did_end) return;
-	memset(oscilo_buf, 0, sizeof(oscilo_buf));
+	memset(oscillo_buf, 0, sizeof(oscillo_buf));
 	oscilo_index = 0;
 	oscilo_run = 1;
 	itm_debug1(DBG_TIM, "osc start", 0);
@@ -122,6 +122,7 @@ void oscilo_end(void)
 	HAL_ADC_Stop_DMA(&hadc2);
 	itm_debug1(DBG_TIM, "osc end", 0);
 	oscilo_did_end = 1;
+	adc_in_progress = 0; // XXX should already been 0, except if failure
 }
 
 static uint16_t adcbuf[16];
@@ -132,9 +133,9 @@ void tim5_elapsed(void)
 	if (!oscilo_run) return;
 
 
-	oscilo_buf[oscilo_index].tim1cnt =  __HAL_TIM_GET_COUNTER(&htim1);
-	oscilo_buf[oscilo_index].tim2cnt =  __HAL_TIM_GET_COUNTER(&htim2);
-	oscilo_buf[oscilo_index].tim8cnt =  __HAL_TIM_GET_COUNTER(&htim8);
+	oscillo_buf[oscilo_index].tim1cnt =  __HAL_TIM_GET_COUNTER(&htim1);
+	oscillo_buf[oscilo_index].tim2cnt =  __HAL_TIM_GET_COUNTER(&htim2);
+	oscillo_buf[oscilo_index].tim8cnt =  __HAL_TIM_GET_COUNTER(&htim8);
 	//TIM_TypeDef *T1 = htim1.Instance;
 	//TIM_TypeDef *T2 = htim2.Instance;
 	//uint16_t sr1 = T1->SR;
@@ -143,29 +144,34 @@ void tim5_elapsed(void)
 	//oscilo_buf[oscilo_index].valt1ch2 = (sr1 & TIM_SR_CC2IF) ? 1 : 0;
 
 
-	oscilo_buf[oscilo_index].valt1ch1 = HAL_GPIO_ReadPin(PWM_0_0_GPIO_Port, PWM_0_0_Pin);
-	oscilo_buf[oscilo_index].valt1ch2 = HAL_GPIO_ReadPin(PWM_0_1_GPIO_Port, PWM_0_1_Pin);
+	oscillo_buf[oscilo_index].valt1ch1 = HAL_GPIO_ReadPin(PWM_0_0_GPIO_Port, PWM_0_0_Pin);
+	oscillo_buf[oscilo_index].valt1ch2 = HAL_GPIO_ReadPin(PWM_0_1_GPIO_Port, PWM_0_1_Pin);
 
-	oscilo_buf[oscilo_index].valt1ch3 = HAL_GPIO_ReadPin(PWM_1_0_GPIO_Port, PWM_1_0_Pin);
-	oscilo_buf[oscilo_index].valt1ch4 = HAL_GPIO_ReadPin(PWM_1_1_GPIO_Port, PWM_1_1_Pin);
+	oscillo_buf[oscilo_index].valt1ch3 = HAL_GPIO_ReadPin(PWM_1_0_GPIO_Port, PWM_1_0_Pin);
+	oscillo_buf[oscilo_index].valt1ch4 = HAL_GPIO_ReadPin(PWM_1_1_GPIO_Port, PWM_1_1_Pin);
 
-	oscilo_buf[oscilo_index].valt2ch1 = HAL_GPIO_ReadPin(PWM_2_0_GPIO_Port, PWM_2_0_Pin);
-	oscilo_buf[oscilo_index].valt2ch2 = HAL_GPIO_ReadPin(PWM_2_1_GPIO_Port, PWM_2_1_Pin);
+	oscillo_buf[oscilo_index].valt2ch1 = HAL_GPIO_ReadPin(PWM_2_0_GPIO_Port, PWM_2_0_Pin);
+	oscillo_buf[oscilo_index].valt2ch2 = HAL_GPIO_ReadPin(PWM_2_1_GPIO_Port, PWM_2_1_Pin);
 
-	oscilo_buf[oscilo_index].valt2ch3 = HAL_GPIO_ReadPin(PWM_3_0_GPIO_Port, PWM_3_0_Pin);
-	oscilo_buf[oscilo_index].valt2ch4 = HAL_GPIO_ReadPin(PWM_3_1_GPIO_Port, PWM_3_1_Pin);
+	oscillo_buf[oscilo_index].valt2ch3 = HAL_GPIO_ReadPin(PWM_3_0_GPIO_Port, PWM_3_0_Pin);
+	oscillo_buf[oscilo_index].valt2ch4 = HAL_GPIO_ReadPin(PWM_3_1_GPIO_Port, PWM_3_1_Pin);
 
-	oscilo_buf[oscilo_index].t0bemf = oscilo_t0bemf;
-	oscilo_buf[oscilo_index].t1bemf = oscilo_t1bemf;
+	oscillo_buf[oscilo_index].t0bemf = oscillo_t0bemf;
+	oscillo_buf[oscilo_index].t1bemf = oscillo_t1bemf;
 
-	if (oscilo_buf[oscilo_index].t0bemf > 7000) {
+	oscillo_buf[oscilo_index].ina0 = oscillo_ina0;
+	oscillo_buf[oscilo_index].ina0 = oscillo_ina1;
+	oscillo_buf[oscilo_index].ina0 = oscillo_ina2;
+	//itm_debug3(DBG_TIM, "oscina", oscillo_ina0, oscillo_ina1, oscillo_ina2);
+
+	if (oscillo_buf[oscilo_index].t0bemf > 7000) {
 		//extern void bemf_hi(void);
 		//bemf_hi();
 	}
-	oscilo_buf[oscilo_index].evtadc = oscilo_evtadc;
-	if (oscilo_evtadc) {
+	oscillo_buf[oscilo_index].evtadc = oscillo_evtadc;
+	if (oscillo_evtadc) {
 		//itm_debug1(DBG_TIM, "osc evtadc", oscilo_evtadc);
-		oscilo_evtadc = 0;
+		oscillo_evtadc = 0;
 	}
  	oscilo_index++;
 	if (oscilo_index >= OSC_NUM_SAMPLES) {
@@ -177,11 +183,15 @@ void tim5_elapsed(void)
 		}
 		adc_in_progress = 1;
 		if ((0)) {
-			HAL_ADC_Start_DMA(&hadc2,(uint32_t *)(&oscilo_buf[oscilo_index-1].vadc[0]), 4);
+			HAL_ADC_Start_DMA(&hadc2,(uint32_t *)(&oscillo_buf[oscilo_index-1].vadc[0]), 4);
 		} else {
-			memcpy(&oscilo_buf[oscilo_index-1].vadc[0],adcbuf, 2*4);
+			memcpy(&oscillo_buf[oscilo_index-1].vadc[0],adcbuf, 2*4);
 			memset(adcbuf, 0, sizeof(adcbuf));
-			HAL_ADC_Start_DMA(&hadc2,(uint32_t *)adcbuf, 4);
+			HAL_StatusTypeDef rc = HAL_ADC_Start_DMA(&hadc2,(uint32_t *)adcbuf, 4);
+			if (rc != HAL_OK) {
+				itm_debug1(DBG_ERR|DBG_TIM, "OSC ERR", rc);
+				adc_in_progress = 0;
+			}
 
 		}
 	}

@@ -125,7 +125,7 @@ const osThreadAttr_t ina3221_task_attributes = {
   .cb_size = sizeof(ina3221_taskControlBlock),
   .stack_mem = &ina3221_taskBuffer[0],
   .stack_size = sizeof(ina3221_taskBuffer),
-  .priority = (osPriority_t) osPriorityRealtime,
+  .priority = (osPriority_t) osPriorityRealtime2,
 };
 /* Definitions for ledTask */
 osThreadId_t ledTaskHandle;
@@ -1453,68 +1453,48 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
     HAL_IncTick();
   }
   /* USER CODE BEGIN Callback 1 */
-  /*
-  if ((htim->Instance == TIM7) && ledTaskHandle) {
-	  BaseType_t higher=0;
-	  xTaskNotifyFromISR(ledTaskHandle, NOTIF_SYSTICK, eSetBits, &higher);
-	  portYIELD_FROM_ISR(higher);
 
-	NOT OK because system time prio is too high, can't invoke system call
-    }*/
-  /*
-  if (htim->Instance == TIM7) {
-	  static uint32_t lastuitick = 0;
-	  uint32_t t = HAL_GetTick();
-	  if (t >= lastuitick+100) {
-		  // 10Hz UI tick
-		  lastuitick = t;
-		  BaseType_t higher=0;
-		  xTaskNotifyFromISR(uiTaskHandle, NOTIF_TICKUI, eSetBits, &higher);
-		  portYIELD_FROM_ISR(higher);
-	  }
-  }
-  */
   if (htim->Instance == TIM5) {
 	  tim5_elapsed();
   }
   if (htim->Instance == TIM8) {
-	  if ((0)) {
-		  uint32_t t1 = __HAL_TIM_GET_COUNTER(&htim1);
-		  static uint32_t cnt = 0;
-		  itm_debug2(DBG_TIM, "tim8",cnt, t1);
-		  cnt++;
-		  void ina3221_trigger_conversion(void);
-		  ina3221_trigger_conversion();
-		  //BaseType_t higher=0;
-		  //xTaskNotifyFromISR(ctrlTaskHandle, NOTIF_TIM8, eSetBits, &higher);
-		  //portYIELD_FROM_ISR(higher);
-	  } else {
-		  itm_debug1(DBG_TIM, "tim8",0);
-	  }
+	  itm_debug1(DBG_TIM, "tim8",0);
   }
   if (htim->Instance == TIM1) {
+	  static int igncnt=0;
 	  static uint32_t lasttick = 0;
 	  uint32_t t = HAL_GetTick();
-	  if (t >= lasttick+5) { // not faster than 20Hz, whatever the frequency is
+	  if (t >= lasttick+5) { // not faster than 50Hz (20ms), whatever the frequency is
 		  lasttick = t;
 		  uint32_t t1 = __HAL_TIM_GET_COUNTER(&htim1);
-		  if (0 || (t1<50)) {
-			  static uint32_t cnt = 0;
-			  itm_debug2(DBG_TIM|DBG_INA3221, "tim1",cnt, t1);
-			  cnt++;
-#if INA3221_TASK
+		  if (t1<50) {
+			  igncnt = 0;
+			  //itm_debug1(DBG_TIM|DBG_INA3221, "tim1", t1);
+		      itm_debug1(DBG_DETECT|DBG_INA3221, "noti READ", t1);
+
 			  BaseType_t higher=0;
 			  //xTaskNotifyFromISR(ina3221_taskHandle, ((cnt+0)%2) ? NOTIF_INA_READ : NOTIF_INA_TRIG, eSetBits, &higher);
 			  xTaskNotifyFromISR(ina3221_taskHandle, NOTIF_INA_READ, eSetBits, &higher);
 			  portYIELD_FROM_ISR(higher);
-#else
-			  void ina3221_trigger_conversion(void);
-			  ina3221_trigger_conversion();
-#endif
+
+		  } else if (t1>150) {
+			  itm_debug2(DBG_ERR|DBG_TIM, "ign tim1", t1, igncnt);
+			  igncnt++;
+			  if (igncnt==10) {
+				  extern volatile int oscillo_trigger_start;
+				  oscillo_trigger_start = 1;
+				  int freq = get_pwm_freq();
+				  itm_debug1(DBG_ERR|DBG_TIM, "refreq", freq);
+				  //set_pwm_freq(freq, 0);
+			  }
+
+		  } else {
+			  // late irq
+			  itm_debug1(DBG_ERR|DBG_TIM, "late tim1", t1);
 		  }
 	  }
 
-	  if ((1)) {
+	  if ((0)) {
 		  static uint32_t lasttick = 0;
 		  if (t >= lasttick+5000) { // not faster than 20Hz, whatever the frequency is
 			  lasttick = t;

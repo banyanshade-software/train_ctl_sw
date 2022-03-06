@@ -1470,15 +1470,14 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 		  if (t1<50) {
 			  igncnt = 0;
 			  //itm_debug1(DBG_TIM|DBG_INA3221, "tim1", t1);
-		      itm_debug1(DBG_DETECT|DBG_INA3221, "noti READ", t1);
+		      //itm_debug1(DBG_DETECT|DBG_INA3221, "noti READ", t1);
 
 			  BaseType_t higher=0;
-			  //xTaskNotifyFromISR(ina3221_taskHandle, ((cnt+0)%2) ? NOTIF_INA_READ : NOTIF_INA_TRIG, eSetBits, &higher);
 			  xTaskNotifyFromISR(ina3221_taskHandle, NOTIF_INA_READ, eSetBits, &higher);
 			  portYIELD_FROM_ISR(higher);
 
 		  } else if (t1>150) {
-			  itm_debug2(DBG_ERR|DBG_TIM, "ign tim1", t1, igncnt);
+			  //itm_debug2(DBG_ERR|DBG_TIM, "ign tim1", t1, igncnt);
 			  igncnt++;
 			  if (igncnt==10) {
 				  extern volatile int oscillo_trigger_start;

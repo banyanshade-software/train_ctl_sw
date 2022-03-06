@@ -212,7 +212,7 @@ static void handle_ina_notif(uint32_t notif)
 		*/
 	}
 	if (notif & NOTIF_INA_READ) {
-		itm_debug1(DBG_DETECT|DBG_INA3221, "INA READ", notif);
+		//itm_debug1(DBG_DETECT|DBG_INA3221, "INA READ", notif);
 		int dev = _next_dev(-1);
 		if (dev >= 0) {
 			state = state_rd_0 + dev * 3;

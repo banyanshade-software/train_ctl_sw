@@ -70,6 +70,7 @@ static void run_task_ctrl(void);
 
 int cur_freqhz = 100;
 static int numsampling = 0;
+static int bemf_divisor = 1;
 
 /*
  *  max pwm (MAX_PWM) is 90% : min off time in µs = (1000000/pwmhz)*.1
@@ -208,11 +209,11 @@ void StartCtrlTask(_UNUSED_ void *argument)
 	run_task_ctrl();
 }
 
-//extern TIM_HandleTypeDef htim1;
 
 // #define __HAL_TIM_SET_PRESCALER(__HANDLE__, __PRESC__)       ((__HANDLE__)->Instance->PSC = (__PRESC__))
 void set_pwm_freq(int freqhz, int crit)
 {
+
 	//if ((1)) return;
 	if (!freqhz) {
 		return;
@@ -220,6 +221,13 @@ void set_pwm_freq(int freqhz, int crit)
 	// 12MHz / 200 -> 60000
 	// 50Hz = 1200
 #define FRQ_MULT (2)							// 1 : for 24 MHz (ABP prescaler = /8) ; 2 : 48MHz, ABP prescaler = /4
+
+	bemf_divisor = (freqhz)/100; 			// use to skip some ADC when using high frequencies
+												// divisor must be 1 (no division) or even value
+	if (bemf_divisor > 1) {
+		bemf_divisor = (bemf_divisor/2)*2;
+	}
+
 	int ps = (FRQ_MULT*60000/freqhz); //-1;
 	if ((ps<1) || (ps>0xFFFF)) ps = 1200;
 	ps = ps-1;
@@ -273,13 +281,13 @@ void ADC_IRQ_UserHandler(void)
 
 volatile uint32_t t0ctrl = 0;
 
-static const int ckcpu = 1;
+/*static const int ckcpu = 1;
 static int t_1;
 static int t_2;
 static int t_3;
 static int t_4;
 static int t_5;
-
+*/
 static void run_task_ctrl(void)
 {
 	int cnt = 0;
@@ -299,6 +307,21 @@ static void run_task_ctrl(void)
 	}
 
 	for (;;) {
+		if ((1)) { // measure actual frequency
+			static int cnt = 0;
+			static uint32_t t0 = 0;
+			cnt ++;
+			uint32_t t1 = HAL_GetTick();
+			if (!t0) {
+				t0 = t1;
+				cnt = 0;
+			} else  if (t1-t0 >= 10000) {
+				itm_debug2(DBG_TIM | DBG_DETECT, "wk FREQ", cnt/10, cnt%10);
+				cnt = 0;
+				t0 = t1;
+			}
+		}
+
 		uint32_t notif;
 		xTaskNotifyWait(0, 0xFFFFFFFF, &notif, portMAX_DELAY);
 		if ((1)) {
@@ -311,14 +334,8 @@ static void run_task_ctrl(void)
 				if ((1)) continue; // skip this tick
 			}
 		}
-		if ((0)) {
-			static int d = 0;
-			static int cnt=0;
-			if (!d && (cnt++ == 10)) {
-				d = 1;
-				set_pwm_freq(100, 1);
-			}
-		}
+
+
 
 		cnt++;
 		t0ctrl = HAL_GetTick();
@@ -343,23 +360,23 @@ static void run_task_ctrl(void)
 		}
 
 		bemf_tick(notif, t, dt);
-		if (ckcpu) t_1 = HAL_GetTick();
+		//if (ckcpu) t_1 = HAL_GetTick();
 
 		itm_debug1(DBG_LOWCTRL, "--msg", dt);
 		msgsrv_tick(notif, t, dt);
-		if (ckcpu) t_2 = HAL_GetTick();
+		//if (ckcpu) t_2 = HAL_GetTick();
 
 		itm_debug1(DBG_LOWCTRL, "--spdctl", dt);
 		spdctl_run_tick(notif, t, dt);
-		if (ckcpu) t_3 = HAL_GetTick();
+		//if (ckcpu) t_3 = HAL_GetTick();
 
 		itm_debug1(DBG_LOWCTRL, "--canton", dt);
 		canton_tick(notif, t, dt);
-		if (ckcpu) t_4 = HAL_GetTick();
+		//if (ckcpu) t_4 = HAL_GetTick();
 
 		itm_debug1(DBG_LOWCTRL, "--trnout", dt);
 		turnout_tick(notif, t, dt);
-		if (ckcpu) t_5 = HAL_GetTick();
+		//if (ckcpu) t_5 = HAL_GetTick();
 
 		itm_debug1(DBG_LOWCTRL, "--ctrl", dt);
 		ctrl_run_tick(notif, t, dt);
@@ -382,12 +399,13 @@ static void run_task_ctrl(void)
 			//itm_debug2(DBG_ERR, "ctrl tick", e1, et);
 			if (et>9) {
 				itm_debug1(DBG_ERR, "long proc", et);
-				itm_debug1(DBG_ERR, "t1", t_1 - t);
+				/*itm_debug1(DBG_ERR, "t1", t_1 - t);
 				itm_debug1(DBG_ERR, "t2", t_2 - t_1);
 				itm_debug1(DBG_ERR, "t3", t_3 - t_2);
 				itm_debug1(DBG_ERR, "t4", t_4 - t_3);
 				itm_debug1(DBG_ERR, "t5", t_5 - t_4);
 				itm_debug1(DBG_ERR, "t6", endtime - t_5);
+				*/
 			}
 		}
 	}
@@ -401,8 +419,8 @@ static void run_task_ctrl(void)
 extern osThreadId_t ctrlTaskHandle;
 
 
-static int nhalf=0;
-static int nfull=0;
+static uint32_t nhalf=0;
+static uint32_t nfull=0;
 
 __weak void HAL_ADC_ConvCpltCallback2(_UNUSED_ ADC_HandleTypeDef* hadc)
 {
@@ -414,14 +432,13 @@ __weak void HAL_ADC_ErrorCallback2(_UNUSED_ ADC_HandleTypeDef* hadc)
 {
 }
 
-
+/*
 static int convert_to_mv(int m)
 {
     return ((m * 4545 * 33) / (4096*10));
 }
 
 
-volatile uint8_t oscillo_evtadc;
 static int numresult = 0;
 
 int dump_adc = 0; // for debug
@@ -435,7 +452,8 @@ static void write_num(uint8_t *buf, uint32_t v, int ndigit)
 		v = v/10;
 	}
 }
-
+*/
+volatile uint8_t oscillo_evtadc;
 
 
 void HAL_ADC_ConvCpltCallback(_UNUSED_ ADC_HandleTypeDef* hadc)
@@ -445,6 +463,9 @@ void HAL_ADC_ConvCpltCallback(_UNUSED_ ADC_HandleTypeDef* hadc)
 		return;
 	}
 	nfull++;
+	if ((bemf_divisor >= 4) && (nfull % (bemf_divisor/2))) {
+		return;
+	}
 	oscillo_evtadc = 2;
 	if ((0)) itm_debug1(DBG_TIM, "conv/f", HAL_GetTick());
 	BaseType_t higher=0;
@@ -459,7 +480,9 @@ void HAL_ADC_ConvHalfCpltCallback(_UNUSED_ ADC_HandleTypeDef* hadc)
 		return;
 	}
 	nhalf++;
-
+	if (bemf_divisor > 1) {
+		return;
+	}
 	oscillo_evtadc = 1;
 	BaseType_t higher=0;
 	if ((0)) itm_debug1(DBG_TIM, "conv/h", HAL_GetTick());

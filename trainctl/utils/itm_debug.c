@@ -29,12 +29,12 @@
 #else
 //#include "stm32f1xx_hal.h"
 #endif
-//#include "cmsis_os2.h"                  // ::CMSIS:RTOS2
+//#include "cmsis_os2.h"                  // ::CMSIS:RTOS2 ful2
 #endif
 
 
 /* debug flags */
-uint32_t debug_flags = DBG_ERR  |DBG_DETECT; //|DBG_INA3221| DBG_CTRL; //DBG_DETECT | DBG_AUTO | DBG_CTRL | DBG_POSEC;// | DBG_ADC ; //| DBG_INERTIA | DBG_SPDCTL | DBG_CTRL;// |DBG_CTRL | DBG_INA3221 ;//| DBG_ADC | DBG_INA3221 | DBG_LOWCTRL;
+uint32_t debug_flags = DBG_ERR  |DBG_DETECT; //|DBG_TIM; //|DBG_INA3221| DBG_CTRL; //DBG_DETECT | DBG_AUTO | DBG_CTRL | DBG_POSEC;// | DBG_ADC ; //| DBG_INERTIA | DBG_SPDCTL | DBG_CTRL;// |DBG_CTRL | DBG_INA3221 ;//| DBG_ADC | DBG_INA3221 | DBG_LOWCTRL;
 		 // DBG_ERR | DBG_TURNOUT |DBG_CTRL; // DBG_PRES | DBG_CTRL | DBG_CTRLHI | DBG_POSEC ;//| DBG_ADC ;//| DBG_POSE; // DBG_POSE;// |DBG_SPDCTL|DBG_PID| DBG_PRES|DBG_CTRL; //| DBG_PRES | DBG_INA3221;// | DBG_INA3221 | DBG_PRES | DBG_UI; //| DBG_ADC; //| DBG_CTRL | DBG_SPDCTL|DBG_PID;//| DBG_UI;// |DBG_MSG;
  // | DBG_PRES | DBG_SPDCTL
 

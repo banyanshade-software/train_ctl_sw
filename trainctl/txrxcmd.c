@@ -231,7 +231,7 @@ int32_t (*getter)(struct param *);
 	void (*setter)(struct param *, int32_t);
 */
 
-static int32_t param_get_numtrains(param_t *p)
+static int32_t param_get_numtrains(_UNUSED_ param_t *p)
 {
 	return NUM_TRAINS;
 }
@@ -241,10 +241,14 @@ static int32_t param_get_numcantons(param_t *p)
 	return NUM_CANTONS;
 }
 
+static int32_t param_get_pwm(param_t *p)
+{
+	return get_pwm_freq();
+}
 extern int ocillo_enable;
 
 static const param_t glob_params[] = {
-		{ "pwmfreq",    &cur_freqhz, 0, NULL, param_set_pwm, sizeof(int), 0, 60000,  50},
+		{ "pwmfreq",     NULL, 0, param_get_pwm, param_set_pwm, sizeof(int), 0, 60000,  50},
 		{ "numtrains",   NULL, 0, 	    param_get_numtrains,  NULL, sizeof(uint32_t), 1, 1, 10},
 		{ "numcantons",  NULL, 0, 	    param_get_numcantons, NULL, sizeof(uint32_t), 2, 1, 50},
 		{ "oscilo",     &ocillo_enable, 0, 	   NULL, NULL, sizeof(int), 0, 1, 0},

@@ -13,7 +13,7 @@
 //#define itm_debug2(_f, _t, _p1, _p2) do {} while(0)
 #include "inertia.h"
 
-int cur_freqhz = 100;
+int tsktick_freqhz = 100;
 uint32_t SimuTick = 0;
 
 @interface TestInertia : XCTestCase
@@ -28,7 +28,7 @@ static inertia_vars_t vars;
 - (void)setUp {
     // Put setup code here. This method is called before the invocation of each test method in the class.
     memset(&vars, 0, sizeof(vars));
-    cur_freqhz = 100;
+    tsktick_freqhz = 100;
 }
 
 - (void)tearDown {

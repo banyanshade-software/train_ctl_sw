@@ -68,9 +68,10 @@ static void run_task_ctrl(void);
 // ADC/Vof   NOTIF_  conv/f2/  "osc evtadc "tim"  unk b3 "tx trunc" pwmfreq
 
 
-int cur_freqhz = 100;
+static int cur_freqhz = 100;
 static int numsampling = 0;
 static int bemf_divisor = 1;
+int tsktick_freqhz = 100;
 
 /*
  *  max pwm (MAX_PWM) is 90% : min off time in µs = (1000000/pwmhz)*.1
@@ -232,6 +233,8 @@ void set_pwm_freq(int freqhz, int crit)
 	if ((ps<1) || (ps>0xFFFF)) ps = 1200;
 	ps = ps-1;
 	cur_freqhz = FRQ_MULT*60000/(ps+1);
+	tsktick_freqhz =  (bemf_divisor>1) ? cur_freqhz / bemf_divisor : cur_freqhz;
+
 	// not an error but we want it in the log
 	itm_debug3(DBG_ERR|DBG_CTRL, "FREQ", freqhz, ps, cur_freqhz);
 

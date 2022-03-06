@@ -196,7 +196,7 @@ void startCycleCounter(void);
 #endif
 
 // ---------------------------------------------
-extern int cur_freqhz;
+extern int tsktick_freqhz;	// freq (derived from pwm freq) where most tasklet (ctrl) are called
 
 
 // ---------------------------------------------

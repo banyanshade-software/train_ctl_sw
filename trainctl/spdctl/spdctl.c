@@ -433,7 +433,7 @@ static void train_periodic_control(int numtrain, uint32_t dt)
         //       but we assume speed is really proportional to BEMF
 
         //  dt is not precise enough
-        int32_t pi = (b*100)/cur_freqhz;
+        int32_t pi = (b*100)/tsktick_freqhz;
         tvars->position_estimate += pi;
         itm_debug3(DBG_POSE, "pose", numtrain, tvars->position_estimate, b);
         itm_debug3(DBG_POSE, "pi", b, dt,  pi);

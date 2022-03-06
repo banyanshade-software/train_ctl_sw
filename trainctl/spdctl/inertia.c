@@ -47,7 +47,7 @@ int16_t inertia_value(int tidx, const inertia_config_t *config, inertia_vars_t *
 	int sc =  SIGNOF0(vars->cur100);
 	int inc;
 
-	int32_t dt100 = (100*1000)/cur_freqhz;
+	int32_t dt100 = (100*1000)/tsktick_freqhz;
     int32_t trga100 = abs(vars->target*100);
     
     if (pchanged) *pchanged = 0;

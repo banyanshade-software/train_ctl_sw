@@ -59,7 +59,7 @@ void pidctl_set_target(_UNUSED_ const pidctl_config_t *c, pidctl_vars_t *v, int3
 int32_t pidctl_value(const pidctl_config_t *c, pidctl_vars_t *v, int32_t cur_v)
 {
 	// cuv in native BEMF value
-	int32_t dt10 = 10000 / cur_freqhz; // dt*10 in ms
+	int32_t dt10 = 10000 / tsktick_freqhz; // dt*10 in ms
 
 
 	int32_t err = v->target_v - cur_v;

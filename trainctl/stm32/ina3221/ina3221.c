@@ -126,18 +126,29 @@ void ina3221_task_start(_UNUSED_ void *argument)
 		}
 	}
 	run_ina_task();
+	itm_debug1(DBG_ERR, "impossible", 0);
 }
+
+void brklong(int32_t l)
+{
+	itm_debug1(DBG_ERR, "long notif", l);
+}
+
 
 
 static void run_ina_task(void)
 {
-	ina3221_init_and_configure();
+	ina3221_init_and_configure(); //XXX
 	_UNUSED_ int nstuck = 0;
 	for (;;) {
 		uint32_t notif = 0;
 		xTaskNotifyWait(0, 0xFFFFFFFF, &notif, portMAX_DELAY);
+		uint32_t t0 = HAL_GetTick();
 		handle_ina_notif(notif);
-
+		uint32_t t1 = HAL_GetTick();
+		if ((t1-t0) > 3) {
+			brklong(t1-t0);
+		}
 		for (;;) {
 			msg_64_t m;
 			int rc = mqf_read_to_ina3221(&m);
@@ -162,6 +173,7 @@ static void run_ina_task(void)
 					itm_debug1(DBG_ERR|DBG_INA3221, "bad rmode", run_mode);
 					continue;
 				}
+				itm_debug1(DBG_DETECT|DBG_INA3221, "detect2 ina", m.v1u);
 				detect2_monitor = m.v1u;
 				continue;
 			default:
@@ -200,6 +212,7 @@ static void handle_ina_notif(uint32_t notif)
 		*/
 	}
 	if (notif & NOTIF_INA_READ) {
+		itm_debug1(DBG_DETECT|DBG_INA3221, "INA READ", notif);
 		int dev = _next_dev(-1);
 		if (dev >= 0) {
 			state = state_rd_0 + dev * 3;
@@ -410,7 +423,7 @@ static void _read_complete(_UNUSED_ int err)
 			m.cmd = CMD_INA_REPORT;
 			m.subc = i;
 			m.v1 = ina_svalues[i];
-			itm_debug2(DBG_DETECT, "report", i, ina_svalues[i]);
+			if ((0)) itm_debug2(DBG_DETECT, "report", i, ina_svalues[i]);
 			mqf_write_from_ina3221(&m);
 		}
 		break;

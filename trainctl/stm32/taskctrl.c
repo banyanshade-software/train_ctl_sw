@@ -159,7 +159,7 @@ void StartCtrlTask(_UNUSED_ void *argument)
 	HAL_TIM_PWM_Stop(&htim12, TIM_CHANNEL_1);
 	HAL_TIM_PWM_Stop(&htim12, TIM_CHANNEL_2);
 
-	set_pwm_freq(100);
+	set_pwm_freq(100, 1);
 
 	/*
 	portENTER_CRITICAL();
@@ -211,7 +211,7 @@ void StartCtrlTask(_UNUSED_ void *argument)
 //extern TIM_HandleTypeDef htim1;
 
 // #define __HAL_TIM_SET_PRESCALER(__HANDLE__, __PRESC__)       ((__HANDLE__)->Instance->PSC = (__PRESC__))
-void set_pwm_freq(int freqhz)
+void set_pwm_freq(int freqhz, int crit)
 {
 	//if ((1)) return;
 	if (!freqhz) {
@@ -227,7 +227,7 @@ void set_pwm_freq(int freqhz)
 	// not an error but we want it in the log
 	itm_debug3(DBG_ERR|DBG_CTRL, "FREQ", freqhz, ps, cur_freqhz);
 
-	portENTER_CRITICAL();
+	if (crit) portENTER_CRITICAL();
 	numsampling = 0;
 	HAL_TIM_Base_Stop(&htim1);
 	HAL_TIM_Base_Stop(&htim2);
@@ -255,7 +255,7 @@ void set_pwm_freq(int freqhz)
 	HAL_TIM_Base_Start(&htim3);
 	HAL_TIM_Base_Start(&htim8);
 	HAL_TIM_Base_Start_IT(&htim1);
-	portEXIT_CRITICAL();
+	if (crit) portEXIT_CRITICAL();
 	itm_debug1(DBG_TIM|DBG_ERR, "freq ", cur_freqhz); // not an error but it is importanrt
 }
 
@@ -271,7 +271,15 @@ void ADC_IRQ_UserHandler(void)
 
 #define USE_NOTIF_TIM 0
 
-volatile uint32_t t0ctrl;
+volatile uint32_t t0ctrl = 0;
+
+static const int ckcpu = 1;
+static int t_1;
+static int t_2;
+static int t_3;
+static int t_4;
+static int t_5;
+
 static void run_task_ctrl(void)
 {
 	int cnt = 0;
@@ -287,7 +295,7 @@ static void run_task_ctrl(void)
 		m.v1u = runmode_normal;
 		//m.v1u = runmode_detect2;
 
-		mqf_write_from_nowhere(&m); // XXX it wont be sent to ctl
+		mqf_write_from_nowhere(&m); // from_nowher, otherwise it wont be sent to ctl
 	}
 
 	for (;;) {
@@ -308,7 +316,7 @@ static void run_task_ctrl(void)
 			static int cnt=0;
 			if (!d && (cnt++ == 10)) {
 				d = 1;
-				set_pwm_freq(100);
+				set_pwm_freq(100, 1);
 			}
 		}
 
@@ -333,32 +341,29 @@ static void run_task_ctrl(void)
 			itm_debug2(DBG_LOWCTRL, "ctick", notif, dt);
 			//continue;
 		}
-		/*
-		if (dt>67) {
-			itm_debug2("ctick", notif, dt);
-		}
-		continue;
-		*/
-		/*
-		void bemf_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt);
-		void canton_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt);
-		void turnout_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt);
-		ina3221
-		void spdctl_run_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt);
-		void msgsrv_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt);
-		*/
 
 		bemf_tick(notif, t, dt);
+		if (ckcpu) t_1 = HAL_GetTick();
+
 		itm_debug1(DBG_LOWCTRL, "--msg", dt);
 		msgsrv_tick(notif, t, dt);
+		if (ckcpu) t_2 = HAL_GetTick();
+
 		itm_debug1(DBG_LOWCTRL, "--spdctl", dt);
 		spdctl_run_tick(notif, t, dt);
+		if (ckcpu) t_3 = HAL_GetTick();
+
 		itm_debug1(DBG_LOWCTRL, "--canton", dt);
 		canton_tick(notif, t, dt);
+		if (ckcpu) t_4 = HAL_GetTick();
+
 		itm_debug1(DBG_LOWCTRL, "--trnout", dt);
 		turnout_tick(notif, t, dt);
+		if (ckcpu) t_5 = HAL_GetTick();
+
 		itm_debug1(DBG_LOWCTRL, "--ctrl", dt);
 		ctrl_run_tick(notif, t, dt);
+
 		_UNUSED_ uint32_t e1 = HAL_GetTick() - t;
 		if ((0)) CAN_Tasklet(notif, t, dt);
 #if USE_NOTIF_TIM
@@ -371,11 +376,18 @@ static void run_task_ctrl(void)
 		//led_run_tick(notif, t, dt);
 
 		itm_debug1(DBG_LOWCTRL, "--done", dt);
-		uint32_t et = HAL_GetTick() - t;
+		uint32_t endtime = HAL_GetTick();
+		uint32_t et = endtime - t;
 		if ((1)) {
 			//itm_debug2(DBG_ERR, "ctrl tick", e1, et);
 			if (et>9) {
 				itm_debug1(DBG_ERR, "long proc", et);
+				itm_debug1(DBG_ERR, "t1", t_1 - t);
+				itm_debug1(DBG_ERR, "t2", t_2 - t_1);
+				itm_debug1(DBG_ERR, "t3", t_3 - t_2);
+				itm_debug1(DBG_ERR, "t4", t_4 - t_3);
+				itm_debug1(DBG_ERR, "t5", t_5 - t_4);
+				itm_debug1(DBG_ERR, "t6", endtime - t_5);
 			}
 		}
 	}

@@ -223,7 +223,7 @@ void txrx_process_char(uint8_t c, uint8_t *respbuf, int *replen)
 // ---------------------------------------------------------------------------------
 static void param_set_pwm(struct param *p, int32_t v) // XXX to be moved away
 {
-        set_pwm_freq(v);
+        set_pwm_freq(v, 1);
 }
 
 /*

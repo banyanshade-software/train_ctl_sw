@@ -33,7 +33,7 @@ extern osThreadId_t taskCtrlHandle;
 void StartCtrlTask(void *argument);
 
 
-void set_pwm_freq(int freqhz);
+void set_pwm_freq(int freqhz, int crit); // XXX prototype is also in tasckctrl.h
 int get_pwm_freq(void);
 //extern int cur_freqhz;
 

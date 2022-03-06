@@ -108,7 +108,7 @@ void railconfig_setup_default(void);
 
 // ---------------------------------------------- other
 
-extern void set_pwm_freq(int freqhz);
+extern void set_pwm_freq(int freqhz, int crit);
 
 
 #endif /* TRAINCTL_IFACE_H_ */

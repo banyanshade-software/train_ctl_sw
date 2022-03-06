@@ -390,7 +390,7 @@ void ctrl_run_tick(_UNUSED_ uint32_t notif_flags, uint32_t tick, _UNUSED_ uint32
         ctrl_reset();
     }
     
-	check_block_delayed(tick);
+    if (run_mode==runmode_normal) check_block_delayed(tick);
 
 	/* process messages */
 	for (;;) {

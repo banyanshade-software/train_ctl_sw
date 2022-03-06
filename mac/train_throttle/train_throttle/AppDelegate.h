@@ -117,7 +117,7 @@
 
 // test mode window
 
-@property (nonatomic) NSUInteger testMode;
+@property (nonatomic) NSUInteger runMode;
 @property (nonatomic) NSUInteger testCanton;
 @property (nonatomic) NSUInteger testVoltIdx;
 @property (nonatomic) NSInteger testPWM;

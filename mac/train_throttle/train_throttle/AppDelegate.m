@@ -1623,8 +1623,8 @@ static AppDelegate *theDelegate = nil;
     simuTimer = [NSTimer timerWithTimeInterval:0.01 target:self selector:@selector(simuTimer) userInfo:nil repeats:YES];
     [[NSRunLoop mainRunLoop]addTimer:simuTimer forMode:NSDefaultRunLoopMode];
 
-    _testMode = -1;
-    [self setTestMode:0];
+    _runMode = -1;
+    [self setRunMode:0];
     
 }
 
@@ -1828,7 +1828,7 @@ void txframe_send(frame_msg_t *m, int discardable)
 #endif
 
 int cur_freqhz = 50;
-void set_pwm_freq(int freqhz)
+void set_pwm_freq(int freqhz, int crit)
 {
 }
 int get_pwm_freq(void)
@@ -2211,10 +2211,19 @@ didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic
 
 #pragma mark - canton test
 
-- (void) setTestMode:(NSUInteger)testMode
+- (IBAction) btnRunMode:(id)sender
 {
-    if (testMode == _testMode) return;
-    _testMode = testMode;
+    int tag = (int) [sender tag];
+    /*
+     ATTENTION : tag (and paremeter given to setRunMode: are NOT run_mode values
+     (see below)
+     */
+    [self setRunMode:tag];
+}
+- (void) setRunMode:(NSUInteger)testMode
+{
+    if (testMode == _runMode) return;
+    _runMode = testMode;
     
    
     msg_64_t m;
@@ -2226,6 +2235,8 @@ didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic
         case 1: m.v1u = runmode_testcanton; break;
         case 2: m.v1u = runmode_testcanton; break;
         case 3: m.v1u = runmode_detect_experiment; break;
+        case 4: m.v1u = runmode_detect2; break;
+        case 5: m.v1u = runmode_off; break;
         default:
             break;
     }
@@ -2234,10 +2245,10 @@ didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic
 
 - (void) setTestCanton:(NSUInteger)testCanton
 {
-    if (_testMode != 1) return;
+    if (_runMode != 1) return;
     if (testCanton == _testCanton) return;
     _testCanton = testCanton;
-    if (_testMode == 1) {
+    if (_runMode == 1) {
         for (int i = 0; i<NUM_LOCAL_CANTONS_HW; i++) {
             if (i==testCanton) continue;
             msg_64_t m;
@@ -2255,7 +2266,7 @@ didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic
 }
 - (void) setTestVoltIdx:(NSUInteger)testVoltIdx
 {
-    if (!_testMode) return;
+    if (!_runMode) return;
     if (testVoltIdx == _testVoltIdx) return;
     _testVoltIdx = testVoltIdx;
     [self sendVPWM];
@@ -2263,7 +2274,7 @@ didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic
 
 - (void) setTestPWM:(NSInteger)testPWM
 {
-    if (!_testMode) return;
+    if (!_runMode) return;
     if (testPWM == _testPWM) return;
     _testPWM = testPWM;
     [self sendVPWM];
@@ -2271,7 +2282,7 @@ didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic
 - (void) sendVPWM
 {
     msg_64_t m;
-    m.to = (_testMode == 1) ? MA_CANTON(0, _testCanton) : MA_BROADCAST;
+    m.to = (_runMode == 1) ? MA_CANTON(0, _testCanton) : MA_BROADCAST;
     m.from = MA_UI(UISUB_USB);
     m.cmd = CMD_SETVPWM;
     m.v1u = _testVoltIdx;

@@ -16,6 +16,7 @@
 #include "ctrl.h"
 #include "detectP.h"
 
+#include "../utils/measval.h"
 
 
 #ifndef BOARD_HAS_CTRL
@@ -26,42 +27,64 @@
  train detection
  */
 
+
+#define NUM_FREQS 6
+static const freqs[NUM_FREQS] = { 100, 200, 400, 600, 800, 1000 };
+
+
 static int detect_state = 0;
 static int detect_canton = -1;
 static uint32_t detect_ltick = 0;
 
+
 typedef struct {
-	 int32_t detect_count_bemf;
-	 int32_t detect_count_ina;
-	 int32_t detect_sum_bemf;
-	 int32_t detect_min_bemf;
-	 int32_t detect_max_bemf;
-	 int32_t detect_sum_von;
-	 int32_t detect_min_von;
-	 int32_t detect_max_von;
+	measval_t ina;
+	measval_t voff;
+	measval_t von;
 } detect_stat_t;
 
 static detect_stat_t dst = {0};
 
-static int save_freq = 0;
+#define MAX_CANTON_FOR_DETECTION 8
 
+static detect_stat_t allstats[MAX_CANTON_FOR_DETECTION][NUM_FREQS] = {0};
+
+static int save_freq = 0;
+static int freqindex = 0;
 
 void set_pwm_freq(int freqhz, int crit);
 int get_pwm_freq(void);
 
+#define MEAS_DURATION  500 //tick = ms
+#define RELAX_DURATION 200
+
+
+
+
+// ---------------------------------------------
+
+static int setfreqi(int fi)
+{
+	if (fi >= NUM_FREQS) return -1;
+	set_pwm_freq(freqs[fi], 1);
+	return 0;
+}
 
 void detect2_init(void)
 {
     detect_state = 0;
     detect_canton = -1;
     detect_ltick = 0;
-
     save_freq = get_pwm_freq();
+    freqindex = 0;
+    setfreqi(freqindex);
 }
 
-#define MEAS_DURATION  1000 //tick = ms
-#define RELAX_DURATION 1000
+// ---------------------------------------------
 
+
+
+/*
 typedef struct {
 	int16_t avg_von;
 	int16_t avg_bemf;
@@ -70,28 +93,31 @@ typedef struct {
 } bemf_anal_t;
 
 static bemf_anal_t bemf_anal[4][10] = {0};
+*/
+
 
 static  void analyse_bemf(int cnum, int frequi)
 {
-    if (!dst.detect_count_bemf) {
+    if (!dst.voff.count) {
         itm_debug1(DBG_DETECT|DBG_ERR, "no bemf", detect_canton);
         return;
     }
     int freq = get_pwm_freq();
-    int rf = dst.detect_count_bemf * 1000 / MEAS_DURATION;
-    itm_debug3(DBG_DETECT, "Z freq", freq, rf, dst.detect_count_bemf);
-    itm_debug1(DBG_DETECT, "Z ina", dst.detect_count_ina);
-    itm_debug3(DBG_DETECT, "Z bemf --", detect_canton, freq, dst.detect_sum_bemf/dst.detect_count_bemf);
-    itm_debug2(DBG_DETECT, "Z b min max", dst.detect_min_bemf, dst.detect_max_bemf);
-    itm_debug3(DBG_DETECT, "Z von  --", detect_canton, freq, dst.detect_sum_von/dst.detect_count_bemf);
-    itm_debug2(DBG_DETECT, "Z v min max", dst.detect_min_von, dst.detect_max_von);
+    int rf = dst.voff.count * 1000 / MEAS_DURATION;
+    itm_debug1(DBG_DETECT, "Z canton", detect_canton);
+    itm_debug3(DBG_DETECT, "Z freq", freq, rf, dst.voff.count);
+    itm_debug3(DBG_DETECT, "Z bemf", dst.voff.min, measval_avg(&dst.voff), dst.voff.max);
+    itm_debug3(DBG_DETECT, "Z von",  dst.von.min, measval_avg(&dst.von), dst.von.max);
+    itm_debug3(DBG_DETECT, "Z ina",  dst.ina.min, measval_avg(&dst.ina), dst.ina.max);
+
+
     if (cnum>=4) return;
     if (frequi>=10) return;
-    bemf_anal_t *p = &bemf_anal[cnum][frequi];
+    /*bemf_anal_t *p = &bemf_anal[cnum][frequi];
     p->avg_von = dst.detect_sum_von/dst.detect_count_bemf;
     p->avg_bemf =  dst.detect_sum_bemf/dst.detect_count_bemf;
     p->min_bemf = dst.detect_min_bemf;
-    p->max_bemf = dst.detect_max_bemf;
+    p->max_bemf = dst.detect_max_bemf;*/
 }
 
 void analyse_bemf_final(void)
@@ -112,39 +138,11 @@ void detect2_process_tick(uint32_t tick)
 
         if (lsb.n<0) {
             detect_state = -1;
-            // done
-            int freq = get_pwm_freq();
-            itm_debug1(DBG_DETECT, "done freq", freq);
-            if (0) {
-            } else if (freq<= 100) {
-            	freqi=1;
-            	freq = 200; // XXX 200
-            } else if (freq<= 200) {
-            	freqi=2;
-            	freq = 500;
-            } else if (freq<= 504) {
-            	freqi=3;
-            	freq = 1000;
-            } else if (freq<= 1224) {
-            	freqi=4;
-            	freq = 2000;
-            	/*
-            } else if (freq<= 2500) {
-            	freqi=5;
-            	freq = 3000;
-            } else if (freq<= 2700) {
-            	freqi=6;
-            	freq = 4000;
-            } else if (freq<= 4000) {
-            	freqi=7;
-            	freq = 8000;
-            } else if (freq<= 9000) {
-            	freqi=8;
-            	freq = 10000;
-            } else if (freq<= 16000) {
-            	freqi=9;
-                 freq = 20000;*/
-            } else {
+            // done for this freq
+            freqindex++;
+            int rc = setfreqi(freqindex);
+
+            if (rc<0) {
             	// all done
                 detect_state = -1;
 				set_pwm_freq(save_freq, 1);
@@ -173,9 +171,8 @@ void detect2_process_tick(uint32_t tick)
 
 		        return;
             }
-            set_pwm_freq(freq, 1);
-            itm_debug2(DBG_DETECT, "freq", freq, get_pwm_freq());
-        	//osDelay(100);
+
+            itm_debug3(DBG_DETECT, "*freq", freqindex, freqs[freqindex], get_pwm_freq());
             detect_canton = 0;
 
         }
@@ -252,6 +249,7 @@ void detect2_process_msg(msg_64_t *m)
     } */
     switch (m->cmd) {
         case CMD_BEMF_NOTIF:
+        	itm_debug2(DBG_DETECT, "bemf", m->v1, m->v2); //XXX
             if (detect_state != 1) {
                 itm_debug2(DBG_DETECT, "bad state", detect_state, m->from);
                 break;
@@ -260,29 +258,23 @@ void detect2_process_msg(msg_64_t *m)
                 itm_debug2(DBG_DETECT, "bad from", detect_canton, m->from);
                 break;
             }
-            // handle bemf notif
-            int32_t b = m->v1;
-            int32_t v = m->v2;
-            if (!dst.detect_count_bemf) {
-            	dst.detect_max_bemf = dst.detect_min_bemf = dst.detect_sum_bemf = b;
-            	dst.detect_max_von  = dst.detect_min_von  = dst.detect_sum_von  = v;
-            	dst.detect_count_bemf = 1;
-            } else {
-            	dst.detect_count_bemf ++;
-            	dst.detect_sum_bemf += b;
-            	dst.detect_max_bemf = MAX(dst.detect_max_bemf, b);
-            	dst.detect_min_bemf = MIN(dst.detect_min_bemf, b);
-            	dst.detect_sum_von  += v;
-            	dst.detect_max_von  = MAX(dst.detect_max_von, v);
-            	dst.detect_min_von  = MIN(dst.detect_min_von, v);
+            measval_addvalue(&dst.voff, m->v1);
+            measval_addvalue(&dst.von, m->v2);
+            if ((1)) {
+            	if (!freqindex && (detect_canton == 0) && (dst.voff.count > 20) && (m->v1 > 2000)) {
+            		extern volatile int oscillo_trigger_start;
+            		oscillo_trigger_start = 1;
+            	}
             }
+
             break;
         case CMD_INA_REPORT:
         	if (detect_state != 1) {
         		itm_debug2(DBG_DETECT, "bad stat", detect_state, m->from);
         		break;
         	}
-        	dst.detect_count_ina++;
+        	// XXX assume only one INA here
+        	measval_addvalue(&dst.ina, m->v1);
         	if ((0)) itm_debug2(DBG_DETECT, "current", m->subc, m->v1);
         	break;
         default:

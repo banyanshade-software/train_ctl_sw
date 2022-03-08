@@ -24,6 +24,7 @@ volatile adc_result_t adc_result[2]; // double buffer
 
 #else
 
+uint8_t adc_is_reversed = 0;
 volatile adc_buf_t train_adc_buf[2]; // double buffer
 
 #endif
@@ -204,6 +205,14 @@ static void process_adc(volatile adc_result_t *buf, _UNUSED_ uint32_t deltaticks
 		int16_t von  = (int16_t)(vonb-vona);
 #endif
 
+		if (adc_is_reversed) {
+			// swap von/voff, depending on synchro between
+			// ADC conversion (TIM8) and PWM (TIM1)
+			// adc_is_reversed is set by taskctrl.c
+			int32_t t = voff;
+			voff = von;
+			von = t;
+		}
 		if (cconf->reverse_bemf) {
 			voff = -voff;
 			von = -von;

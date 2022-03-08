@@ -73,6 +73,8 @@ static int numsampling = 0;
 static int bemf_divisor = 1;
 int tsktick_freqhz = 100;
 
+static int check_adc_order = 0;
+
 /*
  *  max pwm (MAX_PWM) is 90% : min off time in µs = (1000000/pwmhz)*.1
  *  	pwmhz       offtime
@@ -266,6 +268,8 @@ void set_pwm_freq(int freqhz, int crit)
 	HAL_TIM_Base_Start(&htim3);
 	HAL_TIM_Base_Start(&htim8);
 	HAL_TIM_Base_Start_IT(&htim1);
+	check_adc_order = 1;
+
 	if (crit) portEXIT_CRITICAL();
 	itm_debug1(DBG_TIM|DBG_ERR, "freq ", cur_freqhz); // not an error but it is importanrt
 }
@@ -466,6 +470,17 @@ void HAL_ADC_ConvCpltCallback(_UNUSED_ ADC_HandleTypeDef* hadc)
 		return;
 	}
 	nfull++;
+	if (check_adc_order) {
+		  uint32_t t1 = __HAL_TIM_GET_COUNTER(&htim1);
+		  itm_debug1(DBG_DETECT|DBG_TIM, "chk adc ord", t1);
+		  if (t1>150) {
+			  check_adc_order = 0;
+			  adc_is_reversed = 1;
+		  } else if (t1<50) {
+			  check_adc_order = 0;
+			  adc_is_reversed = 0;
+		  }
+	}
 	if ((bemf_divisor >= 4) && (nfull % (bemf_divisor/2))) {
 		return;
 	}

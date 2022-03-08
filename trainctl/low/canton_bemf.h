@@ -81,6 +81,12 @@ extern volatile adc_buf_t train_adc_buf[2]; // double buffer
 
 extern runmode_t bemf_run_mode;
 
+/*
+ * order of Von/Voff in ADC
+ * this is checked when freq is changed, by looking at T1 value when conversion
+ * is complete
+ */
+extern uint8_t adc_is_reversed;
 
 
 #endif /* LOW_CANTON_BEMF_H_ */

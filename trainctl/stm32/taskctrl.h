@@ -37,4 +37,5 @@ void set_pwm_freq(int freqhz, int crit); // XXX prototype is also in tasckctrl.h
 int get_pwm_freq(void);
 
 
+
 #endif /* STM32_TASKCTRL_H_ */

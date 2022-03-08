@@ -1476,20 +1476,20 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 			  xTaskNotifyFromISR(ina3221_taskHandle, NOTIF_INA_READ, eSetBits, &higher);
 			  portYIELD_FROM_ISR(higher);
 
-		  } else if (t1>150) {
+		  } else {
 			  //itm_debug2(DBG_ERR|DBG_TIM, "ign tim1", t1, igncnt);
 			  igncnt++;
-			  if (igncnt==10) {
+			  if (0 == (igncnt%15)) {
 				  extern volatile int oscillo_trigger_start;
 				  oscillo_trigger_start = 1;
-				  int freq = get_pwm_freq();
-				  itm_debug1(DBG_ERR|DBG_TIM, "refreq", freq);
+				  // make sure ina3221 task consume messages
+				  BaseType_t higher=0;
+				  itm_debug2(DBG_ERR|DBG_TIM, "tick ina", t1, igncnt);
+				  xTaskNotifyFromISR(ina3221_taskHandle, NOTIF_SYSTICK, eSetBits, &higher);
+				  portYIELD_FROM_ISR(higher);
+
 				  //set_pwm_freq(freq, 0);
 			  }
-
-		  } else {
-			  // late irq
-			  itm_debug1(DBG_ERR|DBG_TIM, "late tim1", t1);
 		  }
 	  }
 

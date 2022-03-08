@@ -1828,6 +1828,7 @@ void txframe_send(frame_msg_t *m, int discardable)
 #endif
 
 int cur_freqhz = 50;
+int tsktick_freqhz = 50;
 void set_pwm_freq(int freqhz, int crit)
 {
 }
@@ -2218,6 +2219,7 @@ didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic
      ATTENTION : tag (and paremeter given to setRunMode: are NOT run_mode values
      (see below)
      */
+    _runMode = -1;
     [self setRunMode:tag];
 }
 - (void) setRunMode:(NSUInteger)testMode

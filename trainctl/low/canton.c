@@ -229,7 +229,7 @@ static void handle_msg_detect2(msg_64_t *m)
             canton_set_volt(cidx, cconf, cvars,  7);
             m->cmd = CMD_BEMF_ON;
             bemf_msg(m);
-            canton_set_pwm(cidx, cconf, cvars, 1, 20); // 20% PWM
+            canton_set_pwm(cidx, cconf, cvars, 1, m->v1u); // % PWM
             break;
         case CMD_STOP_DETECT_TRAIN:
             m->cmd = CMD_BEMF_OFF;

@@ -28,8 +28,8 @@
  */
 
 
-#define NUM_FREQS 6
-static const freqs[NUM_FREQS] = { 100, 200, 400, 600, 800, 1000 };
+#define NUM_FREQS 7
+static const freqs[NUM_FREQS] = { 100, /*400, 800,*/ 1000, 2000, 3000, 4000, 6000, 8000 };
 
 
 static int detect_state = 0;
@@ -197,6 +197,7 @@ void detect2_process_tick(uint32_t tick)
         m.from = MA_CONTROL_T(0);
         m.to = detect_canton; //MA_CANTON(0, canton);
         m.cmd = CMD_START_DETECT_TRAIN;
+        m.v1u = 80; //%pwm
         mqf_write_from_ctrl(&m);
 
         // notify UI

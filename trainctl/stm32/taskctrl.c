@@ -458,7 +458,7 @@ static void write_num(uint8_t *buf, uint32_t v, int ndigit)
 		buf[ndigit-1] = '0'+ (v % 10);
 		v = v/10;
 	}
-}
+} "busy"
 */
 volatile uint8_t oscillo_evtadc;
 

@@ -473,10 +473,10 @@ void HAL_ADC_ConvCpltCallback(_UNUSED_ ADC_HandleTypeDef* hadc)
 	if (check_adc_order) {
 		  uint32_t t1 = __HAL_TIM_GET_COUNTER(&htim1);
 		  itm_debug1(DBG_DETECT|DBG_TIM, "chk adc ord", t1);
-		  if (t1>150) {
+		  if (t1>135) {
 			  check_adc_order = 0;
 			  adc_is_reversed = 1;
-		  } else if (t1<50) {
+		  } else if (t1<65) {
 			  check_adc_order = 0;
 			  adc_is_reversed = 0;
 		  }

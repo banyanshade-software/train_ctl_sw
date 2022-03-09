@@ -15,8 +15,8 @@
 
 #include "ctrl.h"
 #include "detectP.h"
-
 #include "../utils/measval.h"
+#include "detect_loco.h"
 
 
 #ifndef BOARD_HAS_CTRL
@@ -28,9 +28,9 @@
  */
 
 
-#define NUM_FREQS 7
-static const freqs[NUM_FREQS] = { 100, /*400, 800,*/ 1000, 2000, 3000, 4000, 6000, 8000 };
+static const int freqs[DETECT_NUM_FREQS] = { 100, 1000, 2000, 3000, 4000, 5000, 6000, 7000 };
 
+#define USE_INA_FOR_DETECT 1
 
 static int detect_state = 0;
 static int detect_canton = -1;
@@ -45,9 +45,9 @@ typedef struct {
 
 static detect_stat_t dst = {0};
 
-#define MAX_CANTON_FOR_DETECTION 8
+#define MAX_CANTON_FOR_DETECTION 4
 
-static detect_stat_t allstats[MAX_CANTON_FOR_DETECTION][NUM_FREQS] = {0};
+//static detect_stat_t allstats[MAX_CANTON_FOR_DETECTION][DETECT_NUM_FREQS] = {0};
 
 static int save_freq = 0;
 static int freqindex = 0;
@@ -61,11 +61,16 @@ int get_pwm_freq(void);
 
 
 
+static bemf_anal_t bemf_anal[MAX_CANTON_FOR_DETECTION] = {0};
+
+
+
+
 // ---------------------------------------------
 
 static int setfreqi(int fi)
 {
-	if (fi >= NUM_FREQS) return -1;
+	if (fi >= DETECT_NUM_FREQS) return -1;
 	set_pwm_freq(freqs[fi], 1);
 	return 0;
 }
@@ -78,25 +83,14 @@ void detect2_init(void)
     save_freq = get_pwm_freq();
     freqindex = 0;
     setfreqi(freqindex);
+    memset(bemf_anal, 0, sizeof(bemf_anal));
 }
 
 // ---------------------------------------------
 
 
 
-/*
-typedef struct {
-	int16_t avg_von;
-	int16_t avg_bemf;
-	int16_t min_bemf;
-	int16_t max_bemf;
-} bemf_anal_t;
-
-static bemf_anal_t bemf_anal[4][10] = {0};
-*/
-
-
-static  void analyse_bemf(int cnum, int frequi)
+static void analyse_bemf(int cnum, int frequi)
 {
     if (!dst.voff.count) {
         itm_debug1(DBG_DETECT|DBG_ERR, "no bemf", detect_canton);
@@ -111,24 +105,58 @@ static  void analyse_bemf(int cnum, int frequi)
     itm_debug3(DBG_DETECT, "Z ina",  dst.ina.min, measval_avg(&dst.ina), dst.ina.max);
 
 
-    if (cnum>=4) return;
-    if (frequi>=10) return;
-    /*bemf_anal_t *p = &bemf_anal[cnum][frequi];
-    p->avg_von = dst.detect_sum_von/dst.detect_count_bemf;
-    p->avg_bemf =  dst.detect_sum_bemf/dst.detect_count_bemf;
-    p->min_bemf = dst.detect_min_bemf;
-    p->max_bemf = dst.detect_max_bemf;*/
+    bemf_anal_t *p = &bemf_anal[cnum];
+    int32_t v =  measval_avg(&dst.voff)*1000;
+    int32_t avgon =  measval_avg(&dst.von);
+    v = avgon ? (v / avgon) : 0; // should not happen, but it did happen
+    p->R[frequi] = v;
+
+    if (frequi==0) {
+    	if (p->R[0] > 100) {
+    		itm_debug1(DBG_DETECT, "*ROKUHAN", cnum);
+    		// Rokuhan chassis will start moving at lowest voltage thus having bemf>0
+    		// we cant continue detection
+    		p->d = loco_rokuhan_chassis;
+    	}
+    }
+    if (frequi==1) {
+    	if ((abs(bemf_anal[cnum].R[0]) < 12) && (abs(bemf_anal[cnum].R[1]) < 12)) {
+    		// empty
+    		itm_debug1(DBG_DETECT, "*empty", cnum);
+    		p->d = loco_none;
+    	}
+    }
+
 }
 
 void analyse_bemf_final(void)
 {
 	itm_debug1(DBG_CTRL, "job here", 0);
+	for (int cnum = 0; cnum < MAX_CANTON_FOR_DETECTION; cnum ++) {
+		if (!bemf_anal[cnum].d) {
+			itm_debug2(DBG_DETECT, "LOCO", cnum, bemf_anal[cnum].d);
+			itm_write("{", 1);
+			for (int fi = 0; fi < DETECT_NUM_FREQS; fi++) {
+				if (fi)  itm_write(", ", 2);
+				char buf[12];
+				itoa(bemf_anal[cnum].R[fi], buf, 10);
+				int l = MIN(12, strlen(buf));
+				itm_write(buf, l);
+			}
+			itm_write("}\n", 2);
+			int16_t r = detect_loco_find(&bemf_anal[cnum]);
+			bemf_anal[cnum].d = r;
+		}
+		itm_debug2(DBG_DETECT, ">>>", cnum, bemf_anal[cnum].d);
+		const char *n = loco_detect_name(bemf_anal[cnum].d);
+		itm_write("---->", 5); itm_write(n, strlen(n)); itm_write("\n", 1);
+	}
 }
+
 void detect2_process_tick(uint32_t tick)
 {
 	if (tick<6000) return;
 
-	static int freqi = 0;
 	if (0) {
 	} else if (-1 == detect_state) {
 		return;
@@ -176,12 +204,17 @@ void detect2_process_tick(uint32_t tick)
             detect_canton = 0;
 
         }
+        if (bemf_anal[detect_canton].d) {
+        	itm_debug2(DBG_DETECT, "already", detect_canton, bemf_anal[detect_canton].d);
+            detect_state = 0;
+			return;
+        }
 
         // start detection on new canton
         detect_ltick = tick;
         itm_debug1(DBG_DETECT, "DETECT", detect_canton);
 
-        if ((1)) {
+        if ((USE_INA_FOR_DETECT)) {
         	// start monitoring current (INA3221) on concerned sub blocks
         	uint16_t inas = get_ina_bitfield_for_canton(detect_canton);
             msg_64_t m = {0};
@@ -221,7 +254,7 @@ void detect2_process_tick(uint32_t tick)
             detect_ltick = tick;
             detect_state = 2;
 
-            if ((1)) {
+            if ((USE_INA_FOR_DETECT)) {
             	// stop monitoring current (INA3221)
             	msg_64_t m = {0};
             	m.from = MA_CONTROL_T(0);
@@ -231,7 +264,7 @@ void detect2_process_tick(uint32_t tick)
             	mqf_write_from_ctrl(&m);
             }
             // analyse results
-            analyse_bemf(detect_canton, freqi);
+            analyse_bemf(detect_canton, freqindex);
         }
     } else if (detect_state==2) {
     	// relax time
@@ -250,7 +283,7 @@ void detect2_process_msg(msg_64_t *m)
     } */
     switch (m->cmd) {
         case CMD_BEMF_NOTIF:
-        	itm_debug2(DBG_DETECT, "bemf", m->v1, m->v2); //XXX
+        	//itm_debug2(DBG_DETECT, "bemf", m->v1, m->v2); //XXX
             if (detect_state != 1) {
                 itm_debug2(DBG_DETECT, "bad state", detect_state, m->from);
                 break;
@@ -270,6 +303,7 @@ void detect2_process_msg(msg_64_t *m)
 
             break;
         case CMD_INA_REPORT:
+#if USE_INA_FOR_DETECT
         	if (detect_state != 1) {
         		itm_debug2(DBG_DETECT, "bad stat", detect_state, m->from);
         		break;
@@ -278,6 +312,7 @@ void detect2_process_msg(msg_64_t *m)
         	measval_addvalue(&dst.ina, m->v1);
         	if ((0)) itm_debug2(DBG_DETECT, "current", m->subc, m->v1);
         	break;
+#endif
         default:
             break;
     }

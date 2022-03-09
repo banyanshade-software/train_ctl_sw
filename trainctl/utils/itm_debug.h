@@ -60,5 +60,6 @@ static inline void itm_debug3(uint32_t f, const char *msg, int32_t v1, int32_t v
 
 #endif
 
+void itm_write(const char *str, int len);
 
 #endif /* UTILS_ITM_DEBUG_H_ */

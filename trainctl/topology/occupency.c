@@ -31,6 +31,7 @@ typedef struct {
 } canton_occ_t;
 
 static  canton_occ_t canton_occ[0x40] = {0};
+static volatile uint8_t  lockedby[NUM_TURNOUTS] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
 
 static void occupency_turnout_release_for_train_canton(int8_t train, uint8_t canton);
 
@@ -42,6 +43,7 @@ void occupency_clear(void)
 {
     lastcheck = 0;
     memset(canton_occ, 0, sizeof(canton_occ));
+    memset(lockedby, 0xFF, sizeof(lockedby));
 }
 
 static void _block_freed(int cnum, canton_occ_t *co)
@@ -157,7 +159,6 @@ void check_block_delayed(_UNUSED_ uint32_t tick)
 }
 
 
-static volatile uint8_t  lockedby[NUM_TURNOUTS] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
 
 
 static  void _notify_chg_owner(uint8_t turnout, int8_t numtrain)

@@ -279,6 +279,10 @@ static void ctrl_init(void)
 	}
 }
 
+train_ctrl_t *ctrl_get_tvar(int trnum)
+{
+    return &trctl[trnum];
+}
 // ----------------------------------------------------------------------------
 // timers
 

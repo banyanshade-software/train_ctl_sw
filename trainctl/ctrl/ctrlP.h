@@ -79,6 +79,7 @@ typedef struct {
 #define _TFLAG_C2_CHANGED    (1<<11) //xx
 #define _TFLAG_MODE_CHANGED  (1<<14)
 
+train_ctrl_t *ctrl_get_tvar(int trnum);
 
 int ctrl2_tick_process(int tidx, train_ctrl_t *tvars, const train_config_t *tconf, int8_t occupency_changed);
 void ctrl2_init_train(int tidx, train_ctrl_t *tvars,

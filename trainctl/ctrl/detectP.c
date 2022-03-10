@@ -14,6 +14,7 @@
 #include "../topology/occupency.h"
 
 #include "ctrl.h"
+#include "ctrlP.h"
 #include "detectP.h"
 #include "../utils/measval.h"
 #include "detect_loco.h"
@@ -131,6 +132,10 @@ static void analyse_bemf(int cnum, int frequi)
 
 void analyse_bemf_final(void)
 {
+    // clear all presence
+    occupency_clear();
+    
+    // check for train
 	itm_debug1(DBG_CTRL, "job here", 0);
 	for (int cnum = 0; cnum < MAX_CANTON_FOR_DETECTION; cnum ++) {
 		if (!bemf_anal[cnum].d) {
@@ -140,7 +145,7 @@ void analyse_bemf_final(void)
 				if (fi)  itm_write(", ", 2);
 				char buf[12];
 				itoa(bemf_anal[cnum].R[fi], buf, 10);
-				int l = MIN(12, strlen(buf));
+				int l = MIN(12, (int) strlen(buf));
 				itm_write(buf, l);
 			}
 			itm_write("}\n", 2);
@@ -149,7 +154,29 @@ void analyse_bemf_final(void)
 		}
 		itm_debug2(DBG_DETECT, ">>>", cnum, bemf_anal[cnum].d);
 		const char *n = loco_detect_name(bemf_anal[cnum].d);
-		itm_write("---->", 5); itm_write(n, strlen(n)); itm_write("\n", 1);
+		itm_write("---->", 5); itm_write(n, (int) strlen(n)); itm_write("\n", 1);
+        
+        
+        int altrnum = 0;  // for now trainnum are given in order
+        if (bemf_anal[cnum].d != loco_none) {
+            lsblk_num_t sblk = any_lsblk_with_canton(cnum);
+            // train num XXX TODO
+            int trnum = altrnum;
+            altrnum++;
+            //...
+            train_ctrl_t *tvar = ctrl_get_tvar(trnum);
+            ctrl2_init_train(trnum, tvar, sblk);
+            ctrl2_set_mode(trnum, tvar, train_manual);
+            
+            // set occupency
+            set_block_addr_occupency(cnum, BLK_OCC_STOP, trnum, sblk);
+            
+            // train params
+            const train_config_t *tconf = get_train_cnf(trnum);
+            train_config_t *tconfm = (train_config_t *)tconf;
+            const train_config_t *template = detect_loco_conf(bemf_anal[cnum].d);
+            memcpy(tconfm, template, sizeof(*tconfm));
+        }
 	}
 }
 

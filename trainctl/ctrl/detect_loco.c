@@ -7,8 +7,8 @@
 
 
 #include "misc.h"
+#include "../train.h"
 #include "detect_loco.h"
-
 
 
 
@@ -16,7 +16,8 @@
 #define NUM_KNOWN 5
 
 static const bemf_anal_t known_loco[NUM_KNOWN] = {
-		{loco_8875_v160, {0, -36, -229, -375, -548, -713, -854, -998} },
+		{loco_8875_v160, {0, -17, -62, -119, -206, -312, -433, -538}},
+					//   {0, -36, -229, -375, -548, -713, -854, -998} },
 					//   {3, -17, -60, -112, -201, -301, -411, -510}
 					//	{0, -17, -62, -119, -206, -312, -433, -538}
 
@@ -40,6 +41,8 @@ static const bemf_anal_t known_loco[NUM_KNOWN] = {
 		//{loco_8864_v60,
 
 };
+
+
 
 int16_t detect_loco_find(bemf_anal_t *d)
 {
@@ -75,4 +78,51 @@ const char *loco_detect_name(enum loco_detect_locos l)
 	case loco_8864_v60b:	return "v60b";
 	default: return "(err)";
 	}
+}
+
+
+// TODO FIXME also defined (but different) in railconfig.c, fix me
+#define DEFAULT_TRAIN_CFG(_R,  _kP, _kI, _kD, _P, _S)  { \
+                        { /* pidctl_config_t*/ \
+                                _kP, _kI, _kD,  /* kP, kI, kD */ \
+                        }, \
+                        { /* inertia_config_t */ \
+                                120, 120        /* dec, acc */ \
+                        }, \
+                        vpolicy_normal,  /*vpolicy_normal, vpolicy_pure_volt, vpolicy_pure_pwm,*/ \
+                        0, /* enable_inertia */        \
+                        1, /* enabled */            \
+                        1, /* enable_pid */            \
+                        0, /* notify_speed */        \
+                        0, /* notify_pose */        \
+                        0, /* bemfIIR; */            \
+                        0, /* postIIR */            \
+                        0, /* fix_bemf; */            \
+                        0,  /*    uint8_t en_spd2pow; */\
+                        20, /*    uint8_t min_power; */ \
+                        _R, /* reversed */            \
+                        _S, /* slipping */          \
+                        _P, /* pose_per_cm */       \
+                        10, /* len right*/         \
+                        10, /* len left */         \
+}
+
+
+static const train_config_t trcfg[] ={
+    /* loco_unknown=0 */    DEFAULT_TRAIN_CFG(0, 500, 180, 500,   450, 120),
+    /*loco_rokuhan_chassis*/DEFAULT_TRAIN_CFG(0, 100, 180, 100,   400, 120),
+    /*loco_8875_v160*/      DEFAULT_TRAIN_CFG(1, 500, 180, 500,   450, 120),
+    /*loco_8821_v221*/      DEFAULT_TRAIN_CFG(0, 500, 180, 500,   450, 120),
+    /*loco_8805_br89*/      DEFAULT_TRAIN_CFG(0, 500, 180, 500,   310, 120),
+    /*loco_8864_v60*/       DEFAULT_TRAIN_CFG(0, 500, 180, 500,   450, 120),
+    /*loco_8864_v60b*/      DEFAULT_TRAIN_CFG(0, 500, 180, 500,   450, 120),
+};
+
+const train_config_t *detect_loco_conf(enum loco_detect_locos loco)
+{
+    if (loco>=loco_end) {
+        Error_Handler();
+        return &trcfg[0];
+    }
+    return &trcfg[loco];
 }

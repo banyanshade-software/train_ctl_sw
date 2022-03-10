@@ -29,9 +29,12 @@ enum loco_detect_locos {
 	loco_8805_br89,		/* mini steam black */
 	loco_8864_v60,		/* small red one */
 	loco_8864_v60b,		/* small red one, new one with red roof */
+    
+    loco_end
 
 };
 
 const char *loco_detect_name(enum loco_detect_locos l);
 
+const train_config_t *detect_loco_conf(enum loco_detect_locos loco);
 #endif /* CTRL_DETECT_LOCO_H_ */

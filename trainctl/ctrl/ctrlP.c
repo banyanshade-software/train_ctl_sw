@@ -51,6 +51,7 @@ static void fatal(void)
 
 // ------------------------------------------------------
 
+
 static uint32_t pose_convert_to_mm( const train_config_t *tconf, int32_t poseval)
 {
     int32_t mm = poseval*10/tconf->pose_per_cm;

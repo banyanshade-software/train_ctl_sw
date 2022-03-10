@@ -296,6 +296,7 @@ const canton_config_t *get_canton_cnf(int idx)
 
 #ifdef BOARD_HAS_CTRL
 
+
 #define DEFAULT_TRAIN_CFG(_EN, _R, _P, _S, _LL, _LR)  { \
 						{ /* pidctl_config_t*/ \
 								500, 180, 500,  /* kP, kI, kD */ \

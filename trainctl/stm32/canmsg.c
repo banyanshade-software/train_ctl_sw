@@ -228,6 +228,10 @@ static void _send_msg_if_any(int fromirq)
 static void send_messages_if_any(void)
 {
 	if (!mqf_len(&to_canbus)) return;
+	/*
+	 * TODO : if CAN Tx is stuck (eg because not connected to transceiver)
+	 * we will stop reading msgq and have a q full condition here !!
+	 */
 	if (!HAL_CAN_GetTxMailboxesFreeLevel(&CAN_DEVICE)) return;
 
 	HAL_NVIC_DisableIRQ(CAN1_TX_IRQn);

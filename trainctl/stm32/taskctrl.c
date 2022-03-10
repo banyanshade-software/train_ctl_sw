@@ -388,8 +388,9 @@ static void run_task_ctrl(void)
 		itm_debug1(DBG_LOWCTRL, "--ctrl", dt);
 		ctrl_run_tick(notif, t, dt);
 
-		_UNUSED_ uint32_t e1 = HAL_GetTick() - t;
-		if ((0)) CAN_Tasklet(notif, t, dt);
+		itm_debug1(DBG_LOWCTRL, "--CAN", dt);
+		CAN_Tasklet(notif, t, dt);
+
 #if USE_NOTIF_TIM
 #else
 		//if (cnt>20) {
@@ -397,7 +398,8 @@ static void run_task_ctrl(void)
 		presdect_tick(notif, t, dt);
 		//}
 #endif
-		//led_run_tick(notif, t, dt);
+		//led_run_tick(notif, t, dt);	//LED has its own task
+		_UNUSED_ uint32_t e1 = HAL_GetTick() - t;
 
 		itm_debug1(DBG_LOWCTRL, "--done", dt);
 		uint32_t endtime = HAL_GetTick();

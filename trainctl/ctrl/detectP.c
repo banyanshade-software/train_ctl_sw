@@ -56,7 +56,7 @@ static int freqindex = 0;
 void set_pwm_freq(int freqhz, int crit);
 int get_pwm_freq(void);
 
-#define MEAS_DURATION  500 //tick = ms
+#define MEAS_DURATION  300 //tick = ms
 #define RELAX_DURATION 200
 
 
@@ -107,9 +107,9 @@ static void analyse_bemf(int cnum, int frequi)
 
 
     bemf_anal_t *p = &bemf_anal[cnum];
-    int32_t v =  measval_avg(&dst.voff)*1000;
-    int32_t avgon =  measval_avg(&dst.von);
-    v = avgon ? (v / avgon) : 0; // should not happen, but it did happen
+    int32_t v =  measval_avg(&dst.voff); //*1000;
+    //int32_t avgon =  measval_avg(&dst.von);
+    //v = avgon ? (v / avgon) : 0; // should not happen, but it did happen
     p->R[frequi] = v;
 
     if (frequi==0) {
@@ -139,8 +139,13 @@ void analyse_bemf_final(void)
 	itm_debug1(DBG_CTRL, "job here", 0);
 	for (int cnum = 0; cnum < MAX_CANTON_FOR_DETECTION; cnum ++) {
 		if (!bemf_anal[cnum].d) {
+			char buf[12];
+
 			itm_debug2(DBG_DETECT, "LOCO", cnum, bemf_anal[cnum].d);
-			itm_write("{", 1);
+			itm_write("/* C:", 5);
+			itoa(cnum, buf, 10);
+			itm_write(buf, strlen(buf));
+			itm_write("*/ {", 4);
 			for (int fi = 0; fi < DETECT_NUM_FREQS; fi++) {
 				if (fi)  itm_write(", ", 2);
 				char buf[12];
@@ -345,4 +350,15 @@ void detect2_process_msg(msg_64_t *m)
     }
 }
 
+/*
+ * after 3 detect :
+ *
+0421486@q/0/3/255 CMD_SETRUN_MODE, to_canbus
+0421486@q/1/3/128
+0421486@q/2/3/255
+0421486@q/3/3/128
+0421486@q/4/3/255
+0421487@q/5/3/128
+0421487@q/6/3/255
+ */
 

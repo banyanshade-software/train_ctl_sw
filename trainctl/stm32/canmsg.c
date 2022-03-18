@@ -232,7 +232,27 @@ static void send_messages_if_any(void)
 	 * TODO : if CAN Tx is stuck (eg because not connected to transceiver)
 	 * we will stop reading msgq and have a q full condition here !!
 	 */
-	if (!HAL_CAN_GetTxMailboxesFreeLevel(&CAN_DEVICE)) return;
+	static uint32_t tlocked = 0;
+
+	if (!HAL_CAN_GetTxMailboxesFreeLevel(&CAN_DEVICE))  {
+		if (!tlocked) tlocked = HAL_GetTick();
+		else {
+			if (HAL_GetTick() > tlocked+1000) {
+				// no free mbox for 1 second at least
+				// probably CAN is stuck (eg no transciever connected)
+				itm_debug1(DBG_ERR|DBG_CAN, "CAN lock", 0);
+				for (;;) {
+					msg_64_t m;
+					int rc = mqf_read_to_canbus(&m);
+					if (rc) break;
+				}
+				tlocked = 0;
+			}
+		}
+		return;
+	}
+	// not locked
+	tlocked = 0;
 
 	HAL_NVIC_DisableIRQ(CAN1_TX_IRQn);
 	_send_msg_if_any(0);

@@ -1,5 +1,5 @@
 /*
- * oscillo.c
+ *  oscillo.c
  *
  *  Created on: Jan 24, 2022
  *      Author: danielbraun
@@ -58,7 +58,7 @@ int oscilo_running(void)
 	return 0;
 }
 
-volatile int ocillo_enable = 0;
+volatile int oscillo_enable = 0;
 volatile int oscillo_trigger_start = 0;
 
 void StartOscilo(_UNUSED_ void *argument)
@@ -83,10 +83,15 @@ void StartOscilo(_UNUSED_ void *argument)
 			oscilo_did_end = 0;
 			// TODO
 		}
-		if (ocillo_enable &&  oscillo_trigger_start) {
-			oscillo_trigger_start = 0;
-			oscilo_start();
+		if (oscillo_enable) {
+			if (oscillo_trigger_start>1) {
+				oscillo_trigger_start--; // this allow delayed trigger
+			} else if (oscillo_trigger_start==1) {
+				oscillo_trigger_start = 0;
+				oscilo_start();
+			}
 		}
+
 	}
 }
 
@@ -168,12 +173,17 @@ void tim5_elapsed(void)
 		//extern void bemf_hi(void);
 		//bemf_hi();
 	}
+
 	oscillo_buf[oscilo_index].evtadc = oscillo_evtadc;
 	if (oscillo_evtadc) {
-		//itm_debug1(DBG_TIM, "osc evtadc", oscilo_evtadc);
 		oscillo_evtadc = 0;
 	}
- 	oscilo_index++;
+	oscillo_buf[oscilo_index].evtt1 = oscillo_evtt1;
+	if (oscillo_evtt1) {
+		oscillo_evtt1 = 0;
+	}
+
+	oscilo_index++;
 	if (oscilo_index >= OSC_NUM_SAMPLES) {
 		oscilo_end();
 	} else {

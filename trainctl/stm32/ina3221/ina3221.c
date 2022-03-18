@@ -57,9 +57,12 @@ const stat_val_t statval_ina3221[] = {
 #error hu?
 #endif
 
+extern volatile int oscillo_trigger_start;
+
 static void bkpoint(int loc, int err)
 {
 	itm_debug2(DBG_ERR|DBG_INA3221, "INA ERR", loc, err);
+	oscillo_trigger_start = 200;
 }
 
 

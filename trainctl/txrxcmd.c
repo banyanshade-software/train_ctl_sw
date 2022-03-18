@@ -245,13 +245,13 @@ static int32_t param_get_pwm(param_t *p)
 {
 	return get_pwm_freq();
 }
-extern int ocillo_enable;
+extern int oscillo_enable;
 
 static const param_t glob_params[] = {
 		{ "pwmfreq",     NULL, 0, param_get_pwm, param_set_pwm, sizeof(int), 0, 60000,  50},
 		{ "numtrains",   NULL, 0, 	    param_get_numtrains,  NULL, sizeof(uint32_t), 1, 1, 10},
 		{ "numcantons",  NULL, 0, 	    param_get_numcantons, NULL, sizeof(uint32_t), 2, 1, 50},
-		{ "oscilo",     &ocillo_enable, 0, 	   NULL, NULL, sizeof(int), 0, 1, 0},
+		{ "oscilo",     &oscillo_enable, 0, 	   NULL, NULL, sizeof(int), 0, 1, 0},
 		//{ "test_mode",   &trainctl_test_mode, 0, 	    NULL, NULL, sizeof(uint8_t), 2, 1, 50},
 
 		{ NULL,     NULL,0,    NULL,NULL, 0, 0, 0,   0}

@@ -10,11 +10,11 @@
 
 
 
-#define DETECT_NUM_FREQS 8
+#define DETECT_NUM_FREQS 3
 
 typedef struct {
 	int16_t d;
-	int16_t R[DETECT_NUM_FREQS];
+	int16_t R[DETECT_NUM_FREQS*2];
 } bemf_anal_t;
 
 

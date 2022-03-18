@@ -30,6 +30,7 @@ typedef struct {
     uint8_t valt2ch4:1;
 
     uint8_t evtadc:4;
+    uint8_t evtt1;
 
     int16_t ina0;
     int16_t ina1;
@@ -43,8 +44,9 @@ extern volatile int oscillo_trigger_start;
 extern volatile int16_t oscillo_t0bemf;
 extern volatile int16_t oscillo_t1bemf;
 extern volatile uint8_t oscillo_evtadc;
+extern volatile uint8_t oscillo_evtt1;
 
-extern volatile int ocillo_enable;
+extern volatile int oscillo_enable;
 
 extern volatile int16_t oscillo_ina0;
 extern volatile int16_t oscillo_ina1;

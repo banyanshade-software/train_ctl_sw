@@ -1414,15 +1414,15 @@ volatile int ocillo_enable = 0;
                     @"tim1", @"tim2", @"tim8",
                     @"T1ch1", @"T1ch2", @"T1ch3", @"T1ch4",
                     @"T2ch1", @"T2ch2", @"T2ch3", @"T2ch4",
-                    @"t0bemf", @"t1bemf", @"evtadc",
+                    @"t0bemf", @"t1bemf", @"evtadc", @"evtt1",
                     @"ina0", @"ina1", @"ina2"];
     NSDictionary *itms = @{ @"i" : @0,  @"V0" : @1 , @"V1" : @2 ,
                             @"V0a" : @3 , @"V0b" : @4 , @"V1a" : @5, @"V1b" : @6,
                             @"tim1" : @7, @"tim2" : @8, @"tim8" : @9,
         @"T1ch1" : @10, @"T1ch2" : @11, @"T1ch3" : @12, @"T1ch4" : @13,
         @"T2ch1" : @14, @"T2ch2" : @15, @"T2ch3" : @16, @"T2ch4" : @17,
-        @"t0bemf" : @18, @"t1bemf" : @19, @"evtadc" : @20,
-        @"ina0" : @21, @"ina1" : @22, @"ina2" : @23
+        @"t0bemf" : @18, @"t1bemf" : @19, @"evtadc" : @20, @"evtt1" : @21,
+        @"ina0" : @22, @"ina1" : @23, @"ina2" : @24
     };
     
     [recordFileRaw writeData:[@"i" dataUsingEncoding:NSUTF8StringEncoding]];
@@ -1437,7 +1437,7 @@ volatile int ocillo_enable = 0;
     
     for (int i=0; i<ns; i++) {
         osc_values_t *v = &samples[i];
-        NSString *s = [NSString stringWithFormat:@"%d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d\n",
+        NSString *s = [NSString stringWithFormat:@"%d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d\n",
                        i,
                        convert_to_mv(v->vadc[0]-v->vadc[1])+10000*5,
                        convert_to_mv(v->vadc[2]-v->vadc[3])+10000*4,
@@ -1459,13 +1459,14 @@ volatile int ocillo_enable = 0;
                        v->t0bemf +50000,
                        v->t1bemf -50000,
                        v->evtadc*2000 - 35000,
+                       v->evtt1*2000 - 37000,
                        v->ina0+70000,
                        v->ina1+70000,
                        v->ina2+70000
                        ];
         [recordFileGp writeData:[s dataUsingEncoding:NSUTF8StringEncoding]];
         
-        s = [NSString stringWithFormat:@"%d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d\n",
+        s = [NSString stringWithFormat:@"%d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d\n",
                        i,
                        convert_to_mv_raw(v->vadc[0]-v->vadc[1]),
                        convert_to_mv_raw(v->vadc[2]-v->vadc[3]),
@@ -1487,6 +1488,7 @@ volatile int ocillo_enable = 0;
                        v->t0bemf,
                        v->t1bemf,
                        v->evtadc,
+                       v->evtt1,
                        v->ina0, v->ina1, v->ina2
                        ];
         [recordFileRaw writeData:[s dataUsingEncoding:NSUTF8StringEncoding]];

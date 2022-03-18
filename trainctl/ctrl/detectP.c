@@ -29,7 +29,8 @@
  */
 
 
-static const int freqs[DETECT_NUM_FREQS] = { 100, 1000, 2000, 3000, 4000, 5000, 6000, 7000 };
+//static const int freqs[DETECT_NUM_FREQS] = { 100, 1000, 2000, 3000, 4000, 5000, 6000, 7000 };
+static const int freqs[DETECT_NUM_FREQS] = { 100, 200, 400 };
 
 #define USE_INA_FOR_DETECT 1
 
@@ -90,7 +91,11 @@ void detect2_init(void)
 // ---------------------------------------------
 
 
-
+static inline int32_t divp(int32_t a, int32_t b)
+{
+	if (!b) return 0;
+	return a/b;
+}
 static void analyse_bemf(int cnum, int frequi)
 {
     if (!dst.voff.count) {
@@ -108,10 +113,14 @@ static void analyse_bemf(int cnum, int frequi)
 
     bemf_anal_t *p = &bemf_anal[cnum];
     int32_t v =  measval_avg(&dst.voff); //*1000;
-    //int32_t avgon =  measval_avg(&dst.von);
-    //v = avgon ? (v / avgon) : 0; // should not happen, but it did happen
-    p->R[frequi] = v;
 
+    p->R[frequi*2] = v;
+    p->R[frequi*2+1] = measval_avg(&dst.ina);
+
+    // U=RI, R=U/I -> 1/R
+    //p->R[frequi] = divp(measval_avg(&dst.ina)*1000, measval_avg(&dst.von));
+
+    /*
     if (frequi==0) {
     	if (p->R[0] > 100) {
     		itm_debug1(DBG_DETECT, "*ROKUHAN", cnum);
@@ -127,6 +136,7 @@ static void analyse_bemf(int cnum, int frequi)
     		p->d = loco_none;
     	}
     }
+    */
 
 }
 
@@ -146,7 +156,7 @@ void analyse_bemf_final(void)
 			itoa(cnum, buf, 10);
 			itm_write(buf, strlen(buf));
 			itm_write("*/ {", 4);
-			for (int fi = 0; fi < DETECT_NUM_FREQS; fi++) {
+			for (int fi = 0; fi < DETECT_NUM_FREQS*2; fi++) {
 				if (fi)  itm_write(", ", 2);
 				char buf[12];
 				itoa(bemf_anal[cnum].R[fi], buf, 10);
@@ -262,7 +272,7 @@ void detect2_process_tick(uint32_t tick)
         m.from = MA_CONTROL_T(0);
         m.to = detect_canton; //MA_CANTON(0, canton);
         m.cmd = CMD_START_DETECT_TRAIN;
-        m.v1u = 80; //%pwm
+        m.v1u = 20; //%pwm
         mqf_write_from_ctrl(&m);
 
         // notify UI

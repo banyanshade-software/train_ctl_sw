@@ -47,6 +47,8 @@ typedef StaticTask_t osStaticThreadDef_t;
 typedef StaticQueue_t osStaticMessageQDef_t;
 /* USER CODE BEGIN PTD */
 
+volatile uint8_t oscillo_evtt1;
+
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
@@ -1463,34 +1465,16 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
   if (htim->Instance == TIM1) {
 	  static int igncnt=0;
 	  static uint32_t lasttick = 0;
+	  uint32_t t1 = __HAL_TIM_GET_COUNTER(&htim1);
 	  uint32_t t = HAL_GetTick();
-	  if (t >= lasttick+5) { // not faster than 50Hz (20ms), whatever the frequency is
-		  lasttick = t;
-		  uint32_t t1 = __HAL_TIM_GET_COUNTER(&htim1);
-		  if (t1<50) {
-			  igncnt = 0;
-			  //itm_debug1(DBG_TIM|DBG_INA3221, "tim1", t1);
-		      //itm_debug1(DBG_DETECT|DBG_INA3221, "noti READ", t1);
+	  if ((t1<50) && (t >= lasttick+5)) { // not faster than 50Hz (20ms), whatever the frequency is
+		 lasttick = t;
+		  oscillo_evtt1 = 1+t1;
 
-			  BaseType_t higher=0;
-			  xTaskNotifyFromISR(ina3221_taskHandle, NOTIF_INA_READ, eSetBits, &higher);
-			  portYIELD_FROM_ISR(higher);
+		  BaseType_t higher=0;
+		  xTaskNotifyFromISR(ina3221_taskHandle, NOTIF_INA_READ, eSetBits, &higher);
+		  portYIELD_FROM_ISR(higher);
 
-		  } else {
-			  //itm_debug2(DBG_ERR|DBG_TIM, "ign tim1", t1, igncnt);
-			  igncnt++;
-			  if (0 == (igncnt%15)) {
-				  extern volatile int oscillo_trigger_start;
-				  oscillo_trigger_start = 1;
-				  // make sure ina3221 task consume messages
-				  BaseType_t higher=0;
-				  itm_debug2(DBG_ERR|DBG_TIM, "tick ina", t1, igncnt);
-				  xTaskNotifyFromISR(ina3221_taskHandle, NOTIF_SYSTICK, eSetBits, &higher);
-				  portYIELD_FROM_ISR(higher);
-
-				  //set_pwm_freq(freq, 0);
-			  }
-		  }
 	  }
 
 	  if ((0)) {

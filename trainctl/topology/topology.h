@@ -91,8 +91,14 @@ void topology_get_cantons_for_turnout(uint8_t turnout, uint8_t *head, uint8_t *s
 
 // ---------------------------------------------------------------------
 
-uint8_t get_lsblk_ina3221(lsblk_num_t num);
+// get ina3221 associated with a sblk
+uint8_t  get_lsblk_ina3221(lsblk_num_t num);
+
+// for presence detection, retrive all ina3221 belonging to a canton
 uint16_t get_ina_bitfield_for_canton(int cnum);
 
+// get lsblk associated with a given ina3221
+// several lsblk may share the same ina3221 (using POSE only between these lsblk)
 
+// TODO
 #endif /* TOPOLOGY_TOPOLOGY_H_ */

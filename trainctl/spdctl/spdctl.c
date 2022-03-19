@@ -218,7 +218,7 @@ void spdctl_run_tick(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, uint
                         	else if (1==tidx) oscillo_t1bemf = m.v1;
                         }
                         else if (abs(m.v1) > abs(tvars->bemf_mv)+300) {
-                        	itm_debug3(DBG_SPDCTL|DBG_PRES, "c2_hi", tidx, m.v1, tvars->bemf_mv);
+                        	itm_debug3(DBG_PRES|DBG_PRES|DBG_CTRL, "c2_hi", tidx, m.v1, tvars->bemf_mv);
                         	msg_64_t m = {0};
                         	m.from = MA_TRAIN_SC(tidx);
                         	m.to = MA_CONTROL_T(tidx);

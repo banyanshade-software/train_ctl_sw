@@ -1389,7 +1389,7 @@ int convert_to_mv_raw(int m)
 }
 
 volatile int oscillo_trigger_start = 0;
-volatile int ocillo_enable = 0;
+volatile int oscillo_enable = 0;
 
 - (void) processOscilloFrame
 {

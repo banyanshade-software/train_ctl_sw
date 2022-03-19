@@ -1070,7 +1070,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "405"
             endingLineNumber = "405"
-            landmarkName = "ctrl_run_tick(notif_flags, tick, dt)"
+            landmarkName = "posecm_measured(tidx, pose, blk1, blk2)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1342,7 +1342,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "589"
             endingLineNumber = "589"
-            landmarkName = "pose_check_trig(numtrain, tvars, lastincr)"
+            landmarkName = "_pose_check_trig(numtrain, tvars, lastincr, pose)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1547,7 +1547,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "202"
             endingLineNumber = "202"
-            landmarkName = "_first_lsblk_with_canton(ca, fromblk)"
+            landmarkName = "next_lsblk(blknum, left, palternate)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1627,7 +1627,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "535"
             endingLineNumber = "535"
-            landmarkName = "train_set_target_speed(numtrain, target)"
+            landmarkName = "_set_speed(tidx, cnf, vars)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1643,7 +1643,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "554"
             endingLineNumber = "554"
-            landmarkName = "_pose_check_trig(numtrain, tvars, lastincr, pose)"
+            landmarkName = "train_set_target_speed(numtrain, target)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1659,7 +1659,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "552"
             endingLineNumber = "552"
-            landmarkName = "_pose_check_trig(numtrain, tvars, lastincr, pose)"
+            landmarkName = "train_set_target_speed(numtrain, target)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -2797,7 +2797,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "240"
             endingLineNumber = "240"
-            landmarkName = "first_lsblk_with_canton(ca, fromblk)"
+            landmarkName = "get_ina_bitfield_for_canton(cnum)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -2813,7 +2813,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "243"
             endingLineNumber = "243"
-            landmarkName = "first_lsblk_with_canton(ca, fromblk)"
+            landmarkName = "get_ina_bitfield_for_canton(cnum)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -3251,7 +3251,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "587"
             endingLineNumber = "587"
-            landmarkName = "pose_check_trig(numtrain, tvars, lastincr)"
+            landmarkName = "_pose_check_trig(numtrain, tvars, lastincr, pose)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -3267,7 +3267,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "592"
             endingLineNumber = "592"
-            landmarkName = "pose_check_trig(numtrain, tvars, lastincr)"
+            landmarkName = "_pose_check_trig(numtrain, tvars, lastincr, pose)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -3283,8 +3283,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "596"
             endingLineNumber = "596"
-            landmarkName = "pose_check_trig(numtrain, tvars, lastincr)"
-            landmarkType = "9">
+            landmarkName = "unknown"
+            landmarkType = "0">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -3299,7 +3299,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "583"
             endingLineNumber = "583"
-            landmarkName = "pose_check_trig(numtrain, tvars, lastincr)"
+            landmarkName = "_pose_check_trig(numtrain, tvars, lastincr, pose)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -3315,7 +3315,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "580"
             endingLineNumber = "580"
-            landmarkName = "pose_check_trig(numtrain, tvars, lastincr)"
+            landmarkName = "_pose_check_trig(numtrain, tvars, lastincr, pose)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -3331,7 +3331,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "275"
             endingLineNumber = "275"
-            landmarkName = "train_periodic_control(numtrain, dt)"
+            landmarkName = "spdctl_run_tick(notif_flags, tick, dt)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -3395,7 +3395,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "551"
             endingLineNumber = "551"
-            landmarkName = "_pose_check_trig(numtrain, tvars, lastincr, pose)"
+            landmarkName = "train_set_target_speed(numtrain, target)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>

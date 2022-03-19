@@ -310,6 +310,42 @@ static void check_timers(uint32_t tick)
 
 static void sub_presence_changed(_UNUSED_ uint32_t tick, _UNUSED_ uint8_t from_addr, _UNUSED_ uint8_t lsegnum, _UNUSED_ uint16_t p, _UNUSED_ int16_t ival)
 {
+	for (int tidx=0; tidx < NUM_TRAINS; tidx++) {
+		train_ctrl_t *tvar = &trctl[tidx];
+        if (tvar->_mode == train_notrunning) continue;
+        uint8_t is_s1 = 0;
+        uint8_t is_s2 = 0;
+        if ((tvar->c1_sblk.n != -1) && (lsegnum == get_lsblk_ina3221(tvar->c1_sblk))) {
+            is_s1 = 1;
+        }
+        lsblk_num_t c2s = {-1};
+        if (tvar->can2_addr != 0xFF) {
+            c2s = first_lsblk_with_canton(tvar->can2_addr, tvar->c1_sblk);
+            if (c2s.n == -1) Error_Handler();
+            if (lsegnum == get_lsblk_ina3221(c2s)) {
+                is_s2 = 1;
+            }
+        }
+        if (is_s2 && !is_s1) {
+            if (p) {
+                itm_debug3(DBG_CTRL, "ina ps2", tidx, lsegnum, c2s.n);
+                ctrl2_evt_entered_c2(tidx, tvar, 0);
+            } else {
+                ctrl2_evt_leaved_c2(tidx, tvar);
+                itm_debug3(DBG_CTRL, "ina ls2", tidx, lsegnum, c2s.n);
+            }
+            break; // no need to test other trains
+        } else if (is_s1) {
+            if (p) {
+                itm_debug3(DBG_CTRL, "ina ps1", tidx, lsegnum, c2s.n);
+                ctrl2_evt_entered_c1(tidx, tvar, 0);
+            } else {
+                ctrl2_evt_leaved_c1(tidx, tvar);
+                itm_debug3(DBG_CTRL, "ina ls1", tidx, lsegnum, c2s.n);
+            }
+            break; // no need to test other trains
+        }
+	}
     //abort();
 #if 0
     xxxx

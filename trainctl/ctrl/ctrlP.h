@@ -116,7 +116,7 @@ void ctrl2_evt_stop_detected(int tidx, train_ctrl_t *tvar, int32_t pose);
 void ctrl_set_pose_trig(int numtrain, int32_t pose, int n);
 
 #define ignore_bemf_presence 0
-#define ignore_ina_presence  1
+#define ignore_ina_presence  0
 
 
 void ctrl_reset_timer(int tidx, train_ctrl_t *tvar, int numtimer);

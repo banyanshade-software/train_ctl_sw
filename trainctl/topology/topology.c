@@ -76,7 +76,7 @@ static const topo_lsblk_t _Topology[] = {
     /* 7*/  { FUTURE_CANTON,    0xFF,   0, 60,    6,  -1,  0xFF,       8,   -1, 0xFF       _PTS(3, {6,6}, {6,8}, {7,10} ,{7, 14}) },
     /* 8*/  { FUTURE_CANTON,    0xFF,   0, 60,    7,  -1,  0xFF,       -1,  -1, 0xFF       _PTS(1, {7,14}, {7,16}, {6,17}, {1, 17})}
 #else
-    //          canton         ina    steep  len      l1    l2    tn       r1   r2   tn      graph pt
+    	//          canton         ina    steep  len      l1    l2    tn       r1   r2   tn      graph pt
        /* 0 */ { MA_CANTON(0, 0),     2,   0, 98,    -1,   -1, 0xFF,       1,  -1,    0    _PTS(2, {L0+1,2}, {L0+4,2}, {L0+5,3}, {L0+5,9})},
        /* 1 */ { MA_CANTON(0, 1),     1,   0, 23,     0,    3,    0,       4,  12 ,   5    _PTS(0, {L0+5,10}, {L0+5,11}, _VP, _VP)},
        /* 2 */ { MA_CANTON(0, 2),     0,   0, 70,    -1 ,  -1, 0xFF,       3,  11,    4    _PTS(2, {L0+1,3}, {L0+3,3}, {L0+4,4}, {L0+4,5})},

@@ -712,6 +712,22 @@ int ctrl2_set_turnout(int tn, int v, int train)
     return set_turnout(tn, v, train);
 }
 
+ // #longtrain
+int ctrl2_lock_turnout(int tn, int train)
+{
+    int rc = occupency_turnout_reserve(tn, train);
+    if (rc) {
+        itm_debug3(DBG_CTRL, "tn busy", train, tn, rc);
+        return rc;
+    }
+    return rc;
+}
+
+void ctrl2_unlock_turnout(int tn, int train) // #longtrain
+{
+    occupency_turnout_release(tn, train);
+}
+
 
 void ctrl2_send_led(uint8_t led_num, uint8_t prog_num)
 {

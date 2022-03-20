@@ -23,6 +23,9 @@
 #define TLEAVE_C1_VALUE 20
 #define TGUARD_C1_VALUE 1
 
+
+#define MAX_LSBLK_CARS 4
+
 typedef struct {
     train_mode_t   _mode;
     train_state_t  _state;
@@ -38,9 +41,15 @@ typedef struct {
     uint8_t trig_eoseg:1;
     uint8_t measure_pose_percm:1;
     
+    // locomotive is on can1/c1_sblk, heading to can2
     uint8_t     can1_addr;
     lsblk_num_t c1_sblk;
     uint8_t     can2_addr;
+    
+    // cars spawn before and/or after locomotive on several sblk (and possibly several can)
+    // #longtrain
+    lsblk_num_t leftcars[MAX_LSBLK_CARS];
+    lsblk_num_t rightcars[MAX_LSBLK_CARS];
 
     uint16_t spd_limit;
     int16_t desired_speed;
@@ -116,7 +125,7 @@ void ctrl2_evt_stop_detected(int tidx, train_ctrl_t *tvar, int32_t pose);
 void ctrl_set_pose_trig(int numtrain, int32_t pose, int n);
 
 #define ignore_bemf_presence 0
-#define ignore_ina_presence  0
+#define ignore_ina_presence  1
 
 
 void ctrl_reset_timer(int tidx, train_ctrl_t *tvar, int numtimer);
@@ -140,7 +149,14 @@ extern uint8_t ctrl_flag_notify_speed ;
 
 // provided by ctrl.c
 extern int ctrl2_set_turnout(int tn, int v, int train_num); // ctrl.c
+
+// #longtrain :  lock a turnout without changing value
+extern int ctrl2_lock_turnout(int tn, int train);
+extern void ctrl2_unlock_turnout(int tn, int train);
+
 extern void ctrl2_send_led(uint8_t led_num, uint8_t prog_num);
 
+
+int ctrl2_get_next_sblk(int tidx, train_ctrl_t *tvars,  const train_config_t *tconf, int left, lsblk_num_t *resp, int nsblk, int reserveturnout);
 
 #endif /* ctrlP_h */

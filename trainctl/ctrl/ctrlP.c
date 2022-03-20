@@ -887,3 +887,37 @@ int ctrl2_tick_process(int tidx, train_ctrl_t *tvars, const train_config_t *tcon
     if (tvars->_mode == train_auto) cauto_end_tick(tidx, tvars);
     return nloop;
 }
+
+
+
+// #longtrain
+
+int ctrl2_get_next_sblk(int tidx, train_ctrl_t *tvars,  const train_config_t *tconf, int left, lsblk_num_t *resp, int nsblk, int reserveturnout)
+{
+    int lidx = 0;
+    int cm = left ? tconf->trainlen_left : tconf->trainlen_right;
+    lsblk_num_t cblk = tvars->c1_sblk;
+    // curposmm
+    int l0 = tvars->curposmm / 10;
+    for (;;) {
+        int l = get_lsblk_len(cblk, NULL);
+        if (l0) {
+            if (left) {
+                l = l0;
+            } else {
+                l = l-l0;
+            }
+            l0 = 0;
+        }
+        if (l >= cm) {
+            // done
+            return lidx;
+        }
+        cm -= l;
+        cblk = next_lsblk(cblk, left, NULL);
+        resp[lidx] = cblk;
+        lidx++;
+        if (lidx>=nsblk) return lidx;
+        if (cblk.n == -1) return lidx;
+    }
+}

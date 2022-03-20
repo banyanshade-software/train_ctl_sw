@@ -103,6 +103,9 @@ void ctrl2_send_led(uint8_t led_num, uint8_t prog_num)
 
 - (void)setUp
 {
+    extern uint8_t topology_num;
+    topology_num = 1;
+
     tconf = get_train_cnf(0);
     notify_occupency_change = 0;
     ctrl_flag_notify_speed = 0;
@@ -945,7 +948,7 @@ static NSString *dump_msgbuf(int clear)
 }
 // -------------------------------------
 
-static const train_config_t testconf = {
+static  train_config_t testconf = {
     .pose_per_cm = 20,
     .slipping = 100,
 };

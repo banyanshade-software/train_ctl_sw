@@ -61,21 +61,8 @@
  * ina2 on C0 (B0)
  */
 
-static const topo_lsblk_t _Topology[] = {
-#ifdef UNIT_TEST
-//#error he
-    // layout 5 segs
-    //          canton         ina    steep  len      l1    l2    tn       r1   r2   tn      graph pt
-    /* 0 */ { MA_CANTON(0, 0),  0xFF,   0, 98,    -1,   -1, 0xFF,       1,  -1,    0       _PTS(2, {1,3}, {4,3},{5,4},{5,8})},
-    /* 1 */ { MA_CANTON(0, 1),  0xFF,   0, 45,     0,    2,    0,      -1,   3,    1       _PTS(0, {5,9}, {5,12}, _VP, _VP)},
-    /* 2 */ { MA_CANTON(0, 2),  0xFF,   0, 90,    -1 ,  -1, 0xFF,      -1,   1,    0       _PTS(2, {1,4}, {3,4}, {4,5}, {4,8})},
-    /* 3 */ { MA_CANTON(0, 3),  0xFF,   0, 54, 	4,    1,    1,      -1,  -1, 0xFF          _PTS(0, {6,13}, {6,15}, {5,16}, {1,16})},
-    /* 4 */ { MA_CANTON(0, 3),  0xFF,  -1, 80,   -1,   5,     2,       3,  -1,    1        _PTS(0, {7,4}, {7,8}, {6,10}, {6,12})},
-    /* 5 */ { MA_CANTON(0, 3),  0xFF,   0, 58,   -1,  -1,  0xFF,       6,   4,    2        _PTS(0, {1,2}, {5,2}, {6,3}, _VP)},
-    /* 6 */ { MA_CANTON(0, 3),  0xFF,   0, 36,    5,   -1,    2,       7, -1, 0xFF         _PTS(0, {6,4}, {6,6}, _VP, _VP)},
-    /* 7*/  { FUTURE_CANTON,    0xFF,   0, 60,    6,  -1,  0xFF,       8,   -1, 0xFF       _PTS(3, {6,6}, {6,8}, {7,10} ,{7, 14}) },
-    /* 8*/  { FUTURE_CANTON,    0xFF,   0, 60,    7,  -1,  0xFF,       -1,  -1, 0xFF       _PTS(1, {7,14}, {7,16}, {6,17}, {1, 17})}
-#else
+uint8_t topology_num = 0;
+static const topo_lsblk_t _Topology0[] = {
     	//          canton         ina    steep  len      l1    l2    tn       r1   r2   tn      graph pt
        /* 0 */ { MA_CANTON(0, 0),     2,   0, 98,    -1,   -1, 0xFF,       1,  -1,    0    _PTS(2, {L0+1,2}, {L0+4,2}, {L0+5,3}, {L0+5,9})},
        /* 1 */ { MA_CANTON(0, 1),     1,   0, 23,     0,    3,    0,       4,  12 ,   5    _PTS(0, {L0+5,10}, {L0+5,11}, _VP, _VP)},
@@ -106,24 +93,54 @@ static const topo_lsblk_t _Topology[] = {
     
        /*21*/  { FUTURE_CANTON,    0xFF,   0, 20,    22, 11,    11,       20,  15,   10   _PTS(0, {L0+2,8}, {L0+2, 9}, _VP, _VP)},
        /*22*/  { FUTURE_CANTON,    0xFF,   0, 20,    -1, -1,  0xFF,       21,  -1,   11   _PTS(0, {L0+2,4}, {L0+2, 7}, _VP, _VP)}
-
-#endif
-    
 };
+#ifdef UNIT_TEST
+static const topo_lsblk_t _Topology1[] = {
+        // layout 5 segs
+        //          canton         ina    steep  len      l1    l2    tn       r1   r2   tn      graph pt
+        /* 0 */ { MA_CANTON(0, 0),  0xFF,   0, 98,    -1,   -1, 0xFF,       1,  -1,    0       _PTS(2, {1,3}, {4,3},{5,4},{5,8})},
+        /* 1 */ { MA_CANTON(0, 1),  0xFF,   0, 45,     0,    2,    0,      -1,   3,    1       _PTS(0, {5,9}, {5,12}, _VP, _VP)},
+        /* 2 */ { MA_CANTON(0, 2),  0xFF,   0, 90,    -1 ,  -1, 0xFF,      -1,   1,    0       _PTS(2, {1,4}, {3,4}, {4,5}, {4,8})},
+        /* 3 */ { MA_CANTON(0, 3),  0xFF,   0, 54,     4,    1,    1,      -1,  -1, 0xFF          _PTS(0, {6,13}, {6,15}, {5,16}, {1,16})},
+        /* 4 */ { MA_CANTON(0, 3),  0xFF,  -1, 80,   -1,   5,     2,       3,  -1,    1        _PTS(0, {7,4}, {7,8}, {6,10}, {6,12})},
+        /* 5 */ { MA_CANTON(0, 3),  0xFF,   0, 58,   -1,  -1,  0xFF,       6,   4,    2        _PTS(0, {1,2}, {5,2}, {6,3}, _VP)},
+        /* 6 */ { MA_CANTON(0, 3),  0xFF,   0, 36,    5,   -1,    2,       7, -1, 0xFF         _PTS(0, {6,4}, {6,6}, _VP, _VP)},
+        /* 7*/  { FUTURE_CANTON,    0xFF,   0, 60,    6,  -1,  0xFF,       8,   -1, 0xFF       _PTS(3, {6,6}, {6,8}, {7,10} ,{7, 14}) },
+        /* 8*/  { FUTURE_CANTON,    0xFF,   0, 60,    7,  -1,  0xFF,       -1,  -1, 0xFF       _PTS(1, {7,14}, {7,16}, {6,17}, {1, 17})}
+};
+#else
+#define _Topology1 _Topology0
+#endif
 
 
-static inline  int numTopology(void)
+static inline  int numTopology0(void)
 {
     static int s=0;
     if (!s) {
-        s = sizeof(_Topology)/sizeof(topo_lsblk_t);
+        s = sizeof(_Topology0)/sizeof(topo_lsblk_t);
     }
     return s;
 }
 
+static inline  int numTopology1(void)
+{
+    static int s=0;
+    if (!s) {
+        s = sizeof(_Topology1)/sizeof(topo_lsblk_t);
+    }
+    return s;
+}
+
+static inline  int numTopology(void)
+{
+    if (topology_num) return numTopology1();
+    return numTopology0();
+}
+
 static inline const topo_lsblk_t *Topology(lsblk_num_t blknum)
 {
-    return &_Topology[blknum.n];
+    if (!topology_num) return &_Topology0[blknum.n];
+    return &_Topology1[blknum.n];
 }
 
 const topo_lsblk_t *topology_get_sblkd(int lsblk)

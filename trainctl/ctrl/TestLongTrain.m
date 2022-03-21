@@ -34,7 +34,7 @@ static lsblk_num_t sone = {1};
     // Put setup code here. This method is called before the invocation of each test method in the class.
     
     extern uint8_t topology_num;
-    topology_num = 1;
+    topology_num = 0;
 
     tconf = (train_config_t *) get_train_cnf(0);
     notify_occupency_change = 0;
@@ -55,13 +55,49 @@ static lsblk_num_t sone = {1};
     // Put teardown code here. This method is called after the invocation of each test method in the class.
 }
 
+
+static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
+{
+    for (int i=0; i<n ; i++) {
+        if (res[i].n != exp[i]) return -1;
+    }
+    return 0;
+}
+
 - (void) test1
 {
     tconf->trainlen_left = 0;
-    tconf->trainlen_right = 90;
+    tconf->trainlen_right = 20;
     tvars.curposmm = 30;
     lsblk_num_t r[4];
     int n = ctrl2_get_next_sblk(0, &tvars, tconf, 0, r, 4, 0);
+    XCTAssert(n==0);
+    
+    tconf->trainlen_right = 30;
+    n = ctrl2_get_next_sblk(0, &tvars, tconf, 0, r, 4, 0);
     XCTAssert(n==1);
+    static const int exp1[] = { 4 };
+    int rc = check_lsblk_array(r, exp1, n);
+    XCTAssert(!rc);
+    
+    tconf->trainlen_right = 90;
+    n = ctrl2_get_next_sblk(0, &tvars, tconf, 0, r, 4, 0);
+    XCTAssert(n==2);
+    static const int exp2[] = { 4, 5 };
+    rc = check_lsblk_array(r, exp2, n);
+    XCTAssert(!rc);
+    
+    
+    
+    n = ctrl2_get_next_sblk(0, &tvars, tconf, 1, r, 4, 0);
+    XCTAssert(n==0);    // len left is 9
+   
+    
+    tconf->trainlen_left = 90;
+    n = ctrl2_get_next_sblk(0, &tvars, tconf, 1, r, 4, 0);
+    XCTAssert(n==1);
+    static const int exp3[] = { 0 };
+    rc = check_lsblk_array(r, exp3, n);
+    XCTAssert(!rc);
 }
 @end

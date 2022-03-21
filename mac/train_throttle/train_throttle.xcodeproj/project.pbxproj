@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		1B0ECEB127BAF993003692B1 /* adc_mean.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B0ECEB027BAF993003692B1 /* adc_mean.c */; };
-		1B0ECEB327BAFA8C003692B1 /* TestAdcMean.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B0ECEB227BAFA8C003692B1 /* TestAdcMean.m */; };
 		1B0ECEB427BAFC37003692B1 /* adc_mean.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B0ECEB027BAF993003692B1 /* adc_mean.c */; };
 		1B18114F26BD5BA30008F21C /* uitrack.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B18114D26BD5BA30008F21C /* uitrack.c */; };
 		1B18115126BFFCC00008F21C /* uitrack.html in Resources */ = {isa = PBXBuildFile; fileRef = 1B18115026BFFCC00008F21C /* uitrack.html */; };
@@ -23,6 +22,7 @@
 		1B3657BB275BED540042491A /* CTCManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3657BA275BED540042491A /* CTCManager.m */; };
 		1B46EE552692684F00FAC813 /* topology.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B46EE542692684E00FAC813 /* topology.c */; };
 		1B4BCB022549ADC90062961D /* statval.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B4BCB002549ADC70062961D /* statval.c */; };
+		1B53774627E7E0C1009CA93C /* TestLongTrain.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B53774527E7E0C1009CA93C /* TestLongTrain.m */; };
 		1B60329726CA4C0200D5B6CA /* trkplan.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B60329626CA4BF400D5B6CA /* trkplan.c */; };
 		1B61090D256AAE1A00F1AC45 /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B61090C256AAE1900F1AC45 /* CoreBluetooth.framework */; };
 		1B67360F2531E4450063EA9A /* SimTrain.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B67360E2531E4450063EA9A /* SimTrain.m */; };
@@ -85,7 +85,6 @@
 /* Begin PBXFileReference section */
 		1B0ECEAF27BAF993003692B1 /* adc_mean.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = adc_mean.h; sourceTree = "<group>"; };
 		1B0ECEB027BAF993003692B1 /* adc_mean.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = adc_mean.c; sourceTree = "<group>"; };
-		1B0ECEB227BAFA8C003692B1 /* TestAdcMean.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TestAdcMean.m; sourceTree = "<group>"; };
 		1B18114D26BD5BA30008F21C /* uitrack.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = uitrack.c; sourceTree = "<group>"; };
 		1B18114E26BD5BA30008F21C /* uitrack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = uitrack.h; sourceTree = "<group>"; };
 		1B18115026BFFCC00008F21C /* uitrack.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = uitrack.html; sourceTree = "<group>"; };
@@ -99,6 +98,7 @@
 		1B4B70A12729194F00FBDB52 /* TopologyTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TopologyTest.m; sourceTree = "<group>"; };
 		1B4BCB002549ADC70062961D /* statval.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = statval.c; sourceTree = "<group>"; };
 		1B4BCB012549ADC80062961D /* statval.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = statval.h; sourceTree = "<group>"; };
+		1B53774527E7E0C1009CA93C /* TestLongTrain.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TestLongTrain.m; sourceTree = "<group>"; };
 		1B60329526CA4BF400D5B6CA /* trkplan.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = trkplan.h; sourceTree = "<group>"; };
 		1B60329626CA4BF400D5B6CA /* trkplan.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = trkplan.c; sourceTree = "<group>"; };
 		1B61090C256AAE1900F1AC45 /* CoreBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreBluetooth.framework; path = System/Library/Frameworks/CoreBluetooth.framework; sourceTree = SDKROOT; };
@@ -283,7 +283,6 @@
 				1B7A2A12262D599E004E0481 /* lf_mqueue.c */,
 				1B1C75FF27248C1500F95111 /* TestMQueue.m */,
 				1B0ECEAF27BAF993003692B1 /* adc_mean.h */,
-				1B0ECEB227BAFA8C003692B1 /* TestAdcMean.m */,
 				1B0ECEB027BAF993003692B1 /* adc_mean.c */,
 			);
 			path = utils;
@@ -299,6 +298,7 @@
 				1B77BEC8274A471200BC5230 /* detectP.h */,
 				1B77BEC9274A471200BC5230 /* detectP.c */,
 				1BEB93CD272B325700508C17 /* ctrlP.h */,
+				1B53774527E7E0C1009CA93C /* TestLongTrain.m */,
 				1BEB93CE272B325700508C17 /* ctrlP.c */,
 				1B812B3B273FA77B00924749 /* cautoP.h */,
 				1B812B3C273FA77B00924749 /* cautoP.c */,
@@ -543,13 +543,13 @@
 				1B1C75FD27245D1400F95111 /* misc.c in Sources */,
 				1B1C760127248DA800F95111 /* lf_mqueue.c in Sources */,
 				1B0ECEB427BAFC37003692B1 /* adc_mean.c in Sources */,
+				1B53774627E7E0C1009CA93C /* TestLongTrain.m in Sources */,
 				1B255145273262B30015B4FA /* TestOccupency.m in Sources */,
 				1BEB93D2272B342500508C17 /* TestCtrlP.m in Sources */,
 				1B1C75FE27245D4E00F95111 /* itm_debug.c in Sources */,
 				1BC903172720AD730087CEA7 /* LedTest.m in Sources */,
 				1BE8B29527418D82000A0FAD /* cautoP.c in Sources */,
 				1B1C75FC27245C3F00F95111 /* inertia.c in Sources */,
-				1B0ECEB327BAFA8C003692B1 /* TestAdcMean.m in Sources */,
 				1BA0FCB12724B0380002DF4C /* TestPid.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -621,7 +621,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "-";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = "";
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -645,7 +645,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "-";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = "";
 				GCC_PREPROCESSOR_DEFINITIONS = (

@@ -78,6 +78,7 @@ static int32_t get_lsblk_len_steep(lsblk_num_t lsbk, const train_config_t *tconf
 	return cm;
 }
 
+// ------------------------------------------------------
 
 static int32_t ctrl_pose_percent_c1(const train_config_t *tconf, train_ctrl_t *tvar, int percent)
 {
@@ -127,19 +128,6 @@ static int32_t ctrl_pose_end_c1(const train_config_t *tconf, train_ctrl_t *tvar)
     return p;
 }
 
-void ctrl_set_pose_trig(int numtrain, int32_t pose, int n)
-{
-    itm_debug3(DBG_CTRL, "set posetr", numtrain, n, pose);
-    msg_64_t m = {0};
-    m.from = MA_CONTROL_T(numtrain);
-    m.to =  MA_TRAIN_SC(numtrain);
-    m.cmd = n ? CMD_POSE_SET_TRIG_U1 :  CMD_POSE_SET_TRIG0; // XXXX
-    const train_config_t *tconf = get_train_cnf(numtrain);
-    if (tconf->reversed)  m.v32 = -pose;
-    else m.v32 = pose;
-    mqf_write_from_ctrl(&m);
-}
-
 void ctrl2_upcmd_settrigU1(int tidx, train_ctrl_t *tvars, uint8_t t)
 {
     if (!tvars->_dir) return;
@@ -159,6 +147,29 @@ void ctrl2_upcmd_settrigU1(int tidx, train_ctrl_t *tvars, uint8_t t)
     }
     ctrl_set_pose_trig(tidx, p, 1);
 }
+
+
+void ctrl_set_pose_trig(int numtrain, int32_t pose, int n)
+{
+    itm_debug3(DBG_CTRL, "set posetr", numtrain, n, pose);
+    if (abs(pose)>32000*10) {
+        itm_debug3(DBG_ERR|DBG_POSEC, "toobig", numtrain, n, pose);
+    }
+    msg_64_t m = {0};
+    m.from = MA_CONTROL_T(numtrain);
+    m.to =  MA_TRAIN_SC(numtrain);
+    m.cmd = n ? CMD_POSE_SET_TRIG_U1 :  CMD_POSE_SET_TRIG0; // XXXX
+    const train_config_t *tconf = get_train_cnf(numtrain);
+    if (tconf->reversed)  m.v1 = -pose/10;
+    else m.v1 = pose/10;
+    itm_debug3(DBG_CTRL|DBG_POSEC, "S_TRIG", numtrain, n, pose/10);
+    mqf_write_from_ctrl(&m);
+}
+
+
+// -----------------------------------------------------------------------------------
+
+
 
 void ctrl_reset_timer(int tidx, train_ctrl_t *tvar, int numtimer)
 {
@@ -921,3 +932,4 @@ int ctrl2_get_next_sblk(int tidx, train_ctrl_t *tvars,  const train_config_t *tc
         if (cblk.n == -1) return lidx;
     }
 }
+

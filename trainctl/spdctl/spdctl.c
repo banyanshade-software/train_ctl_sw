@@ -256,13 +256,13 @@ void spdctl_run_tick(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, uint
                     break;
                 case CMD_POSE_SET_TRIG0:
                 	itm_debug2(DBG_POSEC, "POSE set0", tidx, m.v32);
-                	tvars->pose_trig0 = m.v32*10;
+                	tvars->pose_trig0 = m.v1*100;
                 	// check if already trigg
                 	pose_check_trig(tidx, tvars, 0);
                 	break;
                 case CMD_POSE_SET_TRIG_U1:
                     itm_debug2(DBG_POSEC, "POSE setU1", tidx, m.v32);
-                    tvars->pose_trigU1 = m.v32*10;
+                    tvars->pose_trigU1 = m.v1*100;
                     // check if already trigg
                     pose_check_trig(tidx, tvars, 0);
                 default:

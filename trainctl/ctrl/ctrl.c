@@ -547,7 +547,8 @@ void ctrl_run_tick(_UNUSED_ uint32_t notif_flags, uint32_t tick, _UNUSED_ uint32
                 break;
 
             case CMD_POSE_TRIGGERED:
-                itm_debug3(DBG_POSE, "Trig", m.v1u, m.v2u, m.subc);
+                // v1u = canton addr, v2 = pose, subc=tag
+                itm_debug3(DBG_POSEC, "Trig", m.v1u, m.v2, m.subc);
                 ctrl2_evt_pose_triggered(tidx, tvar, m.v1u, m.subc, m.v2);
                 break;
             case CMD_STOP_DETECTED:

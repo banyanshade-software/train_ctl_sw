@@ -145,11 +145,11 @@ void ctrl2_upcmd_settrigU1(int tidx, train_ctrl_t *tvars, uint8_t t)
             p = ctrl_pose_percent_c1(get_train_cnf(tidx), tvars, 10);
             break;
     }
-    ctrl_set_pose_trig(tidx, p, tag_auto_u1);
+    ctrl_set_pose_trig(tidx, tvars->can1_addr,  p, tag_auto_u1);
 }
 
 
-void ctrl_set_pose_trig(int numtrain, int32_t pose, uint16_t tag)
+void ctrl_set_pose_trig(int numtrain, uint8_t canaddr, int32_t pose, uint16_t tag)
 {
     itm_debug3(DBG_CTRL, "set posetr", numtrain, tag, pose);
     if (!tag) Error_Handler();
@@ -158,7 +158,8 @@ void ctrl_set_pose_trig(int numtrain, int32_t pose, uint16_t tag)
     }
     msg_64_t m = {0};
     m.from = MA_CONTROL_T(numtrain);
-    m.to =  MA_TRAIN_SC(numtrain);
+    //m.to =  MA_TRAIN_SC(numtrain);
+    m.to = canaddr;
     m.cmd = CMD_POSE_SET_TRIG; // XXXX
     const train_config_t *tconf = get_train_cnf(numtrain);
     if (tconf->reversed)  m.v1 = -pose/10;
@@ -761,7 +762,7 @@ void ctrl2_evt_leaved_c2(int tidx, train_ctrl_t *tvar)
 int ctrl2_evt_pose_triggered(int tidx, train_ctrl_t *tvar, uint8_t ca_addr, uint8_t tag, int16_t cposd10)
 {
     int retcode = 0;
-	itm_debug3(DBG_CTRL, "POSEtrg", tidx, ca_addr, cposd10);
+	itm_debug3(DBG_CTRL|DBG_POSEC, "POSEtrg", tidx, ca_addr, cposd10);
 
     if (tvar->_state != train_running_c1) {
         itm_debug2(DBG_ERR|DBG_CTRL, "bad st/3",tidx, tvar->_state);
@@ -916,10 +917,10 @@ int ctrl2_tick_process(int tidx, train_ctrl_t *tvars, const train_config_t *tcon
         fatal();
     }
     if (posetag_c2) {
-        ctrl_set_pose_trig(tidx, pose_eoseg, posetag_c2);
+        ctrl_set_pose_trig(tidx, tvars->can1_addr, pose_eoseg, posetag_c2);
         //tvars->trig_eoseg = 1;
     } else if (posetag_topo) {
-        ctrl_set_pose_trig(tidx, pose_topo, posetag_topo);
+        ctrl_set_pose_trig(tidx, tvars->can1_addr,  pose_topo, posetag_topo);
         //tvars->trig_eoseg = 0;
     }
     if (pflags & (_TFLAG_TSPD_CHANGED)) {

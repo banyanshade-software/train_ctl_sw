@@ -185,7 +185,7 @@ static void dispatch_m64(msg_64_t *m, int f)
 		if ((m->to & routes[i].mask) == routes[i].value) {
 			if (f==routes[i].destq) {
 				// loop
-				itm_debug1(DBG_ERR|DBG_MSG, "loop", f);
+				itm_debug2(DBG_ERR|DBG_MSG, "loop", f, m->cmd);
 				return;
 			}
 			mqf_t *q = qdef[routes[i].destq].to;

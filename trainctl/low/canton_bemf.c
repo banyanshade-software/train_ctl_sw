@@ -34,23 +34,39 @@ volatile adc_buf_t train_adc_buf[2]; // double buffer
 runmode_t bemf_run_mode = runmode_off;
 uint8_t bemf_test_all = 0;
 
+#define NUM_TRIGS 4
+typedef struct {
+    int32_t posval;
+    uint8_t postag;
+    //uint8_t postag2;
+} bemf_trig_t;
+
+typedef struct{
+    uint8_t bemf_to;
+    int32_t pose;
+    bemf_trig_t trigs[NUM_TRIGS];
+} canton_bemf_t;
+
 #if NUM_LOCAL_CANTONS_SW == 1
-static uint8_t bemf_to[NUM_LOCAL_CANTONS_SW] = {0xFF};
+static canton_bemf_t cbvars[NUM_LOCAL_CANTONS_SW] = {0};
 #else
-static uint8_t bemf_to[NUM_LOCAL_CANTONS_SW] = {0xFF, 0xFF, 0xFF, 0xFF,  0xFF, 0xFF, 0xFF, 0xFF};
+static canton_bemf_t cbvars[NUM_LOCAL_CANTONS_SW] = {0};
 #endif
 
 static void process_adc(volatile adc_result_t *buf, uint32_t deltaticks);
+static void add_trig(canton_bemf_t *, int32_t posval, uint8_t posetag);
 
 
-#define USE_CANTON(_idx) \
-		const canton_config_t *cconf = get_canton_cnf(_idx); \
-		//canton_vars_t         *cvars = &canton_vars[_idx];
+#define USE_CANTON(_idx)                                        \
+		const canton_config_t *cconf = get_canton_cnf(_idx);    \
+		canton_bemf_t         *cvars = &cbvars[_idx];
 
 void bemf_reset(void)
 {
 	for (int i=0; i<NUM_LOCAL_CANTONS_SW; i++) {
-		bemf_to[i]=0xFF;
+		cbvars[i].bemf_to = 0xFF;
+        cbvars[i].pose = 0;
+        memset(cbvars[i].trigs, 0, sizeof(bemf_trig_t)*NUM_TRIGS);
 	}
 }
 
@@ -65,12 +81,23 @@ void bemf_msg(msg_64_t *m)
 	switch(m->cmd) {
 	case CMD_BEMF_OFF:
 		itm_debug1(DBG_SPDCTL|DBG_CTRL|DBG_DETECT, "BEMF OFF", idx);
-		bemf_to[idx] = 0xFF;
+		cbvars[idx].bemf_to = 0xFF;
+        cbvars[idx].pose = 0;
+        memset(cbvars[idx].trigs, 0, sizeof(bemf_trig_t)*NUM_TRIGS);
 		break;
 	case CMD_BEMF_ON:
 		itm_debug2(DBG_SPDCTL|DBG_CTRL|DBG_DETECT, "BEMF ON", idx, m->from);
-		bemf_to[idx] = m->from;
+		cbvars[idx].bemf_to = m->from;
+        cbvars[idx].pose = 0;
 		break;
+            
+    case CMD_POSE_SET_TRIG:
+            if ((m->from & 0x7) != (cbvars[idx].bemf_to &  0x7)) {
+                itm_debug2(DBG_ERR, "st/bad", m->from, cbvars[idx].bemf_to);
+                break;
+            }
+            add_trig(&cbvars[idx], m->v1*100, m->v2);
+            break;
 	default:
 		itm_debug1(DBG_ERR, "bad bemf c", m->to);
 		break;
@@ -96,6 +123,40 @@ void bemf_tick(uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_ uint32_t d
 
 
 
+static int _add_trig(canton_bemf_t *cvars, int32_t posval, uint8_t posetag)
+{
+    if (!posval) {
+        itm_debug1(DBG_ERR|DBG_POSEC, "nul trig", posetag);
+        posval = 1; // 0 means no trigger
+    }
+    for (int pi=0; pi<NUM_TRIGS; pi++) {
+        if (cvars->trigs[pi].posval == posval) {
+            if (cvars->trigs[pi].postag == posetag) {
+                itm_debug2(DBG_ERR|DBG_POSEC, "dup trig", posval, posetag);
+                return -1; // ignore it
+            }
+            // same poseval but different tag ; not  an error here,
+            // but for now it could be a bug in ctrlP.c
+            itm_debug3(DBG_ERR|DBG_POSEC, "same trig", posval, cvars->trigs[pi].postag, posetag);
+        }
+        if (cvars->trigs[pi].posval) continue;
+        cvars->trigs[pi].posval = posval;
+        cvars->trigs[pi].postag = posetag;
+        return pi;
+     }
+     itm_debug1(DBG_ERR|DBG_POSEC, "NO TRIG", posetag);
+     Error_Handler();
+     return -1;
+}
+
+static void add_trig(canton_bemf_t *cvars, int32_t posval, uint8_t posetag)
+{
+    int pi = _add_trig(cvars, posval, posetag);
+    if (pi) {
+        // check trig ?
+        // nothing to do it will be checked at first bemf notif
+    }
+}
 
 // volt_measured * 4.545 = volt_real (10k 2.2k bridge)
 // ADC 12bits: 0x3FF = 3.3V
@@ -188,7 +249,7 @@ static void process_adc(volatile adc_result_t *buf, _UNUSED_ uint32_t deltaticks
 			skp = 1;
 		}
 
-		const canton_config_t *c = get_canton_cnf(i);
+		//const canton_config_t *c = get_canton_cnf(i);
 
 #if NEW_ADC_AVG
 		int32_t voff = bemf_convert_to_millivolt(c, buf->meas[i].vBA);
@@ -197,10 +258,10 @@ static void process_adc(volatile adc_result_t *buf, _UNUSED_ uint32_t deltaticks
 		//int32_t vona = 0; // not available with NEW_ADC_AVG
 		int16_t von = 0;
 #else
-		int32_t voffa = bemf_convert_to_millivolt(c, buf->off[i].vA);
-		int32_t voffb = bemf_convert_to_millivolt(c, buf->off[i].vB);
-		int32_t vona =  bemf_convert_to_millivolt(c, buf->on[i].vA);
-		int32_t vonb =  bemf_convert_to_millivolt(c, buf->on[i].vB);
+		int32_t voffa = bemf_convert_to_millivolt(cconf, buf->off[i].vA);
+		int32_t voffb = bemf_convert_to_millivolt(cconf, buf->off[i].vB);
+		int32_t vona =  bemf_convert_to_millivolt(cconf, buf->on[i].vA);
+		int32_t vonb =  bemf_convert_to_millivolt(cconf, buf->on[i].vB);
 		int16_t voff = (int16_t)(voffb-voffa);
 		int16_t von  = (int16_t)(vonb-vona);
 #endif
@@ -229,7 +290,7 @@ static void process_adc(volatile adc_result_t *buf, _UNUSED_ uint32_t deltaticks
 		 * this could be (and was) done before millivolt conversion,
 		 * but we want some debug
 		 */
-		if (0xFF == bemf_to[i]) {
+		if (0xFF == cvars->bemf_to) {
 			continue;
 		}
 		if (skp) continue;
@@ -248,12 +309,55 @@ static void process_adc(volatile adc_result_t *buf, _UNUSED_ uint32_t deltaticks
 				mqf_write(&from_canton, &m);
 			}
 		}
+        /* modif for #longtrain
+         * we now compute pose and triggers here
+         */
+        int32_t b = voff;
+        if (abs(b)<100) b = 0; // XXX XXXX
+        // TODO: BEMF to speed. currently part of it is done in convert_to_centivolt
+        //       but we assume speed is really proportional to BEMF
+
+        //  dt is not precise enough
+        int32_t pi = (b*100)/tsktick_freqhz;
+        cvars->pose += pi;
+        
+        // check trigs
+        int s = SIGNOF(pi);
+        uint8_t ptag = 0;
+        if (s) {
+            for (int ti=NUM_TRIGS-1; ti>=0; ti--) {
+                // check in reverse order, so that oldest trig
+                // is fired first
+                if (!cvars->trigs[ti].posval) continue;
+                if (s>0) {
+                    // pose is incrementing
+                    if (cvars->pose > cvars->trigs[ti].posval) {
+                        ptag = cvars->trigs[ti].postag;
+                        itm_debug3(DBG_POSEC|DBG_POSE, "TRIG>", cvars->pose, cvars->trigs[ti].posval, ptag);
+                        cvars->trigs[ti].posval = 0;
+                        break;
+                    }
+                } else {
+                    // pose is decrementing
+                    if (cvars->pose < cvars->trigs[ti].posval) {
+                        ptag = cvars->trigs[ti].postag;
+                        itm_debug3(DBG_POSEC|DBG_POSE, "TRIG<", cvars->pose, cvars->trigs[ti].posval, ptag);
+                        cvars->trigs[ti].posval = 0;
+                        break;
+                    }
+                }
+            }
+        }
+        
 		msg_64_t m = {0};
 		m.from = MA_CANTON(localBoardNum, i);
-		m.to = bemf_to[i];
+		m.to = cvars->bemf_to;
+        m.subc = ptag;
+        
 		m.cmd = CMD_BEMF_NOTIF;
 		m.v1 = voff;
-		m.v2 = von;
+        //m.v2 = von;
+        m.v2 = cvars->pose/100;
 		mqf_write(&from_canton, &m);
 	}
 }

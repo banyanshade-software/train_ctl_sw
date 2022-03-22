@@ -112,7 +112,7 @@ static void canton_reset(void)
 
 static void handle_canton_cmd(int cidx, msg_64_t *m)
 {
-	if ((m->cmd == CMD_BEMF_OFF) || (m->cmd==CMD_BEMF_ON)) {
+	if ((m->cmd == CMD_BEMF_OFF) || (m->cmd==CMD_BEMF_ON) || (m->cmd==CMD_POSE_SET_TRIG)) {
 		itm_debug1(DBG_LOWCTRL, "msg-bemf", m->to);
 		bemf_msg(m);
 		return;

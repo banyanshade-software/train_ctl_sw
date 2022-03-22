@@ -30,8 +30,10 @@ typedef enum {
     CMD_BEMF_NOTIF,					// canton->spdctl	v1=voff v2=von			canton BEMF measurement
     CMD_BEMF_DETECT_ON_C2ALT,		// 											unused for now
     CMD_PRESENCE_SUB_CHANGE,		// ina->ctrl		subc=ch v1=pres v2=vi   ina change value notification
-    CMD_POSE_SET_TRIG0,				// ctrl->spdctl		v32=POSE				set POSE trigger 0
-    CMD_POSE_SET_TRIG_U1,			// ctrl->spdctl		v32=POSE				set POSE trigger U1
+    
+    CMD_POSE_SET_TRIG,            // ctrl->spdctl        v1=POSE/10   v2=tag    set POSE trigger
+    //CMD_POSE_SET_TRIG0,			// ctrl->spdctl		v1=POSE/10				set POSE trigger 0
+    //CMD_POSE_SET_TRIG_U1,			// ctrl->spdctl		v1=POSE/10				set POSE trigger U1
     CMD_POSE_TRIGGERED,				// spdctl->ctrl		s=trignum v1u=C1 v2=P/10 pose trigger notification
     CMD_STOP_DETECTED,				// spdctl->ctrl		v32=POSE				stop condition (after pid and inertia) reached
     

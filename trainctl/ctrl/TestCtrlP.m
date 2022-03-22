@@ -141,14 +141,14 @@ void ctrl2_send_led(uint8_t led_num, uint8_t prog_num)
 
 - (void) test_set_trig
 {
-    ctrl_set_pose_trig(0, 142, 1);
+    ctrl_set_pose_trig(0, 142, tag_auto_u1);
     XCTAssert(mqf_len(&from_ctrl)==1);
-    ctrl_set_pose_trig(0, -40, 0);
+    ctrl_set_pose_trig(0, -40, tag_end_seg);
     XCTAssert(mqf_len(&from_ctrl)==2);
 
     NSString *s = dump_msgbuf(0);
-    EXPMSG({.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_POSE_SET_TRIG_U1, .v32=142},
-           {.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_POSE_SET_TRIG0, .v32=-40});
+    EXPMSG({.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_POSE_SET_TRIG_U1, .v1=142, .v2=3},
+           {.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_POSE_SET_TRIG0, .v1=-40, .v2=1});
 
 
 }

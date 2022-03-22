@@ -145,24 +145,26 @@ void ctrl2_upcmd_settrigU1(int tidx, train_ctrl_t *tvars, uint8_t t)
             p = ctrl_pose_percent_c1(get_train_cnf(tidx), tvars, 10);
             break;
     }
-    ctrl_set_pose_trig(tidx, p, 1);
+    ctrl_set_pose_trig(tidx, p, tag_auto_u1);
 }
 
 
-void ctrl_set_pose_trig(int numtrain, int32_t pose, int n)
+void ctrl_set_pose_trig(int numtrain, int32_t pose, uint16_t tag)
 {
-    itm_debug3(DBG_CTRL, "set posetr", numtrain, n, pose);
+    itm_debug3(DBG_CTRL, "set posetr", numtrain, tag, pose);
+    if (!tag) Error_Handler();
     if (abs(pose)>32000*10) {
-        itm_debug3(DBG_ERR|DBG_POSEC, "toobig", numtrain, n, pose);
+        itm_debug3(DBG_ERR|DBG_POSEC, "toobig", numtrain, tag, pose);
     }
     msg_64_t m = {0};
     m.from = MA_CONTROL_T(numtrain);
     m.to =  MA_TRAIN_SC(numtrain);
-    m.cmd = n ? CMD_POSE_SET_TRIG_U1 :  CMD_POSE_SET_TRIG0; // XXXX
+    m.cmd = CMD_POSE_SET_TRIG; // XXXX
     const train_config_t *tconf = get_train_cnf(numtrain);
     if (tconf->reversed)  m.v1 = -pose/10;
     else m.v1 = pose/10;
-    itm_debug3(DBG_CTRL|DBG_POSEC, "S_TRIG", numtrain, n, pose/10);
+    m.v2 = tag;
+    itm_debug3(DBG_CTRL|DBG_POSEC, "S_TRIG", numtrain, tag, pose/10);
     mqf_write_from_ctrl(&m);
 }
 
@@ -498,13 +500,23 @@ void ctrl2_apply_speed_limit(int tidx, train_ctrl_t *tvar)
              break;
      }
 }
-static void ctrl2_had_trig2(int tidx, train_ctrl_t *tvar)
+static void ctrl2_had_trig2(int tidx, train_ctrl_t *tvar, uint8_t posetag)
 {
 	itm_debug1(DBG_CTRL, "had trig2", tidx);
     switch (tvar->_state) {
         //case train_running_c1c2:
         case train_running_c1:
-            ctrl2_set_state(tidx, tvar, tvar->pose2_is_blk_wait ? train_blk_wait : train_end_of_track);
+            switch (posetag) {
+                case tag_stop_blk_wait:
+                    ctrl2_set_state(tidx, tvar, train_blk_wait);
+                    break;
+                case tag_stop_eot:
+                    ctrl2_set_state(tidx, tvar, train_end_of_track);
+                    break;
+                default:
+                    itm_debug2(DBG_ERR|DBG_CTRL|DBG_POSEC, "bad tag", tidx, posetag);
+                    break;
+            }
             break;
             
         default:
@@ -513,7 +525,7 @@ static void ctrl2_had_trig2(int tidx, train_ctrl_t *tvar)
 }
 
 
-void ctrl2_update_topo(int tidx, train_ctrl_t *tvar, const train_config_t *tconf, int32_t *ppose1)
+void ctrl2_update_topo(int tidx, train_ctrl_t *tvar, const train_config_t *tconf, int32_t *ppose1, uint8_t *pposetag)
 {
 	itm_debug1(DBG_CTRL, "upd topo", tidx);
     switch (tvar->_state) {
@@ -539,7 +551,7 @@ void ctrl2_update_topo(int tidx, train_ctrl_t *tvar, const train_config_t *tconf
                 } else {
                     if (!tvar->_dir) fatal();
                     tvar->pose2_set = 1;
-                    tvar->pose2_is_blk_wait = alternate ? 1 : 0;
+                    //tvar->pose2_is_blk_wait = alternate ? 1 : 0;
                     set_speed_limit(tvar, SPD_LIMIT_EOT);
                     int32_t posetval;
                     if ((0)) {
@@ -548,6 +560,7 @@ void ctrl2_update_topo(int tidx, train_ctrl_t *tvar, const train_config_t *tconf
                         posetval = ctrl_pose_limit_c1(tconf, tvar);
                     }
                     *ppose1 = posetval;
+                    *pposetag = alternate ? tag_stop_blk_wait : tag_stop_eot;
                 }
                 break;
                 
@@ -577,7 +590,7 @@ void ctrl2_update_topo(int tidx, train_ctrl_t *tvar, const train_config_t *tconf
 }
     
 
-void ctrl2_update_c2(int tidx, train_ctrl_t *tvar, const train_config_t *tconf, int32_t *ppose0)
+void ctrl2_update_c2(int tidx, train_ctrl_t *tvar, const train_config_t *tconf, int32_t *ppose0, uint8_t *pposetag)
 {
 	itm_debug3(DBG_CTRL, "updc2", tidx, tvar->c1_sblk.n, tvar->can1_addr);
     if (tvar->can1_addr == 0xFF) fatal();
@@ -597,8 +610,8 @@ void ctrl2_update_c2(int tidx, train_ctrl_t *tvar, const train_config_t *tconf, 
         if (c2n == tvar->can1_addr) {
             //set trig
             int32_t posetval = ctrl_pose_end_c1(tconf, tvar);
-            //ctrl_set_pose_trig(tidx, posetval, 0);
             *ppose0 = posetval;
+            *pposetag = tag_end_lsblk;
         }
         if (c2r != tvar->can1_addr) {
             tvar->can2_addr = c2r;
@@ -745,14 +758,14 @@ void ctrl2_evt_leaved_c2(int tidx, train_ctrl_t *tvar)
     itm_debug2(DBG_CTRL, "leave C2", tidx, tvar->_state);
 }
 
-int ctrl2_evt_pose_triggered(int tidx, train_ctrl_t *tvar, uint8_t ca_addr, uint8_t trigbits, int16_t cposd10)
+int ctrl2_evt_pose_triggered(int tidx, train_ctrl_t *tvar, uint8_t ca_addr, uint8_t tag, int16_t cposd10)
 {
     int retcode = 0;
 	itm_debug3(DBG_CTRL, "POSEtrg", tidx, ca_addr, cposd10);
 
     if (tvar->_state != train_running_c1) {
         itm_debug2(DBG_ERR|DBG_CTRL, "bad st/3",tidx, tvar->_state);
-        if (trigbits & (1<<1)) tvar->pose2_set = 0;
+        if ((tag == tag_stop_blk_wait) || (tag==tag_stop_eot)) tvar->pose2_set = 0;
         return -1;
     }
     if (ca_addr != tvar->can1_addr) {
@@ -761,21 +774,21 @@ int ctrl2_evt_pose_triggered(int tidx, train_ctrl_t *tvar, uint8_t ca_addr, uint
     }
     const train_config_t *tconf = get_train_cnf(tidx);
     tvar->curposmm = pose_convert_to_mm(tconf, cposd10*10);
-    itm_debug3(DBG_POSE|DBG_CTRL, "curposmm", tidx, tvar->curposmm, trigbits);
-    if (trigbits & (1<<0)) {
-        if (tvar->trig_eoseg) {
+    itm_debug3(DBG_POSE|DBG_CTRL, "curposmm", tidx, tvar->curposmm, tag);
+    switch (tag) {
+        case tag_end_lsblk:
             // POSE Trig 1
+            itm_debug1(DBG_CTRL|DBG_POSEC, "end lsblk", tidx);
             lsblk_num_t ns = next_lsblk_free(tidx, tvar,  (tvar->_dir<0), NULL, NULL);
             if (ns.n<0) {
                 itm_debug3(DBG_CTRL|DBG_ERR, "no next!", tidx, tvar->c1_sblk.n, tvar->_dir);
-                goto t2;
+                break;
             }
             if (canton_for_lsblk(ns) != tvar->can1_addr) {
                 itm_debug3(DBG_ERR|DBG_CTRL, "bad sblk", tidx, ns.n, tvar->can1_addr);
-                goto t2;
+                break;
             }
-            
-            
+        
             int len1 = get_lsblk_len_steep(tvar->c1_sblk, get_train_cnf(tidx), tvar);
             int len2 = get_lsblk_len_steep(ns, get_train_cnf(tidx), tvar);
             int exppose;
@@ -793,20 +806,32 @@ int ctrl2_evt_pose_triggered(int tidx, train_ctrl_t *tvar, uint8_t ca_addr, uint
             }
             tvar->tick_flags |= _TFLAG_C1LSB_CHANGED;
             //tvar->beginposmm = (tvar->_dir >= 0) ? tvar->curposmm : tvar->curposmm + get_lsblk_len(ns)*10;
-        }
-
-t2:
-		if (!tvar->trig_eoseg) {
-			// POSE Trig 2
-
-			if (!tvar->pose2_set) return 3;
+            break;
+            
+        case tag_stop_eot:
+            if (!tvar->pose2_set) {
+                itm_debug2(DBG_ERR|DBG_POSEC|DBG_CTRL, "unexp tag", tidx, tag);
+                return 3;
+            }
 			tvar->pose2_set = 0;
-			tvar->tick_flags |= _TFLAG_POSE_TRIG2;
-		}
-    }
-    if (trigbits & (1<<1)) {
-        itm_debug2(DBG_POSEC|DBG_CTRL|DBG_AUTO, "trig U1", tidx, trigbits);
-        cauto_had_trigU1(tidx, tvar);
+			tvar->tick_flags |= _TFLAG_POSE_TRIG_EOT;
+            break;
+        case tag_stop_blk_wait:
+            if (!tvar->pose2_set) {
+                itm_debug2(DBG_ERR|DBG_POSEC|DBG_CTRL, "unexp tag", tidx, tag);
+                return 3;
+            }
+            tvar->pose2_set = 0;
+            tvar->tick_flags |= _TFLAG_POSE_TRIG_BLKW;
+            break;
+        case tag_auto_u1:
+            itm_debug2(DBG_POSEC|DBG_CTRL|DBG_AUTO, "trig U1", tidx, tag);
+            cauto_had_trigU1(tidx, tvar);
+            break;
+        default:
+            itm_debug2(DBG_ERR|DBG_POSEC|DBG_CTRL, "unexp tag", tidx, tag);
+            break;
+
     }
     return retcode;
 }
@@ -829,8 +854,10 @@ int ctrl2_tick_process(int tidx, train_ctrl_t *tvars, const train_config_t *tcon
     if (0==tvars->tick_flags) return 0;
     
     uint16_t pflags = 0;
-    int32_t pose_s0eoseg = 0;
-    int32_t pose_s0middle = 0;
+    int32_t pose_eoseg = 0; // pose for end of lsblk
+    int32_t pose_topo = 0;
+    uint8_t posetag_c2 = 0;
+    uint8_t posetag_topo = 0;
     while (tvars->tick_flags) {
         nloop++;
         if (nloop>16) {
@@ -853,8 +880,11 @@ int ctrl2_tick_process(int tidx, train_ctrl_t *tvars, const train_config_t *tcon
         if (flags & _TFLAG_STATE_CHANGED) {
             ctrl2_check_stop(tidx, tvars);
         }
-        if (flags & _TFLAG_POSE_TRIG2) {
-            ctrl2_had_trig2(tidx, tvars);
+        if (flags & _TFLAG_POSE_TRIG_EOT) {
+            ctrl2_had_trig2(tidx, tvars, tag_stop_eot);
+        }
+        if (flags & _TFLAG_POSE_TRIG_BLKW) {
+            ctrl2_had_trig2(tidx, tvars, tag_stop_blk_wait);
         }
         
         if ((tvars->_mode == train_auto) && (flags & _TFLAG_C1LSB_CHANGED)) {
@@ -864,10 +894,10 @@ int ctrl2_tick_process(int tidx, train_ctrl_t *tvars, const train_config_t *tcon
 
 
         if (flags & (_TFLAG_C1LSB_CHANGED|_TFLAG_DIR_CHANGED|_TFLAG_NEED_C2)) {
-            ctrl2_update_c2(tidx, tvars, tconf, &pose_s0eoseg);
+            ctrl2_update_c2(tidx, tvars, tconf, &pose_eoseg, &posetag_c2);
         }
         if (flags & (_TFLAG_C1LSB_CHANGED|_TFLAG_OCC_CHANGED|_TFLAG_DIR_CHANGED)) {
-            ctrl2_update_topo(tidx, tvars, tconf, &pose_s0middle);
+            ctrl2_update_topo(tidx, tvars, tconf, &pose_topo, &posetag_topo);
         }
             
         if (flags & (_TFLAG_LIMIT_CHANGED|/*_TFLAG_TSPD_CHANGED|*/_TFLAG_DSPD_CHANGED)) {
@@ -881,16 +911,16 @@ int ctrl2_tick_process(int tidx, train_ctrl_t *tvars, const train_config_t *tcon
     if (pflags & _TFLAG_STATE_CHANGED) {
         ctrl2_notify_state(tidx, tvars);
     }
-    if (pose_s0eoseg && pose_s0middle) {
-        itm_debug3(DBG_ERR|DBG_CTRL, "BAD POSE", tidx, pose_s0eoseg, pose_s0middle);
+    if (pose_eoseg && pose_topo) {
+        itm_debug3(DBG_ERR|DBG_CTRL, "BAD POSE", tidx, pose_eoseg, pose_topo);
         fatal();
     }
-    if (pose_s0eoseg) {
-        ctrl_set_pose_trig(tidx, pose_s0eoseg, 0);
-        tvars->trig_eoseg = 1;
-    } else if (pose_s0middle) {
-        ctrl_set_pose_trig(tidx, pose_s0middle, 0);
-        tvars->trig_eoseg = 0;
+    if (posetag_c2) {
+        ctrl_set_pose_trig(tidx, pose_eoseg, posetag_c2);
+        //tvars->trig_eoseg = 1;
+    } else if (posetag_topo) {
+        ctrl_set_pose_trig(tidx, pose_topo, posetag_topo);
+        //tvars->trig_eoseg = 0;
     }
     if (pflags & (_TFLAG_TSPD_CHANGED)) {
         ctrl2_sendlow_tspd(tidx, tvars);

@@ -36,9 +36,9 @@ typedef struct {
     int8_t   _dir;
     
     uint8_t  c1c2:1;
-    uint8_t  pose2_set:1;
-    uint8_t  pose2_is_blk_wait:1;
-    uint8_t trig_eoseg:1;
+    uint8_t  pose2_set:1;   // at eot (or blk wait) spd limit was set, next time it will stop
+    //uint8_t  pose2_is_blk_wait:1;
+    //uint8_t trig_eoseg:1;
     uint8_t measure_pose_percm:1;
     
     // locomotive is on can1/c1_sblk, heading to can2
@@ -72,21 +72,22 @@ typedef struct {
 /*
  tick_flags values
  */
-//#define _TFLAG_C1_CHANGED    (1<<0) obsolete
-//#define _TFLAG_POSE_TRIG1  (1<<1)
-#define _TFLAG_NEED_C2       (1<<1)
-#define _TFLAG_C1LSB_CHANGED (1<<2)
-#define _TFLAG_POSE_TRIG2    (1<<3)
-#define _TFLAG_STOP_DETECTED (1<<4)
-#define _TFLAG_OCC_CHANGED   (1<<5)
-#define _TFLAG_STATE_CHANGED (1<<6)
-#define _TFLAG_DIR_CHANGED   (1<<7)
-#define _TFLAG_TSPD_CHANGED  (1<<8)
-#define _TFLAG_LIMIT_CHANGED (1<<9)
-#define _TFLAG_DSPD_CHANGED  (1<<10)
-#define _TFLAG_C1_CHANGED    (1<<11)
-#define _TFLAG_C2_CHANGED    (1<<11) //xx
-#define _TFLAG_MODE_CHANGED  (1<<14)
+//#define _TFLAG_C1_CHANGED     (1<<0) obsolete
+//#define _TFLAG_POSE_TRIG1     (1<<1)
+#define _TFLAG_NEED_C2          (1<<1)
+#define _TFLAG_C1LSB_CHANGED    (1<<2)
+#define _TFLAG_POSE_TRIG_EOT    (1<<3)
+#define _TFLAG_POSE_TRIG_BLKW   (1<<4)
+#define _TFLAG_STOP_DETECTED    (1<<5)
+#define _TFLAG_OCC_CHANGED      (1<<6)
+#define _TFLAG_STATE_CHANGED    (1<<7)
+#define _TFLAG_DIR_CHANGED      (1<<8)
+#define _TFLAG_TSPD_CHANGED     (1<<9)
+#define _TFLAG_LIMIT_CHANGED    (1<<10)
+#define _TFLAG_DSPD_CHANGED     (1<<11)
+#define _TFLAG_C1_CHANGED       (1<<12)
+#define _TFLAG_C2_CHANGED       (1<<13) //xx
+#define _TFLAG_MODE_CHANGED     (1<<14)
 
 train_ctrl_t *ctrl_get_tvar(int trnum);
 
@@ -114,15 +115,23 @@ void ctrl2_check_alreadystopped(int tidx, train_ctrl_t *tvar);
 void ctrl2_check_checkstart(int tidx, train_ctrl_t *tvar);
 void ctrl2_check_stop(int tidx, train_ctrl_t *tvar);
 void ctrl2_apply_speed_limit(int tidx, train_ctrl_t *tvar);
-void ctrl2_update_topo(int tidx, train_ctrl_t *tvar, const train_config_t *tconf, int32_t *ppose1);
-void ctrl2_update_c2(int tidx, train_ctrl_t *tvar, const train_config_t *tconf, int32_t *ppose0);
+void ctrl2_update_topo(int tidx, train_ctrl_t *tvar, const train_config_t *tconf, int32_t *ppose1, uint8_t *pposetag);
+void ctrl2_update_c2(int tidx, train_ctrl_t *tvar, const train_config_t *tconf, int32_t *ppose0, uint8_t *pposetag);
 void ctrl2_notify_state(int tidx, train_ctrl_t *tvar);
 void ctrl2_sendlow_tspd(int tidx, train_ctrl_t *tvar);
 void ctrl2_sendlow_c1c2(int tidx, train_ctrl_t *tvar);
 int  ctrl2_evt_pose_triggered(int tidx, train_ctrl_t *tvar, uint8_t ca_addr, uint8_t trigbits, int16_t cposd10);
 void ctrl2_evt_stop_detected(int tidx, train_ctrl_t *tvar, int32_t pose);
 
-void ctrl_set_pose_trig(int numtrain, int32_t pose, int n);
+void ctrl_set_pose_trig(int numtrain, int32_t pose, uint16_t tag);
+
+enum pose_trig_tag {
+    tag_invalid = 0,
+    tag_end_lsblk = 1,
+    tag_stop_blk_wait,
+    tag_stop_eot,
+    tag_auto_u1,
+};
 
 #define ignore_bemf_presence 0
 #define ignore_ina_presence  1

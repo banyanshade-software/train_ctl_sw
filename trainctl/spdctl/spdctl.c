@@ -66,6 +66,7 @@ uint32_t train_ntick = 0;
 
 // ------------------------------------------------------
 
+#define MAX_TRIG 4
 
 typedef struct train_vars {
 	int16_t target_speed;	// always >= 0
@@ -87,8 +88,9 @@ typedef struct train_vars {
 	uint16_t C2_cur_volt_idx;
 
 	int32_t position_estimate;
-    int32_t pose_trig0;
-    int32_t pose_trigU1;
+    int32_t pose_trig[MAX_TRIG];
+    uint8_t pose_trig_tag[MAX_TRIG];
+    //int32_t pose_trigU1;
 	int32_t bemfiir;
     int16_t v_iir;
 
@@ -114,8 +116,8 @@ const stat_val_t statval_spdctrl[] = {
     { trspc_vars, offsetof(train_vars_t, inertiavars.cur100), 2    _P("T#_ine_c")},
     { trspc_vars, offsetof(train_vars_t, last_speed), 2         _P("T#_spd_curspeed")},
     { trspc_vars, offsetof(train_vars_t, position_estimate), 4  _P("T#_pose")},
-    { trspc_vars, offsetof(train_vars_t, pose_trig0), 4          _P("T#_pose_trig1")},
-    { trspc_vars, offsetof(train_vars_t, pose_trigU1), 4          _P("T#_pose_trig2")},
+    //{ trspc_vars, offsetof(train_vars_t, pose_trig0), 4          _P("T#_pose_trig1")},
+    //{ trspc_vars, offsetof(train_vars_t, pose_trigU1), 4          _P("T#_pose_trig2")},
 #endif
     { NULL, sizeof(train_vars_t), 0 _P(NULL)}
 };
@@ -134,8 +136,8 @@ static void _set_speed(int tidx, const train_config_t *cnf, train_vars_t *vars);
 static void spdctl_reset(void);
 static void set_c1_c2(int num, train_vars_t *tvars, uint8_t c1, int8_t dir1, uint8_t c2, int8_t dir2);
 
-static void pose_check_trig(int numtrain, train_vars_t *tvars, int32_t lastincr);
-
+static void pose_check_trig(int numtrain, train_vars_t *tvars, int trigidx, int32_t lastincr);
+static int pose_add_trig(train_vars_t *tvars, int16_t tag, int32_t pose);
 
 static void spdctl_reset(void)
 {
@@ -254,17 +256,24 @@ void spdctl_run_tick(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, uint
                     //static void set_c1_c2(int tidx, train_vars_t *tvars, uint8_t c1, int8_t dir1, uint8_t c2, int8_t dir2)
                     set_c1_c2(tidx, tvars, m.vbytes[0], m.vbytes[1], m.vbytes[2], m.vbytes[3]);
                     break;
+                case CMD_POSE_SET_TRIG:
+                    itm_debug3(DBG_POSEC, "POSE set", tidx, m.v2, m.v1);
+                    int pidx = pose_add_trig(tvars, m.v2, m.v1*100);
+                    if (pidx>=0) pose_check_trig(tidx, tvars, pidx, 0);
+                    break;
+                /*
                 case CMD_POSE_SET_TRIG0:
-                	itm_debug2(DBG_POSEC, "POSE set0", tidx, m.v32);
+                	itm_debug2(DBG_POSEC, "POSE set0", tidx, m.v1);
                 	tvars->pose_trig0 = m.v1*100;
                 	// check if already trigg
                 	pose_check_trig(tidx, tvars, 0);
                 	break;
                 case CMD_POSE_SET_TRIG_U1:
-                    itm_debug2(DBG_POSEC, "POSE setU1", tidx, m.v32);
+                    itm_debug2(DBG_POSEC, "POSE setU1", tidx, m.v1);
                     tvars->pose_trigU1 = m.v1*100;
                     // check if already trigg
                     pose_check_trig(tidx, tvars, 0);
+                 */
                 default:
                     break;
             }
@@ -277,6 +286,19 @@ void spdctl_run_tick(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, uint
 	}
 }
     
+static int pose_add_trig(train_vars_t *tvars, int16_t tag, int32_t pose)
+{
+    for (int pi=0; pi<MAX_TRIG; pi++) {
+        if (!tvars->pose_trig_tag[pi] || (tvars->pose_trig_tag[pi]==tag)) {
+            tvars->pose_trig_tag[pi] = tag;
+            tvars->pose_trig[pi] = pose;
+            return pi;
+        }
+    }
+    itm_debug1(DBG_ERR|DBG_POSEC, "NO TRIG", tag);
+    Error_Handler();
+    return -1;
+}
 
 void send_train_stopped(int numtrain, train_vars_t *tvars)
 {
@@ -438,7 +460,10 @@ static void train_periodic_control(int numtrain, uint32_t dt)
         itm_debug3(DBG_POSE, "pose", numtrain, tvars->position_estimate, b);
         itm_debug3(DBG_POSE, "pi", b, dt,  pi);
 
-        pose_check_trig(numtrain, tvars, b);
+        for (int i=0; i<MAX_TRIG; i++) {
+            if (!tvars->pose_trig_tag[i]) continue;
+            pose_check_trig(numtrain, tvars, i, b);
+        }
         if (tconf->notify_pose) {
     		train_notif(numtrain, 'i', (void *)&tvars->position_estimate, sizeof(int32_t));
         }
@@ -455,6 +480,10 @@ static void set_c1_c2(int tidx, train_vars_t *tvars, uint8_t c1, int8_t dir1, ui
 	itm_debug3(DBG_SPDCTL, "s-c2", tidx, c2, dir2);
 
 	tvars->c2bemf = 0;
+    
+    if (tvars->C1 != c1) {
+        itm_debug3(DBG_POSEC, "chg c1", tidx, tvars->C1, c1);
+    }
 
 	if ((tvars->C1 != 0xFF) && (tvars->C1 != c1)  && (tvars->C1 != c2)) {
 		m.to = tvars->C1;
@@ -484,13 +513,14 @@ static void set_c1_c2(int tidx, train_vars_t *tvars, uint8_t c1, int8_t dir1, ui
 	}
     if (c1 != tvars->C1) {
         tvars->position_estimate = 0; // reset POSE
+    	itm_debug2(DBG_POSEC, "POS reset", tidx, tvars->position_estimate);
+        memset(tvars->pose_trig_tag, 0, sizeof(tvars->pose_trig_tag));
     }
 	tvars->C1 = c1;
 	tvars->C1_dir = dir1;
 	tvars->C2 = c2;
 	tvars->C2_dir = dir2;
 	tvars->last_speed = 9000; // make sure cmd is sent
-	itm_debug2(DBG_POSEC, "POS reset", tidx, tvars->position_estimate);
 }
 
 
@@ -594,24 +624,19 @@ static int _pose_check_trig(int numtrain, train_vars_t *tvars, int32_t lastincr,
 	return 0;
 }
 
-static void pose_check_trig(int numtrain, train_vars_t *tvars, int32_t lastincr)
+static void pose_check_trig(int numtrain, train_vars_t *tvars, int pi, int32_t lastincr)
 {
-    int rc1 = _pose_check_trig(numtrain, tvars, lastincr, tvars->pose_trig0);
-    int rc2 = _pose_check_trig(numtrain, tvars, lastincr, tvars->pose_trigU1);
+    int rc1 = _pose_check_trig(numtrain, tvars, lastincr, tvars->pose_trig[pi]);
 
     int r = 0;
     if (rc1>0) {
-        r |= (1<<0);
-        tvars->pose_trig0 = 0; // trig only once
-        itm_debug3(DBG_POSEC, "POSE trg1", numtrain, tvars->position_estimate, tvars->pose_trig0);
+        r = tvars->pose_trig_tag[pi];
+        tvars->pose_trig_tag[pi] = 0; // trig only once
+        itm_debug3(DBG_POSEC, "POSE trg", numtrain, tvars->position_estimate, tvars->pose_trig[pi]);
     }
-    if (rc2>0) {
-        r |= (1<<1);
-        tvars->pose_trigU1 = 0; // trig only once
-        itm_debug3(DBG_POSEC, "POSE trg2", numtrain, tvars->position_estimate, tvars->pose_trigU1);
-    }
+   
     if (!r) return;
-
+    itm_debug3(DBG_POSEC, "POSE tag", numtrain, r, pi);
     msg_64_t m;
     m.from = MA_TRAIN_SC(numtrain);
     m.to = MA_CONTROL_T(numtrain);

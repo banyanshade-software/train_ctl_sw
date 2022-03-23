@@ -37,6 +37,7 @@ uint8_t bemf_test_all = 0;
 #define NUM_TRIGS 4
 typedef struct {
     int32_t posval;
+    int8_t dir;
     uint8_t postag;
     //uint8_t postag2;
 } bemf_trig_t;
@@ -54,7 +55,7 @@ static canton_bemf_t cbvars[NUM_LOCAL_CANTONS_SW] = {0};
 #endif
 
 static void process_adc(volatile adc_result_t *buf, uint32_t deltaticks);
-static void add_trig(canton_bemf_t *, int32_t posval, uint8_t posetag);
+static void add_trig(canton_bemf_t *, int32_t posval, uint8_t posetag,  int8_t dir);
 
 
 #define USE_CANTON(_idx)                                        \
@@ -96,7 +97,7 @@ void bemf_msg(msg_64_t *m)
                 itm_debug2(DBG_ERR, "st/bad", m->from, cbvars[idx].bemf_to);
                 break;
             }
-            add_trig(&cbvars[idx], m->v1*100, m->v2);
+            add_trig(&cbvars[idx], m->v1*100, m->subc, m->v2);
             break;
 	default:
 		itm_debug1(DBG_ERR, "bad bemf c", m->to);
@@ -123,8 +124,9 @@ void bemf_tick(uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_ uint32_t d
 
 
 
-static int _add_trig(canton_bemf_t *cvars, int32_t posval, uint8_t posetag)
+static int _add_trig(canton_bemf_t *cvars, int32_t posval, uint8_t posetag, int8_t dir)
 {
+    itm_debug3(DBG_POSEC, "set trg", posetag, dir, posval);
     if (!posval) {
         itm_debug1(DBG_ERR|DBG_POSEC, "nul trig", posetag);
         posval = 1; // 0 means no trigger
@@ -133,6 +135,7 @@ static int _add_trig(canton_bemf_t *cvars, int32_t posval, uint8_t posetag)
         if (cvars->trigs[pi].posval == posval) {
             if (cvars->trigs[pi].postag == posetag) {
                 itm_debug2(DBG_ERR|DBG_POSEC, "dup trig", posval, posetag);
+                cvars->trigs[pi].dir = dir;
                 return -1; // ignore it
             }
             // same poseval but different tag ; not  an error here,
@@ -141,6 +144,7 @@ static int _add_trig(canton_bemf_t *cvars, int32_t posval, uint8_t posetag)
         }
         if (cvars->trigs[pi].posval) continue;
         cvars->trigs[pi].posval = posval;
+        cvars->trigs[pi].dir = dir;
         cvars->trigs[pi].postag = posetag;
         return pi;
      }
@@ -149,9 +153,9 @@ static int _add_trig(canton_bemf_t *cvars, int32_t posval, uint8_t posetag)
      return -1;
 }
 
-static void add_trig(canton_bemf_t *cvars, int32_t posval, uint8_t posetag)
+static void add_trig(canton_bemf_t *cvars, int32_t posval, uint8_t posetag, int8_t dir)
 {
-    int pi = _add_trig(cvars, posval, posetag);
+    int pi = _add_trig(cvars, posval, posetag, dir);
     if (pi) {
         // check trig ?
         // nothing to do it will be checked at first bemf notif
@@ -322,14 +326,14 @@ static void process_adc(volatile adc_result_t *buf, _UNUSED_ uint32_t deltaticks
         cvars->pose += pi;
         
         // check trigs
-        int s = SIGNOF(pi);
+        int s = SIGNOF0(pi);
         uint8_t ptag = 0;
         if (s) {
             for (int ti=NUM_TRIGS-1; ti>=0; ti--) {
                 // check in reverse order, so that oldest trig
                 // is fired first
                 if (!cvars->trigs[ti].posval) continue;
-                if (s>0) {
+                if (cvars->trigs[ti].dir>0) {
                     // pose is incrementing
                     if (cvars->pose > cvars->trigs[ti].posval) {
                         ptag = cvars->trigs[ti].postag;
@@ -346,6 +350,7 @@ static void process_adc(volatile adc_result_t *buf, _UNUSED_ uint32_t deltaticks
                         break;
                     }
                 }
+                
             }
         }
         

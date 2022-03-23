@@ -123,7 +123,7 @@ void ctrl2_sendlow_c1c2(int tidx, train_ctrl_t *tvar);
 int  ctrl2_evt_pose_triggered(int tidx, train_ctrl_t *tvar, uint8_t ca_addr, uint8_t trigbits, int16_t cposd10);
 void ctrl2_evt_stop_detected(int tidx, train_ctrl_t *tvar, int32_t pose);
 
-void ctrl_set_pose_trig(int numtrain, uint8_t canaddr, int32_t pose, uint16_t tag);
+void ctrl_set_pose_trig(int numtrain, int8_t dir, uint8_t canaddr, int32_t pose, uint8_t tag);
 
 enum pose_trig_tag {
     tag_invalid = 0,

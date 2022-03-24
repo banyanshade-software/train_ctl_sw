@@ -99,8 +99,8 @@ typedef struct train_vars {
 	int32_t bemfiir;
     int16_t v_iir;
 
-    uint8_t c2bemf:1;
-
+    uint8_t	c2hicnt:4;	// number of bemf_c2>bemf_c1, before setting c2bemf and notify higher layer
+    uint8_t c2bemf:1; 	// 1=bemf shall be taken on C2
 } train_vars_t;
 
 
@@ -214,7 +214,6 @@ void spdctl_run_tick(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, uint
                     	if (!tidx) oscillo_t0bemf = m.v1;
                     	else if (1==tidx) oscillo_t1bemf = m.v1;
 
-
                         itm_debug3(DBG_PID, "st bemf", tidx, m.v1, m.from);
                         if (!tvars->c2bemf) tvars->bemf_mv = m.v1;
                         break;
@@ -227,22 +226,28 @@ void spdctl_run_tick(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, uint
                         }
                         else if (abs(m.v1) > abs(tvars->bemf_mv)+300) {
                         	itm_debug3(DBG_PRES|DBG_PRES|DBG_CTRL, "c2_hi", tidx, m.v1, tvars->bemf_mv);
-                        	msg_64_t m = {0};
-                        	m.from = MA1_SPDCTL(tidx);
-                        	m.to = MA1_CTRL(tidx);
-                        	m.cmd = CMD_BEMF_DETECT_ON_C2;
-                        	m.v1u = tvars->C2x;
-                        	if ((1)) {
-                        		int32_t p = tvars->position_estimate / 100;
-                        		if (abs(p)>0x7FFF) {
-                        			// TODO: problem here pose is > 16bits
-                        			itm_debug1(DBG_POSEC|DBG_ERR, "L pose", p);
-                        			p = SIGNOF(p)*0x7FFF;
-                        		}
-                        		m.v2 = (int16_t) p;
+                        	if (tvars->c2hicnt >= 1) {
+                        		msg_64_t m = {0};
+                            	m.from = MA1_SPDCTL(tidx);
+                            	m.to = MA1_CTRL(tidx);
+                        		m.cmd = CMD_BEMF_DETECT_ON_C2;
+                            	m.v1u = tvars->C2x;
+                            	int32_t p = tvars->position_estimate / 100;
+                            	if (abs(p)>0x7FFF) {
+                            		// TODO: problem here pose is > 16bits
+                            		itm_debug1(DBG_POSEC|DBG_ERR, "L pose", p);
+                            		p = SIGNOF(p)*0x7FFF;
+                            	}
+                            	m.v2 = (int16_t) p;
+                        		mqf_write_from_spdctl(&m);
+
+                        		tvars->c2hicnt = 0;
+                        		tvars->c2bemf = 1;
+                        	} else {
+                        		tvars->c2hicnt++;
                         	}
-                            mqf_write_from_spdctl(&m);
-                            tvars->c2bemf = 1;
+                        } else {
+                        	tvars->c2hicnt = 0;
                         }
                         // check it ?
                     } else {

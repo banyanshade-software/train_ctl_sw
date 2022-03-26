@@ -324,6 +324,8 @@ void ctrl2_init_train(_UNUSED_ int tidx, train_ctrl_t *tvars,
         _TFLAG_C1LSB_CHANGED | _TFLAG_DIR_CHANGED |
         _TFLAG_DSPD_CHANGED | _TFLAG_TSPD_CHANGED |
         _TFLAG_STATE_CHANGED | _TFLAG_LIMIT_CHANGED;
+    tvars->beginposmm = 0;
+    tvars->_curposmm = POSE_UNKNOWN;
     tvars->route = NULL;
     tvars->routeidx = 0;
 }
@@ -794,8 +796,8 @@ int ctrl2_evt_pose_triggered(int tidx, train_ctrl_t *tvar, uint8_t ca_addr, uint
         return -1;
     }
     const train_config_t *tconf = get_train_cnf(tidx);
-    tvar->curposmm = pose_convert_to_mm(tconf, cposd10*10);
-    itm_debug3(DBG_POSE|DBG_CTRL, "curposmm", tidx, tvar->curposmm, tag);
+    tvar->_curposmm = pose_convert_to_mm(tconf, cposd10*10);
+    itm_debug3(DBG_POSE|DBG_CTRL, "curposmm", tidx, tvar->_curposmm, tag);
     switch (tag) {
         case tag_end_lsblk:
             // POSE Trig 1
@@ -821,8 +823,8 @@ int ctrl2_evt_pose_triggered(int tidx, train_ctrl_t *tvar, uint8_t ca_addr, uint
                 tvar->beginposmm = tvar->beginposmm + len1*10;
                 exppose = tvar->beginposmm;
             }
-            if (abs(tvar->curposmm - exppose)>30) {
-                itm_debug3(DBG_ERR, "large p", tidx, exppose, tvar->curposmm);
+            if (abs(tvar->_curposmm - exppose)>30) {
+                itm_debug3(DBG_ERR, "large p", tidx, exppose, tvar->_curposmm);
                 retcode = 2;
             }
             tvar->tick_flags |= _TFLAG_C1LSB_CHANGED;
@@ -862,8 +864,8 @@ void ctrl2_evt_stop_detected(_UNUSED_ int tidx, train_ctrl_t *tvar, _UNUSED_ int
     // TODO
     tvar->tick_flags |= _TFLAG_STOP_DETECTED;
     const train_config_t *tconf = get_train_cnf(tidx);
-    tvar->curposmm = pose_convert_to_mm(tconf, pose);
-    itm_debug1(DBG_POSE|DBG_CTRL, "curposmm/s", tvar->curposmm);
+    tvar->_curposmm = pose_convert_to_mm(tconf, pose);
+    itm_debug1(DBG_POSE|DBG_CTRL, "curposmm/s", tvar->_curposmm);
 }
 
 static const uint16_t perm_flags = (_TFLAG_STATE_CHANGED|_TFLAG_DIR_CHANGED|_TFLAG_TSPD_CHANGED|_TFLAG_C1_CHANGED|_TFLAG_C2_CHANGED);
@@ -888,7 +890,7 @@ int ctrl2_tick_process(int tidx, train_ctrl_t *tvars, const train_config_t *tcon
         pflags |= (flags & perm_flags);
         tvars->tick_flags = 0;
 
-        if (pflags & _TFLAG_C1_CHANGED) tvars->curposmm = 0;
+        if (pflags & _TFLAG_C1_CHANGED) tvars->_curposmm = 0;
 
         if (flags & (_TFLAG_DSPD_CHANGED|_TFLAG_MODE_CHANGED)) {
             ctrl2_check_alreadystopped(tidx, tvars);
@@ -953,13 +955,22 @@ int ctrl2_tick_process(int tidx, train_ctrl_t *tvars, const train_config_t *tcon
 
 // #longtrain
 
-int ctrl2_get_next_sblk(int tidx, train_ctrl_t *tvars,  const train_config_t *tconf, int left, lsblk_num_t *resp, int nsblk, int reserveturnout)
+static int32_t getcurpossmm(train_ctrl_t *tvars, const train_config_t *tconf, int left)
+{
+    if (POSE_UNKNOWN == tvars->_curposmm) {
+        if (left) return tvars->beginposmm;
+        return tvars->beginposmm + get_lsblk_len_steep(tvars->c1_sblk, tconf, tvars);
+    }
+    return tvars->_curposmm;
+}
+
+int ctrl2_get_next_sblks(int tidx, train_ctrl_t *tvars,  const train_config_t *tconf, int left, lsblk_num_t *resp, int nsblk, int reserveturnout)
 {
     int lidx = 0;
     int cm = left ? tconf->trainlen_left : tconf->trainlen_right;
     lsblk_num_t cblk = tvars->c1_sblk;
     // curposmm
-    int l0 = tvars->curposmm / 10;
+    int l0 = getcurpossmm(tvars,tconf,left) / 10;
     for (;;) {
         int l = get_lsblk_len(cblk, NULL);
         if (l0) {

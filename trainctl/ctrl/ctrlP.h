@@ -59,7 +59,7 @@ typedef struct {
     //uint16_t behaviour_flags;
     uint32_t timertick[NUM_TIMERS];
     
-    int32_t curposmm;
+    int32_t _curposmm;
     int32_t beginposmm; // left side is 0, mm of right side
     
     const uint8_t *route;
@@ -69,6 +69,7 @@ typedef struct {
     uint8_t got_u1:1;
 } train_ctrl_t;
 
+#define POSE_UNKNOWN 9999999
 /*
  tick_flags values
  */
@@ -166,6 +167,6 @@ extern void ctrl2_unlock_turnout(int tn, int train);
 extern void ctrl2_send_led(uint8_t led_num, uint8_t prog_num);
 
 
-int ctrl2_get_next_sblk(int tidx, train_ctrl_t *tvars,  const train_config_t *tconf, int left, lsblk_num_t *resp, int nsblk, int reserveturnout);
+int ctrl2_get_next_sblks(int tidx, train_ctrl_t *tvars,  const train_config_t *tconf, int left, lsblk_num_t *resp, int nsblk, int reserveturnout);
 
 #endif /* ctrlP_h */

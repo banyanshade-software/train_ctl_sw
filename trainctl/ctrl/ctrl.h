@@ -15,7 +15,7 @@ void ctrl_run_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt);
 
 
 typedef enum {
-    train_notrunning=0,    // train is not running, mode not yet defined
+    train_notrunning=0,    // train is not running/existing,
     train_manual,        // manual drive with anti collision
     train_fullmanual,    // full manual mode
     train_auto,            //    auto mode

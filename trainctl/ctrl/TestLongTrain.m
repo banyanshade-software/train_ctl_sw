@@ -68,20 +68,20 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
 {
     tconf->trainlen_left = 0;
     tconf->trainlen_right = 20;
-    tvars.curposmm = 30;
+    tvars._curposmm = 30;
     lsblk_num_t r[4];
-    int n = ctrl2_get_next_sblk(0, &tvars, tconf, 0, r, 4, 0);
+    int n = ctrl2_get_next_sblks(0, &tvars, tconf, 0, r, 4, 0);
     XCTAssert(n==0);
     
     tconf->trainlen_right = 30;
-    n = ctrl2_get_next_sblk(0, &tvars, tconf, 0, r, 4, 0);
+    n = ctrl2_get_next_sblks(0, &tvars, tconf, 0, r, 4, 0);
     XCTAssert(n==1);
     static const int exp1[] = { 4 };
     int rc = check_lsblk_array(r, exp1, n);
     XCTAssert(!rc);
     
     tconf->trainlen_right = 90;
-    n = ctrl2_get_next_sblk(0, &tvars, tconf, 0, r, 4, 0);
+    n = ctrl2_get_next_sblks(0, &tvars, tconf, 0, r, 4, 0);
     XCTAssert(n==2);
     static const int exp2[] = { 4, 5 };
     rc = check_lsblk_array(r, exp2, n);
@@ -89,12 +89,12 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     
     
     
-    n = ctrl2_get_next_sblk(0, &tvars, tconf, 1, r, 4, 0);
+    n = ctrl2_get_next_sblks(0, &tvars, tconf, 1, r, 4, 0);
     XCTAssert(n==0);    // len left is 9
    
     
     tconf->trainlen_left = 90;
-    n = ctrl2_get_next_sblk(0, &tvars, tconf, 1, r, 4, 0);
+    n = ctrl2_get_next_sblks(0, &tvars, tconf, 1, r, 4, 0);
     XCTAssert(n==1);
     static const int exp3[] = { 0 };
     rc = check_lsblk_array(r, exp3, n);

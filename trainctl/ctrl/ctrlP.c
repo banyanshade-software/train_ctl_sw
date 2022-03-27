@@ -76,10 +76,10 @@ static uint32_t pose_convert_from_mm(const train_config_t *tconf, int32_t mm)
     return pv;
 }
 
-static int32_t get_lsblk_len_steep(lsblk_num_t lsbk, const train_config_t *tconf, train_ctrl_t *tvar)
+static int32_t get_lsblk_len_cm_steep(lsblk_num_t lsbk, const train_config_t *tconf, train_ctrl_t *tvar)
 {
     int8_t steep = 0;
-	int cm = get_lsblk_len(lsbk, &steep);
+	int cm = get_lsblk_len_cm(lsbk, &steep);
 	itm_debug3(DBG_CTRL|DBG_POSEC, "steep?", steep, tvar->_dir, lsbk.n);
 	if (steep*tvar->_dir > 0) {
         if (!tconf->slipping) fatal();
@@ -94,17 +94,17 @@ static int32_t get_lsblk_len_steep(lsblk_num_t lsbk, const train_config_t *tconf
 
 static int32_t ctrl_pose_percent_c1(const train_config_t *tconf, train_ctrl_t *tvar, int percent)
 {
-    int cm = get_lsblk_len_steep(tvar->c1_sblk, tconf, tvar);
+    int cm = get_lsblk_len_cm_steep(tvar->c1_sblk, tconf, tvar);
     int mm;
     int mm1 = cm * (100-percent) / 10; // 10%
     if (mm1<120) mm1 = 120; // min guard
     if (tvar->_dir>0) {
         // going right
-        mm = tvar->beginposmm + (cm*10-mm1) - tconf->trainlen_right*10;
+        mm = tvar->beginposmm + (cm*10-mm1) - tconf->trainlen_right_cm*10;
         if (mm<=tvar->beginposmm) mm=tvar->beginposmm;
     } else {
         // going left
-        mm = tvar->beginposmm + mm1 + tconf->trainlen_left*10;
+        mm = tvar->beginposmm + mm1 + tconf->trainlen_left_cm*10;
         if (mm>=tvar->beginposmm+cm*10) mm=tvar->beginposmm+cm*10;
     }
     int32_t p = pose_convert_from_mm(tconf, mm);
@@ -128,7 +128,7 @@ static int32_t ctrl_pose_limit_c1(const train_config_t *tconf, train_ctrl_t *tva
 
 static int32_t ctrl_pose_end_c1(const train_config_t *tconf, train_ctrl_t *tvar)
 {
-    int cm = get_lsblk_len_steep(tvar->c1_sblk, tconf, tvar);
+    int cm = get_lsblk_len_cm_steep(tvar->c1_sblk, tconf, tvar);
     int mm;
     if (tvar->_dir<0) {
         mm = tvar->beginposmm;
@@ -759,7 +759,7 @@ void ctrl2_evt_leaved_c1(int tidx, train_ctrl_t *tvars)
         fatal();
     }
 
-    int len = get_lsblk_len_steep(tvars->c1_sblk, get_train_cnf(tidx), tvars);
+    int len = get_lsblk_len_cm_steep(tvars->c1_sblk, get_train_cnf(tidx), tvars);
     if (tvars->_dir<0) {
     	tvars->beginposmm =  -len*10;
     } else {
@@ -812,8 +812,8 @@ int ctrl2_evt_pose_triggered(int tidx, train_ctrl_t *tvar, uint8_t ca_addr, uint
                 break;
             }
         
-            int len1 = get_lsblk_len_steep(tvar->c1_sblk, get_train_cnf(tidx), tvar);
-            int len2 = get_lsblk_len_steep(ns, get_train_cnf(tidx), tvar);
+            int len1 = get_lsblk_len_cm_steep(tvar->c1_sblk, get_train_cnf(tidx), tvar);
+            int len2 = get_lsblk_len_cm_steep(ns, get_train_cnf(tidx), tvar);
             int exppose;
             tvar->c1_sblk = ns;
             if (tvar->_dir<0) {
@@ -959,20 +959,21 @@ static int32_t getcurpossmm(train_ctrl_t *tvars, const train_config_t *tconf, in
 {
     if (POSE_UNKNOWN == tvars->_curposmm) {
         if (left) return tvars->beginposmm;
-        return tvars->beginposmm + get_lsblk_len_steep(tvars->c1_sblk, tconf, tvars);
+        return tvars->beginposmm + get_lsblk_len_cm_steep(tvars->c1_sblk, tconf, tvars);
     }
     return tvars->_curposmm;
 }
 
-int ctrl2_get_next_sblks(int tidx, train_ctrl_t *tvars,  const train_config_t *tconf, int left, lsblk_num_t *resp, int nsblk, int reserveturnout)
+int ctrl2_get_next_sblks_(int tidx, train_ctrl_t *tvars,  const train_config_t *tconf, int left, lsblk_num_t *resp, int nsblk, int16_t *premainlen)
 {
+    if (premainlen) *premainlen = 0;
     int lidx = 0;
-    int cm = left ? tconf->trainlen_left : tconf->trainlen_right;
+    int cm = left ? tconf->trainlen_left_cm : tconf->trainlen_right_cm;
     lsblk_num_t cblk = tvars->c1_sblk;
     // curposmm
     int l0 = getcurpossmm(tvars,tconf,left) / 10;
     for (;;) {
-        int l = get_lsblk_len(cblk, NULL);
+        int l = get_lsblk_len_cm(cblk, NULL);
         if (l0) {
             if (left) {
                 l = l0;
@@ -983,6 +984,7 @@ int ctrl2_get_next_sblks(int tidx, train_ctrl_t *tvars,  const train_config_t *t
         }
         if (l >= cm) {
             // done
+            if (premainlen) *premainlen = l-cm;
             return lidx;
         }
         cm -= l;
@@ -994,3 +996,85 @@ int ctrl2_get_next_sblks(int tidx, train_ctrl_t *tvars,  const train_config_t *t
     }
 }
 
+int ctrl2_get_next_sblks(int tidx, train_ctrl_t *tvars,  const train_config_t *tconf)
+{
+    memset(tvars->rightcars.r, 0xFF, sizeof(tvars->rightcars.r));
+    memset(tvars->leftcars.r, 0xFF, sizeof(tvars->leftcars.r));
+    tvars->rightcars.nr = ctrl2_get_next_sblks_(tidx, tvars, tconf, 0, tvars->rightcars.r, MAX_LSBLK_CARS, &tvars->rightcars.rlen_cm);
+    tvars->leftcars.nr = ctrl2_get_next_sblks_(tidx, tvars, tconf, 1, tvars->leftcars.r, MAX_LSBLK_CARS, &tvars->leftcars.rlen_cm);
+    return 0; // XXX error handling here
+}
+
+static const int brake_len_cm = 15;
+static const int margin_len_cm = 12;
+
+
+static int trig_for_frontdistcm(int tidx, train_ctrl_t *tvars,  const train_config_t *tconf, int left, int distcm)
+{
+    struct forwdsblk *fsblk = left ? &tvars->leftcars : &tvars->rightcars;
+    if (!left) {
+        int lmm = tvars->_curposmm - tvars->beginposmm + 10*distcm;
+        if (lmm<10*get_lsblk_len_cm(tvars->c1_sblk, NULL)) {
+            return lmm+tvars->beginposmm;
+        }
+    } else {
+        int lmm = (tvars->_curposmm - tvars->beginposmm) - 10*distcm;
+        if (lmm>0) {
+            return lmm+tvars->beginposmm;
+        }
+    }
+    return -1;
+}
+
+static int check_for_dist(int tidx, train_ctrl_t *tvars,  struct forwdsblk *fsblk, int left, int distcm)
+{
+    lsblk_num_t ns = (fsblk->nr>0) ? fsblk->r[fsblk->nr-1] : tvars->c1_sblk;
+    int slen = get_lsblk_len_cm(ns, NULL);
+    int cklen = fsblk->rlen_cm-distcm;
+    uint8_t a;
+
+    while (cklen<0) {
+        ns = next_lsblk(ns, left, &a);
+        if (ns.n == -1) {
+            // block occupied (a=1) or eot (a=0)
+            return -1;
+            break;
+        }
+        slen = get_lsblk_len_cm(ns, NULL);
+        cklen += slen;
+    }
+    lsblk_num_t fs = next_lsblk(ns, left, &a);
+    if (fs.n == -1) {
+        return cklen;
+    }
+    return 0;
+}
+
+int ctrl2_check_front_sblks(int tidx, train_ctrl_t *tvars,  const train_config_t *tconf, int left, void (*settrig)(uint32_t mm, uint8_t tag))
+{
+    struct forwdsblk *fsblk = left ? &tvars->leftcars : &tvars->rightcars;
+    
+    // distance that will trigger a c1sblk change
+    //int dc1mm =  10*get_lsblk_len_cm(tvars->c1_sblk, NULL) - (tvars->_curposmm - tvars->beginposmm) ;
+    // trigger for end of seg
+    int lmm = trig_for_frontdistcm(tidx, tvars, tconf, left, fsblk->rlen_cm);
+    if (lmm>=0) settrig(lmm, tag_chkocc);
+
+    int l1 = check_for_dist(tidx, tvars, fsblk, left,  brake_len_cm+margin_len_cm);
+    if (l1<0) {
+        // should already brake
+    } else if (l1<fsblk->rlen_cm) {
+        // set trig for braking
+    }
+    int l2 = check_for_dist(tidx, tvars, fsblk, left, margin_len_cm);
+    printf("l2/8=%d\n", l2);
+    l2 = check_for_dist(tidx, tvars, fsblk, left, 10);
+    printf("l2/10=%d\n", l2);
+    l2 = check_for_dist(tidx, tvars, fsblk, left, 12);
+    printf("l2/12=%d\n", l2);
+    l2 = check_for_dist(tidx, tvars, fsblk, left, 14);
+    printf("l2/14=%d\n", l2);
+    l2 = check_for_dist(tidx, tvars, fsblk, left, 18);
+    printf("l2/18=%d\n", l2);
+    return 0;
+}

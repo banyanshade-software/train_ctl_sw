@@ -245,7 +245,7 @@ void ctrl2_send_led(uint8_t led_num, uint8_t prog_num)
     XCTAssert(tvars.c1c2 == 1);
     ctrl2_evt_leaved_c1(0, &tvars);
     //  <- c0 -
-    int l0 = get_lsblk_len(szero, NULL);
+    int l0 = get_lsblk_len_cm(szero, NULL);
     
     XCTAssert(tvars.c1c2 == 0);
     XCTAssert(tvars.can2_addr == 0xFF);
@@ -380,7 +380,7 @@ void ctrl2_send_led(uint8_t led_num, uint8_t prog_num)
     
     rc = ctrl2_tick_process(0, &tvars, tconf, 0);
     XCTAssert(rc==4);
-    int l1 = get_lsblk_len(sone, NULL);
+    int l1 = get_lsblk_len_cm(sone, NULL);
     NSString *s = dump_msgbuf(0);
     //{D0, C8, 11, 257, 511},{D0, 81, 26, 1, 0},{D0, C8, 51, 420, 0},{D0, C8, 10, 70, 0}
     EXPMSG({.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_C1_C2,        .vb0=1, .vb1=1, .vb2=0xFF, .vb3=1}
@@ -581,8 +581,8 @@ void ctrl2_send_led(uint8_t led_num, uint8_t prog_num)
     NSString *s = dump_msgbuf(1);
     
     train_ctrl_t savtvar = tvars;
-    int l3 = 10*get_lsblk_len(sthree, NULL);
-    int l4 = 10*get_lsblk_len(sfoor, NULL);
+    int l3 = 10*get_lsblk_len_cm(sthree, NULL);
+    int l4 = 10*get_lsblk_len_cm(sfoor, NULL);
     //int l5 = 10*get_lsblk_len(sfive, NULL);
     XCTAssert(l3==540);
     XCTAssert(l4==800);

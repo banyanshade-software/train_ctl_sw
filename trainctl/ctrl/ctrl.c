@@ -398,8 +398,8 @@ static void sub_presence_changed(_UNUSED_ uint32_t tick, _UNUSED_ uint8_t from_a
 
 static void posecm_measured(int tidx, int32_t pose, lsblk_num_t blk1, lsblk_num_t blk2)
 {
-	int cm = get_lsblk_len(blk1, NULL);
-	if (blk2.n >= 0) cm += get_lsblk_len(blk2, NULL);
+	int cm = get_lsblk_len_cm(blk1, NULL);
+	if (blk2.n >= 0) cm += get_lsblk_len_cm(blk2, NULL);
 	int32_t ppcm = pose / cm;
 	itm_debug2(DBG_POSEC, "ppcm", tidx, ppcm);
 	debug_info('P', tidx, "PPCM", ppcm, 0,0);

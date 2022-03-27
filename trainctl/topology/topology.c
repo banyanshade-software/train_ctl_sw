@@ -63,7 +63,7 @@
 
 uint8_t topology_num = 0;
 static const topo_lsblk_t _Topology0[] = {
-    	//          canton         ina    steep  len      l1    l2    tn       r1   r2   tn      graph pt
+    	//          canton         ina steep  len      l1    l2    tn       r1   r2   tn      graph pt
        /* 0 */ { MA_CANTON(0, 0),     2,   0, 98,    -1,   -1, 0xFF,       1,  -1,    0    _PTS(2, {L0+1,2}, {L0+4,2}, {L0+5,3}, {L0+5,9})},
        /* 1 */ { MA_CANTON(0, 1),     1,   0, 23,     0,    3,    0,       4,  12 ,   5    _PTS(0, {L0+5,10}, {L0+5,11}, _VP, _VP)},
        /* 2 */ { MA_CANTON(0, 2),     0,   0, 70,    -1 ,  -1, 0xFF,       3,  11,    4    _PTS(2, {L0+1,3}, {L0+3,3}, {L0+4,4}, {L0+4,5})},
@@ -188,7 +188,7 @@ void next_lsblk_nums(lsblk_num_t blknum, uint8_t left, lsblk_num_t *pb1, lsblk_n
     if (*tn  == 0xFF) *tn  = -1;
 }
 
-int get_lsblk_len(lsblk_num_t blknum, int8_t *psteep)
+int get_lsblk_len_cm(lsblk_num_t blknum, int8_t *psteep)
 {
     const topo_lsblk_t *t = Topology(blknum);
     if (psteep) *psteep = t->steep;

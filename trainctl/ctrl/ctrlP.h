@@ -25,6 +25,12 @@
 
 
 #define MAX_LSBLK_CARS 4
+struct forwdsblk {
+    lsblk_num_t r[MAX_LSBLK_CARS];
+    int16_t     rlen_cm;
+    int8_t      nr;
+};
+
 
 typedef struct {
     train_mode_t   _mode;
@@ -48,8 +54,8 @@ typedef struct {
     
     // cars spawn before and/or after locomotive on several sblk (and possibly several can)
     // #longtrain
-    lsblk_num_t leftcars[MAX_LSBLK_CARS];
-    lsblk_num_t rightcars[MAX_LSBLK_CARS];
+    struct forwdsblk leftcars;
+    struct forwdsblk rightcars;
 
     uint16_t spd_limit;
     int16_t desired_speed;
@@ -132,6 +138,9 @@ enum pose_trig_tag {
     tag_stop_blk_wait,
     tag_stop_eot,
     tag_auto_u1,
+    
+    tag_chkocc,
+    tag_brake,
 };
 
 #define ignore_bemf_presence 0
@@ -167,6 +176,8 @@ extern void ctrl2_unlock_turnout(int tn, int train);
 extern void ctrl2_send_led(uint8_t led_num, uint8_t prog_num);
 
 
-int ctrl2_get_next_sblks(int tidx, train_ctrl_t *tvars,  const train_config_t *tconf, int left, lsblk_num_t *resp, int nsblk, int reserveturnout);
+int ctrl2_get_next_sblks_(int tidx, train_ctrl_t *tvars,  const train_config_t *tconf, int left, lsblk_num_t *resp, int nsblk, int16_t *premainlen);
+int ctrl2_get_next_sblks(int tidx, train_ctrl_t *tvars,  const train_config_t *tconf);
+int ctrl2_check_front_sblks(int tidx, train_ctrl_t *tvars,  const train_config_t *tconf, int left, void (*settrig)(uint32_t mm, uint8_t tag));
 
 #endif /* ctrlP_h */

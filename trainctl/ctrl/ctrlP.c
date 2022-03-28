@@ -1026,15 +1026,14 @@ static int trig_for_frontdistcm(int tidx, train_ctrl_t *tvars,  const train_conf
     return -1;
 }
 
-static int check_for_dist(int tidx, train_ctrl_t *tvars,  struct forwdsblk *fsblk, int left, int distcm)
+static int check_for_dist(int tidx, train_ctrl_t *tvars,  struct forwdsblk *fsblk, int left, int distcm, uint8_t *pa)
 {
     lsblk_num_t ns = (fsblk->nr>0) ? fsblk->r[fsblk->nr-1] : tvars->c1_sblk;
     int slen = get_lsblk_len_cm(ns, NULL);
     int cklen = fsblk->rlen_cm-distcm;
-    uint8_t a;
 
     while (cklen<0) {
-        ns = next_lsblk(ns, left, &a);
+        ns = next_lsblk(ns, left, pa);
         if (ns.n == -1) {
             // block occupied (a=1) or eot (a=0)
             return -1;
@@ -1043,38 +1042,41 @@ static int check_for_dist(int tidx, train_ctrl_t *tvars,  struct forwdsblk *fsbl
         slen = get_lsblk_len_cm(ns, NULL);
         cklen += slen;
     }
-    lsblk_num_t fs = next_lsblk(ns, left, &a);
+    lsblk_num_t fs = next_lsblk(ns, left, pa);
     if (fs.n == -1) {
         return cklen;
     }
     return 0;
 }
 
-int ctrl2_check_front_sblks(int tidx, train_ctrl_t *tvars,  const train_config_t *tconf, int left, void (*settrig)(uint32_t mm, uint8_t tag))
+int ctrl2_check_front_sblks(int tidx, train_ctrl_t *tvars,  const train_config_t *tconf, int left,  rettrigs_t ret)
 {
     struct forwdsblk *fsblk = left ? &tvars->leftcars : &tvars->rightcars;
-    
+
+     memset(ret, 0, sizeof(rettrigs_t));
     // distance that will trigger a c1sblk change
     //int dc1mm =  10*get_lsblk_len_cm(tvars->c1_sblk, NULL) - (tvars->_curposmm - tvars->beginposmm) ;
     // trigger for end of seg
     int lmm = trig_for_frontdistcm(tidx, tvars, tconf, left, fsblk->rlen_cm);
-    if (lmm>=0) settrig(lmm, tag_chkocc);
-
-    int l1 = check_for_dist(tidx, tvars, fsblk, left,  brake_len_cm+margin_len_cm);
+    if (lmm>=0) {
+        ret[0].poscm = lmm/10;
+        ret[0].tag = tag_chkocc;
+    }
+    uint8_t a;
+    int l1 = check_for_dist(tidx, tvars, fsblk, left,  brake_len_cm+margin_len_cm, &a);
     if (l1<0) {
         // should already brake
-    } else if (l1<fsblk->rlen_cm) {
-        // set trig for braking
+    } else if ((l1>0) && (l1<fsblk->rlen_cm)) {
+        ret[1].poscm = l1;
+        ret[1].tag = tag_brake;
     }
-    int l2 = check_for_dist(tidx, tvars, fsblk, left, margin_len_cm);
+    int l2 = check_for_dist(tidx, tvars, fsblk, left, margin_len_cm, &a);
     printf("l2/8=%d\n", l2);
-    l2 = check_for_dist(tidx, tvars, fsblk, left, 10);
-    printf("l2/10=%d\n", l2);
-    l2 = check_for_dist(tidx, tvars, fsblk, left, 12);
-    printf("l2/12=%d\n", l2);
-    l2 = check_for_dist(tidx, tvars, fsblk, left, 14);
-    printf("l2/14=%d\n", l2);
-    l2 = check_for_dist(tidx, tvars, fsblk, left, 18);
-    printf("l2/18=%d\n", l2);
+    if (l2<0) {
+    } else if ((l2>0) && (l2<fsblk->rlen_cm)) {
+        ret[2].poscm = l2;
+        ret[2].tag = a ? tag_stop_blk_wait : tag_stop_eot;
+    }
+   
     return 0;
 }

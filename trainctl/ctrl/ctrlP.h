@@ -27,7 +27,7 @@
 #define MAX_LSBLK_CARS 4
 struct forwdsblk {
     lsblk_num_t r[MAX_LSBLK_CARS];
-    int16_t     rlen_cm;
+    int16_t     rlen_cm;            // caution value should be updated if curposmm changed
     int8_t      nr;
 };
 
@@ -178,6 +178,14 @@ extern void ctrl2_send_led(uint8_t led_num, uint8_t prog_num);
 
 int ctrl2_get_next_sblks_(int tidx, train_ctrl_t *tvars,  const train_config_t *tconf, int left, lsblk_num_t *resp, int nsblk, int16_t *premainlen);
 int ctrl2_get_next_sblks(int tidx, train_ctrl_t *tvars,  const train_config_t *tconf);
-int ctrl2_check_front_sblks(int tidx, train_ctrl_t *tvars,  const train_config_t *tconf, int left, void (*settrig)(uint32_t mm, uint8_t tag));
+
+struct sttrig {
+    int16_t poscm;
+    int8_t tag;
+};
+typedef struct sttrig rettrigs_t[3];
+
+
+int ctrl2_check_front_sblks(int tidx, train_ctrl_t *tvars,  const train_config_t *tconf, int left, rettrigs_t ret);
 
 #endif /* ctrlP_h */

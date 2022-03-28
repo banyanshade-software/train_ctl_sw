@@ -131,20 +131,23 @@ static void settrig(uint32_t mm, uint8_t tag)
     
     // train can goes right because turnout 0 is in good position
     topology_set_turnout(0, 1, -1);
-    rc = ctrl2_check_front_sblks(0, &tvars, tconf, 0, settrig);
+    rettrigs_t rettrigs;
+    rc = ctrl2_check_front_sblks(0, &tvars, tconf, 0, rettrigs);
+    const rettrigs_t expt1 = { {44, tag_chkocc}, {0, 0}, {0,0}};
+    XCTAssert(!memcmp(rettrigs, expt1, sizeof(rettrigs_t)));
     
     // or..
     // train cannot goes right (or only 4cm before margin) because turnout 0 is in bad position
     topology_set_turnout(0, 0, -1);
-    rc = ctrl2_check_front_sblks(0, &tvars, tconf, 0, settrig);
+    rc = ctrl2_check_front_sblks(0, &tvars, tconf, 0, rettrigs);
+    const rettrigs_t expt2 = { {44, tag_chkocc}, {0, 0}, {2,tag_stop_blk_wait}};
+    XCTAssert(!memcmp(rettrigs, expt2, sizeof(rettrigs_t)));
     
-    
-    /* 46
-     l2/8=6
-     l2/10=4
-     l2/12=2
-     l2/14=0
-     l2/18=-1
-     */
+    tvars._curposmm = 310;
+    ctrl2_get_next_sblks(0, &tvars, tconf);
+    XCTAssert(tvars.rightcars.rlen_cm == 13);
+    rc = ctrl2_check_front_sblks(0, &tvars, tconf, 0, rettrigs);
+    const rettrigs_t expt3 = { {44, tag_chkocc}, {0, 0}, {1,tag_stop_blk_wait}};
+    XCTAssert(!memcmp(rettrigs, expt3, sizeof(rettrigs_t)));
 }
 @end

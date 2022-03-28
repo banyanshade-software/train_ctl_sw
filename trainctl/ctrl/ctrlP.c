@@ -982,7 +982,7 @@ int ctrl2_get_next_sblks_(int tidx, train_ctrl_t *tvars,  const train_config_t *
             }
             l0 = 0;
         }
-        if (l >= cm) {
+        if (l > cm) {
             // done
             if (premainlen) *premainlen = l-cm;
             return lidx;
@@ -1036,7 +1036,7 @@ static int check_for_dist(int tidx, train_ctrl_t *tvars,  struct forwdsblk *fsbl
         ns = next_lsblk(ns, left, pa);
         if (ns.n == -1) {
             // block occupied (a=1) or eot (a=0)
-            return -1;
+            return cklen;
             break;
         }
         slen = get_lsblk_len_cm(ns, NULL);
@@ -1053,6 +1053,8 @@ int ctrl2_check_front_sblks(int tidx, train_ctrl_t *tvars,  const train_config_t
 {
     struct forwdsblk *fsblk = left ? &tvars->leftcars : &tvars->rightcars;
     int retc = 0;
+    int curcm = tvars->_curposmm/10;
+    int maxcm = get_lsblk_len_cm(tvars->c1_sblk, NULL);
      memset(ret, 0, sizeof(rettrigs_t));
     // distance that will trigger a c1sblk change
     //int dc1mm =  10*get_lsblk_len_cm(tvars->c1_sblk, NULL) - (tvars->_curposmm - tvars->beginposmm) ;
@@ -1065,20 +1067,52 @@ int ctrl2_check_front_sblks(int tidx, train_ctrl_t *tvars,  const train_config_t
     uint8_t a;
     int l1 = check_for_dist(tidx, tvars, fsblk, left,  brake_len_cm+margin_len_cm, &a);
     if (l1<0) {
-        retc = brake_len_cm-l1;
+        retc = brake_len_cm+l1;
         if (retc<=0) retc = 1;
-    } else if ((l1>0) && (l1<fsblk->rlen_cm)) {
-        ret[1].poscm = l1;
+    } else if ((l1>0) && (l1+curcm<maxcm)) {
+        ret[1].poscm = l1+curcm;
         ret[1].tag = tag_brake;
     }
     int l2 = check_for_dist(tidx, tvars, fsblk, left, margin_len_cm, &a);
-    printf("l2/8=%d\n", l2);
+    //printf("l2/8=%d\n", l2);
     if (l2<0) {
         retc = -1;
-    } else if ((l2>0) && (l2<fsblk->rlen_cm)) {
-        ret[2].poscm = l2;
+    } else if ((l2>0) && (l2+curcm<maxcm)) {
+        ret[2].poscm = l2+curcm;
         ret[2].tag = a ? tag_stop_blk_wait : tag_stop_eot;
     }
    
     return retc;
+}
+
+
+int ctrl2_update_front_sblks(int tidx, train_ctrl_t *tvars,  const train_config_t *tconf, int left)
+{
+    struct forwdsblk *fsblk = left ? &tvars->leftcars : &tvars->rightcars;
+    
+    if ((1)) {
+        // sanity check, c1sblk should not have change
+        lsblk_num_t ns = next_lsblk(tvars->c1_sblk, left, NULL);
+        if (fsblk->nr) {
+            if (fsblk->r[0].n != ns.n) return -1;
+        }
+    }
+    // this could be improved, as only last sblk (and rlen) are to be updated.
+    // but for now let's be safe
+    return ctrl2_get_next_sblks(tidx, tvars, tconf);
+}
+
+int ctrl2_update_front_sblks_c1changed(int tidx, train_ctrl_t *tvars,  const train_config_t *tconf, int left)
+{
+    struct forwdsblk *fsblk = left ? &tvars->leftcars : &tvars->rightcars;
+    
+    if ((1)) {
+        // sanity check, c1sblk should be first item
+        if (fsblk->nr) {
+            if (fsblk->r[0].n != tvars->c1_sblk.n) return -1;
+        }
+    }
+    // this could be improved,
+    // but for now let's be safe
+    return ctrl2_get_next_sblks(tidx, tvars, tconf);
 }

@@ -68,7 +68,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
 - (void) test1
 {
     tconf->trainlen_left_cm = 0;
-    tconf->trainlen_right_cm = 20;
+    tconf->trainlen_right_cm = 19;
     tvars._curposmm = 30;
     lsblk_num_t r[4];
     int n = ctrl2_get_next_sblks_(0, &tvars, tconf, 0, r, 4, NULL);
@@ -102,10 +102,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     XCTAssert(!rc);
 }
 
-static void settrig(uint32_t mm, uint8_t tag)
-{
-    NSLog(@"set trig %d %d", mm, tag);
-}
+
 
 - (void) test_chk_front_right
 {
@@ -142,7 +139,7 @@ static void settrig(uint32_t mm, uint8_t tag)
     topology_set_turnout(0, 0, -1);
     rc = ctrl2_check_front_sblks(0, &tvars, tconf, 0, rettrigs);
     XCTAssert(rc>0);
-    const rettrigs_t expt2 = { {44, tag_chkocc}, {0, 0}, {2,tag_stop_blk_wait}};
+    const rettrigs_t expt2 = { {44, tag_chkocc}, {0, 0}, {32,tag_stop_blk_wait}};
     XCTAssert(!memcmp(rettrigs, expt2, sizeof(rettrigs_t)));
     
     tvars._curposmm = 310;
@@ -150,7 +147,7 @@ static void settrig(uint32_t mm, uint8_t tag)
     XCTAssert(tvars.rightcars.rlen_cm == 13);
     rc = ctrl2_check_front_sblks(0, &tvars, tconf, 0, rettrigs);
     XCTAssert(rc>0);
-    const rettrigs_t expt3 = { {44, tag_chkocc}, {0, 0}, {1,tag_stop_blk_wait}};
+    const rettrigs_t expt3 = { {44, tag_chkocc}, {0, 0}, {31+1,tag_stop_blk_wait}};
     XCTAssert(!memcmp(rettrigs, expt3, sizeof(rettrigs_t)));
     
     tvars._curposmm = 290;
@@ -158,9 +155,78 @@ static void settrig(uint32_t mm, uint8_t tag)
     XCTAssert(tvars.rightcars.rlen_cm == 15);
     rc = ctrl2_check_front_sblks(0, &tvars, tconf, 0, rettrigs);
     XCTAssert(rc>0);
-    const rettrigs_t expt4 = { {44, tag_chkocc}, {0, 0}, {3,tag_stop_blk_wait}};
+    const rettrigs_t expt4 = { {44, tag_chkocc}, {0, 0}, {29+3,tag_stop_blk_wait}};
     XCTAssert(!memcmp(rettrigs, expt4, sizeof(rettrigs_t)));
+}
+
+- (void) testProgressRight
+{
+    tconf->trainlen_left_cm = 0;
+    tconf->trainlen_right_cm = 46;
+    occupency_clear();
+    topology_set_turnout(0, 0, -1);
+    topology_set_turnout(1, 1, -1);
+    ctrl2_init_train(0, &tvars, stwo);
+    tvars._curposmm = 300;
+    ctrl2_get_next_sblks(0, &tvars, tconf);
+    XCTAssert(tvars.rightcars.nr == 1);
+    static const int exp2[] = { 3 };
+    int rc = check_lsblk_array(tvars.rightcars.r, exp2, 1);
+    XCTAssert(!rc);
+    XCTAssert(tvars.rightcars.rlen_cm == 14);
+    topology_set_turnout(0, 1, -1);
+    
+    rettrigs_t rettrigs;
+    rc = ctrl2_check_front_sblks(0, &tvars, tconf, 0, rettrigs);
+    XCTAssert(rc==0);
+    const rettrigs_t expt1 = { {44, tag_chkocc}, {0, 0}, {0,0}};
+    XCTAssert(!memcmp(rettrigs, expt1, sizeof(rettrigs_t)));
+    
+    // ------------------------
+    // trains progress until triggering of tag_chkocc
+    tvars._curposmm = rettrigs[0].poscm*10; // 441
+    rc = ctrl2_update_front_sblks(0, &tvars, tconf, 0);
+    XCTAssert(!rc);
+    
+    rc = ctrl2_check_front_sblks(0, &tvars, tconf, 0, rettrigs);
+    XCTAssert(rc==0);
+    const rettrigs_t expt2 = { {67, tag_chkocc}, {0, 0}, {0,0}};
+    XCTAssert(!memcmp(rettrigs, expt2, sizeof(rettrigs_t)));
+
+    // if s1 is locked
+    topology_set_turnout(1, 0, -1);
+    rc = ctrl2_check_front_sblks(0, &tvars, tconf, 0, rettrigs);
+    XCTAssert(rc==0);
+    const rettrigs_t expt3 = { {67, tag_chkocc}, {44+18, tag_brake}, {0,0}};
+    XCTAssert(!memcmp(rettrigs, expt3, sizeof(rettrigs_t)));
+   
+    // ------------
+    // c1sblk = b2 = 70cm, so next trig is tag_chkocc again (we ignore brake)
+    
+    tvars._curposmm = rettrigs[0].poscm*10; // 670
+    rc = ctrl2_update_front_sblks(0, &tvars, tconf, 0);
+    XCTAssert(!rc);
        
-       
+    rc = ctrl2_check_front_sblks(0, &tvars, tconf, 0, rettrigs);
+    XCTAssert(rc>0);
+    XCTAssert(rc==10);
+    const rettrigs_t expt4 = { {0, 0}, {0, 0}, {0,0}};
+    XCTAssert(!memcmp(rettrigs, expt4, sizeof(rettrigs_t)));
+    // not trig because brake already reached and next is c1 change
+    
+    
+    tvars.c1_sblk.n = 3;
+    tvars._curposmm = 0;
+    tvars.beginposmm = 0;
+    rc = ctrl2_update_front_sblks_c1changed(0, &tvars, tconf, 0);
+    XCTAssert(!rc);
+    
+    rc = ctrl2_check_front_sblks(0, &tvars, tconf, 0, rettrigs);
+    XCTAssert(rc>0);
+    XCTAssert(rc==7);
+    const rettrigs_t expt5 = { {19, tag_chkocc}, {0, 0}, {7,tag_stop_blk_wait}};
+    XCTAssert(!memcmp(rettrigs, expt5, sizeof(rettrigs_t)));
+    
+
 }
 @end

@@ -203,4 +203,19 @@ typedef struct sttrig rettrigs_t[3];
 ///                 0 otherwise
 int ctrl2_check_front_sblks(int tidx, train_ctrl_t *tvars,  const train_config_t *tconf, int left, rettrigs_t ret);
 
+
+/// called when tag_chkocc occurs, it will update tvars->leftcars  and tvars->rightcars
+/// @param tidx train number
+/// @param tvars train tvars structure
+/// @param tconf triain tconf config pointer
+/// @param left 1 if train is going left, 0 if it is going right
+int ctrl2_update_front_sblks(int tidx, train_ctrl_t *tvars,  const train_config_t *tconf, int left);
+
+/// called when c1sblk changed, it will update tvars->leftcars  and tvars->rightcars
+/// @param tidx train number
+/// @param tvars train tvars structure
+/// @param tconf triain tconf config pointer
+/// @param left 1 if train is going left, 0 if it is going right
+int ctrl2_update_front_sblks_c1changed(int tidx, train_ctrl_t *tvars,  const train_config_t *tconf, int left);
+
 #endif /* ctrlP_h */

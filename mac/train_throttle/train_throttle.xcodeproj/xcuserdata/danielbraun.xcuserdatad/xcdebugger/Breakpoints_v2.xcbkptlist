@@ -4730,9 +4730,9 @@
             filePath = "../../trainctl/ctrl/TestLongTrain.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "142"
-            endingLineNumber = "142"
-            landmarkName = "-test2"
+            startingLineNumber = "143"
+            endingLineNumber = "143"
+            landmarkName = "-test_chk_front_right"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -4812,7 +4812,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "135"
             endingLineNumber = "135"
-            landmarkName = "-test2"
+            landmarkName = "-test_chk_front_right"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -4826,9 +4826,9 @@
             filePath = "../../trainctl/ctrl/TestLongTrain.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "151"
-            endingLineNumber = "151"
-            landmarkName = "-test2"
+            startingLineNumber = "154"
+            endingLineNumber = "154"
+            landmarkName = "-test_chk_front_right"
             landmarkType = "7">
             <Locations>
                <Location
@@ -4904,9 +4904,9 @@
             filePath = "../../trainctl/ctrl/TestLongTrain.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "148"
-            endingLineNumber = "148"
-            landmarkName = "-test2"
+            startingLineNumber = "150"
+            endingLineNumber = "150"
+            landmarkName = "-test_chk_front_right"
             landmarkType = "7">
             <Locations>
                <Location
@@ -4970,6 +4970,22 @@
                   offsetFromSymbolStart = "8903">
                </Location>
             </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "28B3E5E0-51C5-49FC-BE83-DA1D1C6156B7"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../trainctl/ctrl/ctrlP.c"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1068"
+            endingLineNumber = "1068"
+            landmarkName = "ctrl2_check_front_sblks(tidx, tvars, tconf, left, ret)"
+            landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

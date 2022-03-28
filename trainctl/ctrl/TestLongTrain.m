@@ -107,7 +107,7 @@ static void settrig(uint32_t mm, uint8_t tag)
     NSLog(@"set trig %d %d", mm, tag);
 }
 
-- (void) test2
+- (void) test_chk_front_right
 {
     tconf->trainlen_left_cm = 0;
     tconf->trainlen_right_cm = 46;
@@ -133,6 +133,7 @@ static void settrig(uint32_t mm, uint8_t tag)
     topology_set_turnout(0, 1, -1);
     rettrigs_t rettrigs;
     rc = ctrl2_check_front_sblks(0, &tvars, tconf, 0, rettrigs);
+    XCTAssert(rc==0);
     const rettrigs_t expt1 = { {44, tag_chkocc}, {0, 0}, {0,0}};
     XCTAssert(!memcmp(rettrigs, expt1, sizeof(rettrigs_t)));
     
@@ -140,6 +141,7 @@ static void settrig(uint32_t mm, uint8_t tag)
     // train cannot goes right (or only 4cm before margin) because turnout 0 is in bad position
     topology_set_turnout(0, 0, -1);
     rc = ctrl2_check_front_sblks(0, &tvars, tconf, 0, rettrigs);
+    XCTAssert(rc>0);
     const rettrigs_t expt2 = { {44, tag_chkocc}, {0, 0}, {2,tag_stop_blk_wait}};
     XCTAssert(!memcmp(rettrigs, expt2, sizeof(rettrigs_t)));
     
@@ -147,7 +149,18 @@ static void settrig(uint32_t mm, uint8_t tag)
     ctrl2_get_next_sblks(0, &tvars, tconf);
     XCTAssert(tvars.rightcars.rlen_cm == 13);
     rc = ctrl2_check_front_sblks(0, &tvars, tconf, 0, rettrigs);
+    XCTAssert(rc>0);
     const rettrigs_t expt3 = { {44, tag_chkocc}, {0, 0}, {1,tag_stop_blk_wait}};
     XCTAssert(!memcmp(rettrigs, expt3, sizeof(rettrigs_t)));
+    
+    tvars._curposmm = 290;
+    ctrl2_get_next_sblks(0, &tvars, tconf);
+    XCTAssert(tvars.rightcars.rlen_cm == 15);
+    rc = ctrl2_check_front_sblks(0, &tvars, tconf, 0, rettrigs);
+    XCTAssert(rc>0);
+    const rettrigs_t expt4 = { {44, tag_chkocc}, {0, 0}, {3,tag_stop_blk_wait}};
+    XCTAssert(!memcmp(rettrigs, expt4, sizeof(rettrigs_t)));
+       
+       
 }
 @end

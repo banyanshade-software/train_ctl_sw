@@ -31,7 +31,12 @@
 
 extern CAN_HandleTypeDef CAN_DEVICE;
 
-void can_init(void)
+static runmode_t run_mode = 0;
+static int local_msg_process(msg_64_t *m, int localmsg);
+
+
+
+static void can_init(void)
 {
 
 	// CAN1_RX0_IRQHandler
@@ -187,7 +192,9 @@ static int _can_send_msg(msg_64_t *msg, int f)
 }
 // HAL_NVIC_SetPriority SVCall
 
-void CanTest(void)
+
+#if 0
+void CanTest(void) // XXX to be removed
 {
 	msg_64_t m = {0};
 	m.from = MA_CONTROL_T(1);
@@ -212,6 +219,7 @@ void CanTest(void)
 		itm_debug1(DBG_CAN|DBG_ERR, "CAN KO", TxMailbox);
 	}
 }
+#endif
 
 
 static void _send_msg_if_any(int fromirq)
@@ -221,9 +229,12 @@ static void _send_msg_if_any(int fromirq)
 		msg_64_t m;
 		int rc = mqf_read_to_canbus(&m);
 		if (rc) return;
+		rc = local_msg_process(&m, 1);
+		if (rc) continue;
 		_can_send_msg(&m, fromirq);
 	}
 }
+
 
 static void send_messages_if_any(void)
 {
@@ -245,6 +256,7 @@ static void send_messages_if_any(void)
 					msg_64_t m;
 					int rc = mqf_read_to_canbus(&m);
 					if (rc) break;
+					local_msg_process(&m, 1);
 				}
 				tlocked = 0;
 			}
@@ -253,6 +265,7 @@ static void send_messages_if_any(void)
 	}
 	// not locked
 	tlocked = 0;
+
 
 	HAL_NVIC_DisableIRQ(CAN1_TX_IRQn);
 	_send_msg_if_any(0);
@@ -395,8 +408,9 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
 	  }
   }
   flash_led();
-  mqf_write_from_canbus(&m);
 
+  int rc = local_msg_process(&m, 0);
+  if (!rc) mqf_write_from_canbus(&m);
 
 }
 
@@ -519,10 +533,11 @@ void CAN_Tasklet(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_
 		init = 0;
 		can_init();
 	}
+
 	send_messages_if_any();
 
 #ifdef TRN_BOARD_DISPATCHER
-	if ((1)) {
+	if ((0)) {
 		static uint32_t lt = 0;
 		if (!lt) {
 			lt = tick;
@@ -542,6 +557,24 @@ void CAN_Tasklet(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_
 		}
 	}
 #endif
+}
+
+// returns non zero if message shall be skipped
+static int local_msg_process(msg_64_t *m, _UNUSED_ int loc)
+{
+	if (m->cmd == CMD_SETRUN_MODE) {
+		run_mode = (runmode_t) m->v1u;
+		return 0; // always broadcast it
+	}
+	switch (run_mode) {
+	case runmode_off:
+		return 1;
+	/* unlike other tasklet, default is normal mode
+	 * (forward msg to CAN bus
+	 */
+	default:
+		return 0;
+	}
 }
 
 

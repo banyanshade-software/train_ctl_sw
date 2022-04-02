@@ -72,6 +72,9 @@ typedef enum {
     CMD_INA3221_VAL1,
     CMD_NOTIF_SPEED,				// spdctl->ui	(debug)
 	CMD_TRIG_OSCILLO,				// any -> spdctl
+
+	CMD_CANTEST,					// any (cantest) -> any (cantest)
+	CMD_CANTEST_RESP				// any - > any (ui)
 } cmd_msg_t;
 
 #endif /* trainmsgdef_h */

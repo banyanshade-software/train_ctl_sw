@@ -116,6 +116,7 @@ static void ihm_runtick_testcanton(int);
 //static void ihm_runtick_detect(int);
 static void ihm_runtick_detect1(int);
 static void ihm_runtick_detect2(int);
+static void ihm_runtick_testcan(int);
 
 void ihm_runtick(void)
 {
@@ -128,6 +129,7 @@ void ihm_runtick(void)
 	case runmode_testcanton:ihm_runtick_testcanton(performInit); 	break;
 	case runmode_detect_experiment:	ihm_runtick_detect1(performInit);	break;
 	case runmode_detect2:	ihm_runtick_detect2(performInit);		break;
+	case runmode_testcan:	ihm_runtick_testcan(performInit);		break;
 	}
 	performInit = (run_mode == orm) ? 0 : 1;
 }
@@ -529,6 +531,8 @@ static void ui_process_msg_d1(void)
 		}
 	}
 }
+
+
 // ---------------------------------
 // run mode detect
 // ---------------------------------
@@ -598,6 +602,69 @@ static void ui_process_msg_d2(void)
         	SET_NEEDSREFRESH(0);
         	break;
         	*/
+
+        default:
+        	itm_debug1(DBG_ERR|DBG_UI, "unhndld msg", m.cmd);
+        	break;
+		}
+	}
+}
+
+
+
+// ---------------------------------
+// run mode runmode_testcan
+// ---------------------------------
+static void ui_process_msg_tc(void);
+
+static void ihm_runtick_testcan(int init)
+{
+	needsrefresh_mask = 0;
+
+	if (init) {
+		itm_debug1(DBG_UI, "UI init", 0);
+		ihm_setlayout(0, LAYOUT_TESTCAN);
+    	SET_NEEDSREFRESH(0);
+
+		for (int i = 0; i<DISP_MAX_REGS; i++) {
+			ihm_setvar(0, i, 0);
+		}
+
+	}
+	// process messages --------------
+	ui_process_msg_tc();
+
+	// update displays ---------------
+	for (int i=0; i<MAX_DISP; i++) {
+		if (NEEDSREFRESH(i)) {
+			disp_layout(i);
+		}
+	}
+}
+
+
+static void ui_process_msg_tc(void)
+{
+	for (;;) {
+		msg_64_t m;
+		int rc = mqf_read_to_ui(&m);
+		if (rc) break;
+
+		switch(m.cmd) {
+
+        case CMD_SETRUN_MODE:
+            run_mode = m.v1u;
+            return;
+            break;
+        case CMD_CANTEST:
+        	ihm_setvar(0, 0, m.v1u);
+        	SET_NEEDSREFRESH(0);
+			break;
+        case CMD_CANTEST_RESP:
+        	ihm_setvar(0, 1, m.v1u);
+        	ihm_setvar(0, 2, m.v2u);
+        	SET_NEEDSREFRESH(0);
+        	break;
 
         default:
         	itm_debug1(DBG_ERR|DBG_UI, "unhndld msg", m.cmd);

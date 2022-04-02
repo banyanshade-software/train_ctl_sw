@@ -208,6 +208,13 @@ static const uint8_t layout_detect2[] = {
 		CODE_END
 };
 
+static const uint8_t layout_testcan[] = {
+		CODE_ZONE_STATUS, CODE_STR|35, CODE_SVAL, 0, // CAN:n
+		CODE_ZONE_TEXT1, CODE_SVAL, 1,
+		CODE_ZONE_TEXT2, CODE_SVAL, 2,
+		CODE_END
+};
+
 
 void ihm_setlayout(int numdisp, int numlayout)
 {
@@ -238,6 +245,9 @@ void ihm_setlayout(int numdisp, int numlayout)
 		break;
 	case LAYOUT_DETECT2:
 		p = layout_detect2;
+		break;
+	case LAYOUT_TESTCAN:
+		p = layout_testcan;
 		break;
 	default:
 		itm_debug1(DBG_ERR|DBG_UI, "bad layout", numlayout);
@@ -290,7 +300,9 @@ static const char *ui_strings[] = {
 
 /*32*/      "Detect",
 /*33*/      "C:",
-/*34*/		"Hz"
+/*34*/		"Hz",
+
+/* 35*/		"CAN:",
 };
 
 

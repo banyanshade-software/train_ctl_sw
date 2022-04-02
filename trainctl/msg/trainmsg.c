@@ -61,6 +61,10 @@ LFMQUEUE_DEF_C(to_canbus, msg_64_t, 8, 0)
 LFMQUEUE_DEF_C(from_canbus, msg_64_t, 8, 0)
 
 
+LFMQUEUE_DEF_C(to_oam, msg_64_t, 3, 0)
+LFMQUEUE_DEF_C(from_oam, msg_64_t, 3, 0)
+
+
 typedef struct {
 	mqf_t *to;
 	mqf_t *from;
@@ -71,7 +75,7 @@ typedef struct {
 } qroute_t;
 
 #ifdef TRN_BOARD_MAIN
-#define NQDEF 11
+#define NQDEF 12
 static const qdef_t qdef[NQDEF] = {
 		/* 0*/ { &to_turnout, &from_turnout },
 		/* 1*/ { &to_canton,  &from_canton},
@@ -83,10 +87,11 @@ static const qdef_t qdef[NQDEF] = {
 		/* 7*/ { &to_ina3221, &from_ina3221},
         /* 8*/ { &to_ui_track, &from_ui_track},
         /* 9*/ { &to_led, &from_led},
-		/*10*/ { NULL, &from_nowhere}
+        /*10*/ { &to_oam, &from_oam},
+		/*11*/ { NULL, &from_nowhere}
 };
 
-#define NROUTES 12
+#define NROUTES 14
 static const qroute_t routes[NROUTES] = {
 		{MA_ADDR_MASK_2|MA_ADDR_MASK_BOARD,		MA_ADDR_2_TURNOUT|0,	0},
 		{MA_ADDR_MASK_2|MA_ADDR_MASK_BOARD,		MA_ADDR_2_CANTON|0,		1},
@@ -105,6 +110,8 @@ static const qroute_t routes[NROUTES] = {
 		{MA_ADDR_MASK_8,						MA_ADDR_5_LED|0,		9},
 		{MA_ADDR_MASK_5,						MA_ADDR_5_LED,			3},
 		{MA_ADDR_MASK_8,						MA_ADDR_5_INA|0,		7},
+		{MA_ADDR_MASK_8,						MA_ADDR_OAM|0,			10},
+		{MA_ADDR_MASK_5,						MA_ADDR_OAM,			3}
 };
 
 #endif // TRN_BOARD_MAIN

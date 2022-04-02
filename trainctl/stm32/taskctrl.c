@@ -205,10 +205,11 @@ void StartCtrlTask(_UNUSED_ void *argument)
 	itm_debug1(DBG_ERR, "tcycl", GetCycleCount64()-k);
 	*/
 
-	if ((0)) {
+	/*if ((0)) {
 		void CanTest(void);
 		CanTest();
-	}
+	}*/
+
 	run_task_ctrl();
 }
 

@@ -178,6 +178,7 @@ void canton_tick(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_
         	break;
         }
         switch (run_mode) {
+        default: // FALLTHRU
         case runmode_off:
         	break;
         case runmode_normal:
@@ -191,8 +192,6 @@ void canton_tick(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_
         	break;
         case runmode_testcanton:
         	handle_msg_cantontest(&m);
-        	break;
-        default:
         	break;
         }
 	}

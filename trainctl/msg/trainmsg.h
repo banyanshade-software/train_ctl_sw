@@ -122,7 +122,9 @@ typedef enum {
 	runmode_normal,
 	runmode_testcanton,
 	runmode_detect_experiment,	// obsolete, used for experimentation
-	runmode_detect2				// auto detect trains
+	runmode_detect2,			// auto detect trains
+
+	runmode_testcan,			// test CAN bus
 } runmode_t;
 
 LFMQUEUE_DEF_H(to_canbus, msg_64_t)

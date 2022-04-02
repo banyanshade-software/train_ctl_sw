@@ -190,9 +190,9 @@ void spdctl_run_tick(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, uint
 
         switch (run_mode) {
         case runmode_normal: break;
+
+        default: // FALLTHRU
         case runmode_off:
-        	continue;
-        default:
         	continue;
         }
 

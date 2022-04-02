@@ -79,7 +79,22 @@ void bemf_msg(msg_64_t *m)
 
 void bemf_tick(uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_ uint32_t dt)
 {
-	if (bemf_run_mode == runmode_off) return;
+	switch (bemf_run_mode) {
+	default: //FALLTHRU
+	case runmode_testcan: // FALLTHRU
+	case runmode_off:
+		// dont handle bemf in these modes
+		return;
+		break;
+
+	case runmode_testcanton : //FALLTHRU
+	case runmode_detect_experiment:	// FALLTHRU
+	case runmode_detect2: // FALLTHRU
+	case runmode_normal :
+		// do handle bemf in these modes
+		break;
+
+	}
 
 	//itm_debug1(DBG_ADC, "------- btk", (int) notif_flags);
 	if (notif_flags & NOTIF_NEW_ADC_1) {

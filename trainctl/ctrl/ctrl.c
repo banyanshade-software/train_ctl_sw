@@ -457,15 +457,22 @@ void ctrl_run_tick(_UNUSED_ uint32_t notif_flags, uint32_t tick, _UNUSED_ uint32
             default:
             	break;
         }
-        if (run_mode == runmode_detect2) {
-            detect2_process_msg(&m);
-            continue;
-        }
-        if (run_mode != runmode_normal) continue;
+        switch (run_mode) {
+        case runmode_detect2:
+        	detect2_process_msg(&m);
+        	continue;
 
+        default: //FALLTHRU
+        case runmode_off:
+        	continue; // no processing
+
+        case runmode_normal:
+        	break; // keep on processing
+        }
         
+
        
-        
+        // mode_normal processing
         // -----------------------------------------
         switch (m.cmd) {
             default:

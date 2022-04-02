@@ -122,12 +122,12 @@ void ihm_runtick(void)
 	static int performInit = 1;
 	runmode_t orm = run_mode;
 	switch (run_mode) {
-	case runmode_normal:	ihm_runtick_normal(performInit); 	break;
-	case runmode_off:		ihm_runtick_off(performInit); 		break;
-	case runmode_testcanton:ihm_runtick_testcanton(performInit); break;
+	case runmode_normal:	ihm_runtick_normal(performInit); 		break;
+	default: // FALLTHRU
+	case runmode_off:		ihm_runtick_off(performInit); 			break;
+	case runmode_testcanton:ihm_runtick_testcanton(performInit); 	break;
 	case runmode_detect_experiment:	ihm_runtick_detect1(performInit);	break;
-	case runmode_detect2:	ihm_runtick_detect2(performInit);	break;
-	default:				ihm_runtick_off(performInit);		break;
+	case runmode_detect2:	ihm_runtick_detect2(performInit);		break;
 	}
 	performInit = (run_mode == orm) ? 0 : 1;
 }

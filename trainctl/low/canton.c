@@ -202,7 +202,7 @@ static void handle_msg_normal(msg_64_t *m)
 {
     int cidx = -1;
     if (!IS_CANTON(m->to)) return;
-    cidx = m->to & 0x07;
+    cidx = MA_GET_CANTON_NUM(m->to);
     handle_canton_cmd(cidx, m);
 }
 
@@ -219,7 +219,7 @@ static void handle_msg_detect2(msg_64_t *m)
     if (!IS_CANTON(m->to)) {
         return;
     }
-    int cidx = m->to & 0x07;
+    int cidx = MA_GET_CANTON_NUM(m->to);
     const canton_config_t *cconf = get_canton_cnf(cidx);
     canton_vars_t *cvars = &canton_vars[cidx];
     
@@ -247,7 +247,7 @@ static void handle_msg_cantontest(msg_64_t *m)
 	if (IS_BROADCAST(m->to)) {
 		cidx = -1;
 	} else if (IS_CANTON(m->to)) {
-		cidx = m->to & 0x07;
+		cidx = MA_GET_CANTON_NUM(m->to);
 	} else {
 		itm_debug1(DBG_LOWCTRL, "not handled msg", m->cmd);
 		return;

@@ -61,7 +61,7 @@ void bemf_msg(msg_64_t *m)
 		itm_debug1(DBG_ERR, "bad bemf c", m->to);
 		return;
 	}
-	int idx = m->to & 0x07;
+	int idx = MA_GET_CANTON_NUM(m->to);
 	switch(m->cmd) {
 	case CMD_BEMF_OFF:
 		itm_debug1(DBG_SPDCTL|DBG_CTRL|DBG_DETECT, "BEMF OFF", idx);

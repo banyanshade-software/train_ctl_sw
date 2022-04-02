@@ -490,7 +490,7 @@ void ctrl_run_tick(_UNUSED_ uint32_t notif_flags, uint32_t tick, _UNUSED_ uint32
         // -----------------------------------------
 		if (IS_CONTROL_T(m.to)) {
 			//if (test_mode) continue;
-			int tidx = m.to & 0x7;
+			int tidx = MA_GET_TRAINNUM(m.to);
 			train_ctrl_t *tvar = &trctl[tidx];
 
 			switch (m.cmd) {

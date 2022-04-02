@@ -1933,8 +1933,20 @@
                                         <action selector="btnRunMode:" target="Voe-Tx-rLC" id="Td6-kP-vJM"/>
                                     </connections>
                                 </button>
+                                <button verticalHuggingPriority="750" ambiguous="YES" tag="6" translatesAutoresizingMaskIntoConstraints="NO" id="9Uh-pS-m8Z">
+                                    <rect key="frame" x="66" y="25" width="64" height="32"/>
+                                    <buttonCell key="cell" type="push" title="Can" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="OWl-CB-HXi">
+                                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                        <font key="font" metaFont="system"/>
+                                    </buttonCell>
+                                    <connections>
+                                        <action selector="btnRunMode:" target="Voe-Tx-rLC" id="lGS-ME-CWX"/>
+                                    </connections>
+                                </button>
                             </subviews>
                             <constraints>
+                                <constraint firstItem="9Uh-pS-m8Z" firstAttribute="leading" secondItem="Jjn-BZ-9aa" secondAttribute="leading" id="3UY-Id-TS3"/>
+                                <constraint firstItem="9Uh-pS-m8Z" firstAttribute="firstBaseline" secondItem="P9f-ZG-zrh" secondAttribute="firstBaseline" id="8uo-8D-PvX"/>
                                 <constraint firstItem="972-61-OaF" firstAttribute="top" secondItem="RKa-sb-EZX" secondAttribute="top" constant="6" id="DKq-RV-Gtu"/>
                                 <constraint firstItem="Jjn-BZ-9aa" firstAttribute="centerY" secondItem="972-61-OaF" secondAttribute="centerY" id="Hdy-nY-fST"/>
                                 <constraint firstAttribute="trailing" secondItem="Jjn-BZ-9aa" secondAttribute="trailing" constant="8" id="L5P-Fm-3ps"/>

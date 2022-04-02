@@ -49,7 +49,7 @@
 #include "canmsg.h"
 
 #include "../utils/adc_mean.h"
-
+#include "../oam/oam.h"
 /*
 #define NUM_VAL_PER_CANTON (sizeof(adc_buffer_t)/sizeof(uint16_t))
 #define ADC_HALF_BUFFER (NUM_LOCAL_CANTONS_HW * NUM_VAL_PER_CANTON)
@@ -367,29 +367,28 @@ static void run_task_ctrl(void)
 			//continue;
 		}
 
+		//-----------------------------------
 		bemf_tick(notif, t, dt);
-		//if (ckcpu) t_1 = HAL_GetTick();
 
-		itm_debug1(DBG_LOWCTRL, "--msg", dt);
+		//itm_debug1(DBG_LOWCTRL, "--msg", dt);
 		msgsrv_tick(notif, t, dt);
-		//if (ckcpu) t_2 = HAL_GetTick();
 
-		itm_debug1(DBG_LOWCTRL, "--spdctl", dt);
+		//itm_debug1(DBG_LOWCTRL, "--oam", dt);
+		OAM_Tasklet(notif, t, dt);
+
+		//itm_debug1(DBG_LOWCTRL, "--spdctl", dt);
 		spdctl_run_tick(notif, t, dt);
-		//if (ckcpu) t_3 = HAL_GetTick();
 
-		itm_debug1(DBG_LOWCTRL, "--canton", dt);
+		//itm_debug1(DBG_LOWCTRL, "--canton", dt);
 		canton_tick(notif, t, dt);
-		//if (ckcpu) t_4 = HAL_GetTick();
 
-		itm_debug1(DBG_LOWCTRL, "--trnout", dt);
+		//itm_debug1(DBG_LOWCTRL, "--trnout", dt);
 		turnout_tick(notif, t, dt);
-		//if (ckcpu) t_5 = HAL_GetTick();
 
-		itm_debug1(DBG_LOWCTRL, "--ctrl", dt);
+		//itm_debug1(DBG_LOWCTRL, "--ctrl", dt);
 		ctrl_run_tick(notif, t, dt);
 
-		itm_debug1(DBG_LOWCTRL, "--CAN", dt);
+		//itm_debug1(DBG_LOWCTRL, "--CAN", dt);
 		CAN_Tasklet(notif, t, dt);
 
 #if USE_NOTIF_TIM

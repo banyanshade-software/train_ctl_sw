@@ -299,7 +299,7 @@ static void ui_process_msg(void)
         	break;
         }
 		if (IS_CONTROL_T(m.from)) {
-			int trnum = m.from & 0x07;
+			int trnum = MA_GET_TRAINNUM(m.from);
 			if (trnum != 0) break; // TODO
 			switch (m.cmd) {
 			case CMD_TRTSPD_NOTIF:

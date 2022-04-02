@@ -16,12 +16,42 @@
 extern uint8_t localBoardNum;
 
 typedef uint8_t  msg_addr_t;
-//
+// old
 // first 2 bits :
 // M2:  0 x : (6bits) bbb xxx		CANTON (00) and TURNOUT (01)
 // M3   1 0 x : (5bits)				UI
 // M5   1 1 0 x x : (3 bits)		SPD_CTL (110 01) + trn,  CTRL (110 10) + trn , LED (110 11)+brd, INA (110 00)+brd
 // M8   1 1 1 1 1 x x x				OAM
+
+/* new:
+ *
+ * M2 :		0 0 b b b c c c 		CANTON (00)
+ *
+ * M5t:		0 1 0 x x t t t			per train addr, all on board 0
+ * 									1 0 0  0 0  t t t  = CTRL
+ * 									1 0 0  0 1  t t t  = SPDCTL
+ *
+ * M5b :    1 0 x x x b b b			per board addr
+ * 			   						1 0  0 0 0  b b b 	= turnout
+ * 			   						1 0  0 0 1  b b b 	= led
+ * 			   						1 0  0 1 0  b b b   = relay
+ * 			   						1 0  0 1 1  b b b	= INA
+ *
+ * 			   						1 0  1 1 1  b b b   = OAM
+ *
+ * GLO :    1 1 0 0 x x x x			global addresses (1100, extensible to 1101, 1110)
+ * 		 							1 1 0  0 0 0 0 0   	= UI (gen)
+ * 									1 1 0  0 0 0 0 1 	= UI (ctc)
+ *
+ * LOC :    1 1 1 1 x x x x			local addresses, never routed (xxxx != 1111)
+ * 									1 1 1 1  0 0 0 0	= UI (local)
+ * 									1 1 1 1  0 1 1 1	= OAM (local)
+ *
+ *  BCAST:  1 1 1 1 1 1 1 1
+ *
+ *
+ *
+ */
 
 #define MA_ADDR_MASK_2		0xC0
 #define MA_ADDR_MASK_BOARD	0x38
@@ -34,6 +64,7 @@ typedef uint8_t  msg_addr_t;
 #define MA_ADDR_2_CANTON	0x00
 #define MA_CANTON(_board, _c) (MA_ADDR_2_CANTON| (((_board) & 0x7)<<3 | ((_c) & 0x07)))
 #define IS_CANTON(_addr) (MA_ADDR_2_CANTON==((_addr) & MA_ADDR_MASK_2))
+#define MA_GET_CANTON_NUM(_addr) ((_addr) & 0x07)
 
 // turnouts : up to 8 board with 8 turnouts (may be changed to 4 boards with 16 turnouts)
 // 0 1  b b b t t t
@@ -60,6 +91,7 @@ typedef uint8_t  msg_addr_t;
 #define MA_ADDR_5_TRSC	0xC8
 #define MA_TRAIN_SC(_t) (MA_ADDR_5_TRSC | (((_t)& 0x07)))
 #define IS_TRAIN_SC(_addr) (MA_ADDR_5_TRSC == ((_addr) & MA_ADDR_MASK_5))
+#define MA_GET_TRAINNUM(_addr) ((_addr) & 0x07)
 
 
 // train hilevel control

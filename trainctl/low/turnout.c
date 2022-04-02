@@ -118,7 +118,7 @@ static turnout_vars_t tvars[NUM_LOCAL_TURNOUTS]={0};
 
 static void process_turnout_cmd(msg_64_t *m, _UNUSED_ uint32_t tick, _UNUSED_ uint32_t dt)
 {
-	uint8_t tidx = m->to & 0x07;
+	uint8_t tidx = m->to & 0x07; // XXX
 	USE_TURNOUT(tidx)
 	if (!aconf || !avars) {
 		turnout_error(ERR_BAD_PARAM, "bad idx");

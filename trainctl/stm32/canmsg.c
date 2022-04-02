@@ -94,7 +94,7 @@ static int boardForAddr(uint8_t addr)
 	if (0==(addr & 0x80)) {
 		return MA_2_BOARD(addr);
 	}
-	if ((addr & MA_ADDR_MASK_5) == MA_ADDR_5_LED) {
+	if ((addr & MA_ADDR_MASK_5) == MA_ADDR_5_LED) { // XXX
 		return (addr & 0x07);
 	}
 	return 0;

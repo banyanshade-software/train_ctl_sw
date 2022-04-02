@@ -198,7 +198,7 @@ void spdctl_run_tick(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, uint
 
         // mode normal
         if (IS_TRAIN_SC(m.to)) {
-            int tidx = m.to & 0x7;
+            int tidx = MA_GET_TRAINNUM(m.to);
             USE_TRAIN(tidx)
             switch (m.cmd) {
                 case CMD_BEMF_NOTIF:

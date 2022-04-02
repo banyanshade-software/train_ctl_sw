@@ -1136,7 +1136,7 @@ static int frm_unescape(uint8_t *buf, int len)
     }
     switch (m.cmd) {
         case CMD_NOTIF_SPEED:
-            nt = m.from & 0x07;
+            nt = MA_GET_TRAINNUM(m.from);
             v = m.v1u;
             NSLog(@"train %d spd %d\n", nt, v);
             self.curspeed = v;
@@ -2241,6 +2241,7 @@ didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic
         case 3: m.v1u = runmode_detect_experiment; break;
         case 4: m.v1u = runmode_detect2; break;
         case 5: m.v1u = runmode_off; break;
+        case 6: m.v1u = runmode_testcan; break;
         default:
             break;
     }

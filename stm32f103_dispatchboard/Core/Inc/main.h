@@ -60,28 +60,40 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+#define LED3_Pin GPIO_PIN_13
+#define LED3_GPIO_Port GPIOC
+#define RELAY_SET2_Pin GPIO_PIN_14
+#define RELAY_SET2_GPIO_Port GPIOC
+#define RELAY_SET0_Pin GPIO_PIN_15
+#define RELAY_SET0_GPIO_Port GPIOC
 #define VOLT_0_SEL_0_Pin GPIO_PIN_4
 #define VOLT_0_SEL_0_GPIO_Port GPIOA
 #define VOLT_0_SEL_1_Pin GPIO_PIN_5
 #define VOLT_0_SEL_1_GPIO_Port GPIOA
 #define VOLT_0_SEL_2_Pin GPIO_PIN_6
 #define VOLT_0_SEL_2_GPIO_Port GPIOA
-#define RELAY1_1_Pin GPIO_PIN_0
-#define RELAY1_1_GPIO_Port GPIOB
-#define LED3_Pin GPIO_PIN_2
-#define LED3_GPIO_Port GPIOB
-#define LED4_Pin GPIO_PIN_12
-#define LED4_GPIO_Port GPIOB
-#define TURN2B_Pin GPIO_PIN_13
+#define RELAY0_Pin GPIO_PIN_0
+#define RELAY0_GPIO_Port GPIOB
+#define RELAY_SET1_Pin GPIO_PIN_1
+#define RELAY_SET1_GPIO_Port GPIOB
+#define TURN3B_Pin GPIO_PIN_12
+#define TURN3B_GPIO_Port GPIOB
+#define TURN3A_Pin GPIO_PIN_13
+#define TURN3A_GPIO_Port GPIOB
+#define TURN2B_Pin GPIO_PIN_14
 #define TURN2B_GPIO_Port GPIOB
-#define LED0_Pin GPIO_PIN_14
-#define LED0_GPIO_Port GPIOB
+#define TURN2A_Pin GPIO_PIN_15
+#define TURN2A_GPIO_Port GPIOB
 #define TURN1B_Pin GPIO_PIN_8
 #define TURN1B_GPIO_Port GPIOA
 #define TURN1A_Pin GPIO_PIN_9
 #define TURN1A_GPIO_Port GPIOA
-#define LED5_Pin GPIO_PIN_4
-#define LED5_GPIO_Port GPIOB
+#define LED0_Pin GPIO_PIN_10
+#define LED0_GPIO_Port GPIOA
+#define LED1_Pin GPIO_PIN_4
+#define LED1_GPIO_Port GPIOB
+#define LED2_Pin GPIO_PIN_5
+#define LED2_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */

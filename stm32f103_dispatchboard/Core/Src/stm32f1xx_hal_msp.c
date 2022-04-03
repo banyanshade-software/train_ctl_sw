@@ -202,8 +202,6 @@ void HAL_CAN_MspInit(CAN_HandleTypeDef* hcan)
     /* CAN1 interrupt Init */
     HAL_NVIC_SetPriority(USB_HP_CAN1_TX_IRQn, 6, 0);
     HAL_NVIC_EnableIRQ(USB_HP_CAN1_TX_IRQn);
-    HAL_NVIC_SetPriority(USB_LP_CAN1_RX0_IRQn, 6, 0);
-    HAL_NVIC_EnableIRQ(USB_LP_CAN1_RX0_IRQn);
     HAL_NVIC_SetPriority(CAN1_RX1_IRQn, 4, 0);
     HAL_NVIC_EnableIRQ(CAN1_RX1_IRQn);
     HAL_NVIC_SetPriority(CAN1_SCE_IRQn, 4, 0);
@@ -238,8 +236,14 @@ void HAL_CAN_MspDeInit(CAN_HandleTypeDef* hcan)
     HAL_GPIO_DeInit(GPIOB, GPIO_PIN_8|GPIO_PIN_9);
 
     /* CAN1 interrupt DeInit */
-    HAL_NVIC_DisableIRQ(USB_HP_CAN1_TX_IRQn);
-    HAL_NVIC_DisableIRQ(USB_LP_CAN1_RX0_IRQn);
+  /* USER CODE BEGIN CAN1:USB_HP_CAN1_TX_IRQn disable */
+    /**
+    * Uncomment the line below to disable the "USB_HP_CAN1_TX_IRQn" interrupt
+    * Be aware, disabling shared interrupt may affect other IPs
+    */
+    /* HAL_NVIC_DisableIRQ(USB_HP_CAN1_TX_IRQn); */
+  /* USER CODE END CAN1:USB_HP_CAN1_TX_IRQn disable */
+
     HAL_NVIC_DisableIRQ(CAN1_RX1_IRQn);
     HAL_NVIC_DisableIRQ(CAN1_SCE_IRQn);
   /* USER CODE BEGIN CAN1_MspDeInit 1 */
@@ -258,32 +262,27 @@ void HAL_CAN_MspDeInit(CAN_HandleTypeDef* hcan)
 void HAL_I2C_MspInit(I2C_HandleTypeDef* hi2c)
 {
   GPIO_InitTypeDef GPIO_InitStruct = {0};
-  if(hi2c->Instance==I2C1)
+  if(hi2c->Instance==I2C2)
   {
-  /* USER CODE BEGIN I2C1_MspInit 0 */
+  /* USER CODE BEGIN I2C2_MspInit 0 */
 
-  /* USER CODE END I2C1_MspInit 0 */
+  /* USER CODE END I2C2_MspInit 0 */
 
     __HAL_RCC_GPIOB_CLK_ENABLE();
-    /**I2C1 GPIO Configuration
-    PB6     ------> I2C1_SCL
-    PB7     ------> I2C1_SDA
+    /**I2C2 GPIO Configuration
+    PB10     ------> I2C2_SCL
+    PB11     ------> I2C2_SDA
     */
-    GPIO_InitStruct.Pin = GPIO_PIN_6|GPIO_PIN_7;
+    GPIO_InitStruct.Pin = GPIO_PIN_10|GPIO_PIN_11;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_OD;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
     HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
     /* Peripheral clock enable */
-    __HAL_RCC_I2C1_CLK_ENABLE();
-    /* I2C1 interrupt Init */
-    HAL_NVIC_SetPriority(I2C1_EV_IRQn, 6, 0);
-    HAL_NVIC_EnableIRQ(I2C1_EV_IRQn);
-    HAL_NVIC_SetPriority(I2C1_ER_IRQn, 6, 0);
-    HAL_NVIC_EnableIRQ(I2C1_ER_IRQn);
-  /* USER CODE BEGIN I2C1_MspInit 1 */
+    __HAL_RCC_I2C2_CLK_ENABLE();
+  /* USER CODE BEGIN I2C2_MspInit 1 */
 
-  /* USER CODE END I2C1_MspInit 1 */
+  /* USER CODE END I2C2_MspInit 1 */
   }
 
 }
@@ -296,28 +295,25 @@ void HAL_I2C_MspInit(I2C_HandleTypeDef* hi2c)
 */
 void HAL_I2C_MspDeInit(I2C_HandleTypeDef* hi2c)
 {
-  if(hi2c->Instance==I2C1)
+  if(hi2c->Instance==I2C2)
   {
-  /* USER CODE BEGIN I2C1_MspDeInit 0 */
+  /* USER CODE BEGIN I2C2_MspDeInit 0 */
 
-  /* USER CODE END I2C1_MspDeInit 0 */
+  /* USER CODE END I2C2_MspDeInit 0 */
     /* Peripheral clock disable */
-    __HAL_RCC_I2C1_CLK_DISABLE();
+    __HAL_RCC_I2C2_CLK_DISABLE();
 
-    /**I2C1 GPIO Configuration
-    PB6     ------> I2C1_SCL
-    PB7     ------> I2C1_SDA
+    /**I2C2 GPIO Configuration
+    PB10     ------> I2C2_SCL
+    PB11     ------> I2C2_SDA
     */
-    HAL_GPIO_DeInit(GPIOB, GPIO_PIN_6);
+    HAL_GPIO_DeInit(GPIOB, GPIO_PIN_10);
 
-    HAL_GPIO_DeInit(GPIOB, GPIO_PIN_7);
+    HAL_GPIO_DeInit(GPIOB, GPIO_PIN_11);
 
-    /* I2C1 interrupt DeInit */
-    HAL_NVIC_DisableIRQ(I2C1_EV_IRQn);
-    HAL_NVIC_DisableIRQ(I2C1_ER_IRQn);
-  /* USER CODE BEGIN I2C1_MspDeInit 1 */
+  /* USER CODE BEGIN I2C2_MspDeInit 1 */
 
-  /* USER CODE END I2C1_MspDeInit 1 */
+  /* USER CODE END I2C2_MspDeInit 1 */
   }
 
 }
@@ -331,7 +327,18 @@ void HAL_I2C_MspDeInit(I2C_HandleTypeDef* hi2c)
 void HAL_TIM_Base_MspInit(TIM_HandleTypeDef* htim_base)
 {
   GPIO_InitTypeDef GPIO_InitStruct = {0};
-  if(htim_base->Instance==TIM2)
+  if(htim_base->Instance==TIM1)
+  {
+  /* USER CODE BEGIN TIM1_MspInit 0 */
+
+  /* USER CODE END TIM1_MspInit 0 */
+    /* Peripheral clock enable */
+    __HAL_RCC_TIM1_CLK_ENABLE();
+  /* USER CODE BEGIN TIM1_MspInit 1 */
+
+  /* USER CODE END TIM1_MspInit 1 */
+  }
+  else if(htim_base->Instance==TIM2)
   {
   /* USER CODE BEGIN TIM2_MspInit 0 */
 
@@ -392,7 +399,18 @@ void HAL_TIM_MspPostInit(TIM_HandleTypeDef* htim)
 */
 void HAL_TIM_Base_MspDeInit(TIM_HandleTypeDef* htim_base)
 {
-  if(htim_base->Instance==TIM2)
+  if(htim_base->Instance==TIM1)
+  {
+  /* USER CODE BEGIN TIM1_MspDeInit 0 */
+
+  /* USER CODE END TIM1_MspDeInit 0 */
+    /* Peripheral clock disable */
+    __HAL_RCC_TIM1_CLK_DISABLE();
+  /* USER CODE BEGIN TIM1_MspDeInit 1 */
+
+  /* USER CODE END TIM1_MspDeInit 1 */
+  }
+  else if(htim_base->Instance==TIM2)
   {
   /* USER CODE BEGIN TIM2_MspDeInit 0 */
 
@@ -410,6 +428,63 @@ void HAL_TIM_Base_MspDeInit(TIM_HandleTypeDef* htim_base)
   /* USER CODE BEGIN TIM2_MspDeInit 1 */
 
   /* USER CODE END TIM2_MspDeInit 1 */
+  }
+
+}
+
+/**
+* @brief PCD MSP Initialization
+* This function configures the hardware resources used in this example
+* @param hpcd: PCD handle pointer
+* @retval None
+*/
+void HAL_PCD_MspInit(PCD_HandleTypeDef* hpcd)
+{
+  if(hpcd->Instance==USB)
+  {
+  /* USER CODE BEGIN USB_MspInit 0 */
+
+  /* USER CODE END USB_MspInit 0 */
+    /* Peripheral clock enable */
+    __HAL_RCC_USB_CLK_ENABLE();
+    /* USB interrupt Init */
+    HAL_NVIC_SetPriority(USB_HP_CAN1_TX_IRQn, 6, 0);
+    HAL_NVIC_EnableIRQ(USB_HP_CAN1_TX_IRQn);
+  /* USER CODE BEGIN USB_MspInit 1 */
+
+  /* USER CODE END USB_MspInit 1 */
+  }
+
+}
+
+/**
+* @brief PCD MSP De-Initialization
+* This function freeze the hardware resources used in this example
+* @param hpcd: PCD handle pointer
+* @retval None
+*/
+void HAL_PCD_MspDeInit(PCD_HandleTypeDef* hpcd)
+{
+  if(hpcd->Instance==USB)
+  {
+  /* USER CODE BEGIN USB_MspDeInit 0 */
+
+  /* USER CODE END USB_MspDeInit 0 */
+    /* Peripheral clock disable */
+    __HAL_RCC_USB_CLK_DISABLE();
+
+    /* USB interrupt DeInit */
+  /* USER CODE BEGIN USB:USB_HP_CAN1_TX_IRQn disable */
+    /**
+    * Uncomment the line below to disable the "USB_HP_CAN1_TX_IRQn" interrupt
+    * Be aware, disabling shared interrupt may affect other IPs
+    */
+    /* HAL_NVIC_DisableIRQ(USB_HP_CAN1_TX_IRQn); */
+  /* USER CODE END USB:USB_HP_CAN1_TX_IRQn disable */
+
+  /* USER CODE BEGIN USB_MspDeInit 1 */
+
+  /* USER CODE END USB_MspDeInit 1 */
   }
 
 }

@@ -4,10 +4,10 @@
 *.map
 *.list
 *.swp
-*.cproject
+# *.cproject
 .settings
-*.project
-*.mxproject
+# *.project
+# *.mxproject
 .metadata/
 stm32_f103_display/
 stm32f407VETx/Debug

@@ -112,7 +112,7 @@ typedef uint8_t  msg_addr_t;
 
 // OAM (per board)
 #define MA_ADDR_OAM 0xF8
-#define MA_OAM(_b)		(MA_ADDR_OAM | ((_b)& 0x07)))
+#define MA_OAM(_b)		(MA_ADDR_OAM | ((_b)& 0x07))
 #define IS_OAM(_addr)	(MA_ADDR_OAM == ((_addr) & MA_ADDR_MASK_5))
 
 #define IS_BROADCAST(_addr) (0xFF == (_addr))

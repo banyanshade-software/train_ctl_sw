@@ -61,7 +61,7 @@ LFMQUEUE_DEF_C(to_canbus, msg_64_t, 8, 0)
 LFMQUEUE_DEF_C(from_canbus, msg_64_t, 8, 0)
 
 
-LFMQUEUE_DEF_C(to_oam, msg_64_t, 3, 0)
+LFMQUEUE_DEF_C(to_oam, msg_64_t, 4, 0)
 LFMQUEUE_DEF_C(from_oam, msg_64_t, 3, 0)
 
 
@@ -91,10 +91,12 @@ static const qdef_t qdef[NQDEF] = {
 		/*11*/ { NULL, &from_nowhere}
 };
 
+#define _BOARD 1  // XXX
+
 #define NROUTES 14
 static const qroute_t routes[NROUTES] = {
-		{MA_ADDR_MASK_2|MA_ADDR_MASK_BOARD,		MA_ADDR_2_TURNOUT|0,	0},
-		{MA_ADDR_MASK_2|MA_ADDR_MASK_BOARD,		MA_ADDR_2_CANTON|0,		1},
+		{MA_ADDR_MASK_2|MA_ADDR_MASK_BOARD,		MA_ADDR_2_TURNOUT|(_BOARD<<3),	0},
+		{MA_ADDR_MASK_2|MA_ADDR_MASK_BOARD,		MA_ADDR_2_CANTON|(_BOARD<<3),	1},
 
 		{MA_ADDR_MASK_2,						MA_ADDR_2_TURNOUT,		3},
 		{MA_ADDR_MASK_2,						MA_ADDR_2_CANTON,		3},
@@ -107,10 +109,10 @@ static const qroute_t routes[NROUTES] = {
         {MA_ADDR_MASK_3,                        MA_ADDR_3_UI,           4},
 		{MA_ADDR_MASK_5,						MA_ADDR_5_TRSC,			2},
 		{MA_ADDR_MASK_5,						MA_ADDR_5_CTRL,			5},
-		{MA_ADDR_MASK_8,						MA_ADDR_5_LED|0,		9},
+		{MA_ADDR_MASK_8,						MA_ADDR_5_LED|_BOARD,	9},
 		{MA_ADDR_MASK_5,						MA_ADDR_5_LED,			3},
-		{MA_ADDR_MASK_8,						MA_ADDR_5_INA|0,		7},
-		{MA_ADDR_MASK_8,						MA_ADDR_OAM|0,			10},
+		{MA_ADDR_MASK_8,						MA_ADDR_5_INA|_BOARD,	7},
+		{MA_ADDR_MASK_8,						MA_ADDR_OAM|_BOARD,		10},
 		{MA_ADDR_MASK_5,						MA_ADDR_OAM,			3}
 };
 

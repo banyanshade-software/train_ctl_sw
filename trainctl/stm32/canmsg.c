@@ -528,7 +528,7 @@ void HAL_CAN_ErrorCallback(CAN_HandleTypeDef *hcan)
 	if (errcnt++ < 500) {  // stop display error if too many
 		itm_debug1(DBG_CAN, "CAN ERR", hcan->ErrorCode);
 	}
-	bh(); // AutoBusOff
+	bh();
 	HAL_CAN_ResetError(hcan);
 }
 

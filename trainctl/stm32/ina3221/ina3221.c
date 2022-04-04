@@ -180,7 +180,7 @@ static void run_ina_task(void)
 				detect2_monitor = m.v1u;
 				continue;
 			default:
-				itm_debug2(DBG_INA3221|DBG_DETECT, "unk msg", m.cmd, run_mode);
+				//itm_debug2(DBG_INA3221|DBG_DETECT, "unk msg", m.cmd, run_mode);
 				break;
 			}
 		}

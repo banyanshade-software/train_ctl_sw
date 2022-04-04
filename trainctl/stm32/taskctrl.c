@@ -302,17 +302,7 @@ static void run_task_ctrl(void)
 	//if ((0))   calibrate_bemf(); //XXX
 
 
-	if ((1)) {
-		msg_64_t m;
-		m.from = MA_BROADCAST;
-		m.to = MA_BROADCAST;
-		m.cmd = CMD_SETRUN_MODE;
-		//m.v1u = runmode_off;
-		m.v1u = runmode_normal;
-		//m.v1u = runmode_detect2;
 
-		mqf_write_from_nowhere(&m); // from_nowher, otherwise it wont be sent to ctl
-	}
 
 	for (;;) {
 		if ((1)) { // measure actual frequency

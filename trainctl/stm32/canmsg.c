@@ -34,7 +34,15 @@ extern CAN_HandleTypeDef CAN_DEVICE;
 static runmode_t run_mode = 0;
 static int local_msg_process(msg_64_t *m, int localmsg);
 
-
+/*
+ *
+ *
+ *
+ *
+ * http://www.bittiming.can-wiki.info
+ *
+ * ABOM
+ */
 
 static void can_init(void)
 {
@@ -274,7 +282,7 @@ static void send_messages_if_any(void)
 
 static void bh(void)
 {
-	itm_debug1(DBG_CAN, "bh-------", 0);
+	//itm_debug1(DBG_CAN, "bh-------", 0);
 }
 
 /**
@@ -516,12 +524,12 @@ void HAL_CAN_WakeUpFromRxMsgCallback(CAN_HandleTypeDef *hcan)
   */
 void HAL_CAN_ErrorCallback(CAN_HandleTypeDef *hcan)
 {
-  /* Prevent unused argument(s) compilation warning */
-  UNUSED(hcan);
-	itm_debug1(DBG_CAN, "CAN ERR", 0);
-
-  bh();
-
+	static int errcnt = 0;
+	if (errcnt++ < 500) {  // stop display error if too many
+		itm_debug1(DBG_CAN, "CAN ERR", hcan->ErrorCode);
+	}
+	bh();
+   HAL_CAN_ResetError(hcan);
 }
 
 /// --------------------------------------------------------------------------

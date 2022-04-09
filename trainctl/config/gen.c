@@ -71,6 +71,21 @@ void generate_cfile(config_node_t *node, int continue_next, FILE *output, config
 			char *brduc = strdup(board->string);
 			for (char *p = brduc; *p; p++) *p = toupper(*p);
 			fprintf(output, "\n\n#ifdef TRN_BOARD_%s\n\n", brduc);
+
+			config_node_t *bdefault = NULL;
+			config_node_t *b = node->numinst;
+			for (; b;  b = b->next) {
+				if (!strcmp(b->string, "all")) bdefault = b;;
+				if (!strcmp(b->string, "default")) bdefault = b;;
+				if (!strcmp(b->string, board->string)) break;
+			}
+			if (b) fprintf(output, "// value for %s\n", b->string);
+			else { 
+				b = bdefault;
+				fprintf(output, "// default value\n");
+			}
+			if (!b) error("no board or no default");
+		    fprintf(output, "int conf_%s_num_entries(void)\n{\n    return %s;\n}\n\n", n, b->val->string);
 			fprintf(output, "#endif // TRN_BOARD_%s\n\n\n", brduc);
 		}
 	}

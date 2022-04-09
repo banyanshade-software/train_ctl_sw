@@ -47,8 +47,7 @@ int main(int argc, char **argv) {
 			generate_hfile(ast, 1, stdout);
 			config_node_t *bm = create_config_node_string(&system, CONFIG_NODE_BOARD, "main");
 			bm->next = create_config_node_string(&system, CONFIG_NODE_BOARD, "dispatcher");
-			bm->next->next = create_config_node_string(&system, CONFIG_NODE_BOARD, "dispatcher");
-			bm->next->next->next = create_config_node_string(&system, CONFIG_NODE_BOARD, "switcher");
+			bm->next->next = create_config_node_string(&system, CONFIG_NODE_BOARD, "switcher");
 			generate_cfile(ast, 1, stdout, bm);
         }
     }

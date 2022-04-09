@@ -14,10 +14,11 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <stdio.h>
 #include "system.h"
 #include "config.h"
 
-#include <stdio.h>
+#include "gen.h"
 
 int main(int argc, char **argv) {
     if (argc > 2) {
@@ -43,12 +44,14 @@ int main(int argc, char **argv) {
         else {
 	    fprintf(stderr, "parsed\n");
            system__dump_ast(&system, ast);
+			generate_hfile(ast, 1, stdout);
         }
     }
     else {
         ret = 2; /* error during parsing */
     }
     cnfparse_destroy(parser);
+
     system__finalize(&system); /* all system resources are freed */
     return ret;
 }

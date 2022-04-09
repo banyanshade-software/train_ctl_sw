@@ -60,12 +60,8 @@ fields
 field_list 
 	<-  f:field _ l:field_list
      	{ 
-			if (l) {
-				$$ = l;
-				config_node_append(l, f);
-			} else {
-				$$ = f;
-			}
+            $$ = f;
+			$$->next = l;
 		}
 	 /  f:field
 		{ $$ = f; }

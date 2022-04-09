@@ -345,3 +345,4 @@ static void dump_ast_(system_t *obj, config_node_t *node, int level) {
 void system__dump_ast(system_t *obj, config_node_t *root) {
     dump_ast_(obj, root, 0);
 }
+

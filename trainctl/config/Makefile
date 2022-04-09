@@ -4,7 +4,7 @@ all: config
 
 CFLAGS += -g
 
-SRCS=config.c system.c utility.c main.c
+SRCS=config.c system.c utility.c main.c gen.c
 
 OBJS = $(SRCS:%.c=%.o)
 

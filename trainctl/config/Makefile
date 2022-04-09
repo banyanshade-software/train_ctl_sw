@@ -2,7 +2,7 @@
 
 all: config
 
-CFLAGS += -g
+CFLAGS += -g -Wall -Werror
 
 SRCS=config.c system.c utility.c main.c gen.c
 

@@ -34,13 +34,21 @@ static void gen_fields(config_node_t *node, FILE *output)
 
 void generate_hfile(config_node_t *node, int continue_next, FILE *output)
 {
+	fprintf(output, "// this file is generated automatically\n// do not modify\n");
 	for ( ; node; node = node->next) {
 		if (node->tag != CONFIG_NODE_CONF) {
 			error("bad tag");
-		}  
-		fprintf(output, "typedef struct conf_%s {\n", node->string);
+		}
+
+		char *n = node->string;
+
+		fprintf(output, "typedef struct conf_%s {\n", n);
 		gen_fields(node->fields, output);
-		fprintf(output, "} conf_%s_t;\n", node->string);
+		fprintf(output, "} conf_%s_t;\n\n\n", n);
+		fprintf(output, "int conf_%s_num_entries(void);\n", n);
+		fprintf(output, "const conf_%s_t conf_%s_get(int num);\n\n", n, n);
+		fprintf(output, "// handling config setup from master\n");
+		fprintf(output, "void conf_%s_change(int instnum, int fieldnum, int16_t value);\n", n);
 		if (!continue_next) break;
 	}
 }

@@ -1,6 +1,8 @@
 
 #include <memory.h>
 #include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
 #include "system.h"
 #include "gen.h"
 
@@ -52,3 +54,25 @@ void generate_hfile(config_node_t *node, int continue_next, FILE *output)
 		if (!continue_next) break;
 	}
 }
+
+
+
+void generate_cfile(config_node_t *node, int continue_next, FILE *output, config_node_t *board)
+{
+    fprintf(output, "// this file is generated automatically\n// do not modify\n");
+    for ( ; node; node = node->next) {
+        if (node->tag != CONFIG_NODE_CONF) {
+            error("bad tag");
+        }
+
+        char *n = node->string;
+		printf("// gen for %s\n\n", n);
+		for (; board; board = board->next) {
+			char *brduc = strdup(board->string);
+			for (char *p = brduc; *p; p++) *p = toupper(*p);
+			fprintf(output, "\n\n#ifdef TRN_BOARD_%s\n\n", brduc);
+			fprintf(output, "#endif // TRN_BOARD_%s\n\n\n", brduc);
+		}
+	}
+}
+

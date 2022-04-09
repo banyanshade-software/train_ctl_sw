@@ -45,11 +45,12 @@ confall
 	 / _ end_of_file
 
 configdef
-	<- kw_config _ n:identifier _  f:fields  _ kw_num _ board_values  _ ';' 
+	<- kw_config _ n:identifier _  f:fields  _ kw_num _ b:board_values  _ ';' 
         {
             $$ = create_config_node(auxil, CONFIG_NODE_CONF, range__new($0s, $0e));
             $$->string = n->string;
             $$->fields = f;
+			$$->numinst = b;
         }
 
 
@@ -99,21 +100,32 @@ qualifier
 		{ $$ = create_config_node_int(auxil, CONFIG_NODE_IDENT, range__new($0s, $0e), 1);}
 
 board_values 
-	<- board_val _ board_values
-        / board_val
+	<- b:board_val _ l:board_values
+	   { $$ = b; b->next = l; }
+     / b:board_val
+	   { $$ = b; }
 
 board_val 
-	<- '=' _ '(' board_id  ')' _ value
+	<- '=' _ '(' b:board_id  ')' _ v:value
+	   { $$ = b; $$->tag = CONFIG_NODE_BOARDVAL; $$->val = v; }
 
 board_id 
 	<- kw_all
-         / identifier ':' D+
-         / identifier
+       { $$ = create_config_node(auxil, CONFIG_NODE_BOARDVAL, range__new($0s, $0e));
+    	 $$->string = strdup("all");
+	   }
+     / i:identifier ':' n:integer
+       { $$ = i; $$->value = n->value; }
+     / i:identifier
+       { $$ = i; }
 
 value
 	<- integer
+       { $$ = create_config_node_text(auxil, CONFIG_NODE_VALUE, range__new($0s, $0e)); }
      / identifier
+       { $$ = create_config_node_text(auxil, CONFIG_NODE_VALUE, range__new($0s, $0e)); }
      / '{' _ val_list _ '}'
+       { $$ = create_config_node_text(auxil, CONFIG_NODE_VALUE, range__new($0s, $0e)); }
 
 val_list 
 	<- value _ ',' _ val_list

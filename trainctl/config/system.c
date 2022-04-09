@@ -201,12 +201,22 @@ config_node_t *create_config_node_int(system_t *obj, node_type_t type, range_t r
     return node;
 }
 
+config_node_t *create_config_node_string(system_t *obj, node_type_t type, const char *str)
+{
+	config_node_t *node = create_config_node(obj, type, range__void());
+	node->string = strdup(str);
+	return node;
+}
+
+
 
 void config_node_append(config_node_t *node, config_node_t *end)
 {
 	for (; node->next; node=node->next);
 	node->next = end;
 }
+
+
 
 // -------
 

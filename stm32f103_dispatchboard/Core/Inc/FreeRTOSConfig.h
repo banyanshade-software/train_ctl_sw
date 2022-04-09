@@ -78,7 +78,7 @@
 #define configUSE_TIMERS                         1
 #define configTIMER_TASK_PRIORITY                ( 2 )
 #define configTIMER_QUEUE_LENGTH                 10
-#define configTIMER_TASK_STACK_DEPTH             128
+#define configTIMER_TASK_STACK_DEPTH             256
 
 /* Set the following definitions to 1 to include the API function, or zero
 to exclude the API function. */
@@ -99,7 +99,7 @@ to exclude the API function. */
  * The CMSIS-RTOS V2 FreeRTOS wrapper is dependent on the heap implementation used
  * by the application thus the correct define need to be enabled below
  */
-#define USE_FreeRTOS_HEAP_1
+#define USE_FreeRTOS_HEAP_4
 
 /* Cortex-M specific definitions. */
 #ifdef __NVIC_PRIO_BITS

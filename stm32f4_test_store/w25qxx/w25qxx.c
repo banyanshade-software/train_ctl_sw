@@ -10,6 +10,8 @@
 
 w25qxx_t w25qxx;
 extern SPI_HandleTypeDef _W25QXX_SPI;
+
+
 #if (_W25QXX_USE_FREERTOS == 1)
 #define W25qxx_Delay(delay) osDelay(delay)
 #include "cmsis_os.h"
@@ -23,6 +25,8 @@ uint8_t W25qxx_Spi(uint8_t Data)
 	HAL_SPI_TransmitReceive(&_W25QXX_SPI, &Data, &ret, 1, 100);
 	return ret;
 }
+
+
 //###################################################################################################################
 uint32_t W25qxx_ReadID(void)
 {
@@ -36,6 +40,8 @@ uint32_t W25qxx_ReadID(void)
 	Temp = (Temp0 << 16) | (Temp1 << 8) | Temp2;
 	return Temp;
 }
+
+
 //###################################################################################################################
 void W25qxx_ReadUniqID(void)
 {
@@ -47,6 +53,8 @@ void W25qxx_ReadUniqID(void)
 		w25qxx.UniqID[i] = W25qxx_Spi(W25QXX_DUMMY_BYTE);
 	HAL_GPIO_WritePin(_W25QXX_CS_GPIO, _W25QXX_CS_PIN, GPIO_PIN_SET);
 }
+
+
 //###################################################################################################################
 void W25qxx_WriteEnable(void)
 {
@@ -55,6 +63,7 @@ void W25qxx_WriteEnable(void)
 	HAL_GPIO_WritePin(_W25QXX_CS_GPIO, _W25QXX_CS_PIN, GPIO_PIN_SET);
 	W25qxx_Delay(1);
 }
+
 //###################################################################################################################
 void W25qxx_WriteDisable(void)
 {
@@ -63,6 +72,8 @@ void W25qxx_WriteDisable(void)
 	HAL_GPIO_WritePin(_W25QXX_CS_GPIO, _W25QXX_CS_PIN, GPIO_PIN_SET);
 	W25qxx_Delay(1);
 }
+
+
 //###################################################################################################################
 uint8_t W25qxx_ReadStatusRegister(uint8_t SelectStatusRegister_1_2_3)
 {
@@ -89,6 +100,8 @@ uint8_t W25qxx_ReadStatusRegister(uint8_t SelectStatusRegister_1_2_3)
 	HAL_GPIO_WritePin(_W25QXX_CS_GPIO, _W25QXX_CS_PIN, GPIO_PIN_SET);
 	return status;
 }
+
+
 //###################################################################################################################
 void W25qxx_WriteStatusRegister(uint8_t SelectStatusRegister_1_2_3, uint8_t Data)
 {
@@ -111,6 +124,9 @@ void W25qxx_WriteStatusRegister(uint8_t SelectStatusRegister_1_2_3, uint8_t Data
 	W25qxx_Spi(Data);
 	HAL_GPIO_WritePin(_W25QXX_CS_GPIO, _W25QXX_CS_PIN, GPIO_PIN_SET);
 }
+
+
+
 //###################################################################################################################
 void W25qxx_WaitForWriteEnd(void)
 {
@@ -124,12 +140,14 @@ void W25qxx_WaitForWriteEnd(void)
 	} while ((w25qxx.StatusRegister1 & 0x01) == 0x01);
 	HAL_GPIO_WritePin(_W25QXX_CS_GPIO, _W25QXX_CS_PIN, GPIO_PIN_SET);
 }
+
+
+
 //###################################################################################################################
-bool W25qxx_Init(void)
+int W25qxx_Init(void)
 {
 	w25qxx.Lock = 1;
-	while (HAL_GetTick() < 100)
-		W25qxx_Delay(1);
+	while (HAL_GetTick() < 100) W25qxx_Delay(1);
 	HAL_GPIO_WritePin(_W25QXX_CS_GPIO, _W25QXX_CS_PIN, GPIO_PIN_SET);
 	W25qxx_Delay(100);
 	uint32_t id;
@@ -218,7 +236,7 @@ bool W25qxx_Init(void)
 		printf("w25qxx Unknown ID\r\n");
 #endif
 		w25qxx.Lock = 0;
-		return false;
+		return -1;
 	}
 	w25qxx.PageSize = 256;
 	w25qxx.SectorSize = 0x1000;
@@ -241,8 +259,11 @@ bool W25qxx_Init(void)
 	printf("w25qxx Init Done\r\n");
 #endif
 	w25qxx.Lock = 0;
-	return true;
+	return 0;
 }
+
+
+
 //###################################################################################################################
 void W25qxx_EraseChip(void)
 {
@@ -264,6 +285,9 @@ void W25qxx_EraseChip(void)
 	W25qxx_Delay(10);
 	w25qxx.Lock = 0;
 }
+
+
+
 //###################################################################################################################
 void W25qxx_EraseSector(uint32_t SectorAddr)
 {
@@ -298,6 +322,9 @@ void W25qxx_EraseSector(uint32_t SectorAddr)
 	W25qxx_Delay(1);
 	w25qxx.Lock = 0;
 }
+
+
+
 //###################################################################################################################
 void W25qxx_EraseBlock(uint32_t BlockAddr)
 {
@@ -334,6 +361,9 @@ void W25qxx_EraseBlock(uint32_t BlockAddr)
 	W25qxx_Delay(1);
 	w25qxx.Lock = 0;
 }
+
+
+
 //###################################################################################################################
 uint32_t W25qxx_PageToSector(uint32_t PageAddress)
 {
@@ -359,6 +389,8 @@ uint32_t W25qxx_BlockToPage(uint32_t BlockAddress)
 {
 	return (BlockAddress * w25qxx.BlockSize) / w25qxx.PageSize;
 }
+
+
 //###################################################################################################################
 bool W25qxx_IsEmptyPage(uint32_t Page_Address, uint32_t OffsetInByte, uint32_t NumByteToCheck_up_to_PageSize)
 {
@@ -441,6 +473,11 @@ NOT_EMPTY:
 	w25qxx.Lock = 0;
 	return false;
 }
+
+
+
+
+
 //###################################################################################################################
 bool W25qxx_IsEmptySector(uint32_t Sector_Address, uint32_t OffsetInByte, uint32_t NumByteToCheck_up_to_SectorSize)
 {
@@ -522,6 +559,11 @@ NOT_EMPTY:
 	w25qxx.Lock = 0;
 	return false;
 }
+
+
+
+
+
 //###################################################################################################################
 bool W25qxx_IsEmptyBlock(uint32_t Block_Address, uint32_t OffsetInByte, uint32_t NumByteToCheck_up_to_BlockSize)
 {
@@ -605,11 +647,14 @@ NOT_EMPTY:
 	w25qxx.Lock = 0;
 	return false;
 }
+
+
+
+
 //###################################################################################################################
 void W25qxx_WriteByte(uint8_t pBuffer, uint32_t WriteAddr_inBytes)
 {
-	while (w25qxx.Lock == 1)
-		W25qxx_Delay(1);
+	while (w25qxx.Lock == 1) W25qxx_Delay(1);
 	w25qxx.Lock = 1;
 #if (_W25QXX_DEBUG == 1)
 	uint32_t StartTime = HAL_GetTick();
@@ -639,6 +684,10 @@ void W25qxx_WriteByte(uint8_t pBuffer, uint32_t WriteAddr_inBytes)
 #endif
 	w25qxx.Lock = 0;
 }
+
+
+
+
 //###################################################################################################################
 void W25qxx_WritePage(uint8_t *pBuffer, uint32_t Page_Address, uint32_t OffsetInByte, uint32_t NumByteToWrite_up_to_PageSize)
 {
@@ -691,6 +740,9 @@ void W25qxx_WritePage(uint8_t *pBuffer, uint32_t Page_Address, uint32_t OffsetIn
 	W25qxx_Delay(1);
 	w25qxx.Lock = 0;
 }
+
+
+
 //###################################################################################################################
 void W25qxx_WriteSector(uint8_t *pBuffer, uint32_t Sector_Address, uint32_t OffsetInByte, uint32_t NumByteToWrite_up_to_SectorSize)
 {

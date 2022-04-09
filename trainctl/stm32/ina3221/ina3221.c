@@ -5,9 +5,16 @@
  *      Author: danielbraun
  */
 
+#include "../../misc.h"
 
+#ifdef STM32_F4
 #include "stm32f4xx_hal.h"
 #include "stm32f4xx_hal_gpio.h"
+#else
+#include "stm32f1xx_hal.h"
+#include "stm32f1xx_hal_gpio.h"
+#endif
+
 #include "cmsis_os2.h"
 
 #include "ina3221.h"
@@ -15,7 +22,6 @@
 #include "ina3221_config.h"
 //#include "utils/microsec.h"
 
-#include "misc.h"
 #include "../../msg/trainmsg.h"
 #include "../../oscillo/oscillo.h"
 #include "../../statval.h"

@@ -34,6 +34,7 @@ typedef struct system_tag system_t;
 typedef enum node_type_tag {
     CONFIG_NODE_ROOT,
     CONFIG_NODE_IDENT,
+    CONFIG_NODE_INT,
     CONFIG_NODE_CONF,
     CONFIG_NODE_FIELD,
 
@@ -49,7 +50,14 @@ typedef struct config_node {
     int value;
     struct config_node *next;
     union {
-	struct config_node *fields;
+		struct { // config definition
+			struct config_node *fields;
+		};
+		struct { // field definition
+			int configurable;
+			int bitfield;
+			int array;
+		};
     };
 } config_node_t;
 
@@ -133,6 +141,8 @@ void ast_node__destroy(config_node_t *obj);
 
 config_node_t *create_config_node(system_t *obj, node_type_t type, range_t range);
 config_node_t *create_config_node_text(system_t *obj, node_type_t type, range_t range);
+config_node_t *create_config_node_int(system_t *obj, node_type_t type, range_t range, int v);
+config_node_t *create_config_node_intstr(system_t *obj, node_type_t type, range_t range, int base);
 void config_node_append(config_node_t *node, config_node_t *end);
 
 #ifdef __cplusplus

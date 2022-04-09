@@ -71,27 +71,32 @@ field_list
 		{ $$ = f; }
 
 field 
-	<- qualifier _ type _ d:fielddef _ board_values _ ';'
+	<- q:qualifier _ type _ d:fielddef _ board_values _ ';'
 		{
 			$$ =  create_config_node(auxil, CONFIG_NODE_FIELD, range__new($0s, $0e));
 			$$->string = d->string;
+			$$->array = d->array;
+			$$->bitfield = d->bitfield;
+			$$->configurable = q->value;
 		}
 
 fielddef 
-	<- i:identifier _ '[' integer ']'
-		{ $$ = i; }
-     / i:identifier _ ':' integer
-		{ $$ = i; }
+	<- i:identifier _ '[' n:integer ']'
+		{ $$ = i; $$->array = n->value; }
+     / i:identifier _ ':' n:integer
+		{ $$ = i; $$->bitfield = n->value; }
      / i:identifier
 		{ $$ = i; }
 
 type
 	<- identifier _ ('*')+
-         / identifier
+     / identifier
 
 qualifier
 	<- kw_const
-         / kw_user
+		{ $$ = create_config_node_int(auxil, CONFIG_NODE_IDENT, range__new($0s, $0e), 0);}
+     / kw_user
+		{ $$ = create_config_node_int(auxil, CONFIG_NODE_IDENT, range__new($0s, $0e), 1);}
 
 board_values 
 	<- board_val _ board_values
@@ -107,8 +112,8 @@ board_id
 
 value
 	<- integer
-         / identifier
-         / '{' _ val_list _ '}'
+     / identifier
+     / '{' _ val_list _ '}'
 
 val_list 
 	<- value _ ',' _ val_list
@@ -121,15 +126,15 @@ val_list
 integer
    <- '0'[xX]X+
     {
-        //$$ = system__create_ast_node_terminal(auxil, AST_NODE_TYPE_INTEGER_HEX, range__new($0s, $0e));
+        $$ = create_config_node_intstr(auxil, CONFIG_NODE_INT, range__new($0s, $0e), 16);
     }
     / '0'O+
     {
-        //$$ = system__create_ast_node_terminal(auxil, AST_NODE_TYPE_INTEGER_OCT, range__new($0s, $0e));
+        $$ = create_config_node_intstr(auxil, CONFIG_NODE_INT, range__new($0s, $0e), 8);
     }
     / !'0' D+
     {
-        //$$ = system__create_ast_node_terminal(auxil, AST_NODE_TYPE_INTEGER_DEC, range__new($0s, $0e));
+        $$ = create_config_node_intstr(auxil, CONFIG_NODE_INT, range__new($0s, $0e), 10);
     }
     / D !D
 

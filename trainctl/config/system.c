@@ -184,6 +184,24 @@ config_node_t *create_config_node_text(system_t *obj, node_type_t type, range_t 
     return node;
 }
 
+config_node_t *create_config_node_intstr(system_t *obj, node_type_t type, range_t range, int base) 
+{
+    config_node_t *node = create_config_node(obj, type, range);
+    node->string = strndup(obj->source.text.p + range.min, range.max - range.min);
+	node->value = strtol(node->string, NULL, base);
+    printf("val : <%d>\n", node->value);
+    return node;
+}
+
+
+config_node_t *create_config_node_int(system_t *obj, node_type_t type, range_t range, int v)
+{
+	config_node_t *node = create_config_node(obj, type, range);
+    node->value = v;
+    return node;
+}
+
+
 void config_node_append(config_node_t *node, config_node_t *end)
 {
 	for (; node->next; node=node->next);
@@ -450,13 +468,23 @@ static void dump_ast_(system_t *obj, config_node_t *node, int level) {
     case CONFIG_NODE_IDENT:		type="IDENT";	break;
     case CONFIG_NODE_CONF:		type="CONF";	break;
 	case CONFIG_NODE_FIELD:		type="FIELD";	break;
+	case CONFIG_NODE_INT:		type="INT";		break;
 	default: break;
 	}
 
 	char *n = "()";
     if (node->string) n = node->string;
 
-	printf("%*s%s: string=%s\n", 2 * level, "", type, n);
+	printf("%*s%s: string=%s", 2 * level, "", type, n);
+	switch (node->tag) {
+	default: printf("\n"); break;
+	case CONFIG_NODE_FIELD:
+		if (node->bitfield) printf(":%d", node->bitfield);
+		if (node->array) printf("[%d]", node->array);
+		if (node->configurable) printf(" (USER)");
+		printf("\n");
+		break;
+	}
 	if (node->tag == CONFIG_NODE_CONF) {
 		dump_ast_(obj, node->fields, level+1);
 	}

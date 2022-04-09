@@ -28,8 +28,9 @@ config canton {
 		= (main:2) GPIOD;
 	const uint16_t volt_b0
 		= (main:0) GPIO_PIN_1;
-        user uint8_t reverse_bemf:1
+    user uint8_t reverse_bemf:1
 		= (default) 0;
+     
 } num = (main) 6
       = (dispatcher) 1
       = (default) 0;

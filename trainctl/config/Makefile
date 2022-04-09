@@ -13,6 +13,7 @@ config: $(OBJS)
 config.c: config.peg
 	#packcc -d -l config.peg
 	packcc  -l config.peg
+	
 
 clean:
 	rm -f *.o *.log .depend

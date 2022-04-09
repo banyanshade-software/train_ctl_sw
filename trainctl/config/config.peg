@@ -107,7 +107,11 @@ board_values
 
 board_val 
 	<- '=' _ '(' b:board_id  ')' _ v:value
-	   { $$ = b; $$->tag = CONFIG_NODE_BOARDVAL; $$->val = v; }
+	   	{ 
+			$$ = b; 
+			$$->tag = CONFIG_NODE_BOARDVAL; 
+			$$->val = v; 
+		}
 
 board_id 
 	<- kw_all
@@ -115,7 +119,7 @@ board_id
     	 $$->string = strdup("all");
 	   }
      / i:identifier ':' n:integer
-       { $$ = i; $$->value = n->value; }
+       	{ $$ = i; $$->value = n->value; }
      / i:identifier
        { $$ = i; }
 
@@ -149,6 +153,9 @@ integer
         $$ = create_config_node_intstr(auxil, CONFIG_NODE_INT, range__new($0s, $0e), 10);
     }
     / D !D
+    {
+        $$ = create_config_node_intstr(auxil, CONFIG_NODE_INT, range__new($0s, $0e), 10);
+    }
 
 
 kw_config <- 'config'  !(L/D)

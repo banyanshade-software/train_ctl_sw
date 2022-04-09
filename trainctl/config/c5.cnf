@@ -1,0 +1,12 @@
+config canton {
+  	const uint16_t volts_cv[8]   // unit : 1/100 V, from 1000 to 0
+		= (all) { 1000, 770, 621,  538, 451, 413, 379, 355};
+	const GPIO_TypeDef *volt_port_b0
+		= (main:0) GPIOD
+                = (main:1) GPIOD
+		= (main:2) GPIOD;
+	const int16_t volt_b0
+		= (main:0) GPIO_PIN_1;
+} num = (main) 6
+      = (dispatcher) 1
+      = (default) 0;

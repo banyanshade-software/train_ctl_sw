@@ -1,0 +1,7 @@
+config canton {
+	const int volt_b0[4]
+		= (main:0) { 1, 2, 3 };
+} num = (plof) 6
+      = (dispatcher) 1
+      = (zob) 0;
+

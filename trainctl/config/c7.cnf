@@ -1,0 +1,6 @@
+config canton {
+	user int8_t volt_b0:5
+		= (main:0) GPIO_PIN_1;
+} num = (main) 6
+      = (dispatcher) 1
+      = (default) 0;

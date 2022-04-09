@@ -1,0 +1,8 @@
+config canton {
+	const GPIO_TypeDef volt_port_b0
+		= (main:0) GPIOD
+                = (main:1) GPIOD
+		= (main:2) GPIOD;
+} num = (main) 6
+      = (dispatcher) 1
+      = (default) 0;

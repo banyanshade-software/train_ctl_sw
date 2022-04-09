@@ -1,0 +1,155 @@
+
+#
+
+
+%prefix "cnfparse"
+
+# %value "ast_node_t *"
+%auxil "system_t *"
+
+%header {
+#include <stdio.h>
+#include <stdlib.h>
+#include "system.h"
+
+}
+
+%source{
+#define PCC_ERROR(auxil) system__handle_syntax_error(auxil, SYNTAX_ERROR_UNKNOWN, range__void()) /* <-- caused by incompleteness of the grammar */
+#define PCC_GETCHAR(auxil) system__read_source_file(auxil)
+#define PCC_MALLOC(auxil, size) system__allocate_memory(auxil, size)
+#define PCC_REALLOC(auxil, ptr, size) system__reallocate_memory(auxil, ptr, size)
+#define PCC_FREE(auxil, ptr) system__deallocate_memory(auxil, ptr)
+ 
+static const char *dbg_str[] = { "EVAL_", "MATCH", "ABAND" };
+
+#define PCC_DEBUG(auxil, event, rule, level, pos, buffer, length) do {\
+	 fprintf(stdout, "%*s%s %s @%d [%.*s]\n", (int)(level * 2), "", dbg_str[event], rule, (int)pos, (int)length,  buffer); fflush(stdout); \
+} while(0)
+
+
+}
+
+
+confall 
+	<- _ configdef _ confall
+         / _ configdef 
+	 / _ end_of_file
+
+configdef
+	<- kw_config _ identifier _  fields  _ kw_num _ board_values  _ ';' 
+
+
+fields
+	<- '{' _ field_list _ '}'
+
+field_list 
+	<-  field _ field_list
+	 /  field
+
+field 
+	<- qualifier _ type _ fielddef _ board_values _ ';'
+
+fielddef 
+	<- identifier _ '[' integer ']'
+         / identifier _ ':' integer
+         / identifier
+
+type
+	<- identifier _ ('*')+
+         / identifier
+
+qualifier
+	<- kw_const
+         / kw_user
+
+board_values 
+	<- board_val _ board_values
+        / board_val
+
+board_val 
+	<- '=' _ '(' board_id  ')' _ value
+
+board_id 
+	<- kw_all
+         / identifier ':' D+
+         / identifier
+
+value
+	<- integer
+         / identifier
+         / '{' _ val_list _ '}'
+
+val_list 
+	<- value _ ',' _ val_list
+	 / value
+
+
+
+# ########################################@
+
+integer
+   <- '0'[xX]X+
+    {
+        //$$ = system__create_ast_node_terminal(auxil, AST_NODE_TYPE_INTEGER_HEX, range__new($0s, $0e));
+    }
+    / '0'O+
+    {
+        //$$ = system__create_ast_node_terminal(auxil, AST_NODE_TYPE_INTEGER_OCT, range__new($0s, $0e));
+    }
+    / !'0' D+
+    {
+        //$$ = system__create_ast_node_terminal(auxil, AST_NODE_TYPE_INTEGER_DEC, range__new($0s, $0e));
+    }
+    / D !D
+
+
+kw_config <- 'config'  !(L/D)
+kw_num    <- 'num' !(L/D)
+kw_const  <- 'const' !(L/D)
+kw_user <- 'user' !(L/D)
+kw_all  <- 'all' !(L/D)
+
+O <- [0-7]
+D <- [0-9]
+X <- [0-9a-fA-F]
+L <- [a-zA-Z_]
+
+
+keyword
+   <- kw_num
+    / kw_const
+    / kw_user
+    / kw_all
+    / kw_config
+
+_ <- ( space / comment )*
+#_ <- ( comment / space )*
+
+comment
+   <- '/*' ( !'*/' . )* '*/'
+    / '#' (!end_of_line .)* end_of_line
+    / '//' (!end_of_line .)* end_of_line
+    ## error handling ##
+    / '/*' ( !'*/' . )*
+    {
+	fprintf(stderr, "unclosed comment at %ld-%ld", $0s, $0e);
+        //system__handle_syntax_error(auxil, SYNTAX_ERROR_UNCLOSED_COMMENT_BLOCK, range__new($0s, $0e));
+    }
+
+
+space <- blank / end_of_line
+blank <- [ \t\v\f]
+end_of_line <- '\r\n' / '\n' / '\r'
+end_of_file <- !.
+
+	
+identifier
+   <- !keyword L(L/D)*
+    {
+        //$$ = system__create_ast_node_terminal(auxil, AST_NODE_TYPE_IDENTIFIER, range__new($0s, $0e));
+    }
+
+
+%%
+

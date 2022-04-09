@@ -1,0 +1,7 @@
+config canton {
+	const int volt_b0
+		= (main:0) GPIO_PIN_1;
+} num = (plof) 6
+      = (dispatcher) 1
+      = (zob) 0;
+

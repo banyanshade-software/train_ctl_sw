@@ -30,6 +30,7 @@ config canton {
 		= (main:0) GPIO_PIN_1;
     user uint8_t reverse_bemf:1
 		= (default) 0;
+	const int8_t **pptr = (default)0;
      
 } num = (main) 6
       = (dispatcher) 1

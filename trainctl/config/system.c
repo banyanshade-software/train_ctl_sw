@@ -210,165 +210,12 @@ void config_node_append(config_node_t *node, config_node_t *end)
 
 // -------
 
-static config_node_t *create_ast_node_(system_t *obj, node_type_t type, range_t range) { // remove
-    config_node_t *const node = (config_node_t *)system__allocate_memory(obj, sizeof(config_node_t));
-    node->tag = type;
-    node->range = range;
-    node->system = obj;
-/*
-    node->arity = 0;
-    node->parent = NULL;
-    node->sibling.prev = NULL;
-    node->sibling.next = NULL;
-    node->child.first = NULL;
-    node->child.last = NULL;
-    if (obj->managed.last != NULL) {
-        node->managed.prev = obj->managed.last;
-        node->managed.next = NULL;
-        obj->managed.last = node;
-        if (node->managed.prev != NULL) {
-            node->managed.prev->managed.next = node;
-        }
-        else {
-            obj->managed.first = node;
-        }
-    }
-    else {
-        node->managed.prev = NULL;
-        node->managed.next = NULL;
-        obj->managed.first = node;
-        obj->managed.last = node;
-    }
-
-*/
-    return node;
-}
-
-config_node_t *system__create_ast_node_terminal(system_t *obj, node_type_t type, range_t range) {
-    return create_ast_node_(obj, type, range);
-}
-
-config_node_t *system__create_ast_node_unary(system_t *obj, node_type_t type, range_t range, config_node_t *node1) {
-/*
-    if (node1 == NULL) {
-        fprintf(stderr, "FATAL: Internal error\n");
-        longjmp(obj->jmp, 1); // never returns 
-    }
-    config_node_t *const node = create_ast_node_(obj, type, range);
-    ast_node__append_child(node, node1);
-    return node;
-*/
-    return NULL;
-}
-
-config_node_t *system__create_ast_node_binary(system_t *obj, node_type_t type, range_t range, config_node_t *node1, config_node_t *node2) {
-/*
-    if (node1 == NULL || node2 == NULL) {
-        fprintf(stderr, "FATAL: Internal error\n");
-        longjmp(obj->jmp, 1); // never returns 
-    }
-    config_node_t *const node = create_ast_node_(obj, type, range);
-    ast_node__append_child(node, node1);
-    ast_node__append_child(node, node2);
-    return node;
-*/
-    return NULL;
-}
-
-config_node_t *system__create_ast_node_ternary(system_t *obj, node_type_t type, range_t range, config_node_t *node1, config_node_t *node2, config_node_t *node3) {
-    if (node1 == NULL || node2 == NULL || node3 == NULL) {
-        fprintf(stderr, "FATAL: Internal error\n");
-        longjmp(obj->jmp, 1); /* never returns */
-    }
-/*
-    config_node_t *const node = create_ast_node_(obj, type, range);
-    ast_node__append_child(node, node1);
-    ast_node__append_child(node, node2);
-    ast_node__append_child(node, node3);
-    return node;
-*/
-	return NULL;
-}
-
-config_node_t *system__create_ast_node_variadic(system_t *obj, node_type_t type, range_t range) {
-    return create_ast_node_(obj, type, range);
-}
-
 void system__destroy_all_ast_nodes(system_t *obj) {
     while (obj->managed.first != NULL) {
         ast_node__destroy(obj->managed.first);
     }
 }
 
-void ast_node__prepend_child(config_node_t *obj, config_node_t *node) {
-    if (node == NULL) return; /* just ignored */
-/*
-    if (node->parent != NULL) {
-        if (node->sibling.prev != NULL) {
-            node->sibling.prev->sibling.next = node->sibling.next;
-        }
-        else {
-            node->parent->child.first = node->sibling.next;
-        }
-        if (node->sibling.next != NULL) {
-            node->sibling.next->sibling.prev = node->sibling.prev;
-        }
-        else {
-            node->parent->child.last = node->sibling.prev;
-        }
-        node->parent->arity--;
-    }
-    node->parent = obj;
-    if (obj->child.first != NULL) {
-        obj->child.first->sibling.prev = node;
-        node->sibling.next = obj->child.first;
-        node->sibling.prev = NULL;
-        obj->child.first = node;
-    }
-    else {
-        node->sibling.next = NULL;
-        node->sibling.prev = NULL;
-        obj->child.first = node;
-        obj->child.last = node;
-    }
-    obj->arity++;
-*/ 
-}
-
-void ast_node__append_child(config_node_t *obj, config_node_t *node) {
-    if (node == NULL) return; /* just ignored */
-/*
-    if (node->parent != NULL) {
-        if (node->sibling.prev != NULL) {
-            node->sibling.prev->sibling.next = node->sibling.next;
-        }
-        else {
-            node->parent->child.first = node->sibling.next;
-        }
-        if (node->sibling.next != NULL) {
-            node->sibling.next->sibling.prev = node->sibling.prev;
-        }
-        else {
-            node->parent->child.last = node->sibling.prev;
-        }
-        node->parent->arity--;
-    }
-    node->parent = obj;
-    if (obj->child.last != NULL) {
-        obj->child.last->sibling.next = node;
-        node->sibling.prev = obj->child.last;
-        node->sibling.next = NULL;
-        obj->child.last = node;
-    }
-    else {
-        node->sibling.prev = NULL;
-        node->sibling.next = NULL;
-        obj->child.last = node;
-        obj->child.first = node;
-    }
-    obj->arity++;
-*/
-}
 
 void ast_node__destroy(config_node_t *obj) {
 /*
@@ -480,6 +327,8 @@ static void dump_ast_(system_t *obj, config_node_t *node, int level) {
 	default: printf("\n"); break;
 	case CONFIG_NODE_FIELD:
 		if (node->bitfield) printf(":%d", node->bitfield);
+		if (node->nptr) printf(",nptr=%d,", node->nptr);
+		if (node->type) printf(",type=%s,", node->type);
 		if (node->array) printf("[%d]", node->array);
 		if (node->configurable) printf(" (USER)");
 		printf("\n");

@@ -71,26 +71,30 @@ field_list
 		{ $$ = f; }
 
 field 
-	<- q:qualifier _ type _ d:fielddef _ board_values _ ';'
+	<- q:qualifier _ t:type _ d:fielddef _ board_values _ ';'
 		{
 			$$ =  create_config_node(auxil, CONFIG_NODE_FIELD, range__new($0s, $0e));
 			$$->string = d->string;
 			$$->array = d->array;
 			$$->bitfield = d->bitfield;
 			$$->configurable = q->value;
+			$$->nptr = t->value;
+			$$->type = t->string;
 		}
 
 fielddef 
 	<- i:identifier _ '[' n:integer ']'
-		{ $$ = i; $$->array = n->value; }
+		{ $$ = i; $$->array = n->value; $$->value = i->value;}
      / i:identifier _ ':' n:integer
-		{ $$ = i; $$->bitfield = n->value; }
+		{ $$ = i; $$->bitfield = n->value; $$->value = i->value;}
      / i:identifier
-		{ $$ = i; }
+		{ $$ = i; $$->value = i->value; }
 
 type
-	<- identifier _ ('*')+
-     / identifier
+	<- i:identifier _ <('*')+>
+	   { $$ = i; $$->value = $1e-$1s; printf("t=%s; nptr=%d\n", $$->string, $$->value);}
+     / i:identifier
+	   { $$ = i; }
 
 qualifier
 	<- kw_const

@@ -57,29 +57,12 @@ typedef struct config_node {
 			int configurable;
 			int bitfield;
 			int array;
+			int nptr;
+			char *type;
 		};
     };
 } config_node_t;
 
-#if 0
-struct ast_node_tag {
-    ast_node_type_t type; /* the AST node type */
-    size_t arity; /* the number of the child AST nodes */
-    ast_node_t *parent; /* the parent AST node */
-    struct ast_node_sibling_tag {
-        ast_node_t *prev; /* the previous sibling AST node */
-        ast_node_t *next; /* the next sibling AST node */
-    } sibling;
-    struct ast_node_child_tag {
-        ast_node_t *first; /* the first child AST node */
-        ast_node_t *last; /* the last child AST node */
-    } child;
-    struct ast_node_managed_tag {
-        ast_node_t *prev; /* the previous AST node managed by the same system */
-        ast_node_t *next; /* the next AST node managed by the same system */
-    } managed;
-};
-#endif
 
 typedef enum syntax_error_tag {
     SYNTAX_ERROR_IF_WITHOUT_CONDITION,
@@ -124,11 +107,6 @@ int system__read_source_file(system_t *obj);
 
 void system__handle_syntax_error(system_t *obj, syntax_error_t error, range_t range);
 
-config_node_t *system__create_ast_node_terminal(system_t *obj, node_type_t type, range_t range);
-config_node_t *system__create_ast_node_unary(system_t *obj, node_type_t type, range_t range, config_node_t *node1);
-config_node_t *system__create_ast_node_binary(system_t *obj, node_type_t type, range_t range, config_node_t *node1, config_node_t *node2);
-config_node_t *system__create_ast_node_ternary(system_t *obj, node_type_t type, range_t range, config_node_t *node1, config_node_t *node2, config_node_t *node3);
-config_node_t *system__create_ast_node_variadic(system_t *obj, node_type_t type, range_t range);
 
 void system__destroy_all_ast_nodes(system_t *obj);
 

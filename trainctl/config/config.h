@@ -15,7 +15,7 @@ extern "C" {
 typedef struct cnfparse_context_tag cnfparse_context_t;
 
 cnfparse_context_t *cnfparse_create(system_t *auxil);
-int cnfparse_parse(cnfparse_context_t *ctx, int *ret);
+int cnfparse_parse(cnfparse_context_t *ctx, config_node_t **ret);
 void cnfparse_destroy(cnfparse_context_t *ctx);
 
 #ifdef __cplusplus

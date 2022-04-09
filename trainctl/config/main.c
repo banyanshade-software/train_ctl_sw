@@ -32,7 +32,7 @@ int main(int argc, char **argv) {
         system__initialize(&system);
         system__open_source_file(&system, path);
         parser = cnfparse_create(&system);
-        ast_node_t *ast;
+        config_node_t *ast;
         const int b = cnfparse_parse(parser, &ast);
         if (system.source.ecount > 0) longjmp(system.jmp, 1); /* never returns */
         if (b) {
@@ -42,7 +42,7 @@ int main(int argc, char **argv) {
         }
         else {
 	    fprintf(stderr, "parsed\n");
-            //system__dump_ast(&system, ast);
+           system__dump_ast(&system, ast);
         }
     }
     else {

@@ -19,9 +19,10 @@
 #define _CRT_SECURE_NO_WARNINGS /* suppress the warning of fopen() use */
 #endif /* _MSC_VER */
 
+#include <memory.h>
+#include <stdlib.h>
 #include "system.h"
 
-#include <stdlib.h>
 
 #ifndef ERROR_MAX
 #define ERROR_MAX 4 /* the maximum number of errors displayed at a time */
@@ -90,6 +91,7 @@ void *system__allocate_memory(system_t *obj, size_t size) {
         fprintf(stderr, "FATAL: Out of memory\n");
         longjmp(obj->jmp, 1); /* never returns */
     }
+    memset(p, 0, size);
     return p;
 }
 
@@ -163,17 +165,45 @@ int system__read_source_file(system_t *obj) {
     return c;
 }
 
-static ast_node_t *create_ast_node_(system_t *obj, ast_node_type_t type, range_t range) {
-    ast_node_t *const node = (ast_node_t *)system__allocate_memory(obj, sizeof(ast_node_t));
-    node->type = type;
+// -------
+
+config_node_t *create_config_node(system_t *obj, node_type_t type, range_t range)
+{
+    config_node_t *const node = (config_node_t *)system__allocate_memory(obj, sizeof(config_node_t));
+    node->tag = type;
     node->range = range;
+    node->system = obj;
+    return node;
+}
+
+config_node_t *create_config_node_text(system_t *obj, node_type_t type, range_t range) 
+{
+    config_node_t *node = create_config_node(obj, type, range);
+    node->string = strndup(obj->source.text.p + range.min, range.max - range.min);
+    printf("id : <%s>\n", node->string);
+    return node;
+}
+
+void config_node_append(config_node_t *node, config_node_t *end)
+{
+	for (; node->next; node=node->next);
+	node->next = end;
+}
+
+// -------
+
+static config_node_t *create_ast_node_(system_t *obj, node_type_t type, range_t range) { // remove
+    config_node_t *const node = (config_node_t *)system__allocate_memory(obj, sizeof(config_node_t));
+    node->tag = type;
+    node->range = range;
+    node->system = obj;
+/*
     node->arity = 0;
     node->parent = NULL;
     node->sibling.prev = NULL;
     node->sibling.next = NULL;
     node->child.first = NULL;
     node->child.last = NULL;
-    node->system = obj;
     if (obj->managed.last != NULL) {
         node->managed.prev = obj->managed.last;
         node->managed.next = NULL;
@@ -191,47 +221,58 @@ static ast_node_t *create_ast_node_(system_t *obj, ast_node_type_t type, range_t
         obj->managed.first = node;
         obj->managed.last = node;
     }
+
+*/
     return node;
 }
 
-ast_node_t *system__create_ast_node_terminal(system_t *obj, ast_node_type_t type, range_t range) {
+config_node_t *system__create_ast_node_terminal(system_t *obj, node_type_t type, range_t range) {
     return create_ast_node_(obj, type, range);
 }
 
-ast_node_t *system__create_ast_node_unary(system_t *obj, ast_node_type_t type, range_t range, ast_node_t *node1) {
+config_node_t *system__create_ast_node_unary(system_t *obj, node_type_t type, range_t range, config_node_t *node1) {
+/*
     if (node1 == NULL) {
         fprintf(stderr, "FATAL: Internal error\n");
-        longjmp(obj->jmp, 1); /* never returns */
+        longjmp(obj->jmp, 1); // never returns 
     }
-    ast_node_t *const node = create_ast_node_(obj, type, range);
+    config_node_t *const node = create_ast_node_(obj, type, range);
     ast_node__append_child(node, node1);
     return node;
+*/
+    return NULL;
 }
 
-ast_node_t *system__create_ast_node_binary(system_t *obj, ast_node_type_t type, range_t range, ast_node_t *node1, ast_node_t *node2) {
+config_node_t *system__create_ast_node_binary(system_t *obj, node_type_t type, range_t range, config_node_t *node1, config_node_t *node2) {
+/*
     if (node1 == NULL || node2 == NULL) {
         fprintf(stderr, "FATAL: Internal error\n");
-        longjmp(obj->jmp, 1); /* never returns */
+        longjmp(obj->jmp, 1); // never returns 
     }
-    ast_node_t *const node = create_ast_node_(obj, type, range);
+    config_node_t *const node = create_ast_node_(obj, type, range);
     ast_node__append_child(node, node1);
     ast_node__append_child(node, node2);
     return node;
+*/
+    return NULL;
 }
 
-ast_node_t *system__create_ast_node_ternary(system_t *obj, ast_node_type_t type, range_t range, ast_node_t *node1, ast_node_t *node2, ast_node_t *node3) {
+config_node_t *system__create_ast_node_ternary(system_t *obj, node_type_t type, range_t range, config_node_t *node1, config_node_t *node2, config_node_t *node3) {
     if (node1 == NULL || node2 == NULL || node3 == NULL) {
         fprintf(stderr, "FATAL: Internal error\n");
         longjmp(obj->jmp, 1); /* never returns */
     }
-    ast_node_t *const node = create_ast_node_(obj, type, range);
+/*
+    config_node_t *const node = create_ast_node_(obj, type, range);
     ast_node__append_child(node, node1);
     ast_node__append_child(node, node2);
     ast_node__append_child(node, node3);
     return node;
+*/
+	return NULL;
 }
 
-ast_node_t *system__create_ast_node_variadic(system_t *obj, ast_node_type_t type, range_t range) {
+config_node_t *system__create_ast_node_variadic(system_t *obj, node_type_t type, range_t range) {
     return create_ast_node_(obj, type, range);
 }
 
@@ -241,8 +282,9 @@ void system__destroy_all_ast_nodes(system_t *obj) {
     }
 }
 
-void ast_node__prepend_child(ast_node_t *obj, ast_node_t *node) {
+void ast_node__prepend_child(config_node_t *obj, config_node_t *node) {
     if (node == NULL) return; /* just ignored */
+/*
     if (node->parent != NULL) {
         if (node->sibling.prev != NULL) {
             node->sibling.prev->sibling.next = node->sibling.next;
@@ -272,10 +314,12 @@ void ast_node__prepend_child(ast_node_t *obj, ast_node_t *node) {
         obj->child.last = node;
     }
     obj->arity++;
+*/ 
 }
 
-void ast_node__append_child(ast_node_t *obj, ast_node_t *node) {
+void ast_node__append_child(config_node_t *obj, config_node_t *node) {
     if (node == NULL) return; /* just ignored */
+/*
     if (node->parent != NULL) {
         if (node->sibling.prev != NULL) {
             node->sibling.prev->sibling.next = node->sibling.next;
@@ -305,9 +349,11 @@ void ast_node__append_child(ast_node_t *obj, ast_node_t *node) {
         obj->child.first = node;
     }
     obj->arity++;
+*/
 }
 
-void ast_node__destroy(ast_node_t *obj) {
+void ast_node__destroy(config_node_t *obj) {
+/*
     if (obj->parent != NULL) {
         if (obj->sibling.prev != NULL) {
             obj->sibling.prev->sibling.next = obj->sibling.next;
@@ -345,6 +391,7 @@ void ast_node__destroy(ast_node_t *obj) {
         }
     }
     system__deallocate_memory(obj->system, obj);
+*/
 }
 
 void system__handle_syntax_error(system_t *obj, syntax_error_t error, range_t range) {
@@ -394,89 +441,30 @@ void system__handle_syntax_error(system_t *obj, syntax_error_t error, range_t ra
     if (obj->source.ecount >= ERROR_MAX) longjmp(obj->jmp, 1); /* never returns */
 }
 
-static void dump_ast_(system_t *obj, ast_node_t *node, int level) {
+
+static void dump_ast_(system_t *obj, config_node_t *node, int level) {
+	if (!node) return;
     const char *type = "UNKNOWN";
-    switch (node->type) {
-    case AST_NODE_TYPE_IDENTIFIER:          type = "IDENTIFIER";          break;
-    case AST_NODE_TYPE_INTEGER_DEC:         type = "INTEGER_DEC";         break;
-    case AST_NODE_TYPE_INTEGER_OCT:         type = "INTEGER_OCT";         break;
-    case AST_NODE_TYPE_INTEGER_HEX:         type = "INTEGER_HEX";         break;
-    case AST_NODE_TYPE_OPERATOR_PLUS:       type = "OPERATOR_PLUS";       break;
-    case AST_NODE_TYPE_OPERATOR_MINUS:      type = "OPERATOR_MINUS";      break;
-    case AST_NODE_TYPE_OPERATOR_INV:        type = "OPERATOR_INV";        break;
-    case AST_NODE_TYPE_OPERATOR_NOT:        type = "OPERATOR_NOT";        break;
-    case AST_NODE_TYPE_OPERATOR_INC:        type = "OPERATOR_INC";        break;
-    case AST_NODE_TYPE_OPERATOR_DEC:        type = "OPERATOR_DEC";        break;
-    case AST_NODE_TYPE_OPERATOR_POST_INC:   type = "OPERATOR_POST_INC";   break;
-    case AST_NODE_TYPE_OPERATOR_POST_DEC:   type = "OPERATOR_POST_DEC";   break;
-    case AST_NODE_TYPE_OPERATOR_ADD:        type = "OPERATOR_ADD";        break;
-    case AST_NODE_TYPE_OPERATOR_SUB:        type = "OPERATOR_SUB";        break;
-    case AST_NODE_TYPE_OPERATOR_MUL:        type = "OPERATOR_MUL";        break;
-    case AST_NODE_TYPE_OPERATOR_DIV:        type = "OPERATOR_DIV";        break;
-    case AST_NODE_TYPE_OPERATOR_MOD:        type = "OPERATOR_MOD";        break;
-    case AST_NODE_TYPE_OPERATOR_AND:        type = "OPERATOR_AND";        break;
-    case AST_NODE_TYPE_OPERATOR_AND2:       type = "OPERATOR_AND2";       break;
-    case AST_NODE_TYPE_OPERATOR_OR:         type = "OPERATOR_OR";         break;
-    case AST_NODE_TYPE_OPERATOR_OR2:        type = "OPERATOR_OR2";        break;
-    case AST_NODE_TYPE_OPERATOR_XOR:        type = "OPERATOR_XOR";        break;
-    case AST_NODE_TYPE_OPERATOR_SHL:        type = "OPERATOR_SHL";        break;
-    case AST_NODE_TYPE_OPERATOR_SHR:        type = "OPERATOR_SHR";        break;
-    case AST_NODE_TYPE_OPERATOR_EQ:         type = "OPERATOR_EQ";         break;
-    case AST_NODE_TYPE_OPERATOR_NE:         type = "OPERATOR_NE";         break;
-    case AST_NODE_TYPE_OPERATOR_LT:         type = "OPERATOR_LT";         break;
-    case AST_NODE_TYPE_OPERATOR_LE:         type = "OPERATOR_LE";         break;
-    case AST_NODE_TYPE_OPERATOR_GT:         type = "OPERATOR_GT";         break;
-    case AST_NODE_TYPE_OPERATOR_GE:         type = "OPERATOR_GE";         break;
-    case AST_NODE_TYPE_OPERATOR_COND:       type = "OPERATOR_COND";       break;
-    case AST_NODE_TYPE_OPERATOR_COMMA:      type = "OPERATOR_COMMA";      break;
-    case AST_NODE_TYPE_OPERATOR_ASSIGN:     type = "OPERATOR_ASSIGN";     break;
-    case AST_NODE_TYPE_OPERATOR_ASSIGN_ADD: type = "OPERATOR_ASSIGN_ADD"; break;
-    case AST_NODE_TYPE_OPERATOR_ASSIGN_SUB: type = "OPERATOR_ASSIGN_SUB"; break;
-    case AST_NODE_TYPE_OPERATOR_ASSIGN_MUL: type = "OPERATOR_ASSIGN_MUL"; break;
-    case AST_NODE_TYPE_OPERATOR_ASSIGN_DIV: type = "OPERATOR_ASSIGN_DIV"; break;
-    case AST_NODE_TYPE_OPERATOR_ASSIGN_MOD: type = "OPERATOR_ASSIGN_MOD"; break;
-    case AST_NODE_TYPE_OPERATOR_ASSIGN_AND: type = "OPERATOR_ASSIGN_AND"; break;
-    case AST_NODE_TYPE_OPERATOR_ASSIGN_OR:  type = "OPERATOR_ASSIGN_OR";  break;
-    case AST_NODE_TYPE_OPERATOR_ASSIGN_XOR: type = "OPERATOR_ASSIGN_XOR"; break;
-    case AST_NODE_TYPE_OPERATOR_ASSIGN_SHL: type = "OPERATOR_ASSIGN_SHL"; break;
-    case AST_NODE_TYPE_OPERATOR_ASSIGN_SHR: type = "OPERATOR_ASSIGN_SHR"; break;
-    case AST_NODE_TYPE_STATEMENT_VOID:      type = "STATEMENT_VOID";      break;
-    case AST_NODE_TYPE_STATEMENT_IF:        type = "STATEMENT_IF";        break;
-    case AST_NODE_TYPE_STATEMENT_IF_ELSE:   type = "STATEMENT_IF_ELSE";   break;
-    case AST_NODE_TYPE_STATEMENT_WHILE:     type = "STATEMENT_WHILE";     break;
-    case AST_NODE_TYPE_STATEMENT_DO_WHILE:  type = "STATEMENT_DO_WHILE";  break;
-    case AST_NODE_TYPE_STATEMENT_LIST:      type = "STATEMENT_LIST";      break;
-    case AST_NODE_TYPE_ERROR_SKIP:          type = "ERROR_SKIP";          break;
-    case AST_NODE_TYPE_ERROR_SKIP_IF_0:     type = "ERROR_SKIP_IF_0";     break;
-    case AST_NODE_TYPE_ERROR_SKIP_IF_1:     type = "ERROR_SKIP_IF_1";     break;
-    case AST_NODE_TYPE_ERROR_SKIP_IF_2:     type = "ERROR_SKIP_IF_2";     break;
-    case AST_NODE_TYPE_ERROR_SKIP_ELSE_0:   type = "ERROR_SKIP_ELSE_0";   break;
-    case AST_NODE_TYPE_ERROR_SKIP_ELSE_1:   type = "ERROR_SKIP_ELSE_1";   break;
-    case AST_NODE_TYPE_ERROR_SKIP_DO_0:     type = "ERROR_SKIP_DO_0";     break;
-    case AST_NODE_TYPE_ERROR_SKIP_DO_1:     type = "ERROR_SKIP_DO_1";     break;
-    case AST_NODE_TYPE_ERROR_SKIP_DO_2:     type = "ERROR_SKIP_DO_2";     break;
-    case AST_NODE_TYPE_ERROR_SKIP_WHILE_0:  type = "ERROR_SKIP_WHILE_0";  break;
-    case AST_NODE_TYPE_ERROR_SKIP_WHILE_1:  type = "ERROR_SKIP_WHILE_1";  break;
-    case AST_NODE_TYPE_UNEXPECTED_TOKEN:    type = "UNEXPECTED_TOKEN";    break;
-    default: break;
-    }
-    if (node->arity > 0 || node->type == AST_NODE_TYPE_STATEMENT_LIST) {
-        printf("%*s%s: arity = %zu\n", 2 * level, "", type, node->arity);
-        for (ast_node_t *p = node->child.first; p != NULL; p = p->sibling.next) {
-            dump_ast_(obj, p, level + 1);
-        }
-    }
-    else {
-        size_t line, col;
-        compute_line_and_column_(obj, node->range.min, &line, &col);
-        printf(
-            "%*s%s: line = %zu, column = %zu, value = '%.*s'\n",
-            2 * level, "", type, line, col,
-            (int)(node->range.max - node->range.min), obj->source.text.p + node->range.min
-        );
-    }
+    switch (node->tag) {
+	case CONFIG_NODE_ROOT:		type="ROOT";	break;
+    case CONFIG_NODE_IDENT:		type="IDENT";	break;
+    case CONFIG_NODE_CONF:		type="CONF";	break;
+	case CONFIG_NODE_FIELD:		type="FIELD";	break;
+	default: break;
+	}
+
+	char *n = "()";
+    if (node->string) n = node->string;
+
+	printf("%*s%s: string=%s\n", 2 * level, "", type, n);
+	if (node->tag == CONFIG_NODE_CONF) {
+		dump_ast_(obj, node->fields, level+1);
+	}
+
+	dump_ast_(obj, node->next, level);
 }
 
-void system__dump_ast(system_t *obj, ast_node_t *root) {
+
+void system__dump_ast(system_t *obj, config_node_t *root) {
     dump_ast_(obj, root, 0);
 }

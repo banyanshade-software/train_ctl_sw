@@ -27,75 +27,35 @@ extern "C" {
 #endif
 
 typedef struct system_tag system_t;
-typedef struct ast_node_tag ast_node_t;
 
-typedef enum ast_node_type_tag {
-    AST_NODE_TYPE_IDENTIFIER,
-    AST_NODE_TYPE_INTEGER_DEC,
-    AST_NODE_TYPE_INTEGER_OCT,
-    AST_NODE_TYPE_INTEGER_HEX,
-    AST_NODE_TYPE_OPERATOR_PLUS,
-    AST_NODE_TYPE_OPERATOR_MINUS,
-    AST_NODE_TYPE_OPERATOR_INV,
-    AST_NODE_TYPE_OPERATOR_NOT,
-    AST_NODE_TYPE_OPERATOR_INC,
-    AST_NODE_TYPE_OPERATOR_DEC,
-    AST_NODE_TYPE_OPERATOR_POST_INC,
-    AST_NODE_TYPE_OPERATOR_POST_DEC,
-    AST_NODE_TYPE_OPERATOR_ADD,
-    AST_NODE_TYPE_OPERATOR_SUB,
-    AST_NODE_TYPE_OPERATOR_MUL,
-    AST_NODE_TYPE_OPERATOR_DIV,
-    AST_NODE_TYPE_OPERATOR_MOD,
-    AST_NODE_TYPE_OPERATOR_AND,
-    AST_NODE_TYPE_OPERATOR_AND2,
-    AST_NODE_TYPE_OPERATOR_OR,
-    AST_NODE_TYPE_OPERATOR_OR2,
-    AST_NODE_TYPE_OPERATOR_XOR,
-    AST_NODE_TYPE_OPERATOR_SHL,
-    AST_NODE_TYPE_OPERATOR_SHR,
-    AST_NODE_TYPE_OPERATOR_EQ,
-    AST_NODE_TYPE_OPERATOR_NE,
-    AST_NODE_TYPE_OPERATOR_LT,
-    AST_NODE_TYPE_OPERATOR_LE,
-    AST_NODE_TYPE_OPERATOR_GT,
-    AST_NODE_TYPE_OPERATOR_GE,
-    AST_NODE_TYPE_OPERATOR_COND,
-    AST_NODE_TYPE_OPERATOR_COMMA,
-    AST_NODE_TYPE_OPERATOR_ASSIGN,
-    AST_NODE_TYPE_OPERATOR_ASSIGN_ADD,
-    AST_NODE_TYPE_OPERATOR_ASSIGN_SUB,
-    AST_NODE_TYPE_OPERATOR_ASSIGN_MUL,
-    AST_NODE_TYPE_OPERATOR_ASSIGN_DIV,
-    AST_NODE_TYPE_OPERATOR_ASSIGN_MOD,
-    AST_NODE_TYPE_OPERATOR_ASSIGN_AND,
-    AST_NODE_TYPE_OPERATOR_ASSIGN_OR,
-    AST_NODE_TYPE_OPERATOR_ASSIGN_XOR,
-    AST_NODE_TYPE_OPERATOR_ASSIGN_SHL,
-    AST_NODE_TYPE_OPERATOR_ASSIGN_SHR,
-    AST_NODE_TYPE_STATEMENT_VOID,
-    AST_NODE_TYPE_STATEMENT_IF,
-    AST_NODE_TYPE_STATEMENT_IF_ELSE,
-    AST_NODE_TYPE_STATEMENT_WHILE,
-    AST_NODE_TYPE_STATEMENT_DO_WHILE,
-    AST_NODE_TYPE_STATEMENT_LIST,
-    AST_NODE_TYPE_ERROR_SKIP,
-    AST_NODE_TYPE_ERROR_SKIP_IF_0,
-    AST_NODE_TYPE_ERROR_SKIP_IF_1,
-    AST_NODE_TYPE_ERROR_SKIP_IF_2,
-    AST_NODE_TYPE_ERROR_SKIP_ELSE_0,
-    AST_NODE_TYPE_ERROR_SKIP_ELSE_1,
-    AST_NODE_TYPE_ERROR_SKIP_DO_0,
-    AST_NODE_TYPE_ERROR_SKIP_DO_1,
-    AST_NODE_TYPE_ERROR_SKIP_DO_2,
-    AST_NODE_TYPE_ERROR_SKIP_WHILE_0,
-    AST_NODE_TYPE_ERROR_SKIP_WHILE_1,
-    AST_NODE_TYPE_UNEXPECTED_TOKEN
-} ast_node_type_t;
 
+                
+
+typedef enum node_type_tag {
+    CONFIG_NODE_ROOT,
+    CONFIG_NODE_IDENT,
+    CONFIG_NODE_CONF,
+    CONFIG_NODE_FIELD,
+
+} node_type_t;
+
+
+	
+typedef struct config_node {
+    range_t range; /* the byte range in the source text */
+    system_t *system; /* the system that manages this AST node */
+    enum node_type_tag tag;
+    char *string;
+    int value;
+    struct config_node *next;
+    union {
+	struct config_node *fields;
+    };
+} config_node_t;
+
+#if 0
 struct ast_node_tag {
     ast_node_type_t type; /* the AST node type */
-    range_t range; /* the byte range in the source text */
     size_t arity; /* the number of the child AST nodes */
     ast_node_t *parent; /* the parent AST node */
     struct ast_node_sibling_tag {
@@ -106,12 +66,12 @@ struct ast_node_tag {
         ast_node_t *first; /* the first child AST node */
         ast_node_t *last; /* the last child AST node */
     } child;
-    system_t *system; /* the system that manages this AST node */
     struct ast_node_managed_tag {
         ast_node_t *prev; /* the previous AST node managed by the same system */
         ast_node_t *next; /* the next AST node managed by the same system */
     } managed;
 };
+#endif
 
 typedef enum syntax_error_tag {
     SYNTAX_ERROR_IF_WITHOUT_CONDITION,
@@ -137,8 +97,8 @@ struct system_tag {
         size_t ecount; /* the error count */
     } source;
     struct system_managed_tag {
-        ast_node_t *first; /* the first managed AST node */
-        ast_node_t *last; /* the last managed AST node */
+        config_node_t *first; /* the first managed AST node */
+        config_node_t *last; /* the last managed AST node */
     } managed;
     jmp_buf jmp;
 };
@@ -156,19 +116,24 @@ int system__read_source_file(system_t *obj);
 
 void system__handle_syntax_error(system_t *obj, syntax_error_t error, range_t range);
 
-ast_node_t *system__create_ast_node_terminal(system_t *obj, ast_node_type_t type, range_t range);
-ast_node_t *system__create_ast_node_unary(system_t *obj, ast_node_type_t type, range_t range, ast_node_t *node1);
-ast_node_t *system__create_ast_node_binary(system_t *obj, ast_node_type_t type, range_t range, ast_node_t *node1, ast_node_t *node2);
-ast_node_t *system__create_ast_node_ternary(system_t *obj, ast_node_type_t type, range_t range, ast_node_t *node1, ast_node_t *node2, ast_node_t *node3);
-ast_node_t *system__create_ast_node_variadic(system_t *obj, ast_node_type_t type, range_t range);
+config_node_t *system__create_ast_node_terminal(system_t *obj, node_type_t type, range_t range);
+config_node_t *system__create_ast_node_unary(system_t *obj, node_type_t type, range_t range, config_node_t *node1);
+config_node_t *system__create_ast_node_binary(system_t *obj, node_type_t type, range_t range, config_node_t *node1, config_node_t *node2);
+config_node_t *system__create_ast_node_ternary(system_t *obj, node_type_t type, range_t range, config_node_t *node1, config_node_t *node2, config_node_t *node3);
+config_node_t *system__create_ast_node_variadic(system_t *obj, node_type_t type, range_t range);
 
 void system__destroy_all_ast_nodes(system_t *obj);
 
-void system__dump_ast(system_t *obj, ast_node_t *root);
+void system__dump_ast(system_t *obj, config_node_t *root);
 
-void ast_node__prepend_child(ast_node_t *obj, ast_node_t *node);
-void ast_node__append_child(ast_node_t *obj, ast_node_t *node);
-void ast_node__destroy(ast_node_t *obj);
+//void ast_node__prepend_child(ast_node_t *obj, ast_node_t *node);
+//void ast_node__append_child(ast_node_t *obj, ast_node_t *node);
+void ast_node__destroy(config_node_t *obj);
+
+
+config_node_t *create_config_node(system_t *obj, node_type_t type, range_t range);
+config_node_t *create_config_node_text(system_t *obj, node_type_t type, range_t range);
+void config_node_append(config_node_t *node, config_node_t *end);
 
 #ifdef __cplusplus
 }

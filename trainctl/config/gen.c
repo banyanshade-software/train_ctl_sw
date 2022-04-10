@@ -43,6 +43,7 @@ static void gen_fields(config_node_t *node, FILE *output)
 void generate_hfile(config_node_t *root, int continue_next, FILE *output)
 {
     fprintf(output, "// this file is generated automatically\n// do not modify\n");
+    fprintf(output, "// HEADER\n");
 
     // generate sub sutruct
     for (config_node_t *node = root->subdefs; node; node = node->next) {
@@ -65,7 +66,7 @@ void generate_hfile(config_node_t *root, int continue_next, FILE *output)
         gen_fields(node->fields, output);
         fprintf(output, "} conf_%s_t;\n\n\n", n);
         fprintf(output, "int conf_%s_num_entries(void);\n", n);
-        fprintf(output, "const conf_%s_t conf_%s_get(int num);\n\n", n, n);
+        fprintf(output, "const conf_%s_t *conf_%s_get(int num);\n\n", n, n);
         fprintf(output, "// handling config setup from master\n");
         fprintf(output, "void conf_%s_change(int instnum, int fieldnum, int16_t value);\n", n);
         if (!continue_next) break;
@@ -84,6 +85,7 @@ void generate_cfile(config_node_t *root, int continue_next, FILE *output, config
     config_node_t *node = root->defs;
     config_node_t *tables = root->tables;
     fprintf(output, "// this file is generated automatically\n// do not modify\n");
+    fprintf(output, "// CFILE\n");
     for ( ; node; node = node->next) {
         if (node->tag != CONFIG_NODE_CONF) {
             error("bad tag, expect conf");
@@ -112,6 +114,9 @@ void generate_cfile(config_node_t *root, int continue_next, FILE *output, config
             fprintf(output, "};\n\n");
             fprintf(output, "#endif // TRN_BOARD_%s\n\n\n", brduc);
         }
+        fprintf(output, "\n\nconst conf_%s_t *conf_%s_get(int num)\n", n, n);
+        fprintf(output, "{\n  if (num<0) return NULL;\n    if (num>=conf_%s_num_entries()) return NULL;\n", n);
+        fprintf(output, "    return &conf_%s[num];\n}\n\n", n);
     }
 }
 

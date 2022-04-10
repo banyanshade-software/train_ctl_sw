@@ -180,7 +180,7 @@ config_node_t *create_config_node_text(system_t *obj, node_type_t type, range_t 
 {
     config_node_t *node = create_config_node(obj, type, range);
     node->string = strndup(obj->source.text.p + range.min, range.max - range.min);
-    printf("id : <%s>\n", node->string);
+    //printf("id : <%s>\n", node->string);
     return node;
 }
 
@@ -189,7 +189,7 @@ config_node_t *create_config_node_intstr(system_t *obj, node_type_t type, range_
     config_node_t *node = create_config_node(obj, type, range);
     node->string = strndup(obj->source.text.p + range.min, range.max - range.min);
 	node->value = strtol(node->string, NULL, base);
-    printf("val : <%d>\n", node->value);
+    //printf("val : <%d>\n", node->value);
     return node;
 }
 
@@ -325,6 +325,9 @@ static void dump_ast_(system_t *obj, config_node_t *node, int level) {
     case CONFIG_NODE_IDENT:		type="IDENT";	break;
     case CONFIG_NODE_CONF:		type="CONF";	break;
 	case CONFIG_NODE_FIELD:		type="FIELD";	break;
+	case CONFIG_NODE_TABLE:		type="TABLE";	break;
+	case CONFIG_NODE_TABLELINE:	type="LINE";	break;
+	case CONFIG_NODE_TABLEREF:	type="TREF";	break;
 	case CONFIG_NODE_INT:		type="INT";		break;
 	default: break;
 	}
@@ -343,9 +346,22 @@ static void dump_ast_(system_t *obj, config_node_t *node, int level) {
 		if (node->configurable) printf(" (USER)");
 		printf("\n");
 		break;
-	}
-	if (node->tag == CONFIG_NODE_CONF) {
-		dump_ast_(obj, node->fields, level+1);
+    case CONFIG_NODE_CONF:
+		printf("\n");
+        dump_ast_(obj, node->fields, level+1);
+		printf("\n");
+        break;
+    case CONFIG_NODE_TABLE:
+        printf("\n%*scols:\n", 2*level, "");
+        dump_ast_(obj, node->coldef, level+1);
+        printf("%*slines:\n", 2*level, "");
+        dump_ast_(obj, node->lines, level+1);
+		printf("\n");
+        break;
+    case CONFIG_NODE_TABLELINE:
+        printf("\n");
+        dump_ast_(obj, node->lineval, level+1);
+        break;
 	}
 
 	dump_ast_(obj, node->next, level);

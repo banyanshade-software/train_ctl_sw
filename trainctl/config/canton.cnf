@@ -22,16 +22,28 @@
 config canton {
   	const uint16_t volts_cv[8]   // unit : 1/100 V, from 1000 to 0
 		= (all) { 1000, 770, 621,  538, 451, 413, 379, 355};
+
 	const GPIO_TypeDef *volt_port_b0
-		= (main:0) GPIOD
-        = (main:1) GPIOD
-		= (main:2) GPIOD
-		= (default) 0;
+		= (main:*) table(vpin_main, p0)
+		= (default) NULL;
 	const uint16_t volt_b0
-		= (main:0) GPIO_PIN_1
-		= (main:1) GPIO_PIN_7
-		= (main:2) GPIO_PIN_9
+		= (main:*) table(vpin_main, b0)
 		= (default) 0;
+
+	const GPIO_TypeDef *volt_port_b1
+		= (main:*) table(vpin_main, p1)
+		= (default) NULL;
+	const uint16_t volt_b1
+		= (main:*) table(vpin_main, b1)
+		= (default) 0;
+
+	const GPIO_TypeDef *volt_port_b2
+		= (main:*) table(vpin_main, p2)
+		= (default) NULL;
+	const uint16_t volt_b2
+		= (main:*) table(vpin_main, b2)
+		= (default) 0;
+
     user uint8_t reverse_bemf:1
 		= (default) 0;
 	const int8_t **pptr 
@@ -43,3 +55,12 @@ config canton {
 } num = (main) 6
       = (dispatcher) 1
       = (default) 0;
+
+table vpin_main 
+	( p0, b0,   	p1, b1,  	p2, b2,			tim, ch1, ch2)
+    ( GPIOD, 0,		GPIOD, 1,	GPIOD, 2,		1, TIM_CHANNEL_1, TIM_CHANNEL_2)
+    ( GPIOD, 3,		GPIOD, 4,	GPIOD, 5,		1, TIM_CHANNEL_3, TIM_CHANNEL_4)
+    ( GPIOD, 6,		GPIOD, 7,	GPIOD, 8,		2, TIM_CHANNEL_3, TIM_CHANNEL_4)
+    ( GPIOD, 9,		GPIOD, 10,	GPIOD, 11,		3, TIM_CHANNEL_1, TIM_CHANNEL_2)
+    ( GPIOE, 2,		GPIOE, 3,	GPIOE, 5,		3, TIM_CHANNEL_3, TIM_CHANNEL_4)
+;

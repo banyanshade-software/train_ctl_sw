@@ -44,11 +44,33 @@ int main(int argc, char **argv) {
         else {
 	    fprintf(stderr, "parsed\n");
            	system__dump_ast(&system, ast);
-			generate_hfile(ast, 1, stdout);
+            config_node_t *root = create_config_node(&system, CONFIG_NODE_ROOT, range__void());
+            config_node_t *next = NULL;
+            for (config_node_t *n = ast; n; n = next) {
+                next = n->next;
+                n->next = NULL;
+                switch (n->tag) {
+                case CONFIG_NODE_TABLE:
+                    n->next = root->tables;
+                    root->tables = n;
+                    break;
+                case CONFIG_NODE_CONF:
+                    n->next = root->defs;
+                    root->defs = n;
+                    break;
+                default:
+                    fprintf(stderr, "bad top level tag %d\n", n->tag);
+                    exit(1);
+                    break;
+                }
+            }
+			generate_hfile(root->defs, 1, stdout);
+
 			config_node_t *bm = create_config_node_string(&system, CONFIG_NODE_BOARD, "main");
 			bm->next = create_config_node_string(&system, CONFIG_NODE_BOARD, "dispatcher");
 			bm->next->next = create_config_node_string(&system, CONFIG_NODE_BOARD, "switcher");
-			generate_cfile(ast, 1, stdout, bm);
+
+			generate_cfile(root->defs, root->tables, 1, stdout, bm);
         }
     }
     else {

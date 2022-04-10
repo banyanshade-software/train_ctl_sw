@@ -33,10 +33,13 @@ typedef struct system_tag system_t;
 
 typedef enum node_type_tag {
     CONFIG_NODE_ROOT, // not used
+    CONFIG_NODE_TABLE,
+    CONFIG_NODE_TABLELINE,
     CONFIG_NODE_CONF,
     CONFIG_NODE_FIELD,
 	CONFIG_NODE_BOARDVAL,
 	CONFIG_NODE_VALUE,
+	CONFIG_NODE_TABLEREF,
 
 	// transiant use only
     CONFIG_NODE_IDENT,	
@@ -72,6 +75,21 @@ typedef struct config_node {
 		struct { // per board value CONFIG_NODE_BOARDVAL
 			struct config_node *val;
 		};
+		struct { // root node CONFIG_NODE_ROOT
+			struct config_node *defs;
+            struct config_node *tables;
+        };
+        struct { // table CONFIG_NODE_TABLE
+            struct config_node *coldef;
+            struct config_node *lines;
+        };
+        struct { // CONFIG_NODE_TABLELINE
+            struct config_node *lineval;
+        };
+        struct { // CONFIG_NODE_TABLEREF
+            char *tablename;
+            char *colname;
+        };
     };
 } config_node_t;
 

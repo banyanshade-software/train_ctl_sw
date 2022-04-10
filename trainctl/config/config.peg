@@ -31,18 +31,47 @@ static const char *dbg_str[] = { "EVAL_", "MATCH", "ABAND" };
 }
 
 
-confall 
-	<- _ s:configdef _ l:confall
-	    {
-            $$ = s;
-            $$->range = range__new($0s, $0e);
-			$$->next = l;
-	    }
-     / _ s:configdef 
-        {
-            $$ = s;
+defall 
+	<- _ s:defstatement _ l:defall
+        { $$ = s; $$->next = l; $$->range = range__new($0s, $0e); }
+     / _ s:defstatement
+        { $$ = s; }
+     / _ end_of_file
+
+defstatement
+	<- s:configdef
+        { $$ = s; }
+     / s:tabledef
+        { $$ = s; }
+
+# ---------------- tables
+tabledef
+	<- kw_table _ n:identifier _ c:tableline  v:tablemultiline _ ';'
+        { $$ = create_config_node(auxil, CONFIG_NODE_TABLE, range__new($0s, $0e));
+          $$->string = n->string;
+          $$->coldef = c;
+          $$->lines = v;
         }
-	 / _ end_of_file
+
+tablemultiline
+    <- _ a:tableline _ l:tablemultiline
+        { $$ = a; a->next = l; }
+     / _ a:tableline
+        { $$ = a; }
+
+tableline
+	<- '(' l:tablevals _ ')'
+        { $$ = create_config_node(auxil, CONFIG_NODE_TABLELINE, range__new($0s, $0e));
+          $$->lineval = l;
+        }
+
+tablevals
+	<- _ v:value _ ',' l:tablevals
+        { $$ = v; $$->next = l; }
+     / _ v:value
+        { $$ = v; }
+
+# ---------------- config
 
 configdef
 	<- kw_config _ n:identifier _  f:fields  _ kw_num _ b:board_values  _ ';' 
@@ -90,7 +119,7 @@ fielddef
 
 type
 	<- i:identifier _ <('*')+>
-	   { $$ = i; $$->value = $1e-$1s; printf("t=%s; nptr=%d\n", $$->string, $$->value);}
+	   { $$ = i; $$->value = $1e-$1s; /*printf("t=%s; nptr=%d\n", $$->string, $$->value);*/}
      / i:identifier
 	   { $$ = i; }
 
@@ -123,7 +152,12 @@ board_id
        { $$ = i; $$->value = -1; }
 
 value
-	<- v:integer
+	<- kw_table _ '(' _ n:identifier _ ',' _ c:identifier _ ')' 
+       { $$ = create_config_node_text(auxil, CONFIG_NODE_TABLEREF, range__new($0s, $0e));
+         $$->tablename = strdup(n->string);
+         $$->colname = strdup(c->string);
+       }
+     / v:integer
        { $$ = v; }
      / v:identifier
        { $$ = v; }
@@ -157,10 +191,11 @@ integer
     }
 
 
-kw_config <- 'config'  !(L/D)
-kw_num    <- 'num' !(L/D)
-kw_const  <- 'const' !(L/D)
-kw_user <- 'user' !(L/D)
+kw_config 	<- 'config'  !(L/D)
+kw_num    	<- 'num' !(L/D)
+kw_const  	<- 'const' !(L/D)
+kw_user		<- 'user' !(L/D)
+kw_table	<- 'table' !(L/D)
 
 O <- [0-7]
 D <- [0-9]
@@ -173,9 +208,9 @@ keyword
     / kw_const
     / kw_user
     / kw_config
+    / kw_table
 
 _ <- ( space / comment )*
-#_ <- ( comment / space )*
 
 comment
    <- '/*' ( !'*/' . )* '*/'

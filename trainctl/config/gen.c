@@ -60,7 +60,7 @@ void generate_hfile(config_node_t *node, int continue_next, FILE *output)
 static void gen_field_val(FILE *output, config_node_t *f, config_node_t *b, int numinst);
 static config_node_t *find_board_value(config_node_t *values, int inst, const char *boardname);
 
-void generate_cfile(config_node_t *node, int continue_next, FILE *output, config_node_t *board)
+void generate_cfile(config_node_t *node, config_node_t *tables, int continue_next, FILE *output, config_node_t *board)
 {
     fprintf(output, "// this file is generated automatically\n// do not modify\n");
     for ( ; node; node = node->next) {

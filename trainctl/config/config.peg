@@ -68,7 +68,7 @@ field_list
 		{ $$ = f; }
 
 field 
-	<- q:qualifier _ t:type _ d:fielddef _ board_values _ ';'
+	<- q:qualifier _ t:type _ d:fielddef _ k:board_values _ ';'
 		{
 			$$ =  create_config_node(auxil, CONFIG_NODE_FIELD, range__new($0s, $0e));
 			$$->string = d->string;
@@ -77,6 +77,7 @@ field
 			$$->configurable = q->value;
 			$$->nptr = t->value;
 			$$->type = t->string;
+			$$->boardvalues = k;
 		}
 
 fielddef 
@@ -124,10 +125,10 @@ board_id
        { $$ = i; }
 
 value
-	<- integer
-       { $$ = create_config_node_text(auxil, CONFIG_NODE_VALUE, range__new($0s, $0e)); }
-     / identifier
-       { $$ = create_config_node_text(auxil, CONFIG_NODE_VALUE, range__new($0s, $0e)); }
+	<- v:integer
+       { $$ = v; }
+     / v:identifier
+       { $$ = v; }
      / '{' _ val_list _ '}'
        { $$ = create_config_node_text(auxil, CONFIG_NODE_VALUE, range__new($0s, $0e)); }
 

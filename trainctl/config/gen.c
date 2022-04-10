@@ -57,6 +57,8 @@ void generate_hfile(config_node_t *node, int continue_next, FILE *output)
 
 
 
+static void gen_field_val(FILE *output, config_node_t *f, config_node_t *b);
+
 void generate_cfile(config_node_t *node, int continue_next, FILE *output, config_node_t *board)
 {
     fprintf(output, "// this file is generated automatically\n// do not modify\n");
@@ -85,9 +87,25 @@ void generate_cfile(config_node_t *node, int continue_next, FILE *output, config
 				fprintf(output, "// default value\n");
 			}
 			if (!b) error("no board or no default");
-		    fprintf(output, "int conf_%s_num_entries(void)\n{\n    return %s;\n}\n\n", n, b->val->string);
+		    fprintf(output, "int conf_%s_num_entries(void)\n{\n    return %s; // %d \n}\n\n", n, b->val->string, b->val->value);
+			fprintf(output, "static conf_%s_t conf_%s[%s] = {\n", n,n, b->val->string);
+			for (int numinst=0; numinst<b->val->value; numinst++) {
+				fprintf(output, "  {     // %d\n", numinst);
+				for (config_node_t *f = node->fields; f; f = f->next) {
+					gen_field_val(output, f, b);
+				}
+				fprintf(output, "  }%s\n", (numinst==b->val->value-1) ?  "" : ",");
+			}
+			fprintf(output, "};\n\n");
 			fprintf(output, "#endif // TRN_BOARD_%s\n\n\n", brduc);
 		}
 	}
+}
+
+static void gen_field_val(FILE *output, config_node_t *f, config_node_t *b)
+{
+	fprintf(output, "     .%s = \n",
+		f->string);
+	fprintf(output, "//%s\n", f->boardvalues->string);
 }
 

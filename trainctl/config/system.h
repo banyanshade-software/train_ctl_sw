@@ -61,14 +61,15 @@ typedef struct config_node {
 			struct config_node *fields;
             struct config_node *numinst;
 		};
-		struct { // field definition
+		struct { // field definition CONFIG_NODE_FIELD
 			int configurable;
 			int bitfield;
 			int array;
 			int nptr;
 			char *type;
+			struct config_node *boardvalues;
 		};
-		struct { // per board value
+		struct { // per board value CONFIG_NODE_BOARDVAL
 			struct config_node *val;
 		};
     };

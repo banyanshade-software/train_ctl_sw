@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include <assert.h>
 #include "system.h"
 #include "gen.h"
 
@@ -57,8 +58,9 @@ void generate_hfile(config_node_t *node, int continue_next, FILE *output)
 
 
 
-static void gen_field_val(FILE *output, config_node_t *f, config_node_t *b, int numinst);
+static void gen_field_val(FILE *output, config_node_t *f, config_node_t *b, int numinst, config_node_t *tables);
 static config_node_t *find_board_value(config_node_t *values, int inst, const char *boardname);
+static config_node_t *value_for_table(config_node_t *tables, char *tblname, char *colname, int numinst);
 
 void generate_cfile(config_node_t *node, config_node_t *tables, int continue_next, FILE *output, config_node_t *board)
 {
@@ -77,13 +79,14 @@ void generate_cfile(config_node_t *node, config_node_t *tables, int continue_nex
 
 			config_node_t *b = find_board_value(node->numinst, -1, board->string);
 
+
 			if (!b) error("no board or no default");
 		    fprintf(output, "int conf_%s_num_entries(void)\n{\n    return %s; // %d \n}\n\n", n, b->val->string, b->val->value);
 			fprintf(output, "static conf_%s_t conf_%s[%s] = {\n", n,n, b->val->string);
 			for (int numinst=0; numinst<b->val->value; numinst++) {
 				fprintf(output, "  {     // %d\n", numinst);
 				for (config_node_t *f = node->fields; f; f = f->next) {
-					gen_field_val(output, f, b, numinst);
+					gen_field_val(output, f, b, numinst, tables);
 				}
 				fprintf(output, "  }%s\n", (numinst==b->val->value-1) ?  "" : ",");
 			}
@@ -116,12 +119,82 @@ static config_node_t *find_board_value(config_node_t *values, int inst, const ch
 	return bvdefault;
 }
 
-static void gen_field_val(FILE *output, config_node_t *f, config_node_t *b, int numinst)
+static void gen_field_val(FILE *output, config_node_t *f, config_node_t *b, int numinst, config_node_t *tables)
 {
 	config_node_t *v = find_board_value(f->boardvalues, numinst, b->string);
-	fprintf(output, "     .%s = %s \t\t// %s:%d,%s:%d \n",
+    config_node_t *val = v->val;
+    if (val->tag == CONFIG_NODE_TABLEREF) {
+        //printf("//table %s col %s inst %d\n", val->tablename, val->colname, numinst);
+        config_node_t *v = value_for_table(tables, val->tablename, val->colname, numinst);
+        if (v) val = v;
+    }
+	fprintf(output, "     .%s = %s \t\t// %s:%d,%s:%d tag:%d\n",
 		f->string,
-		v ? v->val->string : "missing",
-		b->string, numinst, v->string, v->value);
+		val ? val->string : "missing",
+		b->string, numinst, v->string, v->value, val->tag);
 }
 
+// tables management
+
+static config_node_t *find_by_name(config_node_t *node, const char *s, int *pc)
+{
+    int n=0;
+    for ( ; node; node = node->next) {
+        if (!strcmp(node->string, s)) {
+            if (pc) *pc = n;
+            return node;
+        }
+        n++;
+    }
+    if (pc) *pc = -1;
+    return NULL;
+}
+
+static config_node_t *find_by_index(config_node_t *node, int idx)
+{
+    int n=0;
+    for ( ; node; node = node->next) {
+        if (n==idx) return node;
+        n++;
+    }
+    return NULL;
+}
+
+
+static int table_find_colindex(config_node_t *coldef, char *string)
+{
+    int n;
+    assert(coldef->tag == CONFIG_NODE_TABLELINE);
+    find_by_name(coldef->lineval, string, &n);
+    return n;
+}
+
+static config_node_t *value_for_table(config_node_t *tables, char *tblname, char *colname, int numinst)
+{
+    config_node_t *tbl = find_by_name(tables, tblname, NULL);
+    if (!tbl) {
+        fprintf(stderr, "no such table '%s'\n", tblname);
+        return NULL;
+    }
+    assert(tbl->tag == CONFIG_NODE_TABLE);
+    int cidx = table_find_colindex(tbl->coldef, colname);
+    if (cidx<0) {
+        fprintf(stderr, "no such column '%s' in %s\n", colname, tblname);
+        return NULL;
+    }
+    config_node_t *line = find_by_index(tbl->lines, numinst);
+    if (!line) {
+        fprintf(stderr, "no such line %d in %s\n", numinst, tblname);
+        return NULL;
+    }
+    assert(line->tag == CONFIG_NODE_TABLELINE);
+    config_node_t *v = find_by_index(line->lineval, cidx);
+    if (!v) {
+        fprintf(stderr, "no such column %d in line %d of %s\n", cidx, numinst, tblname);
+        return NULL;
+    }
+    return v;
+}
+
+    
+    

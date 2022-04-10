@@ -63,4 +63,5 @@ table vpin_main
     ( GPIOD, 6,		GPIOD, 7,	GPIOD, 8,		2, TIM_CHANNEL_3, TIM_CHANNEL_4)
     ( GPIOD, 9,		GPIOD, 10,	GPIOD, 11,		3, TIM_CHANNEL_1, TIM_CHANNEL_2)
     ( GPIOE, 2,		GPIOE, 3,	GPIOE, 5,		3, TIM_CHANNEL_3, TIM_CHANNEL_4)
+    ( NULL, 0,      NULL, 0,     NULL, 0,       0, 0, 0)
 ;

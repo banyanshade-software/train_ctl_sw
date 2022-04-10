@@ -57,7 +57,8 @@ void generate_hfile(config_node_t *node, int continue_next, FILE *output)
 
 
 
-static void gen_field_val(FILE *output, config_node_t *f, config_node_t *b);
+static void gen_field_val(FILE *output, config_node_t *f, config_node_t *b, int numinst);
+static config_node_t *find_board_value(config_node_t *values, int inst, const char *boardname);
 
 void generate_cfile(config_node_t *node, int continue_next, FILE *output, config_node_t *board)
 {
@@ -74,25 +75,15 @@ void generate_cfile(config_node_t *node, int continue_next, FILE *output, config
 			for (char *p = brduc; *p; p++) *p = toupper(*p);
 			fprintf(output, "\n\n#ifdef TRN_BOARD_%s\n\n", brduc);
 
-			config_node_t *bdefault = NULL;
-			config_node_t *b = node->numinst;
-			for (; b;  b = b->next) {
-				if (!strcmp(b->string, "all")) bdefault = b;;
-				if (!strcmp(b->string, "default")) bdefault = b;;
-				if (!strcmp(b->string, board->string)) break;
-			}
-			if (b) fprintf(output, "// value for %s\n", b->string);
-			else { 
-				b = bdefault;
-				fprintf(output, "// default value\n");
-			}
+			config_node_t *b = find_board_value(node->numinst, -1, board->string);
+
 			if (!b) error("no board or no default");
 		    fprintf(output, "int conf_%s_num_entries(void)\n{\n    return %s; // %d \n}\n\n", n, b->val->string, b->val->value);
 			fprintf(output, "static conf_%s_t conf_%s[%s] = {\n", n,n, b->val->string);
 			for (int numinst=0; numinst<b->val->value; numinst++) {
 				fprintf(output, "  {     // %d\n", numinst);
 				for (config_node_t *f = node->fields; f; f = f->next) {
-					gen_field_val(output, f, b);
+					gen_field_val(output, f, b, numinst);
 				}
 				fprintf(output, "  }%s\n", (numinst==b->val->value-1) ?  "" : ",");
 			}
@@ -102,10 +93,35 @@ void generate_cfile(config_node_t *node, int continue_next, FILE *output, config
 	}
 }
 
-static void gen_field_val(FILE *output, config_node_t *f, config_node_t *b)
+static int sameinstnum(int inst, int binst)
 {
-	fprintf(output, "     .%s = \n",
-		f->string);
-	fprintf(output, "//%s\n", f->boardvalues->string);
+	if (inst == -1) return 1;
+	if (binst  == -1) return 1;
+	if (inst == binst) return 1;
+	return 0;
+}
+
+static config_node_t *find_board_value(config_node_t *values, int inst, const char *boardname)
+{
+  	config_node_t *bvdefault = NULL;
+    config_node_t *bv = values;
+    for (; bv;  bv = bv->next) {
+    	if (!strcmp(bv->string, "all") && sameinstnum(inst, bv->value)) {
+			return bv;
+		}
+		if (!strcmp(bv->string, "default")) bvdefault = bv;
+        if (!strcmp(bv->string, boardname) && sameinstnum(inst, bv->value)) return bv;
+	}
+	if (!bvdefault) error("no board or no default");
+	return bvdefault;
+}
+
+static void gen_field_val(FILE *output, config_node_t *f, config_node_t *b, int numinst)
+{
+	config_node_t *v = find_board_value(f->boardvalues, numinst, b->string);
+	fprintf(output, "     .%s = %s \t\t// %s:%d,%s:%d \n",
+		f->string,
+		v ? v->val->string : "missing",
+		b->string, numinst, v->string, v->value);
 }
 

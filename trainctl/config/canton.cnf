@@ -24,13 +24,21 @@ config canton {
 		= (all) { 1000, 770, 621,  538, 451, 413, 379, 355};
 	const GPIO_TypeDef *volt_port_b0
 		= (main:0) GPIOD
-                = (main:1) GPIOD
-		= (main:2) GPIOD;
+        = (main:1) GPIOD
+		= (main:2) GPIOD
+		= (default) 0;
 	const uint16_t volt_b0
-		= (main:0) GPIO_PIN_1;
+		= (main:0) GPIO_PIN_1
+		= (main:1) GPIO_PIN_7
+		= (main:2) GPIO_PIN_9
+		= (default) 0;
     user uint8_t reverse_bemf:1
 		= (default) 0;
-	const int8_t **pptr = (default)0;
+	const int8_t **pptr 
+		= (all:0) 1
+		= (all:1) 10
+		= (all:2) 100
+		= (all) 42;
      
 } num = (main) 6
       = (dispatcher) 1

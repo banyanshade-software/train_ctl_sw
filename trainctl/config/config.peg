@@ -115,14 +115,12 @@ board_val
 		}
 
 board_id 
-	<- kw_all
-       { $$ = create_config_node(auxil, CONFIG_NODE_BOARDVAL, range__new($0s, $0e));
-    	 $$->string = strdup("all");
-	   }
-     / i:identifier ':' n:integer
+    <- i:identifier ':' n:integer
        	{ $$ = i; $$->value = n->value; }
+     / i:identifier ':*'
+       { $$ = i; $$->value = -1; }
      / i:identifier
-       { $$ = i; }
+       { $$ = i; $$->value = -1; }
 
 value
 	<- v:integer
@@ -163,7 +161,6 @@ kw_config <- 'config'  !(L/D)
 kw_num    <- 'num' !(L/D)
 kw_const  <- 'const' !(L/D)
 kw_user <- 'user' !(L/D)
-kw_all  <- 'all' !(L/D)
 
 O <- [0-7]
 D <- [0-9]
@@ -175,7 +172,6 @@ keyword
    <- kw_num
     / kw_const
     / kw_user
-    / kw_all
     / kw_config
 
 _ <- ( space / comment )*

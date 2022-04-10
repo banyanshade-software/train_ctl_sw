@@ -24,7 +24,7 @@
 static const char *dbg_str[] = { "EVAL_", "MATCH", "ABAND" };
 
 #define PCC_DEBUG(auxil, event, rule, level, pos, buffer, length) do {\
-     if ((1)) fprintf(stdout, "%*s%s %s @%d [%.*s]\n", (int)(level * 2), "", dbg_str[event], rule, (int)pos, (int)length,  buffer); fflush(stdout); \
+     if ((0)) fprintf(stdout, "%*s%s %s @%d [%.*s]\n", (int)(level * 2), "", dbg_str[event], rule, (int)pos, (int)length,  buffer); fflush(stdout); \
 } while(0)
 
 

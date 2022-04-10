@@ -329,6 +329,8 @@ static void dump_ast_(system_t *obj, config_node_t *node, int level) {
 	case CONFIG_NODE_TABLELINE:	type="LINE";	break;
 	case CONFIG_NODE_TABLEREF:	type="TREF";	break;
 	case CONFIG_NODE_INT:		type="INT";		break;
+    case CONFIG_NODE_SUBCONF:   type="SUBCONF"; break;
+    case CONFIG_NODE_SUBREF:    type="SREF";    break;
 	default: break;
 	}
 
@@ -346,6 +348,7 @@ static void dump_ast_(system_t *obj, config_node_t *node, int level) {
 		if (node->configurable) printf(" (USER)");
 		printf("\n");
 		break;
+    case CONFIG_NODE_SUBCONF:
     case CONFIG_NODE_CONF:
 		printf("\n");
         dump_ast_(obj, node->fields, level+1);

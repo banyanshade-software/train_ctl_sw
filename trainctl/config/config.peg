@@ -174,14 +174,19 @@ value
        }
      / v:integer
        { $$ = v; }
+     / identifier '(' paren* ')'
+       { $$ = create_config_node_text(auxil, CONFIG_NODE_VALUE, range__new($0s, $0e)); }
      / v:identifier
        { $$ = v; }
-     / '{' _ val_list _ '}'
+     / '{' accol* '}'
        { $$ = create_config_node_text(auxil, CONFIG_NODE_VALUE, range__new($0s, $0e)); }
 
-val_list 
-    <- value _ ',' _ val_list
-     / value
+paren 
+    <- ![()]. / '(' paren* ')'
+
+accol
+    <- ![{}]. / '{' accol* '}'
+
 
 
 
@@ -204,6 +209,11 @@ integer
     {
         $$ = create_config_node_intstr(auxil, CONFIG_NODE_INT, range__new($0s, $0e), 10);
     }
+    / '-'D+
+    {
+        $$ = create_config_node_intstr(auxil, CONFIG_NODE_INT, range__new($0s, $0e), 10);
+    }
+
 
 
 kw_config       <- 'config'  !(L/D)

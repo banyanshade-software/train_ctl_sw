@@ -33,7 +33,7 @@ static size_t pcc_strnlen(const char *str, size_t maxlen) {
 static const char *dbg_str[] = { "EVAL_", "MATCH", "ABAND" };
 
 #define PCC_DEBUG(auxil, event, rule, level, pos, buffer, length) do {\
-         if ((0)) fprintf(stdout, "%*s%s %s @%d [%.*s]\n", (int)(level * 2), "", dbg_str[event], rule, (int)pos, (int)length,  buffer); fflush(stdout); \
+     if ((1)) fprintf(stdout, "%*s%s %s @%d [%.*s]\n", (int)(level * 2), "", dbg_str[event], rule, (int)pos, (int)length,  buffer); fflush(stdout); \
 } while(0)
 
 #line 39 "config.c"
@@ -1126,6 +1126,24 @@ static void pcc_action_defstatement_1(cnfparse_context_t *__pcc_ctx, pcc_thunk_t
 #undef auxil
 }
 
+static void pcc_action_defstatement_2(cnfparse_context_t *__pcc_ctx, pcc_thunk_t *__pcc_in, pcc_value_t *__pcc_out) {
+#define auxil (__pcc_ctx->auxil)
+#define __ (*__pcc_out)
+#define s (*__pcc_in->data.leaf.values.buf[0])
+#define _0 pcc_get_capture_string(__pcc_ctx, &__pcc_in->data.leaf.capt0)
+#define _0s ((const size_t)(__pcc_ctx->pos + __pcc_in->data.leaf.capt0.range.start))
+#define _0e ((const size_t)(__pcc_ctx->pos + __pcc_in->data.leaf.capt0.range.end))
+#line 47 "config.peg"
+    __ = s;
+#line 1138 "config.c"
+#undef _0e
+#undef _0s
+#undef _0
+#undef s
+#undef __
+#undef auxil
+}
+
 static void pcc_action_tabledef_0(cnfparse_context_t *__pcc_ctx, pcc_thunk_t *__pcc_in, pcc_value_t *__pcc_out) {
 #define auxil (__pcc_ctx->auxil)
 #define __ (*__pcc_out)
@@ -1135,12 +1153,12 @@ static void pcc_action_tabledef_0(cnfparse_context_t *__pcc_ctx, pcc_thunk_t *__
 #define _0 pcc_get_capture_string(__pcc_ctx, &__pcc_in->data.leaf.capt0)
 #define _0s ((const size_t)(__pcc_ctx->pos + __pcc_in->data.leaf.capt0.range.start))
 #define _0e ((const size_t)(__pcc_ctx->pos + __pcc_in->data.leaf.capt0.range.end))
-#line 50 "config.peg"
+#line 52 "config.peg"
     __ = create_config_node(auxil, CONFIG_NODE_TABLE, range__new(_0s, _0e));
     __->string = n->string;
     __->coldef = c;
     __->lines = v;
-#line 1143 "config.c"
+#line 1161 "config.c"
 #undef _0e
 #undef _0s
 #undef _0
@@ -1159,9 +1177,9 @@ static void pcc_action_tablemultiline_0(cnfparse_context_t *__pcc_ctx, pcc_thunk
 #define _0 pcc_get_capture_string(__pcc_ctx, &__pcc_in->data.leaf.capt0)
 #define _0s ((const size_t)(__pcc_ctx->pos + __pcc_in->data.leaf.capt0.range.start))
 #define _0e ((const size_t)(__pcc_ctx->pos + __pcc_in->data.leaf.capt0.range.end))
-#line 58 "config.peg"
+#line 60 "config.peg"
     __ = a; a->next = l;
-#line 1164 "config.c"
+#line 1182 "config.c"
 #undef _0e
 #undef _0s
 #undef _0
@@ -1178,9 +1196,9 @@ static void pcc_action_tablemultiline_1(cnfparse_context_t *__pcc_ctx, pcc_thunk
 #define _0 pcc_get_capture_string(__pcc_ctx, &__pcc_in->data.leaf.capt0)
 #define _0s ((const size_t)(__pcc_ctx->pos + __pcc_in->data.leaf.capt0.range.start))
 #define _0e ((const size_t)(__pcc_ctx->pos + __pcc_in->data.leaf.capt0.range.end))
-#line 60 "config.peg"
+#line 62 "config.peg"
     __ = a;
-#line 1183 "config.c"
+#line 1201 "config.c"
 #undef _0e
 #undef _0s
 #undef _0
@@ -1196,10 +1214,10 @@ static void pcc_action_tableline_0(cnfparse_context_t *__pcc_ctx, pcc_thunk_t *_
 #define _0 pcc_get_capture_string(__pcc_ctx, &__pcc_in->data.leaf.capt0)
 #define _0s ((const size_t)(__pcc_ctx->pos + __pcc_in->data.leaf.capt0.range.start))
 #define _0e ((const size_t)(__pcc_ctx->pos + __pcc_in->data.leaf.capt0.range.end))
-#line 64 "config.peg"
+#line 66 "config.peg"
     __ = create_config_node(auxil, CONFIG_NODE_TABLELINE, range__new(_0s, _0e));
     __->lineval = l;
-#line 1202 "config.c"
+#line 1220 "config.c"
 #undef _0e
 #undef _0s
 #undef _0
@@ -1216,9 +1234,9 @@ static void pcc_action_tablevals_0(cnfparse_context_t *__pcc_ctx, pcc_thunk_t *_
 #define _0 pcc_get_capture_string(__pcc_ctx, &__pcc_in->data.leaf.capt0)
 #define _0s ((const size_t)(__pcc_ctx->pos + __pcc_in->data.leaf.capt0.range.start))
 #define _0e ((const size_t)(__pcc_ctx->pos + __pcc_in->data.leaf.capt0.range.end))
-#line 70 "config.peg"
+#line 72 "config.peg"
     __ = v; __->next = l;
-#line 1221 "config.c"
+#line 1239 "config.c"
 #undef _0e
 #undef _0s
 #undef _0
@@ -1235,9 +1253,9 @@ static void pcc_action_tablevals_1(cnfparse_context_t *__pcc_ctx, pcc_thunk_t *_
 #define _0 pcc_get_capture_string(__pcc_ctx, &__pcc_in->data.leaf.capt0)
 #define _0s ((const size_t)(__pcc_ctx->pos + __pcc_in->data.leaf.capt0.range.start))
 #define _0e ((const size_t)(__pcc_ctx->pos + __pcc_in->data.leaf.capt0.range.end))
-#line 72 "config.peg"
+#line 74 "config.peg"
     __ = v;
-#line 1240 "config.c"
+#line 1258 "config.c"
 #undef _0e
 #undef _0s
 #undef _0
@@ -1255,16 +1273,38 @@ static void pcc_action_configdef_0(cnfparse_context_t *__pcc_ctx, pcc_thunk_t *_
 #define _0 pcc_get_capture_string(__pcc_ctx, &__pcc_in->data.leaf.capt0)
 #define _0s ((const size_t)(__pcc_ctx->pos + __pcc_in->data.leaf.capt0.range.start))
 #define _0e ((const size_t)(__pcc_ctx->pos + __pcc_in->data.leaf.capt0.range.end))
-#line 79 "config.peg"
+#line 81 "config.peg"
     __ = create_config_node(auxil, CONFIG_NODE_CONF, range__new(_0s, _0e));
     __->string = n->string;
     __->fields = f;
-                __->numinst = b;
-#line 1263 "config.c"
+    __->numinst = b;
+#line 1281 "config.c"
 #undef _0e
 #undef _0s
 #undef _0
 #undef b
+#undef f
+#undef n
+#undef __
+#undef auxil
+}
+
+static void pcc_action_subconfigdef_0(cnfparse_context_t *__pcc_ctx, pcc_thunk_t *__pcc_in, pcc_value_t *__pcc_out) {
+#define auxil (__pcc_ctx->auxil)
+#define __ (*__pcc_out)
+#define n (*__pcc_in->data.leaf.values.buf[0])
+#define f (*__pcc_in->data.leaf.values.buf[1])
+#define _0 pcc_get_capture_string(__pcc_ctx, &__pcc_in->data.leaf.capt0)
+#define _0s ((const size_t)(__pcc_ctx->pos + __pcc_in->data.leaf.capt0.range.start))
+#define _0e ((const size_t)(__pcc_ctx->pos + __pcc_in->data.leaf.capt0.range.end))
+#line 90 "config.peg"
+    __ = create_config_node(auxil, CONFIG_NODE_SUBCONF, range__new(_0s, _0e));
+    __->string = n->string;
+    __->fields = f;
+#line 1304 "config.c"
+#undef _0e
+#undef _0s
+#undef _0
 #undef f
 #undef n
 #undef __
@@ -1278,9 +1318,9 @@ static void pcc_action_fields_0(cnfparse_context_t *__pcc_ctx, pcc_thunk_t *__pc
 #define _0 pcc_get_capture_string(__pcc_ctx, &__pcc_in->data.leaf.capt0)
 #define _0s ((const size_t)(__pcc_ctx->pos + __pcc_in->data.leaf.capt0.range.start))
 #define _0e ((const size_t)(__pcc_ctx->pos + __pcc_in->data.leaf.capt0.range.end))
-#line 88 "config.peg"
+#line 98 "config.peg"
     __ = l;
-#line 1283 "config.c"
+#line 1323 "config.c"
 #undef _0e
 #undef _0s
 #undef _0
@@ -1297,10 +1337,10 @@ static void pcc_action_field_list_0(cnfparse_context_t *__pcc_ctx, pcc_thunk_t *
 #define _0 pcc_get_capture_string(__pcc_ctx, &__pcc_in->data.leaf.capt0)
 #define _0s ((const size_t)(__pcc_ctx->pos + __pcc_in->data.leaf.capt0.range.start))
 #define _0e ((const size_t)(__pcc_ctx->pos + __pcc_in->data.leaf.capt0.range.end))
-#line 93 "config.peg"
+#line 103 "config.peg"
     __ = f;
-                __->next = l;
-#line 1303 "config.c"
+    __->next = l;
+#line 1343 "config.c"
 #undef _0e
 #undef _0s
 #undef _0
@@ -1317,9 +1357,9 @@ static void pcc_action_field_list_1(cnfparse_context_t *__pcc_ctx, pcc_thunk_t *
 #define _0 pcc_get_capture_string(__pcc_ctx, &__pcc_in->data.leaf.capt0)
 #define _0s ((const size_t)(__pcc_ctx->pos + __pcc_in->data.leaf.capt0.range.start))
 #define _0e ((const size_t)(__pcc_ctx->pos + __pcc_in->data.leaf.capt0.range.end))
-#line 97 "config.peg"
+#line 107 "config.peg"
     __ = f;
-#line 1322 "config.c"
+#line 1362 "config.c"
 #undef _0e
 #undef _0s
 #undef _0
@@ -1338,7 +1378,7 @@ static void pcc_action_field_0(cnfparse_context_t *__pcc_ctx, pcc_thunk_t *__pcc
 #define _0 pcc_get_capture_string(__pcc_ctx, &__pcc_in->data.leaf.capt0)
 #define _0s ((const size_t)(__pcc_ctx->pos + __pcc_in->data.leaf.capt0.range.start))
 #define _0e ((const size_t)(__pcc_ctx->pos + __pcc_in->data.leaf.capt0.range.end))
-#line 102 "config.peg"
+#line 112 "config.peg"
     __ =  create_config_node(auxil, CONFIG_NODE_FIELD, range__new(_0s, _0e));
     __->string = d->string;
     __->array = d->array;
@@ -1347,7 +1387,7 @@ static void pcc_action_field_0(cnfparse_context_t *__pcc_ctx, pcc_thunk_t *__pcc
     __->nptr = t->value;
     __->type = t->string;
     __->boardvalues = k;
-#line 1350 "config.c"
+#line 1390 "config.c"
 #undef _0e
 #undef _0s
 #undef _0
@@ -1355,6 +1395,25 @@ static void pcc_action_field_0(cnfparse_context_t *__pcc_ctx, pcc_thunk_t *__pcc
 #undef d
 #undef t
 #undef q
+#undef __
+#undef auxil
+}
+
+static void pcc_action_field_1(cnfparse_context_t *__pcc_ctx, pcc_thunk_t *__pcc_in, pcc_value_t *__pcc_out) {
+#define auxil (__pcc_ctx->auxil)
+#define __ (*__pcc_out)
+#define v (*__pcc_in->data.leaf.values.buf[4])
+#define _0 pcc_get_capture_string(__pcc_ctx, &__pcc_in->data.leaf.capt0)
+#define _0s ((const size_t)(__pcc_ctx->pos + __pcc_in->data.leaf.capt0.range.start))
+#define _0e ((const size_t)(__pcc_ctx->pos + __pcc_in->data.leaf.capt0.range.end))
+#line 123 "config.peg"
+    __ = create_config_node(auxil, CONFIG_NODE_SUBREF, range__new(_0s, _0e));
+    __->string = strdup(v->string);
+#line 1412 "config.c"
+#undef _0e
+#undef _0s
+#undef _0
+#undef v
 #undef __
 #undef auxil
 }
@@ -1367,9 +1426,9 @@ static void pcc_action_fielddef_0(cnfparse_context_t *__pcc_ctx, pcc_thunk_t *__
 #define _0 pcc_get_capture_string(__pcc_ctx, &__pcc_in->data.leaf.capt0)
 #define _0s ((const size_t)(__pcc_ctx->pos + __pcc_in->data.leaf.capt0.range.start))
 #define _0e ((const size_t)(__pcc_ctx->pos + __pcc_in->data.leaf.capt0.range.end))
-#line 114 "config.peg"
+#line 129 "config.peg"
     __ = i; __->array = n->value; __->value = i->value;
-#line 1372 "config.c"
+#line 1431 "config.c"
 #undef _0e
 #undef _0s
 #undef _0
@@ -1387,9 +1446,9 @@ static void pcc_action_fielddef_1(cnfparse_context_t *__pcc_ctx, pcc_thunk_t *__
 #define _0 pcc_get_capture_string(__pcc_ctx, &__pcc_in->data.leaf.capt0)
 #define _0s ((const size_t)(__pcc_ctx->pos + __pcc_in->data.leaf.capt0.range.start))
 #define _0e ((const size_t)(__pcc_ctx->pos + __pcc_in->data.leaf.capt0.range.end))
-#line 116 "config.peg"
+#line 131 "config.peg"
     __ = i; __->bitfield = n->value; __->value = i->value;
-#line 1392 "config.c"
+#line 1451 "config.c"
 #undef _0e
 #undef _0s
 #undef _0
@@ -1406,9 +1465,9 @@ static void pcc_action_fielddef_2(cnfparse_context_t *__pcc_ctx, pcc_thunk_t *__
 #define _0 pcc_get_capture_string(__pcc_ctx, &__pcc_in->data.leaf.capt0)
 #define _0s ((const size_t)(__pcc_ctx->pos + __pcc_in->data.leaf.capt0.range.start))
 #define _0e ((const size_t)(__pcc_ctx->pos + __pcc_in->data.leaf.capt0.range.end))
-#line 118 "config.peg"
+#line 133 "config.peg"
     __ = i; __->value = i->value;
-#line 1411 "config.c"
+#line 1470 "config.c"
 #undef _0e
 #undef _0s
 #undef _0
@@ -1427,9 +1486,9 @@ static void pcc_action_type_0(cnfparse_context_t *__pcc_ctx, pcc_thunk_t *__pcc_
 #define _1 pcc_get_capture_string(__pcc_ctx, __pcc_in->data.leaf.capts.buf[0])
 #define _1s ((const size_t)(__pcc_ctx->pos + __pcc_in->data.leaf.capts.buf[0]->range.start))
 #define _1e ((const size_t)(__pcc_ctx->pos + __pcc_in->data.leaf.capts.buf[0]->range.end))
-#line 122 "config.peg"
+#line 137 "config.peg"
     __ = i; __->value = _1e-_1s; /*printf("t=%s; nptr=%d\n", $$->string, $$->value);*/
-#line 1432 "config.c"
+#line 1491 "config.c"
 #undef _1e
 #undef _1s
 #undef _1
@@ -1448,9 +1507,9 @@ static void pcc_action_type_1(cnfparse_context_t *__pcc_ctx, pcc_thunk_t *__pcc_
 #define _0 pcc_get_capture_string(__pcc_ctx, &__pcc_in->data.leaf.capt0)
 #define _0s ((const size_t)(__pcc_ctx->pos + __pcc_in->data.leaf.capt0.range.start))
 #define _0e ((const size_t)(__pcc_ctx->pos + __pcc_in->data.leaf.capt0.range.end))
-#line 124 "config.peg"
+#line 139 "config.peg"
     __ = i;
-#line 1453 "config.c"
+#line 1512 "config.c"
 #undef _0e
 #undef _0s
 #undef _0
@@ -1465,9 +1524,9 @@ static void pcc_action_qualifier_0(cnfparse_context_t *__pcc_ctx, pcc_thunk_t *_
 #define _0 pcc_get_capture_string(__pcc_ctx, &__pcc_in->data.leaf.capt0)
 #define _0s ((const size_t)(__pcc_ctx->pos + __pcc_in->data.leaf.capt0.range.start))
 #define _0e ((const size_t)(__pcc_ctx->pos + __pcc_in->data.leaf.capt0.range.end))
-#line 128 "config.peg"
+#line 143 "config.peg"
     __ = create_config_node_int(auxil, CONFIG_NODE_IDENT, range__new(_0s, _0e), 0);
-#line 1470 "config.c"
+#line 1529 "config.c"
 #undef _0e
 #undef _0s
 #undef _0
@@ -1481,9 +1540,9 @@ static void pcc_action_qualifier_1(cnfparse_context_t *__pcc_ctx, pcc_thunk_t *_
 #define _0 pcc_get_capture_string(__pcc_ctx, &__pcc_in->data.leaf.capt0)
 #define _0s ((const size_t)(__pcc_ctx->pos + __pcc_in->data.leaf.capt0.range.start))
 #define _0e ((const size_t)(__pcc_ctx->pos + __pcc_in->data.leaf.capt0.range.end))
-#line 130 "config.peg"
+#line 145 "config.peg"
     __ = create_config_node_int(auxil, CONFIG_NODE_IDENT, range__new(_0s, _0e), 1);
-#line 1486 "config.c"
+#line 1545 "config.c"
 #undef _0e
 #undef _0s
 #undef _0
@@ -1499,9 +1558,9 @@ static void pcc_action_board_values_0(cnfparse_context_t *__pcc_ctx, pcc_thunk_t
 #define _0 pcc_get_capture_string(__pcc_ctx, &__pcc_in->data.leaf.capt0)
 #define _0s ((const size_t)(__pcc_ctx->pos + __pcc_in->data.leaf.capt0.range.start))
 #define _0e ((const size_t)(__pcc_ctx->pos + __pcc_in->data.leaf.capt0.range.end))
-#line 134 "config.peg"
+#line 149 "config.peg"
     __ = b; b->next = l;
-#line 1504 "config.c"
+#line 1563 "config.c"
 #undef _0e
 #undef _0s
 #undef _0
@@ -1518,9 +1577,9 @@ static void pcc_action_board_values_1(cnfparse_context_t *__pcc_ctx, pcc_thunk_t
 #define _0 pcc_get_capture_string(__pcc_ctx, &__pcc_in->data.leaf.capt0)
 #define _0s ((const size_t)(__pcc_ctx->pos + __pcc_in->data.leaf.capt0.range.start))
 #define _0e ((const size_t)(__pcc_ctx->pos + __pcc_in->data.leaf.capt0.range.end))
-#line 136 "config.peg"
+#line 151 "config.peg"
     __ = b;
-#line 1523 "config.c"
+#line 1582 "config.c"
 #undef _0e
 #undef _0s
 #undef _0
@@ -1537,11 +1596,11 @@ static void pcc_action_board_val_0(cnfparse_context_t *__pcc_ctx, pcc_thunk_t *_
 #define _0 pcc_get_capture_string(__pcc_ctx, &__pcc_in->data.leaf.capt0)
 #define _0s ((const size_t)(__pcc_ctx->pos + __pcc_in->data.leaf.capt0.range.start))
 #define _0e ((const size_t)(__pcc_ctx->pos + __pcc_in->data.leaf.capt0.range.end))
-#line 141 "config.peg"
+#line 156 "config.peg"
     __ = b;
     __->tag = CONFIG_NODE_BOARDVAL;
     __->val = v;
-#line 1544 "config.c"
+#line 1603 "config.c"
 #undef _0e
 #undef _0s
 #undef _0
@@ -1559,9 +1618,9 @@ static void pcc_action_board_id_0(cnfparse_context_t *__pcc_ctx, pcc_thunk_t *__
 #define _0 pcc_get_capture_string(__pcc_ctx, &__pcc_in->data.leaf.capt0)
 #define _0s ((const size_t)(__pcc_ctx->pos + __pcc_in->data.leaf.capt0.range.start))
 #define _0e ((const size_t)(__pcc_ctx->pos + __pcc_in->data.leaf.capt0.range.end))
-#line 148 "config.peg"
+#line 163 "config.peg"
     __ = i; __->value = n->value;
-#line 1564 "config.c"
+#line 1623 "config.c"
 #undef _0e
 #undef _0s
 #undef _0
@@ -1578,9 +1637,9 @@ static void pcc_action_board_id_1(cnfparse_context_t *__pcc_ctx, pcc_thunk_t *__
 #define _0 pcc_get_capture_string(__pcc_ctx, &__pcc_in->data.leaf.capt0)
 #define _0s ((const size_t)(__pcc_ctx->pos + __pcc_in->data.leaf.capt0.range.start))
 #define _0e ((const size_t)(__pcc_ctx->pos + __pcc_in->data.leaf.capt0.range.end))
-#line 150 "config.peg"
+#line 165 "config.peg"
     __ = i; __->value = -1;
-#line 1583 "config.c"
+#line 1642 "config.c"
 #undef _0e
 #undef _0s
 #undef _0
@@ -1596,9 +1655,9 @@ static void pcc_action_board_id_2(cnfparse_context_t *__pcc_ctx, pcc_thunk_t *__
 #define _0 pcc_get_capture_string(__pcc_ctx, &__pcc_in->data.leaf.capt0)
 #define _0s ((const size_t)(__pcc_ctx->pos + __pcc_in->data.leaf.capt0.range.start))
 #define _0e ((const size_t)(__pcc_ctx->pos + __pcc_in->data.leaf.capt0.range.end))
-#line 152 "config.peg"
+#line 167 "config.peg"
     __ = i; __->value = -1;
-#line 1601 "config.c"
+#line 1660 "config.c"
 #undef _0e
 #undef _0s
 #undef _0
@@ -1615,11 +1674,11 @@ static void pcc_action_value_0(cnfparse_context_t *__pcc_ctx, pcc_thunk_t *__pcc
 #define _0 pcc_get_capture_string(__pcc_ctx, &__pcc_in->data.leaf.capt0)
 #define _0s ((const size_t)(__pcc_ctx->pos + __pcc_in->data.leaf.capt0.range.start))
 #define _0e ((const size_t)(__pcc_ctx->pos + __pcc_in->data.leaf.capt0.range.end))
-#line 156 "config.peg"
+#line 171 "config.peg"
     __ = create_config_node_text(auxil, CONFIG_NODE_TABLEREF, range__new(_0s, _0e));
     __->tablename = strdup(n->string);
     __->colname = strdup(c->string);
-#line 1622 "config.c"
+#line 1681 "config.c"
 #undef _0e
 #undef _0s
 #undef _0
@@ -1636,9 +1695,9 @@ static void pcc_action_value_1(cnfparse_context_t *__pcc_ctx, pcc_thunk_t *__pcc
 #define _0 pcc_get_capture_string(__pcc_ctx, &__pcc_in->data.leaf.capt0)
 #define _0s ((const size_t)(__pcc_ctx->pos + __pcc_in->data.leaf.capt0.range.start))
 #define _0e ((const size_t)(__pcc_ctx->pos + __pcc_in->data.leaf.capt0.range.end))
-#line 161 "config.peg"
+#line 176 "config.peg"
     __ = v;
-#line 1641 "config.c"
+#line 1700 "config.c"
 #undef _0e
 #undef _0s
 #undef _0
@@ -1654,9 +1713,9 @@ static void pcc_action_value_2(cnfparse_context_t *__pcc_ctx, pcc_thunk_t *__pcc
 #define _0 pcc_get_capture_string(__pcc_ctx, &__pcc_in->data.leaf.capt0)
 #define _0s ((const size_t)(__pcc_ctx->pos + __pcc_in->data.leaf.capt0.range.start))
 #define _0e ((const size_t)(__pcc_ctx->pos + __pcc_in->data.leaf.capt0.range.end))
-#line 163 "config.peg"
+#line 178 "config.peg"
     __ = v;
-#line 1659 "config.c"
+#line 1718 "config.c"
 #undef _0e
 #undef _0s
 #undef _0
@@ -1671,9 +1730,9 @@ static void pcc_action_value_3(cnfparse_context_t *__pcc_ctx, pcc_thunk_t *__pcc
 #define _0 pcc_get_capture_string(__pcc_ctx, &__pcc_in->data.leaf.capt0)
 #define _0s ((const size_t)(__pcc_ctx->pos + __pcc_in->data.leaf.capt0.range.start))
 #define _0e ((const size_t)(__pcc_ctx->pos + __pcc_in->data.leaf.capt0.range.end))
-#line 165 "config.peg"
+#line 180 "config.peg"
     __ = create_config_node_text(auxil, CONFIG_NODE_VALUE, range__new(_0s, _0e));
-#line 1676 "config.c"
+#line 1735 "config.c"
 #undef _0e
 #undef _0s
 #undef _0
@@ -1687,9 +1746,9 @@ static void pcc_action_integer_0(cnfparse_context_t *__pcc_ctx, pcc_thunk_t *__p
 #define _0 pcc_get_capture_string(__pcc_ctx, &__pcc_in->data.leaf.capt0)
 #define _0s ((const size_t)(__pcc_ctx->pos + __pcc_in->data.leaf.capt0.range.start))
 #define _0e ((const size_t)(__pcc_ctx->pos + __pcc_in->data.leaf.capt0.range.end))
-#line 178 "config.peg"
+#line 193 "config.peg"
     __ = create_config_node_intstr(auxil, CONFIG_NODE_INT, range__new(_0s, _0e), 16);
-#line 1692 "config.c"
+#line 1751 "config.c"
 #undef _0e
 #undef _0s
 #undef _0
@@ -1703,9 +1762,9 @@ static void pcc_action_integer_1(cnfparse_context_t *__pcc_ctx, pcc_thunk_t *__p
 #define _0 pcc_get_capture_string(__pcc_ctx, &__pcc_in->data.leaf.capt0)
 #define _0s ((const size_t)(__pcc_ctx->pos + __pcc_in->data.leaf.capt0.range.start))
 #define _0e ((const size_t)(__pcc_ctx->pos + __pcc_in->data.leaf.capt0.range.end))
-#line 182 "config.peg"
+#line 197 "config.peg"
     __ = create_config_node_intstr(auxil, CONFIG_NODE_INT, range__new(_0s, _0e), 8);
-#line 1708 "config.c"
+#line 1767 "config.c"
 #undef _0e
 #undef _0s
 #undef _0
@@ -1719,9 +1778,9 @@ static void pcc_action_integer_2(cnfparse_context_t *__pcc_ctx, pcc_thunk_t *__p
 #define _0 pcc_get_capture_string(__pcc_ctx, &__pcc_in->data.leaf.capt0)
 #define _0s ((const size_t)(__pcc_ctx->pos + __pcc_in->data.leaf.capt0.range.start))
 #define _0e ((const size_t)(__pcc_ctx->pos + __pcc_in->data.leaf.capt0.range.end))
-#line 186 "config.peg"
+#line 201 "config.peg"
     __ = create_config_node_intstr(auxil, CONFIG_NODE_INT, range__new(_0s, _0e), 10);
-#line 1724 "config.c"
+#line 1783 "config.c"
 #undef _0e
 #undef _0s
 #undef _0
@@ -1735,9 +1794,9 @@ static void pcc_action_integer_3(cnfparse_context_t *__pcc_ctx, pcc_thunk_t *__p
 #define _0 pcc_get_capture_string(__pcc_ctx, &__pcc_in->data.leaf.capt0)
 #define _0s ((const size_t)(__pcc_ctx->pos + __pcc_in->data.leaf.capt0.range.start))
 #define _0e ((const size_t)(__pcc_ctx->pos + __pcc_in->data.leaf.capt0.range.end))
-#line 190 "config.peg"
+#line 205 "config.peg"
     __ = create_config_node_intstr(auxil, CONFIG_NODE_INT, range__new(_0s, _0e), 10);
-#line 1740 "config.c"
+#line 1799 "config.c"
 #undef _0e
 #undef _0s
 #undef _0
@@ -1751,10 +1810,10 @@ static void pcc_action_comment_0(cnfparse_context_t *__pcc_ctx, pcc_thunk_t *__p
 #define _0 pcc_get_capture_string(__pcc_ctx, &__pcc_in->data.leaf.capt0)
 #define _0s ((const size_t)(__pcc_ctx->pos + __pcc_in->data.leaf.capt0.range.start))
 #define _0e ((const size_t)(__pcc_ctx->pos + __pcc_in->data.leaf.capt0.range.end))
-#line 222 "config.peg"
+#line 241 "config.peg"
     fprintf(stderr, "unclosed comment at %ld-%ld", _0s, _0e);
-    //system__handle_syntax_error(auxil, SYNTAX_ERROR_UNCLOSED_COMMENT_BLOCK, range__new($0s, $0e));
-#line 1757 "config.c"
+        //system__handle_syntax_error(auxil, SYNTAX_ERROR_UNCLOSED_COMMENT_BLOCK, range__new($0s, $0e));
+#line 1816 "config.c"
 #undef _0e
 #undef _0s
 #undef _0
@@ -1768,9 +1827,9 @@ static void pcc_action_identifier_0(cnfparse_context_t *__pcc_ctx, pcc_thunk_t *
 #define _0 pcc_get_capture_string(__pcc_ctx, &__pcc_in->data.leaf.capt0)
 #define _0s ((const size_t)(__pcc_ctx->pos + __pcc_in->data.leaf.capt0.range.start))
 #define _0e ((const size_t)(__pcc_ctx->pos + __pcc_in->data.leaf.capt0.range.end))
-#line 236 "config.peg"
+#line 254 "config.peg"
     __ = create_config_node_text(auxil, CONFIG_NODE_IDENT, range__new(_0s, _0e));
-#line 1773 "config.c"
+#line 1832 "config.c"
 #undef _0e
 #undef _0s
 #undef _0
@@ -1785,6 +1844,7 @@ static pcc_thunk_chunk_t *pcc_evaluate_rule_tablemultiline(cnfparse_context_t *c
 static pcc_thunk_chunk_t *pcc_evaluate_rule_tableline(cnfparse_context_t *ctx);
 static pcc_thunk_chunk_t *pcc_evaluate_rule_tablevals(cnfparse_context_t *ctx);
 static pcc_thunk_chunk_t *pcc_evaluate_rule_configdef(cnfparse_context_t *ctx);
+static pcc_thunk_chunk_t *pcc_evaluate_rule_subconfigdef(cnfparse_context_t *ctx);
 static pcc_thunk_chunk_t *pcc_evaluate_rule_fields(cnfparse_context_t *ctx);
 static pcc_thunk_chunk_t *pcc_evaluate_rule_field_list(cnfparse_context_t *ctx);
 static pcc_thunk_chunk_t *pcc_evaluate_rule_field(cnfparse_context_t *ctx);
@@ -1798,6 +1858,8 @@ static pcc_thunk_chunk_t *pcc_evaluate_rule_value(cnfparse_context_t *ctx);
 static pcc_thunk_chunk_t *pcc_evaluate_rule_val_list(cnfparse_context_t *ctx);
 static pcc_thunk_chunk_t *pcc_evaluate_rule_integer(cnfparse_context_t *ctx);
 static pcc_thunk_chunk_t *pcc_evaluate_rule_kw_config(cnfparse_context_t *ctx);
+static pcc_thunk_chunk_t *pcc_evaluate_rule_kw_subconfig(cnfparse_context_t *ctx);
+static pcc_thunk_chunk_t *pcc_evaluate_rule_kw_subref(cnfparse_context_t *ctx);
 static pcc_thunk_chunk_t *pcc_evaluate_rule_kw_num(cnfparse_context_t *ctx);
 static pcc_thunk_chunk_t *pcc_evaluate_rule_kw_const(cnfparse_context_t *ctx);
 static pcc_thunk_chunk_t *pcc_evaluate_rule_kw_user(cnfparse_context_t *ctx);
@@ -1897,7 +1959,7 @@ static pcc_thunk_chunk_t *pcc_evaluate_rule_defstatement(cnfparse_context_t *ctx
     L0002:;
         ctx->cur = p;
         pcc_thunk_array__revert(ctx->auxil, &chunk->thunks, n);
-        if (!pcc_apply_rule(ctx, pcc_evaluate_rule_tabledef, &chunk->thunks, &(chunk->values.buf[0]))) goto L0003;
+        if (!pcc_apply_rule(ctx, pcc_evaluate_rule_subconfigdef, &chunk->thunks, &(chunk->values.buf[0]))) goto L0003;
         {
             pcc_thunk_t *const thunk = pcc_thunk__create_leaf(ctx->auxil, pcc_action_defstatement_1, 1, 0);
             thunk->data.leaf.values.buf[0] = &(chunk->values.buf[0]);
@@ -1907,6 +1969,18 @@ static pcc_thunk_chunk_t *pcc_evaluate_rule_defstatement(cnfparse_context_t *ctx
         }
         goto L0001;
     L0003:;
+        ctx->cur = p;
+        pcc_thunk_array__revert(ctx->auxil, &chunk->thunks, n);
+        if (!pcc_apply_rule(ctx, pcc_evaluate_rule_tabledef, &chunk->thunks, &(chunk->values.buf[0]))) goto L0004;
+        {
+            pcc_thunk_t *const thunk = pcc_thunk__create_leaf(ctx->auxil, pcc_action_defstatement_2, 1, 0);
+            thunk->data.leaf.values.buf[0] = &(chunk->values.buf[0]);
+            thunk->data.leaf.capt0.range.start = chunk->pos;
+            thunk->data.leaf.capt0.range.end = ctx->cur;
+            pcc_thunk_array__add(ctx->auxil, &chunk->thunks, thunk);
+        }
+        goto L0001;
+    L0004:;
         ctx->cur = p;
         pcc_thunk_array__revert(ctx->auxil, &chunk->thunks, n);
         goto L0000;
@@ -2151,6 +2225,43 @@ L0000:;
     return NULL;
 }
 
+static pcc_thunk_chunk_t *pcc_evaluate_rule_subconfigdef(cnfparse_context_t *ctx) {
+    pcc_thunk_chunk_t *const chunk = pcc_thunk_chunk__create(ctx->auxil);
+    chunk->pos = ctx->cur;
+    PCC_DEBUG(ctx->auxil, PCC_DBG_EVALUATE, "subconfigdef", ctx->level, chunk->pos, (ctx->buffer.buf + chunk->pos), (ctx->buffer.len - chunk->pos));
+    ctx->level++;
+    pcc_value_table__resize(ctx->auxil, &chunk->values, 2);
+    pcc_capture_table__resize(ctx->auxil, &chunk->capts, 0);
+    pcc_value_table__clear(ctx->auxil, &chunk->values);
+    if (!pcc_apply_rule(ctx, pcc_evaluate_rule_kw_subconfig, &chunk->thunks, NULL)) goto L0000;
+    if (!pcc_apply_rule(ctx, pcc_evaluate_rule__, &chunk->thunks, NULL)) goto L0000;
+    if (!pcc_apply_rule(ctx, pcc_evaluate_rule_identifier, &chunk->thunks, &(chunk->values.buf[0]))) goto L0000;
+    if (!pcc_apply_rule(ctx, pcc_evaluate_rule__, &chunk->thunks, NULL)) goto L0000;
+    if (!pcc_apply_rule(ctx, pcc_evaluate_rule_fields, &chunk->thunks, &(chunk->values.buf[1]))) goto L0000;
+    if (!pcc_apply_rule(ctx, pcc_evaluate_rule__, &chunk->thunks, NULL)) goto L0000;
+    if (
+        pcc_refill_buffer(ctx, 1) < 1 ||
+        ctx->buffer.buf[ctx->cur] != ';'
+    ) goto L0000;
+    ctx->cur++;
+    {
+        pcc_thunk_t *const thunk = pcc_thunk__create_leaf(ctx->auxil, pcc_action_subconfigdef_0, 2, 0);
+        thunk->data.leaf.values.buf[0] = &(chunk->values.buf[0]);
+        thunk->data.leaf.values.buf[1] = &(chunk->values.buf[1]);
+        thunk->data.leaf.capt0.range.start = chunk->pos;
+        thunk->data.leaf.capt0.range.end = ctx->cur;
+        pcc_thunk_array__add(ctx->auxil, &chunk->thunks, thunk);
+    }
+    ctx->level--;
+    PCC_DEBUG(ctx->auxil, PCC_DBG_MATCH, "subconfigdef", ctx->level, chunk->pos, (ctx->buffer.buf + chunk->pos), (ctx->cur - chunk->pos));
+    return chunk;
+L0000:;
+    ctx->level--;
+    PCC_DEBUG(ctx->auxil, PCC_DBG_NOMATCH, "subconfigdef", ctx->level, chunk->pos, (ctx->buffer.buf + chunk->pos), (ctx->cur - chunk->pos));
+    pcc_thunk_chunk__destroy(ctx->auxil, chunk);
+    return NULL;
+}
+
 static pcc_thunk_chunk_t *pcc_evaluate_rule_fields(cnfparse_context_t *ctx) {
     pcc_thunk_chunk_t *const chunk = pcc_thunk_chunk__create(ctx->auxil);
     chunk->pos = ctx->cur;
@@ -2245,31 +2356,61 @@ static pcc_thunk_chunk_t *pcc_evaluate_rule_field(cnfparse_context_t *ctx) {
     chunk->pos = ctx->cur;
     PCC_DEBUG(ctx->auxil, PCC_DBG_EVALUATE, "field", ctx->level, chunk->pos, (ctx->buffer.buf + chunk->pos), (ctx->buffer.len - chunk->pos));
     ctx->level++;
-    pcc_value_table__resize(ctx->auxil, &chunk->values, 4);
+    pcc_value_table__resize(ctx->auxil, &chunk->values, 5);
     pcc_capture_table__resize(ctx->auxil, &chunk->capts, 0);
     pcc_value_table__clear(ctx->auxil, &chunk->values);
-    if (!pcc_apply_rule(ctx, pcc_evaluate_rule_qualifier, &chunk->thunks, &(chunk->values.buf[0]))) goto L0000;
-    if (!pcc_apply_rule(ctx, pcc_evaluate_rule__, &chunk->thunks, NULL)) goto L0000;
-    if (!pcc_apply_rule(ctx, pcc_evaluate_rule_type, &chunk->thunks, &(chunk->values.buf[1]))) goto L0000;
-    if (!pcc_apply_rule(ctx, pcc_evaluate_rule__, &chunk->thunks, NULL)) goto L0000;
-    if (!pcc_apply_rule(ctx, pcc_evaluate_rule_fielddef, &chunk->thunks, &(chunk->values.buf[2]))) goto L0000;
-    if (!pcc_apply_rule(ctx, pcc_evaluate_rule__, &chunk->thunks, NULL)) goto L0000;
-    if (!pcc_apply_rule(ctx, pcc_evaluate_rule_board_values, &chunk->thunks, &(chunk->values.buf[3]))) goto L0000;
-    if (!pcc_apply_rule(ctx, pcc_evaluate_rule__, &chunk->thunks, NULL)) goto L0000;
-    if (
-        pcc_refill_buffer(ctx, 1) < 1 ||
-        ctx->buffer.buf[ctx->cur] != ';'
-    ) goto L0000;
-    ctx->cur++;
     {
-        pcc_thunk_t *const thunk = pcc_thunk__create_leaf(ctx->auxil, pcc_action_field_0, 4, 0);
-        thunk->data.leaf.values.buf[0] = &(chunk->values.buf[0]);
-        thunk->data.leaf.values.buf[1] = &(chunk->values.buf[1]);
-        thunk->data.leaf.values.buf[2] = &(chunk->values.buf[2]);
-        thunk->data.leaf.values.buf[3] = &(chunk->values.buf[3]);
-        thunk->data.leaf.capt0.range.start = chunk->pos;
-        thunk->data.leaf.capt0.range.end = ctx->cur;
-        pcc_thunk_array__add(ctx->auxil, &chunk->thunks, thunk);
+        const size_t p = ctx->cur;
+        const size_t n = chunk->thunks.len;
+        if (!pcc_apply_rule(ctx, pcc_evaluate_rule_qualifier, &chunk->thunks, &(chunk->values.buf[0]))) goto L0002;
+        if (!pcc_apply_rule(ctx, pcc_evaluate_rule__, &chunk->thunks, NULL)) goto L0002;
+        if (!pcc_apply_rule(ctx, pcc_evaluate_rule_type, &chunk->thunks, &(chunk->values.buf[1]))) goto L0002;
+        if (!pcc_apply_rule(ctx, pcc_evaluate_rule__, &chunk->thunks, NULL)) goto L0002;
+        if (!pcc_apply_rule(ctx, pcc_evaluate_rule_fielddef, &chunk->thunks, &(chunk->values.buf[2]))) goto L0002;
+        if (!pcc_apply_rule(ctx, pcc_evaluate_rule__, &chunk->thunks, NULL)) goto L0002;
+        if (!pcc_apply_rule(ctx, pcc_evaluate_rule_board_values, &chunk->thunks, &(chunk->values.buf[3]))) goto L0002;
+        if (!pcc_apply_rule(ctx, pcc_evaluate_rule__, &chunk->thunks, NULL)) goto L0002;
+        if (
+            pcc_refill_buffer(ctx, 1) < 1 ||
+            ctx->buffer.buf[ctx->cur] != ';'
+        ) goto L0002;
+        ctx->cur++;
+        {
+            pcc_thunk_t *const thunk = pcc_thunk__create_leaf(ctx->auxil, pcc_action_field_0, 5, 0);
+            thunk->data.leaf.values.buf[0] = &(chunk->values.buf[0]);
+            thunk->data.leaf.values.buf[1] = &(chunk->values.buf[1]);
+            thunk->data.leaf.values.buf[2] = &(chunk->values.buf[2]);
+            thunk->data.leaf.values.buf[3] = &(chunk->values.buf[3]);
+            thunk->data.leaf.capt0.range.start = chunk->pos;
+            thunk->data.leaf.capt0.range.end = ctx->cur;
+            pcc_thunk_array__add(ctx->auxil, &chunk->thunks, thunk);
+        }
+        goto L0001;
+    L0002:;
+        ctx->cur = p;
+        pcc_thunk_array__revert(ctx->auxil, &chunk->thunks, n);
+        if (!pcc_apply_rule(ctx, pcc_evaluate_rule_kw_subref, &chunk->thunks, NULL)) goto L0003;
+        if (!pcc_apply_rule(ctx, pcc_evaluate_rule__, &chunk->thunks, NULL)) goto L0003;
+        if (!pcc_apply_rule(ctx, pcc_evaluate_rule_identifier, &chunk->thunks, &(chunk->values.buf[4]))) goto L0003;
+        if (!pcc_apply_rule(ctx, pcc_evaluate_rule__, &chunk->thunks, NULL)) goto L0003;
+        if (
+            pcc_refill_buffer(ctx, 1) < 1 ||
+            ctx->buffer.buf[ctx->cur] != ';'
+        ) goto L0003;
+        ctx->cur++;
+        {
+            pcc_thunk_t *const thunk = pcc_thunk__create_leaf(ctx->auxil, pcc_action_field_1, 5, 0);
+            thunk->data.leaf.values.buf[4] = &(chunk->values.buf[4]);
+            thunk->data.leaf.capt0.range.start = chunk->pos;
+            thunk->data.leaf.capt0.range.end = ctx->cur;
+            pcc_thunk_array__add(ctx->auxil, &chunk->thunks, thunk);
+        }
+        goto L0001;
+    L0003:;
+        ctx->cur = p;
+        pcc_thunk_array__revert(ctx->auxil, &chunk->thunks, n);
+        goto L0000;
+    L0001:;
     }
     ctx->level--;
     PCC_DEBUG(ctx->auxil, PCC_DBG_MATCH, "field", ctx->level, chunk->pos, (ctx->buffer.buf + chunk->pos), (ctx->cur - chunk->pos));
@@ -3022,6 +3163,106 @@ L0000:;
     return NULL;
 }
 
+static pcc_thunk_chunk_t *pcc_evaluate_rule_kw_subconfig(cnfparse_context_t *ctx) {
+    pcc_thunk_chunk_t *const chunk = pcc_thunk_chunk__create(ctx->auxil);
+    chunk->pos = ctx->cur;
+    PCC_DEBUG(ctx->auxil, PCC_DBG_EVALUATE, "kw_subconfig", ctx->level, chunk->pos, (ctx->buffer.buf + chunk->pos), (ctx->buffer.len - chunk->pos));
+    ctx->level++;
+    pcc_value_table__resize(ctx->auxil, &chunk->values, 0);
+    pcc_capture_table__resize(ctx->auxil, &chunk->capts, 0);
+    if (
+        pcc_refill_buffer(ctx, 9) < 9 ||
+        (ctx->buffer.buf + ctx->cur)[0] != 's' ||
+        (ctx->buffer.buf + ctx->cur)[1] != 'u' ||
+        (ctx->buffer.buf + ctx->cur)[2] != 'b' ||
+        (ctx->buffer.buf + ctx->cur)[3] != 'c' ||
+        (ctx->buffer.buf + ctx->cur)[4] != 'o' ||
+        (ctx->buffer.buf + ctx->cur)[5] != 'n' ||
+        (ctx->buffer.buf + ctx->cur)[6] != 'f' ||
+        (ctx->buffer.buf + ctx->cur)[7] != 'i' ||
+        (ctx->buffer.buf + ctx->cur)[8] != 'g'
+    ) goto L0000;
+    ctx->cur += 9;
+    {
+        const size_t p = ctx->cur;
+        {
+            const size_t p = ctx->cur;
+            const size_t n = chunk->thunks.len;
+            if (!pcc_apply_rule(ctx, pcc_evaluate_rule_L, &chunk->thunks, NULL)) goto L0003;
+            goto L0002;
+        L0003:;
+            ctx->cur = p;
+            pcc_thunk_array__revert(ctx->auxil, &chunk->thunks, n);
+            if (!pcc_apply_rule(ctx, pcc_evaluate_rule_D, &chunk->thunks, NULL)) goto L0004;
+            goto L0002;
+        L0004:;
+            ctx->cur = p;
+            pcc_thunk_array__revert(ctx->auxil, &chunk->thunks, n);
+            goto L0001;
+        L0002:;
+        }
+        ctx->cur = p;
+        goto L0000;
+    L0001:;
+        ctx->cur = p;
+    }
+    ctx->level--;
+    PCC_DEBUG(ctx->auxil, PCC_DBG_MATCH, "kw_subconfig", ctx->level, chunk->pos, (ctx->buffer.buf + chunk->pos), (ctx->cur - chunk->pos));
+    return chunk;
+L0000:;
+    ctx->level--;
+    PCC_DEBUG(ctx->auxil, PCC_DBG_NOMATCH, "kw_subconfig", ctx->level, chunk->pos, (ctx->buffer.buf + chunk->pos), (ctx->cur - chunk->pos));
+    pcc_thunk_chunk__destroy(ctx->auxil, chunk);
+    return NULL;
+}
+
+static pcc_thunk_chunk_t *pcc_evaluate_rule_kw_subref(cnfparse_context_t *ctx) {
+    pcc_thunk_chunk_t *const chunk = pcc_thunk_chunk__create(ctx->auxil);
+    chunk->pos = ctx->cur;
+    PCC_DEBUG(ctx->auxil, PCC_DBG_EVALUATE, "kw_subref", ctx->level, chunk->pos, (ctx->buffer.buf + chunk->pos), (ctx->buffer.len - chunk->pos));
+    ctx->level++;
+    pcc_value_table__resize(ctx->auxil, &chunk->values, 0);
+    pcc_capture_table__resize(ctx->auxil, &chunk->capts, 0);
+    if (
+        pcc_refill_buffer(ctx, 3) < 3 ||
+        (ctx->buffer.buf + ctx->cur)[0] != 's' ||
+        (ctx->buffer.buf + ctx->cur)[1] != 'u' ||
+        (ctx->buffer.buf + ctx->cur)[2] != 'b'
+    ) goto L0000;
+    ctx->cur += 3;
+    {
+        const size_t p = ctx->cur;
+        {
+            const size_t p = ctx->cur;
+            const size_t n = chunk->thunks.len;
+            if (!pcc_apply_rule(ctx, pcc_evaluate_rule_L, &chunk->thunks, NULL)) goto L0003;
+            goto L0002;
+        L0003:;
+            ctx->cur = p;
+            pcc_thunk_array__revert(ctx->auxil, &chunk->thunks, n);
+            if (!pcc_apply_rule(ctx, pcc_evaluate_rule_D, &chunk->thunks, NULL)) goto L0004;
+            goto L0002;
+        L0004:;
+            ctx->cur = p;
+            pcc_thunk_array__revert(ctx->auxil, &chunk->thunks, n);
+            goto L0001;
+        L0002:;
+        }
+        ctx->cur = p;
+        goto L0000;
+    L0001:;
+        ctx->cur = p;
+    }
+    ctx->level--;
+    PCC_DEBUG(ctx->auxil, PCC_DBG_MATCH, "kw_subref", ctx->level, chunk->pos, (ctx->buffer.buf + chunk->pos), (ctx->cur - chunk->pos));
+    return chunk;
+L0000:;
+    ctx->level--;
+    PCC_DEBUG(ctx->auxil, PCC_DBG_NOMATCH, "kw_subref", ctx->level, chunk->pos, (ctx->buffer.buf + chunk->pos), (ctx->cur - chunk->pos));
+    pcc_thunk_chunk__destroy(ctx->auxil, chunk);
+    return NULL;
+}
+
 static pcc_thunk_chunk_t *pcc_evaluate_rule_kw_num(cnfparse_context_t *ctx) {
     pcc_thunk_chunk_t *const chunk = pcc_thunk_chunk__create(ctx->auxil);
     chunk->pos = ctx->cur;
@@ -3353,9 +3594,19 @@ static pcc_thunk_chunk_t *pcc_evaluate_rule_keyword(cnfparse_context_t *ctx) {
     L0005:;
         ctx->cur = p;
         pcc_thunk_array__revert(ctx->auxil, &chunk->thunks, n);
-        if (!pcc_apply_rule(ctx, pcc_evaluate_rule_kw_table, &chunk->thunks, NULL)) goto L0006;
+        if (!pcc_apply_rule(ctx, pcc_evaluate_rule_kw_subconfig, &chunk->thunks, NULL)) goto L0006;
         goto L0001;
     L0006:;
+        ctx->cur = p;
+        pcc_thunk_array__revert(ctx->auxil, &chunk->thunks, n);
+        if (!pcc_apply_rule(ctx, pcc_evaluate_rule_kw_subref, &chunk->thunks, NULL)) goto L0007;
+        goto L0001;
+    L0007:;
+        ctx->cur = p;
+        pcc_thunk_array__revert(ctx->auxil, &chunk->thunks, n);
+        if (!pcc_apply_rule(ctx, pcc_evaluate_rule_kw_table, &chunk->thunks, NULL)) goto L0008;
+        goto L0001;
+    L0008:;
         ctx->cur = p;
         pcc_thunk_array__revert(ctx->auxil, &chunk->thunks, n);
         goto L0000;
@@ -3828,5 +4079,5 @@ void cnfparse_destroy(cnfparse_context_t *ctx) {
     pcc_context__destroy(ctx);
 }
 
-#line 241 "config.peg"
+#line 259 "config.peg"
 

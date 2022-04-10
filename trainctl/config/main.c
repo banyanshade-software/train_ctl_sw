@@ -58,19 +58,23 @@ int main(int argc, char **argv) {
                     n->next = root->defs;
                     root->defs = n;
                     break;
+                case CONFIG_NODE_SUBCONF:
+                    n->next = root->subdefs;
+                    root->subdefs = n;
+                    break;
                 default:
                     fprintf(stderr, "bad top level tag %d\n", n->tag);
                     exit(1);
                     break;
                 }
             }
-			generate_hfile(root->defs, 1, stdout);
+			generate_hfile(root, 1, stdout);
 
 			config_node_t *bm = create_config_node_string(&system, CONFIG_NODE_BOARD, "main");
 			bm->next = create_config_node_string(&system, CONFIG_NODE_BOARD, "dispatcher");
 			bm->next->next = create_config_node_string(&system, CONFIG_NODE_BOARD, "switcher");
 
-			generate_cfile(root->defs, root->tables, 1, stdout, bm);
+			generate_cfile(root, 1, stdout, bm);
         }
     }
     else {

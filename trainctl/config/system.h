@@ -37,6 +37,8 @@ typedef enum node_type_tag {
     CONFIG_NODE_TABLELINE,
     CONFIG_NODE_CONF,
     CONFIG_NODE_FIELD,
+    CONFIG_NODE_SUBCONF,
+    CONFIG_NODE_SUBREF,
 	CONFIG_NODE_BOARDVAL,
 	CONFIG_NODE_VALUE,
 	CONFIG_NODE_TABLEREF,
@@ -60,7 +62,12 @@ typedef struct config_node {
     int value;
     struct config_node *next;
     union {
-		struct { // config definition
+		struct { // root node CONFIG_NODE_ROOT
+			struct config_node *defs;
+			struct config_node *subdefs;
+            struct config_node *tables;
+        };
+		struct { // config CONFIG_NODE_CONF or CONFIG_NODE_SUBCONF
 			struct config_node *fields;
             struct config_node *numinst;
 		};
@@ -75,10 +82,6 @@ typedef struct config_node {
 		struct { // per board value CONFIG_NODE_BOARDVAL
 			struct config_node *val;
 		};
-		struct { // root node CONFIG_NODE_ROOT
-			struct config_node *defs;
-            struct config_node *tables;
-        };
         struct { // table CONFIG_NODE_TABLE
             struct config_node *coldef;
             struct config_node *lines;

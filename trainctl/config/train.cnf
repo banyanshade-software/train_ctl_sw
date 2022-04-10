@@ -28,10 +28,25 @@ typedef struct train_config {
 
 */
 
+subconfig pidctl {
+    user int32_t kP 
+        = (default) 500;
+	user int32_t kI
+        = (default) 100;
+	user int32_t kD
+        = (default) 500; 
+};
+
+subconfig inertia {
+    user int16_t dec
+        = (default) 120;
+    user int16_t acc
+        = (default) 120;
+};
 
 config train {
-    //  pidctl_config_t pidcnf;
-    // inertia_config_t inertiacnf;
+    sub pidctl;
+    sub inertia;
     user train_volt_policy_t volt_policy
         = (default) vpolicy_normal;
 

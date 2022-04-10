@@ -35,9 +35,10 @@ static void gen_fields(config_node_t *node, FILE *output)
 	}
 }
 
-void generate_hfile(config_node_t *node, int continue_next, FILE *output)
+void generate_hfile(config_node_t *root, int continue_next, FILE *output)
 {
 	fprintf(output, "// this file is generated automatically\n// do not modify\n");
+    config_node_t *node = root->defs;
 	for ( ; node; node = node->next) {
 		if (node->tag != CONFIG_NODE_CONF) {
 			error("bad tag");
@@ -62,8 +63,10 @@ static void gen_field_val(FILE *output, config_node_t *f, config_node_t *b, int 
 static config_node_t *find_board_value(config_node_t *values, int inst, const char *boardname);
 static config_node_t *value_for_table(config_node_t *tables, char *tblname, char *colname, int numinst);
 
-void generate_cfile(config_node_t *node, config_node_t *tables, int continue_next, FILE *output, config_node_t *board)
+void generate_cfile(config_node_t *root, int continue_next, FILE *output, config_node_t *board)
 {
+    config_node_t *node = root->defs;
+    config_node_t *tables = root->tables;
     fprintf(output, "// this file is generated automatically\n// do not modify\n");
     for ( ; node; node = node->next) {
         if (node->tag != CONFIG_NODE_CONF) {

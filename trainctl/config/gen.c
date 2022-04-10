@@ -188,10 +188,13 @@ static config_node_t *find_by_name(config_node_t *node, const char *s, int *pc)
 static config_node_t *find_by_index(config_node_t *node, int idx)
 {
     int n=0;
+    config_node_t *last;
     for ( ; node; node = node->next) {
         if (n==idx) return node;
+        last = node;
         n++;
     }
+    if (-1 == idx) return last;
     return NULL;
 }
 
@@ -220,7 +223,7 @@ static config_node_t *value_for_table(config_node_t *tables, char *tblname, char
     config_node_t *line = find_by_index(tbl->lines, numinst);
     if (!line) {
         fprintf(stderr, "no such line %d in %s\n", numinst, tblname);
-        return NULL;
+        line = find_by_index(tbl->lines, -1); // use last line
     }
     assert(line->tag == CONFIG_NODE_TABLELINE);
     config_node_t *v = find_by_index(line->lineval, cidx);

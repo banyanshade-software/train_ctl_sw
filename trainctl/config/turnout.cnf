@@ -1,0 +1,31 @@
+#
+# typedef struct { 
+#	GPIO_TypeDef *cmd_port;
+#	uint16_t pinA;
+#	uint16_t pinB;
+#} turnout_config_t;
+
+
+config turnout {
+	const GPIO_TypeDef *port
+		= (main:*) table(tpin_main, port)
+		= (default) NULL;
+	const uint16_t pinA
+		= (main:*) table(tpin_main, bA)
+		= (default) 0;
+	const uint16_t pinB
+		= (main:*) table(tpin_main, bB)
+		= (default) 0;
+    user uint8_t reverse
+        = (default) 0;
+
+} num = (main) 3
+      = (dispatcher) 0          # TODO
+      = (default) 0;
+
+table tpin_main 
+	( port,     bA,         bB)
+    ( GPIOA,    GPIO_PIN_9, GPIO_PIN_10 )
+    ( GPIOE,    GPIO_PIN_0, GPIO_PIN_1  )
+    ( GPIOE,    GPIO_PIN_8, GPIO_PIN_7  )
+;

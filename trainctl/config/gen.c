@@ -128,10 +128,10 @@ static void gen_field_val(FILE *output, config_node_t *f, config_node_t *b, int 
         config_node_t *v = value_for_table(tables, val->tablename, val->colname, numinst);
         if (v) val = v;
     }
-	fprintf(output, "     .%s = %s \t\t// %s:%d,%s:%d tag:%d\n",
+	fprintf(output, "     .%s = %s\n", // \t\t// %s:%d,%s:%d tag:%d\n",
 		f->string,
-		val ? val->string : "missing",
-		b->string, numinst, v->string, v->value, val->tag);
+		val ? val->string : "missing");
+		//b->string, numinst, v->string, v->value, val->tag);
 }
 
 // tables management

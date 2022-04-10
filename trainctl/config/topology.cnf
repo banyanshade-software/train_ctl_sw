@@ -25,27 +25,27 @@ typedef struct {
 */
 
 config topology {
-    user uint8_t canton_addr = (default) 0;
-    user int8_t ina_segnum = (default) 0xFF;
+    user uint8_t canton_addr                    = (main) table(topo,canton);
+    user int8_t ina_segnum                      = (main) table(topo,ina);
     
-    user int8_t steep = (default) 0;
-    user uint8_t length_cm = (default) 0;
+    user int8_t steep                           = (main) table(topo,stp);
+    user uint8_t length_cm                      = (main) table(topo,len);
     
-    user int8_t left1 = (default) -1;
-    user int8_t left2 = (default) -1;
-    user uint8_t ltn = (default) 0; 
-    user int8_t right1 = (default) 0;
-    user int8_t right2 = (default) 0;
-    user uint8_t rtn = (default) 0;
+    user int8_t left1                           = (main) table(topo,l1);
+    user int8_t left2                           = (main) table(topo,l2);
+    user uint8_t ltn                            = (main) table(topo,ltn); 
+    user int8_t right1                          = (main) table(topo,r1);
+    user int8_t right2                          = (main) table(topo,r2);
+    user uint8_t rtn                            = (main) table(topo,rtn);
 
-    user int p0 = (default) 0;
-    user coord_t points[4] = (default) { {0,0},{0,0},{0,0},{0,0}};
+    user int p0 = (default) table(topo,p0);
+    user coord_t points[4] = (default) table(topo, pts);
 } num = (main) 64
       = (default) 0;
 
 
 table topo
-        (canton,             ina,  stp,  len,    l1,    l2,   ltn,       r1,   r2,  rtn,      p1,  pts)
+        (canton,             ina,  stp,  len,    l1,    l2,   ltn,       r1,   r2,  rtn,      p0,  pts)
 /* 0 */ ( MA_CANTON(0, 0),     2,   0,    98,    -1,    -1,  0xFF,        1,   -1,    0,      2,  {{L0+1,2}, {L0+4,2}, {L0+5,3}, {L0+5,9}})
 /* 1 */ ( MA_CANTON(0, 1),     1,   0,    23,     0,     3,     0,        4,   12,    5,      0,  {{L0+5,10}, {L0+5,11}, _VP, _VP})
 /* 2 */ ( MA_CANTON(0, 2),     0,   0,    70,    -1,    -1,  0xFF,        3,   11,    4,      2,  {{L0+1,3}, {L0+3,3}, {L0+4,4}, {L0+4,5}})

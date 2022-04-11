@@ -68,13 +68,13 @@ int main(int argc, char **argv) {
                     break;
                 }
             }
-			generate_hfile(root, 1, stdout);
+			generate_hfile(root, 1);
 
 			config_node_t *bm = create_config_node_string(&system, CONFIG_NODE_BOARD, "main");
 			bm->next = create_config_node_string(&system, CONFIG_NODE_BOARD, "dispatcher");
 			bm->next->next = create_config_node_string(&system, CONFIG_NODE_BOARD, "switcher");
 
-			generate_cfile(root, 1, stdout, bm);
+			generate_cfile(root, 1, bm);
         }
     }
     else {

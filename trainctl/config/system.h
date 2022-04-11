@@ -43,6 +43,8 @@ typedef enum node_type_tag {
 	CONFIG_NODE_VALUE,
 	CONFIG_NODE_TABLEREF,
 
+    CONFIG_NODE_ATTR_CODE,
+
 	// transiant use only
     CONFIG_NODE_IDENT,	
     CONFIG_NODE_INT,
@@ -58,18 +60,24 @@ typedef struct config_node {
     range_t range; /* the byte range in the source text */
     system_t *system; /* the system that manages this AST node */
     enum node_type_tag tag;
+    struct config_node *next;
+
     char *string;
     int value;
-    struct config_node *next;
+    char *hcode;
+    char *ccode;
+
     union {
 		struct { // root node CONFIG_NODE_ROOT
 			struct config_node *defs;
 			struct config_node *subdefs;
             struct config_node *tables;
+            struct config_node *globattrib;
         };
 		struct { // config CONFIG_NODE_CONF or CONFIG_NODE_SUBCONF
 			struct config_node *fields;
             struct config_node *numinst;
+            struct config_node *attr;
 		};
 		struct { // field definition CONFIG_NODE_FIELD
 			int configurable;

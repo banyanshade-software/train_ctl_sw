@@ -62,6 +62,10 @@ int main(int argc, char **argv) {
                     n->next = root->subdefs;
                     root->subdefs = n;
                     break;
+                case CONFIG_NODE_ATTR_CODE:
+                    n->next = root->globattrib;
+                    root->globattrib = n;
+                    break;
                 default:
                     fprintf(stderr, "bad top level tag %d\n", n->tag);
                     exit(1);

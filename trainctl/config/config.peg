@@ -24,7 +24,7 @@
 static const char *dbg_str[] = { "EVAL_", "MATCH", "ABAND" };
 
 #define PCC_DEBUG(auxil, event, rule, level, pos, buffer, length) do {\
-     if ((0)) fprintf(stdout, "%*s%s %s @%d [%.*s]\n", (int)(level * 2), "", dbg_str[event], rule, (int)pos, (int)length,  buffer); fflush(stdout); \
+     if ((1)) fprintf(stdout, "%*s%s %s @%d [%.*s]\n", (int)(level * 2), "", dbg_str[event], rule, (int)pos, (int)length,  buffer); fflush(stdout); \
 } while(0)
 
 
@@ -45,6 +45,25 @@ defstatement
         { $$ = s; }
      / s:tabledef
         { $$ = s; }
+     / _ g:globalattrib
+        { $$ = g; }
+     / _ a:configattrib
+        { $$ = a; }
+
+# ---------------- attribs
+
+globalattrib 
+    <- attr_hcode _ '{' <accol*> '}'
+      { $$ = create_config_node(auxil, CONFIG_NODE_ATTR_CODE, range__new($0s, $0e)); $$->value = 1; }
+     / attr_ccode _ '{' <accol*> '}'
+      { $$ = create_config_node(auxil, CONFIG_NODE_ATTR_CODE, range__new($0s, $0e)); $$->value = 2; }
+
+configattrib
+    <- kw_attrib _ identifier _ g:globalattrib
+     / kw_attrib _ identifier _ attribute_name _ '=' _ value
+
+
+
 
 # ---------------- tables
 tabledef
@@ -223,12 +242,24 @@ kw_num          <- 'num' !(L/D)
 kw_const        <- 'const' !(L/D)
 kw_user         <- 'user' !(L/D)
 kw_table        <- 'table' !(L/D)
+kw_attrib       <- 'attrib' !(L/D)
+
+attr_hcode       <- 'h_code' !(L/D)
+attr_ccode       <- 'c_code' !(L/D)
+
+attr_storetype   <- 'store'  !(L/D)
+attr_storenum    <- 'stnum'  !(L/D)
+
 
 O <- [0-7]
 D <- [0-9]
 X <- [0-9a-fA-F]
 L <- [a-zA-Z_]
 
+
+attribute_name
+   <- attr_storetype
+    / attr_storenum
 
 keyword
    <- kw_num
@@ -238,6 +269,9 @@ keyword
     / kw_subconfig
     / kw_subref
     / kw_table
+    / kw_attrib
+    / attr_hcode
+    / attr_ccode
 
 _ <- ( space / comment )*
 

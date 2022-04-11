@@ -79,3 +79,25 @@ table topo
 
 /*-1*/  (FUTURE_CANTON,     0xFF,   0,      0,   -1,    -1,  0xFF,      -1,  -1,  0xFF,      0,  {{L0+2,0}, {L0+0, 0}, _VP, _VP})
 ;
+
+attrib topology h_code {
+
+typedef struct {
+    int l;
+    int c;
+} coord_t;
+
+}
+
+attrib topology c_code {
+
+#include "../msg/trainmsg.h"
+
+#define _PTS(pi, ...)  ,pi,{__VA_ARGS__}
+#define _VP {-1, -1}
+#define L0 (2)
+
+
+#define FUTURE_CANTON 0xFF
+
+}

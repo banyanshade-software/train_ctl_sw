@@ -44,6 +44,7 @@ typedef enum node_type_tag {
 	CONFIG_NODE_TABLEREF,
 
     CONFIG_NODE_ATTR_CODE,
+    CONFIG_NODE_ATTR_LOCAL,
 
 	// transiant use only
     CONFIG_NODE_IDENT,	
@@ -100,6 +101,9 @@ typedef struct config_node {
         struct { // CONFIG_NODE_TABLEREF
             char *tablename;
             char *colname;
+        };
+        struct { // CONFIG_NODE_ATTR_LOCAL
+            struct config_node *attrnode; 
         };
     };
 } config_node_t;

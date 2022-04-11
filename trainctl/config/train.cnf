@@ -1,5 +1,6 @@
 /*
 
+original structure :
 
 typedef struct train_config {
 	pidctl_config_t pidcnf;
@@ -28,9 +29,6 @@ typedef struct train_config {
 
 */
 
-h_code {
-// this code goes in all .h files
-}
 
 
 
@@ -49,6 +47,17 @@ subconfig inertia {
     user int16_t acc
         = (default) 120;
 };
+
+
+
+attrib train h_code {
+typedef enum train_volt_policy /*: uint8_t*/ {
+    vpolicy_normal = 0,
+    vpolicy_pure_pwm,
+    vpolicy_pure_volt,
+} train_volt_policy_t;
+}
+
 
 config train {
     sub pidctl;
@@ -104,12 +113,7 @@ config train {
 } num = (main) 8
       = (default) 0;
 
-attrib train h_code {
-    typedef enum train_volt_policy /*: uint8_t*/ {
-	    vpolicy_normal = 0,
-	    vpolicy_pure_pwm,
-	    vpolicy_pure_volt,
-    } train_volt_policy_t;
+
+attrib train c_code {
+    // this goes only in config_train.c
 }
-
-

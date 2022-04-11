@@ -31,7 +31,16 @@ static void filename_for(char *buf, config_node_t *confnode, char *ext)
     sprintf(buf, "conf_%s.%s", confnode->string, ext);
 }
 
-static FILE *genfile_h_create(config_node_t *confnode)
+static void include_code(FILE *output, config_node_t *attr, int v)
+{
+    for ( ; attr; attr = attr->next) {
+        if (attr->tag != CONFIG_NODE_ATTR_CODE) continue;
+        if (attr->value != v) continue;
+        fputs(attr->string, output);
+    }
+}
+
+static FILE *genfile_h_create(config_node_t *confnode, config_node_t *root)
 {
     assert((confnode->tag == CONFIG_NODE_CONF) || (confnode->tag == CONFIG_NODE_SUBCONF));
     char n[128];
@@ -40,6 +49,8 @@ static FILE *genfile_h_create(config_node_t *confnode)
     assert(F);
     fprintf(F, "// this file is generated automatically by config\n// DO NOT EDIT\n\n\n");
     fprintf(F, "#ifndef _conf_%s_H_\n#define _conf_%s_H_\n\n#include <stdint.h>\n", confnode->string, confnode->string);
+    include_code(F, root->globattrib, 1);
+    include_code(F, confnode->attr, 1);
     return F;
 }
 
@@ -50,7 +61,7 @@ static void genfile_h_close(FILE *F)
 }
 
 
-static FILE *genfile_c_create(config_node_t *confnode)
+static FILE *genfile_c_create(config_node_t *confnode, config_node_t *root)
 {
     assert((confnode->tag == CONFIG_NODE_CONF) || (confnode->tag == CONFIG_NODE_SUBCONF));
     char n[128];
@@ -59,6 +70,8 @@ static FILE *genfile_c_create(config_node_t *confnode)
     assert(F);
     fprintf(F, "// this file is generated automatically by config\n// DO NOT EDIT\n\n\n");
     fprintf(F, "#include <stdint.h>\n#include <stddef.h>\n#include \"conf_%s.h\"\n\n", confnode->string);
+    include_code(F, root->globattrib, 2);
+    include_code(F, confnode->attr, 2);
     return F;
 }
 
@@ -105,7 +118,7 @@ void generate_hfile(config_node_t *root, int continue_next)
 
     // generate sub struct
     for (config_node_t *node = root->subdefs; node; node = node->next) {
-        FILE *output = genfile_h_create(node);
+        FILE *output = genfile_h_create(node, root);
         char *n = node->string;
         generate_incsub(node, output);
         fprintf(output, "struct conf_%s {\n", n);
@@ -119,7 +132,7 @@ void generate_hfile(config_node_t *root, int continue_next)
         if (node->tag != CONFIG_NODE_CONF) {
             error("bad tag");
         }
-        FILE *output = genfile_h_create(node);
+        FILE *output = genfile_h_create(node, root);
         generate_incsub(node->fields, output);
         char *n = node->string;
 
@@ -153,7 +166,7 @@ void generate_cfile(config_node_t *root, int continue_next, config_node_t *board
         }
 
         char *n = node->string;
-        FILE *output = genfile_c_create(node);
+        FILE *output = genfile_c_create(node, root);
 
 
         for (; board; board = board->next) {

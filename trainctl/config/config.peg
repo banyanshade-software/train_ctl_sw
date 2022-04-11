@@ -33,7 +33,14 @@ static const char *dbg_str[] = { "EVAL_", "MATCH", "ABAND" };
 
 defall 
     <- _ s:defstatement _ l:defall
-        { $$ = s; $$->next = l; $$->range = range__new($0s, $0e); }
+        { if (s) {
+            $$ = s; 
+            $$->next = l;
+          } else {
+            $$ = l;
+          }
+          if ($$) $$->range = range__new($0s, $0e);
+        }
      / _ s:defstatement
         { $$ = s; }
      / _ end_of_file
@@ -54,12 +61,16 @@ defstatement
 
 globalattrib 
     <- attr_hcode _ '{' <accol*> '}'
-      { $$ = create_config_node(auxil, CONFIG_NODE_ATTR_CODE, range__new($0s, $0e)); $$->value = 1; }
+      { $$ = create_config_node_string(auxil, CONFIG_NODE_ATTR_CODE, $1); $$->value = 1; }
      / attr_ccode _ '{' <accol*> '}'
-      { $$ = create_config_node(auxil, CONFIG_NODE_ATTR_CODE, range__new($0s, $0e)); $$->value = 2; }
+      { $$ = create_config_node_string(auxil, CONFIG_NODE_ATTR_CODE, $2); $$->value = 2; }
 
 configattrib
-    <- kw_attrib _ identifier _ g:globalattrib
+    <- kw_attrib _ i:identifier _ g:globalattrib
+      { $$ = create_config_node(auxil, CONFIG_NODE_ATTR_LOCAL, range__new($0s, $0e));
+        $$->string = i->string;
+        $$->attrnode = g;
+      }
      / kw_attrib _ identifier _ attribute_name _ '=' _ value
 
 

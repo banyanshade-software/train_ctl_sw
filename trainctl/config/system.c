@@ -332,6 +332,7 @@ static void dump_ast_(system_t *obj, config_node_t *node, int level) {
     case CONFIG_NODE_SUBCONF:   type="SUBCONF"; break;
     case CONFIG_NODE_SUBREF:    type="SREF";    break;
     case CONFIG_NODE_ATTR_CODE: type="CODE";    break;
+    case CONFIG_NODE_ATTR_LOCAL: type="LOCATTR";    break;
 	default: break;
 	}
 

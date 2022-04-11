@@ -15,10 +15,24 @@
  */
 
 #include <stdio.h>
+#include <string.h>
+#include <assert.h>
 #include "system.h"
 #include "config.h"
 
 #include "gen.h"
+
+
+static config_node_t *find_by_name_and_type(config_node_t *node, const char *s, node_type_t t)
+{
+    for ( ; node; node = node->next) {
+        if (strcmp(node->string, s)) continue;
+        if (node->tag != t) continue;
+        return node;
+    }
+    return NULL;
+}
+
 
 int main(int argc, char **argv) {
     if (argc > 2) {
@@ -46,6 +60,7 @@ int main(int argc, char **argv) {
            	system__dump_ast(&system, ast);
             config_node_t *root = create_config_node(&system, CONFIG_NODE_ROOT, range__void());
             config_node_t *next = NULL;
+            config_node_t *loc = NULL;
             for (config_node_t *n = ast; n; n = next) {
                 next = n->next;
                 n->next = NULL;
@@ -66,12 +81,38 @@ int main(int argc, char **argv) {
                     n->next = root->globattrib;
                     root->globattrib = n;
                     break;
+                case CONFIG_NODE_ATTR_LOCAL:
+                    n->next = loc;
+                    loc = n;
+                    // handle it in 2nd pass
+                    break;
                 default:
                     fprintf(stderr, "bad top level tag %d\n", n->tag);
                     exit(1);
                     break;
                 }
             }
+            for (config_node_t *n = loc; n; n = n->next) {
+                config_node_t *c;
+                switch (n->tag) {
+                default:
+                    break;
+                case CONFIG_NODE_ATTR_LOCAL:
+                    printf("proc CONFIG_NODE_ATTR_LOCAL\n");
+                    c = find_by_name_and_type(root->defs, n->string, CONFIG_NODE_CONF);
+                    if (!c) {
+                        fprintf(stderr, "no such config '%s'\n", n->string);
+                        exit(1);
+                    }
+                    config_node_t *a = n->attrnode;
+                    assert(a);
+                    assert(!a->next);
+                    a->next = c->attr;
+                    c->attr = a;
+                    break;
+                }
+            }
+
 			generate_hfile(root, 1);
 
 			config_node_t *bm = create_config_node_string(&system, CONFIG_NODE_BOARD, "main");

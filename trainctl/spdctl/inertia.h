@@ -23,6 +23,8 @@
 #define INERTIA_H_
 
 
+//#include "../config/conf_inertia.h"
+
 typedef struct {
 	int16_t dec; // power% per second
 	int16_t acc; // power% per second

@@ -9,6 +9,7 @@
 # *.project
 # *.mxproject
 .metadata/
+.depend
 stm32_f103_display/
 stm32f407VETx/Debug
 stm32f407VETx/Debug
@@ -20,3 +21,4 @@ stm32f407VETx/Release/
 mac/layoutexport/layoutexport.xcodeproj/xcuserdata/danielbraun.xcuserdatad/xcdebugger/
 mac/train_throttle/train_throttle.xcodeproj/xcshareddata/
 .DS_Store
+tags

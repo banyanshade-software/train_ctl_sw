@@ -111,6 +111,7 @@ static void generate_incsub(config_node_t *field, FILE *output)
         filename_for(n, field, "h");
         fprintf(output, "#include \"%s\"\n", n);
     }
+    fprintf(output, "\n\n");
 }
 
 void generate_hfile(config_node_t *root, int continue_next)
@@ -156,7 +157,7 @@ static config_node_t *value_for_table(config_node_t *tables, char *tblname, char
 static config_node_t *find_by_name(config_node_t *node, const char *s, int *pc);
 
 
-void generate_cfile(config_node_t *root, int continue_next, config_node_t *board)
+void generate_cfile(config_node_t *root, int continue_next, config_node_t *boards)
 {
     config_node_t *node = root->defs;
     config_node_t *tables = root->tables;
@@ -166,10 +167,12 @@ void generate_cfile(config_node_t *root, int continue_next, config_node_t *board
         }
 
         char *n = node->string;
+        printf("--> config def %s\n", n);
         FILE *output = genfile_c_create(node, root);
 
 
-        for (; board; board = board->next) {
+        for (config_node_t *board = boards; board; board = board->next) {
+            printf("  --> gen for board %s\n", board->string);
             char *brduc = strdup(board->string);
             for (char *p = brduc; *p; p++) *p = toupper(*p);
             fprintf(output, "\n\n#ifdef TRN_BOARD_%s\n\n", brduc);
@@ -245,7 +248,7 @@ static void gen_field_val(FILE *output, config_node_t *f, config_node_t *b, int 
         if (v) val = v;
     }
    
-    fprintf(output, "     .%s = %s\n", // \t\t// %s:%d,%s:%d tag:%d\n",
+    fprintf(output, "     .%s = %s,\n", // \t\t// %s:%d,%s:%d tag:%d\n",
         f->string,
         val ? val->string : "missing");
         //b->string, numinst, v->string, v->value, val->tag);

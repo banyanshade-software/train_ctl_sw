@@ -4,7 +4,7 @@ all: config
 
 CFLAGS += -g -Wall -Werror
 
-SRCS=config.c system.c utility.c main.c gen.c
+SRCS=config.c system.c utility.c main.c gen.c nodeutil.c
 
 OBJS = $(SRCS:%.c=%.o)
 

@@ -71,8 +71,24 @@ configattrib
         $$->string = i->string;
         $$->attrnode = g;
       }
-     / kw_attrib _ identifier _ attribute_name _ '=' _ value
+     / kw_attrib _ i:identifier _ attr_storetype _ '=' _ t:storetypevalue
+      { $$ = create_config_node(auxil, CONFIG_NODE_ATTR_LOCAL, range__new($0s, $0e));
+        $$->string = i->string;
+        $$->attrnode = t;
+      }
+     / kw_attrib _ i:identifier _ attr_storenum _ '=' _ n:integer
+      { $$ = create_config_node(auxil, CONFIG_NODE_ATTR_LOCAL, range__new($0s, $0e));
+        $$->string = i->string;
+        config_node_t *a = create_config_node(auxil, CONFIG_NODE_ATTR_STORENUM, range__new($0s, $0e)); 
+        a->value = n->value; 
+        $$->attrnode = a;
+      }
 
+storetypevalue
+    <- 'normal' !(L/D)
+        { $$ = create_config_node(auxil, CONFIG_NODE_ATTR_STORETYPE, range__new($0s, $0e)); $$->value = 0; }
+     / 'local'   !(L/D)
+        { $$ = create_config_node(auxil, CONFIG_NODE_ATTR_STORETYPE, range__new($0s, $0e)); $$->value = 1; }
 
 
 
@@ -268,9 +284,6 @@ X <- [0-9a-fA-F]
 L <- [a-zA-Z_]
 
 
-attribute_name
-   <- attr_storetype
-    / attr_storenum
 
 keyword
    <- kw_num

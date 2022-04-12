@@ -6,6 +6,7 @@
 #include <assert.h>
 #include "system.h"
 #include "gen.h"
+#include "nodeutil.h"
 
 
 static void error(const char *s)
@@ -40,17 +41,20 @@ static void include_code(FILE *output, config_node_t *attr, int v)
     }
 }
 
-static FILE *genfile_h_create(config_node_t *confnode, config_node_t *root)
+static FILE *genfile_h_create(config_node_t *confnode, config_node_t *root, int propag)
 {
     assert((confnode->tag == CONFIG_NODE_CONF) || (confnode->tag == CONFIG_NODE_SUBCONF));
     char n[128];
-    filename_for(n, confnode, "h");
+    filename_for(n, confnode, propag ?  "propag.h" : "h");
     FILE *F = fopen(n, "w");
     assert(F);
+    char *p = propag ? "propag_":"";
+    char *s = confnode->string;
     fprintf(F, "// this file is generated automatically by config\n// DO NOT EDIT\n\n\n");
-    fprintf(F, "#ifndef _conf_%s_H_\n#define _conf_%s_H_\n\n#include <stdint.h>\n", confnode->string, confnode->string);
-    include_code(F, root->globattrib, 1);
-    include_code(F, confnode->attr, 1);
+    fprintf(F, "#ifndef _conf_%s_%sH_\n#define _conf_%s_%sH_\n\n#include <stdint.h>\n", 
+        s, p, s, p);
+    include_code(F, root->globattrib, propag ? 3 : 1);
+    include_code(F, confnode->attr, propag ? 3 : 1);
     return F;
 }
 
@@ -69,7 +73,11 @@ static FILE *genfile_c_create(config_node_t *confnode, config_node_t *root)
     FILE *F = fopen(n, "w");
     assert(F);
     fprintf(F, "// this file is generated automatically by config\n// DO NOT EDIT\n\n\n");
-    fprintf(F, "#include <stdint.h>\n#include <stddef.h>\n#include \"conf_%s.h\"\n\n", confnode->string);
+    fprintf(F, "#include <stdint.h>\n#include <stddef.h>\n#include \"conf_%s.h\"\n", confnode->string);
+    if (confnode->tag == CONFIG_NODE_CONF) {
+        fprintf(F, "#include \"conf_%s.propag.h\"\n", confnode->string);
+    }
+    fprintf(F, "\n\n");
     include_code(F, root->globattrib, 2);
     include_code(F, confnode->attr, 2);
     return F;
@@ -85,43 +93,68 @@ static void genfile_c_close(FILE *F)
 // ------------------------------------------------------------
 
 
-static void gen_fields(config_node_t *node, FILE *output)
+static void _gen_subref(config_node_t *node, FILE *output, void *priv)
 {
-    for (; node; node = node->next) {
-        if (node->tag == CONFIG_NODE_SUBREF) {
-            char *s = node->string;
-            fprintf(output, "    struct conf_%s %s;\n", s, s);
-            continue;
-        }
-        if (node->tag != CONFIG_NODE_FIELD) {
-            error("bad tag expect field");
-        }  
-        fprintf(output, "    %s %s%s", node->type, nstar(node->nptr), node->string);
-        if (node->bitfield) fprintf(output, ":%d", node->bitfield);
-        if (node->array)    fprintf(output, "[%d]", node->array);
-        fprintf(output, ";\n");
-    }
+    char *s = node->string;
+    fprintf(output, "    struct conf_%s %s;\n", s, s);
 }
 
+static void _gen_field(config_node_t *node, FILE *output, void *priv)
+{
+    if (node->tag != CONFIG_NODE_FIELD) {
+        error("bad tag expect field");
+    }  
+    fprintf(output, "    %s %s%s", node->type, nstar(node->nptr), node->string);
+    if (node->bitfield) fprintf(output, ":%d", node->bitfield);
+    if (node->array)    fprintf(output, "[%d]", node->array);
+    fprintf(output, ";\n");
+}
+
+static void gen_fields(config_node_t *node, FILE *output)
+{
+    apply_field(NULL, node, -1, _gen_subref, output, NULL);
+    apply_field(NULL, node,  0, _gen_field,  output, NULL);
+}
+
+static void _gen_incsub(config_node_t *node, FILE *output, void *priv)
+{
+    char n[128];
+    filename_for(n, node, "h");
+    fprintf(output, "#include \"%s\"\n", n);
+}
 static void generate_incsub(config_node_t *field, FILE *output)
 {
-    for ( ; field ; field = field->next) {
-        if (field->tag != CONFIG_NODE_SUBREF) continue;
-        char n[128];
-        filename_for(n, field, "h");
-        fprintf(output, "#include \"%s\"\n", n);
-    }
+    apply_field(NULL, field,  -1, _gen_incsub,  output, NULL);
     fprintf(output, "\n\n");
 }
 
-void generate_hfile(config_node_t *root, int continue_next)
+static void get_storetype(config_node_t *node, int *ptype, int *pnum)
+{
+    config_node_t *nt = find_by_name_and_type(node->attr, NULL, CONFIG_NODE_ATTR_STORETYPE);
+    if (!nt) {
+        fprintf(stderr, "no config store type for %s\n", node->string);
+        exit(1);
+        *ptype = 0;
+    } else {
+        *ptype = nt->value;
+    }
+    config_node_t *nn = find_by_name_and_type(node->attr, NULL, CONFIG_NODE_ATTR_STORENUM);
+    if (!nn) {
+        fprintf(stderr, "no config store num for %s\n", node->string);
+        exit(1);
+    } else {
+        *pnum = nn->value;
+    }
+}
+
+static void generate_hfile_normal(config_node_t *root)
 {
 
     // generate sub struct
     for (config_node_t *node = root->subdefs; node; node = node->next) {
-        FILE *output = genfile_h_create(node, root);
+        FILE *output = genfile_h_create(node, root, 0);
         char *n = node->string;
-        generate_incsub(node, output);
+        generate_incsub(node->fields, output);
         fprintf(output, "struct conf_%s {\n", n);
         gen_fields(node->fields, output);
         fprintf(output, "};\n\n");
@@ -133,7 +166,9 @@ void generate_hfile(config_node_t *root, int continue_next)
         if (node->tag != CONFIG_NODE_CONF) {
             error("bad tag");
         }
-        FILE *output = genfile_h_create(node, root);
+
+        FILE *output = genfile_h_create(node, root, 0);
+
         generate_incsub(node->fields, output);
         char *n = node->string;
 
@@ -145,17 +180,41 @@ void generate_hfile(config_node_t *root, int continue_next)
         //fprintf(output, "// handling config setup from master\n");
         //fprintf(output, "void conf_%s_change(int instnum, int fieldnum, int16_t value);\n", n);
         genfile_h_close(output);
-        if (!continue_next) break;
     }
 }
 
+static void _gen_propagdef(config_node_t *f, FILE *output, void *priv)
+{
+    fprintf(output, "#define conf_numfield_%s \t\t%d\n", f->string, 42);
+}
+static void generate_hfile_propag(config_node_t *root)
+{
+    for (config_node_t *node = root->defs; node; node = node->next) {
+        if (node->tag != CONFIG_NODE_CONF) {
+            error("bad tag");
+        }
 
+        FILE *output = genfile_h_create(node, root, 1);
+        char *n = node->string;
+        fprintf(output, "// %s for propag\n", n);
+        apply_field(root, node->fields, 1, _gen_propagdef, output, NULL);
+
+        genfile_h_close(output);
+    }
+}
+
+void generate_hfiles(config_node_t *root)
+{
+    generate_hfile_normal(root);
+    generate_hfile_propag(root);
+}
 
 static void gen_field_val(FILE *output, config_node_t *f, config_node_t *b, int numinst, config_node_t *tables, config_node_t *subs);
 static config_node_t *find_board_value(config_node_t *values, int inst, const char *boardname);
 static config_node_t *value_for_table(config_node_t *tables, char *tblname, char *colname, int numinst);
-static config_node_t *find_by_name(config_node_t *node, const char *s, int *pc);
 
+
+static void gen_field_propag(FILE * output, config_node_t *fields, config_node_t *root);
 
 void generate_cfile(config_node_t *root, int continue_next, config_node_t *boards)
 {
@@ -196,9 +255,37 @@ void generate_cfile(config_node_t *root, int continue_next, config_node_t *board
         fprintf(output, "\n\nconst conf_%s_t *conf_%s_get(int num)\n", n, n);
         fprintf(output, "{\n  if (num<0) return NULL;\n    if (num>=conf_%s_num_entries()) return NULL;\n", n);
         fprintf(output, "    return &conf_%s[num];\n}\n\n", n);
+
+        int storetype, storenum;
+        get_storetype(node, &storetype, &storenum);
+        fprintf(output, "// %s config store type %d num %d\n", node->string, storetype, storenum);
+
+        if (storetype == 0) {
+            fprintf(output, "int conf_%s_propagate(int numinst, int numfield, int32_t value)\n", n);
+            fprintf(output, "{\n    if (numinst>=conf_%s_num_entries()) return -1;\n", n);
+            fprintf(output, "    conf_%s_t *conf = &conf_%s[numinst];\n", n, n);
+            fprintf(output, "    switch (numfield) {\n");
+            fprintf(output, "    default: return -1;\n");
+            gen_field_propag(output, node->fields, root);
+            fprintf(output, "    }\n");
+            fprintf(output, "    return 0;\n}\n\n\n");
+        }
         genfile_c_close(output);
     }
 }
+
+static void _gen_fpropag(config_node_t *f, FILE *output, void *priv)
+{
+    if (!f->configurable) return;
+    fprintf(output, "    case conf_numfield_%s:\n", f->string);
+    fprintf(output, "        conf->%s = value;\n        break;\n", f->string);
+}
+
+static void gen_field_propag(FILE * output, config_node_t *fields, config_node_t *root)
+{
+    apply_field(root, fields, 1, _gen_fpropag, output, NULL);
+}
+
 
 static int sameinstnum(int inst, int binst)
 {
@@ -255,34 +342,6 @@ static void gen_field_val(FILE *output, config_node_t *f, config_node_t *b, int 
 }
 
 // tables management
-
-static config_node_t *find_by_name(config_node_t *node, const char *s, int *pc)
-{
-    int n=0;
-    for ( ; node; node = node->next) {
-        if (!strcmp(node->string, s)) {
-            if (pc) *pc = n;
-            return node;
-        }
-        n++;
-    }
-    if (pc) *pc = -1;
-    return NULL;
-}
-
-static config_node_t *find_by_index(config_node_t *node, int idx)
-{
-    int n=0;
-    config_node_t *last;
-    for ( ; node; node = node->next) {
-        if (n==idx) return node;
-        last = node;
-        n++;
-    }
-    if (-1 == idx) return last;
-    return NULL;
-}
-
 
 static int table_find_colindex(config_node_t *coldef, char *string)
 {

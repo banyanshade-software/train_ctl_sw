@@ -113,7 +113,7 @@ int main(int argc, char **argv) {
                 }
             }
 
-			generate_hfile(root, 1);
+			generate_hfiles(root);
 
 			config_node_t *bm = create_config_node_string(&system, CONFIG_NODE_BOARD, "main");
 			bm->next = create_config_node_string(&system, CONFIG_NODE_BOARD, "dispatcher");

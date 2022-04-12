@@ -47,13 +47,15 @@ config_node_t *find_by_index(config_node_t *node, int idx)
     return NULL;
 }
 
-void apply_field(config_node_t *root, config_node_t *fields, int recsubref, void (*func)(config_node_t *n, FILE *output, void *priv), FILE *output, void *priv)
+void apply_field(config_node_t *root, config_node_t *fields, int recsubref, void (*func)(config_node_t *n, FILE *output, int num), FILE *output, int startnum)
 {
-     for (config_node_t *f = fields; f; f=f->next) {
+    int num = startnum;
+    for (config_node_t *f = fields; f; f=f->next) {
         if (f->tag == CONFIG_NODE_SUBREF) {
             if (!recsubref) continue;
             if (-1 == recsubref) {
-                func(f, output, priv);
+                func(f, output, num);
+                num++;
                 continue;
             }
             config_node_t *sub = find_by_name(root->subdefs, f->string, NULL);
@@ -62,11 +64,12 @@ void apply_field(config_node_t *root, config_node_t *fields, int recsubref, void
                 exit(1);
             }
             assert(CONFIG_NODE_SUBCONF == sub->tag);
-            apply_field(root, sub->fields, recsubref, func, output, priv);
+            apply_field(root, sub->fields, recsubref, func, output, num);
         } else {
             assert(f->tag == CONFIG_NODE_FIELD);
             if (-1 == recsubref) continue;
-            func(f, output, priv);
+            func(f, output, num);
+            num++;
         }
     }
 }

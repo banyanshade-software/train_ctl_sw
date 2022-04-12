@@ -93,13 +93,13 @@ static void genfile_c_close(FILE *F)
 // ------------------------------------------------------------
 
 
-static void _gen_subref(config_node_t *node, FILE *output, void *priv)
+static void _gen_subref(config_node_t *node, FILE *output, int num)
 {
     char *s = node->string;
     fprintf(output, "    struct conf_%s %s;\n", s, s);
 }
 
-static void _gen_field(config_node_t *node, FILE *output, void *priv)
+static void _gen_field(config_node_t *node, FILE *output, int num)
 {
     if (node->tag != CONFIG_NODE_FIELD) {
         error("bad tag expect field");
@@ -112,11 +112,11 @@ static void _gen_field(config_node_t *node, FILE *output, void *priv)
 
 static void gen_fields(config_node_t *node, FILE *output)
 {
-    apply_field(NULL, node, -1, _gen_subref, output, NULL);
-    apply_field(NULL, node,  0, _gen_field,  output, NULL);
+    apply_field(NULL, node, -1, _gen_subref, output, 0);
+    apply_field(NULL, node,  0, _gen_field,  output, 0);
 }
 
-static void _gen_incsub(config_node_t *node, FILE *output, void *priv)
+static void _gen_incsub(config_node_t *node, FILE *output, int num)
 {
     char n[128];
     filename_for(n, node, "h");
@@ -124,7 +124,7 @@ static void _gen_incsub(config_node_t *node, FILE *output, void *priv)
 }
 static void generate_incsub(config_node_t *field, FILE *output)
 {
-    apply_field(NULL, field,  -1, _gen_incsub,  output, NULL);
+    apply_field(NULL, field,  -1, _gen_incsub,  output, 0);
     fprintf(output, "\n\n");
 }
 
@@ -183,9 +183,9 @@ static void generate_hfile_normal(config_node_t *root)
     }
 }
 
-static void _gen_propagdef(config_node_t *f, FILE *output, void *priv)
+static void _gen_propagdef(config_node_t *f, FILE *output, int num)
 {
-    fprintf(output, "#define conf_numfield_%s \t\t%d\n", f->string, 42);
+    fprintf(output, "#define conf_numfield_%s \t\t%d\n", f->string, num);
 }
 static void generate_hfile_propag(config_node_t *root)
 {
@@ -197,7 +197,7 @@ static void generate_hfile_propag(config_node_t *root)
         FILE *output = genfile_h_create(node, root, 1);
         char *n = node->string;
         fprintf(output, "// %s for propag\n", n);
-        apply_field(root, node->fields, 1, _gen_propagdef, output, NULL);
+        apply_field(root, node->fields, 1, _gen_propagdef, output, 0);
 
         genfile_h_close(output);
     }
@@ -274,7 +274,7 @@ void generate_cfile(config_node_t *root, int continue_next, config_node_t *board
     }
 }
 
-static void _gen_fpropag(config_node_t *f, FILE *output, void *priv)
+static void _gen_fpropag(config_node_t *f, FILE *output, int num)
 {
     if (!f->configurable) return;
     fprintf(output, "    case conf_numfield_%s:\n", f->string);
@@ -283,7 +283,7 @@ static void _gen_fpropag(config_node_t *f, FILE *output, void *priv)
 
 static void gen_field_propag(FILE * output, config_node_t *fields, config_node_t *root)
 {
-    apply_field(root, fields, 1, _gen_fpropag, output, NULL);
+    apply_field(root, fields, 1, _gen_fpropag, output, 0);
 }
 
 

@@ -136,6 +136,7 @@ subconfigdef
             $$ = create_config_node(auxil, CONFIG_NODE_SUBCONF, range__new($0s, $0e));
             $$->string = n->string;
             $$->fields = f;
+            for (config_node_t *fld = f; fld; fld=fld->next) { fld->parentconf = $$;}
         }
 
 

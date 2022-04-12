@@ -278,7 +278,11 @@ static void _gen_fpropag(config_node_t *f, FILE *output, int num)
 {
     if (!f->configurable) return;
     fprintf(output, "    case conf_numfield_%s:\n", f->string);
-    fprintf(output, "        conf->%s = value;\n        break;\n", f->string);
+    if (f->parentconf && (f->parentconf->tag == CONFIG_NODE_SUBCONF)) {
+        fprintf(output, "        conf->%s.%s = value;\n     break;\n", f->parentconf->string,  f->string);
+    } else {
+        fprintf(output, "        conf->%s = value;\n        break;\n", f->string);
+    }
 }
 
 static void gen_field_propag(FILE * output, config_node_t *fields, config_node_t *root)

@@ -89,6 +89,7 @@ typedef struct config_node {
 			int nptr;
 			char *type;
 			struct config_node *boardvalues;
+			struct config_node *parentconf;
 		};
 		struct { // per board value CONFIG_NODE_BOARDVAL
 			struct config_node *val;

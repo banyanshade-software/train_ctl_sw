@@ -16,6 +16,14 @@
 #include "../leds/ledtask.h"
 #include "../msg/notif.h"
 
+
+
+
+#ifndef BOARD_HAS_LED
+#error BOARD_HAS_LED not defined, remove this file from build
+#endif
+
+
 void start_led_task(_UNUSED_ void *argument)
 {
 

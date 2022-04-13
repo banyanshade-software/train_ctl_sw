@@ -11,7 +11,7 @@
 #include "main.h"
 #include "task.h"
 //#include "oscillo.h"
-#include "misc.h"
+#include "../misc.h"
 
 #ifdef STM32_F4
 #include "stm32f4xx_hal.h"
@@ -21,7 +21,12 @@
 #include "stm32f1xx_hal_tim.h"
 #endif
 
-#include "trainctl_iface.h"
+
+#ifndef BOARD_HAS_USB
+#error oscillo requires BOARD_HAS_USB, remove from builr
+#endif
+
+//#include "trainctl_iface.h"
 
 #include "../msg/trainmsg.h"
 

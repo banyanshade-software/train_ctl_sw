@@ -74,6 +74,26 @@ typedef struct {
     uint8_t mask; uint8_t value; uint8_t destq;
 } qroute_t;
 
+
+#ifdef TRN_BOARD_MAIN_ZERO
+#define NQDEF 3
+static const qdef_t qdef[NQDEF] = {
+		/* 1*/ { &to_canbus, &from_canbus},
+        /* 2*/ { &to_oam, &from_oam},
+		/* 3*/ { NULL, &from_nowhere}
+};
+
+#define _BOARD 0 // TODO
+#define NROUTES 2
+static const qroute_t routes[NROUTES] = {
+		{MA_ADDR_MASK_8,						MA_ADDR_OAM|_BOARD,		2},
+		{MA_ADDR_MASK_5,						MA_ADDR_OAM,			1}
+
+};
+
+#endif // TRN_BOARD_MAIN_ZERO
+
+
 #ifdef TRN_BOARD_MAIN
 #define NQDEF 12
 static const qdef_t qdef[NQDEF] = {

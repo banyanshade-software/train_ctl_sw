@@ -12,7 +12,7 @@
 
 #ifndef TRACKPLAN_TESTPGM
 #include "../msg/trainmsg.h"
-#include "railconfig.h"
+#include "../railconfig.h"
 #endif
 
 #include "topology.h"

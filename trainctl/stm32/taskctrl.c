@@ -21,34 +21,37 @@
 #include "taskctrl.h"
 
 #include "../msg/trainmsg.h"
+
+
+//#include "../../../stm32dev/ina3221/ina3221.h"
+#include "trainctl_config.h"
+
+#ifdef BOARD_HAS_TURNOUTS
+#include "../low/turnout.h"
+#endif
+#ifdef BOARD_HAS_CTRL
+#include "../spdctl/spdctl.h"
+#include "../ctrl/ctrl.h"
+#endif
+
+#ifdef BOARD_HAS_CANTON
 #include "../low/canton.h"
 #include "../low/canton_bemf.h"
 #include "../low/presence_detection.h"
-#include "../low/turnout.h"
-#include "../spdctl/spdctl.h"
-#include "../ctrl/ctrl.h"
 
-#if 0
-#include "cmsis_os.h"
-#include "../misc.h"
-#include "../trainctl_iface.h"
-#include "taskauto.h"
-#include "taskctrl.h"
-#ifdef STM32_F4
-#include "stm32f4xx_hal.h"
-#else
-#include "stm32f1xx_hal.h"
 #endif
-#include "misc.h"
-//#include "../traincontrol.h"
-#endif
-//#include "../../../stm32dev/ina3221/ina3221.h"
-#include "trainctl_config.h"
-#include "../low/canton_bemf.h"
+#ifdef BOARD_HAS_LED
 #include "../leds/ledtask.h"
+#endif
+#ifdef BOARD_HAS_CAN
 #include "canmsg.h"
+#endif
 
+#ifdef BOARD_HAS_CANTON
 #include "../utils/adc_mean.h"
+#endif
+
+
 #include "../oam/oam.h"
 /*
 #define NUM_VAL_PER_CANTON (sizeof(adc_buffer_t)/sizeof(uint16_t))
@@ -121,12 +124,14 @@ static void TIM_ResetCounter(int tn, TIM_HandleTypeDef *htim)
 	//TIMx->CR1 &= ~(TIM_CR1_DIR);
 	//itm_debug2(DBG_TIM, "CR1b : ", tn, (TIMx->CR1 & TIM_CR1_DIR) ? 1 : 0);
 }
-
+#ifdef BOARD_HAS_CANTON
 static int adc_nsmpl = 0;
+#endif
+
 
 void StartCtrlTask(_UNUSED_ void *argument)
 {
-
+#ifdef BOARD_HAS_CANTON
 	adc_nsmpl = sizeof(train_adc_buf)/sizeof(uint16_t);
 
 	if (sizeof(train_adc_buf) != sizeof(uint16_t)*NUM_LOCAL_CANTONS_HW*8) Error_Handler();
@@ -189,7 +194,7 @@ void StartCtrlTask(_UNUSED_ void *argument)
 	// XXX XXX XXX XXX
 	memset((void *)train_adc_buf, 0, sizeof(train_adc_buf));
 	HAL_ADC_Start_DMA(&hadc1,(uint32_t *)train_adc_buf, adc_nsmpl);
-
+#endif // BOARD_HAS_CANTON
 
 
 	startCycleCounter();
@@ -358,29 +363,41 @@ static void run_task_ctrl(void)
 		}
 
 		//-----------------------------------
+#ifdef BOARD_HAS_CANTON
 		bemf_tick(notif, t, dt);
-
+#endif
 		//itm_debug1(DBG_LOWCTRL, "--msg", dt);
 		msgsrv_tick(notif, t, dt);
 
 		//itm_debug1(DBG_LOWCTRL, "--oam", dt);
 		OAM_Tasklet(notif, t, dt);
 
+#ifdef BOARD_HAS_CTRL
 		//itm_debug1(DBG_LOWCTRL, "--spdctl", dt);
 		spdctl_run_tick(notif, t, dt);
+#endif
 
+#ifdef BOARD_HAS_CANTON
 		//itm_debug1(DBG_LOWCTRL, "--canton", dt);
 		canton_tick(notif, t, dt);
+#endif
 
+#ifdef BOARD_HAS_TURNOUTS
 		//itm_debug1(DBG_LOWCTRL, "--trnout", dt);
 		turnout_tick(notif, t, dt);
+#endif
 
+#ifdef BOARD_HAS_CTRL
 		//itm_debug1(DBG_LOWCTRL, "--ctrl", dt);
 		ctrl_run_tick(notif, t, dt);
+#endif
 
+#ifdef BOARD_HAS_CAN
 		//itm_debug1(DBG_LOWCTRL, "--CAN", dt);
 		CAN_Tasklet(notif, t, dt);
+#endif
 
+#ifdef BOARD_HAS_INA3221
 #if USE_NOTIF_TIM
 #else
 		//if (cnt>20) {
@@ -407,16 +424,19 @@ static void run_task_ctrl(void)
 				*/
 			}
 		}
+#endif
 	}
 
 }
 
+
+#ifdef BOARD_HAS_CANTON
 // ---------------------------------------------------------------
 // ADC DMA callbacks
 // ---------------------------------------------------------------
 
-extern osThreadId_t ctrlTaskHandle;
 
+extern osThreadId_t ctrlTaskHandle;
 
 static uint32_t nhalf=0;
 static uint32_t nfull=0;
@@ -518,7 +538,7 @@ void  HAL_ADC_ErrorCallback(_UNUSED_ ADC_HandleTypeDef *hadc)
 	}
 	itm_debug1(DBG_ERR|DBG_TIM, "ADC ERR", 0);
 }
-
+#endif
 
 void vApplicationStackOverflowHook(_UNUSED_ xTaskHandle xTask, _UNUSED_ signed char *pcTaskName)
 {

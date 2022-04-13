@@ -13,6 +13,10 @@
  */
 
 
+
+
+// TODO : to be removed
+
 /* trainctl_iface.h : this file should contain all exported symbols/definition
  *         that are needed to operate (either from RTOS tasks or from simulation program)
  *         the trainctl library

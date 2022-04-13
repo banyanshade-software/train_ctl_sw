@@ -29,6 +29,9 @@
 
 #include "canmsg.h"
 
+/*
+ * error here on CAN_HandleTypeDef probably due to CAN is not activated in  ioc
+ */
 extern CAN_HandleTypeDef CAN_DEVICE;
 
 static runmode_t run_mode = 0;

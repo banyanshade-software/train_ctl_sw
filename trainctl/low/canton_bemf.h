@@ -23,6 +23,10 @@
 #include "../msg/trainmsg.h"
 
 
+#ifndef BOARD_HAS_CANTON
+#error BOARD_HAS_CANTON not defined, remove this file from build
+#endif
+
 void bemf_reset(void);
 void bemf_msg(msg_64_t *m);
 void bemf_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt);

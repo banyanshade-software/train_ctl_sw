@@ -118,6 +118,7 @@ int main(int argc, char **argv) {
 			config_node_t *bm = create_config_node_string(&system, CONFIG_NODE_BOARD, "main");
 			bm->next = create_config_node_string(&system, CONFIG_NODE_BOARD, "dispatcher");
 			bm->next->next = create_config_node_string(&system, CONFIG_NODE_BOARD, "switcher");
+			bm->next->next->next = create_config_node_string(&system, CONFIG_NODE_BOARD, "main_zero");
 
 			generate_cfile(root, 1, bm);
         }

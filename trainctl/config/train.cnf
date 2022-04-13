@@ -31,7 +31,6 @@ typedef struct train_config {
 
 
 
-
 subconfig pidctl {
     user int32_t kP 
         = (default) 500;

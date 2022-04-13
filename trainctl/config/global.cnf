@@ -22,3 +22,17 @@ c_code {
 
 
 
+
+attrib train store = normal
+attrib train stnum = 1
+attrib canton store = normal
+attrib canton stnum = 2
+attrib turnout store = normal
+attrib turnout stnum = 3
+
+attrib boards store = local
+attrib boards stnum = 1
+attrib topology store = local
+attrib topology stnum = 2
+
+

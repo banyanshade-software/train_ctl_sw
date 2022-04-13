@@ -196,7 +196,14 @@ static void generate_hfile_propag(config_node_t *root)
 
         FILE *output = genfile_h_create(node, root, 1);
         char *n = node->string;
-        fprintf(output, "// %s for propag\n", n);
+        fprintf(output, "// %s for propag\n\n", n);
+    
+        int storetype, storenum;
+        get_storetype(node, &storetype, &storenum);
+        if (storetype == 0) {
+            fprintf(output, "#define conf_pnum_%s %d\n\n", node->string, storenum);
+        }
+
         apply_field(root, node->fields, 1, _gen_propagdef, output, 0);
 
         genfile_h_close(output);

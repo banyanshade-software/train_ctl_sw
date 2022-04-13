@@ -16,7 +16,7 @@ config.c: config.peg
 	
 
 clean:
-	rm -f *.o *.log .depend
+	rm -f *.o *.log .depend conf_*
 
 test: tests/c1.log tests/c2.log tests/c3.log tests/c4.log tests/c5.log tests/c6.log tests/c7.log tests/c8.log
 

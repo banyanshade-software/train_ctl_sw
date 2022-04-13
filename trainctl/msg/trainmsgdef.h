@@ -62,6 +62,13 @@ typedef enum {
     CMD_SET_TRAIN_MODE,				// ui,?->ctrl		v1u=tr v2u=mode			chg train mode, mostly to off
     CMD_START_AUTO,					// ui->ctrl			mv1u=autonum			start auto global scenario
     //CMD_UI_MSG,
+
+	CMD_PARAM_USER_SET,				// ui(?) -> oam(0)							user parameter chage
+	CMD_PARAM_USER_COMMIT,			// ui(?) -> oam(0)
+	CMD_PARAM_USER_GET,				// ui(?) -> oam(0)
+	CMD_PARAM_USER_VAL,				// oam(0) -> ui(?)
+
+	CMD_PARAM_PROPAG,				// oam(0) -> oam(slave)
     
     // 111 xxxxx = 0xE0 debug and misc low prio
     CMD_NOOP = 0xE0,				// ?->can									msg intended for CAN testing, do nothing

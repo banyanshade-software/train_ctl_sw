@@ -5,7 +5,7 @@
 
 
 
-#include "../../w25qxx/w25qxx.h"
+#include "../stm32/w25qxx/w25qxx.h"
 
 
 
@@ -16,6 +16,7 @@ void oam_flashstore_set_value(int confnum, int fieldnum, int confbrd, int instnu
 
 void oam_flash_init(void)
 {
+	itm_debug1(DBG_OAM|DBG_ERR, "flash init", 0);
 	int rc = W25qxx_Init();
 	if (rc) {
 		Error_Handler();

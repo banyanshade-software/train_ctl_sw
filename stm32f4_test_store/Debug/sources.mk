@@ -33,6 +33,6 @@ trainctl \
 trainctl/msg \
 trainctl/oam \
 trainctl/stm32 \
+trainctl/stm32/w25qxx \
 trainctl/utils \
-w25qxx \
 

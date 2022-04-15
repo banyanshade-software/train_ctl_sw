@@ -23,7 +23,6 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
-#include "../../w25qxx/w25qxx.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -816,8 +815,7 @@ __weak void StartOamTask(void *argument)
   /* Infinite loop */
 	//extern w25qxx_t w25qxx;
 	//int rc = W25qxx_Init();
-	void oam_flash_init(void);
-	oam_flash_init();
+
 
 
   for(;;)

@@ -94,8 +94,10 @@ void Error_Handler(void);
 #define LED0_GPIO_Port GPIOA
 #define ADC_5_V1_Pin GPIO_PIN_4
 #define ADC_5_V1_GPIO_Port GPIOC
-#define ADC_3_V0_Pin GPIO_PIN_0
-#define ADC_3_V0_GPIO_Port GPIOB
+#define ADC_3_V0_Pin GPIO_PIN_5
+#define ADC_3_V0_GPIO_Port GPIOC
+#define FLASH_CS_Pin GPIO_PIN_0
+#define FLASH_CS_GPIO_Port GPIOB
 #define PWM_4_1_Pin GPIO_PIN_1
 #define PWM_4_1_GPIO_Port GPIOB
 #define TURN3B_Pin GPIO_PIN_7

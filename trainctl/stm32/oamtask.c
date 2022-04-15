@@ -13,6 +13,7 @@
 #include "task.h"
 #include "taskctrl.h"
 
+#include "../misc.h"
 #include "../msg/trainmsg.h"
 
 #include "../oam/oam.h"
@@ -20,7 +21,7 @@
 
 //extern osThreadId_t taskOamHandle;
 
-void StartOamTask(void *argument)
+void StartOamTask(_UNUSED_ void *argument)
 {
 
 	OAM_Init();

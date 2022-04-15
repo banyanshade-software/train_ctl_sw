@@ -22,6 +22,22 @@
 		1B255145273262B30015B4FA /* TestOccupency.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B255144273262B30015B4FA /* TestOccupency.m */; };
 		1B3657BB275BED540042491A /* CTCManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3657BA275BED540042491A /* CTCManager.m */; };
 		1B46EE552692684F00FAC813 /* topology.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B46EE542692684E00FAC813 /* topology.c */; };
+		1B46F7E228074DCF00BAD6E8 /* canton.cnf in Resources */ = {isa = PBXBuildFile; fileRef = 1B46F7D928074DCF00BAD6E8 /* canton.cnf */; };
+		1B46F7E328074DCF00BAD6E8 /* Makefile in Sources */ = {isa = PBXBuildFile; fileRef = 1B46F7DA28074DCF00BAD6E8 /* Makefile */; };
+		1B46F7E428074DCF00BAD6E8 /* .configdone in Resources */ = {isa = PBXBuildFile; fileRef = 1B46F7DB28074DCF00BAD6E8 /* .configdone */; };
+		1B46F7E528074DCF00BAD6E8 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = 1B46F7DC28074DCF00BAD6E8 /* .gitignore */; };
+		1B46F7E628074DCF00BAD6E8 /* boards.cnf in Resources */ = {isa = PBXBuildFile; fileRef = 1B46F7DD28074DCF00BAD6E8 /* boards.cnf */; };
+		1B46F7E728074DCF00BAD6E8 /* turnout.cnf in Resources */ = {isa = PBXBuildFile; fileRef = 1B46F7DE28074DCF00BAD6E8 /* turnout.cnf */; };
+		1B46F7E828074DCF00BAD6E8 /* train.cnf in Resources */ = {isa = PBXBuildFile; fileRef = 1B46F7DF28074DCF00BAD6E8 /* train.cnf */; };
+		1B46F7E928074DCF00BAD6E8 /* global.cnf in Resources */ = {isa = PBXBuildFile; fileRef = 1B46F7E028074DCF00BAD6E8 /* global.cnf */; };
+		1B46F7EA28074DCF00BAD6E8 /* topology.cnf in Resources */ = {isa = PBXBuildFile; fileRef = 1B46F7E128074DCF00BAD6E8 /* topology.cnf */; };
+		1B46F7F028074DDF00BAD6E8 /* oam.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B46F7EC28074DDF00BAD6E8 /* oam.c */; };
+		1B46F7F128074DDF00BAD6E8 /* boards.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B46F7EE28074DDF00BAD6E8 /* boards.c */; };
+		1B46F803280752D600BAD6E8 /* conf_turnout.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B46F7F7280752D500BAD6E8 /* conf_turnout.c */; };
+		1B46F804280752D600BAD6E8 /* conf_canton.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B46F7F9280752D500BAD6E8 /* conf_canton.c */; };
+		1B46F805280752D600BAD6E8 /* conf_topology.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B46F7FA280752D500BAD6E8 /* conf_topology.c */; };
+		1B46F806280752D600BAD6E8 /* conf_train.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B46F7FD280752D600BAD6E8 /* conf_train.c */; };
+		1B46F807280752D600BAD6E8 /* conf_boards.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B46F802280752D600BAD6E8 /* conf_boards.c */; };
 		1B4BCB022549ADC90062961D /* statval.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B4BCB002549ADC70062961D /* statval.c */; };
 		1B60329726CA4C0200D5B6CA /* trkplan.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B60329626CA4BF400D5B6CA /* trkplan.c */; };
 		1B61090D256AAE1A00F1AC45 /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B61090C256AAE1900F1AC45 /* CoreBluetooth.framework */; };
@@ -96,6 +112,36 @@
 		1B3657B9275BED540042491A /* CTCManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CTCManager.h; sourceTree = "<group>"; };
 		1B3657BA275BED540042491A /* CTCManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CTCManager.m; sourceTree = "<group>"; };
 		1B46EE542692684E00FAC813 /* topology.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = topology.c; sourceTree = "<group>"; };
+		1B46F7D928074DCF00BAD6E8 /* canton.cnf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = canton.cnf; sourceTree = "<group>"; };
+		1B46F7DA28074DCF00BAD6E8 /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
+		1B46F7DB28074DCF00BAD6E8 /* .configdone */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = .configdone; sourceTree = "<group>"; };
+		1B46F7DC28074DCF00BAD6E8 /* .gitignore */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
+		1B46F7DD28074DCF00BAD6E8 /* boards.cnf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = boards.cnf; sourceTree = "<group>"; };
+		1B46F7DE28074DCF00BAD6E8 /* turnout.cnf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = turnout.cnf; sourceTree = "<group>"; };
+		1B46F7DF28074DCF00BAD6E8 /* train.cnf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = train.cnf; sourceTree = "<group>"; };
+		1B46F7E028074DCF00BAD6E8 /* global.cnf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = global.cnf; sourceTree = "<group>"; };
+		1B46F7E128074DCF00BAD6E8 /* topology.cnf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = topology.cnf; sourceTree = "<group>"; };
+		1B46F7EC28074DDF00BAD6E8 /* oam.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = oam.c; sourceTree = "<group>"; };
+		1B46F7ED28074DDF00BAD6E8 /* boards.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = boards.h; sourceTree = "<group>"; };
+		1B46F7EE28074DDF00BAD6E8 /* boards.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = boards.c; sourceTree = "<group>"; };
+		1B46F7EF28074DDF00BAD6E8 /* oam.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = oam.h; sourceTree = "<group>"; };
+		1B46F7F2280752D500BAD6E8 /* conf_boards.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = conf_boards.h; sourceTree = "<group>"; };
+		1B46F7F3280752D500BAD6E8 /* conf_train.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = conf_train.h; sourceTree = "<group>"; };
+		1B46F7F4280752D500BAD6E8 /* conf_canton.propag.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = conf_canton.propag.h; sourceTree = "<group>"; };
+		1B46F7F5280752D500BAD6E8 /* conf_turnout.propag.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = conf_turnout.propag.h; sourceTree = "<group>"; };
+		1B46F7F6280752D500BAD6E8 /* conf_topology.propag.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = conf_topology.propag.h; sourceTree = "<group>"; };
+		1B46F7F7280752D500BAD6E8 /* conf_turnout.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = conf_turnout.c; sourceTree = "<group>"; };
+		1B46F7F8280752D500BAD6E8 /* conf_turnout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = conf_turnout.h; sourceTree = "<group>"; };
+		1B46F7F9280752D500BAD6E8 /* conf_canton.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = conf_canton.c; sourceTree = "<group>"; };
+		1B46F7FA280752D500BAD6E8 /* conf_topology.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = conf_topology.c; sourceTree = "<group>"; };
+		1B46F7FB280752D500BAD6E8 /* conf_canton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = conf_canton.h; sourceTree = "<group>"; };
+		1B46F7FC280752D500BAD6E8 /* conf_inertia.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = conf_inertia.h; sourceTree = "<group>"; };
+		1B46F7FD280752D600BAD6E8 /* conf_train.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = conf_train.c; sourceTree = "<group>"; };
+		1B46F7FE280752D600BAD6E8 /* conf_boards.propag.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = conf_boards.propag.h; sourceTree = "<group>"; };
+		1B46F7FF280752D600BAD6E8 /* conf_train.propag.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = conf_train.propag.h; sourceTree = "<group>"; };
+		1B46F800280752D600BAD6E8 /* conf_topology.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = conf_topology.h; sourceTree = "<group>"; };
+		1B46F801280752D600BAD6E8 /* conf_pidctl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = conf_pidctl.h; sourceTree = "<group>"; };
+		1B46F802280752D600BAD6E8 /* conf_boards.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = conf_boards.c; sourceTree = "<group>"; };
 		1B4B70A12729194F00FBDB52 /* TopologyTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TopologyTest.m; sourceTree = "<group>"; };
 		1B4BCB002549ADC70062961D /* statval.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = statval.c; sourceTree = "<group>"; };
 		1B4BCB012549ADC80062961D /* statval.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = statval.h; sourceTree = "<group>"; };
@@ -212,6 +258,50 @@
 				1B18114E26BD5BA30008F21C /* uitrack.h */,
 			);
 			path = uitrack;
+			sourceTree = "<group>";
+		};
+		1B46F7D828074DCF00BAD6E8 /* config */ = {
+			isa = PBXGroup;
+			children = (
+				1B46F802280752D600BAD6E8 /* conf_boards.c */,
+				1B46F7F2280752D500BAD6E8 /* conf_boards.h */,
+				1B46F7FE280752D600BAD6E8 /* conf_boards.propag.h */,
+				1B46F7F9280752D500BAD6E8 /* conf_canton.c */,
+				1B46F7FB280752D500BAD6E8 /* conf_canton.h */,
+				1B46F7F4280752D500BAD6E8 /* conf_canton.propag.h */,
+				1B46F7FC280752D500BAD6E8 /* conf_inertia.h */,
+				1B46F801280752D600BAD6E8 /* conf_pidctl.h */,
+				1B46F7FA280752D500BAD6E8 /* conf_topology.c */,
+				1B46F800280752D600BAD6E8 /* conf_topology.h */,
+				1B46F7F6280752D500BAD6E8 /* conf_topology.propag.h */,
+				1B46F7FD280752D600BAD6E8 /* conf_train.c */,
+				1B46F7F3280752D500BAD6E8 /* conf_train.h */,
+				1B46F7FF280752D600BAD6E8 /* conf_train.propag.h */,
+				1B46F7F7280752D500BAD6E8 /* conf_turnout.c */,
+				1B46F7F8280752D500BAD6E8 /* conf_turnout.h */,
+				1B46F7F5280752D500BAD6E8 /* conf_turnout.propag.h */,
+				1B46F7D928074DCF00BAD6E8 /* canton.cnf */,
+				1B46F7DA28074DCF00BAD6E8 /* Makefile */,
+				1B46F7DB28074DCF00BAD6E8 /* .configdone */,
+				1B46F7DC28074DCF00BAD6E8 /* .gitignore */,
+				1B46F7DD28074DCF00BAD6E8 /* boards.cnf */,
+				1B46F7DE28074DCF00BAD6E8 /* turnout.cnf */,
+				1B46F7DF28074DCF00BAD6E8 /* train.cnf */,
+				1B46F7E028074DCF00BAD6E8 /* global.cnf */,
+				1B46F7E128074DCF00BAD6E8 /* topology.cnf */,
+			);
+			path = config;
+			sourceTree = "<group>";
+		};
+		1B46F7EB28074DDF00BAD6E8 /* oam */ = {
+			isa = PBXGroup;
+			children = (
+				1B46F7EC28074DDF00BAD6E8 /* oam.c */,
+				1B46F7ED28074DDF00BAD6E8 /* boards.h */,
+				1B46F7EE28074DDF00BAD6E8 /* boards.c */,
+				1B46F7EF28074DDF00BAD6E8 /* oam.h */,
+			);
+			path = oam;
 			sourceTree = "<group>";
 		};
 		1B60329426CA4BF400D5B6CA /* trkpln */ = {
@@ -355,6 +445,8 @@
 		1BD93C4A2546FF42006C4D70 /* trainctl */ = {
 			isa = PBXGroup;
 			children = (
+				1B46F7EB28074DDF00BAD6E8 /* oam */,
+				1B46F7D828074DCF00BAD6E8 /* config */,
 				1BD3F61327A3C0460007521D /* oscillo */,
 				1BC90303272091870087CEA7 /* leds */,
 				1B60329426CA4BF400D5B6CA /* trkpln */,
@@ -515,12 +607,20 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1B46F7E628074DCF00BAD6E8 /* boards.cnf in Resources */,
 				1BED2A9A25173D1E0080FC97 /* Assets.xcassets in Resources */,
 				1BED2A9D25173D1F0080FC97 /* MainMenu.xib in Resources */,
 				1BD93C772546FF44006C4D70 /* readme.txt in Resources */,
 				1BED2AA8251804310080FC97 /* stop.png in Resources */,
 				1B8707A227CA2C1C00253DDF /* train-svgrepo-com.svg in Resources */,
+				1B46F7EA28074DCF00BAD6E8 /* topology.cnf in Resources */,
+				1B46F7E428074DCF00BAD6E8 /* .configdone in Resources */,
+				1B46F7E728074DCF00BAD6E8 /* turnout.cnf in Resources */,
+				1B46F7E828074DCF00BAD6E8 /* train.cnf in Resources */,
 				1B18115126BFFCC00008F21C /* uitrack.html in Resources */,
+				1B46F7E528074DCF00BAD6E8 /* .gitignore in Resources */,
+				1B46F7E228074DCF00BAD6E8 /* canton.cnf in Resources */,
+				1B46F7E928074DCF00BAD6E8 /* global.cnf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -561,8 +661,10 @@
 				1B7A2A0D262D595F004E0481 /* pidctl.c in Sources */,
 				1B0ECEB127BAF993003692B1 /* adc_mean.c in Sources */,
 				1BEB93CF272B325700508C17 /* ctrlP.c in Sources */,
+				1B46F7F028074DDF00BAD6E8 /* oam.c in Sources */,
 				1B812B3D273FA77B00924749 /* cautoP.c in Sources */,
 				1BC90306272092EC0087CEA7 /* led.c in Sources */,
+				1B46F7E328074DCF00BAD6E8 /* Makefile in Sources */,
 				1BA4B49F2551DAF70043D763 /* StringExtension.m in Sources */,
 				1B92EA302631A0BA00558716 /* ctrl.c in Sources */,
 				1BD93C782546FF44006C4D70 /* misc.c in Sources */,
@@ -576,17 +678,23 @@
 				1BED2A9825173CF40080FC97 /* AppDelegate.m in Sources */,
 				1B67360F2531E4450063EA9A /* SimTrain.m in Sources */,
 				1B7A2A14262D599E004E0481 /* lf_mqueue.c in Sources */,
+				1B46F804280752D600BAD6E8 /* conf_canton.c in Sources */,
 				1B7A2A13262D599E004E0481 /* itm_debug.c in Sources */,
 				1BA4B4A22551DE820043D763 /* NSCalendar+Gmt.m in Sources */,
 				1B60329726CA4C0200D5B6CA /* trkplan.c in Sources */,
+				1B46F807280752D600BAD6E8 /* conf_boards.c in Sources */,
 				1B7A29F7262D5904004E0481 /* trainmsg.c in Sources */,
+				1B46F7F128074DDF00BAD6E8 /* boards.c in Sources */,
 				1B7A2A0B262D595F004E0481 /* inertia.c in Sources */,
 				1B46EE552692684F00FAC813 /* topology.c in Sources */,
 				1B7A2A02262D5948004E0481 /* turnout.c in Sources */,
 				1B7A2A03262D5948004E0481 /* canton.c in Sources */,
+				1B46F803280752D600BAD6E8 /* conf_turnout.c in Sources */,
 				1B4BCB022549ADC90062961D /* statval.c in Sources */,
 				1BEB93CA2729F10D00508C17 /* occupency.c in Sources */,
 				1B18114F26BD5BA30008F21C /* uitrack.c in Sources */,
+				1B46F806280752D600BAD6E8 /* conf_train.c in Sources */,
+				1B46F805280752D600BAD6E8 /* conf_topology.c in Sources */,
 				1B3657BB275BED540042491A /* CTCManager.m in Sources */,
 				1B77BECA274A471200BC5230 /* detectP.c in Sources */,
 				1B693C4427D9CFEA0063D8B6 /* detect_loco.c in Sources */,
@@ -624,6 +732,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = "";
+				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -648,6 +757,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = "";
+				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					TRAIN_SIMU,
 					HOST_SIDE,

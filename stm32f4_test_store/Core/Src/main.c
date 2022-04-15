@@ -27,6 +27,7 @@
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
+typedef StaticTask_t osStaticThreadDef_t;
 /* USER CODE BEGIN PTD */
 
 /* USER CODE END PTD */
@@ -54,12 +55,17 @@ TIM_HandleTypeDef htim1;
 TIM_HandleTypeDef htim2;
 TIM_HandleTypeDef htim3;
 
-/* Definitions for defaultTask */
-osThreadId_t defaultTaskHandle;
-const osThreadAttr_t defaultTask_attributes = {
-  .name = "defaultTask",
-  .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityNormal,
+/* Definitions for oamTask */
+osThreadId_t oamTaskHandle;
+uint32_t oamTaskBuffer[ 128 ];
+osStaticThreadDef_t oamTaskControlBlock;
+const osThreadAttr_t oamTask_attributes = {
+  .name = "oamTask",
+  .cb_mem = &oamTaskControlBlock,
+  .cb_size = sizeof(oamTaskControlBlock),
+  .stack_mem = &oamTaskBuffer[0],
+  .stack_size = sizeof(oamTaskBuffer),
+  .priority = (osPriority_t) osPriorityLow3,
 };
 /* USER CODE BEGIN PV */
 
@@ -77,7 +83,7 @@ static void MX_TIM2_Init(void);
 static void MX_TIM3_Init(void);
 static void MX_USB_OTG_FS_USB_Init(void);
 static void MX_CAN1_Init(void);
-void StartDefaultTask(void *argument);
+void StartOamTask(void *argument);
 
 /* USER CODE BEGIN PFP */
 
@@ -149,8 +155,8 @@ int main(void)
   /* USER CODE END RTOS_QUEUES */
 
   /* Create the thread(s) */
-  /* creation of defaultTask */
-  defaultTaskHandle = osThreadNew(StartDefaultTask, NULL, &defaultTask_attributes);
+  /* creation of oamTask */
+  oamTaskHandle = osThreadNew(StartOamTask, NULL, &oamTask_attributes);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -797,23 +803,23 @@ static void MX_GPIO_Init(void)
 
 /* USER CODE END 4 */
 
-/* USER CODE BEGIN Header_StartDefaultTask */
+/* USER CODE BEGIN Header_StartOamTask */
 /**
-  * @brief  Function implementing the defaultTask thread.
+  * @brief  Function implementing the oamTask thread.
   * @param  argument: Not used
   * @retval None
   */
-/* USER CODE END Header_StartDefaultTask */
-void StartDefaultTask(void *argument)
+/* USER CODE END Header_StartOamTask */
+__weak void StartOamTask(void *argument)
 {
   /* USER CODE BEGIN 5 */
   /* Infinite loop */
 	//extern w25qxx_t w25qxx;
+	//int rc = W25qxx_Init();
+	void oam_flash_init(void);
+	oam_flash_init();
 
-	int rc = W25qxx_Init();
-  if (rc) {
 
-  }
   for(;;)
   {
     osDelay(1);

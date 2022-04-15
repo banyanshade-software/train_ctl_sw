@@ -18,17 +18,22 @@
 
 
 #include "oam.h"
+#include "oam_flash.h"
 #include "boards.h"
+#include "../config/propag.h"
 
 
-#ifndef BOARD_HAS_CAN
-#error BOARD_HAS_CAN not defined, remove this file from build
-#endif
-
+int OAM_NeedsReschedule = 0;
 
 static runmode_t run_mode = 0;
 
 static  int master = 0;
+
+void OAM_Init(void)
+{
+	oam_flash_init();
+}
+
 
 static void exit_can_test(void)
 {
@@ -40,12 +45,15 @@ static void exit_can_test(void)
 	mqf_write_from_nowhere(&m);
 }
 
+
+
+
 void OAM_Tasklet(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_ uint32_t dt)
 {
 	static int first = 1;
 	static int respok = 0;
 	if ((first)) {
-		uint32_t myid = getDeviceId();
+		uint32_t myid = oam_getDeviceUniqueId();
 		int myboard = boardIdToBoardNum(myid);
 		if (0==myboard) {
 			master = 1;
@@ -75,6 +83,66 @@ void OAM_Tasklet(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_
 				}
 			}
 			break;
+
+		case CMD_PARAM_USER_SET: {
+			if (!oam_isMaster()) {
+				itm_debug1(DBG_OAM|DBG_ERR, "only master recv set", 0);
+				Error_Handler();
+				break;
+			}
+			int instnum;
+			int confnum;
+			int fieldnum;
+			int confbrd;
+			int32_t v;
+			oam_decode_val40(m.val40, &confnum, &confbrd, &instnum, &fieldnum, &v);
+            // store in flash
+            oam_flashstore_set_value(confnum, fieldnum, confbrd, instnum, v);
+            if (confbrd == 0)  {
+            	// master == local board
+            	conf_propagate(confnum, fieldnum, instnum, v);
+            } else {
+            	m.cmd = CMD_PARAM_PROPAG;
+            	m.to = MA_OAM(confbrd);
+            	mqf_write_from_oam(&m);
+            }
+			}
+			break;
+
+		case CMD_PARAM_USER_COMMIT:
+			if (!oam_isMaster()) {
+				itm_debug1(DBG_OAM|DBG_ERR, "only master recv commit", 0);
+				Error_Handler();
+				break;
+			}
+			break;
+
+		case CMD_PARAM_USER_GET:
+			if (!oam_isMaster()) {
+				itm_debug1(DBG_OAM|DBG_ERR, "only master recv get", 0);
+				Error_Handler();
+				break;
+			}
+
+			break;
+
+		case CMD_PARAM_PROPAG: {
+			if (oam_isMaster()) {
+				itm_debug1(DBG_OAM|DBG_ERR, "only slave recv propag", 0);
+				Error_Handler();
+				break;
+			}
+			int instnum;
+			int confnum;
+			int fieldnum;
+			int confbrd;
+			int32_t v;
+			oam_decode_val40(m.val40, &confnum, &confbrd, &instnum, &fieldnum, &v);
+        	conf_propagate(confnum, fieldnum, instnum, v);
+			}
+		    break;
+
+
 		case CMD_CANTEST:
 			if ((0)) { // XXX test relat
 				static int cnt=0;
@@ -142,8 +210,37 @@ void OAM_Tasklet(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_
 	}
 }
 
-uint32_t getDeviceId(void)
+/*
+ *
+ * file:	4bit
+ * board:   4 bits
+ * inst:    6 bits
+ * field:   5 bits
+ * value : 21 bits
+ */
+
+void oam_decode_val40(uint64_t  val40, int *fnum, int *brd, int *inst, int *fld, int32_t *v)
 {
+	*fnum = (val40 >> (21+5+6+4)) & 0x0F;
+	*brd  = (val40 >> (21+5+6))   & 0x0F;
+	*inst = (val40 >> (21+5))     & 0x3F;
+	*fld =  (val40 >> (21))       & 0x1F;
+	*v   =  (val40 >> (0))        & 0x1FFFFF;
+}
+void oam_encode_val40(uint64_t *val40, int  fnum, int  brd, int  inst, int  fld, int32_t  v)
+{
+	*val40 = 0;
+	*val40 |= (uint64_t) (v & 0x1FFFFF)  << 0;
+	*val40 |= (uint64_t) (fld  & 0x1F)   << (21);
+	*val40 |= (uint64_t) (inst & 0x3F)   << (21+5);
+	*val40 |= (uint64_t) (brd & 0x0F)    << (21+5+6);
+}
+
+
+
+uint32_t oam_getDeviceUniqueId(void)
+{
+#ifndef TRAIN_SIMU
 	/* Read MCU Id, 32-bit access */
 	uint32_t id0 = HAL_GetUIDw0();
 	uint32_t id1 = HAL_GetUIDw1();
@@ -155,4 +252,12 @@ uint32_t getDeviceId(void)
 	uint32_t xid = id0 ^ id1 ^ id2;
 	// XXX TODO use crc32 instead
 	return xid;
+#else
+    return 42;
+#endif
+}
+
+int oam_isMaster(void)
+{
+    return 1; // TODO
 }

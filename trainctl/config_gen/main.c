@@ -121,6 +121,8 @@ int main(int argc, char **argv) {
 			bm->next->next->next = create_config_node_string(&system, CONFIG_NODE_BOARD, "main_zero");
 
 			generate_cfile(root, 1, bm);
+        
+            generate_cfile_global_propag(root);    
         }
     }
     else {

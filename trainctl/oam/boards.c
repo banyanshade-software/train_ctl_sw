@@ -30,3 +30,4 @@ int boardIdToBoardNum(uint32_t uuid)
 	}
 	return -1;
 }
+

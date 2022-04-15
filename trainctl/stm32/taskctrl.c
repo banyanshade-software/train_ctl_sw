@@ -370,7 +370,7 @@ static void run_task_ctrl(void)
 		msgsrv_tick(notif, t, dt);
 
 		//itm_debug1(DBG_LOWCTRL, "--oam", dt);
-		OAM_Tasklet(notif, t, dt);
+		// OAM_Tasklet(notif, t, dt); OAM on its own stack
 
 #ifdef BOARD_HAS_CTRL
 		//itm_debug1(DBG_LOWCTRL, "--spdctl", dt);

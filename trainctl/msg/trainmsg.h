@@ -126,31 +126,43 @@ typedef union {
 			uint8_t rbytes[6];
 			struct {
 				uint8_t cmd;
-				uint8_t subc;
 				union {
-					uint32_t v32u;
-					int32_t v32;
-					struct {
-						uint16_t v1u;
-						uint16_t v2u;
+					uint8_t subc;
+					union {
+						uint32_t v32u;
+						int32_t v32;
+						struct {
+							uint16_t v1u;
+							uint16_t v2u;
+						};
+						struct {
+							int16_t v1;
+							int16_t v2;
+						};
+						uint8_t vbytes[4];
+						struct {
+							uint8_t vb0;
+							uint8_t vb1;
+							uint8_t vb2;
+							uint8_t vb3;
+						};
+
 					};
-					struct {
-						int16_t v1;
-						int16_t v2;
-					};
-                    uint8_t vbytes[4];
-                    struct {
-                        uint8_t vb0;
-                        uint8_t vb1;
-                        uint8_t vb2;
-                        uint8_t vb3;
-                    };
-				};
+					uint64_t val40:40 ;
+				} __attribute__((packed));
 			}  __attribute__((packed));
 		};
 	} __attribute__((packed));
 	uint64_t raw;
 } msg_64_t;
+
+#ifndef TRAIN_SIMU
+static_assert(sizeof(msg_64_t) == 8);
+#else
+//#define COMPILE_TIME_ASSERT(expr) {typedef char COMP_TIME_ASSERT[(expr) ? 1 : 0];}
+//COMPILE_TIME_ASSERT(sizeof(msg_64_t) == 8);
+typedef char compile_assert[(sizeof(msg_64_t) == 8) ? 1 : -1];
+#endif
 
 typedef enum {
 	runmode_off,				// when switching mode

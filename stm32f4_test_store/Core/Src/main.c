@@ -68,6 +68,8 @@ const osThreadAttr_t oamTask_attributes = {
 };
 /* USER CODE BEGIN PV */
 
+uint32_t oamTaskBuffer[] __attribute__((section(".ccmram")));
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/

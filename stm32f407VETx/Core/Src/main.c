@@ -166,6 +166,14 @@ const osMessageQueueAttr_t frameQueue_attributes = {
 };
 /* USER CODE BEGIN PV */
 
+
+uint32_t defaultTaskBuffer[] __attribute__((section(".ccmram")));
+uint32_t ledTaskBuffer[] __attribute__((section(".ccmram")));
+uint32_t osciloBuffer[] __attribute__((section(".ccmram")));
+uint32_t txrxFrameTaskBuffer[] __attribute__((section(".ccmram")));
+uint32_t ina3221_taskBuffer[] __attribute__((section(".ccmram")));
+uint32_t ctrlTaskBuffer[] __attribute__((section(".ccmram")));
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/

@@ -12,6 +12,7 @@ w25qxx_t w25qxx;
 extern SPI_HandleTypeDef _W25QXX_SPI;
 
 
+
 #if (_W25QXX_USE_FREERTOS == 1)
 #define W25qxx_Delay(delay) osDelay(delay)
 #include "cmsis_os.h"

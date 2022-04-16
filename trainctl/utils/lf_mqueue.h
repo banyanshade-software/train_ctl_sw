@@ -22,6 +22,12 @@ typedef struct {
 	uint8_t *msgbuf;
 } mqf_t;
 
+
+// put msg queues in CCM ram, if any
+//#define MQF_ATTRIB
+#define MQF_ATTRIB __attribute__((section(".ccmram")))
+
+
 #define LFMQUEUE_DEF_H(_name, _type) 						\
     extern mqf_t  _name; 									\
     														\
@@ -36,8 +42,8 @@ typedef struct {
 
 
 #define LFMQUEUE_DEF_C(_name, _type,_num, _sil) 					\
-	_type buf##_name[_num];									\
-    mqf_t _name = {.head=0, .tail=0, .msgsiz=sizeof(_type), .num=_num, .maxuse=0, .msgbuf=(uint8_t *) buf##_name, .silentdrop=_sil};
+	_type buf##_name[_num] MQF_ATTRIB;									\
+    mqf_t MQF_ATTRIB _name = {.head=0, .tail=0, .msgsiz=sizeof(_type), .num=_num, .maxuse=0, .msgbuf=(uint8_t *) buf##_name, .silentdrop=_sil} ;
 
 
 void mqf_clear(mqf_t *);

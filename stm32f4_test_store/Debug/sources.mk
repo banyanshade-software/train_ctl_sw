@@ -35,4 +35,5 @@ trainctl/oam \
 trainctl/stm32 \
 trainctl/stm32/w25qxx \
 trainctl/utils \
+Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS \
 

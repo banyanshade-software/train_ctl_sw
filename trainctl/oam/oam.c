@@ -90,10 +90,10 @@ void OAM_Tasklet(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_
 				Error_Handler();
 				break;
 			}
-			int instnum;
-			int confnum;
-			int fieldnum;
-			int confbrd;
+			unsigned int instnum;
+			unsigned int confnum;
+			unsigned int fieldnum;
+			unsigned int confbrd;
 			int32_t v;
 			oam_decode_val40(m.val40, &confnum, &confbrd, &instnum, &fieldnum, &v);
             // store in flash
@@ -132,10 +132,10 @@ void OAM_Tasklet(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_
 				Error_Handler();
 				break;
 			}
-			int instnum;
-			int confnum;
-			int fieldnum;
-			int confbrd;
+			unsigned int instnum;
+			unsigned int confnum;
+			unsigned int fieldnum;
+			unsigned int confbrd;
 			int32_t v;
 			oam_decode_val40(m.val40, &confnum, &confbrd, &instnum, &fieldnum, &v);
         	conf_propagate(confnum, fieldnum, instnum, v);
@@ -219,7 +219,7 @@ void OAM_Tasklet(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_
  * value : 21 bits
  */
 
-void oam_decode_val40(uint64_t  val40, int *fnum, int *brd, int *inst, int *fld, int32_t *v)
+void oam_decode_val40(uint64_t  val40, unsigned int *fnum, unsigned int *brd, unsigned int *inst, unsigned int *fld, int32_t *v)
 {
 	*fnum = (val40 >> (21+5+6+4)) & 0x0F;
 	*brd  = (val40 >> (21+5+6))   & 0x0F;
@@ -227,7 +227,7 @@ void oam_decode_val40(uint64_t  val40, int *fnum, int *brd, int *inst, int *fld,
 	*fld =  (val40 >> (21))       & 0x1F;
 	*v   =  (val40 >> (0))        & 0x1FFFFF;
 }
-void oam_encode_val40(uint64_t *val40, int  fnum, int  brd, int  inst, int  fld, int32_t  v)
+void oam_encode_val40(uint64_t *val40, unsigned int  fnum, unsigned int brd, unsigned int  inst, unsigned int  fld, int32_t  v)
 {
 	*val40 = 0;
 	*val40 |= (uint64_t) (v & 0x1FFFFF)  << 0;

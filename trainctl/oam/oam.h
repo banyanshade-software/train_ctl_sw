@@ -30,7 +30,7 @@ int oam_isMaster(void);
  * -> value : 21 bits							   21
  */
 
-void oam_decode_val40(uint64_t  val40, int *fnum, int *brd, int *inst, int *field, int32_t *v);
-void oam_encode_val40(uint64_t *val40, int  fnum, int  brd, int  inst, int  field, int32_t  v);
+void oam_decode_val40(uint64_t  val40, unsigned int *fnum, unsigned int *brd, unsigned int *inst, unsigned int *field, int32_t *v);
+void oam_encode_val40(uint64_t *val40, unsigned int  fnum, unsigned int  brd, unsigned int  inst, unsigned int  field, int32_t  v);
 
 #endif /* OAM_OAM_H_ */

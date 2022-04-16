@@ -385,12 +385,24 @@ uint32_t W25qxx_SectorToPage(uint32_t SectorAddress)
 {
 	return (SectorAddress * w25qxx.SectorSize) / w25qxx.PageSize;
 }
+
+//###################################################################################################################
+uint32_t W25qxx_SectorToAddr(uint32_t SectorAddress)
+{
+	return (SectorAddress * w25qxx.SectorSize);
+}
+
+
 //###################################################################################################################
 uint32_t W25qxx_BlockToPage(uint32_t BlockAddress)
 {
 	return (BlockAddress * w25qxx.BlockSize) / w25qxx.PageSize;
 }
-
+//###################################################################################################################
+uint32_t W25qxx_BlockToSector(uint32_t BlockAddress)
+{
+	return (BlockAddress * w25qxx.BlockSize) / w25qxx.SectorSize;
+}
 
 //###################################################################################################################
 bool W25qxx_IsEmptyPage(uint32_t Page_Address, uint32_t OffsetInByte, uint32_t NumByteToCheck_up_to_PageSize)

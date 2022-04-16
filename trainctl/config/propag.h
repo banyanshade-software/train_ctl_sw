@@ -8,7 +8,7 @@
 #ifndef CONFIG_PROPAG_H_
 #define CONFIG_PROPAG_H_
 
-int conf_canton_propagate(int numinst, int numfield, int32_t value);
+void conf_propagate(int confnum, int fieldnum, int instnum, int32_t v);
 
 
 #endif /* CONFIG_PROPAG_H_ */

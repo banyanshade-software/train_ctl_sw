@@ -2,8 +2,8 @@
 // DO NOT EDIT
 
 
-#ifndef _conf_canton_H_
-#define _conf_canton_H_
+#ifndef _conf_led_H_
+#define _conf_led_H_
 
 #include <stdint.h>
 
@@ -34,51 +34,42 @@ typedef void *GPIO_TypeDef;
 
 
 
-typedef struct conf_canton {
-    uint16_t volts_cv[8];
-    GPIO_TypeDef *volt_port_b0;
-    uint16_t volt_b0;
-    GPIO_TypeDef *volt_port_b1;
-    uint16_t volt_b1;
-    GPIO_TypeDef *volt_port_b2;
-    uint16_t volt_b2;
-    uint8_t pwm_timer_num;
-    uint32_t ch0;
-    uint32_t ch1;
-    uint8_t notif_bemf:1;
-    uint8_t reverse_bemf:1;
-} conf_canton_t;
+typedef struct conf_led {
+    GPIO_TypeDef *port_led;
+    uint16_t pin_led;
+    uint8_t defprog;
+} conf_led_t;
 
 
-int conf_canton_num_entries(void);
-const conf_canton_t *conf_canton_get(int num);
+int conf_led_num_entries(void);
+const conf_led_t *conf_led_get(int num);
 
 
 
 #ifdef TRN_BOARD_MAIN
-#define NUM_CANTONS 6 // 6 
+#define NUM_LEDS 3 // 3 
 #endif // TRN_BOARD_MAIN
 
 
 
 #ifdef TRN_BOARD_DISPATCHER
-#define NUM_CANTONS 1 // 1 
+#define NUM_LEDS 0 // 0 
 #endif // TRN_BOARD_DISPATCHER
 
 
 
 #ifdef TRN_BOARD_SWITCHER
-#define NUM_CANTONS 0 // 0 
+#define NUM_LEDS 0 // 0 
 #endif // TRN_BOARD_SWITCHER
 
 
 
 #ifdef TRN_BOARD_MAIN_ZERO
-#define NUM_CANTONS 0 // 0 
+#define NUM_LEDS 0 // 0 
 #endif // TRN_BOARD_MAIN_ZERO
 
 
-#define MAX_CANTONS 6
+#define MAX_LEDS 3
 
 
 

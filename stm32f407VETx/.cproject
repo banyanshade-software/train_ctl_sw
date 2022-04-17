@@ -159,12 +159,12 @@
 					</folderInfo>
 					<fileInfo id="com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.debug.2127587642.1798667181" name="LedTest.m" rcbsApplicability="disable" resourcePath="trainctl/leds/LedTest.m" toolsToInvoke=""/>
 					<sourceEntries>
-						<entry excluding="stm32/w25qxx|config_gen|leds/LedTest.m|stm32/taskauto.h|stm32/taskauto.c|obsolete" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="trainctl"/>
-						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="stm32dev"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Core"/>
-						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Middlewares"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Drivers"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Middlewares"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="USB_DEVICE"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="stm32dev"/>
+						<entry excluding="railconfig.c|stm32/w25qxx|config_gen|leds/LedTest.m|stm32/taskauto.h|stm32/taskauto.c|obsolete" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="trainctl"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -254,12 +254,12 @@
 					</folderInfo>
 					<fileInfo id="com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.release.1788962927.1969388926" name="taskauto.h" rcbsApplicability="disable" resourcePath="trainctl/stm32/taskauto.h" toolsToInvoke=""/>
 					<sourceEntries>
-						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="stm32dev"/>
-						<entry excluding="config_gen|stm32/w25qxx|obsolete|stm32/taskauto.h|stm32/taskauto.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="trainctl"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Core"/>
-						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Middlewares"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Drivers"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Middlewares"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="USB_DEVICE"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="stm32dev"/>
+						<entry excluding="railconfig.c|config_gen|stm32/w25qxx|obsolete|stm32/taskauto.h|stm32/taskauto.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="trainctl"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>

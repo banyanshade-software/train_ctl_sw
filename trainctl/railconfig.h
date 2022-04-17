@@ -19,6 +19,8 @@
  * 				  Configuration upload/download is planned here, but not implemented
  */
 
+// TODO this file should be  removed and replaced by conf_*
+
 #ifndef RAILCONFIG_H_
 #define RAILCONFIG_H_
 
@@ -28,12 +30,12 @@
 #include "train_simu.h"
 #endif
 
-#include "low/canton_config.h"
+//#include "low/canton_config.h"
 //#include "block_canton.h"
 #include "param.h"
 
-#include "train.h"
-#include "low/turnout_config.h"
+//#include "train.h"
+//#include "low/turnout_config.h"
 
 
 // ---------------------------------------------------------
@@ -77,7 +79,7 @@ void railconfig_setup_default(void);
 
 // ---------------------------------------------------------
 
-const canton_config_t *get_canton_cnf(int idx);
+//const canton_config_t *get_canton_cnf(int idx);
 //canton_vars_t   *get_canton_vars(int idx);
 //int canton_idx(canton_vars_t *v);
 
@@ -85,11 +87,11 @@ const canton_config_t *get_canton_cnf(int idx);
 //block_canton_vars_t   *get_block_canton_vars(int idx);
 //int block_canton_idx(block_canton_vars_t *v);
 
-const train_config_t  *get_train_cnf(int idx);
+//const train_config_t  *get_train_cnf(int idx);
 //train_vars_t  *get_train_vars(int idx);
 //int train_idx(train_vars_t *v);
 
-const turnout_config_t  *get_turnout_cnf(int idx);
+//const turnout_config_t  *get_turnout_cnf(int idx);
 //turnout_vars_t  *get_turnout_vars(int idx);
 //int turnout_idx(turnout_vars_t *v);
 
@@ -108,6 +110,7 @@ const turnout_config_t  *get_turnout_cnf(int idx);
 */
 // ---------------------------------------------------------
 
+/*
 typedef struct {
 #ifndef TRAIN_SIMU
     GPIO_TypeDef *port_led;
@@ -121,5 +124,6 @@ typedef struct {
 #define CONFIG_NLED 1
 const led_config_t *get_led_cnf(int idx);
 
+*/
 
 #endif /* RAILCONFIG_H_ */

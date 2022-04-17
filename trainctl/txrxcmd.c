@@ -33,9 +33,9 @@
 
 #include "txrxcmd.h"
 
-#include "railconfig.h"
+//#include "railconfig.h"
 //#include "canton.h"
-#include "train.h"
+//#include "train.h"
 //#include "turnout.h"
 //#include "traincontrol.h"
 //#include "auto1.h"
@@ -46,6 +46,8 @@
 //#include "stm32/txframe.h"
 //#include "stm32/taskauto.h"
 #include "msg/trainmsg.h"
+
+#include "config/conf_train.h"
 
 static uint8_t cli_frame_mode=1;  // XXX to be removed
 
@@ -238,7 +240,7 @@ static int32_t param_get_numtrains(_UNUSED_ param_t *p)
 
 static int32_t param_get_numcantons(param_t *p)
 {
-	return NUM_CANTONS;
+	return 64; // XXX
 }
 
 static int32_t param_get_pwm(param_t *p)
@@ -343,14 +345,15 @@ static uint8_t process_frame_cmd(uint8_t sel, uint8_t num,  uint8_t cmd, uint8_t
 			return rc;
 			break;
 		case 'p': {
-			const train_config_t *tcnf = get_train_cnf(num);
-			if (tcnf) {
+			const conf_train_t *tcnf = conf_train_get(num);
+			if (0 && tcnf) {/* XXX
 				rc = param_get_value(train_params, (void *)tcnf, (char *)param, &v, &d, &min, &max);
 				memcpy(rbuf, &v,   sizeof(int32_t)); rbuf += sizeof(int32_t);
 				memcpy(rbuf, &d,   sizeof(int32_t)); rbuf += sizeof(int32_t);
 				memcpy(rbuf, &min, sizeof(int32_t)); rbuf += sizeof(int32_t);
 				memcpy(rbuf, &max, sizeof(int32_t)); rbuf += sizeof(int32_t);
 				*prlen = 4*sizeof(int32_t);
+				*/
 			} else {
 				rc = 3;
 			}
@@ -359,11 +362,11 @@ static uint8_t process_frame_cmd(uint8_t sel, uint8_t num,  uint8_t cmd, uint8_t
 
 		case 'P': {
 			if (plen < 4+1) return 1;
-			const train_config_t *tcnf = get_train_cnf(num);
-			if (tcnf) {
+			const conf_train_t *tcnf = conf_train_get(num);
+			if (0 && tcnf) {/*XXX
 				int32_t v;
 				memcpy(&v, param, sizeof(int32_t));
-			    rc = param_set_value(train_params, (void *)tcnf, (char *)(param+sizeof(int32_t)), v);
+			    rc = param_set_value(train_params, (void *)tcnf, (char *)(param+sizeof(int32_t)), v); */
 			} else {
 				rc = 33;
 			}

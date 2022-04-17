@@ -85,8 +85,6 @@ config train {
     const uint8_t min_power
         = (default) 0;
     
-    const 	uint8_t notify_speed:1
-        = (default) 0;
 	const uint8_t notify_pose:1
         = (default) 0;
 

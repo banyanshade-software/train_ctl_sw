@@ -12,7 +12,9 @@
 
 #ifndef TRACKPLAN_TESTPGM
 #include "../msg/trainmsg.h"
-#include "../railconfig.h"
+//#include "../railconfig.h"
+#include "../config/conf_turnout.h"
+#include "../config/conf_canton.h"
 #endif
 
 #include "topology.h"
@@ -31,7 +33,7 @@ typedef struct {
 } canton_occ_t;
 
 static  canton_occ_t canton_occ[0x40] = {0};
-static volatile uint8_t  lockedby[NUM_TURNOUTS] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
+static volatile uint8_t  lockedby[32] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF}; // XXX TODO this should be total number of turnouts
 
 static void occupency_turnout_release_for_train_canton(int8_t train, uint8_t canton);
 

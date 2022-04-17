@@ -1,0 +1,42 @@
+#
+
+# typedef struct { 
+# GPIO_TypeDef *port_led;
+#    uint16_t pin_led;
+#} led_config_t;
+
+
+config led {
+	const GPIO_TypeDef *port_led
+		= (main:*) table(lpin_main, port)
+		= (default) NULL;
+	const uint16_t pin_led
+		= (main:*) table(lpin_main, pin)
+		= (default) 0;
+    user uint8_t defprog
+        = (default) 0;
+} num = (main) 3
+      = (dispatcher) 0          # TODO
+      = (default) 0;
+
+table lpin_main 
+	( port,     pin)
+    ( GPIOA,    GPIO_PIN_7)
+;
+
+
+attrib led h_code {
+
+
+#ifndef TRAIN_SIMU
+#ifdef STM32_F4
+#include "stm32f4xx_hal.h"
+#else
+#include "stm32f1xx_hal.h"
+#endif
+#else
+typedef void *GPIO_TypeDef;
+#endif
+
+}
+

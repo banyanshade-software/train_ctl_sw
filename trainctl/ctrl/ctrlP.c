@@ -15,7 +15,8 @@
 #include "../topology/topology.h"
 #include "../topology/occupency.h"
 
-#include "../railconfig.h"
+//#include "../railconfig.h"
+#include "../config/conf_train.h"
 
 #include "ctrl.h"
 #include "ctrlP.h"
@@ -52,19 +53,19 @@ static void fatal(void)
 // ------------------------------------------------------
 
 
-static uint32_t pose_convert_to_mm( const train_config_t *tconf, int32_t poseval)
+static uint32_t pose_convert_to_mm( const conf_train_t *tconf, int32_t poseval)
 {
     int32_t mm = poseval*10/tconf->pose_per_cm;
     return mm;
 }
 
-static uint32_t pose_convert_from_mm(const train_config_t *tconf, int32_t mm)
+static uint32_t pose_convert_from_mm(const conf_train_t *tconf, int32_t mm)
 {
     int32_t pv = mm * tconf->pose_per_cm / 10;
     return pv;
 }
 
-static int32_t get_lsblk_len_steep(lsblk_num_t lsbk, const train_config_t *tconf, train_ctrl_t *tvar)
+static int32_t get_lsblk_len_steep(lsblk_num_t lsbk, const conf_train_t *tconf, train_ctrl_t *tvar)
 {
     int8_t steep = 0;
 	int cm = get_lsblk_len(lsbk, &steep);
@@ -79,7 +80,7 @@ static int32_t get_lsblk_len_steep(lsblk_num_t lsbk, const train_config_t *tconf
 }
 
 
-static int32_t ctrl_pose_percent_c1(const train_config_t *tconf, train_ctrl_t *tvar, int percent)
+static int32_t ctrl_pose_percent_c1(const conf_train_t *tconf, train_ctrl_t *tvar, int percent)
 {
     int cm = get_lsblk_len_steep(tvar->c1_sblk, tconf, tvar);
     int mm;
@@ -101,19 +102,19 @@ static int32_t ctrl_pose_percent_c1(const train_config_t *tconf, train_ctrl_t *t
 }
 
 
-static int32_t ctrl_pose_middle_c1(const train_config_t *tconf, train_ctrl_t *tvar)
+static int32_t ctrl_pose_middle_c1(const conf_train_t *tconf, train_ctrl_t *tvar)
 {
     return ctrl_pose_percent_c1(tconf, tvar, 50);
 }
 
-static int32_t ctrl_pose_limit_c1(const train_config_t *tconf, train_ctrl_t *tvar)
+static int32_t ctrl_pose_limit_c1(const conf_train_t *tconf, train_ctrl_t *tvar)
 {
     return ctrl_pose_percent_c1(tconf, tvar, 90);
 }
 
 
 
-static int32_t ctrl_pose_end_c1(const train_config_t *tconf, train_ctrl_t *tvar)
+static int32_t ctrl_pose_end_c1(const conf_train_t *tconf, train_ctrl_t *tvar)
 {
     int cm = get_lsblk_len_steep(tvar->c1_sblk, tconf, tvar);
     int mm;
@@ -134,7 +135,7 @@ void ctrl_set_pose_trig(int numtrain, int32_t pose, int n)
     m.from = MA_CONTROL_T(numtrain);
     m.to =  MA_TRAIN_SC(numtrain);
     m.cmd = n ? CMD_POSE_SET_TRIG_U1 :  CMD_POSE_SET_TRIG0; // XXXX
-    const train_config_t *tconf = get_train_cnf(numtrain);
+    const conf_train_t *tconf = conf_train_get(numtrain);
     if (tconf->reversed)  m.v32 = -pose;
     else m.v32 = pose;
     mqf_write_from_ctrl(&m);
@@ -148,13 +149,13 @@ void ctrl2_upcmd_settrigU1(int tidx, train_ctrl_t *tvars, uint8_t t)
         default:
             //FALLTHRU
         case 1:
-            p = ctrl_pose_middle_c1(get_train_cnf(tidx), tvars);
+            p = ctrl_pose_middle_c1(conf_train_get(tidx), tvars);
             break;
         case 2:
-            p = ctrl_pose_end_c1(get_train_cnf(tidx), tvars);
+            p = ctrl_pose_end_c1(conf_train_get(tidx), tvars);
             break;
         case 3:
-            p = ctrl_pose_percent_c1(get_train_cnf(tidx), tvars, 10);
+            p = ctrl_pose_percent_c1(conf_train_get(tidx), tvars, 10);
             break;
     }
     ctrl_set_pose_trig(tidx, p, 1);
@@ -502,7 +503,7 @@ static void ctrl2_had_trig2(int tidx, train_ctrl_t *tvar)
 }
 
 
-void ctrl2_update_topo(int tidx, train_ctrl_t *tvar, const train_config_t *tconf, int32_t *ppose1)
+void ctrl2_update_topo(int tidx, train_ctrl_t *tvar, const conf_train_t *tconf, int32_t *ppose1)
 {
 	itm_debug1(DBG_CTRL, "upd topo", tidx);
     switch (tvar->_state) {
@@ -566,7 +567,7 @@ void ctrl2_update_topo(int tidx, train_ctrl_t *tvar, const train_config_t *tconf
 }
     
 
-void ctrl2_update_c2(int tidx, train_ctrl_t *tvar, const train_config_t *tconf, int32_t *ppose0)
+void ctrl2_update_c2(int tidx, train_ctrl_t *tvar, const conf_train_t *tconf, int32_t *ppose0)
 {
 	itm_debug3(DBG_CTRL, "updc2", tidx, tvar->c1_sblk.n, tvar->can1_addr);
     if (tvar->can1_addr == 0xFF) fatal();
@@ -653,7 +654,7 @@ void ctrl2_sendlow_c1c2(int tidx, train_ctrl_t *tvar)
     m.cmd = CMD_SET_C1_C2;
     int dir = tvar->_dir;
     
-    const train_config_t *tconf = get_train_cnf(tidx);
+    const conf_train_t *tconf = conf_train_get(tidx);
     if (tconf->reversed) dir = -dir;
     
     m.vbytes[0] = tvar->can1_addr;
@@ -712,7 +713,7 @@ void ctrl2_evt_leaved_c1(int tidx, train_ctrl_t *tvars)
         fatal();
     }
 
-    int len = get_lsblk_len_steep(tvars->c1_sblk, get_train_cnf(tidx), tvars);
+    int len = get_lsblk_len_steep(tvars->c1_sblk, conf_train_get(tidx), tvars);
     if (tvars->_dir<0) {
     	tvars->beginposmm =  -len*10;
     } else {
@@ -748,7 +749,7 @@ int ctrl2_evt_pose_triggered(int tidx, train_ctrl_t *tvar, uint8_t ca_addr, uint
         itm_debug3(DBG_ERR|DBG_POSEC|DBG_CTRL, "ptrg bad", tidx, ca_addr, tvar->can1_addr);
         return -1;
     }
-    const train_config_t *tconf = get_train_cnf(tidx);
+    const conf_train_t *tconf = conf_train_get(tidx);
     tvar->curposmm = pose_convert_to_mm(tconf, cposd10*10);
     itm_debug3(DBG_POSE|DBG_CTRL, "curposmm", tidx, tvar->curposmm, trigbits);
     if (trigbits & (1<<0)) {
@@ -765,8 +766,8 @@ int ctrl2_evt_pose_triggered(int tidx, train_ctrl_t *tvar, uint8_t ca_addr, uint
             }
             
             
-            int len1 = get_lsblk_len_steep(tvar->c1_sblk, get_train_cnf(tidx), tvar);
-            int len2 = get_lsblk_len_steep(ns, get_train_cnf(tidx), tvar);
+            int len1 = get_lsblk_len_steep(tvar->c1_sblk, conf_train_get(tidx), tvar);
+            int len2 = get_lsblk_len_steep(ns, conf_train_get(tidx), tvar);
             int exppose;
             tvar->c1_sblk = ns;
             if (tvar->_dir<0) {
@@ -804,14 +805,14 @@ void ctrl2_evt_stop_detected(_UNUSED_ int tidx, train_ctrl_t *tvar, _UNUSED_ int
 {
     // TODO
     tvar->tick_flags |= _TFLAG_STOP_DETECTED;
-    const train_config_t *tconf = get_train_cnf(tidx);
+    const conf_train_t *tconf = conf_train_get(tidx);
     tvar->curposmm = pose_convert_to_mm(tconf, pose);
     itm_debug1(DBG_POSE|DBG_CTRL, "curposmm/s", tvar->curposmm);
 }
 
 static const uint16_t perm_flags = (_TFLAG_STATE_CHANGED|_TFLAG_DIR_CHANGED|_TFLAG_TSPD_CHANGED|_TFLAG_C1_CHANGED|_TFLAG_C2_CHANGED);
 
-int ctrl2_tick_process(int tidx, train_ctrl_t *tvars, const train_config_t *tconf, int8_t occupency_changed)
+int ctrl2_tick_process(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int8_t occupency_changed)
 {
     int nloop = 0;
     if (occupency_changed) tvars->tick_flags |= _TFLAG_OCC_CHANGED;

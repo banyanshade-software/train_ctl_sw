@@ -45,12 +45,13 @@ void calibrate_bemf(void);
 
 void train_stop_all(void);
 
+/*
 struct spd_notif {
     int16_t sv100;
     int16_t pid_target;
     int32_t bemf_centivolt;
 };
-
+*/
 
 
 extern uint32_t train_tick_last_dt;

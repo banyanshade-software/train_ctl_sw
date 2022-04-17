@@ -20,8 +20,8 @@
 #include "statval.h"
 //#include "train.h"
 #include "spdctl/spdctl.h"
-#include "low/canton_config.h"
-#include "railconfig.h"
+//#include "low/canton_config.h"
+//#include "railconfig.h"
 
 
 typedef struct {

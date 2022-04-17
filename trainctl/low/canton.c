@@ -43,7 +43,7 @@
 #else
 #include "train_simu.h"
 #endif
-#include "../railconfig.h"
+//#include "../railconfig.h"
 #include "../statval.h"
 
 
@@ -82,13 +82,13 @@ const stat_val_t statval_canton[] = {
 // ------------------------------------------------------
 
 #define USE_CANTON(_idx) \
-		const canton_config_t *cconf = get_canton_cnf(_idx); \
+		const conf_canton_t   *cconf = conf_canton_get(_idx); \
 		canton_vars_t         *cvars = &canton_vars[_idx];
 
 
 
-static void canton_set_pwm(int cn, const canton_config_t *c, canton_vars_t *v,  int8_t dir, int duty);
-void canton_set_volt(int cn, const canton_config_t *c, canton_vars_t *v, int voltidx);
+static void canton_set_pwm(int cn, const conf_canton_t *c, canton_vars_t *v,  int8_t dir, int duty);
+void canton_set_volt(int cn, const conf_canton_t *c, canton_vars_t *v, int voltidx);
 
 
 
@@ -220,7 +220,7 @@ static void handle_msg_detect2(msg_64_t *m)
         return;
     }
     int cidx = MA_GET_CANTON_NUM(m->to);
-    const canton_config_t *cconf = get_canton_cnf(cidx);
+    const conf_canton_t *cconf = conf_canton_get(cidx);
     canton_vars_t *cvars = &canton_vars[cidx];
     
     switch (m->cmd) {
@@ -315,7 +315,7 @@ HAL_StatusTypeDef my_HAL_TIM_PWM_Stop(TIM_HandleTypeDef *htim, uint32_t Channel)
 #define CNT_ON(_v) (_v)
 #endif
 
-static void canton_set_pwm(int cidx, const canton_config_t *c, canton_vars_t *v,  int8_t dir, int duty)
+static void canton_set_pwm(int cidx, const conf_canton_t *c, canton_vars_t *v,  int8_t dir, int duty)
 {
 	itm_debug3(DBG_LOWCTRL, "c/set_pwm", cidx, dir, duty);
 	int t = 2*duty; // with centered pwm (or normal)
@@ -415,7 +415,7 @@ static void canton_set_pwm(int cidx, const canton_config_t *c, canton_vars_t *v,
 	}
 
 }
-void canton_set_volt(int cidx, const canton_config_t *c, canton_vars_t *v, int voltidx)
+void canton_set_volt(int cidx, const conf_canton_t *c, canton_vars_t *v, int voltidx)
 {
 	v->cur_voltidx = voltidx;
     v->selected_centivolt =  (c->volts_cv[v->cur_voltidx]);
@@ -429,9 +429,7 @@ void canton_set_volt(int cidx, const canton_config_t *c, canton_vars_t *v, int v
 	HAL_GPIO_WritePin(c->volt_port_b0, c->volt_b0, (voltidx & 0x01) ? GPIO_PIN_SET : GPIO_PIN_RESET);
 	HAL_GPIO_WritePin(c->volt_port_b1, c->volt_b1, (voltidx & 0x02) ? GPIO_PIN_SET : GPIO_PIN_RESET);
 	HAL_GPIO_WritePin(c->volt_port_b2, c->volt_b2, (voltidx & 0x04) ? GPIO_PIN_SET : GPIO_PIN_RESET);
-#ifndef VOLT_SEL_3BITS
-	HAL_GPIO_WritePin(c->volt_port_b3, c->volt_b3, (voltidx & 0x08) ? GPIO_PIN_SET : GPIO_PIN_RESET);
-#endif
+
 #if 0
 	uint16_t s = 0;
 	uint16_t r = 0;
@@ -475,7 +473,8 @@ void canton_set_pwm(int n, const canton_config_t *c, canton_vars_t *v,  int8_t d
 
 #endif
 
-
+#if 0
+// moved to spdctl
 #define MAX_PVI (NUM_VOLTS_VAL-1)
 
 int volt_index(uint16_t mili_power,
@@ -581,7 +580,7 @@ int volt_index(uint16_t mili_power,
     }
 	return duty;
 }
-
+#endif
 
 #if 0
 

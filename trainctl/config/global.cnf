@@ -42,6 +42,8 @@ attrib canton store = normal
 attrib canton stnum = 2
 attrib turnout store = normal
 attrib turnout stnum = 3
+attrib led store = normal
+attrib led stnum = 4
 
 attrib boards store = local
 attrib boards stnum = 1

@@ -23,6 +23,9 @@
 #ifndef TRAIN_H_
 #define TRAIN_H_
 
+#error obsolete, replaced by generated file config/conf_train.h
+
+
 #include "param.h"
 #include "spdctl/inertia.h"
 #include "spdctl/pidctl.h"

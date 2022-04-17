@@ -8,6 +8,7 @@
 #ifndef LOW_TURNOUT_CONFIG_H_
 #define LOW_TURNOUT_CONFIG_H_
 
+#error obsolete replaced by generated file config/conf_turnout.h
 //#define NUM_TURNOUT 8
 
 typedef struct turnout_config {

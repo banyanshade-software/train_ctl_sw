@@ -91,6 +91,10 @@ static void genfile_c_close(FILE *F)
 
 
 // ------------------------------------------------------------
+static void gen_field_val(FILE *output, config_node_t *f, config_node_t *b, int numinst, config_node_t *tables, config_node_t *subs);
+static config_node_t *find_board_value(config_node_t *values, int inst, const char *boardname);
+static config_node_t *value_for_table(config_node_t *tables, char *tblname, char *colname, int numinst);
+// ------------------------------------------------------------
 
 
 static void _gen_subref(config_node_t *node, FILE *output, int num)
@@ -147,7 +151,7 @@ static void get_storetype(config_node_t *node, int *ptype, int *pnum)
     }
 }
 
-static void generate_hfile_normal(config_node_t *root)
+static void generate_hfile_normal(config_node_t *root, config_node_t *boards)
 {
 
     // generate sub struct
@@ -177,6 +181,23 @@ static void generate_hfile_normal(config_node_t *root)
         fprintf(output, "} conf_%s_t;\n\n\n", n);
         fprintf(output, "int conf_%s_num_entries(void);\n", n);
         fprintf(output, "const conf_%s_t *conf_%s_get(int num);\n\n", n, n);
+        // get max entries
+        char *nuc = strdup(n);
+        for (char *p = nuc; *p; p++) *p = toupper(*p);
+
+        int max=0;
+        for (config_node_t *board = boards; board; board = board->next) {
+            char *brduc = strdup(board->string);
+            for (char *p = brduc; *p; p++) *p = toupper(*p);
+            fprintf(output, "\n\n#ifdef TRN_BOARD_%s\n", brduc);
+            config_node_t *b = find_board_value(node->numinst, -1, board->string);
+            fprintf(output, "#define NUM_%sS %s // %d \n", nuc, b->val->string, b->val->value);
+            fprintf(output, "#endif // TRN_BOARD_%s\n\n", brduc);
+            if (b->val->value>max) max = b->val->value;
+        }
+        fprintf(output, "\n#define MAX_%sS %d\n\n", nuc, max);
+
+
         //fprintf(output, "// handling config setup from master\n");
         //fprintf(output, "void conf_%s_change(int instnum, int fieldnum, int16_t value);\n", n);
         genfile_h_close(output);
@@ -243,15 +264,12 @@ void generate_cfile_global_propag(config_node_t *root)
     fclose(output);
 }
 
-void generate_hfiles(config_node_t *root)
+void generate_hfiles(config_node_t *root, config_node_t *boards)
 {
-    generate_hfile_normal(root);
+    generate_hfile_normal(root, boards);
     generate_hfile_propag(root);
 }
 
-static void gen_field_val(FILE *output, config_node_t *f, config_node_t *b, int numinst, config_node_t *tables, config_node_t *subs);
-static config_node_t *find_board_value(config_node_t *values, int inst, const char *boardname);
-static config_node_t *value_for_table(config_node_t *tables, char *tblname, char *colname, int numinst);
 
 
 static void gen_field_propag(FILE * output, config_node_t *fields, config_node_t *root);

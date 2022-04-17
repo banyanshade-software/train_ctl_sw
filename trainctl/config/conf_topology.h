@@ -49,5 +49,32 @@ const conf_topology_t *conf_topology_get(int num);
 
 
 
+#ifdef TRN_BOARD_MAIN
+#define NUM_TOPOLOGYS 64 // 64 
+#endif // TRN_BOARD_MAIN
+
+
+
+#ifdef TRN_BOARD_DISPATCHER
+#define NUM_TOPOLOGYS 0 // 0 
+#endif // TRN_BOARD_DISPATCHER
+
+
+
+#ifdef TRN_BOARD_SWITCHER
+#define NUM_TOPOLOGYS 0 // 0 
+#endif // TRN_BOARD_SWITCHER
+
+
+
+#ifdef TRN_BOARD_MAIN_ZERO
+#define NUM_TOPOLOGYS 0 // 0 
+#endif // TRN_BOARD_MAIN_ZERO
+
+
+#define MAX_TOPOLOGYS 64
+
+
+
 
 #endif

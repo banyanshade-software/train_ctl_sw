@@ -9,8 +9,12 @@
 #ifndef ctrlP_h
 #define ctrlP_h
 
-#include "../railconfig.h"
-// -----------------------------------------------------------
+//#include "../railconfig.h"
+#include "../config/conf_train.h"
+
+
+// ---------------------------
+//--------------------------------
 //per train stucture
 
 
@@ -81,7 +85,7 @@ typedef struct {
 
 train_ctrl_t *ctrl_get_tvar(int trnum);
 
-int ctrl2_tick_process(int tidx, train_ctrl_t *tvars, const train_config_t *tconf, int8_t occupency_changed);
+int ctrl2_tick_process(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int8_t occupency_changed);
 void ctrl2_init_train(int tidx, train_ctrl_t *tvars,
                       lsblk_num_t sblk);
 
@@ -105,8 +109,8 @@ void ctrl2_check_alreadystopped(int tidx, train_ctrl_t *tvar);
 void ctrl2_check_checkstart(int tidx, train_ctrl_t *tvar);
 void ctrl2_check_stop(int tidx, train_ctrl_t *tvar);
 void ctrl2_apply_speed_limit(int tidx, train_ctrl_t *tvar);
-void ctrl2_update_topo(int tidx, train_ctrl_t *tvar, const train_config_t *tconf, int32_t *ppose1);
-void ctrl2_update_c2(int tidx, train_ctrl_t *tvar, const train_config_t *tconf, int32_t *ppose0);
+void ctrl2_update_topo(int tidx, train_ctrl_t *tvar, const conf_train_t *tconf, int32_t *ppose1);
+void ctrl2_update_c2(int tidx, train_ctrl_t *tvar, const conf_train_t *tconf, int32_t *ppose0);
 void ctrl2_notify_state(int tidx, train_ctrl_t *tvar);
 void ctrl2_sendlow_tspd(int tidx, train_ctrl_t *tvar);
 void ctrl2_sendlow_c1c2(int tidx, train_ctrl_t *tvar);

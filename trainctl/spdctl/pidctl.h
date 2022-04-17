@@ -25,11 +25,14 @@
 #ifndef PIDCTL_H_
 #define PIDCTL_H_
 
+#include "../config/conf_pidctl.h"
+/*
 typedef struct pidctl_config {
 	int32_t kP;
 	int32_t kI;
 	int32_t kD;
 } pidctl_config_t;
+*/
 
 typedef struct pidctl_vars {
 	int32_t last_err;
@@ -39,10 +42,10 @@ typedef struct pidctl_vars {
     uint8_t stopped:1;
 } pidctl_vars_t;
 
-void pidctl_reset(const pidctl_config_t *c, pidctl_vars_t *v);
+void pidctl_reset(const struct conf_pidctl *c, pidctl_vars_t *v);
 
-void pidctl_set_target(const pidctl_config_t *c, pidctl_vars_t *v, int32_t val);
-int32_t pidctl_value(const pidctl_config_t *c, pidctl_vars_t *v, int32_t cur_v);
+void pidctl_set_target(const struct conf_pidctl *c, pidctl_vars_t *v, int32_t val);
+int32_t pidctl_value(const struct conf_pidctl *c, pidctl_vars_t *v, int32_t cur_v);
 
 /*
  * PID ctrl operates on raw BEMF values, mmostly between -280..280 (-1V..+1V)

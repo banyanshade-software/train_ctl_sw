@@ -187,9 +187,9 @@ void analyse_bemf_final(void)
             set_block_addr_occupency(cnum, BLK_OCC_STOP, trnum, sblk);
             
             // train params
-            const train_config_t *tconf = get_train_cnf(trnum);
-            train_config_t *tconfm = (train_config_t *)tconf;
-            const train_config_t *template = detect_loco_conf(bemf_anal[cnum].d);
+            const conf_train_t *tconf = conf_train_get(trnum);
+            conf_train_t *tconfm = (conf_train_t *)tconf;
+            const conf_train_t *template = detect_loco_conf(bemf_anal[cnum].d);
             memcpy(tconfm, template, sizeof(*tconfm));
         }
 	}

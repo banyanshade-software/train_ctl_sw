@@ -5,7 +5,7 @@
  *      Author: danielbraun
  */
 
-
+#error this file is obsolete, replaced by config/conf_*
 /*
  * (c) Daniel Braun 2020
  * ---------------------
@@ -20,6 +20,7 @@
  * 				  Configuration upload/download is planned here, but not implemented
  */
 
+// TODO this file should be removed, and replaced by config/conf_*
 
 /* 20201204 good setup for lowspeed 8875 :
  200Hz
@@ -28,10 +29,10 @@
  pre-iir
  */
 #include "misc.h"
-#include "railconfig.h"
-#include "low/canton_config.h"
-#include "train.h"
-#include "low/turnout_config.h"
+//#include "railconfig.h"
+//#include "low/canton_config.h"
+//#include "train.h"
+//#include "low/turnout_config.h"
 #include "param.h"
 
 
@@ -139,8 +140,11 @@
 // -----------------------------------------
 
 
+
 static int setup_done = 1;
 
+
+#if 0
 #ifdef BOARD_HAS_CANTON
 
 #ifdef TRN_BOARD_MAIN
@@ -292,8 +296,9 @@ const canton_config_t *get_canton_cnf(int idx)
 
 
 #endif // BOARD_HAS_CANTON
+#endif
 
-
+#if 0
 #ifdef BOARD_HAS_CTRL
 
 
@@ -344,9 +349,12 @@ const train_config_t *get_train_cnf(int idx)
 }
 
 #endif // BOARD_HAS_CTRL
+#endif
 
+
+#if 0
 #ifdef BOARD_HAS_TURNOUTS
-
+/*
 static const turnout_config_t Turnouts[NUM_TURNOUTS] = {
 #ifndef TRAIN_SIMU
 #ifdef TRN_BOARD_MAIN
@@ -372,14 +380,16 @@ const turnout_config_t  *get_turnout_cnf(int idx)
 	return &Turnouts[idx];
 }
 
+*/
+
 #endif // BOARD_HAS_TURNOUTS
+#endif
 
 
 
 
 
-
-
+#if 1
 #ifdef BOARD_HAS_LED
 
 static const led_config_t _led_conf[CONFIG_NLED] = {
@@ -396,5 +406,6 @@ const led_config_t *get_led_cnf(int idx)
     if (idx>CONFIG_NLED) return NULL;
     return &_led_conf[idx];
 }
+#endif
 
 #endif // BOARD_HAS_LED

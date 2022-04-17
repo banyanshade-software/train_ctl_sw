@@ -35,7 +35,7 @@ typedef void *GPIO_TypeDef;
 
 
 typedef struct conf_turnout {
-    GPIO_TypeDef *port;
+    GPIO_TypeDef *cmd_port;
     uint16_t pinA;
     uint16_t pinB;
     uint8_t reverse;
@@ -44,6 +44,33 @@ typedef struct conf_turnout {
 
 int conf_turnout_num_entries(void);
 const conf_turnout_t *conf_turnout_get(int num);
+
+
+
+#ifdef TRN_BOARD_MAIN
+#define NUM_TURNOUTS 3 // 3 
+#endif // TRN_BOARD_MAIN
+
+
+
+#ifdef TRN_BOARD_DISPATCHER
+#define NUM_TURNOUTS 0 // 0 
+#endif // TRN_BOARD_DISPATCHER
+
+
+
+#ifdef TRN_BOARD_SWITCHER
+#define NUM_TURNOUTS 0 // 0 
+#endif // TRN_BOARD_SWITCHER
+
+
+
+#ifdef TRN_BOARD_MAIN_ZERO
+#define NUM_TURNOUTS 0 // 0 
+#endif // TRN_BOARD_MAIN_ZERO
+
+
+#define MAX_TURNOUTS 3
 
 
 

@@ -34,14 +34,14 @@
 #endif
 
 
-void inertia_reset(int tidx, _UNUSED_ const inertia_config_t *cnf, inertia_vars_t *vars)
+void inertia_reset(int tidx, _UNUSED_ const struct conf_inertia *cnf, inertia_vars_t *vars)
 {
 	itm_debug1(DBG_INERTIA, "i/rst", tidx);
 	vars->target = 0;
 	vars->cur100 = 0;
 }
 
-int16_t inertia_value(int tidx, const inertia_config_t *config, inertia_vars_t *vars, int *pchanged)
+int16_t inertia_value(int tidx, const struct conf_inertia *config, inertia_vars_t *vars, int *pchanged)
 {
 	int st =  SIGNOF0(vars->target);
 	int sc =  SIGNOF0(vars->cur100);

@@ -82,8 +82,8 @@ static void MX_I2C3_Init(void);
 static void MX_TIM1_Init(void);
 static void MX_TIM2_Init(void);
 static void MX_TIM3_Init(void);
-static void MX_USB_OTG_FS_USB_Init(void);
 static void MX_CAN1_Init(void);
+static void MX_USB_OTG_FS_USB_Init(void);
 void StartOamTask(void *argument);
 
 /* USER CODE BEGIN PFP */
@@ -130,8 +130,8 @@ int main(void)
   MX_TIM1_Init();
   MX_TIM2_Init();
   MX_TIM3_Init();
-  MX_USB_OTG_FS_USB_Init();
   MX_CAN1_Init();
+  MX_USB_OTG_FS_USB_Init();
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */

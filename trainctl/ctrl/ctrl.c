@@ -12,7 +12,9 @@
 #include "ctrl.h"
 
 #include "../topology/topology.h"
-#include "../railconfig.h"
+//#include "../railconfig.h"
+#include "../config/conf_train.h"
+
 #include "../statval.h"
 
 #include "../topology/occupency.h"
@@ -365,7 +367,7 @@ static void sub_presence_changed(_UNUSED_ uint32_t tick, _UNUSED_ uint8_t from_a
 
 	for (int tn = 0; tn < NUM_TRAINS; tn++) {
 		train_ctrl_t *tvar = &trctl[tn];
-		const train_config_t *tconf = get_train_cnf(tn);
+		const conf_train_t *tconf = conf_train_get(tn);
 		// check enabled
 		if (!tconf->enabled) continue;
 		itm_debug3(DBG_PRES|DBG_CTRL, "prblk?", tn, tvar->canton1_addr, tvar->canton2_addr);
@@ -408,8 +410,8 @@ static void posecm_measured(int tidx, int32_t pose, lsblk_num_t blk1, lsblk_num_
 		itm_debug2(DBG_ERR, "sucp PPCM", tidx, ppcm);
 		return;
 	}
-	const train_config_t *tconf = get_train_cnf(tidx);
-	train_config_t *wconf = (train_config_t *)tconf; // writable
+	const conf_train_t *tconf = conf_train_get(tidx);
+	conf_train_t *wconf = (conf_train_t *)tconf; // writable
 	const int alpha = 80; //0.80
 	ppcm = abs(ppcm);
 	wconf->pose_per_cm = (tconf->pose_per_cm * alpha + (100-alpha) * ppcm)/100;
@@ -602,7 +604,7 @@ void ctrl_run_tick(_UNUSED_ uint32_t notif_flags, uint32_t tick, _UNUSED_ uint32
     }
     for (int tidx = 0; tidx<NUM_TRAINS; tidx++) {
         train_ctrl_t *tvars = &trctl[tidx];
-        const train_config_t *tconf = get_train_cnf(tidx);
+        const conf_train_t *tconf = conf_train_get(tidx);
         if (!tconf->enabled) continue;
         if (tvars->_mode == train_notrunning) continue;
         ctrl2_tick_process(tidx, tvars, tconf, occ);
@@ -687,12 +689,14 @@ static void evt_timer(int tidx, train_ctrl_t *tvar, int tnum)
 // - updates topology
 // - sends info to UI (cto)
 
+#define MAX_TURNOUTS 64 //XXX TODO
+
 static int set_turnout(int tn, int v, int train)
 {
 	itm_debug2(DBG_CTRL, "TURN", tn, v);
 	if (tn<0) fatal();
-	if (tn>=NUM_TURNOUTS) fatal();
-	if (tn>=NUM_LOCAL_TURNOUTS) fatal(); // TODO
+	if (tn>=MAX_TURNOUTS) fatal();
+	//if (tn>=NUM_LOCAL_TURNOUTS) fatal(); // TODO
 
 	int rc = topology_set_turnout(tn, v, train);
     if (rc) {
@@ -738,7 +742,7 @@ static void check_behaviour(_UNUSED_ uint32_t tick)
 {
 #ifdef OLD_CTRL
 	for (int tidx = 0; tidx<NUM_TRAINS; tidx++) {
-		const train_config_t *tconf = get_train_cnf(tidx);
+		const conf_train_t *tconf = conf_train_get(tidx);
 		if (!tconf->enabled) continue;
 
 		if (!SCEN_TWOTRAIN) return; // XXX

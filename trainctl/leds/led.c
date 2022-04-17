@@ -6,9 +6,11 @@
 //  Copyright © 2021 Daniel BRAUN. All rights reserved.
 //
 
-#include "led.h"
-#include "../railconfig.h"
+//#include "../railconfig.h"
 #include "../misc.h"
+#include "../config/conf_led.h"
+#include "led.h"
+
 
 
 #ifndef BOARD_HAS_LED
@@ -215,7 +217,7 @@ static uint8_t run_ledmachine(ledmachine_t *state)
     return rc;
 }
 
-static ledmachine_t leds[CONFIG_NLED];
+static ledmachine_t leds[NUM_LEDS];
 
 static int first = 1;
 
@@ -232,11 +234,11 @@ void led_run_all(void)
 {
     if (first) {
         first = 0;
-        for (int i=0; i<CONFIG_NLED; i++) {
+        for (int i=0; i<NUM_LEDS; i++) {
             reset_machine(&leds[i]);
         }
     }
-    for (int i=0; i<CONFIG_NLED; i++) {
+    for (int i=0; i<NUM_LEDS; i++) {
         if (leds[i].prognum == 0xFF) continue;
         uint8_t v = run_ledmachine(&leds[i]);
         led_io(i, v);

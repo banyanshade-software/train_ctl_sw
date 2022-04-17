@@ -8,10 +8,10 @@
 
 #include <stdint.h>
 #include "canton_bemf.h"
-#include "canton_config.h"
+//#include "canton_config.h"
 #include "../msg/trainmsg.h"
-#include "../railconfig.h"
-
+//#include "../railconfig.h"
+#include "../config/conf_canton.h"
 
 #ifndef BOARD_HAS_CANTON
 #error BOARD_HAS_CANTON not defined, remove this file from build
@@ -44,7 +44,7 @@ static void process_adc(volatile adc_result_t *buf, uint32_t deltaticks);
 
 
 #define USE_CANTON(_idx) \
-		const canton_config_t *cconf = get_canton_cnf(_idx); \
+		const conf_canton_t     *cconf = conf_canton_get(_idx); \
 		//canton_vars_t         *cvars = &canton_vars[_idx];
 
 void bemf_reset(void)
@@ -159,7 +159,7 @@ static _UNUSED_ inline int32_t bemf_convert_to_centivolt_for_display(_UNUSED_ co
 #endif
 
 
-static inline int32_t bemf_convert_to_millivolt(_UNUSED_ const canton_config_t *c, int32_t m)
+static inline int32_t bemf_convert_to_millivolt(_UNUSED_ const conf_canton_t *c, int32_t m)
 {
 #if INCLUDE_FIXBEMF
 	if (v->fix_bemf && (v->curtrainidx!=0xFF)) {
@@ -203,7 +203,7 @@ static void process_adc(volatile adc_result_t *buf, _UNUSED_ uint32_t deltaticks
 			skp = 1;
 		}
 
-		const canton_config_t *c = get_canton_cnf(i);
+		const conf_canton_t *c = conf_canton_get(i);
 
 #if NEW_ADC_AVG
 		int32_t voff = bemf_convert_to_millivolt(c, buf->meas[i].vBA);

@@ -36,7 +36,7 @@
 #error BOARD_HAS_CTRL not defined, remove this file from build
 #endif
 
-void pidctl_reset(_UNUSED_ const pidctl_config_t *c, pidctl_vars_t *v)
+void pidctl_reset(_UNUSED_ const struct conf_pidctl *c, pidctl_vars_t *v)
 {
     v->has_last = 0;
 	v->last_err = 0;
@@ -46,7 +46,7 @@ void pidctl_reset(_UNUSED_ const pidctl_config_t *c, pidctl_vars_t *v)
 	v->has_last = 0;
 }
 
-void pidctl_set_target(_UNUSED_ const pidctl_config_t *c, pidctl_vars_t *v, int32_t val)
+void pidctl_set_target(_UNUSED_ const struct conf_pidctl *c, pidctl_vars_t *v, int32_t val)
 {
 	if ((0)) pidctl_reset(c,v);
     if ((0)) v->sume = val;
@@ -56,7 +56,7 @@ void pidctl_set_target(_UNUSED_ const pidctl_config_t *c, pidctl_vars_t *v, int3
 
 #define MAX_I (250000)
 
-int32_t pidctl_value(const pidctl_config_t *c, pidctl_vars_t *v, int32_t cur_v)
+int32_t pidctl_value(const struct conf_pidctl *c, pidctl_vars_t *v, int32_t cur_v)
 {
 	// cuv in native BEMF value
 	int32_t dt10 = 10000 / tsktick_freqhz; // dt*10 in ms

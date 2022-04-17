@@ -19,7 +19,8 @@
 #endif
 
 #include "canton_bemf.h"
-#include "canton_config.h"
+//#include "canton_config.h"
+#include "../config/conf_canton.h"
 #include "../msg/trainmsg.h"
 
 

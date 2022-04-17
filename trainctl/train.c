@@ -18,8 +18,8 @@
 #include <memory.h>
 
 #include "misc.h"
-#include "train.h"
-#include "railconfig.h"
+//#include "train.h"
+//#include "railconfig.h"
 
 #if 0
 void train_reset(const train_config_t *c, train_vars_t *v)
@@ -69,7 +69,7 @@ int train_reset_pos_estimate(int tidx)
 
 
 /* ------------------------------------------------------------------------------- */
-
+#if 0
 const param_t train_params[] = {
 		{ "kp",		 NULL, offsetof(train_config_t, pidcnf.kP), 		NULL,NULL, sizeof(int32_t), -3000, 3000,  150},
 		{ "ki",		 NULL, offsetof(train_config_t, pidcnf.kI), 		NULL,NULL, sizeof(int32_t), -3000, 3000,  50},
@@ -97,4 +97,4 @@ const param_t train_params[] = {
 
 		{ NULL,     NULL,0,    NULL,NULL, 0, 0, 0,   0}
 };
-
+#endif

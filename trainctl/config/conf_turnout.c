@@ -35,19 +35,19 @@ int conf_turnout_num_entries(void)
 
 static conf_turnout_t conf_turnout[3] = {
   {     // 0
-     .port = GPIOA,
+     .cmd_port = GPIOA,
      .pinA = GPIO_PIN_9,
      .pinB = GPIO_PIN_10,
      .reverse = 0,
   },
   {     // 1
-     .port = GPIOE,
+     .cmd_port = GPIOE,
      .pinA = GPIO_PIN_0,
      .pinB = GPIO_PIN_1,
      .reverse = 0,
   },
   {     // 2
-     .port = GPIOE,
+     .cmd_port = GPIOE,
      .pinA = GPIO_PIN_8,
      .pinB = GPIO_PIN_7,
      .reverse = 0,

@@ -8,6 +8,8 @@
 #ifndef LOW_CANTON_CONFIG_H_
 #define LOW_CANTON_CONFIG_H_
 
+#error obsolete, replaced by config/conf_canton.h (generated file)
+
 #include "../misc.h"
 
 #ifndef TRAIN_SIMU

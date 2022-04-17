@@ -4,6 +4,7 @@
 
 #include "propag.h"
 
+#include "conf_led.propag.h"
 #include "conf_turnout.propag.h"
 #include "conf_train.propag.h"
 #include "conf_topology.propag.h"
@@ -14,6 +15,9 @@
 void conf_propagate(int confnum, int fieldnum, int instnum, int32_t v)
 {
     switch (confnum) {
+    case conf_pnum_led:
+        conf_led_propagate(instnum, fieldnum, v);
+        break;
     case conf_pnum_turnout:
         conf_turnout_propagate(instnum, fieldnum, v);
         break;

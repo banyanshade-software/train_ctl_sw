@@ -39,7 +39,8 @@
 #endif
 #endif
 
-#include "canton_config.h"
+//#include "canton_config.h"
+#include "../config/conf_canton.h"
 
 //#define CANTON_TYPE_DUMMY    (0)
 //#define CANTON_TYPE_REMOTE   (0xFF)
@@ -63,7 +64,7 @@ void canton_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt);
  * return value is pwm duty in 0-100 range
  */
 
-
+#if 0
 typedef enum train_volt_policy /*: uint8_t*/ {
 	vpolicy_normal = 0,
 	vpolicy_pure_pwm,
@@ -71,13 +72,15 @@ typedef enum train_volt_policy /*: uint8_t*/ {
     //vpolicy_v2,
     //vpolicy_v4
 } train_volt_policy_t;
+#endif
 
-
+#if 0
 int volt_index(uint16_t mili_power,
-		const canton_config_t *c1, //canton_vars_t *v1,
-		const canton_config_t *c2, //canton_vars_t *v2,
+		const conf_canton_t *c1, //canton_vars_t *v1,
+		const conf_canton_t *c2, //canton_vars_t *v2,
 		int *pvi1, int *pvi2, train_volt_policy_t);
 
+#endif
 
 
 #endif /* CANTON_H_ */

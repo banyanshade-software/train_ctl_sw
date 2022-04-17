@@ -26,13 +26,14 @@
 #include <memory.h>
 
 #include "turnout.h"
-#include "turnout_config.h"
+//#include "turnout_config.h"
+#include "../config/conf_turnout.h"
 
 #include "../misc.h"
 #include "../msg/trainmsg.h"
 
 
-#include "../railconfig.h"
+//#include "../railconfig.h"
 #include "../trainctl_iface.h"
 #ifndef TRAIN_SIMU
 #ifdef STM32_F4
@@ -112,8 +113,8 @@ static turnout_vars_t tvars[NUM_LOCAL_TURNOUTS]={0};
 
 
 #define USE_TURNOUT(_idx) \
-		const turnout_config_t *aconf = get_turnout_cnf(_idx); \
-		turnout_vars_t         *avars = &tvars[_idx];
+		const conf_turnout_t *aconf = conf_turnout_get(_idx); \
+		turnout_vars_t       *avars = &tvars[_idx];
 
 
 static void process_turnout_cmd(msg_64_t *m, _UNUSED_ uint32_t tick, _UNUSED_ uint32_t dt)

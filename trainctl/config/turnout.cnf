@@ -7,7 +7,7 @@
 
 
 config turnout {
-	const GPIO_TypeDef *port
+	const GPIO_TypeDef *cmd_port
 		= (main:*) table(tpin_main, port)
 		= (default) NULL;
 	const uint16_t pinA

@@ -42,7 +42,6 @@ typedef struct conf_train {
     uint8_t en_spd2pow:1;
     uint8_t reversed:1;
     uint8_t min_power;
-    uint8_t notify_speed:1;
     uint8_t notify_pose:1;
     uint8_t bemfIIR;
     uint8_t postIIR;
@@ -55,6 +54,33 @@ typedef struct conf_train {
 
 int conf_train_num_entries(void);
 const conf_train_t *conf_train_get(int num);
+
+
+
+#ifdef TRN_BOARD_MAIN
+#define NUM_TRAINS 8 // 8 
+#endif // TRN_BOARD_MAIN
+
+
+
+#ifdef TRN_BOARD_DISPATCHER
+#define NUM_TRAINS 0 // 0 
+#endif // TRN_BOARD_DISPATCHER
+
+
+
+#ifdef TRN_BOARD_SWITCHER
+#define NUM_TRAINS 0 // 0 
+#endif // TRN_BOARD_SWITCHER
+
+
+
+#ifdef TRN_BOARD_MAIN_ZERO
+#define NUM_TRAINS 0 // 0 
+#endif // TRN_BOARD_MAIN_ZERO
+
+
+#define MAX_TRAINS 8
 
 
 

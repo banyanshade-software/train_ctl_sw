@@ -31,15 +31,22 @@
 #include "../low/canton.h"
 #include "inertia.h"
 #include "pidctl.h"
-#include "train.h"
+//#include "train.h"
 #include "../low/turnout.h"
 #include "spdctl.h"
-#include "railconfig.h"
+//#include "railconfig.h"
 //#include "auto1.h"
 //#include "txrxcmd.h"
 #include "statval.h"
 
+#include "../config/conf_train.h"
+#include "../config/conf_canton.h"
 
+
+static int volt_index(uint16_t mili_power,
+		const conf_canton_t *c1, //canton_vars_t *v1,
+		const conf_canton_t *c2, //canton_vars_t *v2,
+		int *pvi1, int *pvi2, train_volt_policy_t pol);
 
 // ----------------------------------------------------------------------------------
 // global run mode, each tasklet implement this
@@ -125,12 +132,12 @@ const stat_val_t statval_spdctrl[] = {
 
 
 #define USE_TRAIN(_idx) \
-		_UNUSED_ const train_config_t *tconf = get_train_cnf(_idx); \
-		train_vars_t         *tvars = &trspc_vars[_idx];
+		_UNUSED_ const conf_train_t *tconf = conf_train_get(_idx); \
+		train_vars_t                *tvars = &trspc_vars[_idx];
 
 
 static void train_periodic_control(int numtrain, uint32_t dt);
-static void _set_speed(int tidx, const train_config_t *cnf, train_vars_t *vars);
+static void _set_speed(int tidx, const conf_train_t *cnf, train_vars_t *vars);
 static void spdctl_reset(void);
 static void set_c1_c2(int num, train_vars_t *tvars, uint8_t c1, int8_t dir1, uint8_t c2, int8_t dir2);
 
@@ -311,9 +318,9 @@ static void train_periodic_control(int numtrain, uint32_t dt)
     // inertia before PID
 	if (1==tconf->enable_inertia) {
 		int changed;
-		inertia_set_target(numtrain, &tconf->inertiacnf, &tvars->inertiavars, tvars->target_speed);
+		inertia_set_target(numtrain, &tconf->inertia, &tvars->inertiavars, tvars->target_speed);
 		//tvars->inertiavars.target = tvars->target_speed;
-		v = inertia_value(numtrain, &tconf->inertiacnf, &tvars->inertiavars, &changed);
+		v = inertia_value(numtrain, &tconf->inertia, &tvars->inertiavars, &changed);
 		itm_debug3(DBG_INERTIA, "inertia", numtrain, tvars->target_speed, v);
 	}
     
@@ -324,7 +331,7 @@ static void train_periodic_control(int numtrain, uint32_t dt)
         int32_t tbemf = 1800*v/100 * tvars->C1_dir;
         //tbemf = tbemf / 4; //XXX why ?? new cables (more capacitance ?)
         // TODO make this divisor a parameter
-        pidctl_set_target(&tconf->pidcnf, &tvars->pidvars, tbemf);
+        pidctl_set_target(&tconf->pidctl, &tvars->pidvars, tbemf);
         // XXXX notif_target_bemf(tconf, tvars, tbemf);
     }
 
@@ -339,7 +346,7 @@ static void train_periodic_control(int numtrain, uint32_t dt)
     	}
         if (!tvars->pidvars.stopped && (tvars->target_speed == 0) && (abs(tvars->bemf_mv)<100)) {
     		itm_debug1(DBG_PID, "stop", 0);
-			pidctl_reset(&tconf->pidcnf, &tvars->pidvars);
+			pidctl_reset(&tconf->pidctl, &tvars->pidvars);
 			debug_info('T', numtrain, "STOP_PID", 0,0, 0);
 			tvars->pidvars.stopped = 1;
             send_train_stopped(numtrain, tvars);
@@ -359,7 +366,7 @@ static void train_periodic_control(int numtrain, uint32_t dt)
         		bemf_mv = -MAX_PID_VALUE;
         	}
 
-        	int32_t v2 = pidctl_value(&tconf->pidcnf, &tvars->pidvars, bemf_mv)/10; //XXX
+        	int32_t v2 = pidctl_value(&tconf->pidctl, &tvars->pidvars, bemf_mv)/10; //XXX
         	int32_t v3;
         	v3 = (v2>100) ? 100 : v2;
         	v3 = (v3<-100) ? -100: v3;
@@ -373,9 +380,9 @@ static void train_periodic_control(int numtrain, uint32_t dt)
     }
     // or inertia after PID
     if (2==tconf->enable_inertia) {
-		inertia_set_target(numtrain, &tconf->inertiacnf, &tvars->inertiavars, v);
+		inertia_set_target(numtrain, &tconf->inertia, &tvars->inertiavars, v);
         //tvars->inertiavars.target = v;
-        v = inertia_value(numtrain, &tconf->inertiacnf, &tvars->inertiavars, NULL);
+        v = inertia_value(numtrain, &tconf->inertia, &tvars->inertiavars, NULL);
     }
 
     if (tconf->en_spd2pow) {
@@ -415,6 +422,7 @@ static void train_periodic_control(int numtrain, uint32_t dt)
             mqf_write_from_spdctl(&m);
         }
     }
+    /*
     if (tconf->notify_speed) { // to be removed
     	struct spd_notif n;
     	n.sv100 = v;
@@ -423,6 +431,7 @@ static void train_periodic_control(int numtrain, uint32_t dt)
     	n.bemf_centivolt = tvars->bemf_mv/10; //cv1->bemf_centivolt;
     	train_notif(numtrain, 'V', (void *)&n, sizeof(n));
     }
+    */
 
     /* estimate speed/position with bemf */
     if ((1)) {
@@ -495,16 +504,16 @@ static void set_c1_c2(int tidx, train_vars_t *tvars, uint8_t c1, int8_t dir1, ui
 
 
 
-static void _set_speed(int tidx, const train_config_t *cnf, train_vars_t *vars)
+static void _set_speed(int tidx, const conf_train_t *cnf, train_vars_t *vars)
 {
-    const canton_config_t *c1;
-    const canton_config_t *c2;
+    const conf_canton_t *c1;
+    const conf_canton_t *c2;
 
 
 	int16_t sv100 = vars->last_speed;
 
-    c1 =  get_canton_cnf(vars->C1);
-    c2 =  get_canton_cnf(vars->C2);
+    c1 =  conf_canton_get(vars->C1);
+    c2 =  conf_canton_get(vars->C2);
     
     if (!c1) {
     	itm_debug1(DBG_ERR|DBG_SPDCTL, "no canton", sv100);
@@ -852,4 +861,121 @@ static void train_did_switch_canton(uint8_t numtrain)
 
 }
 #endif
+
+
+
+
+
+#define VOLT_SEL_3BITS 1	// otherwise, legacy on 4 bits
+
+#ifdef VOLT_SEL_3BITS
+#define NUM_VOLTS_VAL 8
+#else
+#define NUM_VOLTS_VAL 16
+#endif
+#define MAX_PVI (NUM_VOLTS_VAL-1)
+
+static int volt_index(uint16_t mili_power,
+		const conf_canton_t *c1, //canton_vars_t *v1,
+		_UNUSED_ const conf_canton_t *c2, //canton_vars_t *v2,
+		int *pvi1, int *pvi2,
+		train_volt_policy_t pol)
+{
+	int duty=0;
+	*pvi1 = MAX_PVI;
+	*pvi2 = MAX_PVI;
+
+	//if (mili_power <0)    return canton_error_rc(0, ERR_BAD_PARAM_MPOW, "negative milipower");
+	if (mili_power >1000) return canton_error_rc(0, ERR_BAD_PARAM_MPOW, "milipower should be 0-999");
+	switch (pol) {
+	default :
+        duty = 0;
+		return canton_error_rc(0, ERR_BAD_PARAM_VPOL, "bad volt policy");
+		break;
+	case vpolicy_pure_pwm:
+		*pvi1 = 0;
+		*pvi2 = 0;
+		duty = mili_power / 10;
+		break;
+    case vpolicy_normal:
+            // fall back to full volt +  pwm
+            *pvi1 = *pvi2 = 0;
+            duty = mili_power / 10;
+            for (int i=MAX_PVI; i>=0; i--) {
+                if (!c1->volts_cv[i]) continue;
+                // c1->volts in 0.01V unit
+                int d = 100*mili_power / c1->volts_cv[i];
+                if (d>MAX_PWM) {
+                    continue;
+                }
+                // XXX for now we assume all canton have same board with same voltage level
+                *pvi1 = *pvi2 = i;
+                duty = d;
+                break;
+            }
+		break;
+#if 0
+    case vpolicy_v2:
+    	*pvi1 = *pvi2 = 0;
+    	duty = mili_power / 10;
+    	for (int i=15; i>=0; i--) {
+    		if (!c1->volts_v2[i]) continue;
+    		// c1->volts in 0.01V unit
+			int d = 100*mili_power / c1->volts_v2[i];
+			if (d>MAX_PWM) {
+				continue;
+			}
+			// XXX for now we assume all canton have same board with same voltage level
+			*pvi1 = *pvi2 = i;
+			duty = d;
+			break;
+    	}
+    	break;
+    case vpolicy_v4:
+    	*pvi1 = *pvi2 = 0;
+    	duty = mili_power / 10;
+    	for (int i=15; i>=0; i--) {
+    		if (!c1->volts_v4[i]) continue;
+    		// c1->volts in 0.01V unit
+			int d = 100*mili_power / c1->volts_v4[i];
+			if (d>MAX_PWM) {
+				continue;
+			}
+			// XXX for now we assume all canton have same board with same voltage level
+			*pvi1 = *pvi2 = i;
+			duty = d;
+			break;
+    	}
+    	break;
+#endif
+	case vpolicy_pure_volt:
+		duty = MAX_PWM;
+        int s = 0;
+		for (int i=MAX_PVI; i>=0; i--) {
+			if (!c1->volts_cv[i]) continue;
+			// c1->volts in 0.01V unit. 10V = 1000
+			int p = c1->volts_cv[i]*MAX_PWM/100;  // 0.01V * % , ex : 345*90
+			if (p <= mili_power) {
+                s = 1;
+				*pvi1 = i;
+				*pvi2 = i;
+			} else {
+                if (!s) {
+                    // lower than minimal power
+                    *pvi1 = i;
+                    *pvi2 = i;
+                    duty = 0;
+                }
+                // ok
+				break;
+			}
+		}
+		break;
+	}
+    if (duty>MAX_PWM) {
+        duty = MAX_PWM;
+        //canton_error(ERR_BAD_PARAM_MPOW, "test msg");
+    }
+	return duty;
+}
 

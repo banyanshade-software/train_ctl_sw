@@ -36,5 +36,5 @@ enum loco_detect_locos {
 
 const char *loco_detect_name(enum loco_detect_locos l);
 
-const train_config_t *detect_loco_conf(enum loco_detect_locos loco);
+const conf_train_t *detect_loco_conf(enum loco_detect_locos loco);
 #endif /* CTRL_DETECT_LOCO_H_ */

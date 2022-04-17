@@ -7,7 +7,8 @@
 
 
 #include "misc.h"
-#include "../train.h"
+//#include "../train.h"
+#include "../config/conf_train.h"
 #include "detect_loco.h"
 
 
@@ -108,7 +109,7 @@ const char *loco_detect_name(enum loco_detect_locos l)
 }
 
 
-static const train_config_t trcfg[] ={
+static const conf_train_t trcfg[] ={
     /* loco_unknown=0 */    DEFAULT_TRAIN_CFG(0, 500, 180, 500,   450, 120),
     /*loco_rokuhan_chassis*/DEFAULT_TRAIN_CFG(0, 100, 180, 100,   400, 120),
     /*loco_8875_v160*/      DEFAULT_TRAIN_CFG(1, 500, 180, 500,   450, 120),
@@ -118,7 +119,7 @@ static const train_config_t trcfg[] ={
     /*loco_8864_v60b*/      DEFAULT_TRAIN_CFG(0, 500, 180, 500,   450, 120),
 };
 
-const train_config_t *detect_loco_conf(enum loco_detect_locos loco)
+const conf_train_t *detect_loco_conf(enum loco_detect_locos loco)
 {
     if (loco>=loco_end) {
         Error_Handler();

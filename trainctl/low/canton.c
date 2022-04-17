@@ -451,7 +451,7 @@ void __attribute__((weak)) train_simu_canton_volt(int numcanton, int voltidx, in
 void __attribute__((weak)) train_simu_canton_set_pwm(int numcanton, int8_t dir, int duty)
 {
 }
-void canton_set_volt(int n, const canton_config_t *c, canton_vars_t *v, int voltidx)
+void canton_set_volt(int n, const conf_canton_t *c, canton_vars_t *v, int voltidx)
 {
     int vlt = c->volts_cv[voltidx];
     // int n = canton_idx(v);
@@ -459,7 +459,7 @@ void canton_set_volt(int n, const canton_config_t *c, canton_vars_t *v, int volt
     v->selected_centivolt =  (c->volts_cv[v->cur_voltidx]);
     train_simu_canton_volt(n, voltidx, vlt);
 }
-void canton_set_pwm(int n, const canton_config_t *c, canton_vars_t *v,  int8_t dir, int duty)
+void canton_set_pwm(int n, const conf_canton_t *c, canton_vars_t *v,  int8_t dir, int duty)
 {
     //int n = canton_idx(v);
     v->cur_pwm_duty = duty;

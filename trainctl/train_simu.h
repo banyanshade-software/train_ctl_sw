@@ -49,4 +49,33 @@ extern uint32_t SimuTick;
 #include "spdctl/spdctl.h"
 #include "msg/trainmsg.h"
 #include "ctrl/ctrl.h"
+
+
+#define GPIOA NULL
+#define GPIOB NULL
+#define GPIOC NULL
+#define GPIOD NULL
+#define GPIOE NULL
+
+#define GPIO_PIN_0 (1<<0)
+#define GPIO_PIN_1 (1<<1)
+#define GPIO_PIN_2 (1<<2)
+#define GPIO_PIN_3 (1<<3)
+#define GPIO_PIN_4 (1<<4)
+#define GPIO_PIN_5 (1<<5)
+#define GPIO_PIN_6 (1<<6)
+#define GPIO_PIN_7 (1<<7)
+#define GPIO_PIN_8 (1<<8)
+#define GPIO_PIN_9 (1<<9)
+#define GPIO_PIN_10 (1<<10)
+#define GPIO_PIN_11 (1<<11)
+#define GPIO_PIN_12 (1<<12)
+#define GPIO_PIN_13 (1<<13)
+#define GPIO_PIN_14 (1<<14)
+#define GPIO_PIN_15 (1<<15)
+
+#define TIM_CHANNEL_1 1
+#define TIM_CHANNEL_2 2
+#define TIM_CHANNEL_3 3
+#define TIM_CHANNEL_4 4
 #endif

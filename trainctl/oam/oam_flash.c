@@ -4,11 +4,14 @@
 #include "../misc.h"
 
 
-
+#ifndef TRAIN_SIMU
 #include "../stm32/w25qxx/w25qxx.h"
+#else
+#include "simu_flash.h"
+#endif
+
 #include "oam_flash.h"
 #include "oam.h"
-
 
 
 static void check_store_init(int force);
@@ -21,12 +24,13 @@ void oam_flash_init(void)
 		Error_Handler();
 	}
 	// PageSize = 256, PageCount = 8192, SectorSize = 4096, SectorCount = 512, BlockSize = 65536, BlockCount = 32, CapacityInKiloByte = 2048,
+#ifndef TRAIN_SIMU
 	itm_debug3(DBG_OAM, "FLASH s", w25qxx.PageSize, w25qxx.SectorSize, w25qxx.BlockSize);
 	itm_debug3(DBG_OAM, "FLASH c", w25qxx.PageCount, w25qxx.SectorCount, w25qxx.BlockCount);
+#endif
 
 
-
-
+#ifndef TRAIN_SIMU
 	if ((0)) {
 		if ((1)) {
 			W25qxx_EraseSector(1);
@@ -56,6 +60,7 @@ void oam_flash_init(void)
 			itm_debug3(DBG_OAM, "buf r", buf[0], buf[1], buf[2]);
 		}
 	}
+#endif
 
 	check_store_init(1);
 

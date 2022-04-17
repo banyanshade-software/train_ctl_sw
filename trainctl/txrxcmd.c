@@ -363,7 +363,7 @@ static uint8_t process_frame_cmd(uint8_t sel, uint8_t num,  uint8_t cmd, uint8_t
 		case 'P': {
 			if (plen < 4+1) return 1;
 			const conf_train_t *tcnf = conf_train_get(num);
-			if (0 && tcnf) {/*XXX
+			if ((0) && tcnf) {/*XXX
 				int32_t v;
 				memcpy(&v, param, sizeof(int32_t));
 			    rc = param_set_value(train_params, (void *)tcnf, (char *)(param+sizeof(int32_t)), v); */

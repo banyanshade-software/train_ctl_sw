@@ -25,8 +25,11 @@ typedef struct {
 
 // put msg queues in CCM ram, if any
 //#define MQF_ATTRIB
+#ifndef TRAIN_SIMU
 #define MQF_ATTRIB __attribute__((section(".ccmram")))
-
+#else
+#define MQF_ATTRIB
+#endif
 
 #define LFMQUEUE_DEF_H(_name, _type) 						\
     extern mqf_t  _name; 									\

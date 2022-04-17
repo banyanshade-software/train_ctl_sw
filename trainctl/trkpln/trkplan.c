@@ -6,16 +6,27 @@
 //  Copyright © 2021 Daniel BRAUN. All rights reserved.
 //
 
-#include "trkplan.h"
 #include <stdlib.h>
 #include <memory.h>
 #include <time.h>
+
+#include "../misc.h"
+
+#ifndef TRAIN_SIMU
+#include "trainctl_config.h"
+#else
+#include "train_simu.h"
+#include <stdio.h>
+#endif
+
+
+#include "trkplan.h"
 
 #include "../topology/topology.h"
 
 
 #ifndef TRACKPLAN_TESTPGM
-#include "../railconfig.h"
+//#include "../railconfig.h"
 #else
 
 #include <stdio.h>
@@ -471,7 +482,7 @@ void trkpln_process(void)
         }
         m /= NUM_POPULATION;
         //printf("average score : %f\n", m);
-        printf("average score : %d\n", m);
+        //printf("average score : %d\n", m);
         int nkill = 0;
         for (int pop = 0; pop<NUM_POPULATION; pop++) {
             if (population[pop].score<m) {

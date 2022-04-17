@@ -94,7 +94,6 @@ const char *loco_detect_name(enum loco_detect_locos l)
                         0, /* enable_inertia */        \
                         1, /* enabled */            \
                         1, /* enable_pid */            \
-                        0, /* notify_speed */        \
                         0, /* notify_pose */        \
                         0, /* bemfIIR; */            \
                         0, /* postIIR */            \

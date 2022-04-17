@@ -389,7 +389,7 @@ const turnout_config_t  *get_turnout_cnf(int idx)
 
 
 
-#if 1
+#if 0
 #ifdef BOARD_HAS_LED
 
 static const led_config_t _led_conf[CONFIG_NLED] = {

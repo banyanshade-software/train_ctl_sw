@@ -120,7 +120,7 @@
                 }
             }
         }
-        const canton_config_t *cnf = get_canton_cnf(cn); // canton num / canton addr /local etc TODO
+        const conf_canton_t *cnf = conf_canton_get(cn); // canton num / canton addr /local etc TODO
 
         double spower = dir[cn]*volt[cn]*pwm[cn]/1000.0;
         NSLog(@"train %d power %f", tn, spower);
@@ -131,7 +131,7 @@
         bemf[cn] = be * (revbemf ? -1 : 1);
         int co = cold[tn];
         if (co>=0) {
-            cnf = get_canton_cnf(co);
+            cnf = conf_canton_get(co);
             bemf[co] = be * (revbemf ? -1 : 1);
             cold[tn] = -1;
         }

@@ -718,7 +718,7 @@ static void cantons_start_calib(void)
 	train_volt_policy_t vpol = vpolicy_normal;
 
 	for (int i=0; i<NUM_CANTONS; i++) {
-		const canton_config_t *c = get_canton_cnf(i);
+		const conf_canton_t *c = conf_canton_get(i);
 		canton_vars_t   *v       = get_canton_vars(i);
 		canton_reset_calib(c, v, calib.spd);
 		int vltidx; int dummy;
@@ -732,7 +732,7 @@ static void cantons_start_calib(void)
 static void cantons_stop_calib(void)
 {
 	for (int i=0; i<NUM_CANTONS; i++) {
-		const canton_config_t *c = get_canton_cnf(i);
+		const conf_canton_t *c = conf_canton_get(i);
 		canton_vars_t   *v       = get_canton_vars(i);
 		canton_end_calib(c, v, calib.spd, CALIB_NUM_VAL);
 	}
@@ -792,8 +792,8 @@ static void highlevel_tick(void)
         
 		int c1 = tvars->current_canton;
 		int c2 = tvars->next_canton;
-		//canton_config_t *cc1 =  get_canton_cnf(c1);
-		//canton_config_t *cc2 =  get_canton_cnf(c2);
+		//conf_canton_t *cc1 =  get_canton_cnf(c1);
+		//conf_canton_t *cc2 =  get_canton_cnf(c2);
 		canton_vars_t   *cv1 = get_canton_vars(c1);
 		canton_vars_t   *cv2 = get_canton_vars(c2);
 
@@ -844,7 +844,7 @@ static void train_did_switch_canton(uint8_t numtrain)
 	USE_TRAIN(numtrain);
     (void) tconf; // unused
     debug_info('T', numtrain, "SWT DONE", tvars->current_canton, tvars->next_canton, tvars->C2_dir);
-	const canton_config_t *c_old = get_canton_cnf(tvars->current_canton);
+	const conf_canton_t *c_old = conf_canton_get(tvars->current_canton);
 	canton_vars_t *v_old = get_canton_vars(tvars->current_canton);
 	canton_set_pwm(c_old, v_old, 0, 0);
 

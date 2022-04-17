@@ -22,6 +22,8 @@
 #import "CTCManager.h"
 #include "oscillo.h"
 
+#include "conf_canton.h"
+#include "conf_train.h"
 
 uint16_t dummy[3];
 
@@ -1205,9 +1207,10 @@ static int frm_unescape(uint8_t *buf, int len)
                     return;
             }
         case 'T': {
-            struct spd_notif spd;
+            //struct spd_notif spd;
             switch (frm.cmd) {
                 case 'V':
+                    /*
                     memcpy(&spd, frm.param, sizeof(spd));
                     //NSLog(@"train %d, v=%d\n", frm.num, spd.sv100);
                     if (0==frm.num || '0'==frm.num) { // XXX for test
@@ -1224,6 +1227,7 @@ static int frm_unescape(uint8_t *buf, int len)
                         self.train_bemf = spd.bemf_centivolt/100.0;
                        
                     }
+                     */
                     return;
                     break;
                 case 'i':

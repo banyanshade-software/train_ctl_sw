@@ -1022,8 +1022,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1551"
             endingLineNumber = "1551"
-            landmarkName = "AppDelegate"
-            landmarkType = "3">
+            landmarkName = "-frameResponse"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -1278,8 +1278,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "2141"
             endingLineNumber = "2141"
-            landmarkName = "AppDelegate"
-            landmarkType = "3">
+            landmarkName = "-centralManagerDidUpdateState:"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -1691,8 +1691,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "2199"
             endingLineNumber = "2199"
-            landmarkName = "-sendMsg64:"
-            landmarkType = "7">
+            landmarkName = "AppDelegate"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -1925,8 +1925,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "166"
             endingLineNumber = "166"
-            landmarkName = "-applicationWillTerminate:"
-            landmarkType = "7">
+            landmarkName = "AppDelegate"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -1941,8 +1941,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "2218"
             endingLineNumber = "2218"
-            landmarkName = "-btnRunMode:"
-            landmarkType = "7">
+            landmarkName = "AppDelegate"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -2309,8 +2309,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "47"
             endingLineNumber = "47"
-            landmarkName = "mqf_qfull(m, t)"
-            landmarkType = "9">
+            landmarkName = "unknown"
+            landmarkType = "0">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -2733,8 +2733,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "170"
             endingLineNumber = "170"
-            landmarkName = "AppDelegate"
-            landmarkType = "3">
+            landmarkName = "-applicationWillTerminate:"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -2829,8 +2829,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "2214"
             endingLineNumber = "2214"
-            landmarkName = "AppDelegate"
-            landmarkType = "3">
+            landmarkName = "-sendMsg64:"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -3603,7 +3603,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1952"
             endingLineNumber = "1952"
-            landmarkName = "-plotWithGnuplot:"
+            landmarkName = "-readStdout:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -3730,8 +3730,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "580"
             endingLineNumber = "580"
-            landmarkName = "-getParams:"
-            landmarkType = "7">
+            landmarkName = "AppDelegate"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -4000,8 +4000,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1396"
             endingLineNumber = "1396"
-            landmarkName = "-processOscilloFrame"
-            landmarkType = "7">
+            landmarkName = "AppDelegate"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -4032,7 +4032,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1263"
             endingLineNumber = "1263"
-            landmarkName = "-processStatFrame"
+            landmarkName = "-setValue:forUndefinedKey:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -4040,7 +4040,7 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "42CA8D6D-5203-4F95-8795-F8D5A8E4FFCC"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "train_throttle/AppDelegate.m"
@@ -4215,15 +4215,31 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "BE592237-2F94-416A-A7A0-3907EF0AD8A5"
+            uuid = "8A3C5330-AEC6-4CE3-AE8A-46CB849831E0"
             shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "train_throttle/AppDelegate.m"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "538"
+            endingLineNumber = "538"
+            landmarkName = "-changeParam:"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "C772ABCB-F548-4CCD-B055-F2ED8967C00E"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../../trainctl/config/conf_canton.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "190"
-            endingLineNumber = "190"
+            startingLineNumber = "191"
+            endingLineNumber = "191"
             landmarkName = "conf_canton_get(num)"
             landmarkType = "9">
          </BreakpointContent>

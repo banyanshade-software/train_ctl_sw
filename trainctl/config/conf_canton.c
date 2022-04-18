@@ -187,7 +187,9 @@ static conf_canton_t conf_canton[0] = {
 const conf_canton_t *conf_canton_get(int num)
 {
   if (num<0) return NULL;
-    if (num>=conf_canton_num_entries()) return NULL;
+    if (num>=conf_canton_num_entries()) {
+        return NULL;
+    }
     return &conf_canton[num];
 }
 

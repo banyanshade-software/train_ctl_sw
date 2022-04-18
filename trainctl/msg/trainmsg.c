@@ -100,7 +100,11 @@ static const qdef_t qdef[NQDEF] = {
 		/* 0*/ { &to_turnout, &from_turnout },
 		/* 1*/ { &to_canton,  &from_canton},
 		/* 2*/ { &to_spdctl,  &from_spdctl},
-		/* 3*/ { &to_canbus, &from_canbus},
+#ifdef TRAIN_SIMU
+    /* 3*/ { &to_forward_usb, &from_forward_usb},
+#else
+    /* 3*/ { &to_canbus, &from_canbus},
+#endif
         /* 4*/ { &to_forward_usb, &from_forward_usb},
         /* 5*/ { &to_ctrl, &from_ctrl},
         /* 6*/ { &to_ui, &from_ui},
@@ -218,7 +222,7 @@ static void dispatch_m64(msg_64_t *m, int f)
 				return;
 			}
 			mqf_t *q = qdef[routes[i].destq].to;
-			mqf_write(q, m);
+			if (q) mqf_write(q, m);
 			return;
 		}
 	}

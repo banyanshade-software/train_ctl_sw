@@ -32,7 +32,7 @@ extern uint32_t SimuTick;
 
 //#define NUM_LOCAL_CANTONS 8
 #define NUM_LOCAL_CANTONS_HW 5
-#define NUM_LOCAL_CANTONS_SW 8
+#define NUM_LOCAL_CANTONS_SW 6 // XXX
 
 #define NUM_LOCAL_TURNOUTS 8
 

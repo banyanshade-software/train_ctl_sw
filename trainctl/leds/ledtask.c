@@ -32,10 +32,10 @@ void led_run_tick(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED
 		static int r=0;
 		static int prog = 0;
 		if ((tm<100) && !r) {
-			msg_64_t m;
+			msg_64_t m = {0};
 			m.cmd = CMD_LED_RUN;
-			m.from = MA_BROADCAST; // dont care
-			m.to = MA_LED_B(0);
+			m.from = MA3_BROADCAST; // dont care
+			m.to = MA0_LED(0);
 			m.v1u = 0;
 			m.v2u = prog;
 			mqf_write_from_nowhere(&m);

@@ -132,7 +132,7 @@ static void generate_incsub(config_node_t *field, FILE *output)
     fprintf(output, "\n\n");
 }
 
-static void get_storetype(config_node_t *node, int *ptype, int *pnum)
+static void get_storetype(config_node_t *node, int *ptype, int *pnum, int *gentpl)
 {
     config_node_t *nt = find_by_name_and_type(node->attr, NULL, CONFIG_NODE_ATTR_STORETYPE);
     if (!nt) {
@@ -142,12 +142,20 @@ static void get_storetype(config_node_t *node, int *ptype, int *pnum)
     } else {
         *ptype = nt->value;
     }
+
     config_node_t *nn = find_by_name_and_type(node->attr, NULL, CONFIG_NODE_ATTR_STORENUM);
     if (!nn) {
         fprintf(stderr, "no config store num for %s\n", node->string);
         exit(1);
     } else {
         *pnum = nn->value;
+    }
+
+    config_node_t *nk = find_by_name_and_type(node->attr, NULL, CONFIG_NODE_ATTR_GENTPL);
+    if (nk) {
+        *gentpl = 1;
+    } else {
+        *gentpl = 0;
     }
 }
 
@@ -197,6 +205,11 @@ static void generate_hfile_normal(config_node_t *root, config_node_t *boards)
         }
         fprintf(output, "\n#define MAX_%sS %d\n\n", nuc, max);
 
+        int storetype, storenum, gentpl;
+        get_storetype(node, &storetype, &storenum, &gentpl);
+        if (gentpl) {
+            fprintf(output, "\nconst conf_%s_t *conf_%s_template(void);\n\n", n,n);
+        }
 
         //fprintf(output, "// handling config setup from master\n");
         //fprintf(output, "void conf_%s_change(int instnum, int fieldnum, int16_t value);\n", n);
@@ -222,8 +235,8 @@ static void generate_hfile_propag(config_node_t *root)
 
 
     
-        int storetype, storenum;
-        get_storetype(node, &storetype, &storenum);
+        int storetype, storenum, gentpl;
+        get_storetype(node, &storetype, &storenum, &gentpl);
         if (storetype == 0) {
             fprintf(output, "#define conf_pnum_%s %d\n\n", node->string, storenum);
         }
@@ -252,8 +265,8 @@ void generate_cfile_global_propag(config_node_t *root)
 
     for (config_node_t *node = root->defs; node; node = node->next) {
         char *n = node->string;
-        int storetype, storenum;
-        get_storetype(node, &storetype, &storenum);
+        int storetype, storenum, gentpl;
+        get_storetype(node, &storetype, &storenum, &gentpl);
         if (storetype == 0) {
             fprintf(output, "    case conf_pnum_%s:\n", n);
             fprintf(output, "        conf_%s_propagate(instnum, fieldnum, v);\n", n);
@@ -311,11 +324,24 @@ void generate_cfile(config_node_t *root, int continue_next, config_node_t *board
             fprintf(output, "#endif // TRN_BOARD_%s\n\n\n", brduc);
         }
         fprintf(output, "\n\nconst conf_%s_t *conf_%s_get(int num)\n", n, n);
-        fprintf(output, "{\n  if (num<0) return NULL;\n    if (num>=conf_%s_num_entries()) return NULL;\n", n);
+        fprintf(output, "{\n  if (num<0) return NULL;\n    if (num>=conf_%s_num_entries()) {\n        return NULL;\n    }\n", n);
         fprintf(output, "    return &conf_%s[num];\n}\n\n", n);
 
-        int storetype, storenum;
-        get_storetype(node, &storetype, &storenum);
+        int storetype, storenum, gentpl;
+        get_storetype(node, &storetype, &storenum, &gentpl);
+
+        if (gentpl) {
+            fprintf(output, "static const conf_%s_t %s_template = {\n", n, n);
+            for (config_node_t *f = node->fields; f; f = f->next) {
+                gen_field_val(output, f, NULL, 0, tables, root->subdefs);
+            }
+            fprintf(output, "  };\n");
+
+            fprintf(output, "const conf_%s_t *conf_%s_template(void)\n{\n", n,n);
+            fprintf(output, "  return &%s_template;\n", n);
+            fprintf(output, "}\n\n");
+        }
+
         fprintf(output, "// %s config store type %d num %d\n", node->string, storetype, storenum);
 
         if (storetype == 0) {
@@ -389,7 +415,7 @@ static void gen_field_val(FILE *output, config_node_t *f, config_node_t *b, int 
         fprintf(output, "     },\n");
         return;
     }
-    config_node_t *v = find_board_value(f->boardvalues, numinst, b->string);
+    config_node_t *v = find_board_value(f->boardvalues, numinst, b ? b->string : "unknown");
     config_node_t *val = v->val;
     if (val->tag == CONFIG_NODE_TABLEREF) {
         //printf("//table %s col %s inst %d\n", val->tablename, val->colname, numinst);

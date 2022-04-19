@@ -230,8 +230,8 @@ void ihm_runtick_normal(int init)
 			}
 			if (drive_mode[i]) {	// TODO refactor drive_mode
 				msg_64_t m;
-				m.from = MA_UI(i);
-				m.to = MA_CONTROL_T(i);
+				m.from = MA3_UI_GEN;//(i);
+				m.to = MA1_CTRL(i);
 				m.cmd = CMD_MDRIVE_SPEED_DIR;
 				m.v1u = abs(rot_position[i]);
 				m.v2 = SIGNOF0(rot_position[i]);
@@ -298,8 +298,8 @@ static void ui_process_msg(void)
         	return;
         	break;
         }
-		if (IS_CONTROL_T(m.from)) {
-			int trnum = MA_GET_TRAINNUM(m.from);
+		if (MA1_IS_CTRL(m.from)) {
+			int trnum = MA1_TRAIN(m.from);
 			if (trnum != 0) break; // TODO
 			switch (m.cmd) {
 			case CMD_TRTSPD_NOTIF:
@@ -347,7 +347,7 @@ static void ui_process_msg(void)
 				break;
 			}
 		}
-		if (IS_UI(m.to)) {
+		if (MA3_UI_GEN == m.to) {
 			int dn = m.to & 0x1F;
 			if (dn != 1) {
 				itm_debug1(DBG_UI, "?dn", dn);
@@ -457,13 +457,17 @@ static void ihm_runtick_detect1(int init)
 		ihm_setvar(0, 9, voltidx);
 		SET_NEEDSREFRESH(0);
 		msg_64_t m;
-		m.from = MA_UI(1);
-		m.to = MA_CANTON(0,1);
+		m.from = MA3_UI_GEN; //(1);
+		//m.to = MA0_CANTON(0);
+		TO_CANTON(m, 0);
+		m.subc = 1;
 		m.cmd = CMD_BEMF_ON;
 		mqf_write_from_ui(&m);
 
-		m.from = MA_UI(1);
-		m.to = MA_CANTON(0,1);
+		m.from = MA3_UI_GEN;//(1);
+		//m.to = MA_CANTON(0);
+		TO_CANTON(m, 0);
+		m.subc = 1;
 		m.cmd = CMD_SETVPWM;
 		m.v1u = voltidx;
 		m.v2 = 0;
@@ -479,8 +483,8 @@ static void ihm_runtick_detect1(int init)
 		SET_NEEDSREFRESH(0);
 
 		msg_64_t m;
-		m.from = MA_UI(1);
-		m.to = MA_CANTON(0,1);
+		m.from = MA3_UI_GEN; //(1);
+		TO_CANTON(m, 1);
 		m.cmd = CMD_SETVPWM;
 		m.v1u = voltidx;
 		m.v2 = rotpos;

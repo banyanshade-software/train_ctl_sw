@@ -81,6 +81,9 @@ const conf_canton_t *conf_canton_get(int num);
 #define MAX_CANTONS 6
 
 
+const conf_canton_t *conf_canton_template(void);
+
+
 
 
 #endif

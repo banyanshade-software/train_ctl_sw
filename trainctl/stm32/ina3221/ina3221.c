@@ -416,8 +416,8 @@ static void _read_complete(_UNUSED_ int err)
 		break;
 	case runmode_detect_experiment:
 		itm_debug1(DBG_INA3221, "D/1", ina_svalues[1]);
-		m.from =  MA_CANTON(localBoardNum, 0);
-		m.to = MA_UI(1);
+		m.from =  MA0_INA(localBoardNum);
+		m.to = MA3_UI_GEN;
 		m.cmd = CMD_INA3221_VAL1;
 		m.subc = 1;
 		m.v1 = ina_svalues[1];
@@ -427,8 +427,8 @@ static void _read_complete(_UNUSED_ int err)
 		//itm_debug1(DBG_DETECT, "rdcplD", detect2_monitor);
 		for (int i = 0; i<INA3221_NUM_VALS; i++) {
 			if (0 == (detect2_monitor & (1<<i))) continue;
-			m.from = MA_INA3221_B(localBoardNum);
-			m.to = MA_CONTROL();
+			m.from = MA0_INA(localBoardNum);
+			m.to = MA1_CONTROL();
 			m.cmd = CMD_INA_REPORT;
 			m.subc = i;
 			m.v1 = ina_svalues[i];
@@ -444,8 +444,8 @@ static void _read_complete(_UNUSED_ int err)
 			presence[i] = p;
 			itm_debug3(DBG_INA3221|DBG_PRES, "PRSCH", i,p, ina_svalues[i]);
 			// notify change
-			m.from = MA_CANTON(localBoardNum, 0); // change to MA_INA3221_B ?
-			m.to = MA_CONTROL();
+			m.from = MA0_INA(localBoardNum); // change to MA_INA3221_B ?
+			m.to = MA1_CONTROL();
 			m.cmd = CMD_PRESENCE_SUB_CHANGE;
 			m.subc = i;
 			m.v1u = p;
@@ -465,8 +465,8 @@ static void _read_complete(_UNUSED_ int err)
 					}
 				}
 				if ((1)) v[7] = cnt;
-				m.from = MA_CANTON(localBoardNum, 0);
-				m.to = MA_UI(1);
+				m.from = MA0_INA(localBoardNum);
+				m.to = MA3_UI_GEN;
 				m.cmd = CMD_INA3221_REPORT;
 				m.v32u = (uint32_t) v;
 				mqf_write_from_ina3221(&m);

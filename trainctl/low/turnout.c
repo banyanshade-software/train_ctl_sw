@@ -75,7 +75,7 @@ void turnout_tick(_UNUSED_ uint32_t notif_flags, uint32_t tick, uint32_t dt)
 		msg_64_t m;
 		int rc = mqf_read_to_turnout(&m);
 		if (rc) break;
-		if (IS_TURNOUT(m.to)) {
+		if (MA0_IS_TURNOUT(m.to)) {
 			process_turnout_cmd(&m, tick, dt);
 		} else if (IS_BROADCAST(m.to)) {
 			switch (m.cmd) {
@@ -119,7 +119,7 @@ static turnout_vars_t tvars[NUM_LOCAL_TURNOUTS]={0};
 
 static void process_turnout_cmd(msg_64_t *m, _UNUSED_ uint32_t tick, _UNUSED_ uint32_t dt)
 {
-	uint8_t tidx = m->to & 0x07; // XXX
+	uint8_t tidx = m->subc;
 	USE_TURNOUT(tidx)
 	if (!aconf || !avars) {
 		turnout_error(ERR_BAD_PARAM, "bad idx");

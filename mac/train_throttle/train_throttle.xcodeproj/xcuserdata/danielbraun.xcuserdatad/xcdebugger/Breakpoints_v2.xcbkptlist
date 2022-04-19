@@ -1340,8 +1340,8 @@
             filePath = "../../trainctl/spdctl/spdctl.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "589"
-            endingLineNumber = "589"
+            startingLineNumber = "591"
+            endingLineNumber = "591"
             landmarkName = "_pose_check_trig(numtrain, tvars, lastincr, pose)"
             landmarkType = "9">
          </BreakpointContent>
@@ -1414,7 +1414,7 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "7D5A16E3-A0FB-478D-8C8A-668B48040778"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "train_throttle/SimTrain.m"
@@ -1641,26 +1641,10 @@
             filePath = "../../trainctl/spdctl/spdctl.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "554"
-            endingLineNumber = "554"
-            landmarkName = "unknown"
-            landmarkType = "0">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "1FC74613-DA85-4042-8A00-9BC2D0CCA332"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../../trainctl/spdctl/spdctl.c"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "552"
-            endingLineNumber = "552"
-            landmarkName = "unknown"
-            landmarkType = "0">
+            startingLineNumber = "556"
+            endingLineNumber = "556"
+            landmarkName = "_set_speed(tidx, cnf, vars)"
+            landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -3249,8 +3233,8 @@
             filePath = "../../trainctl/spdctl/spdctl.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "587"
-            endingLineNumber = "587"
+            startingLineNumber = "589"
+            endingLineNumber = "589"
             landmarkName = "_pose_check_trig(numtrain, tvars, lastincr, pose)"
             landmarkType = "9">
          </BreakpointContent>
@@ -3265,8 +3249,8 @@
             filePath = "../../trainctl/spdctl/spdctl.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "592"
-            endingLineNumber = "592"
+            startingLineNumber = "594"
+            endingLineNumber = "594"
             landmarkName = "_pose_check_trig(numtrain, tvars, lastincr, pose)"
             landmarkType = "9">
          </BreakpointContent>
@@ -3281,8 +3265,8 @@
             filePath = "../../trainctl/spdctl/spdctl.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "596"
-            endingLineNumber = "596"
+            startingLineNumber = "598"
+            endingLineNumber = "598"
             landmarkName = "_pose_check_trig(numtrain, tvars, lastincr, pose)"
             landmarkType = "9">
          </BreakpointContent>
@@ -3297,9 +3281,9 @@
             filePath = "../../trainctl/spdctl/spdctl.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "583"
-            endingLineNumber = "583"
-            landmarkName = "_pose_check_trig(numtrain, tvars, lastincr, pose)"
+            startingLineNumber = "585"
+            endingLineNumber = "585"
+            landmarkName = "train_set_target_speed(numtrain, target)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -3313,9 +3297,9 @@
             filePath = "../../trainctl/spdctl/spdctl.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "580"
-            endingLineNumber = "580"
-            landmarkName = "_pose_check_trig(numtrain, tvars, lastincr, pose)"
+            startingLineNumber = "582"
+            endingLineNumber = "582"
+            landmarkName = "train_set_target_speed(numtrain, target)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -3380,22 +3364,6 @@
             startingLineNumber = "228"
             endingLineNumber = "228"
             landmarkName = "process_adc(buf, deltaticks)"
-            landmarkType = "9">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "E1B68010-4028-409B-AB72-513FE2B3A256"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../../trainctl/spdctl/spdctl.c"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "551"
-            endingLineNumber = "551"
-            landmarkName = "_set_speed(tidx, cnf, vars)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -3491,8 +3459,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "458"
             endingLineNumber = "458"
-            landmarkName = "set_c1_c2(tidx, tvars, c1, dir1, c2, dir2)"
-            landmarkType = "9">
+            landmarkName = "unknown"
+            landmarkType = "0">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -4241,6 +4209,102 @@
             startingLineNumber = "191"
             endingLineNumber = "191"
             landmarkName = "conf_canton_get(num)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "7E579590-2EF5-4066-B73D-73E34E555837"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../trainctl/low/canton.c"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "114"
+            endingLineNumber = "114"
+            landmarkName = "handle_canton_cmd(cidx, m)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "994DB208-66A1-4B56-A1A7-19D164AF5038"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "train_throttle/AppDelegate.m"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "2294"
+            endingLineNumber = "2294"
+            landmarkName = "-sendVPWM"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "D571378F-20B0-4C89-A192-39280123378D"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "train_throttle/AppDelegate.m"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "2267"
+            endingLineNumber = "2267"
+            landmarkName = "-setTestCanton:"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "7F9E8761-7A6A-43B0-BD39-85D1DA19A18F"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../trainctl/spdctl/spdctl.c"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "545"
+            endingLineNumber = "545"
+            landmarkName = "_set_speed(tidx, cnf, vars)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "2741C9FD-23F6-42D6-A9A5-DE8B9015240F"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../trainctl/msg/trainmsg.h"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "218"
+            endingLineNumber = "218"
+            landmarkName = "msg_64_t"
+            landmarkType = "16">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "513B16AF-7B4C-4D0C-ABB0-BB2569D691A2"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../trainctl/spdctl/spdctl.c"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "546"
+            endingLineNumber = "546"
+            landmarkName = "_set_speed(tidx, cnf, vars)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>

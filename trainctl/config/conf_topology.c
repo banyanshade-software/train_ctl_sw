@@ -46,7 +46,7 @@ int conf_topology_num_entries(void)
 
 static conf_topology_t conf_topology[64] = {
   {     // 0
-     .canton_addr = MA_CANTON(0, 0),
+     .canton_addr = CNUM(0, 0),
      .ina_segnum = 2,
      .steep = 0,
      .length_cm = 98,
@@ -60,7 +60,7 @@ static conf_topology_t conf_topology[64] = {
      .points = {{L0+1,2}, {L0+4,2}, {L0+5,3}, {L0+5,9}},
   },
   {     // 1
-     .canton_addr = MA_CANTON(0, 1),
+     .canton_addr = CNUM(0, 1),
      .ina_segnum = 1,
      .steep = 0,
      .length_cm = 23,
@@ -74,7 +74,7 @@ static conf_topology_t conf_topology[64] = {
      .points = {{L0+5,10}, {L0+5,11}, _VP, _VP},
   },
   {     // 2
-     .canton_addr = MA_CANTON(0, 2),
+     .canton_addr = CNUM(0, 2),
      .ina_segnum = 0,
      .steep = 0,
      .length_cm = 70,
@@ -88,7 +88,7 @@ static conf_topology_t conf_topology[64] = {
      .points = {{L0+1,3}, {L0+3,3}, {L0+4,4}, {L0+4,5}},
   },
   {     // 3
-     .canton_addr = MA_CANTON(0, 2),
+     .canton_addr = CNUM(0, 2),
      .ina_segnum = 0,
      .steep = 0,
      .length_cm = 20,
@@ -102,7 +102,7 @@ static conf_topology_t conf_topology[64] = {
      .points = {{L0+4,6}, {L0+4, 9}, _VP, _VP},
   },
   {     // 4
-     .canton_addr = MA_CANTON(0, 1),
+     .canton_addr = CNUM(0, 1),
      .ina_segnum = 1,
      .steep = 0,
      .length_cm = 22,
@@ -116,7 +116,7 @@ static conf_topology_t conf_topology[64] = {
      .points = {{L0+5, 12}, {L0+5, 14}, _VP, _VP},
   },
   {     // 5
-     .canton_addr = MA_CANTON(0, 3),
+     .canton_addr = CNUM(0, 3),
      .ina_segnum = 0xFF,
      .steep = 0,
      .length_cm = 54,
@@ -130,7 +130,7 @@ static conf_topology_t conf_topology[64] = {
      .points = {{L0+6,15}, {L0+6,17}, {L0+5,18}, {L0+1,18}},
   },
   {     // 6
-     .canton_addr = MA_CANTON(0, 3),
+     .canton_addr = CNUM(0, 3),
      .ina_segnum = 0xFF,
      .steep = -1,
      .length_cm = 80,
@@ -144,7 +144,7 @@ static conf_topology_t conf_topology[64] = {
      .points = {{L0+7,4}, {L0+7,8}, {L0+6,10}, {L0+6,14}},
   },
   {     // 7
-     .canton_addr = MA_CANTON(0, 3),
+     .canton_addr = CNUM(0, 3),
      .ina_segnum = 0xFF,
      .steep = 0,
      .length_cm = 58,
@@ -158,7 +158,7 @@ static conf_topology_t conf_topology[64] = {
      .points = {{L0+1,1}, {L0+5,1}, {L0+6,2}, {L0+6,3}},
   },
   {     // 8
-     .canton_addr = MA_CANTON(0, 3),
+     .canton_addr = CNUM(0, 3),
      .ina_segnum = 0xFF,
      .steep = 0,
      .length_cm = 36,
@@ -996,7 +996,9 @@ static conf_topology_t conf_topology[0] = {
 const conf_topology_t *conf_topology_get(int num)
 {
   if (num<0) return NULL;
-    if (num>=conf_topology_num_entries()) return NULL;
+    if (num>=conf_topology_num_entries()) {
+        return NULL;
+    }
     return &conf_topology[num];
 }
 

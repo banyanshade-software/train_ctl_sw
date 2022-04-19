@@ -99,7 +99,7 @@ void StartCanTask(_UNUSED_ void *argument)
 	can_init();
 }
 
-
+/*
 static int boardForAddr(uint8_t addr)
 {
 	if (0==(addr & 0x80)) {
@@ -110,6 +110,8 @@ static int boardForAddr(uint8_t addr)
 	}
 	return 0;
 }
+*/
+
 
 /*
  * arbitration id (11 bit)
@@ -139,42 +141,39 @@ static uint32_t arbitration_id(msg_64_t *m)
 {
 	// 0x7FF 11 bits
 	// 3 bits priority of msg, high 3 bits of m->cmd
-	// 6 bits board num, currently 0 0 b b b 0
-	// 2 bits counter
-	// p p p  0 0 b b b 0 n n
+	// 4 bits board num or function num
+	// 1 bit function
+	// 3 bits counter
+	// p p p   b b b b  f n n n
+
+	// master->slave : board num is dest board or dest function
+	// slave->master : board num is sending board (or 0 if unknwon)
 
 	// prio from msg
-	uint32_t aid = (m->cmd & 0xE0) >> 3;
+	uint32_t aid = (m->cmd & 0xE0) << 3;
 
-	int lb = localBoardNum;
+	int lb = localBoardNum; // -1 if unknown
 
 	if ((0)) {
-	} else if (m->to == 0xFF) {
-		aid |= 0xF0;
-		aid |= lb;
-		return aid;
-	} else if (IS_UI(m->to) && !lb) {
-		// Master -> UI
-		aid |= 0xA0;
-		aid |= (m->to & 0x7)<<2;
-	} else if (IS_UI(m->from) & lb) {
-		aid |= 0xE0;
-		aid |= (m->from & 0x7)<<2;
-	} else if (lb) {
-		// from slave board, assumed to be to master
-		aid |= 0x40;
-		aid |= (lb<<2);
+	} else if (MA3_IS_GLOB_ADDR(m->to)) {
+		aid |= 0x80; // function bit
+		aid |= (m->to & 0x0F)<<4;
+
+	} else if (lb<0) {
+			aid |= 0xF8; // function 0xF
+	} else if (lb>0) {
+		// slave->master, use boardnum
+		aid |= lb<<4;
+
+	} else if (MA0_ADDR_IS_BOARD_ADDR(m->to)) {
+		aid |= MA0_BOARD(m->to) << 4;
 	} else {
-		// master->slave
-		aid |= 0x00;
-		int rb = boardForAddr(m->to);
-		if (!rb) {
-			itm_debug2(DBG_ERR | DBG_CAN, "bad rb", m->to, m->cmd);
-		}
-		aid |= (rb<<2);
+		Error_Handler();
 	}
+
+
 	static uint8_t cnt = 0;
-	aid |= cnt & 0x03;
+	aid |= cnt & 0x07;
 	cnt++;
 	return aid;
 }
@@ -395,8 +394,8 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
 	  return;
   }
   if ((0)) {
-	  if ((m.from == MA_CONTROL_T(1))
-			  &&(m.to == MA_UI(0))
+	  if ((m.from == MA1_CTRL(1))
+			  &&(m.to == MA3_UI_GEN)
 			  &&(m.cmd==CMD_NOOP)
 			  &&(m.v1 == 422)
 			  &&(m.v2 == -4242)) {

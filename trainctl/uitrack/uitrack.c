@@ -30,7 +30,7 @@ void uitrack_run_tick(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UN
         msg_64_t m;
         int rc = mqf_read_to_ui_track(&m);
         if (rc) break;
-        if (m.to != MA_UI(UISUB_TRACK)) continue;
+        if (m.to != MA3_UI_CTC) continue;
         int blk; int v; int trn; int sblk; //int rst;
         switch (m.cmd) {
         default:

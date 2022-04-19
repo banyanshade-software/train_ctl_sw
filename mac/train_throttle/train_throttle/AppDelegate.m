@@ -304,8 +304,8 @@ typedef void (^respblk_t)(void);
 {
     int16_t v16 = (uint16_t) (_polarity * v);
     msg_64_t m;
-    m.to = MA_CONTROL_T(t);
-    m.from = MA_UI(UISUB_USB);
+    m.to = MA1_CTRL(t);
+    m.from = MA3_UI_GEN;//(UISUB_USB);
     m.cmd = CMD_MDRIVE_SPEED_DIR;
     m.v1u = abs(v16);
     m.v2 = SIGNOF0(v16);
@@ -330,8 +330,8 @@ typedef void (^respblk_t)(void);
         }];
 #endif
         msg_64_t m = {0};
-        m.from = MA_UI(0);
-        m.to = MA_BROADCAST;
+        m.from = MA3_UI_GEN;//(0);
+        m.to = MA3_BROADCAST;
         m.cmd = CMD_EMERGENCY_STOP;
         [self sendMsg64:m];
     }
@@ -354,8 +354,8 @@ typedef void (^respblk_t)(void);
 - (IBAction) startAuto:(id)sender
 {
     msg_64_t m = {0};
-    m.to = MA_CONTROL();
-    m.from = MA_UI(0);
+    m.to = MA1_CONTROL();
+    m.from = MA3_UI_GEN;//(0);
     m.cmd = CMD_START_AUTO;
     m.v1u = _autoNum;
     [self sendMsg64:m];
@@ -376,8 +376,8 @@ typedef void (^respblk_t)(void);
             break;
     }
     msg_64_t m = {0};
-    m.to = MA_LED_B(brdNum);
-    m.from = MA_UI(0);
+    m.to = MA0_LED(brdNum);
+    m.from = MA3_UI_GEN; //(0);
     m.cmd = CMD_LED_RUN;
     m.v1u = ledNum;
     m.v2u = _ledProg;
@@ -390,8 +390,8 @@ typedef void (^respblk_t)(void);
     NSInteger tn = c.tag;
 
     msg_64_t m;
-    m.to = MA_CONTROL(); //MA_TURNOUT(0, 0);
-    m.from = MA_UI(UISUB_USB);
+    m.to = MA1_CONTROL(); //MA_TURNOUT(0, 0);
+    m.from = MA3_UI_GEN; //(UISUB_USB);
     m.cmd = CMD_TURNOUT_HI_A;
     m.v1u = (uint16_t) tn;
     [self sendMsg64:m];
@@ -402,8 +402,8 @@ typedef void (^respblk_t)(void);
     NSControl *c = (NSControl *)sender;
     NSInteger tn = c.tag;
     msg_64_t m;
-    m.to = MA_CONTROL(); //MA_TURNOUT(0, 0);
-    m.from = MA_UI(UISUB_USB);
+    m.to = MA1_CONTROL(); //MA_TURNOUT(0, 0);
+    m.from = MA3_UI_GEN; //(UISUB_USB);
     m.cmd = CMD_TURNOUT_HI_B;
     m.v1u = (uint16_t) tn;
     [self sendMsg64:m];
@@ -412,8 +412,8 @@ typedef void (^respblk_t)(void);
 - (void) toggleTurnout:(int)tn
 {
     msg_64_t m;
-    m.to = MA_CONTROL(); //MA_TURNOUT(0, 0);
-    m.from = MA_UI(UISUB_USB);
+    m.to = MA1_CONTROL(); //MA_TURNOUT(0, 0);
+    m.from = MA3_UI_GEN; //(UISUB_USB);
     m.cmd = CMD_TURNOUT_HI_TOG;
     m.v1u = (uint16_t) tn;
     [self sendMsg64:m];
@@ -440,8 +440,8 @@ typedef void (^respblk_t)(void);
     m.cmd = CMD_SET_TRAIN_MODE;
     m.v1u = tr;
     m.v2u = v;
-    m.from = MA_UI(0);
-    m.to = MA_CONTROL();
+    m.from = MA3_UI_GEN; //(0);
+    m.to = MA1_CONTROL();
     [self sendMsg64:m];
 }
 #pragma mark -
@@ -1124,7 +1124,7 @@ static int frm_unescape(uint8_t *buf, int len)
         NSLog(@"frameMsg64 bad len");
         return;
     }
-    if (!IS_UI(frm.param[0])) {
+    if ((MA3_UI_GEN != frm.param[0]) && (MA3_UI_CTC != frm.param[0])) {
         NSLog(@"only handle UI");
     }
     int nt=0;
@@ -1132,13 +1132,13 @@ static int frm_unescape(uint8_t *buf, int len)
     msg_64_t m;
     memcpy(&m, frm.param, sizeof(m));
 
-    if (MA_UI(UISUB_TRACK)==m.to) {
+    if (MA3_UI_CTC==m.to) {
         mqf_write_to_ui_track(&m);
         return;
     }
     switch (m.cmd) {
         case CMD_NOTIF_SPEED:
-            nt = MA_GET_TRAINNUM(m.from);
+            nt = MA1_TRAIN(m.from);
             v = m.v1u;
             NSLog(@"train %d spd %d\n", nt, v);
             self.curspeed = v;
@@ -2235,8 +2235,8 @@ didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic
     
    
     msg_64_t m;
-    m.to = MA_BROADCAST;
-    m.from = MA_UI(UISUB_USB);
+    m.to = MA3_BROADCAST;
+    m.from = MA3_UI_GEN; //(UISUB_USB);
     m.cmd = CMD_SETRUN_MODE;
     switch (testMode) {
         case 0: m.v1u = runmode_normal; break;
@@ -2261,8 +2261,9 @@ didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic
         for (int i = 0; i<NUM_LOCAL_CANTONS_HW; i++) {
             if (i==testCanton) continue;
             msg_64_t m;
-            m.to = MA_CANTON(0, i);
-            m.from = MA_UI(UISUB_USB);
+            TO_CANTON(m, i);
+            //m.to = MA_CANTON(0, i);
+            m.from = MA3_UI_GEN; //(UISUB_USB);
             m.cmd = CMD_SETVPWM;
             m.v1u = 7;
             m.v2 = 0;
@@ -2290,9 +2291,14 @@ didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic
 }
 - (void) sendVPWM
 {
-    msg_64_t m;
-    m.to = (_runMode == 1) ? MA_CANTON(0, _testCanton) : MA_BROADCAST;
-    m.from = MA_UI(UISUB_USB);
+    msg_64_t m = {0};
+    if (_runMode == 1) {
+        TO_CANTON(m, _testCanton);
+    } else {
+        m.to = MA3_BROADCAST;
+    }
+    //m.to = (_runMode == 1) ? MA_CANTON(0, _testCanton) : MA_BROADCAST;
+    m.from = MA3_UI_GEN; //(UISUB_USB);
     m.cmd = CMD_SETVPWM;
     m.v1u = _testVoltIdx;
     m.v2 = _testPWM;
@@ -2304,8 +2310,8 @@ didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic
 - (IBAction) triggerOscillo:(id)sender
 {
     msg_64_t m;
-    m.to = MA_TRAIN_SC(0);
-    m.from = MA_UI(UISUB_USB);
+    m.to = MA1_SPDCTL(0);
+    m.from = MA3_UI_GEN; //(UISUB_USB);
     m.cmd = CMD_TRIG_OSCILLO;
     m.v1u = 0;
     m.v2 = 9;

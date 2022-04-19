@@ -193,6 +193,25 @@ const conf_canton_t *conf_canton_get(int num)
     return &conf_canton[num];
 }
 
+static const conf_canton_t canton_template = {
+     .volts_cv = { 1000, 770, 621,  538, 451, 413, 379, 355},
+     .volt_port_b0 = NULL,
+     .volt_b0 = 0,
+     .volt_port_b1 = NULL,
+     .volt_b1 = 0,
+     .volt_port_b2 = NULL,
+     .volt_b2 = 0,
+     .pwm_timer_num = 1,
+     .ch0 = TIM_CHANNEL_1,
+     .ch1 = TIM_CHANNEL_1,
+     .notif_bemf = 0,
+     .reverse_bemf = 0,
+  };
+const conf_canton_t *conf_canton_template(void)
+{
+  return &canton_template;
+}
+
 // canton config store type 0 num 2
 int conf_canton_propagate(int numinst, int numfield, int32_t value)
 {

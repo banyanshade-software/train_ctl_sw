@@ -47,6 +47,7 @@ typedef enum node_type_tag {
     CONFIG_NODE_ATTR_CODE,
     CONFIG_NODE_ATTR_STORETYPE,
     CONFIG_NODE_ATTR_STORENUM,
+    CONFIG_NODE_ATTR_GENTPL,
 
 	// transiant use only
     CONFIG_NODE_IDENT,	

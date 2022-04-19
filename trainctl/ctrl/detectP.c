@@ -225,14 +225,14 @@ void detect2_process_tick(uint32_t tick)
 		        m.cmd = CMD_UI_DETECT;
 		        m.v1 = -1;
 		        m.v2 = 0;
-		        m.to = MA_UI(UISUB_TFT);
+		        m.to = MA3_UI_GEN; //(UISUB_TFT);
 		        mqf_write_from_ctrl(&m);
 
 		        if ((1)) {
 		        	//osDelay(500);
 		        	msg_64_t m;
-		        	m.from = MA_BROADCAST;
-		        	m.to = MA_BROADCAST;
+		        	m.from = MA3_BROADCAST;
+		        	m.to = MA3_BROADCAST;
 		        	m.cmd = CMD_SETRUN_MODE;
 		        	m.v1u = runmode_normal;
 
@@ -260,8 +260,8 @@ void detect2_process_tick(uint32_t tick)
         	// start monitoring current (INA3221) on concerned sub blocks
         	uint16_t inas = get_ina_bitfield_for_canton(detect_canton);
             msg_64_t m = {0};
-            m.from = MA_CONTROL_T(0);
-            m.to = MA_INA3221_B(localBoardNum); // XXX board to be added
+            m.from = MA1_CONTROL();
+            m.to = MA0_INA(localBoardNum); // XXX board to be added
             m.cmd = CMD_START_INA_MONITOR;
             m.v1u = inas;
             mqf_write_from_ctrl(&m);
@@ -269,8 +269,9 @@ void detect2_process_tick(uint32_t tick)
 
         // start monitoring BEMF
         msg_64_t m = {0};
-        m.from = MA_CONTROL_T(0);
-        m.to = detect_canton; //MA_CANTON(0, canton);
+        m.from = MA1_CONTROL();
+        TO_CANTON(m, detect_canton);
+        //m.to = detect_canton; //MA_CANTON(0, canton);
         m.cmd = CMD_START_DETECT_TRAIN;
         m.v1u = 20; //%pwm
         mqf_write_from_ctrl(&m);
@@ -279,7 +280,7 @@ void detect2_process_tick(uint32_t tick)
         m.cmd = CMD_UI_DETECT;
         m.v1 = detect_canton;
         m.v2u = get_pwm_freq();;
-        m.to = MA_UI(UISUB_TFT);
+        m.to = MA3_UI_GEN; //(UISUB_TFT);
         mqf_write_from_ctrl(&m);
 
         detect_state = 1;
@@ -288,8 +289,9 @@ void detect2_process_tick(uint32_t tick)
         if (tick >= detect_ltick+MEAS_DURATION) {
         	// stop monitoring BEMF
             msg_64_t m = {0};
-            m.to = detect_canton; //MA_CANTON(0, canton);
-            m.from = MA_CONTROL_T(0);
+            TO_CANTON(m, detect_canton);
+            //m.to = detect_canton; //MA_CANTON(0, canton);
+            m.from = MA1_CONTROL();
             m.cmd = CMD_STOP_DETECT_TRAIN;
             mqf_write_from_ctrl(&m);
             itm_debug2(DBG_DETECT, "END", detect_canton, detect_ltick);
@@ -299,8 +301,8 @@ void detect2_process_tick(uint32_t tick)
             if ((USE_INA_FOR_DETECT)) {
             	// stop monitoring current (INA3221)
             	msg_64_t m = {0};
-            	m.from = MA_CONTROL_T(0);
-            	m.to = MA_INA3221_B(localBoardNum); // XXX board to be added
+            	m.from = MA1_CONTROL();
+            	m.to = MA0_INA(localBoardNum); // XXX board to be added
             	m.cmd = CMD_START_INA_MONITOR;
             	m.v1u = 0;
             	mqf_write_from_ctrl(&m);
@@ -320,7 +322,7 @@ void detect2_process_tick(uint32_t tick)
 
 void detect2_process_msg(msg_64_t *m)
 {
-    /*if (!IS_CANTON(m->from) ) {
+    /*if (!IS_CANTON(m->from) ) {MA_GET_CANTON_NUM
     	return;
     } */
     switch (m->cmd) {
@@ -330,8 +332,9 @@ void detect2_process_msg(msg_64_t *m)
                 itm_debug2(DBG_DETECT, "bad state", detect_state, m->from);
                 break;
             }
-            if (m->from != detect_canton) {
-                itm_debug2(DBG_DETECT, "bad from", detect_canton, m->from);
+            uint8_t fc = FROM_CANTON(*m);
+            if (fc != detect_canton) {
+                itm_debug3(DBG_DETECT, "bad from", detect_canton, m->from, fc);
                 break;
             }
             measval_addvalue(&dst.voff, m->v1);

@@ -42,9 +42,9 @@ typedef struct {
     uint8_t trig_eoseg:1;
     uint8_t measure_pose_percm:1;
     
-    uint8_t     can1_addr;
+    uint8_t     can1_xaddr;
     lsblk_num_t c1_sblk;
-    uint8_t     can2_addr;
+    uint8_t     can2_xaddr;
 
     uint16_t spd_limit;
     int16_t desired_speed;

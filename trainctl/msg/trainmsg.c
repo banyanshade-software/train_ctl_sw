@@ -115,29 +115,24 @@ static const qdef_t qdef[NQDEF] = {
 		/*11*/ { NULL, &from_nowhere}
 };
 
-#define _BOARD 1  // XXX
+#define _BOARD 0  // XXX
 
-#define NROUTES 14
+#define NROUTES 10
 static const qroute_t routes[NROUTES] = {
-		{MA_ADDR_MASK_2|MA_ADDR_MASK_BOARD,		MA_ADDR_2_TURNOUT|(_BOARD<<3),	0},
-		{MA_ADDR_MASK_2|MA_ADDR_MASK_BOARD,		MA_ADDR_2_CANTON|(_BOARD<<3),	1},
-
-		{MA_ADDR_MASK_2,						MA_ADDR_2_TURNOUT,		3},
-		{MA_ADDR_MASK_2,						MA_ADDR_2_CANTON,		3},
-        {MA_ADDR_MASK_3|0x1F,                   MA_ADDR_3_UI|1,         6},
+		{0xFF,									MA0_TURNOUT(_BOARD),	0},
+		{0xFF,									MA0_CANTON(_BOARD),		1},
+		{0xFF,									MA0_INA(_BOARD),		7},
+		{0xFF,									MA0_LED(_BOARD),		9},
+		{0xFF,									MA0_OAM(_BOARD),	   10},
+		{0xFF,									MA0_RELAY(_BOARD),		0},
+		{0xF0,									MA1_SPDCTL(0), 			2},
+		{0xF0,									MA1_CTRL(0), 			5},
 #ifdef TRAIN_SIMU
-        {MA_ADDR_MASK_3|0x1F,                   MA_ADDR_3_UI|2,         8},
+		{0xFF,									MA3_UI_CTC,				8},
 #else
-        {MA_ADDR_MASK_3|0x1F,                   MA_ADDR_3_UI|2,         4},
+		{0xFF,									MA3_UI_CTC,				4},
 #endif
-        {MA_ADDR_MASK_3,                        MA_ADDR_3_UI,           4},
-		{MA_ADDR_MASK_5,						MA_ADDR_5_TRSC,			2},
-		{MA_ADDR_MASK_5,						MA_ADDR_5_CTRL,			5},
-		{MA_ADDR_MASK_8,						MA_ADDR_5_LED|_BOARD,	9},
-		{MA_ADDR_MASK_5,						MA_ADDR_5_LED,			3},
-		{MA_ADDR_MASK_8,						MA_ADDR_5_INA|_BOARD,	7},
-		{MA_ADDR_MASK_8,						MA_ADDR_OAM|_BOARD,		10},
-		{MA_ADDR_MASK_5,						MA_ADDR_OAM,			3}
+		{0x00,									0,						3},
 };
 
 #endif // TRN_BOARD_MAIN
@@ -203,7 +198,7 @@ static void dispatch_m64(msg_64_t *m, int f)
 			itm_debug1(DBG_USB, "disp A2", m->cmd);
 		}
 	}
-    if (m->to == MA_BROADCAST) {
+    if (m->to == MA3_BROADCAST) {
         for (int i=0; i<NQDEF; i++) {
             if (i == f) {
                 continue;

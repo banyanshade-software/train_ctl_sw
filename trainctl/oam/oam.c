@@ -38,8 +38,8 @@ void OAM_Init(void)
 static void exit_can_test(void)
 {
 	msg_64_t m;
-	m.from = MA_BROADCAST;
-	m.to = MA_BROADCAST;
+	m.from = MA3_BROADCAST;
+	m.to = MA3_BROADCAST;
 	m.cmd = CMD_SETRUN_MODE;
 	m.v1u =  runmode_normal;
 	mqf_write_from_nowhere(&m);
@@ -60,8 +60,8 @@ void OAM_Tasklet(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_
 		}
 		first = 0;
 		msg_64_t m;
-		m.from = MA_BROADCAST;
-		m.to = MA_BROADCAST;
+		m.from = MA3_BROADCAST;
+		m.to = MA3_BROADCAST;
 		m.cmd = CMD_SETRUN_MODE;
 		m.v1u =  runmode_testcan; // runmode_normal; runmode_detect2; runmode_off
 
@@ -103,7 +103,7 @@ void OAM_Tasklet(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_
             	conf_propagate(confnum, fieldnum, instnum, v);
             } else {
             	m.cmd = CMD_PARAM_PROPAG;
-            	m.to = MA_OAM(confbrd);
+            	m.to = MA0_OAM(confbrd);
             	mqf_write_from_oam(&m);
             }
 			}
@@ -150,8 +150,9 @@ void OAM_Tasklet(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_
 				if (0==(cnt%4)) {
 					static int a = 0;
 					msg_64_t m = {0};
-					m.to = MA_TURNOUT(1, 0);
-					m.from = MA_OAM(1);
+					m.to = MA0_TURNOUT(1);
+					m.subc = 0;
+					m.from = MA0_OAM(1);
 					m.cmd = a ? CMD_TURNOUT_A : CMD_TURNOUT_B;
 					a = a ? 0 : 1;
 					mqf_write_from_oam(&m);
@@ -201,8 +202,8 @@ void OAM_Tasklet(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_
 		}
 
 		msg_64_t m = {0};
-		m.from = MA_BROADCAST;
-		m.to = MA_BROADCAST;
+		m.from = MA3_BROADCAST;
+		m.to = MA3_BROADCAST;
 		m.cmd = CMD_CANTEST;
 		m.v1u = cnt;
 
@@ -234,6 +235,7 @@ void oam_encode_val40(uint64_t *val40, unsigned int  fnum, unsigned int brd, uns
 	*val40 |= (uint64_t) (fld  & 0x1F)   << (21);
 	*val40 |= (uint64_t) (inst & 0x3F)   << (21+5);
 	*val40 |= (uint64_t) (brd & 0x0F)    << (21+5+6);
+	*val40 |= (uint64_t) (fnum & 0x0F)   << (21+5+6+4);
 }
 
 

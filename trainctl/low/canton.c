@@ -201,8 +201,8 @@ void canton_tick(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_
 static void handle_msg_normal(msg_64_t *m)
 {
     int cidx = -1;
-    if (!IS_CANTON(m->to)) return;
-    cidx = MA_GET_CANTON_NUM(m->to);
+    if (!MA0_IS_CANTON(m->to)) return;
+    cidx = m->subc; // MA_GET_CANTON_NUM(m->to);
     handle_canton_cmd(cidx, m);
 }
 
@@ -216,10 +216,10 @@ static void handle_msg_detect2(msg_64_t *m)
     if (IS_BROADCAST(m->to)) {
         return;
     }
-    if (!IS_CANTON(m->to)) {
+    if (!MA0_IS_CANTON(m->to)) {
         return;
     }
-    int cidx = MA_GET_CANTON_NUM(m->to);
+    int cidx = m->subc; // MA_GET_CANTON_NUM(m->to);
     const conf_canton_t *cconf = conf_canton_get(cidx);
     canton_vars_t *cvars = &canton_vars[cidx];
     
@@ -246,8 +246,8 @@ static void handle_msg_cantontest(msg_64_t *m)
 	int cidx = -1;
 	if (IS_BROADCAST(m->to)) {
 		cidx = -1;
-	} else if (IS_CANTON(m->to)) {
-		cidx = MA_GET_CANTON_NUM(m->to);
+	} else if (MA0_IS_CANTON(m->to)) {
+		cidx = m->subc; // MA_GET_CANTON_NUM(m->to);
 	} else {
 		itm_debug1(DBG_LOWCTRL, "not handled msg", m->cmd);
 		return;
@@ -256,7 +256,7 @@ static void handle_msg_cantontest(msg_64_t *m)
     	// in test mode, forward CMD_SETVPWM to UI for display
     	msg_64_t m2 = *m;
     	m2.from = m2.to;
-    	m2.to = MA_UI(UISUB_TFT);
+    	m2.to = MA3_UI_GEN;
     	mqf_write_from_canton(&m2);
     }
     if (cidx>=0) handle_canton_cmd(cidx, m);

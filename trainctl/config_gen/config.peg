@@ -83,6 +83,13 @@ configattrib
         a->value = n->value; 
         $$->attrnode = a;
       }
+    / kw_attrib _ i:identifier _ attr_gentpl
+      { $$ = create_config_node(auxil, CONFIG_NODE_ATTR_LOCAL, range__new($0s, $0e));
+        $$->string = i->string;
+        config_node_t *a = create_config_node(auxil, CONFIG_NODE_ATTR_GENTPL, range__new($0s, $0e));
+        a->value = 1;
+        $$->attrnode = a;
+      }
 
 storetypevalue
     <- 'normal' !(L/D)
@@ -277,6 +284,7 @@ attr_ccode       <- 'c_code' !(L/D)
 
 attr_storetype   <- 'store'  !(L/D)
 attr_storenum    <- 'stnum'  !(L/D)
+attr_gentpl      <- 'gentpl'  !(L/D)
 
 
 O <- [0-7]

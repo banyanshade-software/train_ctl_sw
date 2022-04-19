@@ -56,12 +56,12 @@ void bemf_reset(void)
 
 void bemf_msg(msg_64_t *m)
 {
-	if (!IS_CANTON(m->to)) {
+	if (!MA0_IS_CANTON(m->to)) {
 		// error
 		itm_debug1(DBG_ERR, "bad bemf c", m->to);
 		return;
 	}
-	int idx = MA_GET_CANTON_NUM(m->to);
+	int idx = m->subc; // MA_GET_CANTON_NUM(m->to);
 	switch(m->cmd) {
 	case CMD_BEMF_OFF:
 		itm_debug1(DBG_SPDCTL|DBG_CTRL|DBG_DETECT, "BEMF OFF", idx);
@@ -255,8 +255,9 @@ static void process_adc(volatile adc_result_t *buf, _UNUSED_ uint32_t deltaticks
 			cnt++;
 			if ((cnt%32)==0) {
 				msg_64_t m;
-				m.from = MA_CANTON(localBoardNum, i);
-				m.to = MA_UI(UISUB_TFT);
+				m.from = MA0_CANTON(localBoardNum);
+				m.subc = i;
+				m.to = MA3_UI_GEN;
 				m.cmd = CMD_VOFF_NOTIF;
 				m.v1 = (int16_t) voff;
 				m.v2 = von;
@@ -264,7 +265,8 @@ static void process_adc(volatile adc_result_t *buf, _UNUSED_ uint32_t deltaticks
 			}
 		}
 		msg_64_t m = {0};
-		m.from = MA_CANTON(localBoardNum, i);
+		m.from = MA0_CANTON(localBoardNum);
+		m.subc = i;
 		m.to = bemf_to[i];
 		m.cmd = CMD_BEMF_NOTIF;
 		m.v1 = voff;

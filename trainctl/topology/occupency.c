@@ -45,7 +45,7 @@ void occupency_clear(void)
 {
     lastcheck = 0;
     memset(canton_occ, 0, sizeof(canton_occ));
-    memset(lockedby, 0xFF, sizeof(lockedby));
+    memset((void *)lockedby, 0xFF, sizeof(lockedby));
 }
 
 static void _block_freed(int cnum, canton_occ_t *co)
@@ -56,9 +56,7 @@ static void _block_freed(int cnum, canton_occ_t *co)
 
 static inline uint8_t addr_to_num(uint8_t addr)
 {
-    // MA_CANTON(board, c)
-    // // M2:  0 0 : (6bits) bbb xxx        CANTON (00) and TURNOUT (01)
-    return addr & 0x3F;
+    return addr; // TODO : compact it as actually on 6 canton per board and << 8 boards
 }
 
 static uint8_t notif_blk_reset = 1;
@@ -68,8 +66,8 @@ static void notif_blk_occup_chg(int blknum, canton_occ_t *co)
 {
     if (!notify_occupency_change) return;
     msg_64_t m = {0};
-    m.from = MA_CONTROL();
-    m.to = MA_UI(UISUB_TRACK);
+    m.from = MA1_CONTROL();
+    m.to = MA3_UI_CTC;
     m.cmd = CMD_BLK_CHG_NOTIF;
     m.vbytes[0] = blknum;
     m.vbytes[1] = co->occ;
@@ -169,8 +167,8 @@ static  void _notify_chg_owner(uint8_t turnout, int8_t numtrain)
     m.cmd = CMD_TN_RESER_NOTIF;
     m.v1 = turnout;
     m.v2 = numtrain;
-    m.to = MA_UI(UISUB_TRACK);
-    m.from = MA_CONTROL();
+    m.to = MA3_UI_CTC;
+    m.from = MA1_CONTROL();
     mqf_write_from_ctrl(&m);
 }
 

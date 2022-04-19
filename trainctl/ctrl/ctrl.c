@@ -321,8 +321,8 @@ static void sub_presence_changed(_UNUSED_ uint32_t tick, _UNUSED_ uint8_t from_a
             is_s1 = 1;
         }
         lsblk_num_t c2s = {-1};
-        if (tvar->can2_addr != 0xFF) {
-            c2s = first_lsblk_with_canton(tvar->can2_addr, tvar->c1_sblk);
+        if (tvar->can2_xaddr != 0xFF) {
+            c2s = first_lsblk_with_canton(tvar->can2_xaddr, tvar->c1_sblk);
             if (c2s.n == -1) Error_Handler();
             if (lsegnum == get_lsblk_ina3221(c2s)) {
                 is_s2 = 1;
@@ -490,9 +490,9 @@ void ctrl_run_tick(_UNUSED_ uint32_t notif_flags, uint32_t tick, _UNUSED_ uint32
                 break;
         }
         // -----------------------------------------
-		if (IS_CONTROL_T(m.to)) {
+		if (MA1_IS_CTRL(m.to)) {
 			//if (test_mode) continue;
-			int tidx = MA_GET_TRAINNUM(m.to);
+			int tidx = MA1_TRAIN(m.to);
 			train_ctrl_t *tvar = &trctl[tidx];
 
 			switch (m.cmd) {
@@ -537,9 +537,9 @@ void ctrl_run_tick(_UNUSED_ uint32_t notif_flags, uint32_t tick, _UNUSED_ uint32
             case CMD_BEMF_DETECT_ON_C2: {
                 itm_debug2(DBG_CTRL,"BEMF/C2", tidx,  m.v1u);
                 train_ctrl_t *tvar = &trctl[tidx];
-                if (m.v1u != tvar->can2_addr) {
+                if (m.v1u != tvar->can2_xaddr) {
                     // typ. because we already switch to c2 (msg SET_C1_C2 and CMD_BEMF_DETECT_ON_C2 cross over
-                    itm_debug3(DBG_CTRL, "not c2", tidx, m.v1u, tvar->can2_addr);
+                    itm_debug3(DBG_CTRL, "not c2", tidx, m.v1u, tvar->can2_xaddr);
                     break;
                 }
                 if (tvar->measure_pose_percm) {
@@ -706,13 +706,14 @@ static int set_turnout(int tn, int v, int train)
 
 	// send to turnout
     msg_64_t m = {0};
-	m.from = MA_CONTROL();
-	m.to = MA_TURNOUT(0, tn); // TODO board num
+	m.from = MA1_CONTROL();
+	m.to = MA0_TURNOUT(0); // TODO board num
+	m.subc = tn;
 	m.cmd = v ? CMD_TURNOUT_B : CMD_TURNOUT_A;
 	mqf_write_from_ctrl(&m);
 
     // forward to UI/CTO
-    m.to = MA_UI(UISUB_TRACK);
+    m.to = MA3_UI_CTC;
     m.v2 = tn;
     mqf_write_from_ctrl(&m);
     return 0;
@@ -727,8 +728,8 @@ int ctrl2_set_turnout(int tn, int v, int train)
 void ctrl2_send_led(uint8_t led_num, uint8_t prog_num)
 {
     msg_64_t m = {0};
-    m.from = MA_CONTROL();
-    m.to = MA_LED_B(0); // TODO board num
+    m.from = MA1_CONTROL();
+    m.to = MA0_LED(0); // TODO board num
     m.cmd = CMD_LED_RUN;
     m.v1u = led_num;
     m.v2u = prog_num;

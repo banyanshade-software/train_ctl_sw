@@ -135,7 +135,7 @@ const conf_boards_t *conf_boards_get(int num)
     return &conf_boards[num];
 }
 
-// boards config store type 1 num 1
+// boards config store type 1 num 11
 
 
 

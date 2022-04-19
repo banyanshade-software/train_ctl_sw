@@ -1,0 +1,5 @@
+
+config globparam {
+    user uint16_t pwmfreq = (default) 100;
+} num = (main) 1
+      = (default) 0;

@@ -237,7 +237,7 @@ static void generate_hfile_propag(config_node_t *root)
     
         int storetype, storenum, gentpl;
         get_storetype(node, &storetype, &storenum, &gentpl);
-        if (storetype == 0) {
+        if ((1) || (storetype == 0)) {
             fprintf(output, "#define conf_pnum_%s %d\n\n", node->string, storenum);
         }
 

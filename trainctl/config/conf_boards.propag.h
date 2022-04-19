@@ -11,6 +11,8 @@
 
 int conf_boards_propagate(int numinst, int numfield, int32_t value);
 
+#define conf_pnum_boards 11
+
 #define conf_numfield_uuid 		0
 #define conf_numfield_board_type 		1
 #define conf_numfield_disable 		2

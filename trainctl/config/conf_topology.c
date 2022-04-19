@@ -1002,7 +1002,7 @@ const conf_topology_t *conf_topology_get(int num)
     return &conf_topology[num];
 }
 
-// topology config store type 1 num 2
+// topology config store type 1 num 12
 
 
 

@@ -11,6 +11,8 @@
 
 int conf_topology_propagate(int numinst, int numfield, int32_t value);
 
+#define conf_pnum_topology 12
+
 #define conf_numfield_canton_addr 		0
 #define conf_numfield_ina_segnum 		1
 #define conf_numfield_steep 		2

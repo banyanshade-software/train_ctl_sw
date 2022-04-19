@@ -4,6 +4,7 @@
 
 #include "propag.h"
 
+#include "conf_globparam.propag.h"
 #include "conf_led.propag.h"
 #include "conf_turnout.propag.h"
 #include "conf_train.propag.h"

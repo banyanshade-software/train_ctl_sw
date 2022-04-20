@@ -83,7 +83,7 @@
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Core"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Drivers"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Middlewares"/>
-						<entry excluding="railconfig.c|IHM|ctrl|leds|obsolete|oscillo|spdctl|stm32/txrxtask.h|stm32/txrxtask.c|stm32/taskled.h|stm32/taskled.c|stm32/taskdisp.h|stm32/taskdisp.c|low|stm32/taskauto.h|stm32/taskauto.c|stm32/ina3221|topology|uitrack|trkpln|config_gen" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="trainctl"/>
+						<entry excluding="config/_str|railconfig.c|IHM|ctrl|leds|obsolete|oscillo|spdctl|stm32/txrxtask.h|stm32/txrxtask.c|stm32/taskled.h|stm32/taskled.c|stm32/taskdisp.h|stm32/taskdisp.c|low|stm32/taskauto.h|stm32/taskauto.c|stm32/ina3221|topology|uitrack|trkpln|config_gen" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="trainctl"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>

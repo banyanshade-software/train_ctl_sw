@@ -22,8 +22,14 @@
 #import "CTCManager.h"
 #include "oscillo.h"
 
-#include "conf_canton.h"
 #include "conf_train.h"
+#include "conf_train.propag.h"
+#include "conf_canton.h"
+#include "conf_canton.propag.h"
+#include "conf_globparam.h"
+#include "conf_globparam.propag.h"
+
+#include "oam.h"
 
 uint16_t dummy[3];
 
@@ -72,6 +78,9 @@ typedef void (^respblk_t)(void);
 
 @interface AppDelegate () {
     int retry;
+    int nextParamGet;
+    NSMutableDictionary *parctl;
+    
     NSFileHandle *usb;
     // frame decode
     frame_state_t frm;
@@ -578,27 +587,28 @@ typedef void (^respblk_t)(void);
     [self getParams:0];
 }
 
+
 - (void) getParams:(int)np1
 {
-    int np2 = np1+20;
-    static uint8_t gpfrm[80] = "|xT\0p......";
+    nextParamGet = np1;
+    [self _getParams];
+}
+- (void) _getParams
+{
+    int np1 = nextParamGet;
+    int np2 = nextParamGet+4;
+    parctl = [NSMutableDictionary dictionaryWithCapacity:5];
+    //static uint8_t gpfrm[80] = "|xT\0p......";
     int __block numparam = -1;
+    nextParamGet = np2;
     [self forAllParamsDo:^(NSControl *c){
         numparam++;
         if (numparam < np1) return;
+        if (numparam >= np2) return;
         NSLog(@"getParam %d", numparam);
-        if (numparam==np2) {
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                [self getParams:np2];
-            });
-            return;
-        } else if (numparam>np2) {
-            return;
-        }
-        /*if (0 && (n % 7)) {
-            usleep(500*1000); // XXX to be fixed
-        }*/
+        
         NSString *s = c.identifier;
+        self->parctl[s] = c;
         //if (![s isKindOfClass:[NSString class]]) return NO;
         //if (![s hasPrefix:@"par_"]) return NO;
         NSArray *pa = [self splitParamName:s];
@@ -612,7 +622,52 @@ typedef void (^respblk_t)(void);
         }
         const char *cpsel = [psel cStringUsingEncoding:NSUTF8StringEncoding];
         const char *cpn = [pn cStringUsingEncoding:NSUTF8StringEncoding];
+        
+        int confnum = -1;
+        int instnum = cpsel[1]-'0';
+        int fieldnum = -1;
+        int boardnum = 0;
+        
+        // conf generator does not produce .h
+        int conf_canton_fieldnum(const char *str);
+        int conf_train_fieldnum(const char *str);
+        int conf_globparam_fieldnum(const char *str);
+
+        switch (cpsel[0]) {
+            case 'T':
+                confnum = conf_pnum_train;
+                /*if (!strcmp(cpn, "ki")) cpn = "kI";
+                if (!strcmp(cpn, "kp")) cpn = "kP";
+                if (!strcmp(cpn, "kd")) cpn = "kD";
+                if (!strcmp(cpn, "en_pid")) cpn = "enable_pid";*/
+                fieldnum = conf_train_fieldnum(cpn);
+                break;
+            case 'G':
+                confnum = conf_pnum_globparam;
+                fieldnum = conf_globparam_fieldnum(cpn);
+                break;
+            default:
+                NSLog(@"bad param def");
+                break;
+        }
+        if ((confnum<0)||(fieldnum<0)) {
+            return;
+        }
+        
+        uint64_t v40;
+        oam_encode_val40(&v40, confnum, boardnum, instnum, fieldnum, 0);
+        msg_64_t m = {0};
+        m.to = MA0_OAM(0);
+        m.from = MA3_UI_GEN;
+        m.cmd = CMD_PARAM_USER_GET;
+        m.val40 = v40;
+        [self sendMsg64:m];
+        
+#if 0
+        
         NSUInteger nl = strlen(cpn);
+        
+        
         if (nl+4+1+1>=sizeof(gpfrm)) {
             return;
         }
@@ -655,12 +710,59 @@ typedef void (^respblk_t)(void);
             [self setParameter:c value:val def:def min:min max:max enable:YES];
             NSLog(@"val %d def %d min %d max %d\n", val, def ,min, max);
         }];
-        
+#endif
         //NSLog(@"hop");
     }];
 }
 
-- (void) setParameter:(NSControl *)c value:(int)v def:(int)def min:(int)min max:(int)max enable:(BOOL)ena
+- (void) paramUserVal:(msg_64_t)m
+{
+    self->nparamresp++;
+    if (self->nparamresp==self->nparam) {
+        if (self.linkok<LINK_OK) self.linkok = LINK_OK;
+    }
+    if (self->nparamresp == nextParamGet) {
+        [self performSelectorOnMainThread:@selector(_getParams) withObject:NULL waitUntilDone:NO];
+    }
+    
+    unsigned int fnum; unsigned int brd; unsigned int inst; unsigned int field; int32_t v;
+    oam_decode_val40(m.val40, &fnum, &brd, &inst, &field, &v);
+    NSLog(@"paramUserVal");
+    
+    // proto not generated
+    const char *conf_train_fieldname(int f);
+    const char *conf_globparam_fieldname(int f);
+    const char *conf_boards_fieldname(int f);
+    const char *conf_canton_fieldname(int f);
+
+    char t;
+    int n = inst > 9 ? '-' : inst;
+    const char *fld;
+    
+    switch (fnum) {
+        case conf_pnum_train:
+            t = 'T';
+            fld = conf_train_fieldname(field);
+            break;
+        case conf_pnum_globparam:
+            t = 'G';
+            fld = conf_globparam_fieldname(field);
+            break;
+        default:
+            NSLog(@"bad conf num in paramUserVal");
+            return;
+            break;
+    }
+    NSString *pnam = [NSString stringWithFormat:@"par_%c%d_%s", t, n, fld];
+    NSLog(@"val for '%@'", pnam);
+    NSControl *c = parctl[pnam];
+    [self setParameter:c value:v enable:YES];
+    
+    
+
+}
+
+- (void) setParameter:(NSControl *)c value:(int)v /*def:(int)def min:(int)min max:(int)max*/ enable:(BOOL)ena
 {
     if ((0)) {
     } else if ([[c identifier] isEqualToString:@"par_G0_numtrains"]) {
@@ -679,6 +781,7 @@ typedef void (^respblk_t)(void);
     } else {
         NSLog(@"cnt set value");
     }
+    /*
     NSNumberFormatter *nf = c.cell.formatter;
     if (nf) {
         [nf setMaximum:@(max)];
@@ -691,7 +794,7 @@ typedef void (^respblk_t)(void);
     if ([c respondsToSelector:@selector(setMaxValue:)]) {
         [(id)c setMaxValue:min];
     }
-    
+    */
     if (ena) c.enabled = YES;
 }
 
@@ -744,7 +847,7 @@ typedef void (^respblk_t)(void);
             memcpy(&def, self->frm.param + 1*sizeof(int32_t), sizeof(int32_t));
             memcpy(&min, self->frm.param + 2*sizeof(int32_t), sizeof(int32_t));
             memcpy(&max, self->frm.param + 3*sizeof(int32_t), sizeof(int32_t));
-            [self setParameter:c value:def def:def min:min max:max enable:YES];
+            [self setParameter:c value:def /*def:def min:min max:max*/ enable:YES];
             NSLog(@"val %d def %d min %d max %d\n", val, def ,min, max);
             [self changeParam:c];
         }];
@@ -800,7 +903,7 @@ typedef void (^respblk_t)(void);
             memcpy(&def, self->frm.param + 1*sizeof(int32_t), sizeof(int32_t));
             memcpy(&min, self->frm.param + 2*sizeof(int32_t), sizeof(int32_t));
             memcpy(&max, self->frm.param + 3*sizeof(int32_t), sizeof(int32_t));
-            [self setParameter:c value:0 def:def min:min max:max enable:YES];
+            [self setParameter:c value:0 /*def:def min:min max:max*/ enable:YES];
             NSLog(@"val %d def %d min %d max %d\n", val, def ,min, max);
             [self changeParam:c];
         }];
@@ -1142,6 +1245,15 @@ static int frm_unescape(uint8_t *buf, int len)
             v = m.v1u;
             NSLog(@"train %d spd %d\n", nt, v);
             self.curspeed = v;
+            break;
+        case CMD_PARAM_USER_VAL:
+            //NSLog(@"PARAM VAL");
+            [self paramUserVal:m];
+            break;
+        case CMD_SETRUN_MODE:
+        case CMD_TRSTATE_NOTIF:
+        case CMD_TRTSPD_NOTIF:
+        case CMD_CANTEST:
             break;
         default:
             NSLog(@"frameMsg64 UI msg not handled 0x%X", m.cmd);
@@ -1698,6 +1810,7 @@ uint32_t SimuTick = 0;
    
     bemf_tick(notif,        mt, mdt);
     msgsrv_tick(notif,      mt, mdt);
+    OAM_Tasklet(notif, mt, mdt);
     spdctl_run_tick(notif,  mt, mdt);
     //msgsrv_tick(notif,    mt, mdt);
     canton_tick(notif,      mt, mdt);

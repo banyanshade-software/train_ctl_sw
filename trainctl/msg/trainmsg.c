@@ -18,7 +18,7 @@ uint8_t localBoardNum = BOARD_NUMBER; // TODO move to config
 // LFMQUEUE_DEF_C(_name, _type,_num, _sil)
 
 
-LFMQUEUE_DEF_C(to_turnout, msg_64_t, 	8, 0)
+LFMQUEUE_DEF_C(to_turnout, msg_64_t, 	12, 0)
 LFMQUEUE_DEF_C(from_turnout, msg_64_t, 	1, 0)
 
 
@@ -61,8 +61,8 @@ LFMQUEUE_DEF_C(to_canbus, msg_64_t, 8, 0)
 LFMQUEUE_DEF_C(from_canbus, msg_64_t, 8, 0)
 
 
-LFMQUEUE_DEF_C(to_oam, msg_64_t, 4, 0)
-LFMQUEUE_DEF_C(from_oam, msg_64_t, 3, 0)
+LFMQUEUE_DEF_C(to_oam, msg_64_t, 8, 0)
+LFMQUEUE_DEF_C(from_oam, msg_64_t, 12, 0)
 
 
 typedef struct {
@@ -78,16 +78,19 @@ typedef struct {
 #ifdef TRN_BOARD_MAIN_ZERO
 #define NQDEF 3
 static const qdef_t qdef[NQDEF] = {
-		/* 1*/ { &to_canbus, &from_canbus},
-        /* 2*/ { &to_oam, &from_oam},
+		/* 0*/ { &to_canbus, &from_canbus},
+        /* 1*/ { &to_oam, &from_oam},
+		/* 2*/ { &to_forward_usb, &from_forward_usb},
 		/* 3*/ { NULL, &from_nowhere}
 };
 
 #define _BOARD 0 // TODO
-#define NROUTES 2
+#define NROUTES 4
 static const qroute_t routes[NROUTES] = {
-		{MA_ADDR_MASK_8,						MA_ADDR_OAM|_BOARD,		2},
-		{MA_ADDR_MASK_5,						MA_ADDR_OAM,			1}
+		{0xFF,							MA0_OAM(_BOARD),		1},
+		{0xFF,							MA3_UI_GEN,				2},
+		{0xFF,							MA3_UI_CTC,				2},
+		{0,								0,						0}
 
 };
 

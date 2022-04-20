@@ -25,7 +25,10 @@ int boardIdToBoardNum(uint32_t uuid)
 		return 0;
 	} else if (0x12d6661 == uuid) {
 		return 1;
-	} else {
+    } else if (42 == uuid) {
+        // simu
+        return 0;
+    } else {
 		Error_Handler();
 	}
 	return -1;

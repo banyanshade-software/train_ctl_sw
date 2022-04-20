@@ -272,7 +272,7 @@ void oam_flashstore_set_value(int confnum, int fieldnum, int confbrd, int instnu
 	while (0==store_read(desc, buf)) {
 		int32_t ov;
 		if (!store_isvalid(buf)) continue;
-		if (store_is_field(buf, confnum, confbrd, instnum, fieldnum, &ov)) {
+		if (!found && store_is_field(buf, confnum, confbrd, instnum, fieldnum, &ov)) {
 			if (ov == v) {
 				found = 1;
 				continue;
@@ -286,6 +286,28 @@ void oam_flashstore_set_value(int confnum, int fieldnum, int confbrd, int instnu
 	}
 }
 
+uint32_t oam_flashstore_get_value(int confnum, int fieldnum, int confbrd, int instnum)
+{
+    blk_desc_t *desc = use_backup ? &blk_bup0_str : &blk_n1_str;
+    if (!desc->valid) {
+        itm_debug1(DBG_OAM|DBG_ERR, "blk not valid", desc->block_num);
+        return 0;
+    }
+    store_rewind(desc);
+    uint8_t buf[8];
+
+    uint32_t v = 0; // XXX default value
+    while (0==store_read(desc, buf)) {
+        int32_t ov;
+        if (!store_isvalid(buf)) continue;
+        if (store_is_field(buf, confnum, confbrd, instnum, fieldnum, &ov)) {
+            v = ov;
+            if ((1)) return v;
+        }
+    }
+    // XXX TODO default value
+    return v;
+}
 
 
 static void store_rewind(blk_desc_t *d)
@@ -294,7 +316,7 @@ static void store_rewind(blk_desc_t *d)
 	else d->idx = 0;
 }
 
-static int  store_read(blk_desc_t *d, uint8_t *buf)
+static int store_read(blk_desc_t *d, uint8_t *buf)
 {
 	uint32_t s = W25qxx_BlockToSector(d->block_num)+d->startsect;
 	s = W25qxx_SectorToAddr(s)+d->idx;

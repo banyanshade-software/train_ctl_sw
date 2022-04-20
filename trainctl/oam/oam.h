@@ -19,16 +19,13 @@ uint32_t oam_getDeviceUniqueId(void); // returns unique uint32_t
 
 int oam_isMaster(void);
 
-/* encode / decode val40 in msg64_t (assuming same endieness !!)
- * struct {
- * file: 3-4bit										4
- * board: 3-4 bits									4
- * inst: 6 bits mini								6
- * field:5 bits (up to 20 fields in conf_train)	    5
- * total : 17 to 19bits -> 19 bits
- * counting subc : 40 bits available
- * -> value : 21 bits							   21
- */
+/*
+* file:    4bit
+* board:   4 bits
+* inst:    6 bits
+* field:   5 bits
+* value : 21 bits
+*/
 
 void oam_decode_val40(uint64_t  val40, unsigned int *fnum, unsigned int *brd, unsigned int *inst, unsigned int *field, int32_t *v);
 void oam_encode_val40(uint64_t *val40, unsigned int  fnum, unsigned int  brd, unsigned int  inst, unsigned int  field, int32_t  v);

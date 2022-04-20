@@ -28,10 +28,12 @@ int OAM_NeedsReschedule = 0;
 static runmode_t run_mode = 0;
 
 static  int master = 0;
+static int initdone = 0;
 
 void OAM_Init(void)
 {
 	oam_flash_init();
+    initdone=1;
 }
 
 
@@ -50,6 +52,9 @@ static void exit_can_test(void)
 
 void OAM_Tasklet(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_ uint32_t dt)
 {
+    if (!initdone) {
+        OAM_Init();
+    }
 	static int first = 1;
 	static int respok = 0;
 	if ((first)) {
@@ -63,7 +68,7 @@ void OAM_Tasklet(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_
 		m.from = MA3_BROADCAST;
 		m.to = MA3_BROADCAST;
 		m.cmd = CMD_SETRUN_MODE;
-		m.v1u =  runmode_testcan; // runmode_normal; runmode_detect2; runmode_off
+        m.v1u =  runmode_normal; //runmode_testcan; // runmode_normal; runmode_detect2; runmode_off
 
 		mqf_write_from_nowhere(&m); // from_nowher, otherwise it wont be sent to self
 	}
@@ -123,7 +128,19 @@ void OAM_Tasklet(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_
 				Error_Handler();
 				break;
 			}
-
+			unsigned int instnum;
+			unsigned int confnum;
+			unsigned int fieldnum;
+			unsigned int confbrd;
+			int32_t v;
+			oam_decode_val40(m.val40, &confnum, &confbrd, &instnum, &fieldnum, &v);
+			v = oam_flashstore_get_value(confnum, fieldnum, confbrd, instnum);
+            uint64_t enc;
+            oam_encode_val40(&enc, confnum, confbrd, instnum, fieldnum, v);
+            m.to = m.from;
+            m.from = MA0_OAM(0);
+            m.cmd = CMD_PARAM_USER_VAL;
+            mqf_write_from_oam(&m);
 			break;
 
 		case CMD_PARAM_PROPAG: {
@@ -212,7 +229,6 @@ void OAM_Tasklet(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_
 }
 
 /*
- *
  * file:	4bit
  * board:   4 bits
  * inst:    6 bits

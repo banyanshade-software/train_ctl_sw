@@ -16,7 +16,7 @@ config_node_t *find_by_index(config_node_t *node, int idx);
 //      recsubref=0 : ignore SUBREF
 //      recsubref=1 : recurse in subrefs
 //      recusbref=-1 : only apply func to subref
-int apply_field(config_node_t *root, config_node_t *fields, int recsubref, void (*func)(config_node_t *n, FILE *output, int num), FILE *output, int startnum);
+int apply_field(config_node_t *root, config_node_t *fields, int recsubref, int (*func)(config_node_t *n, FILE *output, int num), FILE *output, int startnum);
 
 
 #endif

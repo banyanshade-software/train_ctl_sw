@@ -22,17 +22,13 @@ int conf_train_propagate(int numinst, int numfield, int32_t value);
 #define conf_numfield_enabled 		6
 #define conf_numfield_enable_inertia 		7
 #define conf_numfield_enable_pid 		8
-#define conf_numfield_fix_bemf 		9
-#define conf_numfield_en_spd2pow 		10
-#define conf_numfield_reversed 		11
-#define conf_numfield_min_power 		12
-#define conf_numfield_notify_pose 		13
-#define conf_numfield_bemfIIR 		14
-#define conf_numfield_postIIR 		15
-#define conf_numfield_slipping 		16
-#define conf_numfield_pose_per_cm 		17
-#define conf_numfield_trainlen_left 		18
-#define conf_numfield_trainlen_right 		19
+#define conf_numfield_reversed 		9
+#define conf_numfield_bemfIIR 		10
+#define conf_numfield_postIIR 		11
+#define conf_numfield_slipping 		12
+#define conf_numfield_pose_per_cm 		13
+#define conf_numfield_trainlen_left 		14
+#define conf_numfield_trainlen_right 		15
 
 
 

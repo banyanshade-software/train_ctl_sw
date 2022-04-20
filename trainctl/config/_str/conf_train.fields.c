@@ -45,16 +45,8 @@ int conf_train_fieldnum(const char *str)
          return conf_numfield_enable_inertia;
     } else if (!strcmp(str, "enable_pid")) {
          return conf_numfield_enable_pid;
-    } else if (!strcmp(str, "fix_bemf")) {
-         return conf_numfield_fix_bemf;
-    } else if (!strcmp(str, "en_spd2pow")) {
-         return conf_numfield_en_spd2pow;
     } else if (!strcmp(str, "reversed")) {
          return conf_numfield_reversed;
-    } else if (!strcmp(str, "min_power")) {
-         return conf_numfield_min_power;
-    } else if (!strcmp(str, "notify_pose")) {
-         return conf_numfield_notify_pose;
     } else if (!strcmp(str, "bemfIIR")) {
          return conf_numfield_bemfIIR;
     } else if (!strcmp(str, "postIIR")) {
@@ -92,16 +84,8 @@ const char *conf_train_fieldname(int f)
          return "enable_inertia";
     } else if (f == conf_numfield_enable_pid) {
          return "enable_pid";
-    } else if (f == conf_numfield_fix_bemf) {
-         return "fix_bemf";
-    } else if (f == conf_numfield_en_spd2pow) {
-         return "en_spd2pow";
     } else if (f == conf_numfield_reversed) {
          return "reversed";
-    } else if (f == conf_numfield_min_power) {
-         return "min_power";
-    } else if (f == conf_numfield_notify_pose) {
-         return "notify_pose";
     } else if (f == conf_numfield_bemfIIR) {
          return "bemfIIR";
     } else if (f == conf_numfield_postIIR) {

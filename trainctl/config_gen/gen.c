@@ -97,13 +97,14 @@ static config_node_t *value_for_table(config_node_t *tables, char *tblname, char
 // ------------------------------------------------------------
 
 
-static void _gen_subref(config_node_t *node, FILE *output, int num)
+static int _gen_subref(config_node_t *node, FILE *output, int num)
 {
     char *s = node->string;
     fprintf(output, "    struct conf_%s %s;\n", s, s);
+    return 1;
 }
 
-static void _gen_field(config_node_t *node, FILE *output, int num)
+static int _gen_field(config_node_t *node, FILE *output, int num)
 {
     if (node->tag != CONFIG_NODE_FIELD) {
         error("bad tag expect field");
@@ -112,6 +113,7 @@ static void _gen_field(config_node_t *node, FILE *output, int num)
     if (node->bitfield) fprintf(output, ":%d", node->bitfield);
     if (node->array)    fprintf(output, "[%d]", node->array);
     fprintf(output, ";\n");
+    return 1;
 }
 
 static void gen_fields(config_node_t *node, FILE *output)
@@ -120,11 +122,12 @@ static void gen_fields(config_node_t *node, FILE *output)
     apply_field(NULL, node,  0, _gen_field,  output, 0);
 }
 
-static void _gen_incsub(config_node_t *node, FILE *output, int num)
+static int _gen_incsub(config_node_t *node, FILE *output, int num)
 {
     char n[128];
     filename_for(n, node, "h", "");
     fprintf(output, "#include \"%s\"\n", n);
+    return 1;
 }
 static void generate_incsub(config_node_t *field, FILE *output)
 {
@@ -217,9 +220,11 @@ static void generate_hfile_normal(config_node_t *root, config_node_t *boards)
     }
 }
 
-static void _gen_propagdef(config_node_t *f, FILE *output, int num)
+static int _gen_propagdef(config_node_t *f, FILE *output, int num)
 {
+    if (!f->configurable) return 0;
     fprintf(output, "#define conf_numfield_%s \t\t%d\n", f->string, num);
+    return 1;
 }
 static void generate_hfile_propag(config_node_t *root)
 {
@@ -358,15 +363,16 @@ void generate_cfile(config_node_t *root, int continue_next, config_node_t *board
     }
 }
 
-static void _gen_fpropag(config_node_t *f, FILE *output, int num)
+static int _gen_fpropag(config_node_t *f, FILE *output, int num)
 {
-    if (!f->configurable) return;
+    if (!f->configurable) return 0;
     fprintf(output, "    case conf_numfield_%s:\n", f->string);
     if (f->parentconf && (f->parentconf->tag == CONFIG_NODE_SUBCONF)) {
         fprintf(output, "        conf->%s.%s = value;\n     break;\n", f->parentconf->string,  f->string);
     } else {
         fprintf(output, "        conf->%s = value;\n        break;\n", f->string);
     }
+    return 1;
 }
 
 static void gen_field_propag(FILE * output, config_node_t *fields, config_node_t *root)
@@ -467,16 +473,20 @@ static config_node_t *value_for_table(config_node_t *tables, char *tblname, char
 }
 
     
-static void _genstrfld(config_node_t *f, FILE *output, int num)
+static int _genstrfld(config_node_t *f, FILE *output, int num)
 {
+    if (!f->configurable) return 0;
     fprintf(output, "    } else if (!strcmp(str, \"%s\")) {\n", f->string);
     fprintf(output, "         return conf_numfield_%s;\n", f->string);
+    return 1;
 }
 
-static void _genstrfld2(config_node_t *f, FILE *output, int num)
+static int _genstrfld2(config_node_t *f, FILE *output, int num)
 {
+    if (!f->configurable) return 0;
     fprintf(output, "    } else if (f == conf_numfield_%s) {\n", f->string);
     fprintf(output, "         return \"%s\";\n", f->string);
+    return 1;
 }
 
 

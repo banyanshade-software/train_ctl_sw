@@ -27,12 +27,6 @@
 int conf_turnout_fieldnum(const char *str)
 {
     if (0) {
-    } else if (!strcmp(str, "cmd_port")) {
-         return conf_numfield_cmd_port;
-    } else if (!strcmp(str, "pinA")) {
-         return conf_numfield_pinA;
-    } else if (!strcmp(str, "pinB")) {
-         return conf_numfield_pinB;
     } else if (!strcmp(str, "reverse")) {
          return conf_numfield_reverse;
     }
@@ -42,12 +36,6 @@ int conf_turnout_fieldnum(const char *str)
 const char *conf_turnout_fieldname(int f)
 {
     if (0) {
-    } else if (f == conf_numfield_cmd_port) {
-         return "cmd_port";
-    } else if (f == conf_numfield_pinA) {
-         return "pinA";
-    } else if (f == conf_numfield_pinB) {
-         return "pinB";
     } else if (f == conf_numfield_reverse) {
          return "reverse";
     }

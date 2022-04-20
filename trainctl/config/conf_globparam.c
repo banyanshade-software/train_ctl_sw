@@ -36,6 +36,8 @@ int conf_globparam_num_entries(void)
 static conf_globparam_t conf_globparam[1] = {
   {     // 0
      .pwmfreq = 100,
+     .test_mode = 0,
+     .oscilo = 0,
   }
 };
 

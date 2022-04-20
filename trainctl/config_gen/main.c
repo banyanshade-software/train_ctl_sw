@@ -123,6 +123,7 @@ int main(int argc, char **argv) {
 			generate_cfile(root, 1, bm);
         
             generate_cfile_global_propag(root);    
+            generate_cfile_fieldname(root);
         }
     }
     else {

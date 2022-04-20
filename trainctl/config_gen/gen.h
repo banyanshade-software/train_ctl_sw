@@ -4,6 +4,7 @@
 void generate_hfiles(config_node_t *root, config_node_t *boards);
 void generate_cfile(config_node_t *root, int continue_next, config_node_t *boards);
 void generate_cfile_global_propag(config_node_t *root);
+void generate_cfile_fieldname(config_node_t *root);
 
 
 #endif

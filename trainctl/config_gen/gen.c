@@ -27,9 +27,9 @@ static const char *nstar(int n)
 
 // ------------------------------------------------------------
 
-static void filename_for(char *buf, config_node_t *confnode, char *ext)
+static void filename_for(char *buf, config_node_t *confnode, char *ext, char *prefix)
 {
-    sprintf(buf, "conf_%s.%s", confnode->string, ext);
+    sprintf(buf, "%sconf_%s.%s", prefix, confnode->string, ext);
 }
 
 static void include_code(FILE *output, config_node_t *attr, int v)
@@ -45,7 +45,7 @@ static FILE *genfile_h_create(config_node_t *confnode, config_node_t *root, int 
 {
     assert((confnode->tag == CONFIG_NODE_CONF) || (confnode->tag == CONFIG_NODE_SUBCONF));
     char n[128];
-    filename_for(n, confnode, propag ?  "propag.h" : "h");
+    filename_for(n, confnode, propag ?  "propag.h" : "h", "");
     FILE *F = fopen(n, "w");
     assert(F);
     char *p = propag ? "propag_":"";
@@ -65,11 +65,11 @@ static void genfile_h_close(FILE *F)
 }
 
 
-static FILE *genfile_c_create(config_node_t *confnode, config_node_t *root)
+static FILE *genfile_c_create(config_node_t *confnode, config_node_t *root, int fn)
 {
     assert((confnode->tag == CONFIG_NODE_CONF) || (confnode->tag == CONFIG_NODE_SUBCONF));
     char n[128];
-    filename_for(n, confnode, "c");
+    filename_for(n, confnode, fn ? "fields.c" : "c", fn ? "_str/" : "");
     FILE *F = fopen(n, "w");
     assert(F);
     fprintf(F, "// this file is generated automatically by config\n// DO NOT EDIT\n\n\n");
@@ -79,7 +79,7 @@ static FILE *genfile_c_create(config_node_t *confnode, config_node_t *root)
     }
     fprintf(F, "\n\n");
     include_code(F, root->globattrib, 2);
-    include_code(F, confnode->attr, 2);
+    if (!fn) include_code(F, confnode->attr, 2);
     return F;
 }
 
@@ -123,7 +123,7 @@ static void gen_fields(config_node_t *node, FILE *output)
 static void _gen_incsub(config_node_t *node, FILE *output, int num)
 {
     char n[128];
-    filename_for(n, node, "h");
+    filename_for(n, node, "h", "");
     fprintf(output, "#include \"%s\"\n", n);
 }
 static void generate_incsub(config_node_t *field, FILE *output)
@@ -298,7 +298,7 @@ void generate_cfile(config_node_t *root, int continue_next, config_node_t *board
 
         char *n = node->string;
         printf("--> config def %s\n", n);
-        FILE *output = genfile_c_create(node, root);
+        FILE *output = genfile_c_create(node, root, 0);
 
 
         for (config_node_t *board = boards; board; board = board->next) {
@@ -467,4 +467,43 @@ static config_node_t *value_for_table(config_node_t *tables, char *tblname, char
 }
 
     
-    
+static void _genstrfld(config_node_t *f, FILE *output, int num)
+{
+    fprintf(output, "    } else if (!strcmp(str, \"%s\")) {\n", f->string);
+    fprintf(output, "         return conf_numfield_%s;\n", f->string);
+}
+
+static void _genstrfld2(config_node_t *f, FILE *output, int num)
+{
+    fprintf(output, "    } else if (f == conf_numfield_%s) {\n", f->string);
+    fprintf(output, "         return \"%s\";\n", f->string);
+}
+
+
+void generate_cfile_fieldname(config_node_t *root)
+{
+    config_node_t *node = root->defs;
+    for ( ; node; node = node->next) {
+        if (node->tag != CONFIG_NODE_CONF) {
+            error("bad tag, expect conf");
+        }
+
+        char *n = node->string;
+        printf("--> config fld str %s\n", n);
+        FILE *output = genfile_c_create(node, root, 1);
+        fprintf(output, "int conf_%s_fieldnum(const char *str)\n{\n", n);
+        fprintf(output, "    if (0) {\n");
+        apply_field(root, node->fields, 1, _genstrfld, output, 0);
+        fprintf(output, "    }\n    return -1;\n}\n\n");
+
+        fprintf(output, "const char *conf_%s_fieldname(int f)\n{\n", n);
+        fprintf(output, "    if (0) {\n");
+        apply_field(root, node->fields, 1, _genstrfld2, output, 0);
+        fprintf(output, "    }\n    return NULL;\n}\n\n");
+        genfile_c_close(output);
+    }
+} 
+
+
+
+

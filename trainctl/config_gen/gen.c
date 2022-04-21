@@ -248,6 +248,12 @@ static void generate_hfile_propag(config_node_t *root)
 
         apply_field(root, node->fields, 1, _gen_propagdef, output, 0);
 
+        if (storetype==1) {
+            fprintf(output, "\n\nvoid *conf_%s_ptr(void);\n", n);
+            fprintf(output, "int32_t conf_%s_local_get(unsigned int fieldnum, unsigned int instnum);\n", n);
+            fprintf(output, "void conf_%s_local_set(unsigned int fieldnum, unsigned int instnum, int32_t v);\n", n);
+        }
+
         genfile_h_close(output);
     }
 }

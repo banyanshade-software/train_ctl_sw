@@ -30,5 +30,10 @@ int32_t conf_topology_default_value(unsigned int numinst, unsigned int numfield,
 #define conf_numfield_points 		11
 
 
+void *conf_topology_ptr(void);
+int32_t conf_topology_local_get(unsigned int fieldnum, unsigned int instnum);
+void conf_topology_local_set(unsigned int fieldnum, unsigned int instnum, int32_t v);
+
+
 
 #endif

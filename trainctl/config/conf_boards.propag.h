@@ -21,5 +21,10 @@ int32_t conf_boards_default_value(unsigned int numinst, unsigned int numfield, u
 #define conf_numfield_disable 		2
 
 
+void *conf_boards_ptr(void);
+int32_t conf_boards_local_get(unsigned int fieldnum, unsigned int instnum);
+void conf_boards_local_set(unsigned int fieldnum, unsigned int instnum, int32_t v);
+
+
 
 #endif

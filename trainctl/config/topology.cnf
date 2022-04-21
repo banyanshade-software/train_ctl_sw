@@ -39,7 +39,7 @@ config topology {
     user uint8_t rtn                            = (main) table(topo,rtn);
 
     user int p0 = (default) table(topo,p0);
-    user coord_t points[4] = (default) table(topo, pts);
+    disk coord_t points[4] = (default) table(topo, pts);
 } num = (main) 64
       = (default) 0;
 

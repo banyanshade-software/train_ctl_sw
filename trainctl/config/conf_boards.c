@@ -142,6 +142,44 @@ void *conf_boards_ptr(void)
     return &conf_boards[0];
 }
 
+
+
+int32_t conf_boards_local_get(unsigned int fieldnum, unsigned int instnum)
+{
+    const conf_boards_t *c = conf_boards_get(instnum);
+    if (!c) return 0;
+    switch (fieldnum) {
+    case conf_numfield_uuid:
+        return c->uuid;
+    case conf_numfield_board_type:
+        return c->board_type;
+    case conf_numfield_disable:
+        return c->disable;
+    }
+    return 0;
+}
+
+
+
+void conf_boards_local_set(unsigned int fieldnum, unsigned int instnum, int32_t v)
+{
+    conf_boards_t *ca = (conf_boards_t *) conf_boards_ptr();
+    if (!ca) return;
+    conf_boards_t *c = &ca[instnum];
+    switch (fieldnum) {
+    case conf_numfield_uuid:
+        c->uuid = v;
+        break;
+    case conf_numfield_board_type:
+        c->board_type = v;
+        break;
+    case conf_numfield_disable:
+        c->disable = v;
+        break;
+    }
+
+}
+
 // boards config store type 1 num 11
 
 

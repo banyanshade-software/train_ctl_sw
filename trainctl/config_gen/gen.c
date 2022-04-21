@@ -295,7 +295,7 @@ void generate_cfile_global_propag(config_node_t *root)
     }
     fprintf(output, "    default: return 0;\n    break;\n    }\n\n}\n\n");
 
-    fprintf(output, "\n\nvoid *conf_ptr(unsigned int lconfnum)\n");
+    fprintf(output, "\n\nvoid *conf_local_ptr(unsigned int lconfnum)\n");
     fprintf(output, "{\n    switch (lconfnum) {\n");
     for (config_node_t *node = root->defs; node; node = node->next) {
         char *n = node->string;
@@ -308,7 +308,7 @@ void generate_cfile_global_propag(config_node_t *root)
     }
     fprintf(output, "    }\n    return NULL;\n}\n\n\n");
 
-    fprintf(output, "\n\nunsigned int conf_size(unsigned int lconfnum)\n");
+    fprintf(output, "\n\nunsigned int conf_local_size(unsigned int lconfnum)\n");
     fprintf(output, "{\n    switch (lconfnum) {\n");
     for (config_node_t *node = root->defs; node; node = node->next) {
         char *n = node->string;
@@ -321,6 +321,34 @@ void generate_cfile_global_propag(config_node_t *root)
     }
     fprintf(output, "    }\n    return 0;\n}\n\n\n");
 
+
+
+
+    fprintf(output, "\n\nint32_t conf_local_get(unsigned int lconfnum, unsigned int fieldnum, unsigned int instnum)\n");
+    fprintf(output, "{\n    switch (lconfnum) {\n");
+    for (config_node_t *node = root->defs; node; node = node->next) {
+        char *n = node->string;
+        int storetype, storenum, gentpl;
+        get_storetype(node, &storetype, &storenum, &gentpl);
+        if (storetype == 1) {
+            fprintf(output, "    case conf_lnum_%s:\n", n);
+            fprintf(output, "       return conf_%s_local_get(fieldnum, instnum);\n", n);
+        }
+    }
+    fprintf(output, "    }\n    return 0;\n}\n\n\n");
+
+    fprintf(output, "\n\nvoid conf_local_set(unsigned int lconfnum, unsigned int fieldnum, unsigned int instnum, int32_t v)\n");
+    fprintf(output, "{\n    switch (lconfnum) {\n");
+    for (config_node_t *node = root->defs; node; node = node->next) {
+        char *n = node->string;
+        int storetype, storenum, gentpl;
+        get_storetype(node, &storetype, &storenum, &gentpl);
+        if (storetype == 1) {
+            fprintf(output, "    case conf_lnum_%s:\n", n);
+            fprintf(output, "       conf_%s_local_set(fieldnum, instnum, v);\n        break;\n", n);
+        }
+    }
+    fprintf(output, "    }\n}\n\n\n");
 
     fclose(output);
 }
@@ -336,6 +364,8 @@ void generate_hfiles(config_node_t *root, config_node_t *boards)
 static void gen_field_propag(FILE * output, config_node_t *fields, config_node_t *root);
 static int _gen_fdefault(config_node_t *f, FILE *output, int num);
 static config_node_t *_fdef_tables = NULL;
+static int _gen_lset(config_node_t *f, FILE *output, int num);
+static int _gen_lget(config_node_t *f, FILE *output, int num);
 
 void generate_cfile(config_node_t *root, int continue_next, config_node_t *boards)
 {
@@ -383,6 +413,19 @@ void generate_cfile(config_node_t *root, int continue_next, config_node_t *board
         if (storetype == 1) {
             fprintf(output, "\n\nvoid *conf_%s_ptr(void)\n",n);
             fprintf(output, "{\n    return &conf_%s[0];\n}\n\n", n);
+
+            fprintf(output, "\n\nint32_t conf_%s_local_get(unsigned int fieldnum, unsigned int instnum)\n", n);
+            fprintf(output, "{\n    const conf_%s_t *c = conf_%s_get(instnum);\n    if (!c) return 0;\n", n, n);
+            fprintf(output, "    switch (fieldnum) {\n");
+            apply_field(root, node->fields, 1, _gen_lget, output, 0);
+            fprintf(output, "    }\n    return 0;\n}\n\n");
+
+            fprintf(output, "\n\nvoid conf_%s_local_set(unsigned int fieldnum, unsigned int instnum, int32_t v)\n", n);
+            fprintf(output, "{\n    conf_%s_t *ca = (conf_%s_t *) conf_%s_ptr();\n    if (!ca) return;\n", n, n, n);
+            fprintf(output, "    conf_%s_t *c = &ca[instnum];\n", n);
+            fprintf(output, "    switch (fieldnum) {\n");
+            apply_field(root, node->fields, 1, _gen_lset, output, 0);
+            fprintf(output, "    }\n\n}\n\n");
         }
 
         if (gentpl) {
@@ -434,6 +477,23 @@ static int _gen_fdefault(config_node_t *f, FILE *output, int num)
         if (v) val = v;
     }
     fprintf(output, "        return %s;\n", val->string);
+    return 1;
+}
+static int _gen_lset(config_node_t *f, FILE *output, int num)
+{
+    if (1 != f->configurable) return 0;
+    fprintf(output, "    case conf_numfield_%s:\n", f->string);
+    fprintf(output, "        c->%s = v;\n", f->string);
+    fprintf(output, "        break;\n");
+    return 1;
+}
+
+
+static int _gen_lget(config_node_t *f, FILE *output, int num)
+{
+    if (1 != f->configurable) return 0;
+    fprintf(output, "    case conf_numfield_%s:\n", f->string);
+    fprintf(output, "        return c->%s;\n", f->string);
     return 1;
 }
 

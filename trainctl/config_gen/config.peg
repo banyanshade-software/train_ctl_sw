@@ -197,6 +197,8 @@ qualifier
         { $$ = create_config_node_int(auxil, CONFIG_NODE_IDENT, range__new($0s, $0e), 0);}
      / kw_user
         { $$ = create_config_node_int(auxil, CONFIG_NODE_IDENT, range__new($0s, $0e), 1);}
+     / kw_disk
+        { $$ = create_config_node_int(auxil, CONFIG_NODE_IDENT, range__new($0s, $0e), 2);}
 
 board_values 
     <- b:board_val _ l:board_values
@@ -276,6 +278,7 @@ kw_subref       <- 'sub'  !(L/D)
 kw_num          <- 'num' !(L/D)
 kw_const        <- 'const' !(L/D)
 kw_user         <- 'user' !(L/D)
+kw_disk         <- 'disk' !(L/D)
 kw_table        <- 'table' !(L/D)
 kw_attrib       <- 'attrib' !(L/D)
 
@@ -297,6 +300,7 @@ L <- [a-zA-Z_]
 keyword
    <- kw_num
     / kw_const
+    / kw_disk
     / kw_user
     / kw_config
     / kw_subconfig

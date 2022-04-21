@@ -73,7 +73,7 @@ int32_t conf_default_value(unsigned int confnum, unsigned int fieldnum, unsigned
 
 
 
-void *conf_ptr(unsigned int lconfnum)
+void *conf_local_ptr(unsigned int lconfnum)
 {
     switch (lconfnum) {
     case conf_lnum_globparam:
@@ -89,7 +89,7 @@ void *conf_ptr(unsigned int lconfnum)
 
 
 
-unsigned int conf_size(unsigned int lconfnum)
+unsigned int conf_local_size(unsigned int lconfnum)
 {
     switch (lconfnum) {
     case conf_lnum_globparam:
@@ -100,6 +100,40 @@ unsigned int conf_size(unsigned int lconfnum)
        return sizeof(conf_boards_t)*conf_boards_num_entries();
     }
     return 0;
+}
+
+
+
+
+int32_t conf_local_get(unsigned int lconfnum, unsigned int fieldnum, unsigned int instnum)
+{
+    switch (lconfnum) {
+    case conf_lnum_globparam:
+       return conf_globparam_local_get(fieldnum, instnum);
+    case conf_lnum_topology:
+       return conf_topology_local_get(fieldnum, instnum);
+    case conf_lnum_boards:
+       return conf_boards_local_get(fieldnum, instnum);
+    }
+    return 0;
+}
+
+
+
+
+void conf_local_set(unsigned int lconfnum, unsigned int fieldnum, unsigned int instnum, int32_t v)
+{
+    switch (lconfnum) {
+    case conf_lnum_globparam:
+       conf_globparam_local_set(fieldnum, instnum, v);
+        break;
+    case conf_lnum_topology:
+       conf_topology_local_set(fieldnum, instnum, v);
+        break;
+    case conf_lnum_boards:
+       conf_boards_local_set(fieldnum, instnum, v);
+        break;
+    }
 }
 
 

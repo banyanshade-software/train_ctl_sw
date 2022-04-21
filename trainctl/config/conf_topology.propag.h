@@ -14,7 +14,7 @@ int conf_topology_propagate(unsigned int numinst, unsigned int numfield, int32_t
 
 int32_t conf_topology_default_value(unsigned int numinst, unsigned int numfield, unsigned int board);
 
-#define conf_pnum_topology 12
+#define conf_lnum_topology 12
 
 #define conf_numfield_canton_addr 		0
 #define conf_numfield_ina_segnum 		1

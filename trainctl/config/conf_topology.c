@@ -1002,6 +1002,13 @@ const conf_topology_t *conf_topology_get(int num)
     return &conf_topology[num];
 }
 
+
+
+void *conf_topology_ptr(void)
+{
+    return &conf_topology[0];
+}
+
 // topology config store type 1 num 12
 
 

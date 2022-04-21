@@ -243,9 +243,8 @@ static void generate_hfile_propag(config_node_t *root)
     
         int storetype, storenum, gentpl;
         get_storetype(node, &storetype, &storenum, &gentpl);
-        if ((1) || (storetype == 0)) {
-            fprintf(output, "#define conf_pnum_%s %d\n\n", node->string, storenum);
-        }
+        char t = storetype ? 'l' : 'p';
+        fprintf(output, "#define conf_%cnum_%s %d\n\n", t, node->string, storenum);
 
         apply_field(root, node->fields, 1, _gen_propagdef, output, 0);
 
@@ -263,6 +262,7 @@ void generate_cfile_global_propag(config_node_t *root)
     for (config_node_t *node = root->defs; node; node = node->next) {
         if (node->tag != CONFIG_NODE_CONF) error("bad tag");
         char *n = node->string;
+        fprintf(output, "#include \"conf_%s.h\"\n", n);
         fprintf(output, "#include \"conf_%s.propag.h\"\n", n);
     }
 
@@ -294,6 +294,33 @@ void generate_cfile_global_propag(config_node_t *root)
         }
     }
     fprintf(output, "    default: return 0;\n    break;\n    }\n\n}\n\n");
+
+    fprintf(output, "\n\nvoid *conf_ptr(unsigned int lconfnum)\n");
+    fprintf(output, "{\n    switch (lconfnum) {\n");
+    for (config_node_t *node = root->defs; node; node = node->next) {
+        char *n = node->string;
+        int storetype, storenum, gentpl;
+        get_storetype(node, &storetype, &storenum, &gentpl);
+        if (storetype == 1) {
+            fprintf(output, "    case conf_lnum_%s:\n", n);
+            fprintf(output, "       return conf_%s_ptr();\n", n);
+        }
+    }
+    fprintf(output, "    }\n    return NULL;\n}\n\n\n");
+
+    fprintf(output, "\n\nunsigned int conf_size(unsigned int lconfnum)\n");
+    fprintf(output, "{\n    switch (lconfnum) {\n");
+    for (config_node_t *node = root->defs; node; node = node->next) {
+        char *n = node->string;
+        int storetype, storenum, gentpl;
+        get_storetype(node, &storetype, &storenum, &gentpl);
+        if (storetype == 1) {
+            fprintf(output, "    case conf_lnum_%s:\n", n);
+            fprintf(output, "       return sizeof(conf_%s_t)*conf_%s_num_entries();\n", n, n);
+        }
+    }
+    fprintf(output, "    }\n    return 0;\n}\n\n\n");
+
 
     fclose(output);
 }
@@ -352,6 +379,11 @@ void generate_cfile(config_node_t *root, int continue_next, config_node_t *board
 
         int storetype, storenum, gentpl;
         get_storetype(node, &storetype, &storenum, &gentpl);
+
+        if (storetype == 1) {
+            fprintf(output, "\n\nvoid *conf_%s_ptr(void)\n",n);
+            fprintf(output, "{\n    return &conf_%s[0];\n}\n\n", n);
+        }
 
         if (gentpl) {
             fprintf(output, "static const conf_%s_t %s_template = {\n", n, n);

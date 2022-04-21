@@ -14,7 +14,7 @@ int conf_globparam_propagate(unsigned int numinst, unsigned int numfield, int32_
 
 int32_t conf_globparam_default_value(unsigned int numinst, unsigned int numfield, unsigned int board);
 
-#define conf_pnum_globparam 10
+#define conf_lnum_globparam 10
 
 #define conf_numfield_pwmfreq 		0
 #define conf_numfield_test_mode 		1

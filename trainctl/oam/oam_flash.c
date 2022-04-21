@@ -393,3 +393,19 @@ int  oam_flashstore_rd_next(unsigned int *confnum, unsigned int *fieldnum, unsig
 		return 0;
 	}
 }
+
+
+
+
+
+
+void oam_flashlocal_read(unsigned int confnum)
+{
+    void *ptr = conf_ptr(confnum);
+    unsigned int s = conf_size(confnum);
+}
+void oam_flashlocal_commit(unsigned int confnum)
+{
+    void *ptr = conf_ptr(confnum);
+    unsigned int s = conf_size(confnum);
+}

@@ -12,5 +12,8 @@ void conf_propagate(unsigned int confnum, unsigned int fieldnum, unsigned int in
 
 int32_t conf_default_value(unsigned int confnum, unsigned int fieldnum, unsigned int confbrd, unsigned int instnum);
 
+// local master-only config
+void *conf_ptr(unsigned int lconfnum);
+unsigned int conf_size(unsigned int lconfnum);
 
 #endif /* CONFIG_PROPAG_H_ */

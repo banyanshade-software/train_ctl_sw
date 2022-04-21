@@ -100,6 +100,13 @@ const conf_globparam_t *conf_globparam_get(int num)
     return &conf_globparam[num];
 }
 
+
+
+void *conf_globparam_ptr(void)
+{
+    return &conf_globparam[0];
+}
+
 // globparam config store type 1 num 10
 
 

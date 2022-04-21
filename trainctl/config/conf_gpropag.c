@@ -4,13 +4,21 @@
 
 #include "propag.h"
 
+#include "conf_utest.h"
 #include "conf_utest.propag.h"
+#include "conf_globparam.h"
 #include "conf_globparam.propag.h"
+#include "conf_led.h"
 #include "conf_led.propag.h"
+#include "conf_turnout.h"
 #include "conf_turnout.propag.h"
+#include "conf_train.h"
 #include "conf_train.propag.h"
+#include "conf_topology.h"
 #include "conf_topology.propag.h"
+#include "conf_canton.h"
 #include "conf_canton.propag.h"
+#include "conf_boards.h"
 #include "conf_boards.propag.h"
 
 
@@ -62,4 +70,36 @@ int32_t conf_default_value(unsigned int confnum, unsigned int fieldnum, unsigned
     }
 
 }
+
+
+
+void *conf_ptr(unsigned int lconfnum)
+{
+    switch (lconfnum) {
+    case conf_lnum_globparam:
+       return conf_globparam_ptr();
+    case conf_lnum_topology:
+       return conf_topology_ptr();
+    case conf_lnum_boards:
+       return conf_boards_ptr();
+    }
+    return NULL;
+}
+
+
+
+
+unsigned int conf_size(unsigned int lconfnum)
+{
+    switch (lconfnum) {
+    case conf_lnum_globparam:
+       return sizeof(conf_globparam_t)*conf_globparam_num_entries();
+    case conf_lnum_topology:
+       return sizeof(conf_topology_t)*conf_topology_num_entries();
+    case conf_lnum_boards:
+       return sizeof(conf_boards_t)*conf_boards_num_entries();
+    }
+    return 0;
+}
+
 

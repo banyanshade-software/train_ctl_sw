@@ -135,6 +135,13 @@ const conf_boards_t *conf_boards_get(int num)
     return &conf_boards[num];
 }
 
+
+
+void *conf_boards_ptr(void)
+{
+    return &conf_boards[0];
+}
+
 // boards config store type 1 num 11
 
 

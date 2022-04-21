@@ -26,5 +26,10 @@ void oam_flashstore_rd_rewind(void);
 int  oam_flashstore_rd_next(unsigned int *confnum, unsigned int *fieldnum, unsigned int *confbrd, unsigned int *instnum, int32_t *v);
 
 
+// for 'local' master-only configuration file
+
+
+void oam_flashlocal_read(unsigned int confnum);
+void oam_flashlocal_commit(unsigned int confnum);
 
 #endif /* OAM_OAM_FLASH_H_ */

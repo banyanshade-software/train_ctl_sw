@@ -16,7 +16,7 @@
 
 @implementation TestPid
 
-pidctl_config_t conf;
+struct conf_pidctl conf;
 pidctl_vars_t vars;
 
 - (void)setUp {
@@ -100,7 +100,7 @@ static float simMotor(float power, int reset)
 
 - (void)test3
 {
-    pidctl_config_t cnf;
+    struct conf_pidctl cnf;
     cnf.kP = 500;
     cnf.kI = 1200;//1200;
     cnf.kD = 4000;

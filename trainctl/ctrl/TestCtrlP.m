@@ -98,7 +98,7 @@ void ctrl2_send_led(uint8_t led_num, uint8_t prog_num)
 
 @implementation TestCtrlP {
     train_ctrl_t tvars;
-    const train_config_t *tconf;
+    const conf_train_t *tconf;
 }
 
 - (void)setUp
@@ -144,8 +144,8 @@ void ctrl2_send_led(uint8_t led_num, uint8_t prog_num)
     XCTAssert(mqf_len(&from_ctrl)==2);
 
     NSString *s = dump_msgbuf(0);
-    EXPMSG({.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_POSE_SET_TRIG_U1, .v32=142},
-           {.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_POSE_SET_TRIG0, .v32=-40});
+    EXPMSG({.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_POSE_SET_TRIG_U1, .v32=142},
+           {.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_POSE_SET_TRIG0, .v32=-40});
 
 
 }
@@ -165,7 +165,7 @@ void ctrl2_send_led(uint8_t led_num, uint8_t prog_num)
     XCTAssert(rc==1);
     XCTAssert(mqf_len(&from_ctrl)==1); // notif ui
     //NSString *s = dump_msgbuf(0);
-    EXPMSG({.to=MA_UI(UISUB_TFT), .from=0xD0, .cmd=CMD_TRSTATE_NOTIF, .v1=2, .v2=0});
+    EXPMSG({.to=MA3_UI_GEN, .from=MA1_CTRL(0), .cmd=CMD_TRSTATE_NOTIF, .v1=2, .v2=0});
 
     // same state : no notif ui
     ctrl2_set_state(0, &tvars, train_station);
@@ -182,7 +182,7 @@ void ctrl2_send_led(uint8_t led_num, uint8_t prog_num)
     XCTAssert(rc==1);
     XCTAssert(train_station == tvars._state);
     XCTAssert(mqf_len(&from_ctrl)==1);
-    EXPMSG({.to=MA_UI(UISUB_TFT), .from=0xD0, .cmd=CMD_TRSTATE_NOTIF, .v1=2, .v2=0});
+    EXPMSG({.to=MA3_UI_GEN, .from=MA1_CTRL(0), .cmd=CMD_TRSTATE_NOTIF, .v1=2, .v2=0});
 }
 
 
@@ -194,9 +194,9 @@ void ctrl2_send_led(uint8_t led_num, uint8_t prog_num)
     XCTAssert(rc==1);
     //NSString *s = dump_msgbuf(0);
     // {D0, C8, 11, 1, 255},{D0, 81, 26, 2, 0},{D0, C8, 10, 0, 0}
-    EXPMSG({.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_C1_C2,        .vb0=1, .vb1=0, .vb2=0xFF, .vb3=0},
-           {.to=MA_UI(UISUB_TFT), .from=0xD0, .cmd=CMD_TRSTATE_NOTIF,    .v1=2, .v2=0},
-           {.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_TARGET_SPEED, .v1=0, .v2=0});
+    EXPMSG({.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_C1_C2,        .vb0=1, .vb1=0, .vb2=0xFF, .vb3=0},
+           {.to=MA3_UI_GEN, .from=MA1_CTRL(0), .cmd=CMD_TRSTATE_NOTIF,    .v1=2, .v2=0},
+           {.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_TARGET_SPEED, .v1=0, .v2=0});
     XCTAssert(0==check_occupency(1, -1));
 }
 
@@ -215,15 +215,15 @@ void ctrl2_send_led(uint8_t led_num, uint8_t prog_num)
     rc = ctrl2_tick_process(0, &tvars, tconf, 0);
     //XCTAssert(rc==2);
     NSString *s = dump_msgbuf(0);
-    EXPMSG({.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_C1_C2,        .vb0=1, .vb1=-1, .vb2=0, .vb3=-1}
-          ,{.to=MA_UI(UISUB_TFT), .from=0xD0, .cmd=CMD_TRSTATE_NOTIF,    .v1=1, .v2=0}
-          ,{.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_TARGET_SPEED, .v1=92, .v2=0});
+    EXPMSG({.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_C1_C2,        .vb0=1, .vb1=-1, .vb2=0, .vb3=-1}
+          ,{.to=MA3_UI_GEN, .from=MA1_CTRL(0), .cmd=CMD_TRSTATE_NOTIF,    .v1=1, .v2=0}
+          ,{.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_TARGET_SPEED, .v1=92, .v2=0});
     XCTAssert(tvars._state == train_running_c1);
     XCTAssert(tvars.spd_limit == 100);
     XCTAssert(!tvars.pose2_set);
     XCTAssert(tvars._dir == -1);
     XCTAssert(tvars._target_speed == 92);
-    XCTAssert(tvars.can2_addr == 0x00);
+    XCTAssert(tvars.can2_xaddr == 0x00);
     XCTAssert(0==check_occupency(1, 0));
     //  c0 <-- c1
     
@@ -231,10 +231,10 @@ void ctrl2_send_led(uint8_t led_num, uint8_t prog_num)
     rc = ctrl2_tick_process(0, &tvars, tconf, 0);
     XCTAssert(rc==2);
     s = dump_msgbuf(0);
-    EXPMSG({.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_TARGET_SPEED, .v1=82, .v2=0});
+    EXPMSG({.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_TARGET_SPEED, .v1=82, .v2=0});
     XCTAssert(tvars._target_speed == 82);
     XCTAssert(tvars._dir == -1);
-    XCTAssert(tvars.can2_addr == 0x00);
+    XCTAssert(tvars.can2_xaddr == 0x00);
     XCTAssert(0==check_occupency(1, 0));
     //  c0 <-- c1
     
@@ -246,15 +246,15 @@ void ctrl2_send_led(uint8_t led_num, uint8_t prog_num)
     int l0 = get_lsblk_len(szero, NULL);
     
     XCTAssert(tvars.c1c2 == 0);
-    XCTAssert(tvars.can2_addr == 0xFF);
+    XCTAssert(tvars.can2_xaddr == 0xFF);
     rc = ctrl2_tick_process(0, &tvars, tconf, 0);
     XCTAssert(rc==3);
     s = dump_msgbuf(0);
     //{D0, C8, 51, -840, -1},{D0, C8, 11, -256, -1},{D0, C8, 10, 70, 0}
     // CMD_POSE_SET_TRIG2
-    EXPMSG({.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_C1_C2,        .vb0=0, .vb1=-1, .vb2=0xFF, .vb3=-1}
-          ,{.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_POSE_SET_TRIG0,   .v32=-1720}
-          ,{.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_TARGET_SPEED, .v1=70, .v2=0});
+    EXPMSG({.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_C1_C2,        .vb0=0, .vb1=-1, .vb2=0xFF, .vb3=-1}
+          ,{.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_POSE_SET_TRIG0,   .v32=-1720}
+          ,{.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_TARGET_SPEED, .v1=70, .v2=0});
     XCTAssert(tvars.pose2_set);
     XCTAssert(tvars.trig_eoseg==0);
     XCTAssert(tvars._dir==-1);
@@ -268,8 +268,8 @@ void ctrl2_send_led(uint8_t led_num, uint8_t prog_num)
     XCTAssert(rc==3);
     //s = dump_msgbuf(0);
     // {D0, 81, 26, 4, 0},{D0, C8, 10, 0, 0}
-    EXPMSG({.to=MA_UI(UISUB_TFT), .from=0xD0, .cmd=CMD_TRSTATE_NOTIF,    .v1=4, .v2=0}
-          ,{.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_TARGET_SPEED, .v1=0, .v2=0});
+    EXPMSG({.to=MA3_UI_GEN, .from=MA1_CTRL(0), .cmd=CMD_TRSTATE_NOTIF,    .v1=4, .v2=0}
+          ,{.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_TARGET_SPEED, .v1=0, .v2=0});
     XCTAssert(!tvars.pose2_set);
     XCTAssert(tvars._dir==-1);
     XCTAssert(tvars._target_speed == 0);
@@ -288,7 +288,7 @@ void ctrl2_send_led(uint8_t led_num, uint8_t prog_num)
     XCTAssert(0==check_occupency(0, -1));
     //NSString *s1 = dump_msgbuf(0);
     // {D0, C8, 11, 0, 1}
-    EXPMSG({.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_C1_C2,        .vb0=0, .vb1=0, .vb2=0xFF, .vb3=0});
+    EXPMSG({.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_C1_C2,        .vb0=0, .vb1=0, .vb2=0xFF, .vb3=0});
     
     // delayed free for block1
     purge_block_delayed();
@@ -299,13 +299,13 @@ void ctrl2_send_led(uint8_t led_num, uint8_t prog_num)
     XCTAssert(rc==4);
     //NSString *s = dump_msgbuf(0);
     // {D0, C8, 11, 256, 257},{D0, 81, 26, 1, 0},{D0, C8, 10, 70, 0}
-    EXPMSG({.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_C1_C2,        .vb0=0, .vb1=1, .vb2=1, .vb3=1},
-           {.to=MA_UI(UISUB_TFT), .from=0xD0, .cmd=CMD_TRSTATE_NOTIF,    .v1=1, .v2=0},
-           {.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_TARGET_SPEED, .v1=90, .v2=0});
+    EXPMSG({.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_C1_C2,        .vb0=0, .vb1=1, .vb2=1, .vb3=1},
+           {.to=MA3_UI_GEN, .from=MA1_CTRL(0), .cmd=CMD_TRSTATE_NOTIF,    .v1=1, .v2=0},
+           {.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_TARGET_SPEED, .v1=90, .v2=0});
     XCTAssert(tvars._dir==1);
     XCTAssert(tvars._target_speed == 90);
     XCTAssert(tvars.spd_limit == 100);
-    XCTAssert(tvars.can2_addr = 0x01);
+    XCTAssert(tvars.can2_xaddr = 0x01);
     XCTAssert(tvars._state == train_running_c1);
     XCTAssert(0==check_occupency(0, 1));
 }
@@ -323,7 +323,7 @@ void ctrl2_send_led(uint8_t led_num, uint8_t prog_num)
     NSString *s1 = dump_msgbuf(0);
     // {D0, C8, 11, 0, 1}
     // {D0, C8, 11, 0, 255},{D0, 81, 26, 2, 0}
-    EXPMSG({.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_C1_C2,        .vb0=0, .vb1=0, .vb2=0xFF, .vb3=0});
+    EXPMSG({.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_C1_C2,        .vb0=0, .vb1=0, .vb2=0xFF, .vb3=0});
     
     // do NOT delayed free for block1 (delayed free is activated, but no tick)
     // thus going right will be forbidden due to block occupied
@@ -337,10 +337,10 @@ void ctrl2_send_led(uint8_t led_num, uint8_t prog_num)
     XCTAssert(rc==2);
     NSString *s = dump_msgbuf(0);
     // {D0, C8, 11, 256, 257},{D0, 81, 26, 1, 0},{D0, C8, 10, 70, 0}
-    EXPMSG({.to=MA_UI(UISUB_TFT), .from=0xD0, .cmd=CMD_TRSTATE_NOTIF,    .v1=3, .v2=0});
+    EXPMSG({.to=MA3_UI_GEN, .from=MA1_CTRL(0), .cmd=CMD_TRSTATE_NOTIF,    .v1=3, .v2=0});
     XCTAssert(tvars._dir==1);
     XCTAssert(tvars._target_speed == 0);
-    XCTAssert(tvars.can2_addr = 0xFF);
+    XCTAssert(tvars.can2_xaddr = 0xFF);
     XCTAssert(tvars._state == train_blk_wait);
     XCTAssert(0==check_occupency(0, -1));
     
@@ -353,12 +353,12 @@ void ctrl2_send_led(uint8_t led_num, uint8_t prog_num)
     XCTAssert(rc==3);
     //NSString *s2 = dump_msgbuf(0);
     // {D0, C8, 11, 256, 257},{D0, 81, 26, 1, 0},{D0, C8, 10, 90, 0}
-    EXPMSG({.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_C1_C2,        .vb0=0, .vb1=1, .vb2=1, .vb3=1}
-          ,{.to=MA_UI(UISUB_TFT), .from=0xD0, .cmd=CMD_TRSTATE_NOTIF,    .v1=1, .v2=0}
-          ,{.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_TARGET_SPEED, .v1=90, .v2=0});
+    EXPMSG({.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_C1_C2,        .vb0=0, .vb1=1, .vb2=1, .vb3=1}
+          ,{.to=MA3_UI_GEN, .from=MA1_CTRL(0), .cmd=CMD_TRSTATE_NOTIF,    .v1=1, .v2=0}
+          ,{.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_TARGET_SPEED, .v1=90, .v2=0});
     XCTAssert(tvars._dir==1);
     XCTAssert(tvars._target_speed == 90);
-    XCTAssert(tvars.can2_addr = 0x01);
+    XCTAssert(tvars.can2_xaddr = 0x01);
     XCTAssert(tvars._state == train_running_c1);
     XCTAssert(0==check_occupency(0, 1));
 
@@ -381,13 +381,13 @@ void ctrl2_send_led(uint8_t led_num, uint8_t prog_num)
     int l1 = get_lsblk_len(sone, NULL);
     NSString *s = dump_msgbuf(0);
     //{D0, C8, 11, 257, 511},{D0, 81, 26, 1, 0},{D0, C8, 51, 420, 0},{D0, C8, 10, 70, 0}
-    EXPMSG({.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_C1_C2,        .vb0=1, .vb1=1, .vb2=0xFF, .vb3=1}
-           ,{.to=MA_UI(UISUB_TFT), .from=0xD0, .cmd=CMD_TRSTATE_NOTIF,    .v1=1, .v2=0}
-           ,{.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_POSE_SET_TRIG0,   .v32=660}
-           ,{.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_TARGET_SPEED, .v1=70, .v2=0});
+    EXPMSG({.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_C1_C2,        .vb0=1, .vb1=1, .vb2=0xFF, .vb3=1}
+           ,{.to=MA3_UI_GEN, .from=MA1_CTRL(0), .cmd=CMD_TRSTATE_NOTIF,    .v1=1, .v2=0}
+           ,{.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_POSE_SET_TRIG0,   .v32=660}
+           ,{.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_TARGET_SPEED, .v1=70, .v2=0});
     XCTAssert(tvars.trig_eoseg==0);
     XCTAssert(tvars._state == train_running_c1);
-    XCTAssert(tvars.can2_addr == 0xFF);
+    XCTAssert(tvars.can2_xaddr == 0xFF);
     XCTAssert(tvars.spd_limit == 70);
     XCTAssert(tvars.pose2_set);
     XCTAssert(tvars._dir == 1);
@@ -406,8 +406,8 @@ void ctrl2_send_led(uint8_t led_num, uint8_t prog_num)
     XCTAssert(rc==3);
     NSString *s = dump_msgbuf(0);
     // {D0, 81, 26, 4, 0},{D0, C8, 10, 0, 0}
-    EXPMSG({.to=MA_UI(UISUB_TFT), .from=0xD0, .cmd=CMD_TRSTATE_NOTIF,    .v1=3, .v2=0}
-          ,{.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_TARGET_SPEED, .v1=0, .v2=0});
+    EXPMSG({.to=MA3_UI_GEN, .from=MA1_CTRL(0), .cmd=CMD_TRSTATE_NOTIF,    .v1=3, .v2=0}
+          ,{.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_TARGET_SPEED, .v1=0, .v2=0});
     XCTAssert(tvars._state == train_blk_wait);
     XCTAssert(tvars._dir == 1);
     XCTAssert(tvars._target_speed == 0);
@@ -419,13 +419,13 @@ void ctrl2_send_led(uint8_t led_num, uint8_t prog_num)
     XCTAssert(rc==3);
     s = dump_msgbuf(0);
     //{D0, C8, 11, 257, 259},{D0, 81, 26, 1, 0},{D0, C8, 10, 92, 0}
-    EXPMSG({.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_C1_C2,        .vb0=1, .vb1=1, .vb2=3, .vb3=1}
-          ,{.to=MA_UI(UISUB_TFT), .from=0xD0, .cmd=CMD_TRSTATE_NOTIF,    .v1=1, .v2=0}
-          ,{.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_TARGET_SPEED, .v1=92, .v2=0});
+    EXPMSG({.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_C1_C2,        .vb0=1, .vb1=1, .vb2=3, .vb3=1}
+          ,{.to=MA3_UI_GEN, .from=MA1_CTRL(0), .cmd=CMD_TRSTATE_NOTIF,    .v1=1, .v2=0}
+          ,{.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_TARGET_SPEED, .v1=92, .v2=0});
     XCTAssert(tvars._dir == 1);
     XCTAssert(tvars._target_speed == 92);
     XCTAssert(tvars._state == train_running_c1);
-    XCTAssert(tvars.can2_addr == 0x03);
+    XCTAssert(tvars.can2_xaddr == 0x03);
     XCTAssert(0==check_occupency(1, 3));
 }
 
@@ -441,8 +441,8 @@ void ctrl2_send_led(uint8_t led_num, uint8_t prog_num)
     XCTAssert(rc==3);
     NSString *s = dump_msgbuf(0);
     // {D0, 81, 26, 4, 0},{D0, C8, 10, 0, 0}
-    EXPMSG({.to=MA_UI(UISUB_TFT), .from=0xD0, .cmd=CMD_TRSTATE_NOTIF,    .v1=3, .v2=0}
-          ,{.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_TARGET_SPEED, .v1=0, .v2=0});
+    EXPMSG({.to=MA3_UI_GEN, .from=MA1_CTRL(0), .cmd=CMD_TRSTATE_NOTIF,    .v1=3, .v2=0}
+          ,{.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_TARGET_SPEED, .v1=0, .v2=0});
     XCTAssert(tvars._state == train_blk_wait);
     XCTAssert(tvars._dir == 1);
     XCTAssert(tvars._target_speed == 0);
@@ -464,13 +464,13 @@ void ctrl2_send_led(uint8_t led_num, uint8_t prog_num)
     XCTAssert(rc==3);
     s = dump_msgbuf(0);
     //{D0, C8, 11, 257, 259},{D0, 81, 26, 1, 0},{D0, C8, 10, 92, 0}
-    EXPMSG({.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_C1_C2,        .vb0=1, .vb1=1, .vb2=3, .vb3=1}
-          ,{.to=MA_UI(UISUB_TFT), .from=0xD0, .cmd=CMD_TRSTATE_NOTIF,    .v1=1, .v2=0}
-          ,{.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_TARGET_SPEED, .v1=92, .v2=0});
+    EXPMSG({.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_C1_C2,        .vb0=1, .vb1=1, .vb2=3, .vb3=1}
+          ,{.to=MA3_UI_GEN, .from=MA1_CTRL(0), .cmd=CMD_TRSTATE_NOTIF,    .v1=1, .v2=0}
+          ,{.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_TARGET_SPEED, .v1=92, .v2=0});
     XCTAssert(tvars._dir == 1);
     XCTAssert(tvars._target_speed == 92);
     XCTAssert(tvars._state == train_running_c1);
-    XCTAssert(tvars.can2_addr == 0x03);
+    XCTAssert(tvars.can2_xaddr == 0x03);
     XCTAssert(0==check_occupency(1, 3));
 }
 
@@ -483,12 +483,12 @@ void ctrl2_send_led(uint8_t led_num, uint8_t prog_num)
     XCTAssert(rc==3);
     //NSString *s = dump_msgbuf(0);
     //{D0, C8, 11, 257, 259},{D0, 81, 26, 1, 0},{D0, C8, 10, 92, 0}
-    EXPMSG({.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_C1_C2,        .vb0=1, .vb1=1, .vb2=3, .vb3=1}
-          ,{.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_TARGET_SPEED, .v1=92, .v2=0});
+    EXPMSG({.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_C1_C2,        .vb0=1, .vb1=1, .vb2=3, .vb3=1}
+          ,{.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_TARGET_SPEED, .v1=92, .v2=0});
     XCTAssert(tvars._dir == 1);
     XCTAssert(tvars._target_speed == 92);
     XCTAssert(tvars._state == train_running_c1);
-    XCTAssert(tvars.can2_addr == 0x03);
+    XCTAssert(tvars.can2_xaddr == 0x03);
     XCTAssert(tvars.spd_limit == 100);
     XCTAssert(tvars.pose2_set == 0);
     XCTAssert(0==check_occupency(1, 3));
@@ -501,7 +501,7 @@ void ctrl2_send_led(uint8_t led_num, uint8_t prog_num)
     XCTAssert(tvars._dir == 1);
     XCTAssert(tvars._target_speed == 92);
     XCTAssert(tvars._state == train_running_c1);
-    XCTAssert(tvars.can2_addr == 0x03);
+    XCTAssert(tvars.can2_xaddr == 0x03);
     XCTAssert(tvars.spd_limit == 100);
 }
 
@@ -510,7 +510,7 @@ void ctrl2_send_led(uint8_t led_num, uint8_t prog_num)
     topology_set_turnout(0, 0, -1);
     topology_set_turnout(1, 1, -1); // route from c0-c1-c3
     tvars.c1_sblk = szero;
-    tvars.can1_addr = 0x00;
+    tvars.can1_xaddr = 0x00;
     int rc = ctrl2_tick_process(0, &tvars, tconf, 0);
     XCTAssert(rc==1);
     dump_msgbuf(1);
@@ -520,31 +520,31 @@ void ctrl2_send_led(uint8_t led_num, uint8_t prog_num)
     rc = ctrl2_tick_process(0, &tvars, tconf, 0);
     //XCTAssert(rc==3);
     NSString *s = dump_msgbuf(0);
-    EXPMSG({.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_C1_C2,        .vb0=0, .vb1=1, .vb2=1, .vb3=1}
-          ,{.to=MA_UI(UISUB_TFT), .from=0xD0, .cmd=CMD_TRSTATE_NOTIF,    .v1=1, .v2=0}
-          ,{.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_TARGET_SPEED, .v1=92, .v2=0});
+    EXPMSG({.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_C1_C2,        .vb0=0, .vb1=1, .vb2=1, .vb3=1}
+          ,{.to=MA3_UI_GEN, .from=MA1_CTRL(0), .cmd=CMD_TRSTATE_NOTIF,    .v1=1, .v2=0}
+          ,{.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_TARGET_SPEED, .v1=92, .v2=0});
     XCTAssert(tvars._state == train_running_c1);
     XCTAssert(tvars.spd_limit == 100);
     XCTAssert(!tvars.pose2_set);
     XCTAssert(tvars._dir == 1);
     XCTAssert(tvars._target_speed == 92);
-    XCTAssert(tvars.can1_addr == 0x00);
-    XCTAssert(tvars.can2_addr == 0x01);
+    XCTAssert(tvars.can1_xaddr == 0x00);
+    XCTAssert(tvars.can2_xaddr == 0x01);
     XCTAssert(0==check_occupency(0,1));
 
     // stop
     ctrl2_upcmd_set_desired_speed(0, &tvars, 0);
     rc = ctrl2_tick_process(0, &tvars, tconf, 0);
     s = dump_msgbuf(0);
-    XCTAssert(tvars.can1_addr == 0x00);
-    XCTAssert(tvars.can2_addr == 0x01);
+    XCTAssert(tvars.can1_xaddr == 0x00);
+    XCTAssert(tvars.can2_xaddr == 0x01);
     XCTAssert(0==check_occupency(0,1));
     
     ctrl2_evt_stop_detected(0, &tvars, 333);
     rc = ctrl2_tick_process(0, &tvars, tconf, 0);
     s = dump_msgbuf(0);
-    XCTAssert(tvars.can1_addr == 0x00);
-    XCTAssert(tvars.can2_addr == 0xFF);
+    XCTAssert(tvars.can1_xaddr == 0x00);
+    XCTAssert(tvars.can2_xaddr == 0xFF);
     XCTAssert(0==check_occupency(0, -1));
 
     
@@ -560,14 +560,14 @@ void ctrl2_send_led(uint8_t led_num, uint8_t prog_num)
     XCTAssert(rc==2);
     s = dump_msgbuf(0);
     // {D0, C8, 10, 0, 0},{D0, C8, 11, 0, 255},{D0, 81, 26, 2, 0},{D0, C8, 11, 256, 257},{D0, 81, 26, 1, 0},{D0, C8, 10, 90, 0}
-    XCTAssert(tvars.can2_addr == 0xFF);
+    XCTAssert(tvars.can2_xaddr == 0xFF);
     
     
 }
 
 - (void) testSubPose1
 {
-    train_config_t myconf;
+    conf_train_t myconf;
     memcpy(&myconf, tconf, sizeof(myconf));
     myconf.pose_per_cm = 20;
     
@@ -594,10 +594,10 @@ void ctrl2_send_led(uint8_t led_num, uint8_t prog_num)
     s = dump_msgbuf(0);
     // {D0, C8, 11, -253, -1},{D0, 81, 26, 1, 0},{D0, C8, 50, -640, -1},{D0, C8, 10, 82, 0}
     // {D0, C8, 11, -253, -1},{D0, 81, 26, 1, 0},{D0, C8, 50, -640, -1},{D0, C8, 10, 82, 0}
-    EXPMSG({.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_C1_C2, .vb0=3, .vb1=-1, .vb2=0xFF, .vb3=-1}
-          ,{.to=MA_UI(UISUB_TFT), .from=0xD0, .cmd=CMD_TRSTATE_NOTIF,    .v1=1, .v2=0}
-          ,{.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_POSE_SET_TRIG0,   .v32=1}
-          ,{.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_TARGET_SPEED, .v1=30, .v2=0});
+    EXPMSG({.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_C1_C2, .vb0=3, .vb1=-1, .vb2=0xFF, .vb3=-1}
+          ,{.to=MA3_UI_GEN, .from=MA1_CTRL(0), .cmd=CMD_TRSTATE_NOTIF,    .v1=1, .v2=0}
+          ,{.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_POSE_SET_TRIG0,   .v32=1}
+          ,{.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_TARGET_SPEED, .v1=30, .v2=0});
     XCTAssert(tvars.trig_eoseg==1);
 
     
@@ -610,10 +610,10 @@ void ctrl2_send_led(uint8_t led_num, uint8_t prog_num)
     s = dump_msgbuf(0);
     // {D0, C8, 11, -253, -1},{D0, 81, 26, 1, 0},{D0, C8, 50, -640, -1},{D0, C8, 10, 82, 0}
     // {D0, C8, 11, -253, -1},{D0, 81, 26, 1, 0},{D0, C8, 50, -640, -1},{D0, C8, 10, 82, 0}
-    EXPMSG({.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_C1_C2, .vb0=3, .vb1=-1, .vb2=0xFF, .vb3=-1}
-          ,{.to=MA_UI(UISUB_TFT), .from=0xD0, .cmd=CMD_TRSTATE_NOTIF,    .v1=1, .v2=0}
-          ,{.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_POSE_SET_TRIG0,   .v32=-2000}
-          ,{.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_TARGET_SPEED, .v1=30, .v2=0});
+    EXPMSG({.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_C1_C2, .vb0=3, .vb1=-1, .vb2=0xFF, .vb3=-1}
+          ,{.to=MA3_UI_GEN, .from=MA1_CTRL(0), .cmd=CMD_TRSTATE_NOTIF,    .v1=1, .v2=0}
+          ,{.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_POSE_SET_TRIG0,   .v32=-2000}
+          ,{.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_TARGET_SPEED, .v1=30, .v2=0});
     XCTAssert(tvars.trig_eoseg==1);
 
     XCTAssert(tvars.trig_eoseg==1);
@@ -626,7 +626,7 @@ void ctrl2_send_led(uint8_t led_num, uint8_t prog_num)
     XCTAssert(rc==2);
     s = dump_msgbuf(0);
     // {D0, C8, 11, -253, -1},{D0, 81, 26, 1, 0},{D0, C8, 50, -640, -1},{D0, C8, 10, 82, 0}
-    EXPMSG({.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_POSE_SET_TRIG0,   .v32=-3600});
+    EXPMSG({.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_POSE_SET_TRIG0,   .v32=-3600});
     XCTAssert(tvars.trig_eoseg==1);
     XCTAssert(tvars.curposmm==-1020);
     XCTAssert(tvars.beginposmm==-1800);
@@ -648,10 +648,10 @@ void ctrl2_send_led(uint8_t led_num, uint8_t prog_num)
      //{D0, C8, 11, 259, 511},{D0, 81, 26, 1, 0},{D0, C8, 50, -2000, -1},{D0, C8, 10, 42, 0}
 
 
-    EXPMSG({.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_C1_C2, .vb0=3, .vb1=1, .vb2=0xFF, .vb3=1}
-          ,{.to=MA_UI(UISUB_TFT), .from=0xD0, .cmd=CMD_TRSTATE_NOTIF,    .v1=1, .v2=0}
-          ,{.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_POSE_SET_TRIG0,   .v32=-2000}
-          ,{.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_TARGET_SPEED, .v1=42, .v2=0});
+    EXPMSG({.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_C1_C2, .vb0=3, .vb1=1, .vb2=0xFF, .vb3=1}
+          ,{.to=MA3_UI_GEN, .from=MA1_CTRL(0), .cmd=CMD_TRSTATE_NOTIF,    .v1=1, .v2=0}
+          ,{.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_POSE_SET_TRIG0,   .v32=-2000}
+          ,{.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_TARGET_SPEED, .v1=42, .v2=0});
     XCTAssert(tvars.trig_eoseg==1);
 
     XCTAssert(tvars.curposmm==-1500);
@@ -667,7 +667,7 @@ void ctrl2_send_led(uint8_t led_num, uint8_t prog_num)
     XCTAssert(rc==2);
     s = dump_msgbuf(0);
       // {D0, C8, 11, -253, -1},{D0, 81, 26, 1, 0},{D0, C8, 50, -640, -1},{D0, C8, 10, 82, 0}
-      EXPMSG({.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_POSE_SET_TRIG0,   .v32=-1160});
+      EXPMSG({.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_POSE_SET_TRIG0,   .v32=-1160});
     XCTAssert(tvars.trig_eoseg==0);
 
       XCTAssert(tvars.curposmm==-995);
@@ -693,15 +693,15 @@ void ctrl2_send_led(uint8_t led_num, uint8_t prog_num)
     s = dump_msgbuf(0);
     // {D0, C8, 11, -253, -1},{D0, 81, 26, 1, 0},{D0, C8, 50, -640, -1},{D0, C8, 10, 82, 0}
     // {D0, C8, 11, -253, -1},{D0, 81, 26, 1, 0},{D0, C8, 50, -640, -1},{D0, C8, 10, 82, 0}
-    EXPMSG({.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_C1_C2, .vb0=3, .vb1=-1, .vb2=0xFF, .vb3=-1}
-          ,{.to=MA_UI(UISUB_TFT), .from=0xD0, .cmd=CMD_TRSTATE_NOTIF,    .v1=1, .v2=0}
-          ,{.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_POSE_SET_TRIG0,   .v32=1}
-          ,{.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_TARGET_SPEED, .v1=82, .v2=0});
+    EXPMSG({.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_C1_C2, .vb0=3, .vb1=-1, .vb2=0xFF, .vb3=-1}
+          ,{.to=MA3_UI_GEN, .from=MA1_CTRL(0), .cmd=CMD_TRSTATE_NOTIF,    .v1=1, .v2=0}
+          ,{.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_POSE_SET_TRIG0,   .v32=1}
+          ,{.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_TARGET_SPEED, .v1=82, .v2=0});
     
     XCTAssert(tvars.trig_eoseg==1);
     XCTAssert(tvars._target_speed == 82);
     XCTAssert(tvars._dir == -1);
-    XCTAssert(tvars.can2_addr == 0xFF);
+    XCTAssert(tvars.can2_xaddr == 0xFF);
     XCTAssert(tvars.pose2_set==0);
     XCTAssert(0==check_occupency(3, -1));
     uint8_t rsblk, rtrn;
@@ -715,7 +715,7 @@ void ctrl2_send_led(uint8_t led_num, uint8_t prog_num)
     rc = ctrl2_tick_process(0, &tvars, tconf, 0);
     XCTAssert(rc==2);
     s = dump_msgbuf(0);
-    EXPMSG({.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_POSE_SET_TRIG0,   .v32=-1600});
+    EXPMSG({.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_POSE_SET_TRIG0,   .v32=-1600});
     XCTAssert(tvars.trig_eoseg==1);
     XCTAssert(tvars._dir==-1);
     XCTAssert(tvars._target_speed == 82);
@@ -730,8 +730,8 @@ void ctrl2_send_led(uint8_t led_num, uint8_t prog_num)
     s = dump_msgbuf(0);
     occupency_block_addr_info(3, NULL, &rsblk);
     XCTAssert(rsblk==5);
-    EXPMSG({.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_POSE_SET_TRIG0,   .v32=-2520}
-          ,{.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_TARGET_SPEED, .v1=70, .v2=0});
+    EXPMSG({.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_POSE_SET_TRIG0,   .v32=-2520}
+          ,{.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_TARGET_SPEED, .v1=70, .v2=0});
     XCTAssert(tvars.trig_eoseg==0);
     XCTAssert(tvars._dir==-1);
     XCTAssert(tvars._target_speed == 70);
@@ -745,8 +745,8 @@ void ctrl2_send_led(uint8_t led_num, uint8_t prog_num)
     XCTAssert(rc==3);
     s = dump_msgbuf(0);
     // {D0, 81, 26, 4, 0},{D0, C8, 10, 0, 0}
-    EXPMSG({.to=MA_UI(UISUB_TFT), .from=0xD0, .cmd=CMD_TRSTATE_NOTIF,    .v1=4, .v2=0}
-          ,{.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_TARGET_SPEED, .v1=0, .v2=0});
+    EXPMSG({.to=MA3_UI_GEN, .from=MA1_CTRL(0), .cmd=CMD_TRSTATE_NOTIF,    .v1=4, .v2=0}
+          ,{.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_TARGET_SPEED, .v1=0, .v2=0});
     XCTAssert(!tvars.pose2_set);
     XCTAssert(tvars._dir==-1);
     XCTAssert(tvars._target_speed == 0);
@@ -760,8 +760,8 @@ void ctrl2_send_led(uint8_t led_num, uint8_t prog_num)
     XCTAssert(0==check_occupency(3, -1));
     //NSString *s1 = dump_msgbuf(0);
     // {D0, 81, 26, 4, 0},{D0, C8, 10, 0, 0}
-    //EXPMSG({.to=MA_UI(UISUB_TFT), .from=0xD0, .cmd=CMD_TRSTATE_NOTIF,    .v1=2, .v2=0}
-    //      ,{.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_C1_C2,        .vb0=3, .vb1=0, .vb2=0xFF, .vb3=0});
+    //EXPMSG({.to=MA3_UI_GEN, .from=MA1_CTRL(0), .cmd=CMD_TRSTATE_NOTIF,    .v1=2, .v2=0}
+    //      ,{.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_C1_C2,        .vb0=3, .vb1=0, .vb2=0xFF, .vb3=0});
     
 }
 
@@ -780,7 +780,7 @@ void ctrl2_send_led(uint8_t led_num, uint8_t prog_num)
     NSString *s = dump_msgbuf(0);
     
     
-    EXPMSG({.to=MA_UI(UISUB_TFT), .from=0xD0, .cmd=CMD_TRSTATE_NOTIF, .v1=3, .v2=0});
+    EXPMSG({.to=MA3_UI_GEN, .from=MA1_CTRL(0), .cmd=CMD_TRSTATE_NOTIF, .v1=3, .v2=0});
 
     // same state : no notif ui
     ctrl_set_state(0, &tvars, train_station);
@@ -795,11 +795,11 @@ void ctrl2_send_led(uint8_t led_num, uint8_t prog_num)
     XCTAssert(mqf_len(&from_ctrl)==0);
     ctrl_set_dir(0, &tvars, 0, 1);
     XCTAssert(mqf_len(&from_ctrl)==1);
-    EXPMSG({.to=MA_UI(UISUB_TFT), .from=0xD0, .cmd=CMD_TRDIR_NOTIF, .v1=0, .v2=0});
+    EXPMSG({.to=MA3_UI_GEN, .from=MA1_CTRL(0), .cmd=CMD_TRDIR_NOTIF, .v1=0, .v2=0});
 
     ctrl_set_tspeed(0, &tvars, 23);
-    EXPMSG({.to=MA_UI(UISUB_TFT), .from=0xD0, .cmd=CMD_TRTSPD_NOTIF,     .v1=23, .v2=0},
-           {.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_TARGET_SPEED, .v1=23, .v2=0});
+    EXPMSG({.to=MA3_UI_GEN, .from=MA1_CTRL(0), .cmd=CMD_TRTSPD_NOTIF,     .v1=23, .v2=0},
+           {.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_TARGET_SPEED, .v1=23, .v2=0});
 
     ctrl_set_tspeed(0, &tvars, 23);
     XCTAssert(mqf_len(&from_ctrl)==0);
@@ -817,32 +817,32 @@ void ctrl2_send_led(uint8_t led_num, uint8_t prog_num)
     // _dir and _target_speed should have been reseted becaunse train_station state
     XCTAssert(tvars._target_speed == 0);
     XCTAssert(tvars._dir == 0);
-    EXPMSG({.to=MA_TRAIN_SC(0), .from=0xD0, .cmd=CMD_SET_C1_C2, .vb0=1, .vb1=0, .vb2=0xFF, .vb3=0});
+    EXPMSG({.to=MA1_SPDCTL(0), .from=MA1_CTRL(0), .cmd=CMD_SET_C1_C2, .vb0=1, .vb1=0, .vb2=0xFF, .vb3=0});
     
     // start on sblk 1
-    XCTAssert(tvars.can1_addr == 0x01);
+    XCTAssert(tvars.can1_xaddr == 0x01);
     XCTAssert(tvars.c1_sblk.n == 1);
     
     tvars._state = train_running_c1;
     tvars._dir = 1;
     tvars.spd_limit = 100; //TODO : REMOVE should not be needed
-    XCTAssert(tvars.can2_addr == 0xFF);
+    XCTAssert(tvars.can2_xaddr == 0xFF);
     
     // train should be blk wait due to switch in bad position
     ctrl_update_c2_state_limits(0, &tvars, tconf, upd_change_dir);
-    XCTAssert(tvars.can2_addr == 0xFF);
+    XCTAssert(tvars.can2_xaddr == 0xFF);
     XCTAssert(tvars.spd_limit == 0);
     XCTAssert(tvars._target_speed == 0);
     XCTAssert(tvars._state == train_blk_wait);
     //NSString *s = dump_msgbuf(0);
     //{D0, 81, 26, 4, 0},{D0, C8, 11, 257, 511}
-    EXPMSG({.to=MA_UI(UISUB_TFT), .from=0xD0, .cmd=CMD_TRSTATE_NOTIF, .v1=4, .v2=0},
-           {.to=MA_TRAIN_SC(0), .from=0xD0, .cmd=CMD_SET_C1_C2, .vb0=1, .vb1=1, .vb2=0xFF, .vb3=1});
+    EXPMSG({.to=MA3_UI_GEN, .from=MA1_CTRL(0), .cmd=CMD_TRSTATE_NOTIF, .v1=4, .v2=0},
+           {.to=MA1_SPDCTL(0), .from=MA1_CTRL(0), .cmd=CMD_SET_C1_C2, .vb0=1, .vb1=1, .vb2=0xFF, .vb3=1});
 
     // train should restart after turnout change
     topology_set_turnout(1, 1, -1);
     ctrl_update_c2_state_limits(0, &tvars, tconf, upd_check);
-    XCTAssert(tvars.can2_addr == 0x03);
+    XCTAssert(tvars.can2_xaddr == 0x03);
     XCTAssert(tvars.spd_limit == 100);
     XCTAssert(tvars._target_speed == 90);
     XCTAssert(tvars._state == train_running_c1);
@@ -850,39 +850,39 @@ void ctrl2_send_led(uint8_t led_num, uint8_t prog_num)
     
     //NSString *s3 = dump_msgbuf(0);
     //{D0, 81, 26, 1, 0},{D0, C8, 11, 257, 259},{D0, 81, 24, 90, 1},{D0, C8, 10, 90, 0}
-    EXPMSG({.to=MA_UI(UISUB_TFT), .from=0xD0, .cmd=CMD_TRSTATE_NOTIF, .v1=1, .v2=0},
-           {.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_C1_C2, .vb0=1, .vb1=1, .vb2=3, .vb3=1},
-           {.to=MA_UI(UISUB_TFT), .from=0xD0, .cmd=CMD_TRTSPD_NOTIF, .v1=90, .v2=1},
-           {.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_TARGET_SPEED, .v1=90, .v2=0});
+    EXPMSG({.to=MA3_UI_GEN, .from=MA1_CTRL(0), .cmd=CMD_TRSTATE_NOTIF, .v1=1, .v2=0},
+           {.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_C1_C2, .vb0=1, .vb1=1, .vb2=3, .vb3=1},
+           {.to=MA3_UI_GEN, .from=MA1_CTRL(0), .cmd=CMD_TRTSPD_NOTIF, .v1=90, .v2=1},
+           {.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_TARGET_SPEED, .v1=90, .v2=0});
 
     // got to c3, should stop half way due to end of trac
-    tvars.c1_sblk = first_lsblk_with_canton(tvars.can2_addr, tvars.c1_sblk);
-    tvars.can1_addr = tvars.can2_addr;
-    tvars.can2_addr = 0xFF;
+    tvars.c1_sblk = first_lsblk_with_canton(tvars.can2_xaddr, tvars.c1_sblk);
+    tvars.can1_xaddr = tvars.can2_xaddr;
+    tvars.can2_xaddr = 0xFF;
     ctrl_update_c2_state_limits(0, &tvars, tconf, upd_c1c2);
     
     XCTAssert(tvars._state == train_running_c1);
     XCTAssert(tvars.spd_limit == 70);
-    XCTAssert(tvars.can2_addr == 0xFF);
+    XCTAssert(tvars.can2_xaddr == 0xFF);
     XCTAssert(tvars._target_speed == 70);
     //NSString *s3 = dump_msgbuf(0);
     //{D0, C8, 11, 259, 511},{D0, 81, 24, 70, 1},{D0, C8, 10, 70, 0},{D0, C8, 51, 320, 0}
-    EXPMSG({.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_C1_C2, .vb0=3, .vb1=1, .vb2=0xFF, .vb3=1},
-           {.to=MA_UI(UISUB_TFT), .from=0xD0, .cmd=CMD_TRTSPD_NOTIF, .v1=70, .v2=1},
-           {.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_TARGET_SPEED, .v1=70, .v2=0},
-           {.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_POSE_SET_TRIG2, .v32=320});
+    EXPMSG({.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_C1_C2, .vb0=3, .vb1=1, .vb2=0xFF, .vb3=1},
+           {.to=MA3_UI_GEN, .from=MA1_CTRL(0), .cmd=CMD_TRTSPD_NOTIF, .v1=70, .v2=1},
+           {.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_TARGET_SPEED, .v1=70, .v2=0},
+           {.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_POSE_SET_TRIG2, .v32=320});
 
     
     ctrl_update_c2_state_limits(0, &tvars, tconf, upd_pose_trig);
     XCTAssert(tvars._state == train_end_of_track);
     XCTAssert(tvars.spd_limit == 0);
-    XCTAssert(tvars.can2_addr == 0xFF);
+    XCTAssert(tvars.can2_xaddr == 0xFF);
     XCTAssert(tvars._target_speed == 0);
     NSString *s3 = dump_msgbuf(0);
     //{D0, 81, 26, 5, 0},{D0, 81, 24, 0, 1},{D0, C8, 10, 0, 0}
-    EXPMSG({.to=MA_UI(UISUB_TFT), .from=0xD0, .cmd=CMD_TRSTATE_NOTIF, .v1=5, .v2=0},
-              {.to=MA_UI(UISUB_TFT), .from=0xD0, .cmd=CMD_TRTSPD_NOTIF, .v1=0, .v2=1},
-              {.to=MA_TRAIN_SC(0),   .from=0xD0, .cmd=CMD_SET_TARGET_SPEED, .v1=0, .v2=0});
+    EXPMSG({.to=MA3_UI_GEN, .from=MA1_CTRL(0), .cmd=CMD_TRSTATE_NOTIF, .v1=5, .v2=0},
+              {.to=MA3_UI_GEN, .from=MA1_CTRL(0), .cmd=CMD_TRTSPD_NOTIF, .v1=0, .v2=1},
+              {.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_TARGET_SPEED, .v1=0, .v2=0});
 }
 #endif
 // -------------------------------------
@@ -945,13 +945,13 @@ static NSString *dump_msgbuf(int clear)
 }
 // -------------------------------------
 
-static const train_config_t testconf = {
+static const conf_train_t testconf = {
     .pose_per_cm = 20,
     .slipping = 100,
 };
 
 
-const train_config_t *get_train_cnf(int idx)
+const conf_train_t *get_train_cnf(int idx)
 {
     return &testconf;
 }

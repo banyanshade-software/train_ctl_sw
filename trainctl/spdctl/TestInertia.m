@@ -20,7 +20,7 @@ uint32_t SimuTick = 0;
 
 @end
 
-static inertia_config_t cnf = {200, 300};
+static struct conf_inertia cnf = {200, 300};
 static inertia_vars_t vars;
 
 @implementation TestInertia

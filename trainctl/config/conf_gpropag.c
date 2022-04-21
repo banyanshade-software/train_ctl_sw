@@ -4,6 +4,7 @@
 
 #include "propag.h"
 
+#include "conf_utest.propag.h"
 #include "conf_globparam.propag.h"
 #include "conf_led.propag.h"
 #include "conf_turnout.propag.h"
@@ -13,9 +14,12 @@
 #include "conf_boards.propag.h"
 
 
-void conf_propagate(int confnum, int fieldnum, int instnum, int32_t v)
+void conf_propagate(unsigned int confnum, unsigned int fieldnum, unsigned int instnum, int32_t v)
 {
     switch (confnum) {
+    case conf_pnum_utest:
+        conf_utest_propagate(instnum, fieldnum, v);
+        break;
     case conf_pnum_led:
         conf_led_propagate(instnum, fieldnum, v);
         break;
@@ -29,6 +33,32 @@ void conf_propagate(int confnum, int fieldnum, int instnum, int32_t v)
         conf_canton_propagate(instnum, fieldnum, v);
         break;
     default: break;
+    }
+
+}
+
+
+
+int32_t conf_default_value(unsigned int confnum, unsigned int fieldnum, unsigned int board, unsigned int instnum)
+{
+    switch (confnum) {
+    case conf_pnum_utest:
+        return conf_utest_default_value(instnum, fieldnum, board);
+        break;
+    case conf_pnum_led:
+        return conf_led_default_value(instnum, fieldnum, board);
+        break;
+    case conf_pnum_turnout:
+        return conf_turnout_default_value(instnum, fieldnum, board);
+        break;
+    case conf_pnum_train:
+        return conf_train_default_value(instnum, fieldnum, board);
+        break;
+    case conf_pnum_canton:
+        return conf_canton_default_value(instnum, fieldnum, board);
+        break;
+    default: return 0;
+    break;
     }
 
 }

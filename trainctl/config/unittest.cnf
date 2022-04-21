@@ -1,0 +1,32 @@
+#
+
+
+config utest {
+    const uint32_t fixed = (default) 42;
+	user uint32_t alpha
+		= (main:*) 1000
+		= (default) 1001;
+	user uint32_t beta
+		= (main:*) 1000
+		= (default) 1001;
+
+} num = (main) 1
+      = (dispatcher) 1          # TODO
+      = (default) 1;
+
+
+attrib utest h_code {
+
+#ifndef TRAIN_SIMU
+#error used only for unit test
+#endif
+
+}
+attrib utest c_code {
+
+#ifndef TRAIN_SIMU
+#error used only for unit test
+#endif
+
+}
+

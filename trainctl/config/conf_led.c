@@ -111,7 +111,7 @@ const conf_led_t *conf_led_get(int num)
 }
 
 // led config store type 0 num 4
-int conf_led_propagate(int numinst, int numfield, int32_t value)
+int conf_led_propagate(unsigned int numinst, unsigned int numfield, int32_t value)
 {
     if (numinst>=conf_led_num_entries()) return -1;
     conf_led_t *conf = &conf_led[numinst];
@@ -120,6 +120,18 @@ int conf_led_propagate(int numinst, int numfield, int32_t value)
     case conf_numfield_defprog:
         conf->defprog = value;
         break;
+    }
+    return 0;
+}
+
+
+int32_t conf_led_default_value(unsigned int numinst, unsigned int numfield, unsigned int boardnum)
+{
+    //if (numinst>=conf_led_num_entries()) return 0;
+    switch (numfield) {
+    default: return 0;
+    case conf_numfield_defprog:
+        return 0;
     }
     return 0;
 }

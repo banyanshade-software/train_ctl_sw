@@ -148,7 +148,7 @@ static inline void mywrite(const char *ptr, int32_t len)
 	}
 #else
     ssize_t  write(int fildes, const void *buf, size_t nbyte);
-    write(0, ptr, len);
+    write(1, ptr, len);
 #endif
 }
 

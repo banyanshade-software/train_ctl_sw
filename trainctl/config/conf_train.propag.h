@@ -9,7 +9,10 @@
 // train for propag
 
 
-int conf_train_propagate(int numinst, int numfield, int32_t value);
+int conf_train_propagate(unsigned int numinst, unsigned int numfield, int32_t value);
+
+
+int32_t conf_train_default_value(unsigned int numinst, unsigned int numfield, unsigned int board);
 
 #define conf_pnum_train 1
 

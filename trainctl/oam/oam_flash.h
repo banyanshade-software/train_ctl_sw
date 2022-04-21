@@ -12,7 +12,9 @@
 
 
 void oam_flash_init(void);
+void oam_flash_deinit(void);
 
+void oam_flash_erase(void); // full erase
 
 // for 'normal' multiboard configuration store
 

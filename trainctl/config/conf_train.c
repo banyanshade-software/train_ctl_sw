@@ -306,7 +306,7 @@ const conf_train_t *conf_train_get(int num)
 }
 
 // train config store type 0 num 1
-int conf_train_propagate(int numinst, int numfield, int32_t value)
+int conf_train_propagate(unsigned int numinst, unsigned int numfield, int32_t value)
 {
     if (numinst>=conf_train_num_entries()) return -1;
     conf_train_t *conf = &conf_train[numinst];
@@ -360,6 +360,48 @@ int conf_train_propagate(int numinst, int numfield, int32_t value)
     case conf_numfield_trainlen_right:
         conf->trainlen_right = value;
         break;
+    }
+    return 0;
+}
+
+
+int32_t conf_train_default_value(unsigned int numinst, unsigned int numfield, unsigned int boardnum)
+{
+    //if (numinst>=conf_train_num_entries()) return 0;
+    switch (numfield) {
+    default: return 0;
+    case conf_numfield_kP:
+        return 500;
+    case conf_numfield_kI:
+        return 100;
+    case conf_numfield_kD:
+        return 500;
+    case conf_numfield_dec:
+        return 120;
+    case conf_numfield_acc:
+        return 120;
+    case conf_numfield_volt_policy:
+        return vpolicy_normal;
+    case conf_numfield_enabled:
+        return 1;
+    case conf_numfield_enable_inertia:
+        return 0;
+    case conf_numfield_enable_pid:
+        return 1;
+    case conf_numfield_reversed:
+        return 0;
+    case conf_numfield_bemfIIR:
+        return 0;
+    case conf_numfield_postIIR:
+        return 0;
+    case conf_numfield_slipping:
+        return 120;
+    case conf_numfield_pose_per_cm:
+        return 450;
+    case conf_numfield_trainlen_left:
+        return 6;
+    case conf_numfield_trainlen_right:
+        return 18;
     }
     return 0;
 }

@@ -9,7 +9,10 @@
 // led for propag
 
 
-int conf_led_propagate(int numinst, int numfield, int32_t value);
+int conf_led_propagate(unsigned int numinst, unsigned int numfield, int32_t value);
+
+
+int32_t conf_led_default_value(unsigned int numinst, unsigned int numfield, unsigned int board);
 
 #define conf_pnum_led 4
 

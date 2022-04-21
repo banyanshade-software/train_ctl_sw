@@ -9,7 +9,10 @@
 // topology for propag
 
 
-int conf_topology_propagate(int numinst, int numfield, int32_t value);
+int conf_topology_propagate(unsigned int numinst, unsigned int numfield, int32_t value);
+
+
+int32_t conf_topology_default_value(unsigned int numinst, unsigned int numfield, unsigned int board);
 
 #define conf_pnum_topology 12
 

@@ -9,6 +9,18 @@
 /* Begin PBXBuildFile section */
 		1B0ECEB127BAF993003692B1 /* adc_mean.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B0ECEB027BAF993003692B1 /* adc_mean.c */; };
 		1B0ECEB427BAFC37003692B1 /* adc_mean.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B0ECEB027BAF993003692B1 /* adc_mean.c */; };
+		1B138EE12811243B00DC181B /* TestFlashStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B138EE02811243B00DC181B /* TestFlashStore.m */; };
+		1B138EE528112FBD00DC181B /* conf_utest.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B138EE428112FBD00DC181B /* conf_utest.c */; };
+		1B138EE62811C0A500DC181B /* conf_utest.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B138EE428112FBD00DC181B /* conf_utest.c */; };
+		1B138EE72811C0DF00DC181B /* itm_debug.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B7A2A11262D599E004E0481 /* itm_debug.c */; };
+		1B138EE82811E20E00DC181B /* conf_gpropag.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B46F809280C22C300BAD6E8 /* conf_gpropag.c */; };
+		1B138EE92811E22400DC181B /* conf_globparam.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B455A0B280F563400F09E33 /* conf_globparam.c */; };
+		1B138EEA2811E22800DC181B /* conf_led.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B46F80C280C22C400BAD6E8 /* conf_led.c */; };
+		1B138EEB2811E22C00DC181B /* conf_boards.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B46F802280752D600BAD6E8 /* conf_boards.c */; };
+		1B138EEC2811E23100DC181B /* conf_canton.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B46F7F9280752D500BAD6E8 /* conf_canton.c */; };
+		1B138EED2811E23B00DC181B /* conf_topology.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B46F7FA280752D500BAD6E8 /* conf_topology.c */; };
+		1B138EEE2811E23E00DC181B /* conf_train.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B46F7FD280752D600BAD6E8 /* conf_train.c */; };
+		1B138EEF2811E24300DC181B /* conf_turnout.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B46F7F7280752D500BAD6E8 /* conf_turnout.c */; };
 		1B18114F26BD5BA30008F21C /* uitrack.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B18114D26BD5BA30008F21C /* uitrack.c */; };
 		1B18115126BFFCC00008F21C /* uitrack.html in Resources */ = {isa = PBXBuildFile; fileRef = 1B18115026BFFCC00008F21C /* uitrack.html */; };
 		1B18115326C00F500008F21C /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B18115226C00F4F0008F21C /* WebKit.framework */; };
@@ -31,7 +43,6 @@
 		1B455A272810B6F300F09E33 /* conf_train.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B46F7FD280752D600BAD6E8 /* conf_train.c */; };
 		1B46EE552692684F00FAC813 /* topology.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B46EE542692684E00FAC813 /* topology.c */; };
 		1B46F7E228074DCF00BAD6E8 /* canton.cnf in Resources */ = {isa = PBXBuildFile; fileRef = 1B46F7D928074DCF00BAD6E8 /* canton.cnf */; };
-		1B46F7E328074DCF00BAD6E8 /* Makefile in Sources */ = {isa = PBXBuildFile; fileRef = 1B46F7DA28074DCF00BAD6E8 /* Makefile */; };
 		1B46F7E428074DCF00BAD6E8 /* .configdone in Resources */ = {isa = PBXBuildFile; fileRef = 1B46F7DB28074DCF00BAD6E8 /* .configdone */; };
 		1B46F7E528074DCF00BAD6E8 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = 1B46F7DC28074DCF00BAD6E8 /* .gitignore */; };
 		1B46F7E628074DCF00BAD6E8 /* boards.cnf in Resources */ = {isa = PBXBuildFile; fileRef = 1B46F7DD28074DCF00BAD6E8 /* boards.cnf */; };
@@ -78,6 +89,9 @@
 		1BC903182720B1920087CEA7 /* led.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BC90305272092EC0087CEA7 /* led.c */; };
 		1BC9031A2720B4E60087CEA7 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1BC903192720B4E60087CEA7 /* XCTest.framework */; };
 		1BC9031D2720BFDA0087CEA7 /* ledio.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BC9031C2720BFDA0087CEA7 /* ledio.c */; };
+		1BD157AE281122AC00CFFA00 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1BC903192720B4E60087CEA7 /* XCTest.framework */; };
+		1BD157B5281122FB00CFFA00 /* oam_flash.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B46F80F280C283C00BAD6E8 /* oam_flash.c */; };
+		1BD157B62811230100CFFA00 /* simu_flash.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B46F813280C288E00BAD6E8 /* simu_flash.c */; };
 		1BD93C6C2546FF44006C4D70 /* param.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BD93C4B2546FF42006C4D70 /* param.c */; };
 		1BD93C712546FF44006C4D70 /* txrxcmd.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BD93C552546FF42006C4D70 /* txrxcmd.c */; };
 		1BD93C732546FF44006C4D70 /* train.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BD93C582546FF42006C4D70 /* train.c */; };
@@ -107,11 +121,22 @@
 			remoteGlobalIDString = 1BED2A9225173CF40080FC97;
 			remoteInfo = train_throttle;
 		};
+		1BD15797281122AC00CFFA00 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1BED2A8B25173CF40080FC97 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 1BED2A9225173CF40080FC97;
+			remoteInfo = train_throttle;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		1B0ECEAF27BAF993003692B1 /* adc_mean.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = adc_mean.h; sourceTree = "<group>"; };
 		1B0ECEB027BAF993003692B1 /* adc_mean.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = adc_mean.c; sourceTree = "<group>"; };
+		1B138EE02811243B00DC181B /* TestFlashStore.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TestFlashStore.m; sourceTree = "<group>"; };
+		1B138EE228112FBD00DC181B /* conf_utest.propag.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = conf_utest.propag.h; sourceTree = "<group>"; };
+		1B138EE328112FBD00DC181B /* conf_utest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = conf_utest.h; sourceTree = "<group>"; };
+		1B138EE428112FBD00DC181B /* conf_utest.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = conf_utest.c; sourceTree = "<group>"; };
 		1B18114D26BD5BA30008F21C /* uitrack.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = uitrack.c; sourceTree = "<group>"; };
 		1B18114E26BD5BA30008F21C /* uitrack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = uitrack.h; sourceTree = "<group>"; };
 		1B18115026BFFCC00008F21C /* uitrack.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = uitrack.html; sourceTree = "<group>"; };
@@ -226,6 +251,8 @@
 		1BC903192720B4E60087CEA7 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Platforms/MacOSX.platform/Developer/Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		1BC9031B2720BFDA0087CEA7 /* ledio.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ledio.h; sourceTree = "<group>"; };
 		1BC9031C2720BFDA0087CEA7 /* ledio.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ledio.c; sourceTree = "<group>"; };
+		1BD157B3281122AC00CFFA00 /* flashStoreTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = flashStoreTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		1BD157B4281122AC00CFFA00 /* trainctlTests copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "trainctlTests copy-Info.plist"; path = "/Users/danielbraun/devel/train/sw1/mac/train_throttle/trainctlTests copy-Info.plist"; sourceTree = "<absolute>"; };
 		1BD7CD33273686E30035CF0A /* topologyP.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = topologyP.h; sourceTree = "<group>"; };
 		1BD93C4B2546FF42006C4D70 /* param.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = param.c; sourceTree = "<group>"; };
 		1BD93C4D2546FF42006C4D70 /* train.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = train.h; sourceTree = "<group>"; };
@@ -263,6 +290,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				1BC9031A2720B4E60087CEA7 /* XCTest.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1BD157AD281122AC00CFFA00 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1BD157AE281122AC00CFFA00 /* XCTest.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -305,6 +340,9 @@
 		1B46F7D828074DCF00BAD6E8 /* config */ = {
 			isa = PBXGroup;
 			children = (
+				1B138EE428112FBD00DC181B /* conf_utest.c */,
+				1B138EE328112FBD00DC181B /* conf_utest.h */,
+				1B138EE228112FBD00DC181B /* conf_utest.propag.h */,
 				1B455A18280F671000F09E33 /* _str */,
 				1B455A0B280F563400F09E33 /* conf_globparam.c */,
 				1B455A0C280F563400F09E33 /* conf_globparam.h */,
@@ -353,6 +391,7 @@
 				1B46F7ED28074DDF00BAD6E8 /* boards.h */,
 				1B46F7EE28074DDF00BAD6E8 /* boards.c */,
 				1B46F7EF28074DDF00BAD6E8 /* oam.h */,
+				1B138EE02811243B00DC181B /* TestFlashStore.m */,
 			);
 			path = oam;
 			sourceTree = "<group>";
@@ -538,6 +577,7 @@
 				1BC9030D2720AD250087CEA7 /* trainctlTests */,
 				1BED2A9425173CF40080FC97 /* Products */,
 				1B61090B256AAE1800F1AC45 /* Frameworks */,
+				1BD157B4281122AC00CFFA00 /* trainctlTests copy-Info.plist */,
 			);
 			sourceTree = "<group>";
 		};
@@ -546,6 +586,7 @@
 			children = (
 				1BED2A9325173CF40080FC97 /* train_throttle.app */,
 				1BC9030C2720AD250087CEA7 /* trainctlTests.xctest */,
+				1BD157B3281122AC00CFFA00 /* flashStoreTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -595,6 +636,24 @@
 			productReference = 1BC9030C2720AD250087CEA7 /* trainctlTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		1BD15795281122AC00CFFA00 /* flashStoreTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1BD157B0281122AC00CFFA00 /* Build configuration list for PBXNativeTarget "flashStoreTests" */;
+			buildPhases = (
+				1BD15798281122AC00CFFA00 /* Sources */,
+				1BD157AD281122AC00CFFA00 /* Frameworks */,
+				1BD157AF281122AC00CFFA00 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				1BD15796281122AC00CFFA00 /* PBXTargetDependency */,
+			);
+			name = flashStoreTests;
+			productName = trainctlTests;
+			productReference = 1BD157B3281122AC00CFFA00 /* flashStoreTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		1BED2A9225173CF40080FC97 /* train_throttle */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 1BED2AA425173D1F0080FC97 /* Build configuration list for PBXNativeTarget "train_throttle" */;
@@ -623,7 +682,6 @@
 				TargetAttributes = {
 					1BC9030B2720AD250087CEA7 = {
 						CreatedOnToolsVersion = 11.3;
-						TestTargetID = 1BED2A9225173CF40080FC97;
 					};
 					1BED2A9225173CF40080FC97 = {
 						CreatedOnToolsVersion = 11.3;
@@ -645,12 +703,20 @@
 			targets = (
 				1BED2A9225173CF40080FC97 /* train_throttle */,
 				1BC9030B2720AD250087CEA7 /* trainctlTests */,
+				1BD15795281122AC00CFFA00 /* flashStoreTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		1BC9030A2720AD250087CEA7 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1BD157AF281122AC00CFFA00 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -708,6 +774,26 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		1BD15798281122AC00CFFA00 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1B138EEC2811E23100DC181B /* conf_canton.c in Sources */,
+				1BD157B62811230100CFFA00 /* simu_flash.c in Sources */,
+				1B138EE72811C0DF00DC181B /* itm_debug.c in Sources */,
+				1B138EEF2811E24300DC181B /* conf_turnout.c in Sources */,
+				1BD157B5281122FB00CFFA00 /* oam_flash.c in Sources */,
+				1B138EEE2811E23E00DC181B /* conf_train.c in Sources */,
+				1B138EED2811E23B00DC181B /* conf_topology.c in Sources */,
+				1B138EEB2811E22C00DC181B /* conf_boards.c in Sources */,
+				1B138EE12811243B00DC181B /* TestFlashStore.m in Sources */,
+				1B138EE92811E22400DC181B /* conf_globparam.c in Sources */,
+				1B138EEA2811E22800DC181B /* conf_led.c in Sources */,
+				1B138EE82811E20E00DC181B /* conf_gpropag.c in Sources */,
+				1B138EE528112FBD00DC181B /* conf_utest.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		1BED2A8F25173CF40080FC97 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -719,7 +805,6 @@
 				1B46F7F028074DDF00BAD6E8 /* oam.c in Sources */,
 				1B812B3D273FA77B00924749 /* cautoP.c in Sources */,
 				1BC90306272092EC0087CEA7 /* led.c in Sources */,
-				1B46F7E328074DCF00BAD6E8 /* Makefile in Sources */,
 				1BA4B49F2551DAF70043D763 /* StringExtension.m in Sources */,
 				1B92EA302631A0BA00558716 /* ctrl.c in Sources */,
 				1BD93C782546FF44006C4D70 /* misc.c in Sources */,
@@ -729,6 +814,7 @@
 				1BE8B298274191F9000A0FAD /* ledtask.c in Sources */,
 				1BED2AA025173D1F0080FC97 /* main.m in Sources */,
 				1BC9031D2720BFDA0087CEA7 /* ledio.c in Sources */,
+				1B138EE62811C0A500DC181B /* conf_utest.c in Sources */,
 				1B455A24280F671000F09E33 /* conf_topology.fields.c in Sources */,
 				1B455A22280F671000F09E33 /* conf_turnout.fields.c in Sources */,
 				1BD93C732546FF44006C4D70 /* train.c in Sources */,
@@ -776,6 +862,11 @@
 			target = 1BED2A9225173CF40080FC97 /* train_throttle */;
 			targetProxy = 1BC903112720AD250087CEA7 /* PBXContainerItemProxy */;
 		};
+		1BD15796281122AC00CFFA00 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 1BED2A9225173CF40080FC97 /* train_throttle */;
+			targetProxy = 1BD15797281122AC00CFFA00 /* PBXContainerItemProxy */;
+		};
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
@@ -812,7 +903,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.banyanshade-software.trainctlTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/train_throttle.app/Contents/MacOS/train_throttle";
 			};
 			name = Debug;
 		};
@@ -838,7 +928,56 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.banyanshade-software.trainctlTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/train_throttle.app/Contents/MacOS/train_throttle";
+			};
+			name = Release;
+		};
+		1BD157B1281122AC00CFFA00 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = "";
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+					UNIT_TEST,
+				);
+				INFOPLIST_FILE = "trainctlTests copy-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.banyanshade-software.trainctlTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+			};
+			name = Debug;
+		};
+		1BD157B2281122AC00CFFA00 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = "";
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					TRAIN_SIMU,
+					HOST_SIDE,
+					UNIT_TEST,
+				);
+				INFOPLIST_FILE = "trainctlTests copy-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.banyanshade-software.trainctlTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 			};
 			name = Release;
 		};
@@ -1009,6 +1148,15 @@
 			buildConfigurations = (
 				1BC903142720AD250087CEA7 /* Debug */,
 				1BC903152720AD250087CEA7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1BD157B0281122AC00CFFA00 /* Build configuration list for PBXNativeTarget "flashStoreTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1BD157B1281122AC00CFFA00 /* Debug */,
+				1BD157B2281122AC00CFFA00 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

@@ -213,7 +213,7 @@ const conf_canton_t *conf_canton_template(void)
 }
 
 // canton config store type 0 num 2
-int conf_canton_propagate(int numinst, int numfield, int32_t value)
+int conf_canton_propagate(unsigned int numinst, unsigned int numfield, int32_t value)
 {
     if (numinst>=conf_canton_num_entries()) return -1;
     conf_canton_t *conf = &conf_canton[numinst];
@@ -222,6 +222,18 @@ int conf_canton_propagate(int numinst, int numfield, int32_t value)
     case conf_numfield_reverse_bemf:
         conf->reverse_bemf = value;
         break;
+    }
+    return 0;
+}
+
+
+int32_t conf_canton_default_value(unsigned int numinst, unsigned int numfield, unsigned int boardnum)
+{
+    //if (numinst>=conf_canton_num_entries()) return 0;
+    switch (numfield) {
+    default: return 0;
+    case conf_numfield_reverse_bemf:
+        return 0;
     }
     return 0;
 }

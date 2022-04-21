@@ -145,6 +145,13 @@ void W25qxx_WaitForWriteEnd(void)
 
 
 //###################################################################################################################
+
+int W25qxx_Deinit(void)
+{
+    // not implemented
+    return 0;
+}
+
 int W25qxx_Init(void)
 {
 	w25qxx.Lock = 1;

@@ -15,21 +15,22 @@
 
 #include "simu_flash.h"
 
-
+#define FLASH_SIZE (2*1024*2024)
 static uint8_t *w25qmem = NULL;
+static int w25fd = -1;
 
 int W25qxx_Init(void)
 {
     // mmap flash file
-    int fd = open("/tmp/w25q", O_RDWR|O_CREAT, 0755);
-    if (!fd) {
+    w25fd = open("/tmp/w25q", O_RDWR|O_CREAT, 0755);
+    if (!w25fd) {
         perror("open flash file");
         return -1;
     }
-    lseek(fd, 2*1024*1024-1, SEEK_SET);
+    lseek(w25fd, FLASH_SIZE-1, SEEK_SET);
     uint8_t c = 0;
-    write(fd, &c, 1);
-    w25qmem = mmap(NULL, 2*1024*1024, PROT_READ|PROT_WRITE, MAP_FILE|MAP_SHARED, fd, 0);
+    write(w25fd, &c, 1);
+    w25qmem = mmap(NULL, FLASH_SIZE, PROT_READ|PROT_WRITE, MAP_FILE|MAP_SHARED, w25fd, 0);
     if (!w25qmem || ((long)w25qmem == -1)) {
         perror("mmap");
         return -1;
@@ -37,7 +38,12 @@ int W25qxx_Init(void)
     return 0;
 }
 
-
+int W25qxx_Deinit(void)
+{
+    munmap(w25qmem, 2*1024*2024);
+    close(w25fd);
+    return 0;
+}
 
 
 //###################################################################################################################
@@ -81,7 +87,10 @@ uint32_t W25qxx_BlockToSector(uint32_t BlockAddress)
 
 
 
-//void W25qxx_EraseChip(void);
+void W25qxx_EraseChip(void)
+{
+    memset(w25qmem, 0xFF, FLASH_SIZE);
+}
 //void W25qxx_EraseSector(uint32_t SectorAddr);
 void W25qxx_EraseBlock(uint32_t BlockAddr)
 {

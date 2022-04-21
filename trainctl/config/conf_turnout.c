@@ -114,7 +114,7 @@ const conf_turnout_t *conf_turnout_get(int num)
 }
 
 // turnout config store type 0 num 3
-int conf_turnout_propagate(int numinst, int numfield, int32_t value)
+int conf_turnout_propagate(unsigned int numinst, unsigned int numfield, int32_t value)
 {
     if (numinst>=conf_turnout_num_entries()) return -1;
     conf_turnout_t *conf = &conf_turnout[numinst];
@@ -123,6 +123,18 @@ int conf_turnout_propagate(int numinst, int numfield, int32_t value)
     case conf_numfield_reverse:
         conf->reverse = value;
         break;
+    }
+    return 0;
+}
+
+
+int32_t conf_turnout_default_value(unsigned int numinst, unsigned int numfield, unsigned int boardnum)
+{
+    //if (numinst>=conf_turnout_num_entries()) return 0;
+    switch (numfield) {
+    default: return 0;
+    case conf_numfield_reverse:
+        return 0;
     }
     return 0;
 }

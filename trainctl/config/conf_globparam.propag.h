@@ -9,7 +9,10 @@
 // globparam for propag
 
 
-int conf_globparam_propagate(int numinst, int numfield, int32_t value);
+int conf_globparam_propagate(unsigned int numinst, unsigned int numfield, int32_t value);
+
+
+int32_t conf_globparam_default_value(unsigned int numinst, unsigned int numfield, unsigned int board);
 
 #define conf_pnum_globparam 10
 

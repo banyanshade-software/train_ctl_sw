@@ -236,7 +236,8 @@ static void generate_hfile_propag(config_node_t *root)
         FILE *output = genfile_h_create(node, root, 1);
         char *n = node->string;
         fprintf(output, "// %s for propag\n\n", n);
-        fprintf(output, "\nint conf_%s_propagate(int numinst, int numfield, int32_t value);\n\n", n);
+        fprintf(output, "\nint conf_%s_propagate(unsigned int numinst, unsigned int numfield, int32_t value);\n\n", n);
+        fprintf(output, "\nint32_t conf_%s_default_value(unsigned int numinst, unsigned int numfield, unsigned int board);\n\n", n);
 
 
     
@@ -265,7 +266,7 @@ void generate_cfile_global_propag(config_node_t *root)
         fprintf(output, "#include \"conf_%s.propag.h\"\n", n);
     }
 
-    fprintf(output, "\n\nvoid conf_propagate(int confnum, int fieldnum, int instnum, int32_t v)\n");
+    fprintf(output, "\n\nvoid conf_propagate(unsigned int confnum, unsigned int fieldnum, unsigned int instnum, int32_t v)\n");
     fprintf(output, "{\n    switch (confnum) {\n");
 
     for (config_node_t *node = root->defs; node; node = node->next) {
@@ -279,6 +280,21 @@ void generate_cfile_global_propag(config_node_t *root)
         }
     }
     fprintf(output, "    default: break;\n    }\n\n}\n\n");
+
+    fprintf(output, "\n\nint32_t conf_default_value(unsigned int confnum, unsigned int fieldnum, unsigned int board, unsigned int instnum)\n");
+    fprintf(output, "{\n    switch (confnum) {\n");
+    for (config_node_t *node = root->defs; node; node = node->next) {
+        char *n = node->string;
+        int storetype, storenum, gentpl;
+        get_storetype(node, &storetype, &storenum, &gentpl);
+        if (storetype == 0) {
+            fprintf(output, "    case conf_pnum_%s:\n", n);
+            fprintf(output, "        return conf_%s_default_value(instnum, fieldnum, board);\n", n);
+            fprintf(output, "        break;\n");
+        }
+    }
+    fprintf(output, "    default: return 0;\n    break;\n    }\n\n}\n\n");
+
     fclose(output);
 }
 
@@ -291,6 +307,8 @@ void generate_hfiles(config_node_t *root, config_node_t *boards)
 
 
 static void gen_field_propag(FILE * output, config_node_t *fields, config_node_t *root);
+static int _gen_fdefault(config_node_t *f, FILE *output, int num);
+static config_node_t *_fdef_tables = NULL;
 
 void generate_cfile(config_node_t *root, int continue_next, config_node_t *boards)
 {
@@ -350,7 +368,7 @@ void generate_cfile(config_node_t *root, int continue_next, config_node_t *board
         fprintf(output, "// %s config store type %d num %d\n", node->string, storetype, storenum);
 
         if (storetype == 0) {
-            fprintf(output, "int conf_%s_propagate(int numinst, int numfield, int32_t value)\n", n);
+            fprintf(output, "int conf_%s_propagate(unsigned int numinst, unsigned int numfield, int32_t value)\n", n);
             fprintf(output, "{\n    if (numinst>=conf_%s_num_entries()) return -1;\n", n);
             fprintf(output, "    conf_%s_t *conf = &conf_%s[numinst];\n", n, n);
             fprintf(output, "    switch (numfield) {\n");
@@ -358,9 +376,33 @@ void generate_cfile(config_node_t *root, int continue_next, config_node_t *board
             gen_field_propag(output, node->fields, root);
             fprintf(output, "    }\n");
             fprintf(output, "    return 0;\n}\n\n\n");
+
+            _fdef_tables = root->tables;
+            fprintf(output, "int32_t conf_%s_default_value(unsigned int numinst, unsigned int numfield, unsigned int boardnum)\n", n);
+            fprintf(output, "{\n    //if (numinst>=conf_%s_num_entries()) return 0;\n", n);
+            fprintf(output, "    switch (numfield) {\n");
+            fprintf(output, "    default: return 0;\n");
+            apply_field(root, node->fields, 1, _gen_fdefault, output, 0);
+            fprintf(output, "    }\n");
+            fprintf(output, "    return 0;\n}\n\n\n");
         }
         genfile_c_close(output);
     }
+}
+
+static int _gen_fdefault(config_node_t *f, FILE *output, int num)
+{
+    if (!f->configurable) return 0;
+    fprintf(output, "    case conf_numfield_%s:\n", f->string);
+    config_node_t *v = find_board_value(f->boardvalues, 0 /*numisnt*/, "unknown");  // XXX numinst
+    config_node_t *val = v->val;
+    if (val->tag == CONFIG_NODE_TABLEREF) {
+        //printf("//table %s col %s inst %d\n", val->tablename, val->colname, numinst);
+        config_node_t *v = value_for_table(_fdef_tables, val->tablename, val->colname, 0 /*numinst*/);
+        if (v) val = v;
+    }
+    fprintf(output, "        return %s;\n", val->string);
+    return 1;
 }
 
 static int _gen_fpropag(config_node_t *f, FILE *output, int num)

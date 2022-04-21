@@ -9,7 +9,10 @@
 // boards for propag
 
 
-int conf_boards_propagate(int numinst, int numfield, int32_t value);
+int conf_boards_propagate(unsigned int numinst, unsigned int numfield, int32_t value);
+
+
+int32_t conf_boards_default_value(unsigned int numinst, unsigned int numfield, unsigned int board);
 
 #define conf_pnum_boards 11
 

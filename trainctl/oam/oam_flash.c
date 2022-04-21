@@ -12,10 +12,14 @@
 
 #include "oam_flash.h"
 #include "oam.h"
-
+#include "../config/propag.h"
 
 static void check_store_init(int force);
 
+void oam_flash_deinit(void)
+{
+    W25qxx_Deinit();
+}
 void oam_flash_init(void)
 {
 	itm_debug1(DBG_OAM|DBG_ERR, "flash init", 0);
@@ -65,13 +69,13 @@ void oam_flash_init(void)
 	check_store_init(1);
 
 
-	if ((1)) {
+	if ((0)) {
 		oam_flashstore_set_value(1, 1, 3, 1, 42);
 		oam_flashstore_set_value(1, 1, 3, 2, 56);
 		oam_flashstore_set_value(1, 1, 3, 2, 57);
 		oam_flashstore_set_value(1, 1, 3, 2, 56);
 	}
-	if ((1)) {
+	if ((0)) {
 		oam_flashstore_rd_rewind();
 		unsigned int confnum, fieldnum, confbrd, instnum;
 		int32_t v;
@@ -80,6 +84,13 @@ void oam_flash_init(void)
 		}
 	}
 
+}
+
+
+void oam_flash_erase(void)
+{
+    W25qxx_EraseChip();
+    check_store_init(1);
 }
 
 /*
@@ -155,6 +166,7 @@ static void check_store_init(int force)
 	currentGeneration++;
 
 	if (!force) return;
+    itm_debug1(DBG_OAM, "fl gen", currentGeneration);
 	if (!blk_bup0_str.valid) format_store_block(1,  CONF_STORE_MAGIC, &blk_bup0_str, 1);
 	if (!blk_bup0_loc.valid) format_store_block(2,  CONF_LOCAL_MAGIC, &blk_bup0_loc, 1);
 	if (!blk_n1_str.valid)   format_store_block(8,  CONF_STORE_MAGIC, &blk_n1_str, 1);
@@ -166,9 +178,10 @@ static void check_block(int blocknum, uint32_t magic, blk_desc_t *blkdesc)
 	// <magic4> <gen2> <startsect> <startsect> <FF>
 	W25qxx_ReadPage(pagebuf.b, W25qxx_BlockToPage(blocknum), 0, sizeof(pagebuf));
 	if (pagebuf.w[0] != magic) {
-		itm_debug2(DBG_OAM, "mgic not found", pagebuf.w[0], magic);
+		itm_debug3(DBG_OAM, "mgic not found", blocknum, pagebuf.w[0], magic);
 		return;
 	}
+    itm_debug1(DBG_OAM, "magic ok", blocknum);
 	blkdesc->valid = 1;
 	blkdesc->block_num = blocknum;
 	blkdesc->gen = pagebuf.h[2];
@@ -187,6 +200,7 @@ static void check_block(int blocknum, uint32_t magic, blk_desc_t *blkdesc)
 
 static void format_store_block(int blocknum, uint32_t magic, blk_desc_t *blkdesc, int erase)
 {
+    itm_debug2(DBG_OAM, "format", blocknum, magic);
 	memset(&pagebuf, 0xFF, sizeof(pagebuf));
 	if (erase) {
 		W25qxx_EraseBlock(blocknum);
@@ -198,7 +212,8 @@ static void format_store_block(int blocknum, uint32_t magic, blk_desc_t *blkdesc
 	blkdesc->stsect_idx = 0;
 	blkdesc->block_num = blocknum;
 	blkdesc->gen = pagebuf.h[2];
-	blkdesc->startsect = 0;
+    blkdesc->startsect = 0;
+    blkdesc->valid = 1;
 
 }
 
@@ -239,7 +254,7 @@ static int store_isvalid(uint8_t *buf8)
 
 int store_is_field(uint8_t *buf8, unsigned int  confnum, unsigned int  brd, unsigned int  inst, unsigned int  field, int32_t  *pv)
 {
-	if (buf8[0] & 0x80) return 0; // invalid
+	if (0 == (buf8[0] & 0x80)) return 0; // invalid
 	if ((buf8[0] & 0x3F) != confnum) return 0;
 	if (buf8[1] != brd) return 0;
 	if (buf8[2] != inst) return 0;
@@ -271,14 +286,16 @@ void oam_flashstore_set_value(int confnum, int fieldnum, int confbrd, int instnu
 	int found = 0;
 	while (0==store_read(desc, buf)) {
 		int32_t ov;
+        printf("item: %2.2X %2.2X %2.2X %2.2X %2.2X %2.2X %2.2X %2.2X\n",
+               buf[0], buf[1], buf[2], buf[3],  buf[4], buf[5], buf[6], buf[7]);
 		if (!store_isvalid(buf)) continue;
 		if (!found && store_is_field(buf, confnum, confbrd, instnum, fieldnum, &ov)) {
 			if (ov == v) {
 				found = 1;
 				continue;
 			}
+            store_disable_lastfield(desc);
 		}
-		store_disable_lastfield(desc);
 	}
 	if (!found) {
 		store_encode(buf, confnum, confbrd, instnum, fieldnum, v);
@@ -296,9 +313,11 @@ uint32_t oam_flashstore_get_value(int confnum, int fieldnum, int confbrd, int in
     store_rewind(desc);
     uint8_t buf[8];
 
-    uint32_t v = 0; // XXX default value
+    int32_t v = conf_default_value(confnum, fieldnum, confbrd, instnum);
     while (0==store_read(desc, buf)) {
         int32_t ov;
+        printf("item: %2.2X %2.2X %2.2X %2.2X %2.2X %2.2X %2.2X %2.2X\n",
+               buf[0], buf[1], buf[2], buf[3],  buf[4], buf[5], buf[6], buf[7]);
         if (!store_isvalid(buf)) continue;
         if (store_is_field(buf, confnum, confbrd, instnum, fieldnum, &ov)) {
             v = ov;

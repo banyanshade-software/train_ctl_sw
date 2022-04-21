@@ -14,8 +14,9 @@
 typedef int bool;
 
 int W25qxx_Init(void);
+int W25qxx_Deinit(void);
 
-//void W25qxx_EraseChip(void);
+void W25qxx_EraseChip(void);
 //void W25qxx_EraseSector(uint32_t SectorAddr);
 void W25qxx_EraseBlock(uint32_t BlockAddr);
 

@@ -9,7 +9,10 @@
 // canton for propag
 
 
-int conf_canton_propagate(int numinst, int numfield, int32_t value);
+int conf_canton_propagate(unsigned int numinst, unsigned int numfield, int32_t value);
+
+
+int32_t conf_canton_default_value(unsigned int numinst, unsigned int numfield, unsigned int board);
 
 #define conf_pnum_canton 2
 

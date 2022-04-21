@@ -52,6 +52,8 @@ attrib boards stnum = 11
 attrib topology store = local
 attrib topology stnum = 12
 
+attrib utest store = normal
+attrib utest stnum = 9
 
 attrib canton gentpl
 

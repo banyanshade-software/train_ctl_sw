@@ -633,6 +633,7 @@ typedef void (^respblk_t)(void);
         int conf_train_fieldnum(const char *str);
         int conf_globparam_fieldnum(const char *str);
 
+        int loc = 0;
         switch (cpsel[0]) {
             case 'T':
                 confnum = conf_pnum_train;
@@ -643,7 +644,8 @@ typedef void (^respblk_t)(void);
                 fieldnum = conf_train_fieldnum(cpn);
                 break;
             case 'G':
-                confnum = conf_pnum_globparam;
+                confnum = conf_lnum_globparam;
+                loc = 1;
                 fieldnum = conf_globparam_fieldnum(cpn);
                 break;
             default:
@@ -659,7 +661,7 @@ typedef void (^respblk_t)(void);
         msg_64_t m = {0};
         m.to = MA0_OAM(0);
         m.from = MA3_UI_GEN;
-        m.cmd = CMD_PARAM_USER_GET;
+        m.cmd = CMD_PARAM_USER_GET; // XXX loc
         m.val40 = v40;
         [self sendMsg64:m];
         
@@ -744,7 +746,7 @@ typedef void (^respblk_t)(void);
             t = 'T';
             fld = conf_train_fieldname(field);
             break;
-        case conf_pnum_globparam:
+        case conf_lnum_globparam: //XXX loc
             t = 'G';
             fld = conf_globparam_fieldname(field);
             break;

@@ -32,4 +32,9 @@ int  oam_flashstore_rd_next(unsigned int *confnum, unsigned int *fieldnum, unsig
 void oam_flashlocal_read(unsigned int confnum);
 void oam_flashlocal_commit(unsigned int confnum);
 
+
+void oam_flashlocal_set_value(int confnum, int fieldnum, int instnum, int32_t v);
+uint32_t oam_flashlocal_get_value(int confnum, int fieldnum,  int instnum);
+
+
 #endif /* OAM_OAM_FLASH_H_ */

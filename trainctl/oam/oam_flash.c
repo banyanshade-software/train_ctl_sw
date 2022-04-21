@@ -397,15 +397,38 @@ int  oam_flashstore_rd_next(unsigned int *confnum, unsigned int *fieldnum, unsig
 
 
 
+static void store_local_read(blk_desc_t *desc, int fnum, void *ptr, unsigned int s)
+{
+    // XXX TODO
+}
+
+static void store_local_write(blk_desc_t *desc, int fnum, void *ptr, unsigned int s)
+{
+    // XXX TODO
+}
 
 
 void oam_flashlocal_read(unsigned int confnum)
 {
-    void *ptr = conf_ptr(confnum);
-    unsigned int s = conf_size(confnum);
+    void *ptr = conf_local_ptr(confnum);
+    unsigned int s = conf_local_size(confnum);
+    blk_desc_t *desc = use_backup ? &blk_bup0_loc : &blk_n1_loc;
+    store_local_read(desc, confnum, ptr, s);
 }
 void oam_flashlocal_commit(unsigned int confnum)
 {
-    void *ptr = conf_ptr(confnum);
-    unsigned int s = conf_size(confnum);
+    void *ptr = conf_local_ptr(confnum);
+    unsigned int s = conf_local_size(confnum);
+    blk_desc_t *desc = use_backup ? &blk_bup0_loc : &blk_n1_loc;
+    store_local_write(desc, confnum, ptr, s);
+}
+
+
+void oam_flashlocal_set_value(int confnum, int fieldnum, int instnum, int32_t v)
+{
+    conf_local_set(confnum, fieldnum, instnum, v);
+}
+uint32_t oam_flashlocal_get_value(int confnum, int fieldnum,  int instnum)
+{
+    return conf_local_get(confnum, fieldnum, instnum);
 }

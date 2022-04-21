@@ -1675,8 +1675,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "2312"
             endingLineNumber = "2312"
-            landmarkName = "AppDelegate"
-            landmarkType = "3">
+            landmarkName = "-peripheral:didUpdateNotificationStateForCharacteristic:error:"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -1925,8 +1925,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "2331"
             endingLineNumber = "2331"
-            landmarkName = "AppDelegate"
-            landmarkType = "3">
+            landmarkName = "-sendMsg64:"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -3792,7 +3792,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1987"
             endingLineNumber = "1987"
-            landmarkName = "-stopRecord:"
+            landmarkName = "-markRecord:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

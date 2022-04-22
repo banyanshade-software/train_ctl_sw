@@ -1016,27 +1016,27 @@ int32_t conf_topology_local_get(unsigned int fieldnum, unsigned int instnum)
     const conf_topology_t *c = conf_topology_get(instnum);
     if (!c) return 0;
     switch (fieldnum) {
-    case conf_numfield_canton_addr:
+    case conf_numfield_topology_canton_addr:
         return c->canton_addr;
-    case conf_numfield_ina_segnum:
+    case conf_numfield_topology_ina_segnum:
         return c->ina_segnum;
-    case conf_numfield_steep:
+    case conf_numfield_topology_steep:
         return c->steep;
-    case conf_numfield_length_cm:
+    case conf_numfield_topology_length_cm:
         return c->length_cm;
-    case conf_numfield_left1:
+    case conf_numfield_topology_left1:
         return c->left1;
-    case conf_numfield_left2:
+    case conf_numfield_topology_left2:
         return c->left2;
-    case conf_numfield_ltn:
+    case conf_numfield_topology_ltn:
         return c->ltn;
-    case conf_numfield_right1:
+    case conf_numfield_topology_right1:
         return c->right1;
-    case conf_numfield_right2:
+    case conf_numfield_topology_right2:
         return c->right2;
-    case conf_numfield_rtn:
+    case conf_numfield_topology_rtn:
         return c->rtn;
-    case conf_numfield_p0:
+    case conf_numfield_topology_p0:
         return c->p0;
     }
     return 0;
@@ -1050,37 +1050,37 @@ void conf_topology_local_set(unsigned int fieldnum, unsigned int instnum, int32_
     if (!ca) return;
     conf_topology_t *c = &ca[instnum];
     switch (fieldnum) {
-    case conf_numfield_canton_addr:
+    case conf_numfield_topology_canton_addr:
         c->canton_addr = v;
         break;
-    case conf_numfield_ina_segnum:
+    case conf_numfield_topology_ina_segnum:
         c->ina_segnum = v;
         break;
-    case conf_numfield_steep:
+    case conf_numfield_topology_steep:
         c->steep = v;
         break;
-    case conf_numfield_length_cm:
+    case conf_numfield_topology_length_cm:
         c->length_cm = v;
         break;
-    case conf_numfield_left1:
+    case conf_numfield_topology_left1:
         c->left1 = v;
         break;
-    case conf_numfield_left2:
+    case conf_numfield_topology_left2:
         c->left2 = v;
         break;
-    case conf_numfield_ltn:
+    case conf_numfield_topology_ltn:
         c->ltn = v;
         break;
-    case conf_numfield_right1:
+    case conf_numfield_topology_right1:
         c->right1 = v;
         break;
-    case conf_numfield_right2:
+    case conf_numfield_topology_right2:
         c->right2 = v;
         break;
-    case conf_numfield_rtn:
+    case conf_numfield_topology_rtn:
         c->rtn = v;
         break;
-    case conf_numfield_p0:
+    case conf_numfield_topology_p0:
         c->p0 = v;
         break;
     }

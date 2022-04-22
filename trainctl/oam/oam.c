@@ -34,6 +34,7 @@ void OAM_Init(void)
 {
 	oam_flash_init();
     initdone=1;
+    oam_flashlocal_read(-1);
 }
 
 

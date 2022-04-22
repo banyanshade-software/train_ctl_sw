@@ -16,18 +16,18 @@ int32_t conf_topology_default_value(unsigned int numinst, unsigned int numfield,
 
 #define conf_lnum_topology 12
 
-#define conf_numfield_canton_addr 		0
-#define conf_numfield_ina_segnum 		1
-#define conf_numfield_steep 		2
-#define conf_numfield_length_cm 		3
-#define conf_numfield_left1 		4
-#define conf_numfield_left2 		5
-#define conf_numfield_ltn 		6
-#define conf_numfield_right1 		7
-#define conf_numfield_right2 		8
-#define conf_numfield_rtn 		9
-#define conf_numfield_p0 		10
-#define conf_numfield_points 		11
+#define conf_numfield_topology_canton_addr 		0
+#define conf_numfield_topology_ina_segnum 		1
+#define conf_numfield_topology_steep 		2
+#define conf_numfield_topology_length_cm 		3
+#define conf_numfield_topology_left1 		4
+#define conf_numfield_topology_left2 		5
+#define conf_numfield_topology_ltn 		6
+#define conf_numfield_topology_right1 		7
+#define conf_numfield_topology_right2 		8
+#define conf_numfield_topology_rtn 		9
+#define conf_numfield_topology_p0 		10
+#define conf_numfield_topology_points 		11
 
 
 void *conf_topology_ptr(void);

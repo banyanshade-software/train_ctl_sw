@@ -28,7 +28,7 @@ int conf_turnout_fieldnum(const char *str)
 {
     if (0) {
     } else if (!strcmp(str, "reverse")) {
-         return conf_numfield_reverse;
+         return conf_numfield_turnout_reverse;
     }
     return -1;
 }
@@ -36,7 +36,7 @@ int conf_turnout_fieldnum(const char *str)
 const char *conf_turnout_fieldname(int f)
 {
     if (0) {
-    } else if (f == conf_numfield_reverse) {
+    } else if (f == conf_numfield_turnout_reverse) {
          return "reverse";
     }
     return NULL;

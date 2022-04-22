@@ -16,7 +16,7 @@ int32_t conf_turnout_default_value(unsigned int numinst, unsigned int numfield, 
 
 #define conf_pnum_turnout 3
 
-#define conf_numfield_reverse 		0
+#define conf_numfield_turnout_reverse 		0
 
 
 

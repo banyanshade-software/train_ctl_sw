@@ -14,10 +14,10 @@ int conf_utest_propagate(unsigned int numinst, unsigned int numfield, int32_t va
 
 int32_t conf_utest_default_value(unsigned int numinst, unsigned int numfield, unsigned int board);
 
-#define conf_pnum_utest 9
+#define conf_pnum_utest 8
 
-#define conf_numfield_alpha 		0
-#define conf_numfield_beta 		1
+#define conf_numfield_utest_alpha 		0
+#define conf_numfield_utest_beta 		1
 
 
 

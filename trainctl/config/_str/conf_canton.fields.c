@@ -28,7 +28,7 @@ int conf_canton_fieldnum(const char *str)
 {
     if (0) {
     } else if (!strcmp(str, "reverse_bemf")) {
-         return conf_numfield_reverse_bemf;
+         return conf_numfield_canton_reverse_bemf;
     }
     return -1;
 }
@@ -36,7 +36,7 @@ int conf_canton_fieldnum(const char *str)
 const char *conf_canton_fieldname(int f)
 {
     if (0) {
-    } else if (f == conf_numfield_reverse_bemf) {
+    } else if (f == conf_numfield_canton_reverse_bemf) {
          return "reverse_bemf";
     }
     return NULL;

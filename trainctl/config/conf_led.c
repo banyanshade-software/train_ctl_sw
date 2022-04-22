@@ -117,7 +117,7 @@ int conf_led_propagate(unsigned int numinst, unsigned int numfield, int32_t valu
     conf_led_t *conf = &conf_led[numinst];
     switch (numfield) {
     default: return -1;
-    case conf_numfield_defprog:
+    case conf_numfield_led_defprog:
         conf->defprog = value;
         break;
     }
@@ -130,7 +130,7 @@ int32_t conf_led_default_value(unsigned int numinst, unsigned int numfield, unsi
     //if (numinst>=conf_led_num_entries()) return 0;
     switch (numfield) {
     default: return 0;
-    case conf_numfield_defprog:
+    case conf_numfield_led_defprog:
         return 0;
     }
     return 0;

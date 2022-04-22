@@ -28,11 +28,11 @@ int conf_globparam_fieldnum(const char *str)
 {
     if (0) {
     } else if (!strcmp(str, "pwmfreq")) {
-         return conf_numfield_pwmfreq;
+         return conf_numfield_globparam_pwmfreq;
     } else if (!strcmp(str, "test_mode")) {
-         return conf_numfield_test_mode;
+         return conf_numfield_globparam_test_mode;
     } else if (!strcmp(str, "oscilo")) {
-         return conf_numfield_oscilo;
+         return conf_numfield_globparam_oscilo;
     }
     return -1;
 }
@@ -40,11 +40,11 @@ int conf_globparam_fieldnum(const char *str)
 const char *conf_globparam_fieldname(int f)
 {
     if (0) {
-    } else if (f == conf_numfield_pwmfreq) {
+    } else if (f == conf_numfield_globparam_pwmfreq) {
          return "pwmfreq";
-    } else if (f == conf_numfield_test_mode) {
+    } else if (f == conf_numfield_globparam_test_mode) {
          return "test_mode";
-    } else if (f == conf_numfield_oscilo) {
+    } else if (f == conf_numfield_globparam_oscilo) {
          return "oscilo";
     }
     return NULL;

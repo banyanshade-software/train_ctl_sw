@@ -114,11 +114,11 @@ int32_t conf_globparam_local_get(unsigned int fieldnum, unsigned int instnum)
     const conf_globparam_t *c = conf_globparam_get(instnum);
     if (!c) return 0;
     switch (fieldnum) {
-    case conf_numfield_pwmfreq:
+    case conf_numfield_globparam_pwmfreq:
         return c->pwmfreq;
-    case conf_numfield_test_mode:
+    case conf_numfield_globparam_test_mode:
         return c->test_mode;
-    case conf_numfield_oscilo:
+    case conf_numfield_globparam_oscilo:
         return c->oscilo;
     }
     return 0;
@@ -132,13 +132,13 @@ void conf_globparam_local_set(unsigned int fieldnum, unsigned int instnum, int32
     if (!ca) return;
     conf_globparam_t *c = &ca[instnum];
     switch (fieldnum) {
-    case conf_numfield_pwmfreq:
+    case conf_numfield_globparam_pwmfreq:
         c->pwmfreq = v;
         break;
-    case conf_numfield_test_mode:
+    case conf_numfield_globparam_test_mode:
         c->test_mode = v;
         break;
-    case conf_numfield_oscilo:
+    case conf_numfield_globparam_oscilo:
         c->oscilo = v;
         break;
     }

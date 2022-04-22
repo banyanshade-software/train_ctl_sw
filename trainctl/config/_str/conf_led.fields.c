@@ -28,7 +28,7 @@ int conf_led_fieldnum(const char *str)
 {
     if (0) {
     } else if (!strcmp(str, "defprog")) {
-         return conf_numfield_defprog;
+         return conf_numfield_led_defprog;
     }
     return -1;
 }
@@ -36,7 +36,7 @@ int conf_led_fieldnum(const char *str)
 const char *conf_led_fieldname(int f)
 {
     if (0) {
-    } else if (f == conf_numfield_defprog) {
+    } else if (f == conf_numfield_led_defprog) {
          return "defprog";
     }
     return NULL;

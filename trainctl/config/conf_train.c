@@ -312,52 +312,52 @@ int conf_train_propagate(unsigned int numinst, unsigned int numfield, int32_t va
     conf_train_t *conf = &conf_train[numinst];
     switch (numfield) {
     default: return -1;
-    case conf_numfield_kP:
+    case conf_numfield_pidctl_kP:
         conf->pidctl.kP = value;
      break;
-    case conf_numfield_kI:
+    case conf_numfield_pidctl_kI:
         conf->pidctl.kI = value;
      break;
-    case conf_numfield_kD:
+    case conf_numfield_pidctl_kD:
         conf->pidctl.kD = value;
      break;
-    case conf_numfield_dec:
+    case conf_numfield_inertia_dec:
         conf->inertia.dec = value;
      break;
-    case conf_numfield_acc:
+    case conf_numfield_inertia_acc:
         conf->inertia.acc = value;
      break;
-    case conf_numfield_volt_policy:
+    case conf_numfield_train_volt_policy:
         conf->volt_policy = value;
         break;
-    case conf_numfield_enabled:
+    case conf_numfield_train_enabled:
         conf->enabled = value;
         break;
-    case conf_numfield_enable_inertia:
+    case conf_numfield_train_enable_inertia:
         conf->enable_inertia = value;
         break;
-    case conf_numfield_enable_pid:
+    case conf_numfield_train_enable_pid:
         conf->enable_pid = value;
         break;
-    case conf_numfield_reversed:
+    case conf_numfield_train_reversed:
         conf->reversed = value;
         break;
-    case conf_numfield_bemfIIR:
+    case conf_numfield_train_bemfIIR:
         conf->bemfIIR = value;
         break;
-    case conf_numfield_postIIR:
+    case conf_numfield_train_postIIR:
         conf->postIIR = value;
         break;
-    case conf_numfield_slipping:
+    case conf_numfield_train_slipping:
         conf->slipping = value;
         break;
-    case conf_numfield_pose_per_cm:
+    case conf_numfield_train_pose_per_cm:
         conf->pose_per_cm = value;
         break;
-    case conf_numfield_trainlen_left:
+    case conf_numfield_train_trainlen_left:
         conf->trainlen_left = value;
         break;
-    case conf_numfield_trainlen_right:
+    case conf_numfield_train_trainlen_right:
         conf->trainlen_right = value;
         break;
     }
@@ -370,37 +370,37 @@ int32_t conf_train_default_value(unsigned int numinst, unsigned int numfield, un
     //if (numinst>=conf_train_num_entries()) return 0;
     switch (numfield) {
     default: return 0;
-    case conf_numfield_kP:
+    case conf_numfield_pidctl_kP:
         return 500;
-    case conf_numfield_kI:
+    case conf_numfield_pidctl_kI:
         return 100;
-    case conf_numfield_kD:
+    case conf_numfield_pidctl_kD:
         return 500;
-    case conf_numfield_dec:
+    case conf_numfield_inertia_dec:
         return 120;
-    case conf_numfield_acc:
+    case conf_numfield_inertia_acc:
         return 120;
-    case conf_numfield_volt_policy:
+    case conf_numfield_train_volt_policy:
         return vpolicy_normal;
-    case conf_numfield_enabled:
+    case conf_numfield_train_enabled:
         return 1;
-    case conf_numfield_enable_inertia:
+    case conf_numfield_train_enable_inertia:
         return 0;
-    case conf_numfield_enable_pid:
+    case conf_numfield_train_enable_pid:
         return 1;
-    case conf_numfield_reversed:
+    case conf_numfield_train_reversed:
         return 0;
-    case conf_numfield_bemfIIR:
+    case conf_numfield_train_bemfIIR:
         return 0;
-    case conf_numfield_postIIR:
+    case conf_numfield_train_postIIR:
         return 0;
-    case conf_numfield_slipping:
+    case conf_numfield_train_slipping:
         return 120;
-    case conf_numfield_pose_per_cm:
+    case conf_numfield_train_pose_per_cm:
         return 450;
-    case conf_numfield_trainlen_left:
+    case conf_numfield_train_trainlen_left:
         return 6;
-    case conf_numfield_trainlen_right:
+    case conf_numfield_train_trainlen_right:
         return 18;
     }
     return 0;

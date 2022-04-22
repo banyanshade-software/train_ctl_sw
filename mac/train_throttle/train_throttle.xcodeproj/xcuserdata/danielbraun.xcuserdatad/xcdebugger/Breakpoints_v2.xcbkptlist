@@ -4366,8 +4366,8 @@
             filePath = "../../trainctl/oam/oam_flash.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "299"
-            endingLineNumber = "299"
+            startingLineNumber = "327"
+            endingLineNumber = "327"
             landmarkName = "oam_flashstore_set_value(confnum, fieldnum, confbrd, instnum, v)"
             landmarkType = "9">
          </BreakpointContent>
@@ -4622,8 +4622,8 @@
             filePath = "../../trainctl/oam/TestFlashStore.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "28"
-            endingLineNumber = "28"
+            startingLineNumber = "30"
+            endingLineNumber = "30"
             landmarkName = "TestFlashStore"
             landmarkType = "3">
          </BreakpointContent>
@@ -4638,8 +4638,8 @@
             filePath = "../../trainctl/oam/TestFlashStore.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "25"
-            endingLineNumber = "25"
+            startingLineNumber = "27"
+            endingLineNumber = "27"
             landmarkName = "Error_Handler()"
             landmarkType = "9">
          </BreakpointContent>
@@ -4654,9 +4654,9 @@
             filePath = "../../trainctl/oam/TestFlashStore.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "59"
-            endingLineNumber = "59"
-            landmarkName = "-test1"
+            startingLineNumber = "61"
+            endingLineNumber = "61"
+            landmarkName = "-testSto1"
             landmarkType = "7">
             <Locations>
                <Location
@@ -4732,8 +4732,8 @@
             filePath = "../../trainctl/oam/oam_flash.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "257"
-            endingLineNumber = "257"
+            startingLineNumber = "285"
+            endingLineNumber = "285"
             landmarkName = "store_is_field(buf8, confnum, brd, inst, field, pv)"
             landmarkType = "9">
          </BreakpointContent>
@@ -4748,8 +4748,8 @@
             filePath = "../../trainctl/oam/TestFlashStore.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "31"
-            endingLineNumber = "31"
+            startingLineNumber = "33"
+            endingLineNumber = "33"
             landmarkName = "-setUp"
             landmarkType = "7">
          </BreakpointContent>
@@ -4780,8 +4780,8 @@
             filePath = "../../trainctl/oam/oam_flash.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "181"
-            endingLineNumber = "181"
+            startingLineNumber = "209"
+            endingLineNumber = "209"
             landmarkName = "check_block(blocknum, magic, blkdesc)"
             landmarkType = "9">
          </BreakpointContent>
@@ -4796,8 +4796,8 @@
             filePath = "../../trainctl/oam/oam_flash.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "204"
-            endingLineNumber = "204"
+            startingLineNumber = "232"
+            endingLineNumber = "232"
             landmarkName = "format_store_block(blocknum, magic, blkdesc, erase)"
             landmarkType = "9">
          </BreakpointContent>
@@ -4812,8 +4812,8 @@
             filePath = "../../trainctl/oam/oam_flash.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "210"
-            endingLineNumber = "210"
+            startingLineNumber = "238"
+            endingLineNumber = "238"
             landmarkName = "format_store_block(blocknum, magic, blkdesc, erase)"
             landmarkType = "9">
          </BreakpointContent>
@@ -4828,9 +4828,9 @@
             filePath = "../../trainctl/oam/TestFlashStore.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "42"
-            endingLineNumber = "42"
-            landmarkName = "-test1"
+            startingLineNumber = "44"
+            endingLineNumber = "44"
+            landmarkName = "-testSto1"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -4844,8 +4844,8 @@
             filePath = "../../trainctl/oam/oam_flash.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "291"
-            endingLineNumber = "291"
+            startingLineNumber = "319"
+            endingLineNumber = "319"
             landmarkName = "oam_flashstore_set_value(confnum, fieldnum, confbrd, instnum, v)"
             landmarkType = "9">
          </BreakpointContent>
@@ -4860,9 +4860,9 @@
             filePath = "../../trainctl/oam/TestFlashStore.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "55"
-            endingLineNumber = "55"
-            landmarkName = "-test1"
+            startingLineNumber = "57"
+            endingLineNumber = "57"
+            landmarkName = "-testSto1"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -4876,9 +4876,9 @@
             filePath = "../../trainctl/oam/TestFlashStore.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "51"
-            endingLineNumber = "51"
-            landmarkName = "-test1"
+            startingLineNumber = "53"
+            endingLineNumber = "53"
+            landmarkName = "-testSto1"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -4892,9 +4892,9 @@
             filePath = "../../trainctl/oam/TestFlashStore.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "43"
-            endingLineNumber = "43"
-            landmarkName = "-test1"
+            startingLineNumber = "45"
+            endingLineNumber = "45"
+            landmarkName = "-testSto1"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -4912,6 +4912,84 @@
             endingLineNumber = "144"
             landmarkName = "conf_utest_default_value(numinst, numfield, boardnum)"
             landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "D3F83A9A-E386-4ADA-8502-141D8E3F9BF3"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../trainctl/oam/TestFlashStore.m"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "102"
+            endingLineNumber = "102"
+            landmarkName = "-testLoc1"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "D3F83A9A-E386-4ADA-8502-141D8E3F9BF3 - cf0f964aa19f05df"
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "-[TestFlashStore testLoc1]"
+                  moduleName = "flashStoreTests"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/danielbraun/devel/train/sw1/trainctl/oam/TestFlashStore.m"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "102"
+                  endingLineNumber = "102"
+                  offsetFromSymbolStart = "4765">
+               </Location>
+               <Location
+                  uuid = "D3F83A9A-E386-4ADA-8502-141D8E3F9BF3 - cf0f964aa19f05df"
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "-[TestFlashStore testLoc1]"
+                  moduleName = "flashStoreTests"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/danielbraun/devel/train/sw1/trainctl/oam/TestFlashStore.m"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "102"
+                  endingLineNumber = "102"
+                  offsetFromSymbolStart = "6200">
+               </Location>
+               <Location
+                  uuid = "D3F83A9A-E386-4ADA-8502-141D8E3F9BF3 - cf0f964aa19f05df"
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "-[TestFlashStore testLoc1]"
+                  moduleName = "flashStoreTests"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/danielbraun/devel/train/sw1/trainctl/oam/TestFlashStore.m"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "102"
+                  endingLineNumber = "102"
+                  offsetFromSymbolStart = "6257">
+               </Location>
+               <Location
+                  uuid = "D3F83A9A-E386-4ADA-8502-141D8E3F9BF3 - cf0f964aa19f05df"
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "-[TestFlashStore testLoc1]"
+                  moduleName = "flashStoreTests"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/danielbraun/devel/train/sw1/trainctl/oam/TestFlashStore.m"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "102"
+                  endingLineNumber = "102"
+                  offsetFromSymbolStart = "6375">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

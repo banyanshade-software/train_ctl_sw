@@ -135,6 +135,7 @@ configdef
             $$->string = n->string;
             $$->fields = f;
             $$->numinst = b;
+            for (config_node_t *fld = f; fld; fld=fld->next) { fld->parentconf = $$;}
         }
 
 subconfigdef

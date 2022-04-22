@@ -130,10 +130,36 @@ typedef struct {
 	uint16_t idx;
 } blk_desc_t;
 
-static blk_desc_t blk_bup0_str = {0};
-static blk_desc_t blk_bup0_loc = {0};
-static blk_desc_t blk_n1_str = {0};
-static blk_desc_t blk_n1_loc = {0};
+
+typedef struct {
+    uint8_t confnum:4;
+    uint16_t offset32:12; // x 32 bytes
+    uint16_t len;         // x 4 bytes
+}  lfiledesc_t;
+
+typedef struct {
+    blk_desc_t b;
+    uint8_t readdone;
+    uint16_t nbfiledesc;
+    lfiledesc_t fdesc[128];
+} local_blk_desc_t;
+
+
+
+
+
+#ifndef TRAIN_SIMU
+static_assert(sizeof(lfiledesc_t) == 4);
+#else
+typedef char compile_assert[(sizeof(lfiledesc_t) == 4) ? 1 : -1];
+#endif
+
+
+
+static blk_desc_t       blk_bup0_str = {0};
+static local_blk_desc_t blk_bup0_loc = {0};
+static blk_desc_t       blk_n1_str = {0};
+static local_blk_desc_t blk_n1_loc = {0};
 
 /*
  * generic page buffer, used by any function
@@ -154,23 +180,25 @@ static void format_store_block(int blocknum, uint32_t magic, blk_desc_t *blkdesc
 static void check_store_init(int force)
 {
 	check_block(1, CONF_STORE_MAGIC, &blk_bup0_str);
-	check_block(2, CONF_LOCAL_MAGIC, &blk_bup0_loc);
+	check_block(2, CONF_LOCAL_MAGIC, (blk_desc_t *)&blk_bup0_loc);
 	check_block(8, CONF_STORE_MAGIC, &blk_n1_str);
-	check_block(9, CONF_LOCAL_MAGIC, &blk_n1_loc);
+	check_block(9, CONF_LOCAL_MAGIC, (blk_desc_t *)&blk_n1_loc);
 
 	currentGeneration = 0;
 	if ((blk_bup0_str.valid) && (blk_bup0_str.gen > currentGeneration)) currentGeneration = blk_bup0_str.gen;
-	if ((blk_bup0_loc.valid) && (blk_bup0_loc.gen > currentGeneration)) currentGeneration = blk_bup0_loc.gen;
+	if ((blk_bup0_loc.b.valid) && (blk_bup0_loc.b.gen > currentGeneration)) currentGeneration = blk_bup0_loc.b.gen;
 	if ((blk_n1_str.valid) && (blk_n1_str.gen > currentGeneration)) currentGeneration = blk_n1_str.gen;
-	if ((blk_n1_loc.valid) && (blk_n1_loc.gen > currentGeneration)) currentGeneration = blk_n1_loc.gen;
+	if ((blk_n1_loc.b.valid) && (blk_n1_loc.b.gen > currentGeneration)) currentGeneration = blk_n1_loc.b.gen;
 	currentGeneration++;
 
 	if (!force) return;
     itm_debug1(DBG_OAM, "fl gen", currentGeneration);
-	if (!blk_bup0_str.valid) format_store_block(1,  CONF_STORE_MAGIC, &blk_bup0_str, 1);
-	if (!blk_bup0_loc.valid) format_store_block(2,  CONF_LOCAL_MAGIC, &blk_bup0_loc, 1);
-	if (!blk_n1_str.valid)   format_store_block(8,  CONF_STORE_MAGIC, &blk_n1_str, 1);
-	if (!blk_n1_loc.valid)   format_store_block(9,  CONF_LOCAL_MAGIC, &blk_n1_loc, 1);
+	if (!blk_bup0_str.valid)    format_store_block(1,  CONF_STORE_MAGIC, &blk_bup0_str, 1);
+	if (!blk_bup0_loc.b.valid)  format_store_block(2,  CONF_LOCAL_MAGIC, (blk_desc_t *) &blk_bup0_loc, 1);
+	if (!blk_n1_str.valid)      format_store_block(8,  CONF_STORE_MAGIC, &blk_n1_str, 1);
+	if (!blk_n1_loc.b.valid)    format_store_block(9,  CONF_LOCAL_MAGIC, (blk_desc_t *)&blk_n1_loc, 1);
+    
+    
 }
 
 static void check_block(int blocknum, uint32_t magic, blk_desc_t *blkdesc)
@@ -397,30 +425,51 @@ int  oam_flashstore_rd_next(unsigned int *confnum, unsigned int *fieldnum, unsig
 
 
 
-static void store_local_read(blk_desc_t *desc, int fnum, void *ptr, unsigned int s)
-{
-    // XXX TODO
-}
-
-static void store_local_write(blk_desc_t *desc, int fnum, void *ptr, unsigned int s)
-{
-    // XXX TODO
-}
+static void store_local_read(local_blk_desc_t *desc, int fnum, void *ptr, unsigned int s);
+static void store_local_write(local_blk_desc_t *desc, int fnum, void *ptr, unsigned int s);
 
 
-void oam_flashlocal_read(unsigned int confnum)
+
+static void _oam_flashlocal_read(unsigned int confnum)
 {
     void *ptr = conf_local_ptr(confnum);
+    if (!ptr) return;
     unsigned int s = conf_local_size(confnum);
-    blk_desc_t *desc = use_backup ? &blk_bup0_loc : &blk_n1_loc;
+    if (!s) return;
+    local_blk_desc_t *desc = use_backup ? &blk_bup0_loc : &blk_n1_loc;
     store_local_read(desc, confnum, ptr, s);
+}
+void oam_flashlocal_read(unsigned int confnum)
+{
+    if (-1 == confnum) {
+        for (int i=0; i<16; i++) {
+            _oam_flashlocal_read(i);
+        }
+    } else {
+        _oam_flashlocal_read(confnum);
+    }
+}
+
+
+static void _oam_flashlocal_commit(unsigned int confnum)
+{
+    void *ptr = conf_local_ptr(confnum);
+    if (!ptr) return    ;
+    unsigned int s = conf_local_size(confnum);
+    if (!s) return;
+    local_blk_desc_t *desc = use_backup ? &blk_bup0_loc : &blk_n1_loc;
+    store_local_write(desc, confnum, ptr, s);
 }
 void oam_flashlocal_commit(unsigned int confnum)
 {
-    void *ptr = conf_local_ptr(confnum);
-    unsigned int s = conf_local_size(confnum);
-    blk_desc_t *desc = use_backup ? &blk_bup0_loc : &blk_n1_loc;
-    store_local_write(desc, confnum, ptr, s);
+    if (-1 == confnum) {
+        for (int i=0; i<16; i++) {
+            _oam_flashlocal_commit(i);
+            
+        }
+    } else {
+        _oam_flashlocal_commit(confnum);
+    }
 }
 
 
@@ -431,4 +480,30 @@ void oam_flashlocal_set_value(int confnum, int fieldnum, int instnum, int32_t v)
 uint32_t oam_flashlocal_get_value(int confnum, int fieldnum,  int instnum)
 {
     return conf_local_get(confnum, fieldnum, instnum);
+}
+
+
+
+static void store_local_read_fdesc(local_blk_desc_t *desc)
+{
+    abort();
+}
+
+
+static void store_local_read(local_blk_desc_t *desc, int fnum, void *ptr, unsigned int s)
+{
+    if (!desc->readdone) {
+        store_local_read_fdesc(desc);
+    }
+    abort();
+    // XXX TODO
+}
+
+static void store_local_write(local_blk_desc_t *desc, int fnum, void *ptr, unsigned int s)
+{
+    if (!desc->readdone) {
+        store_local_read_fdesc(desc);
+    }
+    abort();
+    // XXX TODO
 }

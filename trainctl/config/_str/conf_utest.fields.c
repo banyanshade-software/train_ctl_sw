@@ -28,9 +28,9 @@ int conf_utest_fieldnum(const char *str)
 {
     if (0) {
     } else if (!strcmp(str, "alpha")) {
-         return conf_numfield_alpha;
+         return conf_numfield_utest_alpha;
     } else if (!strcmp(str, "beta")) {
-         return conf_numfield_beta;
+         return conf_numfield_utest_beta;
     }
     return -1;
 }
@@ -38,9 +38,9 @@ int conf_utest_fieldnum(const char *str)
 const char *conf_utest_fieldname(int f)
 {
     if (0) {
-    } else if (f == conf_numfield_alpha) {
+    } else if (f == conf_numfield_utest_alpha) {
          return "alpha";
-    } else if (f == conf_numfield_beta) {
+    } else if (f == conf_numfield_utest_beta) {
          return "beta";
     }
     return NULL;

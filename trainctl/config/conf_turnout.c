@@ -120,7 +120,7 @@ int conf_turnout_propagate(unsigned int numinst, unsigned int numfield, int32_t 
     conf_turnout_t *conf = &conf_turnout[numinst];
     switch (numfield) {
     default: return -1;
-    case conf_numfield_reverse:
+    case conf_numfield_turnout_reverse:
         conf->reverse = value;
         break;
     }
@@ -133,7 +133,7 @@ int32_t conf_turnout_default_value(unsigned int numinst, unsigned int numfield, 
     //if (numinst>=conf_turnout_num_entries()) return 0;
     switch (numfield) {
     default: return 0;
-    case conf_numfield_reverse:
+    case conf_numfield_turnout_reverse:
         return 0;
     }
     return 0;

@@ -121,17 +121,17 @@ const conf_utest_t *conf_utest_get(int num)
     return &conf_utest[num];
 }
 
-// utest config store type 0 num 9
+// utest config store type 0 num 8
 int conf_utest_propagate(unsigned int numinst, unsigned int numfield, int32_t value)
 {
     if (numinst>=conf_utest_num_entries()) return -1;
     conf_utest_t *conf = &conf_utest[numinst];
     switch (numfield) {
     default: return -1;
-    case conf_numfield_alpha:
+    case conf_numfield_utest_alpha:
         conf->alpha = value;
         break;
-    case conf_numfield_beta:
+    case conf_numfield_utest_beta:
         conf->beta = value;
         break;
     }
@@ -144,9 +144,9 @@ int32_t conf_utest_default_value(unsigned int numinst, unsigned int numfield, un
     //if (numinst>=conf_utest_num_entries()) return 0;
     switch (numfield) {
     default: return 0;
-    case conf_numfield_alpha:
+    case conf_numfield_utest_alpha:
         return 1001;
-    case conf_numfield_beta:
+    case conf_numfield_utest_beta:
         return 1001;
     }
     return 0;

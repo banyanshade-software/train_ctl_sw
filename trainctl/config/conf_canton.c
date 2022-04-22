@@ -219,7 +219,7 @@ int conf_canton_propagate(unsigned int numinst, unsigned int numfield, int32_t v
     conf_canton_t *conf = &conf_canton[numinst];
     switch (numfield) {
     default: return -1;
-    case conf_numfield_reverse_bemf:
+    case conf_numfield_canton_reverse_bemf:
         conf->reverse_bemf = value;
         break;
     }
@@ -232,7 +232,7 @@ int32_t conf_canton_default_value(unsigned int numinst, unsigned int numfield, u
     //if (numinst>=conf_canton_num_entries()) return 0;
     switch (numfield) {
     default: return 0;
-    case conf_numfield_reverse_bemf:
+    case conf_numfield_canton_reverse_bemf:
         return 0;
     }
     return 0;

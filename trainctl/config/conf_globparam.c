@@ -37,7 +37,7 @@ static conf_globparam_t conf_globparam[1] = {
   {     // 0
      .pwmfreq = 100,
      .test_mode = 0,
-     .oscilo = 0,
+     .oscillo = 0,
   }
 };
 
@@ -119,8 +119,8 @@ int32_t conf_globparam_local_get(unsigned int fieldnum, unsigned int instnum)
         return c->pwmfreq;
     case conf_numfield_globparam_test_mode:
         return c->test_mode;
-    case conf_numfield_globparam_oscilo:
-        return c->oscilo;
+    case conf_numfield_globparam_oscillo:
+        return c->oscillo;
     }
     return 0;
 }
@@ -140,8 +140,8 @@ void conf_globparam_local_set(unsigned int fieldnum, unsigned int instnum, int32
     case conf_numfield_globparam_test_mode:
         c->test_mode = v;
         break;
-    case conf_numfield_globparam_oscilo:
-        c->oscilo = v;
+    case conf_numfield_globparam_oscillo:
+        c->oscillo = v;
         break;
     }
 

@@ -497,7 +497,7 @@ int frame_gather_stat(stat_iterator_t *step, uint8_t *buf)
 
 volatile int stat_on_progress = 0;
 
-__weak int oscilo_running(void)
+__weak int oscillo_running(void)
 {
 	return 0;
 }
@@ -505,7 +505,7 @@ __weak int oscilo_running(void)
 void txframe_send_stat(void)
 {
 	if (stat_on_progress) return;
-	if (oscilo_running()) return;
+	if (oscillo_running()) return;
     frame_msg_t m;
     m.t = TXFRAME_TYPE_STAT;
     txframe_send(&m, 1);
@@ -513,7 +513,7 @@ void txframe_send_stat(void)
 
 uint32_t gtick = 0;
 
-__weak void frame_send_oscilo(_UNUSED_ void(*cb)(uint8_t *d, int l))
+__weak void frame_send_oscillo(_UNUSED_ void(*cb)(uint8_t *d, int l))
 {
 }
 

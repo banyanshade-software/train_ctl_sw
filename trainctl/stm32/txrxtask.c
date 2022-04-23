@@ -93,7 +93,7 @@ void StartTxRxFrameTask(_UNUSED_ void *argument)
 			uint8_t b[]="|_NG\000Y"; //
 			//memcpy(b+6, &t, 4);
 			_send_bytes(b, 6);
-			frame_send_oscilo(_send_bytes);
+			frame_send_oscillo(_send_bytes);
 			_send_bytes((uint8_t *)"|", 1);
 			continue;
 		}

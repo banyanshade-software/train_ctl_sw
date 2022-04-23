@@ -24,7 +24,7 @@
 typedef struct conf_globparam {
     uint16_t pwmfreq;
     int test_mode;
-    int oscilo;
+    int oscillo;
 } conf_globparam_t;
 
 

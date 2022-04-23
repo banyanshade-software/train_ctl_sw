@@ -3294,7 +3294,7 @@
                                                 <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
                                         </textField>
-                                        <button identifier="par_G0_oscilo" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="LP2-6K-CoP">
+                                        <button identifier="par_G0_oscillo" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="LP2-6K-CoP">
                                             <rect key="frame" x="158" y="83" width="61" height="18"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <buttonCell key="cell" type="check" title="oscillo" bezelStyle="regularSquare" imagePosition="left" inset="2" id="fQk-rG-J1f">

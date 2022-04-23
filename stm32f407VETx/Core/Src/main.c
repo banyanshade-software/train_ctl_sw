@@ -141,16 +141,16 @@ const osThreadAttr_t ledTask_attributes = {
   .stack_size = sizeof(ledTaskBuffer),
   .priority = (osPriority_t) osPriorityRealtime4,
 };
-/* Definitions for oscilo */
-osThreadId_t osciloHandle;
-uint32_t osciloBuffer[ 128 ];
-osStaticThreadDef_t osciloControlBlock;
-const osThreadAttr_t oscilo_attributes = {
-  .name = "oscilo",
-  .cb_mem = &osciloControlBlock,
-  .cb_size = sizeof(osciloControlBlock),
-  .stack_mem = &osciloBuffer[0],
-  .stack_size = sizeof(osciloBuffer),
+/* Definitions for oscillo */
+osThreadId_t oscilloHandle;
+uint32_t oscilloBuffer[ 128 ];
+osStaticThreadDef_t oscilloControlBlock;
+const osThreadAttr_t oscillo_attributes = {
+  .name = "oscillo",
+  .cb_mem = &oscilloControlBlock,
+  .cb_size = sizeof(oscilloControlBlock),
+  .stack_mem = &oscilloBuffer[0],
+  .stack_size = sizeof(oscilloBuffer),
   .priority = (osPriority_t) osPriorityNormal,
 };
 /* Definitions for oamTask */
@@ -211,7 +211,7 @@ extern void StartCtrlTask(void *argument);
 extern void StartTxRxFrameTask(void *argument);
 void ina3221_task_start(void *argument);
 void start_led_task(void *argument);
-void StartOscilo(void *argument);
+void StartOscillo(void *argument);
 extern void StartOamTask(void *argument);
 
 /* USER CODE BEGIN PFP */
@@ -328,8 +328,8 @@ int main(void)
   /* creation of ledTask */
   ledTaskHandle = osThreadNew(start_led_task, NULL, &ledTask_attributes);
 
-  /* creation of oscilo */
-  osciloHandle = osThreadNew(StartOscilo, NULL, &oscilo_attributes);
+  /* creation of oscillo */
+  oscilloHandle = osThreadNew(StartOscillo, NULL, &oscillo_attributes);
 
   /* creation of oamTask */
   oamTaskHandle = osThreadNew(StartOamTask, NULL, &oamTask_attributes);
@@ -1463,22 +1463,22 @@ __weak void start_led_task(void *argument)
   /* USER CODE END start_led_task */
 }
 
-/* USER CODE BEGIN Header_StartOscilo */
+/* USER CODE BEGIN Header_StartOscillo */
 /**
-* @brief Function implementing the oscilo thread.
+* @brief Function implementing the oscillo thread.
 * @param argument: Not used
 * @retval None
 */
-/* USER CODE END Header_StartOscilo */
-__weak void StartOscilo(void *argument)
+/* USER CODE END Header_StartOscillo */
+__weak void StartOscillo(void *argument)
 {
-  /* USER CODE BEGIN StartOscilo */
+  /* USER CODE BEGIN StartOscillo */
   /* Infinite loop */
   for(;;)
   {
     osDelay(1);
   }
-  /* USER CODE END StartOscilo */
+  /* USER CODE END StartOscillo */
 }
 
 /**

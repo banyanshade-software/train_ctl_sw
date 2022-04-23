@@ -109,4 +109,8 @@
 #define INA3221_CONTIUNOUS	1
 #define NOTIF_VOFF 0
 
+#ifndef OAM_ONLY
+#define OAM_ONLY 0
+#endif
+
 #endif /* INC_TRAINCTL_CONFIG_H_ */

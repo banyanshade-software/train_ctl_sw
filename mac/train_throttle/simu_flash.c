@@ -40,7 +40,8 @@ int W25qxx_Init(void)
 
 int W25qxx_Deinit(void)
 {
-    munmap(w25qmem, 2*1024*2024);
+    msync(w25qmem, FLASH_SIZE, MS_SYNC);
+    munmap(w25qmem, FLASH_SIZE);
     close(w25fd);
     return 0;
 }

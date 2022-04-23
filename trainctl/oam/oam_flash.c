@@ -86,13 +86,6 @@ void oam_flash_init(void)
 
 }
 
-
-void oam_flash_erase(void)
-{
-    W25qxx_EraseChip();
-    check_store_init(1);
-}
-
 /*
  * BLOCK 0 (64K) - write protected area, reserved for future use, storing e.g. config version, factory setting, etc
  *
@@ -122,7 +115,7 @@ typedef struct {
 	uint8_t valid:1;
 	//uint8_t backup:1;
 	uint8_t block_num;
-	uint8_t startblk;
+	//uint8_t startblk;
 	uint8_t startsect;
 	uint8_t stsect_idx;
 	uint16_t gen;
@@ -131,15 +124,20 @@ typedef struct {
 } blk_desc_t;
 
 
-typedef struct {
-    uint8_t confnum:4;
-    uint16_t offset32:12; // x 32 bytes
-    uint16_t len;         // x 4 bytes
+typedef union {
+    struct {
+        uint8_t confnum:4;
+        uint16_t offset32:12; // x 32 bytes
+        uint16_t len;         // x 4 bytes
+    };
+    uint32_t v32;
+    uint8_t v8[4];
 }  lfiledesc_t;
 
 typedef struct {
     blk_desc_t b;
-    uint8_t readdone;
+    uint8_t readdone:1;
+    uint8_t needwrite:1;
     uint16_t nbfiledesc;
     lfiledesc_t fdesc[128];
 } local_blk_desc_t;
@@ -161,6 +159,8 @@ static local_blk_desc_t blk_bup0_loc = {0};
 static blk_desc_t       blk_n1_str = {0};
 static local_blk_desc_t blk_n1_loc = {0};
 
+
+
 /*
  * generic page buffer, used by any function
  */
@@ -176,6 +176,20 @@ static uint8_t use_backup = 0;
 
 static void check_block(int blocknum, uint32_t magic, blk_desc_t *blkdesc);
 static void format_store_block(int blocknum, uint32_t magic, blk_desc_t *blkdesc, int erase);
+
+
+
+
+void oam_flash_erase(void)
+{
+    W25qxx_EraseChip();
+    memset(&blk_bup0_loc, 0, sizeof(blk_bup0_loc));
+    memset(&blk_bup0_str, 0, sizeof(blk_bup0_str));
+    memset(&blk_n1_str, 0, sizeof(blk_n1_str));
+    memset(&blk_n1_loc, 0, sizeof(blk_n1_loc));
+    check_store_init(1);
+}
+
 
 static void check_store_init(int force)
 {
@@ -425,8 +439,8 @@ int  oam_flashstore_rd_next(unsigned int *confnum, unsigned int *fieldnum, unsig
 
 
 
-static void store_local_read(local_blk_desc_t *desc, int fnum, void *ptr, unsigned int s);
-static void store_local_write(local_blk_desc_t *desc, int fnum, void *ptr, unsigned int s);
+static int store_local_read(local_blk_desc_t *desc, int fnum, void *ptr, unsigned int s);
+static int store_local_write(local_blk_desc_t *desc, int fnum, void *ptr, unsigned int s);
 
 
 
@@ -486,24 +500,99 @@ uint32_t oam_flashlocal_get_value(int confnum, int fieldnum,  int instnum)
 
 static void store_local_read_fdesc(local_blk_desc_t *desc)
 {
-    abort();
+    if (sizeof(lfiledesc_t) != 4) Error_Handler();
+    store_rewind(&desc->b);
+    desc->nbfiledesc = 0;
+    for (;;) {
+        uint32_t addr = W25qxx_BlockToSector(desc->b.block_num)+desc->b.startsect;
+        addr = W25qxx_SectorToAddr(addr) + desc->b.idx;
+        W25qxx_ReadBytes((uint8_t *)&(desc->fdesc[desc->nbfiledesc]), desc->b.idx, sizeof(lfiledesc_t));
+        desc->b.idx += sizeof(lfiledesc_t);
+        if (desc->fdesc[desc->nbfiledesc].v32 == 0xFFFFFFFF) break;
+        itm_debug2(DBG_OAM, "read desc", addr, sizeof(lfiledesc_t));
+        itm_debug3(DBG_OAM, "r /desc", desc->fdesc[desc->nbfiledesc].confnum, desc->fdesc[desc->nbfiledesc].offset32, desc->fdesc[desc->nbfiledesc].len);
+        desc->nbfiledesc++;
+    }
+    desc->readdone = 1;
+}
+
+static void _local_read(local_blk_desc_t *desc, lfiledesc_t *fd, void *ptr, unsigned int s)
+{
+    uint32_t addr = W25qxx_BlockToSector(desc->b.block_num)+desc->b.startsect;
+    addr = W25qxx_SectorToAddr(addr) + fd->offset32*32;
+    itm_debug2(DBG_OAM, "LREAD", s, addr);
+    W25qxx_ReadBytes(ptr, addr, s);
 }
 
 
-static void store_local_read(local_blk_desc_t *desc, int fnum, void *ptr, unsigned int s)
+static void _local_write(local_blk_desc_t *desc, lfiledesc_t *fd, void *ptr, unsigned int s)
+{
+    uint8_t *bptr = (uint8_t *)ptr;
+    uint32_t addr = W25qxx_BlockToSector(desc->b.block_num)+desc->b.startsect;
+    addr = W25qxx_SectorToAddr(addr) + fd->offset32*32;
+    itm_debug2(DBG_OAM, "LWRITE", s, addr);
+    for (int i=0; i<s; i++) { // TODO optimize and write page or sect
+        W25qxx_WriteByte(bptr[i], addr+i);
+    }
+}
+
+static int store_local_read(local_blk_desc_t *desc, int fnum, void *ptr, unsigned int s)
 {
     if (!desc->readdone) {
         store_local_read_fdesc(desc);
     }
-    abort();
-    // XXX TODO
+    for (int i=0; i < desc->nbfiledesc; i++) {
+        if (desc->fdesc[i].len == 0) continue;
+        if (desc->fdesc[i].confnum != fnum) continue;
+        lfiledesc_t *fd = &desc->fdesc[i];
+        _local_read(desc, fd, ptr, s);
+        return 0;
+    }
+    return -1;
 }
 
-static void store_local_write(local_blk_desc_t *desc, int fnum, void *ptr, unsigned int s)
+static int store_local_write(local_blk_desc_t *desc, int fnum, void *ptr, unsigned int s)
 {
     if (!desc->readdone) {
         store_local_read_fdesc(desc);
     }
-    abort();
-    // XXX TODO
+    store_rewind(&desc->b);
+    uint32_t lastaddr32 = 512/32;
+    for (int i=0; i < desc->nbfiledesc; i++) {
+        if (desc->fdesc[i].len == 0) continue;
+        lastaddr32 = desc->fdesc[i].offset32 + (desc->fdesc[i].len+31)/32;
+        if (desc->fdesc[i].confnum != fnum) continue;
+        // invalidate this fdesc locally
+        desc->fdesc[i].len = 0;
+        // ..and on flash
+        uint32_t addr = W25qxx_BlockToSector(desc->b.block_num)+desc->b.startsect;
+        addr = W25qxx_SectorToAddr(addr) + desc->b.idx+i*sizeof(lfiledesc_t);
+        addr += offsetof(lfiledesc_t, len);
+        W25qxx_WriteByte(0, addr);
+        W25qxx_WriteByte(0, addr+1);
+    }
+    // append new filedesc localy
+    if (desc->nbfiledesc >= 128) Error_Handler();
+    lfiledesc_t *fd = &desc->fdesc[desc->nbfiledesc];
+
+    fd->confnum = fnum;
+    fd->len = s;
+    fd->offset32 = lastaddr32;
+    // write it on flash
+    uint32_t addr = W25qxx_BlockToSector(desc->b.block_num)+desc->b.startsect;
+    addr = W25qxx_SectorToAddr(addr) + desc->b.idx+desc->nbfiledesc*sizeof(lfiledesc_t);
+    itm_debug3(DBG_OAM, "w /desc", fd->confnum, fd->offset32, fd->len);
+    itm_debug2(DBG_OAM, "write desc", addr, sizeof(lfiledesc_t));
+    W25qxx_WriteByte(fd->v8[0], addr++);
+    W25qxx_WriteByte(fd->v8[1], addr++);
+    W25qxx_WriteByte(fd->v8[2], addr++);
+    W25qxx_WriteByte(fd->v8[3], addr++);
+    
+    desc->nbfiledesc ++;
+
+    // do actual write
+    _local_write(desc, fd, ptr, s);
+    return 0;
 }
+
+    

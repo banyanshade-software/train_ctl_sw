@@ -42,7 +42,7 @@ typedef struct conf_turnout {
 } conf_turnout_t;
 
 
-int conf_turnout_num_entries(void);
+unsigned int conf_turnout_num_entries(void);
 const conf_turnout_t *conf_turnout_get(int num);
 
 

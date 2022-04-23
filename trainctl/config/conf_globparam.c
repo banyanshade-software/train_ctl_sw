@@ -28,7 +28,7 @@
 
 #ifdef TRN_BOARD_MAIN
 
-int conf_globparam_num_entries(void)
+unsigned int conf_globparam_num_entries(void)
 {
     return 1; // 1 
 }
@@ -48,7 +48,7 @@ static conf_globparam_t conf_globparam[1] = {
 
 #ifdef TRN_BOARD_DISPATCHER
 
-int conf_globparam_num_entries(void)
+unsigned int conf_globparam_num_entries(void)
 {
     return 0; // 0 
 }
@@ -63,7 +63,7 @@ static conf_globparam_t conf_globparam[0] = {
 
 #ifdef TRN_BOARD_SWITCHER
 
-int conf_globparam_num_entries(void)
+unsigned int conf_globparam_num_entries(void)
 {
     return 0; // 0 
 }
@@ -78,7 +78,7 @@ static conf_globparam_t conf_globparam[0] = {
 
 #ifdef TRN_BOARD_MAIN_ZERO
 
-int conf_globparam_num_entries(void)
+unsigned int conf_globparam_num_entries(void)
 {
     return 0; // 0 
 }
@@ -114,6 +114,7 @@ int32_t conf_globparam_local_get(unsigned int fieldnum, unsigned int instnum)
     const conf_globparam_t *c = conf_globparam_get(instnum);
     if (!c) return 0;
     switch (fieldnum) {
+    default: break;
     case conf_numfield_globparam_pwmfreq:
         return c->pwmfreq;
     case conf_numfield_globparam_test_mode:
@@ -132,6 +133,7 @@ void conf_globparam_local_set(unsigned int fieldnum, unsigned int instnum, int32
     if (!ca) return;
     conf_globparam_t *c = &ca[instnum];
     switch (fieldnum) {
+    default: break;
     case conf_numfield_globparam_pwmfreq:
         c->pwmfreq = v;
         break;

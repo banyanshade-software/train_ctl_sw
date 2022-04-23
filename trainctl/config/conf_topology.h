@@ -44,7 +44,7 @@ typedef struct conf_topology {
 } conf_topology_t;
 
 
-int conf_topology_num_entries(void);
+unsigned int conf_topology_num_entries(void);
 const conf_topology_t *conf_topology_get(int num);
 
 

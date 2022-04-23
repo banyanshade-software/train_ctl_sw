@@ -35,6 +35,7 @@ void OAM_Init(void)
 	oam_flash_init();
     initdone=1;
     oam_flashlocal_read(-1);
+    // TODO propag normal store if master
 }
 
 
@@ -80,123 +81,151 @@ void OAM_Tasklet(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_
 		int rc = mqf_read_to_oam(&m);
 		if (rc) break;
 
-		switch (m.cmd) {
-		case CMD_SETRUN_MODE:
-			if (m.v1u != run_mode) {
-				run_mode = (runmode_t) m.v1u;
-				if (run_mode == runmode_testcan) {
-					respok = 0;
-				}
-			}
-			break;
+        unsigned int instnum;
+        unsigned int confnum;
+        unsigned int fieldnum;
+        unsigned int confbrd;
+        int32_t v;
+        uint64_t enc;
 
-		case CMD_PARAM_USER_SET: {
-			if (!oam_isMaster()) {
-				itm_debug1(DBG_OAM|DBG_ERR, "only master recv set", 0);
-				Error_Handler();
-				break;
-			}
-			unsigned int instnum;
-			unsigned int confnum;
-			unsigned int fieldnum;
-			unsigned int confbrd;
-			int32_t v;
-			oam_decode_val40(m.val40, &confnum, &confbrd, &instnum, &fieldnum, &v);
-            // store in flash
-            oam_flashstore_set_value(confnum, fieldnum, confbrd, instnum, v);
-            if (confbrd == 0)  {
-            	// master == local board
-            	conf_propagate(confnum, fieldnum, instnum, v);
-            } else {
-            	m.cmd = CMD_PARAM_PROPAG;
-            	m.to = MA0_OAM(confbrd);
-            	mqf_write_from_oam(&m);
-            }
-			}
-			break;
+        switch (m.cmd) {
+        case CMD_SETRUN_MODE:
+        	if (m.v1u != run_mode) {
+        		run_mode = (runmode_t) m.v1u;
+        		if (run_mode == runmode_testcan) {
+        			respok = 0;
+        		}
+        	}
+        	break;
 
-		case CMD_PARAM_USER_COMMIT:
-			if (!oam_isMaster()) {
-				itm_debug1(DBG_OAM|DBG_ERR, "only master recv commit", 0);
-				Error_Handler();
-				break;
-			}
-			break;
+        case CMD_PARAM_USER_SET:
+        	if (!oam_isMaster()) {
+        		itm_debug1(DBG_OAM|DBG_ERR, "only master recv set", 0);
+        		Error_Handler();
+        		break;
+        	}
 
-		case CMD_PARAM_USER_GET:
-			if (!oam_isMaster()) {
-				itm_debug1(DBG_OAM|DBG_ERR, "only master recv get", 0);
-				Error_Handler();
-				break;
-			}
-			unsigned int instnum;
-			unsigned int confnum;
-			unsigned int fieldnum;
-			unsigned int confbrd;
-			int32_t v;
-			oam_decode_val40(m.val40, &confnum, &confbrd, &instnum, &fieldnum, &v);
-			v = oam_flashstore_get_value(confnum, fieldnum, confbrd, instnum);
-            uint64_t enc;
-            oam_encode_val40(&enc, confnum, confbrd, instnum, fieldnum, v);
-            m.to = m.from;
-            m.from = MA0_OAM(0);
-            m.cmd = CMD_PARAM_USER_VAL;
-            mqf_write_from_oam(&m);
-			break;
+        	oam_decode_val40(m.val40, &confnum, &confbrd, &instnum, &fieldnum, &v);
+        	// store in flash
+        	oam_flashstore_set_value(confnum, fieldnum, confbrd, instnum, v);
+        	if (confbrd == 0)  {
+        		// master == local board
+        		conf_propagate(confnum, fieldnum, instnum, v);
+        	} else {
+        		m.cmd = CMD_PARAM_PROPAG;
+        		m.to = MA0_OAM(confbrd);
+        		mqf_write_from_oam(&m);
+        	}
+        	break;
+        case CMD_PARAM_USER_GET:
+        	if (!oam_isMaster()) {
+        		itm_debug1(DBG_OAM|DBG_ERR, "only master recv get", 0);
+        		Error_Handler();
+        		break;
+        	}
 
-		case CMD_PARAM_PROPAG: {
-			if (oam_isMaster()) {
-				itm_debug1(DBG_OAM|DBG_ERR, "only slave recv propag", 0);
-				Error_Handler();
-				break;
-			}
-			unsigned int instnum;
-			unsigned int confnum;
-			unsigned int fieldnum;
-			unsigned int confbrd;
-			int32_t v;
-			oam_decode_val40(m.val40, &confnum, &confbrd, &instnum, &fieldnum, &v);
+        	oam_decode_val40(m.val40, &confnum, &confbrd, &instnum, &fieldnum, &v);
+        	v = oam_flashstore_get_value(confnum, fieldnum, confbrd, instnum);
+        	oam_encode_val40(&enc, confnum, confbrd, instnum, fieldnum, v);
+        	m.to = m.from;
+        	m.from = MA0_OAM(0);
+        	m.cmd = CMD_PARAM_USER_VAL;
+        	mqf_write_from_oam(&m);
+        	break;
+
+
+        case CMD_PARAM_LUSER_SET:
+        	if (!oam_isMaster()) {
+        		itm_debug1(DBG_OAM|DBG_ERR, "only master recv set", 0);
+        		Error_Handler();
+        		break;
+        	}
+
+        	oam_decode_val40(m.val40, &confnum, &confbrd, &instnum, &fieldnum, &v);
+        	// store in flash
+        	oam_flashlocal_set_value(confnum, fieldnum,  instnum, v);
+        	break;
+
+
+        case CMD_PARAM_LUSER_COMMIT:
+        	if (!oam_isMaster()) {
+        		itm_debug1(DBG_OAM|DBG_ERR, "only master recv commit", 0);
+        		Error_Handler();
+        		break;
+        	}
+        	oam_flashlocal_commit(m.v1);
+        	break;
+
+
+
+        case CMD_PARAM_LUSER_GET:
+        	if (!oam_isMaster()) {
+        		itm_debug1(DBG_OAM|DBG_ERR, "only master recv get", 0);
+        		Error_Handler();
+        		break;
+        	}
+        	oam_decode_val40(m.val40, &confnum, &confbrd, &instnum, &fieldnum, &v);
+        	v = oam_flashlocal_get_value(confnum, fieldnum, instnum);
+        	oam_encode_val40(&enc, confnum, 0, instnum, fieldnum, v);
+        	m.to = m.from;
+        	m.from = MA0_OAM(0);
+        	m.cmd = CMD_PARAM_LUSER_VAL;
+        	mqf_write_from_oam(&m);
+        	break;
+
+        case CMD_PARAM_PROPAG: {
+        	if (oam_isMaster()) {
+        		itm_debug1(DBG_OAM|DBG_ERR, "only slave recv propag", 0);
+        		Error_Handler();
+        		break;
+        	}
+        	unsigned int instnum;
+        	unsigned int confnum;
+        	unsigned int fieldnum;
+        	unsigned int confbrd;
+        	int32_t v;
+        	oam_decode_val40(m.val40, &confnum, &confbrd, &instnum, &fieldnum, &v);
         	conf_propagate(confnum, fieldnum, instnum, v);
-			}
-		    break;
+        }
+        break;
 
 
-		case CMD_CANTEST:
-			if ((0)) { // XXX test relat
-				static int cnt=0;
-				cnt++;
-				if (0==(cnt%4)) {
-					static int a = 0;
-					msg_64_t m = {0};
-					m.to = MA0_TURNOUT(1);
-					m.subc = 0;
-					m.from = MA0_OAM(1);
-					m.cmd = a ? CMD_TURNOUT_A : CMD_TURNOUT_B;
-					a = a ? 0 : 1;
-					mqf_write_from_oam(&m);
-				}
-			}
-			if (run_mode != runmode_testcan) break;
-			if (master) break;
-			m.cmd = CMD_CANTEST_RESP;
-			m.v2u = m.v1u*2;
-			mqf_write_from_oam(&m);
-			break;
+        case CMD_CANTEST:
+        	if ((0)) { // XXX test relat
+        		static int cnt=0;
+        		cnt++;
+        		if (0==(cnt%4)) {
+        			static int a = 0;
+        			msg_64_t m = {0};
+        			m.to = MA0_TURNOUT(1);
+        			m.subc = 0;
+        			m.from = MA0_OAM(1);
+        			m.cmd = a ? CMD_TURNOUT_A : CMD_TURNOUT_B;
+        			a = a ? 0 : 1;
+        			mqf_write_from_oam(&m);
+        		}
+        	}
+        	if (run_mode != runmode_testcan) break;
+        	if (master) break;
+        	m.cmd = CMD_CANTEST_RESP;
+        	m.v2u = m.v1u*2;
+        	mqf_write_from_oam(&m);
+        	break;
 
-		case CMD_CANTEST_RESP:
-			// also handled by IHM
-			if (run_mode == runmode_testcan) {
-				respok++;
-				if (respok > 20) {
-					respok = 0;
-					exit_can_test();
-				}
-			}
-			break;
+        case CMD_CANTEST_RESP:
+        	// also handled by IHM
+        	if (run_mode == runmode_testcan) {
+        		respok++;
+        		if (respok > 20) {
+        			respok = 0;
+        			exit_can_test();
+        		}
+        	}
+        	break;
 
-		default:
-			break;
-		}
+        default:
+        	break;
+        }
 	}
 	switch (run_mode) {
 	case runmode_testcan: break;

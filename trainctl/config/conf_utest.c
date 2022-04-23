@@ -26,15 +26,13 @@
 
 
 
-#ifndef TRAIN_SIMU
-#error used only for unit test
-#endif
+// used only for unit test
 
 
 
 #ifdef TRN_BOARD_MAIN
 
-int conf_utest_num_entries(void)
+unsigned int conf_utest_num_entries(void)
 {
     return 1; // 1 
 }
@@ -54,7 +52,7 @@ static conf_utest_t conf_utest[1] = {
 
 #ifdef TRN_BOARD_DISPATCHER
 
-int conf_utest_num_entries(void)
+unsigned int conf_utest_num_entries(void)
 {
     return 1; // 1 
 }
@@ -74,7 +72,7 @@ static conf_utest_t conf_utest[1] = {
 
 #ifdef TRN_BOARD_SWITCHER
 
-int conf_utest_num_entries(void)
+unsigned int conf_utest_num_entries(void)
 {
     return 1; // 1 
 }
@@ -94,7 +92,7 @@ static conf_utest_t conf_utest[1] = {
 
 #ifdef TRN_BOARD_MAIN_ZERO
 
-int conf_utest_num_entries(void)
+unsigned int conf_utest_num_entries(void)
 {
     return 1; // 1 
 }
@@ -141,6 +139,7 @@ int conf_utest_propagate(unsigned int numinst, unsigned int numfield, int32_t va
 
 int32_t conf_utest_default_value(unsigned int numinst, unsigned int numfield, unsigned int boardnum)
 {
+    (void) boardnum;
     //if (numinst>=conf_utest_num_entries()) return 0;
     switch (numfield) {
     default: return 0;

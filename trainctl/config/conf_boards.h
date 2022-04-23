@@ -28,7 +28,7 @@ typedef struct conf_boards {
 } conf_boards_t;
 
 
-int conf_boards_num_entries(void);
+unsigned int conf_boards_num_entries(void);
 const conf_boards_t *conf_boards_get(int num);
 
 

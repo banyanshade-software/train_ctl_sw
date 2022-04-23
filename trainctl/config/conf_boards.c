@@ -28,7 +28,7 @@
 
 #ifdef TRN_BOARD_MAIN
 
-int conf_boards_num_entries(void)
+unsigned int conf_boards_num_entries(void)
 {
     return 8; // 8 
 }
@@ -83,7 +83,7 @@ static conf_boards_t conf_boards[8] = {
 
 #ifdef TRN_BOARD_DISPATCHER
 
-int conf_boards_num_entries(void)
+unsigned int conf_boards_num_entries(void)
 {
     return 0; // 0 
 }
@@ -98,7 +98,7 @@ static conf_boards_t conf_boards[0] = {
 
 #ifdef TRN_BOARD_SWITCHER
 
-int conf_boards_num_entries(void)
+unsigned int conf_boards_num_entries(void)
 {
     return 0; // 0 
 }
@@ -113,7 +113,7 @@ static conf_boards_t conf_boards[0] = {
 
 #ifdef TRN_BOARD_MAIN_ZERO
 
-int conf_boards_num_entries(void)
+unsigned int conf_boards_num_entries(void)
 {
     return 0; // 0 
 }
@@ -149,6 +149,7 @@ int32_t conf_boards_local_get(unsigned int fieldnum, unsigned int instnum)
     const conf_boards_t *c = conf_boards_get(instnum);
     if (!c) return 0;
     switch (fieldnum) {
+    default: break;
     case conf_numfield_boards_uuid:
         return c->uuid;
     case conf_numfield_boards_board_type:
@@ -167,6 +168,7 @@ void conf_boards_local_set(unsigned int fieldnum, unsigned int instnum, int32_t 
     if (!ca) return;
     conf_boards_t *c = &ca[instnum];
     switch (fieldnum) {
+    default: break;
     case conf_numfield_boards_uuid:
         c->uuid = v;
         break;

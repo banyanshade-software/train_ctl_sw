@@ -50,7 +50,7 @@ typedef struct conf_canton {
 } conf_canton_t;
 
 
-int conf_canton_num_entries(void);
+unsigned int conf_canton_num_entries(void);
 const conf_canton_t *conf_canton_get(int num);
 
 

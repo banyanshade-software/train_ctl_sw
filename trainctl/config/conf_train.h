@@ -52,7 +52,7 @@ typedef struct conf_train {
 } conf_train_t;
 
 
-int conf_train_num_entries(void);
+unsigned int conf_train_num_entries(void);
 const conf_train_t *conf_train_get(int num);
 
 

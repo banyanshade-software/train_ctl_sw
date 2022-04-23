@@ -28,7 +28,7 @@
 
 #ifdef TRN_BOARD_MAIN
 
-int conf_canton_num_entries(void)
+unsigned int conf_canton_num_entries(void)
 {
     return 6; // 6 
 }
@@ -127,7 +127,7 @@ static conf_canton_t conf_canton[6] = {
 
 #ifdef TRN_BOARD_DISPATCHER
 
-int conf_canton_num_entries(void)
+unsigned int conf_canton_num_entries(void)
 {
     return 1; // 1 
 }
@@ -156,7 +156,7 @@ static conf_canton_t conf_canton[1] = {
 
 #ifdef TRN_BOARD_SWITCHER
 
-int conf_canton_num_entries(void)
+unsigned int conf_canton_num_entries(void)
 {
     return 0; // 0 
 }
@@ -171,7 +171,7 @@ static conf_canton_t conf_canton[0] = {
 
 #ifdef TRN_BOARD_MAIN_ZERO
 
-int conf_canton_num_entries(void)
+unsigned int conf_canton_num_entries(void)
 {
     return 0; // 0 
 }
@@ -229,6 +229,7 @@ int conf_canton_propagate(unsigned int numinst, unsigned int numfield, int32_t v
 
 int32_t conf_canton_default_value(unsigned int numinst, unsigned int numfield, unsigned int boardnum)
 {
+    (void) boardnum;
     //if (numinst>=conf_canton_num_entries()) return 0;
     switch (numfield) {
     default: return 0;

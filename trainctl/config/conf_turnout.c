@@ -28,7 +28,7 @@
 
 #ifdef TRN_BOARD_MAIN
 
-int conf_turnout_num_entries(void)
+unsigned int conf_turnout_num_entries(void)
 {
     return 3; // 3 
 }
@@ -61,7 +61,7 @@ static conf_turnout_t conf_turnout[3] = {
 
 #ifdef TRN_BOARD_DISPATCHER
 
-int conf_turnout_num_entries(void)
+unsigned int conf_turnout_num_entries(void)
 {
     return 0; // 0 
 }
@@ -76,7 +76,7 @@ static conf_turnout_t conf_turnout[0] = {
 
 #ifdef TRN_BOARD_SWITCHER
 
-int conf_turnout_num_entries(void)
+unsigned int conf_turnout_num_entries(void)
 {
     return 0; // 0 
 }
@@ -91,7 +91,7 @@ static conf_turnout_t conf_turnout[0] = {
 
 #ifdef TRN_BOARD_MAIN_ZERO
 
-int conf_turnout_num_entries(void)
+unsigned int conf_turnout_num_entries(void)
 {
     return 0; // 0 
 }
@@ -130,6 +130,7 @@ int conf_turnout_propagate(unsigned int numinst, unsigned int numfield, int32_t 
 
 int32_t conf_turnout_default_value(unsigned int numinst, unsigned int numfield, unsigned int boardnum)
 {
+    (void) boardnum;
     //if (numinst>=conf_turnout_num_entries()) return 0;
     switch (numfield) {
     default: return 0;

@@ -190,7 +190,7 @@ static void generate_hfile_normal(config_node_t *root, config_node_t *boards)
         fprintf(output, "typedef struct conf_%s {\n", n);
         gen_fields(node->fields, output);
         fprintf(output, "} conf_%s_t;\n\n\n", n);
-        fprintf(output, "int conf_%s_num_entries(void);\n", n);
+        fprintf(output, "unsigned int conf_%s_num_entries(void);\n", n);
         fprintf(output, "const conf_%s_t *conf_%s_get(int num);\n\n", n, n);
         // get max entries
         char *nuc = strdup(n);
@@ -404,7 +404,7 @@ void generate_cfile(config_node_t *root, int continue_next, config_node_t *board
 
 
             if (!b) error("no board or no default");
-            fprintf(output, "int conf_%s_num_entries(void)\n{\n    return %s; // %d \n}\n\n", n, b->val->string, b->val->value);
+            fprintf(output, "unsigned int conf_%s_num_entries(void)\n{\n    return %s; // %d \n}\n\n", n, b->val->string, b->val->value);
             fprintf(output, "static conf_%s_t conf_%s[%s] = {\n", n,n, b->val->string);
             for (int numinst=0; numinst<b->val->value; numinst++) {
                 fprintf(output, "  {     // %d\n", numinst);
@@ -417,7 +417,7 @@ void generate_cfile(config_node_t *root, int continue_next, config_node_t *board
             fprintf(output, "#endif // TRN_BOARD_%s\n\n\n", brduc);
         }
         fprintf(output, "\n\nconst conf_%s_t *conf_%s_get(int num)\n", n, n);
-        fprintf(output, "{\n  if (num<0) return NULL;\n    if (num>=conf_%s_num_entries()) {\n        return NULL;\n    }\n", n);
+        fprintf(output, "{\n  if (num<0) return NULL;\n    if ((unsigned int)num>=conf_%s_num_entries()) {\n        return NULL;\n    }\n", n);
         fprintf(output, "    return &conf_%s[num];\n}\n\n", n);
 
         int storetype, storenum, gentpl;
@@ -430,6 +430,7 @@ void generate_cfile(config_node_t *root, int continue_next, config_node_t *board
             fprintf(output, "\n\nint32_t conf_%s_local_get(unsigned int fieldnum, unsigned int instnum)\n", n);
             fprintf(output, "{\n    const conf_%s_t *c = conf_%s_get(instnum);\n    if (!c) return 0;\n", n, n);
             fprintf(output, "    switch (fieldnum) {\n");
+            fprintf(output, "    default: break;\n");
             apply_field(root, node->fields, 1, _gen_lget, output, 0);
             fprintf(output, "    }\n    return 0;\n}\n\n");
 
@@ -437,6 +438,7 @@ void generate_cfile(config_node_t *root, int continue_next, config_node_t *board
             fprintf(output, "{\n    conf_%s_t *ca = (conf_%s_t *) conf_%s_ptr();\n    if (!ca) return;\n", n, n, n);
             fprintf(output, "    conf_%s_t *c = &ca[instnum];\n", n);
             fprintf(output, "    switch (fieldnum) {\n");
+            fprintf(output, "    default: break;\n");
             apply_field(root, node->fields, 1, _gen_lset, output, 0);
             fprintf(output, "    }\n\n}\n\n");
         }
@@ -467,7 +469,8 @@ void generate_cfile(config_node_t *root, int continue_next, config_node_t *board
 
             _fdef_tables = root->tables;
             fprintf(output, "int32_t conf_%s_default_value(unsigned int numinst, unsigned int numfield, unsigned int boardnum)\n", n);
-            fprintf(output, "{\n    //if (numinst>=conf_%s_num_entries()) return 0;\n", n);
+            fprintf(output, "{\n    (void) boardnum;\n");
+            fprintf(output, "    //if (numinst>=conf_%s_num_entries()) return 0;\n", n);
             fprintf(output, "    switch (numfield) {\n");
             fprintf(output, "    default: return 0;\n");
             apply_field(root, node->fields, 1, _gen_fdefault, output, 0);

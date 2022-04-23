@@ -28,7 +28,7 @@
 
 #ifdef TRN_BOARD_MAIN
 
-int conf_led_num_entries(void)
+unsigned int conf_led_num_entries(void)
 {
     return 3; // 3 
 }
@@ -58,7 +58,7 @@ static conf_led_t conf_led[3] = {
 
 #ifdef TRN_BOARD_DISPATCHER
 
-int conf_led_num_entries(void)
+unsigned int conf_led_num_entries(void)
 {
     return 0; // 0 
 }
@@ -73,7 +73,7 @@ static conf_led_t conf_led[0] = {
 
 #ifdef TRN_BOARD_SWITCHER
 
-int conf_led_num_entries(void)
+unsigned int conf_led_num_entries(void)
 {
     return 0; // 0 
 }
@@ -88,7 +88,7 @@ static conf_led_t conf_led[0] = {
 
 #ifdef TRN_BOARD_MAIN_ZERO
 
-int conf_led_num_entries(void)
+unsigned int conf_led_num_entries(void)
 {
     return 0; // 0 
 }
@@ -127,6 +127,7 @@ int conf_led_propagate(unsigned int numinst, unsigned int numfield, int32_t valu
 
 int32_t conf_led_default_value(unsigned int numinst, unsigned int numfield, unsigned int boardnum)
 {
+    (void) boardnum;
     //if (numinst>=conf_led_num_entries()) return 0;
     switch (numfield) {
     default: return 0;

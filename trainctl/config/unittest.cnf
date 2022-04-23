@@ -17,16 +17,12 @@ config utest {
 
 attrib utest h_code {
 
-#ifndef TRAIN_SIMU
-#error used only for unit test
-#endif
+// error used only for unit test
 
 }
 attrib utest c_code {
 
-#ifndef TRAIN_SIMU
-#error used only for unit test
-#endif
+// used only for unit test
 
 }
 

@@ -41,7 +41,7 @@ typedef struct conf_led {
 } conf_led_t;
 
 
-int conf_led_num_entries(void);
+unsigned int conf_led_num_entries(void);
 const conf_led_t *conf_led_get(int num);
 
 

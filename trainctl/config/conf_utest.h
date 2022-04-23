@@ -21,9 +21,7 @@
 
 
 
-#ifndef TRAIN_SIMU
-#error used only for unit test
-#endif
+// error used only for unit test
 
 
 
@@ -34,7 +32,7 @@ typedef struct conf_utest {
 } conf_utest_t;
 
 
-int conf_utest_num_entries(void);
+unsigned int conf_utest_num_entries(void);
 const conf_utest_t *conf_utest_get(int num);
 
 

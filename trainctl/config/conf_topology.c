@@ -39,7 +39,7 @@
 
 #ifdef TRN_BOARD_MAIN
 
-int conf_topology_num_entries(void)
+unsigned int conf_topology_num_entries(void)
 {
     return 64; // 64 
 }
@@ -950,7 +950,7 @@ static conf_topology_t conf_topology[64] = {
 
 #ifdef TRN_BOARD_DISPATCHER
 
-int conf_topology_num_entries(void)
+unsigned int conf_topology_num_entries(void)
 {
     return 0; // 0 
 }
@@ -965,7 +965,7 @@ static conf_topology_t conf_topology[0] = {
 
 #ifdef TRN_BOARD_SWITCHER
 
-int conf_topology_num_entries(void)
+unsigned int conf_topology_num_entries(void)
 {
     return 0; // 0 
 }
@@ -980,7 +980,7 @@ static conf_topology_t conf_topology[0] = {
 
 #ifdef TRN_BOARD_MAIN_ZERO
 
-int conf_topology_num_entries(void)
+unsigned int conf_topology_num_entries(void)
 {
     return 0; // 0 
 }
@@ -1016,6 +1016,7 @@ int32_t conf_topology_local_get(unsigned int fieldnum, unsigned int instnum)
     const conf_topology_t *c = conf_topology_get(instnum);
     if (!c) return 0;
     switch (fieldnum) {
+    default: break;
     case conf_numfield_topology_canton_addr:
         return c->canton_addr;
     case conf_numfield_topology_ina_segnum:
@@ -1050,6 +1051,7 @@ void conf_topology_local_set(unsigned int fieldnum, unsigned int instnum, int32_
     if (!ca) return;
     conf_topology_t *c = &ca[instnum];
     switch (fieldnum) {
+    default: break;
     case conf_numfield_topology_canton_addr:
         c->canton_addr = v;
         break;

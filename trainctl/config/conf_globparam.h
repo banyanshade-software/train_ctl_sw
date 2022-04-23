@@ -28,7 +28,7 @@ typedef struct conf_globparam {
 } conf_globparam_t;
 
 
-int conf_globparam_num_entries(void);
+unsigned int conf_globparam_num_entries(void);
 const conf_globparam_t *conf_globparam_get(int num);
 
 

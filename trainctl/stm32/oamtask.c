@@ -28,13 +28,14 @@ void StartOamTask(_UNUSED_ void *argument)
 
 	uint32_t lt = 0;
 	for (;;) {
-		osDelay(OAM_NeedsReschedule ? 1 : 20);
+		osDelay(OAM_NeedsReschedule ? 1 : 50);
 		uint32_t tick = HAL_GetTick();
 		uint32_t notif = 0;
 
 		//itm_debug1(DBG_LOWCTRL, "--msg", dt);
+#if OAM_ONLY
 		msgsrv_tick(notif, tick, tick-lt);
-
+#endif
 		//itm_debug1(DBG_LOWCTRL, "--oam", dt);
 		OAM_Tasklet(notif, tick, tick-lt);
 

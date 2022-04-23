@@ -153,6 +153,18 @@ const osThreadAttr_t oscilo_attributes = {
   .stack_size = sizeof(osciloBuffer),
   .priority = (osPriority_t) osPriorityNormal,
 };
+/* Definitions for oamTask */
+osThreadId_t oamTaskHandle;
+uint32_t oamTaskBuffer[ 256 ];
+osStaticThreadDef_t oamTaskControlBlock;
+const osThreadAttr_t oamTask_attributes = {
+  .name = "oamTask",
+  .cb_mem = &oamTaskControlBlock,
+  .cb_size = sizeof(oamTaskControlBlock),
+  .stack_mem = &oamTaskBuffer[0],
+  .stack_size = sizeof(oamTaskBuffer),
+  .priority = (osPriority_t) osPriorityLow,
+};
 /* Definitions for frameQueue */
 osMessageQueueId_t frameQueueHandle;
 uint8_t frameQueueBuffer[ 48 * sizeof( frame_msg_t ) ];
@@ -173,6 +185,7 @@ uint32_t osciloBuffer[] __attribute__((section(".ccmram")));
 uint32_t txrxFrameTaskBuffer[] __attribute__((section(".ccmram")));
 uint32_t ina3221_taskBuffer[] __attribute__((section(".ccmram")));
 uint32_t ctrlTaskBuffer[] __attribute__((section(".ccmram")));
+uint32_t ctrlOamBuffer[] __attribute__((section(".ccmram")));
 
 /* USER CODE END PV */
 
@@ -199,6 +212,7 @@ extern void StartTxRxFrameTask(void *argument);
 void ina3221_task_start(void *argument);
 void start_led_task(void *argument);
 void StartOscilo(void *argument);
+extern void StartOamTask(void *argument);
 
 /* USER CODE BEGIN PFP */
 
@@ -316,6 +330,9 @@ int main(void)
 
   /* creation of oscilo */
   osciloHandle = osThreadNew(StartOscilo, NULL, &oscilo_attributes);
+
+  /* creation of oamTask */
+  oamTaskHandle = osThreadNew(StartOamTask, NULL, &oamTask_attributes);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -1283,8 +1300,7 @@ static void MX_GPIO_Init(void)
                           |GPIO_PIN_15, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOB, FLASH_CS_Pin|GPIO_PIN_2|GPIO_PIN_12|GPIO_PIN_13
-                          |GPIO_PIN_4|GPIO_PIN_5, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOB, FLASH_CS_Pin|GPIO_PIN_2|GPIO_PIN_12|GPIO_PIN_13, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOD, VOLT_2_SEL2_Pin|VOLT_3_SEL0_Pin|VOLT_3_SEL1_Pin|VOLT_3_SEL2_Pin
@@ -1320,10 +1336,8 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : FLASH_CS_Pin PB2 PB12 PB13
-                           PB4 PB5 */
-  GPIO_InitStruct.Pin = FLASH_CS_Pin|GPIO_PIN_2|GPIO_PIN_12|GPIO_PIN_13
-                          |GPIO_PIN_4|GPIO_PIN_5;
+  /*Configure GPIO pins : FLASH_CS_Pin PB2 PB12 PB13 */
+  GPIO_InitStruct.Pin = FLASH_CS_Pin|GPIO_PIN_2|GPIO_PIN_12|GPIO_PIN_13;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;

@@ -306,7 +306,7 @@ uint8_t topology_or_occupency_changed = 0;
 
 int topology_set_turnout(int tn, int v, int numtrain)
 {
-	if (tn >= NUM_TURNOUTS) return -1;
+	if (tn >= MAX_TOTAL_TURNOUTS) return -1;
 	if (tn<0) return -1;
 	if (tn>31) return -1;
 
@@ -330,7 +330,7 @@ int topology_set_turnout(int tn, int v, int numtrain)
 
 int topology_get_turnout(int tn)
 {
-	if (tn >= NUM_TURNOUTS) return 0;
+	if (tn >= MAX_TOTAL_TURNOUTS) return 0;
 	if (tn<0) return 0;
 	if (tn>31) return 0;
 

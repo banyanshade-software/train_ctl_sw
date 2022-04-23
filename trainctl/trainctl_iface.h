@@ -100,7 +100,7 @@ void auto1_run(uint32_t notif, uint32_t tick);
 
 
 // ---------------------------------------------- param
-
+#if 0
 typedef struct param param_t;
 
 int param_get_value(const param_t *params, void *ptr, const char *name, int32_t *pvalue, int32_t *pdef, int32_t *pmin, int32_t *pmax);
@@ -110,7 +110,7 @@ int param_set_value(const param_t *params, void *ptr, const char *name, int32_t 
 
 void railconfig_setup_default(void);
 
-
+#endif
 // ---------------------------------------------- other
 
 extern void set_pwm_freq(int freqhz, int crit);

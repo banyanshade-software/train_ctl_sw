@@ -131,8 +131,12 @@ void OAM_Tasklet(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_
         	if (confnum == conf_lnum_globparam) {
         		// special handling for some param
         		if (fieldnum == conf_numfield_globparam_oscillo) {
+#ifdef BOARD_HAS_OSCILLO
         			extern int oscillo_enable;
         			v = oscillo_enable;
+#else
+        			v = 0;
+#endif
         			normal = 0;
         		}
         	}
@@ -159,8 +163,10 @@ void OAM_Tasklet(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_
         	if (confnum == conf_lnum_globparam) {
         		// special handling for some param
         		if (fieldnum == conf_numfield_globparam_oscillo) {
+#ifdef BOARD_HAS_OSCILLO
         			extern int oscillo_enable;
         			oscillo_enable = v;
+#endif
         			break;
         		}
         	}

@@ -223,16 +223,19 @@ void txrx_process_char(uint8_t c, uint8_t *respbuf, int *replen)
 
 
 // ---------------------------------------------------------------------------------
+/*
 static void param_set_pwm(struct param *p, int32_t v) // XXX to be moved away
 {
         set_pwm_freq(v, 1);
 }
+*/
 
 /*
 int32_t (*getter)(struct param *);
 	void (*setter)(struct param *, int32_t);
 */
 
+/*
 static int32_t param_get_numtrains(_UNUSED_ param_t *p)
 {
 	return NUM_TRAINS;
@@ -247,8 +250,10 @@ static int32_t param_get_pwm(param_t *p)
 {
 	return get_pwm_freq();
 }
-extern int oscillo_enable;
+*/
+//extern int oscillo_enable;
 
+/*
 static const param_t glob_params[] = {
 		{ "pwmfreq",     NULL, 0, param_get_pwm, param_set_pwm, sizeof(int), 0, 60000,  50},
 		{ "numtrains",   NULL, 0, 	    param_get_numtrains,  NULL, sizeof(uint32_t), 1, 1, 10},
@@ -259,15 +264,15 @@ static const param_t glob_params[] = {
 		{ NULL,     NULL,0,    NULL,NULL, 0, 0, 0,   0}
 };
 
+*/
 
 
-
-static uint8_t process_frame_cmd(uint8_t sel, uint8_t num,  uint8_t cmd, uint8_t *param, int plen, uint8_t *rbuf, int rbuflen, int *prlen)
+static uint8_t process_frame_cmd(uint8_t sel, uint8_t num,  uint8_t cmd, uint8_t *param, int plen, uint8_t *rbuf, _UNUSED_ int rbuflen, int *prlen)
 {
     //HAL_GPIO_TogglePin(GPIOC,GPIO_PIN_13);
 	int16_t s;
 	*prlen = 0;
-	int32_t v,d,min,max;
+	//int32_t v,d,min,max;
 	int rc=-1;
 
 	switch(sel) {
@@ -281,6 +286,7 @@ static uint8_t process_frame_cmd(uint8_t sel, uint8_t num,  uint8_t cmd, uint8_t
         break;
 	case 'A':
 		switch (cmd) {
+		default: break;
 		case 'S':
 			//rc = turnout_cmd(num, 1);
 			break;
@@ -306,6 +312,7 @@ static uint8_t process_frame_cmd(uint8_t sel, uint8_t num,  uint8_t cmd, uint8_t
 			// TODO calibrate_bemf();
 			return 0;
 			break;
+		/* obsolete
 		case 'p':
 			rc = param_get_value(glob_params, NULL, (char *)param, &v, &d, &min, &max);
 			memcpy(rbuf, &v,   sizeof(int32_t)); rbuf += sizeof(int32_t);
@@ -314,13 +321,16 @@ static uint8_t process_frame_cmd(uint8_t sel, uint8_t num,  uint8_t cmd, uint8_t
 			memcpy(rbuf, &max, sizeof(int32_t)); rbuf += sizeof(int32_t);
 			*prlen = 4*sizeof(int32_t);
 			return rc;
+			return 0;
 		case 'P': {
 			if (plen < 4+1) return 1;
 			int32_t v;
 			memcpy(&v, param, sizeof(int32_t));
 			int rc = param_set_value(glob_params, NULL, (char *)(param+sizeof(int32_t)), v);
 			return rc;
+
 		}
+		*/
 		default:
 			return 3;
 		}

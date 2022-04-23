@@ -689,14 +689,12 @@ static void evt_timer(int tidx, train_ctrl_t *tvar, int tnum)
 // - updates topology
 // - sends info to UI (cto)
 
-#define MAX_TURNOUTS 64 //XXX TODO
 
 static int set_turnout(int tn, int v, int train)
 {
 	itm_debug2(DBG_CTRL, "TURN", tn, v);
 	if (tn<0) fatal();
-	if (tn>=MAX_TURNOUTS) fatal();
-	//if (tn>=NUM_LOCAL_TURNOUTS) fatal(); // TODO
+	if (tn>=MAX_TOTAL_TURNOUTS) fatal();
 
 	int rc = topology_set_turnout(tn, v, train);
     if (rc) {

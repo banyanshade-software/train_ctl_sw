@@ -175,7 +175,7 @@ static  void _notify_chg_owner(uint8_t turnout, int8_t numtrain)
 
 int occupency_turnout_reserve(uint8_t turnout, int8_t numtrain)
 {
-	if (turnout >= NUM_TURNOUTS) return -1;
+	if (turnout >= MAX_TOTAL_TURNOUTS) return -1;
 	//if (turnout<0) return -1;
 	if (turnout>31) return -1;
 
@@ -207,7 +207,7 @@ void occupency_turnout_release(uint8_t turnout, _UNUSED_ int8_t train)
 static void occupency_turnout_release_for_train_canton(int8_t train, uint8_t canton)
 {
 	if (train<0) Error_Handler();
-	for (int tn = 0; tn<NUM_TURNOUTS; tn++) {
+	for (int tn = 0; tn<MAX_TOTAL_TURNOUTS; tn++) {
 		if (lockedby[tn] != train) continue;
 		uint8_t ca1, ca2, ca3;
 		topology_get_cantons_for_turnout(tn, &ca1, &ca2, &ca3);

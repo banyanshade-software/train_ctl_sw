@@ -21,9 +21,11 @@
 #include "stm32f1xx_hal_tim.h"
 #endif
 
-
+#ifndef BOARD_HAS_OSCILLO
+#error oscillo requires BOARD_HAS_OSCILLO, remove from build
+#endif
 #ifndef BOARD_HAS_USB
-#error oscillo requires BOARD_HAS_USB, remove from builr
+#error oscillo requires BOARD_HAS_USB, remove from build
 #endif
 
 //#include "trainctl_iface.h"

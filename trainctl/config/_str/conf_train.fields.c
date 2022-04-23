@@ -17,12 +17,7 @@
 
 // include board definitions
 
-#ifndef TRAIN_SIMU
 #include "trainctl_config.h"
-#else
-#include "train_simu.h"
-#include <stdio.h>
-#endif
 
 int conf_train_fieldnum(const char *str)
 {

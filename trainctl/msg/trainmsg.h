@@ -123,7 +123,7 @@ typedef uint8_t  msg_addr_t;
 
 #define CNUM(_board, _canton)  ((((_board) & 0x0F)<<4) | ((_canton) & 0x0F))
 
-#define FROM_CANTON(m) ((MA0_BOARD((m).to) << 4) | ((m).subc & 0x0F))
+#define FROM_CANTON(m) ((MA0_BOARD((m).from) << 4) | ((m).subc & 0x0F))
 
 #define TO_CANTON(_m, _cnum) do {	\
 	(m).to = MA0_CANTON((_cnum) >> 4);	\

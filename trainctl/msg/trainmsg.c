@@ -120,7 +120,7 @@ static const qdef_t qdef[NQDEF] = {
 
 #define _BOARD 0  // XXX
 
-#define NROUTES 10
+#define NROUTES 11
 static const qroute_t routes[NROUTES] = {
 		{0xFF,									MA0_TURNOUT(_BOARD),	0},
 		{0xFF,									MA0_CANTON(_BOARD),		1},
@@ -132,8 +132,10 @@ static const qroute_t routes[NROUTES] = {
 		{0xF0,									MA1_CTRL(0), 			5},
 #ifdef TRAIN_SIMU
 		{0xFF,									MA3_UI_CTC,				8},
+		{0xFF,									MA3_UI_GEN,				8},
 #else
 		{0xFF,									MA3_UI_CTC,				4},
+		{0xFF,									MA3_UI_GEN,				4},
 #endif
 		{0x00,									0,						3},
 };

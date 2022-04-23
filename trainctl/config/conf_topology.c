@@ -996,7 +996,7 @@ static conf_topology_t conf_topology[0] = {
 const conf_topology_t *conf_topology_get(int num)
 {
   if (num<0) return NULL;
-    if (num>=conf_topology_num_entries()) {
+    if ((unsigned int)num>=conf_topology_num_entries()) {
         return NULL;
     }
     return &conf_topology[num];

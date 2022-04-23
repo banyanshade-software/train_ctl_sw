@@ -113,7 +113,7 @@ static conf_utest_t conf_utest[1] = {
 const conf_utest_t *conf_utest_get(int num)
 {
   if (num<0) return NULL;
-    if (num>=conf_utest_num_entries()) {
+    if ((unsigned int)num>=conf_utest_num_entries()) {
         return NULL;
     }
     return &conf_utest[num];

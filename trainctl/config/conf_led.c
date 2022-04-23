@@ -104,7 +104,7 @@ static conf_led_t conf_led[0] = {
 const conf_led_t *conf_led_get(int num)
 {
   if (num<0) return NULL;
-    if (num>=conf_led_num_entries()) {
+    if ((unsigned int)num>=conf_led_num_entries()) {
         return NULL;
     }
     return &conf_led[num];

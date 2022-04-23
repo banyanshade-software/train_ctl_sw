@@ -299,7 +299,7 @@ static conf_train_t conf_train[0] = {
 const conf_train_t *conf_train_get(int num)
 {
   if (num<0) return NULL;
-    if (num>=conf_train_num_entries()) {
+    if ((unsigned int)num>=conf_train_num_entries()) {
         return NULL;
     }
     return &conf_train[num];

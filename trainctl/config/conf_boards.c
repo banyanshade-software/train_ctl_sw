@@ -129,7 +129,7 @@ static conf_boards_t conf_boards[0] = {
 const conf_boards_t *conf_boards_get(int num)
 {
   if (num<0) return NULL;
-    if (num>=conf_boards_num_entries()) {
+    if ((unsigned int)num>=conf_boards_num_entries()) {
         return NULL;
     }
     return &conf_boards[num];

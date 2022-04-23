@@ -94,7 +94,7 @@ static conf_globparam_t conf_globparam[0] = {
 const conf_globparam_t *conf_globparam_get(int num)
 {
   if (num<0) return NULL;
-    if (num>=conf_globparam_num_entries()) {
+    if ((unsigned int)num>=conf_globparam_num_entries()) {
         return NULL;
     }
     return &conf_globparam[num];

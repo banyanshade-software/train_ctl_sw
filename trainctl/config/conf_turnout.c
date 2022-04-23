@@ -107,7 +107,7 @@ static conf_turnout_t conf_turnout[0] = {
 const conf_turnout_t *conf_turnout_get(int num)
 {
   if (num<0) return NULL;
-    if (num>=conf_turnout_num_entries()) {
+    if ((unsigned int)num>=conf_turnout_num_entries()) {
         return NULL;
     }
     return &conf_turnout[num];

@@ -46,7 +46,7 @@ static conf_canton_t conf_canton[6] = {
      .ch0 = TIM_CHANNEL_1,
      .ch1 = TIM_CHANNEL_2,
      .notif_bemf = 0,
-     .reverse_bemf = 0,
+     .reverse_bemf = 1,
   },
   {     // 1
      .volts_cv = { 1000, 770, 621,  538, 451, 413, 379, 355},
@@ -60,7 +60,7 @@ static conf_canton_t conf_canton[6] = {
      .ch0 = TIM_CHANNEL_3,
      .ch1 = TIM_CHANNEL_4,
      .notif_bemf = 0,
-     .reverse_bemf = 0,
+     .reverse_bemf = 1,
   },
   {     // 2
      .volts_cv = { 1000, 770, 621,  538, 451, 413, 379, 355},
@@ -74,7 +74,7 @@ static conf_canton_t conf_canton[6] = {
      .ch0 = TIM_CHANNEL_3,
      .ch1 = TIM_CHANNEL_4,
      .notif_bemf = 0,
-     .reverse_bemf = 0,
+     .reverse_bemf = 1,
   },
   {     // 3
      .volts_cv = { 1000, 770, 621,  538, 451, 413, 379, 355},
@@ -88,7 +88,7 @@ static conf_canton_t conf_canton[6] = {
      .ch0 = TIM_CHANNEL_1,
      .ch1 = TIM_CHANNEL_2,
      .notif_bemf = 0,
-     .reverse_bemf = 0,
+     .reverse_bemf = 1,
   },
   {     // 4
      .volts_cv = { 1000, 770, 621,  538, 451, 413, 379, 355},
@@ -102,7 +102,7 @@ static conf_canton_t conf_canton[6] = {
      .ch0 = TIM_CHANNEL_3,
      .ch1 = TIM_CHANNEL_4,
      .notif_bemf = 0,
-     .reverse_bemf = 0,
+     .reverse_bemf = 1,
   },
   {     // 5
      .volts_cv = { 1000, 770, 621,  538, 451, 413, 379, 355},
@@ -116,7 +116,7 @@ static conf_canton_t conf_canton[6] = {
      .ch0 = 0,
      .ch1 = 0,
      .notif_bemf = 0,
-     .reverse_bemf = 0,
+     .reverse_bemf = 1,
   }
 };
 
@@ -145,7 +145,7 @@ static conf_canton_t conf_canton[1] = {
      .ch0 = TIM_CHANNEL_1,
      .ch1 = TIM_CHANNEL_1,
      .notif_bemf = 0,
-     .reverse_bemf = 0,
+     .reverse_bemf = 1,
   }
 };
 
@@ -205,7 +205,7 @@ static const conf_canton_t canton_template = {
      .ch0 = TIM_CHANNEL_1,
      .ch1 = TIM_CHANNEL_1,
      .notif_bemf = 0,
-     .reverse_bemf = 0,
+     .reverse_bemf = 1,
   };
 const conf_canton_t *conf_canton_template(void)
 {
@@ -235,7 +235,7 @@ int32_t conf_canton_default_value(unsigned int numinst, unsigned int numfield, u
     switch (numfield) {
     default: return 0;
     case conf_numfield_canton_reverse_bemf:
-        return 0;
+        return 1;
     }
     return 0;
 }

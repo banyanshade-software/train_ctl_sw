@@ -60,7 +60,7 @@ config canton {
         = (all) 0;
 
     user uint8_t reverse_bemf:1
-		= (default) 0;
+		= (default) 1;
 
 } num = (main) 6
       = (dispatcher) 1
@@ -68,11 +68,11 @@ config canton {
 
 table vpin_main 
 	( p0,    b0,   	            p1,    b1,  	    p2,    b2,			    tim, ch0, ch1)
-    ( GPIOD, GPIO_PIN_0,		GPIOD, GPIO_PIN_1,	GPIOD, GPIO_PIN_2,		1, TIM_CHANNEL_1, TIM_CHANNEL_2)
-    ( GPIOD, GPIO_PIN_3,		GPIOD, GPIO_PIN_4,	GPIOD, GPIO_PIN_5,		1, TIM_CHANNEL_3, TIM_CHANNEL_4)
-    ( GPIOD, GPIO_PIN_6,		GPIOD, GPIO_PIN_7,	GPIOD, GPIO_PIN_8,		2, TIM_CHANNEL_3, TIM_CHANNEL_4)
-    ( GPIOD, GPIO_PIN_9,		GPIOD, GPIO_PIN_10,	GPIOD, GPIO_PIN_11,		3, TIM_CHANNEL_1, TIM_CHANNEL_2)
-    ( GPIOE, GPIO_PIN_2,		GPIOE, GPIO_PIN_3,	GPIOE, GPIO_PIN_5,		3, TIM_CHANNEL_3, TIM_CHANNEL_4)
+    ( GPIOD, GPIO_PIN_0,		GPIOD, GPIO_PIN_1,	GPIOD, GPIO_PIN_2,		1, TIM_CHANNEL_1, TIM_CHANNEL_2)    // 0
+    ( GPIOD, GPIO_PIN_3,		GPIOD, GPIO_PIN_4,	GPIOD, GPIO_PIN_5,		1, TIM_CHANNEL_3, TIM_CHANNEL_4)    // 1
+    ( GPIOD, GPIO_PIN_6,		GPIOD, GPIO_PIN_7,	GPIOD, GPIO_PIN_8,		2, TIM_CHANNEL_3, TIM_CHANNEL_4)    // 2
+    ( GPIOD, GPIO_PIN_9,		GPIOD, GPIO_PIN_10,	GPIOD, GPIO_PIN_11,		3, TIM_CHANNEL_1, TIM_CHANNEL_2)    // 3
+    ( GPIOE, GPIO_PIN_2,		GPIOE, GPIO_PIN_3,	GPIOE, GPIO_PIN_5,		3, TIM_CHANNEL_3, TIM_CHANNEL_4)    // 4
     ( NULL, GPIO_PIN_0,         NULL, GPIO_PIN_0,   NULL, GPIO_PIN_0,       0, 0, 0)
 ;
 

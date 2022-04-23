@@ -74,7 +74,7 @@ lsblk_num_t any_lsblk_with_canton(uint8_t ca);
 // ---------------------------------------------------------------------
 
 //int get_blk_len(int blknum);
-int get_lsblk_len(lsblk_num_t num, int8_t *psteep);
+int get_lsblk_len_cm(lsblk_num_t num, int8_t *psteep);
 
 // ---------------------------------------------------------------------
 

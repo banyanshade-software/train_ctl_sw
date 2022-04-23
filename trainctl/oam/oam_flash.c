@@ -328,8 +328,8 @@ void oam_flashstore_set_value(int confnum, int fieldnum, int confbrd, int instnu
 	int found = 0;
 	while (0==store_read(desc, buf)) {
 		int32_t ov;
-        printf("item: %2.2X %2.2X %2.2X %2.2X %2.2X %2.2X %2.2X %2.2X\n",
-               buf[0], buf[1], buf[2], buf[3],  buf[4], buf[5], buf[6], buf[7]);
+        //printf("item: %2.2X %2.2X %2.2X %2.2X %2.2X %2.2X %2.2X %2.2X\n",
+        //       buf[0], buf[1], buf[2], buf[3],  buf[4], buf[5], buf[6], buf[7]);
 		if (!store_isvalid(buf)) continue;
 		if (!found && store_is_field(buf, confnum, confbrd, instnum, fieldnum, &ov)) {
 			if (ov == v) {
@@ -358,8 +358,8 @@ uint32_t oam_flashstore_get_value(int confnum, int fieldnum, int confbrd, int in
     int32_t v = conf_default_value(confnum, fieldnum, confbrd, instnum);
     while (0==store_read(desc, buf)) {
         int32_t ov;
-        printf("item: %2.2X %2.2X %2.2X %2.2X %2.2X %2.2X %2.2X %2.2X\n",
-               buf[0], buf[1], buf[2], buf[3],  buf[4], buf[5], buf[6], buf[7]);
+        //printf("item: %2.2X %2.2X %2.2X %2.2X %2.2X %2.2X %2.2X %2.2X\n",
+        //       buf[0], buf[1], buf[2], buf[3],  buf[4], buf[5], buf[6], buf[7]);
         if (!store_isvalid(buf)) continue;
         if (store_is_field(buf, confnum, confbrd, instnum, fieldnum, &ov)) {
             v = ov;

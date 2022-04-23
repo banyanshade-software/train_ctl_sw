@@ -86,7 +86,10 @@ typedef enum {
 	CMD_TRIG_OSCILLO,				// any -> spdctl
 
 	CMD_CANTEST,					// any (cantest) -> any (cantest)
-	CMD_CANTEST_RESP				// any - > any (ui)
+	CMD_CANTEST_RESP,				// any - > any (ui)
+
+	CMD_USB_STATS,					// any -> usb								send stats
+	CMD_USB_OSCILLO,				// any -> usb								send oscillo values
 } cmd_msg_t;
 
 #endif /* trainmsgdef_h */

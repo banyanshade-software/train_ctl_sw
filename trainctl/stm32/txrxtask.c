@@ -23,15 +23,14 @@
 
 
 #include "cmsis_os.h"
-//#include "usb_device.h"
-//#include "usbd_cdc.h"
+
 #include "usbd_cdc_if.h"
 #include "usb_device.h"
 
 #include "../trainctl_iface.h"
 #include "../txrxcmd.h"
-//#include "main.h"
 #include "../misc.h"
+
 #ifdef STM32_F4
 #include "stm32f4xx_hal.h"
 #else

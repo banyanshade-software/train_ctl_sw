@@ -33,7 +33,8 @@
 #include "trainctl_iface.h"
 //#include "traincontrol.h"
 //#include "canton.h"
-#include "stm32/txrxtask.h"
+//#include "stm32/txrxtask.h"
+#include "stm32/usbtask.h"
 //#include "stm32/taskauto.h"
 #include "stm32/taskctrl.h"
 #include "stm32/taskdisp.h"
@@ -1375,7 +1376,7 @@ static void MX_GPIO_Init(void)
   * @retval None
   */
 /* USER CODE END Header_StartUiTask */
-__weak void StartUiTask(void *argument)
+__weak void StartUiTask(_UNUSED_ void *argument)
 {
   /* init code for USB_DEVICE */
   MX_USB_DEVICE_Init();
@@ -1434,7 +1435,7 @@ __weak void StartUiTask(void *argument)
 * @retval None
 */
 /* USER CODE END Header_ina3221_task_start */
-__weak void ina3221_task_start(void *argument)
+__weak void ina3221_task_start(_UNUSED_ void *argument)
 {
   /* USER CODE BEGIN ina3221_task_start */
   /* Infinite loop */
@@ -1452,7 +1453,7 @@ __weak void ina3221_task_start(void *argument)
 * @retval None
 */
 /* USER CODE END Header_start_led_task */
-__weak void start_led_task(void *argument)
+__weak void start_led_task(_UNUSED_ void *argument)
 {
   /* USER CODE BEGIN start_led_task */
   /* Infinite loop */
@@ -1470,7 +1471,7 @@ __weak void start_led_task(void *argument)
 * @retval None
 */
 /* USER CODE END Header_StartOscillo */
-__weak void StartOscillo(void *argument)
+__weak void StartOscillo(_UNUSED_ void *argument)
 {
   /* USER CODE BEGIN StartOscillo */
   /* Infinite loop */

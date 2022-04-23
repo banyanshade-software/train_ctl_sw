@@ -10,8 +10,6 @@
 #include "canmsg.h"
 #include "cmsis_os.h"
 
-#include "../txrxcmd.h"
-//#include "main.h"
 #include "../misc.h"
 
 

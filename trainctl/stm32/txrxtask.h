@@ -15,6 +15,7 @@
 #ifndef STM32_TXRXTASK_H_
 #define STM32_TXRXTASK_H_
 
+#error obsolete
 
 #include "cmsis_os.h"
 

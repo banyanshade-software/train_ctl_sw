@@ -32,7 +32,8 @@
 
 #include "../msg/trainmsg.h"
 
-#include "txrxcmd.h"
+//#include "txrxcmd.h"
+#include "utils/framing.h"
 #include "railconfig.h"
 #include <oscillo/oscillo.h>
 
@@ -84,9 +85,11 @@ void StartOscillo(_UNUSED_ void *argument)
 		if (oscillo_did_end) {
 			oscillo_postprocess = 1;
 			itm_debug1(DBG_TIM, "proc osc", 0);
-			frame_msg_t m;
-			m.t = TXFRAME_TYPE_OSCILO;
-			txframe_send(&m, 0);
+			msg_64_t m;
+			m.from = MA3_BROADCAST; // dont care
+			m.to = MA2_USB_LOCAL;
+			m.cmd = CMD_USB_OSCILLO;
+			mqf_write_from_oscillo(&m);
 			oscillo_did_end = 0;
 			// TODO
 		}
@@ -106,7 +109,7 @@ void StartOscillo(_UNUSED_ void *argument)
 
 
 
-void frame_send_oscillo(void(*cb)(uint8_t *d, int l))
+void frame_send_oscillo(void(*cb)(const uint8_t *d, int l))
 {
 	for (int i=0; i<OSC_NUM_SAMPLES; i++) {
 		uint8_t buf[32];

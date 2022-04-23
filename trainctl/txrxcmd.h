@@ -24,6 +24,9 @@
 #ifndef TXRXCMD_H_
 #define TXRXCMD_H_
 
+
+#error obsolete
+
 #include "trainctl_iface.h"
 #include "statval.h"
 

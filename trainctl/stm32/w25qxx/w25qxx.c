@@ -9,6 +9,7 @@
 #define W25QXX_DUMMY_BYTE 0xA5
 
 w25qxx_t w25qxx;
+#define _UNUSED_ __attribute__((unused))
 
 #ifdef SPI_RESET_CRC // ie. if SPI is included in cubeMX
 extern SPI_HandleTypeDef _W25QXX_SPI;
@@ -1060,41 +1061,41 @@ int W25qxx_Init(void)
 	return 0;
 }
 
-void W25qxx_ReadPage(uint8_t *pBuffer, uint32_t Page_Address, uint32_t OffsetInByte, uint32_t NumByteToRead_up_to_PageSize)
+void W25qxx_ReadPage(_UNUSED_ uint8_t *pBuffer,_UNUSED_ uint32_t Page_Address, _UNUSED_ uint32_t OffsetInByte, _UNUSED_ uint32_t NumByteToRead_up_to_PageSize)
 {
 
 }
-void W25qxx_EraseBlock(uint32_t BlockAddr)
+void W25qxx_EraseBlock(_UNUSED_ uint32_t BlockAddr)
 {
 
 }
 
-uint32_t W25qxx_BlockToSector(uint32_t BlockAddress)
+uint32_t W25qxx_BlockToSector(_UNUSED_ uint32_t BlockAddress)
 {
 	return 0;
 }
-uint32_t W25qxx_SectorToAddr(uint32_t SectorAddress)
+uint32_t W25qxx_SectorToAddr(_UNUSED_ uint32_t SectorAddress)
 {
 	return 0;
 }
-void W25qxx_WriteByte(uint8_t pBuffer, uint32_t WriteAddr_inBytes)
+void W25qxx_WriteByte(_UNUSED_ uint8_t pBuffer, _UNUSED_ uint32_t WriteAddr_inBytes)
 {
 
 }
-void W25qxx_ReadBytes(uint8_t *pBuffer, uint32_t ReadAddr, uint32_t NumByteToRead)
+void W25qxx_ReadBytes(_UNUSED_ uint8_t *pBuffer, _UNUSED_ uint32_t ReadAddr, _UNUSED_ uint32_t NumByteToRead)
 {
 
 }
-uint32_t W25qxx_BlockToPage(uint32_t BlockAddress)
+uint32_t W25qxx_BlockToPage(_UNUSED_ uint32_t BlockAddress)
 {
 	return 0;
 }
-void W25qxx_WriteSector(uint8_t *pBuffer, uint32_t Sector_Address, uint32_t OffsetInByte, uint32_t NumByteToWrite_up_to_SectorSize)
+void W25qxx_WriteSector(_UNUSED_ uint8_t *pBuffer, _UNUSED_ uint32_t Sector_Address, _UNUSED_ uint32_t OffsetInByte, _UNUSED_ uint32_t NumByteToWrite_up_to_SectorSize)
 {
 
 }
 
-void W25qxx_WritePage(uint8_t *pBuffer, uint32_t Page_Address, uint32_t OffsetInByte, uint32_t NumByteToWrite_up_to_PageSize)
+void W25qxx_WritePage(_UNUSED_ uint8_t *pBuffer, _UNUSED_ uint32_t Page_Address, _UNUSED_ uint32_t OffsetInByte, _UNUSED_ uint32_t NumByteToWrite_up_to_PageSize)
 {
 
 }

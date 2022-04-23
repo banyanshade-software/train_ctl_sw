@@ -64,6 +64,8 @@ LFMQUEUE_DEF_C(from_canbus, msg_64_t, 8, 0)
 LFMQUEUE_DEF_C(to_oam, msg_64_t, 8, 0)
 LFMQUEUE_DEF_C(from_oam, msg_64_t, 12, 0)
 
+LFMQUEUE_DEF_C(from_oscillo, msg_64_t, 2, 1)
+
 
 typedef struct {
 	mqf_t *to;
@@ -98,7 +100,7 @@ static const qroute_t routes[NROUTES] = {
 
 
 #ifdef TRN_BOARD_MAIN
-#define NQDEF 12
+#define NQDEF 13
 static const qdef_t qdef[NQDEF] = {
 		/* 0*/ { &to_turnout, &from_turnout },
 		/* 1*/ { &to_canton,  &from_canton},
@@ -115,7 +117,8 @@ static const qdef_t qdef[NQDEF] = {
         /* 8*/ { &to_ui_track, &from_ui_track},
         /* 9*/ { &to_led, &from_led},
         /*10*/ { &to_oam, &from_oam},
-		/*11*/ { NULL, &from_nowhere}
+        /*11*/ { NULL, &from_oscillo},
+		/*12*/ { NULL, &from_nowhere}
 };
 
 #define _BOARD 0  // XXX

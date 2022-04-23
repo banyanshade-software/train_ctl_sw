@@ -615,9 +615,15 @@ void ctrl_run_tick(_UNUSED_ uint32_t notif_flags, uint32_t tick, _UNUSED_ uint32
 	check_behaviour(tick);
 	//hi_tick(notif_flags, tick, dt);
 
-	if ((1)) {
-		void txframe_send_stat(void);
-		txframe_send_stat();
+
+	// TODO : move this away
+	extern int can_send_stat();
+	int st = can_send_stat();
+	if (st) {
+		msg_64_t m = {0};
+		m.from = MA1_CONTROL();
+		m.to = MA2_USB_LOCAL;
+		m.cmd = CMD_USB_STATS;
 	}
 }
 

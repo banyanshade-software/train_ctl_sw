@@ -128,6 +128,7 @@ int conf_led_propagate(unsigned int numinst, unsigned int numfield, int32_t valu
 int32_t conf_led_default_value(unsigned int numinst, unsigned int numfield, unsigned int boardnum)
 {
     (void) boardnum;
+    (void) numinst;
     //if (numinst>=conf_led_num_entries()) return 0;
     switch (numfield) {
     default: return 0;

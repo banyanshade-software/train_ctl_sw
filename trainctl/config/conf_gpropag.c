@@ -72,6 +72,7 @@ int32_t conf_default_value(unsigned int confnum, unsigned int fieldnum, unsigned
 void *conf_local_ptr(unsigned int lconfnum)
 {
     switch (lconfnum) {
+       default: return NULL;
     case conf_lnum_utestloc:
        return conf_utestloc_ptr();
     case conf_lnum_globparam:
@@ -92,6 +93,7 @@ void *conf_local_ptr(unsigned int lconfnum)
 unsigned int conf_local_size(unsigned int lconfnum)
 {
     switch (lconfnum) {
+       default: return 0;
     case conf_lnum_utestloc:
        return sizeof(conf_utestloc_t)*conf_utestloc_num_entries();
     case conf_lnum_globparam:
@@ -112,6 +114,7 @@ unsigned int conf_local_size(unsigned int lconfnum)
 int32_t conf_local_get(unsigned int lconfnum, unsigned int fieldnum, unsigned int instnum)
 {
     switch (lconfnum) {
+       default: return 0;
     case conf_lnum_utestloc:
        return conf_utestloc_local_get(fieldnum, instnum);
     case conf_lnum_globparam:
@@ -132,6 +135,7 @@ int32_t conf_local_get(unsigned int lconfnum, unsigned int fieldnum, unsigned in
 void conf_local_set(unsigned int lconfnum, unsigned int fieldnum, unsigned int instnum, int32_t v)
 {
     switch (lconfnum) {
+       default: break;
     case conf_lnum_utestloc:
        conf_utestloc_local_set(fieldnum, instnum, v);
         break;

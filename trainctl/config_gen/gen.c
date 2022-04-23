@@ -345,21 +345,25 @@ void generate_cfile_global_propag(config_node_t *root)
 
     fprintf(output, "\n\nvoid *conf_local_ptr(unsigned int lconfnum)\n");
     fprintf(output, "{\n    switch (lconfnum) {\n");
+    fprintf(output, "       default: return NULL;\n");
     apply_conf(root, _genf_type1, _gen_ptr, output);
     fprintf(output, "    }\n    return NULL;\n}\n\n\n");
 
     fprintf(output, "\n\nunsigned int conf_local_size(unsigned int lconfnum)\n");
     fprintf(output, "{\n    switch (lconfnum) {\n");
+    fprintf(output, "       default: return 0;\n");
     apply_conf(root, _genf_type1, _gen_size, output);
     fprintf(output, "    }\n    return 0;\n}\n\n\n");
 
     fprintf(output, "\n\nint32_t conf_local_get(unsigned int lconfnum, unsigned int fieldnum, unsigned int instnum)\n");
     fprintf(output, "{\n    switch (lconfnum) {\n");
+    fprintf(output, "       default: return 0;\n");
     apply_conf(root, _genf_type1, _gen_clget, output);
     fprintf(output, "    }\n    return 0;\n}\n\n\n");
 
     fprintf(output, "\n\nvoid conf_local_set(unsigned int lconfnum, unsigned int fieldnum, unsigned int instnum, int32_t v)\n");
     fprintf(output, "{\n    switch (lconfnum) {\n");
+    fprintf(output, "       default: break;\n");
     apply_conf(root, _genf_type1, _gen_clset, output);
     fprintf(output, "    }\n}\n\n\n");
 
@@ -470,6 +474,7 @@ void generate_cfile(config_node_t *root, int continue_next, config_node_t *board
             _fdef_tables = root->tables;
             fprintf(output, "int32_t conf_%s_default_value(unsigned int numinst, unsigned int numfield, unsigned int boardnum)\n", n);
             fprintf(output, "{\n    (void) boardnum;\n");
+            fprintf(output, "    (void) numinst;\n");
             fprintf(output, "    //if (numinst>=conf_%s_num_entries()) return 0;\n", n);
             fprintf(output, "    switch (numfield) {\n");
             fprintf(output, "    default: return 0;\n");

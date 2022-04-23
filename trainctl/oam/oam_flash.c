@@ -453,14 +453,14 @@ static void _oam_flashlocal_read(unsigned int confnum)
     local_blk_desc_t *desc = use_backup ? &blk_bup0_loc : &blk_n1_loc;
     store_local_read(desc, confnum, ptr, s);
 }
-void oam_flashlocal_read(unsigned int confnum)
+void oam_flashlocal_read(int confnum)
 {
     if (-1 == confnum) {
         for (int i=0; i<16; i++) {
-            _oam_flashlocal_read(i);
+            _oam_flashlocal_read((unsigned int) i);
         }
     } else {
-        _oam_flashlocal_read(confnum);
+        _oam_flashlocal_read((unsigned int) confnum);
     }
 }
 
@@ -474,15 +474,15 @@ static void _oam_flashlocal_commit(unsigned int confnum)
     local_blk_desc_t *desc = use_backup ? &blk_bup0_loc : &blk_n1_loc;
     store_local_write(desc, confnum, ptr, s);
 }
-void oam_flashlocal_commit(unsigned int confnum)
+void oam_flashlocal_commit(int confnum)
 {
     if (-1 == confnum) {
         for (int i=0; i<16; i++) {
-            _oam_flashlocal_commit(i);
+            _oam_flashlocal_commit((unsigned int)i);
             
         }
     } else {
-        _oam_flashlocal_commit(confnum);
+        _oam_flashlocal_commit((unsigned int)confnum);
     }
 }
 
@@ -531,7 +531,7 @@ static void _local_write(local_blk_desc_t *desc, lfiledesc_t *fd, void *ptr, uns
     uint32_t addr = W25qxx_BlockToSector(desc->b.block_num)+desc->b.startsect;
     addr = W25qxx_SectorToAddr(addr) + fd->offset32*32;
     itm_debug2(DBG_OAM, "LWRITE", s, addr);
-    for (int i=0; i<s; i++) { // TODO optimize and write page or sect
+    for (unsigned int i=0; i<s; i++) { // TODO optimize and write page or sect
         W25qxx_WriteByte(bptr[i], addr+i);
     }
 }

@@ -34,8 +34,9 @@ static inline int _mqf_len(mqf_t *m)
 		l = m->num + m->head - m->tail;
 	}
 	if (l<0) {
-		itm_debug1(DBG_MSG, "big pb", 1);
-		for (;;);
+		itm_debug1(DBG_ERR|DBG_MSG, "big pb", 1);
+        void Error_Handler(void);
+		Error_Handler();
 	}
 	return l;
 }

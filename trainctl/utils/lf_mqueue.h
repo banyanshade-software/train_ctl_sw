@@ -46,7 +46,7 @@ typedef struct {
 
 #define LFMQUEUE_DEF_C(_name, _type,_num, _sil) 					\
 	_type buf##_name[_num] MQF_ATTRIB;									\
-    mqf_t MQF_ATTRIB _name = {.head=0, .tail=0, .msgsiz=sizeof(_type), .num=_num, .maxuse=0, .msgbuf=(uint8_t *) buf##_name, .silentdrop=_sil} ;
+    mqf_t _name = {.head=0, .tail=0, .msgsiz=sizeof(_type), .num=_num, .maxuse=0, .msgbuf=(uint8_t *) buf##_name, .silentdrop=_sil} ;
 
 
 void mqf_clear(mqf_t *);

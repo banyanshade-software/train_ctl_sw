@@ -23,10 +23,8 @@
 #ifndef TRAIN_SIMU
 #include "cmsis_os.h"
 #include "main.h"
-#include "trainctl_config.h"
-#else
-#include "train_simu.h"
 #endif
+#include "trainctl_config.h"
 
 #include "utils/itm_debug.h"
 

@@ -7,6 +7,7 @@
 //
 
 #include <stdio.h>
+#include "trainctl_config.h"
 #include "uitrack.h"
 
 #include "../msg/trainmsg.h"

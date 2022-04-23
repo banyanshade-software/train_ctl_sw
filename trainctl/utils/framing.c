@@ -7,12 +7,8 @@
 
 
 #include "misc.h"
-#include "utils/framing.h"
+#include "framing.h"
 
-
-
-#define FRAME_DELIM '|'
-#define FRAME_ESC   '\\'
 
 
 static int _frm_escape2(uint8_t *buf,  uint8_t *org, int len, int maxlen)

@@ -21,6 +21,29 @@
 // -----------------------------------------
 
 
+#ifndef TRN_BOARD_SIMU
+
+#define BOARD_NUMBER 0
+#define BOARD_HAS_CANTON
+#define BOARD_HAS_TURNOUTS
+//#define BOARD_HAS_INA3221
+#define BOARD_HAS_CTRL
+#define BOARD_HAS_TOPOLOGY
+#define BOARD_HAS_USB
+//#define BOARD_HAS_CAN
+#define BOARD_HAS_IHM
+#define BOARD_HAS_LED
+#define BOARD_HAS_TRKPLN
+//#define BOARD_HAS_OSCILLO
+
+#endif
+
+// -----------------------------------------
+// -----------------------------------------
+// -----------------------------------------
+// -----------------------------------------
+
+
 
 #ifdef TRN_BOARD_MAIN_ZERO
 
@@ -121,6 +144,7 @@
 #ifdef BOARD_HAS_IHM
 #define BOARD_HAS_TFT
 #endif
+
 // common config, should be moved out
 
 #define NUM_TRAINS	8

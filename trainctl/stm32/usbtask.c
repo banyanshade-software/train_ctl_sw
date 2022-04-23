@@ -109,13 +109,13 @@ void USB_Tasklet(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_
 		switch (m.cmd) {
 		default:
 			// forward packet
-			buf[0] = 0x7E;
+			buf[0] = FRAME_M64;
 			memcpy(buf+1, &m, 8);
 			_send_bytes(buf, 9);
 			break;
 		case CMD_USB_STATS: {
 			sending_stats = 1;
-			const uint8_t b[]="|_NG\000X";
+			const uint8_t b[]="|S";
 			_send_bytes(b, 6);
 			frame_send_stat(_send_bytes, t);
 			_send_bytes((uint8_t *)"|", 1);
@@ -124,7 +124,7 @@ void USB_Tasklet(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_
 			break;
 		case CMD_USB_OSCILLO: {
 			sending_oscillo = 1;
-			const uint8_t b[]="|_NG\000Y"; //
+			const uint8_t b[]="|V"; //
 			_send_bytes(b, 6);
 			frame_send_oscillo(_send_bytes);
 			_send_bytes((uint8_t *)"|", 1);

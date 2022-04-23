@@ -6,6 +6,7 @@
  */
 
 
+#error obsolete
 
 /*
  * (c) Daniel Braun 2020

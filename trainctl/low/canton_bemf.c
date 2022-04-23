@@ -7,6 +7,7 @@
 
 
 #include <stdint.h>
+#include "trainctl_config.h"
 #include "canton_bemf.h"
 //#include "canton_config.h"
 #include "../msg/trainmsg.h"

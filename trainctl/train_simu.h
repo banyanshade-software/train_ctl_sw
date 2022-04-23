@@ -9,20 +9,6 @@
  *
  */
 
-#define TRN_BOARD_MAIN
-
-#define BOARD_NUMBER 0
-
-#define BOARD_HAS_CANTON
-#define BOARD_HAS_TURNOUTS
-//#define BOARD_HAS_INA3221
-#define BOARD_HAS_CTRL
-#define BOARD_HAS_TOPOLOGY
-//#define BOARD_HAS_USB
-//#define BOARD_HAS_CAN
-#define BOARD_HAS_IHM
-#define BOARD_HAS_LED
-#define BOARD_HAS_TRKPLN
 
 void train_simu_canton_volt(int numcanton, int voltidx, int vlt100);
 void train_simu_canton_set_pwm(int numcanton, int8_t dir, int duty);
@@ -37,7 +23,7 @@ extern uint32_t SimuTick;
 #define NUM_LOCAL_TURNOUTS 8
 
 
-#define USE_INA3221
+//#define USE_INA3221
 
 #define NUM_TRAINS 8
 

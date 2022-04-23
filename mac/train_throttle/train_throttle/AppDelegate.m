@@ -12,7 +12,7 @@
 #import "trainctl_iface.h"
 #import "SimTrain.h"
 #include "statval.h"
-#include "txrxcmd.h"
+//#include "txrxcmd.h"
 //#include "low/canton.h"
 #include "StringExtension.h"
 #include "uitrack.h"
@@ -30,7 +30,7 @@
 #include "conf_turnout.propag.h"
 #include "conf_globparam.h"
 #include "conf_globparam.propag.h"
-
+#include "framing.h"
 #include "oam.h"
 
 uint16_t dummy[3];
@@ -433,6 +433,7 @@ typedef void (^respblk_t)(void);
 
 - (IBAction)clearePose:(id)sender
 {
+    /*
     uint8_t spdfrm[] = "|zT\0z|....";
     //NSInteger t = [sender tag];
     //spdfrm[3] = (uint8_t)t;
@@ -440,6 +441,7 @@ typedef void (^respblk_t)(void);
     [self sendFrame:spdfrm len:l blen:sizeof(spdfrm) then:^{
         NSLog(@"clearePose done");
     }];
+     */
 }
 
 - (IBAction) setTrainMode:(id)sender
@@ -883,7 +885,7 @@ int conf_globparam_fieldnum(const char *str);
     if (ena) c.enabled = YES;
 }
 
-
+#if 0
 - (void) resetToDefault:(NSArray *)parlist
 {
     static uint8_t gpfrm[80] = "|xT\0p......";
@@ -994,22 +996,24 @@ int conf_globparam_fieldnum(const char *str);
         }];
     }];
 }
+#endif
+
 - (IBAction) defaultInertia:(id)sender
 {
-    [self resetToDefault:@[@"par_T0_acc", @"par_T0_dec"]];
+   // [self resetToDefault:@[@"par_T0_acc", @"par_T0_dec"]];
 }
 - (IBAction) zeroInertia:(id)sender
 {
-    [self resetToZero:@[@"par_T0_acc", @"par_T0_dec"]];
+   // [self resetToZero:@[@"par_T0_acc", @"par_T0_dec"]];
 }
 - (IBAction) defaultPwmMinMax:(id)sender
 {
-    [self resetToDefault:@[@"par_T0_minpwm", @"par_T0_maxpwm"]];
+   // [self resetToDefault:@[@"par_T0_minpwm", @"par_T0_maxpwm"]];
 }
 
 - (IBAction) startCalibration:(id)sender
 {
-    uint8_t spdfrm[] = "|xG\0K|.........";
+    /*uint8_t spdfrm[] = "|xG\0K|.........";
     int l = 2+4+0;
     uint16_t v16 = (uint16_t) (_polarity * _dspeedT0);
     if (_linkok == LINK_SIMUHI) {
@@ -1018,6 +1022,7 @@ int conf_globparam_fieldnum(const char *str);
     // assume same endienness (little)
     memcpy(spdfrm+5, &v16, 2);
     [self sendFrame:spdfrm len:l blen:sizeof(spdfrm) then:nil];
+*/
 }
 
 #pragma mark -
@@ -1099,10 +1104,8 @@ int conf_globparam_fieldnum(const char *str);
     if (!usb) {
         return;
     }
-    /*NSLog(@"read:  %@\n", d);
-    NSString *s = [[NSString alloc]initWithData:d encoding:NSUTF8StringEncoding];
-    NSLog(@"str: %@\n", s); */
-    [self processFrames:d];
+   
+    [self processUsbData:d];
     [usb waitForDataInBackgroundAndNotify];
 }
 
@@ -1117,6 +1120,114 @@ int conf_globparam_fieldnum(const char *str);
     if (_linkok == LINK_OK) return;
     self.linkok = LINK_OK;
 }
+
+- (void) processUsbData:(NSData *)d
+{
+    static uint8_t buf8[8];
+    static int ptr8 = -1;
+    static int frmstate = -1;
+    static int frmtype = 0;
+    static NSMutableData *frm = nil;
+    
+    int l = (int) [d length];
+    const uint8_t *dta = [d bytes];
+    for (int i=0; i<l; i++) {
+        uint8_t c = dta[i];
+        if (ptr8 >= 0) {
+            buf8[ptr8++] = c;
+            if (8==ptr8) {
+                msg_64_t m;
+                memcpy(&m, buf8, 8);
+                ptr8 = -1;
+                [self processMsg64:m];
+            }
+            continue;
+        }
+        if (frmstate < 0) {
+            if (c == FRAME_M64) {
+                ptr8 = 0;
+                continue;
+            } else if (c == FRAME_DELIM) {
+                frmstate = 0;
+                continue;
+            } else {
+                // ignore car
+                continue;
+            }
+        }
+        switch (frmstate) {
+            case 0:
+                frmtype = c;
+                frm = [NSMutableData dataWithCapacity:1024];
+                frmstate++;
+                break;
+            case 1:
+                if (c==FRAME_DELIM) {
+                    // frame complete
+                    [self processFrame:frm type:frmtype];
+                    frm = nil;
+                    frmstate = -1;
+                    break;
+                } else if (c==FRAME_ESC) {
+                    frmstate = 2;
+                } else {
+                    // normal char, add to frame
+                    [frm appendBytes:&c length:1];
+                }
+                break;
+            case 2:
+                [frm appendBytes:&c length:1];
+                frmstate = 1;
+                break;
+        }
+    }
+}
+
+- (void) processMsg64:(msg_64_t)m
+{
+    if (MA3_UI_CTC==m.to) {
+        mqf_write_to_ui_track(&m);
+        return;
+    }
+    int nt, v;
+    switch (m.cmd) {
+    case CMD_NOTIF_SPEED:
+        nt = MA1_TRAIN(m.from);
+        v = m.v1u;
+        NSLog(@"train %d spd %d\n", nt, v);
+        self.curspeed = v;
+        break;
+    case CMD_PARAM_USER_VAL:
+        [self paramUserVal:m locstore:0];
+        break;
+    case CMD_PARAM_LUSER_VAL:
+        [self paramUserVal:m locstore:1];
+        break;
+    case CMD_SETRUN_MODE:
+    case CMD_TRSTATE_NOTIF:
+    case CMD_TRTSPD_NOTIF:
+    case CMD_CANTEST:
+        break;
+    default:
+        NSLog(@"frameMsg64 UI msg not handled 0x%X", m.cmd);
+        break;
+    }
+}
+
+- (void) processFrame:(NSData *)frm type:(int)frmtype
+{
+    switch (frmtype) {
+        case 'S':
+            [self processStatFrame:frm];
+            break;
+        case 'V':
+            [self processOscilloFrame:frm];
+            break;
+    }
+}
+
+
+#if 0 // OLD_FRAMING
 
 #define FRAME_DELIM '|'
 #define FRAME_ESC   '\\'
@@ -1451,6 +1562,11 @@ static int frm_unescape(uint8_t *buf, int len)
     [self addLog:str important:YES error:NO];
 }
 
+#endif // OLD_FRAMING
+
+
+
+
 
 - (void) setValue:(id)value forUndefinedKey:(NSString *)key
 {
@@ -1460,18 +1576,19 @@ static int frm_unescape(uint8_t *buf, int len)
     }
     [super setValue:value forUndefinedKey:key];
 }
-- (void) processStatFrame
+- (void) processStatFrame:(NSData *)dta
 {
-    if (frm.pidx<8) {
+    NSUInteger len = [dta length];
+    if (len<=8) {
         return; // TODO
     }
-    NSAssert(frm.pidx>8, @"short stat frame");
+    NSAssert(len>8, @"short stat frame");
     //if ((1)) return;
     
     cantons_value = [[NSMutableDictionary alloc]initWithCapacity:25];
     trains_value = [[NSMutableDictionary alloc]initWithCapacity:25];
 
-    int nval = frm.pidx / 4;
+    NSUInteger nval = len / 4;
     uint32_t *ptr = frm.param32;
     //uint32_t tick = *ptr++;
     nval--;
@@ -1594,15 +1711,15 @@ int convert_to_mv_raw(int m)
 volatile int oscillo_trigger_start = 0;
 volatile int oscillo_enable = 0;
 
-- (void) processOscilloFrame
+- (void) processOscilloFrame:(NSData *)dta
 {
-    if (frm.pidx<8) return; // TODO
-    NSAssert(frm.pidx>8, @"short stat frame");
-    int rs = frm.pidx % sizeof(osc_values_t);
+    NSUInteger len = [dta length];
+    if (len<8) return; // TODO
+    int rs = len % sizeof(osc_values_t);
     NSAssert(!rs, @"bad size");
-    int ns = frm.pidx / sizeof(osc_values_t);
+    NSUInteger ns = len / sizeof(osc_values_t);
     NSAssert(ns == OSC_NUM_SAMPLES, @"bad size 2");
-    osc_values_t *samples = (osc_values_t *) frm.param;
+    osc_values_t *samples = (osc_values_t *) [dta bytes];
     
     NSFileHandle *recordFileGp;
     NSFileHandle *recordFileRaw;
@@ -1752,7 +1869,7 @@ volatile int oscillo_enable = 0;
     
 }
 
-
+#if 0
 - (void) sendFrame:(uint8_t *)frame len:(int)len blen:(int)blen then:(respblk_t)b
 {
     if (_linkok<LINK_FRM) return;
@@ -1814,7 +1931,7 @@ volatile int oscillo_enable = 0;
     int fd = [usb fileDescriptor];
     write(fd, frame, len);
 }
-
+#endif
 
 #pragma mark - simu
 
@@ -2009,6 +2126,7 @@ void trainctl_notif(uint8_t sel, uint8_t num, uint8_t cmd, uint8_t *dta, int dta
 
 #else
 
+/*
 static NSMutableData *statframe=nil;
 static void _send_bytes(uint8_t *b, int l)
 {
@@ -2031,6 +2149,7 @@ void txframe_send(frame_msg_t *m, int discardable)
     if ((TRC)) NSLog(@"from notif frame %d bytes : %@\n", (int)[d length], [theDelegate dumpFrames:d]);
     [theDelegate performSelectorOnMainThread:@selector(processFrames:) withObject:d waitUntilDone:NO];
 }
+ */
 #endif
 
 int cur_freqhz = 50;
@@ -2123,8 +2242,8 @@ void notif_target_bemf(const train_config_t *cnf, train_vars_t *vars, int32_t va
               (int) t.terminationReason);
         NSData *d = [self->gnuplotStdoutFh availableData];
         if (d) {
-            NSLog(@"out %@\n%@", [self dumpFrames:d],
-                  [[NSString alloc]initWithData:d encoding:NSUTF8StringEncoding]);
+            /*NSLog(@"out %@\n%@", [self dumpFrames:d],
+                  [[NSString alloc]initWithData:d encoding:NSUTF8StringEncoding]);*/
         }
 
     };
@@ -2400,20 +2519,17 @@ didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic
 
 - (void) sendMsg64:(msg_64_t)m
 {
-    uint8_t spdfrm[] = "|x612345678|.........";
-    int l = 2+8+2;
-    NSAssert(sizeof(m)==8, @"bad size");
-    memcpy(spdfrm+3, &m, sizeof(m));
-#if 0
-    spdfrm[3] = m.
-    spdfrm[4] = MA_UI(UISUB_USB);
-    spdfrm[5] = CMD_SET_TARGET_SPEED;
-    spdfrm[6] = 0; // sub
-    spdfrm[7] = v16 & 0xFF;
-    spdfrm[8] = (v16 >> 8) & 0xFF;
-#endif
-    [self sendFrame:spdfrm len:l blen:sizeof(spdfrm) then:nil];
-    return;
+    uint8_t buf9[9];
+    buf9[0] = FRAME_M64;
+    memcpy(buf9+1, &m, 8);
+    if (_linkok<LINK_FRM) return;
+    if (self.linkok == LINK_SIMULOW) {
+        //NSData *dta = [NSData dataWithBytes:buf9 length:9];
+        // TODO
+        abort();
+    }
+    int fd = [usb fileDescriptor];
+    write(fd, buf9, 9);
 }
 
 #pragma mark - canton test

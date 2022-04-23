@@ -12,12 +12,7 @@
 
 #include "../misc.h"
 
-#ifndef TRAIN_SIMU
 #include "trainctl_config.h"
-#else
-#include "train_simu.h"
-#include <stdio.h>
-#endif
 
 
 #include "trkplan.h"

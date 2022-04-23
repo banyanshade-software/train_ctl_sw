@@ -10,16 +10,16 @@
 
 
 #include <stdint.h>
+#include "trainctl_config.h"
+
 #include "../misc.h"
 
 #ifndef TRAIN_SIMU
 #include "main.h"
-#else
-#include "train_simu.h"
+
 #endif
 
 #include "canton_bemf.h"
-//#include "canton_config.h"
 #include "../config/conf_canton.h"
 #include "../msg/trainmsg.h"
 

@@ -96,6 +96,36 @@ static conf_led_t conf_led[0] = {
 
 
 
+#ifdef TRN_BOARD_SIMU
+
+unsigned int conf_led_num_entries(void)
+{
+    return 3; // 3 
+}
+
+static conf_led_t conf_led[3] = {
+  {     // 0
+     .port_led = NULL,
+     .pin_led = 0,
+     .defprog = 0,
+  },
+  {     // 1
+     .port_led = NULL,
+     .pin_led = 0,
+     .defprog = 0,
+  },
+  {     // 2
+     .port_led = NULL,
+     .pin_led = 0,
+     .defprog = 0,
+  }
+};
+
+#endif // TRN_BOARD_SIMU
+
+
+
+
 const conf_led_t *conf_led_get(int num)
 {
   if (num<0) return NULL;

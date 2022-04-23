@@ -21,7 +21,7 @@
 // -----------------------------------------
 
 
-#ifndef TRN_BOARD_SIMU
+#ifdef TRN_BOARD_SIMU
 
 #define BOARD_NUMBER 0
 #define BOARD_HAS_CANTON

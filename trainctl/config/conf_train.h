@@ -76,6 +76,12 @@ const conf_train_t *conf_train_get(int num);
 #endif // TRN_BOARD_MAIN_ZERO
 
 
+
+#ifdef TRN_BOARD_SIMU
+#define NUM_TRAINS 4 // 4 
+#endif // TRN_BOARD_SIMU
+
+
 #define MAX_TRAINS 8
 
 

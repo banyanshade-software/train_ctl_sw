@@ -291,6 +291,125 @@ static conf_train_t conf_train[0] = {
 
 
 
+#ifdef TRN_BOARD_SIMU
+
+unsigned int conf_train_num_entries(void)
+{
+    return 4; // 4 
+}
+
+static conf_train_t conf_train[4] = {
+  {     // 0
+     .pidctl = {
+     .kP = 500,
+     .kI = 100,
+     .kD = 500,
+     },
+     .inertia = {
+     .dec = 120,
+     .acc = 120,
+     },
+     .volt_policy = vpolicy_normal,
+     .enabled = 1,
+     .enable_inertia = 0,
+     .enable_pid = 1,
+     .fix_bemf = 0,
+     .en_spd2pow = 0,
+     .reversed = 0,
+     .min_power = 0,
+     .notify_pose = 0,
+     .bemfIIR = 0,
+     .postIIR = 0,
+     .slipping = 120,
+     .pose_per_cm = 450,
+     .trainlen_left = 6,
+     .trainlen_right = 18,
+  },
+  {     // 1
+     .pidctl = {
+     .kP = 500,
+     .kI = 100,
+     .kD = 500,
+     },
+     .inertia = {
+     .dec = 120,
+     .acc = 120,
+     },
+     .volt_policy = vpolicy_normal,
+     .enabled = 1,
+     .enable_inertia = 0,
+     .enable_pid = 1,
+     .fix_bemf = 0,
+     .en_spd2pow = 0,
+     .reversed = 0,
+     .min_power = 0,
+     .notify_pose = 0,
+     .bemfIIR = 0,
+     .postIIR = 0,
+     .slipping = 120,
+     .pose_per_cm = 500,
+     .trainlen_left = 15,
+     .trainlen_right = 2,
+  },
+  {     // 2
+     .pidctl = {
+     .kP = 500,
+     .kI = 100,
+     .kD = 500,
+     },
+     .inertia = {
+     .dec = 120,
+     .acc = 120,
+     },
+     .volt_policy = vpolicy_normal,
+     .enabled = 0,
+     .enable_inertia = 0,
+     .enable_pid = 1,
+     .fix_bemf = 0,
+     .en_spd2pow = 0,
+     .reversed = 0,
+     .min_power = 0,
+     .notify_pose = 0,
+     .bemfIIR = 0,
+     .postIIR = 0,
+     .slipping = 120,
+     .pose_per_cm = 500,
+     .trainlen_left = 10,
+     .trainlen_right = 10,
+  },
+  {     // 3
+     .pidctl = {
+     .kP = 500,
+     .kI = 100,
+     .kD = 500,
+     },
+     .inertia = {
+     .dec = 120,
+     .acc = 120,
+     },
+     .volt_policy = vpolicy_normal,
+     .enabled = 0,
+     .enable_inertia = 0,
+     .enable_pid = 1,
+     .fix_bemf = 0,
+     .en_spd2pow = 0,
+     .reversed = 0,
+     .min_power = 0,
+     .notify_pose = 0,
+     .bemfIIR = 0,
+     .postIIR = 0,
+     .slipping = 120,
+     .pose_per_cm = 500,
+     .trainlen_left = 10,
+     .trainlen_right = 10,
+  }
+};
+
+#endif // TRN_BOARD_SIMU
+
+
+
+
 const conf_train_t *conf_train_get(int num)
 {
   if (num<0) return NULL;

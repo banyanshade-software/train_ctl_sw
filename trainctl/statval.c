@@ -22,7 +22,7 @@
 #include "spdctl/spdctl.h"
 //#include "low/canton_config.h"
 //#include "railconfig.h"
-
+#include "utils/framing.h"
 
 typedef struct {
     const stat_val_t *statval;
@@ -187,3 +187,47 @@ int get_val_info(stat_iterator_t *step,
 
 #endif //HOST_SIDE
 
+
+uint32_t gtick = 0;
+
+__weak void frame_send_oscillo(_UNUSED_ void(*cb)(const uint8_t *d, int l))
+{
+}
+
+int frame_gather_stat(stat_iterator_t *step, uint8_t *buf)
+{
+	int done;
+	int32_t v = stat_val_get(step, &done);
+	if (done) return 0;
+
+	int l = txrx_frm_escape2(buf, (void *) &v, 4, 8);
+	if (l<0) {
+		return -1;
+	}
+	return l;
+}
+
+
+void frame_send_stat(void(*cb)(const uint8_t *d, int l), uint32_t tick)
+{
+    uint8_t buf[8];
+    //if ((1)) tick = 0xAA55AA55;
+    //int l = _frm_escape2(buf, (void *) &tick, 4, 8); // tick now handld as normal stat
+    //cb(buf, l);
+
+	stat_iterator_t step;
+    int eos = stat_iterator_reset(&step);
+    gtick = tick;
+
+    int nv = 0; // for debug only, num of val
+    int nb = 0; // and num of bytes
+    for (;!eos; eos=stat_iterator_next(&step)) {
+		int l = frame_gather_stat(&step, buf);
+		if (l<=0) {
+			return;
+		}
+        nv++;
+        nb += l;
+		cb(buf, l);
+	}
+}

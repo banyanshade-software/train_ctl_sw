@@ -52,6 +52,12 @@ const conf_globparam_t *conf_globparam_get(int num);
 #endif // TRN_BOARD_MAIN_ZERO
 
 
+
+#ifdef TRN_BOARD_SIMU
+#define NUM_GLOBPARAMS 1 // 1 
+#endif // TRN_BOARD_SIMU
+
+
 #define MAX_GLOBPARAMS 1
 
 

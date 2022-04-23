@@ -52,6 +52,12 @@ const conf_utestloc_t *conf_utestloc_get(int num);
 #endif // TRN_BOARD_MAIN_ZERO
 
 
+
+#ifdef TRN_BOARD_SIMU
+#define NUM_UTESTLOCS 2 // 2 
+#endif // TRN_BOARD_SIMU
+
+
 #define MAX_UTESTLOCS 4
 
 

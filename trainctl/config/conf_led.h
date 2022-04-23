@@ -65,6 +65,12 @@ const conf_led_t *conf_led_get(int num);
 #endif // TRN_BOARD_MAIN_ZERO
 
 
+
+#ifdef TRN_BOARD_SIMU
+#define NUM_LEDS 3 // 3 
+#endif // TRN_BOARD_SIMU
+
+
 #define MAX_LEDS 3
 
 

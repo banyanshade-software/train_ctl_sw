@@ -52,6 +52,12 @@ const conf_boards_t *conf_boards_get(int num);
 #endif // TRN_BOARD_MAIN_ZERO
 
 
+
+#ifdef TRN_BOARD_SIMU
+#define NUM_BOARDSS 0 // 0 
+#endif // TRN_BOARD_SIMU
+
+
 #define MAX_BOARDSS 8
 
 

@@ -11,6 +11,7 @@ config utest {
 		= (default) 1001;
 
 } num = (main) 1
+      = (simu) 1
       = (dispatcher) 1          # TODO
       = (default) 1;
 
@@ -38,6 +39,7 @@ config utestloc {
         = (main:2) 2002
         = (default) 2000;
 } num = (main) 4
+      = (simu) 2
       = (default) 0;
 
 

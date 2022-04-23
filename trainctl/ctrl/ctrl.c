@@ -624,7 +624,16 @@ void ctrl_run_tick(_UNUSED_ uint32_t notif_flags, uint32_t tick, _UNUSED_ uint32
 		m.from = MA1_CONTROL();
 		m.to = MA2_USB_LOCAL;
 		m.cmd = CMD_USB_STATS;
+        mqf_write_from_ctrl(&m);
 	}
+}
+
+__weak int can_send_stat(void)
+{
+    static int cnt = 0;
+    cnt++;
+    if (0==(cnt % 300)) return 1;
+    return 0;
 }
 
 // ---------------------------------------------------------------

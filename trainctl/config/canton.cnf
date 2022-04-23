@@ -63,6 +63,7 @@ config canton {
 		= (default) 1;
 
 } num = (main) 6
+      = (simu) 6
       = (dispatcher) 1
       = (default) 0;
 

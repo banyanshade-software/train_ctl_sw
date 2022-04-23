@@ -86,6 +86,26 @@ static conf_globparam_t conf_globparam[0] = {
 
 
 
+#ifdef TRN_BOARD_SIMU
+
+unsigned int conf_globparam_num_entries(void)
+{
+    return 1; // 1 
+}
+
+static conf_globparam_t conf_globparam[1] = {
+  {     // 0
+     .pwmfreq = 100,
+     .test_mode = 0,
+     .oscillo = 0,
+  }
+};
+
+#endif // TRN_BOARD_SIMU
+
+
+
+
 const conf_globparam_t *conf_globparam_get(int num)
 {
   if (num<0) return NULL;

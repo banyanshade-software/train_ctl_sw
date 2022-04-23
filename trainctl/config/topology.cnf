@@ -25,22 +25,23 @@ typedef struct {
 */
 
 config topology {
-    user uint8_t canton_addr                    = (main) table(topo,canton);
-    user int8_t ina_segnum                      = (main) table(topo,ina);
+    user uint8_t canton_addr                    = (default) table(topo,canton);
+    user int8_t ina_segnum                      = (default) table(topo,ina);
     
-    user int8_t steep                           = (main) table(topo,stp);
-    user uint8_t length_cm                      = (main) table(topo,len);
+    user int8_t steep                           = (default) table(topo,stp);
+    user uint8_t length_cm                      = (default) table(topo,len);
     
-    user int8_t left1                           = (main) table(topo,l1);
-    user int8_t left2                           = (main) table(topo,l2);
-    user uint8_t ltn                            = (main) table(topo,ltn); 
-    user int8_t right1                          = (main) table(topo,r1);
-    user int8_t right2                          = (main) table(topo,r2);
-    user uint8_t rtn                            = (main) table(topo,rtn);
+    user int8_t left1                           = (default) table(topo,l1);
+    user int8_t left2                           = (default) table(topo,l2);
+    user uint8_t ltn                            = (default) table(topo,ltn); 
+    user int8_t right1                          = (default) table(topo,r1);
+    user int8_t right2                          = (default) table(topo,r2);
+    user uint8_t rtn                            = (default) table(topo,rtn);
 
     user int p0 = (default) table(topo,p0);
     disk coord_t points[4] = (default) table(topo, pts);
 } num = (main) 64
+      = (simu) 64
       = (default) 0;
 
 

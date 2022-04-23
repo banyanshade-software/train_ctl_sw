@@ -9,7 +9,7 @@
 #ifndef INC_TRAINCTL_CONFIG_H_
 #define INC_TRAINCTL_CONFIG_H_
 
-#define TRN_BOAD_SIMU
+#define TRN_BOARD_SIMU
 
 #include <stdio.h>
 #include "boards_def.h"

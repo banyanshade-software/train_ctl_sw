@@ -5,7 +5,7 @@
  *      Author: danielbraun
  */
 
-
+#include "trainctl_config.h"
 #include "trainmsg.h"
 #include "../misc.h"
 #include "../utils/itm_debug.h"
@@ -99,7 +99,7 @@ static const qroute_t routes[NROUTES] = {
 #endif // TRN_BOARD_MAIN_ZERO
 
 
-#ifdef TRN_BOARD_MAIN
+#if defined(TRN_BOARD_MAIN) || defined(TRN_BOARD_SIMU)
 #define NQDEF 13
 static const qdef_t qdef[NQDEF] = {
 		/* 0*/ { &to_turnout, &from_turnout },

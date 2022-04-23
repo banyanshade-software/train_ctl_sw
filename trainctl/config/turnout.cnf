@@ -20,6 +20,7 @@ config turnout {
         = (default) 0;
 
 } num = (main) 3
+      = (simu) 4
       = (dispatcher) 0          # TODO
       = (default) 0;
 

@@ -68,6 +68,12 @@ const conf_topology_t *conf_topology_get(int num);
 #endif // TRN_BOARD_MAIN_ZERO
 
 
+
+#ifdef TRN_BOARD_SIMU
+#define NUM_TOPOLOGYS 64 // 64 
+#endif // TRN_BOARD_SIMU
+
+
 #define MAX_TOPOLOGYS 64
 
 

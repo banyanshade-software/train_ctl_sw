@@ -56,6 +56,12 @@ const conf_utest_t *conf_utest_get(int num);
 #endif // TRN_BOARD_MAIN_ZERO
 
 
+
+#ifdef TRN_BOARD_SIMU
+#define NUM_UTESTS 1 // 1 
+#endif // TRN_BOARD_SIMU
+
+
 #define MAX_UTESTS 1
 
 

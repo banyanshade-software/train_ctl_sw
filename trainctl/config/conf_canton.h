@@ -74,6 +74,12 @@ const conf_canton_t *conf_canton_get(int num);
 #endif // TRN_BOARD_MAIN_ZERO
 
 
+
+#ifdef TRN_BOARD_SIMU
+#define NUM_CANTONS 6 // 6 
+#endif // TRN_BOARD_SIMU
+
+
 #define MAX_CANTONS 6
 
 

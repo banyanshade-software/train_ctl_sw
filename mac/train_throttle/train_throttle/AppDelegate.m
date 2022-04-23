@@ -2019,7 +2019,7 @@ uint32_t SimuTick = 0;
     //msgsrv_tick(notif,    mt, mdt);
     canton_tick(notif,      mt, mdt);
     turnout_tick(notif,     mt, mdt);
-    usbPollQueues();
+    //usbPollQueues();
     ctrl_run_tick(notif,    mt, mdt);
 
     uitrack_run_tick(notif, mt, mdt);
@@ -2519,15 +2519,15 @@ didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic
 
 - (void) sendMsg64:(msg_64_t)m
 {
+    if (_linkok<LINK_FRM) return;
+    if (self.linkok == LINK_SIMULOW) {
+        mqf_write_from_forward_usb(&m);
+        return;
+    }
     uint8_t buf9[9];
     buf9[0] = FRAME_M64;
     memcpy(buf9+1, &m, 8);
-    if (_linkok<LINK_FRM) return;
-    if (self.linkok == LINK_SIMULOW) {
-        //NSData *dta = [NSData dataWithBytes:buf9 length:9];
-        // TODO
-        abort();
-    }
+    
     int fd = [usb fileDescriptor];
     write(fd, buf9, 9);
 }

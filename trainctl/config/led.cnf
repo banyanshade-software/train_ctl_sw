@@ -16,6 +16,7 @@ config led {
     user uint8_t defprog
         = (default) 0;
 } num = (main) 3
+      = (simu) 3
       = (dispatcher) 0          # TODO
       = (default) 0;
 

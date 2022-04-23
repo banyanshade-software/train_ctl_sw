@@ -101,6 +101,31 @@ static conf_utestloc_t conf_utestloc[0] = {
 
 
 
+#ifdef TRN_BOARD_SIMU
+
+unsigned int conf_utestloc_num_entries(void)
+{
+    return 2; // 2 
+}
+
+static conf_utestloc_t conf_utestloc[2] = {
+  {     // 0
+     .fixed = 42,
+     .alpha = 1000,
+     .beta = 2000,
+  },
+  {     // 1
+     .fixed = 42,
+     .alpha = 1000,
+     .beta = 2000,
+  }
+};
+
+#endif // TRN_BOARD_SIMU
+
+
+
+
 const conf_utestloc_t *conf_utestloc_get(int num)
 {
   if (num<0) return NULL;

@@ -121,6 +121,21 @@ static conf_boards_t conf_boards[0] = {
 
 
 
+#ifdef TRN_BOARD_SIMU
+
+unsigned int conf_boards_num_entries(void)
+{
+    return 0; // 0 
+}
+
+static conf_boards_t conf_boards[0] = {
+};
+
+#endif // TRN_BOARD_SIMU
+
+
+
+
 const conf_boards_t *conf_boards_get(int num)
 {
   if (num<0) return NULL;

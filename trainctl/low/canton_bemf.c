@@ -203,19 +203,19 @@ static void process_adc(volatile adc_result_t *buf, _UNUSED_ uint32_t deltaticks
 			skp = 1;
 		}
 
-		const conf_canton_t *c = conf_canton_get(i);
+		//const conf_canton_t *c = conf_canton_get(i);
 
 #if NEW_ADC_AVG
-		int32_t voff = bemf_convert_to_millivolt(c, buf->meas[i].vBA);
-		//int32_t voffa = bemf_convert_to_millivolt(c, buf->meas[i].vA);
-		//int32_t voffb = bemf_convert_to_millivolt(c, buf->meas[i].vB);
+		int32_t voff = bemf_convert_to_millivolt(cconf, buf->meas[i].vBA);
+		//int32_t voffa = bemf_convert_to_millivolt(cconf, buf->meas[i].vA);
+		//int32_t voffb = bemf_convert_to_millivolt(cconf, buf->meas[i].vB);
 		//int32_t vona = 0; // not available with NEW_ADC_AVG
 		int16_t von = 0;
 #else
-		int32_t voffa = bemf_convert_to_millivolt(c, buf->off[i].vA);
-		int32_t voffb = bemf_convert_to_millivolt(c, buf->off[i].vB);
-		int32_t vona =  bemf_convert_to_millivolt(c, buf->on[i].vA);
-		int32_t vonb =  bemf_convert_to_millivolt(c, buf->on[i].vB);
+		int32_t voffa = bemf_convert_to_millivolt(cconf, buf->off[i].vA);
+		int32_t voffb = bemf_convert_to_millivolt(cconf, buf->off[i].vB);
+		int32_t vona =  bemf_convert_to_millivolt(cconf, buf->on[i].vA);
+		int32_t vonb =  bemf_convert_to_millivolt(cconf, buf->on[i].vB);
 		int16_t voff = (int16_t)(voffb-voffa);
 		int16_t von  = (int16_t)(vonb-vona);
 #endif
@@ -232,13 +232,13 @@ static void process_adc(volatile adc_result_t *buf, _UNUSED_ uint32_t deltaticks
 			voff = -voff;
 			von = -von;
 		}
-		/*if ((1)) {
-			if (!(cnt % 50)) {
+		if ((0)) {
+			//if (!(cnt % 50)) {
 				itm_debug3(DBG_ADC|DBG_LOWCTRL, "ADC/Vof", i, voffa, voffb);
 				itm_debug3(DBG_ADC|DBG_LOWCTRL, "ADC/Von",  i, vona, vonb);
 				itm_debug3(DBG_ADC|DBG_LOWCTRL, "ADC/V01", i,  voff, von);
-			}
-		}*/
+			//}
+		}
 
 		/* only send bemf for canton that are active (expecting bemf)
 		 * this could be (and was) done before millivolt conversion,

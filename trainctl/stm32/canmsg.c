@@ -93,11 +93,15 @@ static void can_init(void)
 
 
 }
+/*
 
 void StartCanTask(_UNUSED_ void *argument)
 {
-	can_init();
+	//can_init();
+	for (;;) osDelay(1000);
 }
+
+*/
 
 /*
 static int boardForAddr(uint8_t addr)
@@ -538,6 +542,7 @@ void HAL_CAN_ErrorCallback(CAN_HandleTypeDef *hcan)
 
 void CAN_Tasklet(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_ uint32_t dt)
 {
+	if ((1)) return; //XXX XXX
 	static int init = 1;
 	if (init) {
 		init = 0;

@@ -468,7 +468,6 @@ static void set_c1_c2(int tidx, train_vars_t *tvars, uint8_t c1, int8_t dir1, ui
 
 	if ((tvars->C1x != 0xFF) && (tvars->C1x != c1)  && (tvars->C1x != c2)) {
 		TO_CANTON(m, tvars->C1x);
-		//m.to = tvars->C1;
 		itm_debug1(DBG_SPDCTL, "stp c1", tidx);
 		m.cmd = CMD_STOP;
 		mqf_write_from_spdctl(&m);
@@ -477,7 +476,6 @@ static void set_c1_c2(int tidx, train_vars_t *tvars, uint8_t c1, int8_t dir1, ui
 	}
 	if ((tvars->C2x != 0xFF) && (tvars->C2x != c1)  && (tvars->C2x != c2)) {
 		TO_CANTON(m, tvars->C2x);
-		//m.to = tvars->C2;
 		itm_debug1(DBG_SPDCTL, "stp c2", tidx);
 		m.cmd = CMD_STOP;
 		mqf_write_from_spdctl(&m);
@@ -486,7 +484,6 @@ static void set_c1_c2(int tidx, train_vars_t *tvars, uint8_t c1, int8_t dir1, ui
 	}
 	if ((c1 != 0xFF) && (c1 != tvars->C1x) && (c1 != tvars->C2x)) {
 		TO_CANTON(m, c1);
-		//m.to = c1;
 		m.cmd = CMD_BEMF_ON;
 		mqf_write_from_spdctl(&m);
 	}

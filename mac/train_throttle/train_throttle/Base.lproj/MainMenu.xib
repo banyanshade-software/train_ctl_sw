@@ -3324,6 +3324,16 @@
                                                 <action selector="changeParam:" target="Voe-Tx-rLC" id="4sH-ec-IMn"/>
                                             </connections>
                                         </popUpButton>
+                                        <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="BxR-rM-8Vd">
+                                            <rect key="frame" x="6" y="226" width="135" height="32"/>
+                                            <buttonCell key="cell" type="push" title="Commit (trains)" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="3Sj-e2-vJK">
+                                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                <font key="font" metaFont="system"/>
+                                            </buttonCell>
+                                            <connections>
+                                                <action selector="commitTrains:" target="Voe-Tx-rLC" id="9kV-JQ-1Of"/>
+                                            </connections>
+                                        </button>
                                     </subviews>
                                     <constraints>
                                         <constraint firstItem="oSf-pS-IpB" firstAttribute="top" secondItem="tgY-qA-yhS" secondAttribute="bottom" constant="8" id="3jX-NI-ceN"/>
@@ -3336,6 +3346,7 @@
                                         <constraint firstAttribute="trailing" secondItem="tgY-qA-yhS" secondAttribute="trailing" constant="8" id="OCV-K1-NP5"/>
                                         <constraint firstItem="Un0-ZA-bOn" firstAttribute="top" secondItem="7k1-lj-XgL" secondAttribute="bottom" constant="8" symbolic="YES" id="S1c-eF-G2L"/>
                                         <constraint firstItem="7k1-lj-XgL" firstAttribute="top" secondItem="rWv-kb-O7x" secondAttribute="bottom" constant="20" id="Tgn-iN-4Qt"/>
+                                        <constraint firstItem="BxR-rM-8Vd" firstAttribute="leading" secondItem="VRW-rr-p3f" secondAttribute="leading" constant="12" id="Tql-hR-P5b"/>
                                         <constraint firstItem="IMZ-2K-HBT" firstAttribute="leading" secondItem="VRW-rr-p3f" secondAttribute="leading" constant="20" id="UQX-P4-DuH"/>
                                         <constraint firstItem="aSu-7Z-EKE" firstAttribute="leading" secondItem="VRW-rr-p3f" secondAttribute="leading" constant="8" id="X9o-JK-Uve"/>
                                         <constraint firstItem="Un0-ZA-bOn" firstAttribute="leading" secondItem="7k1-lj-XgL" secondAttribute="leading" id="Zn6-bg-HyX"/>
@@ -3347,6 +3358,7 @@
                                         <constraint firstItem="oSf-pS-IpB" firstAttribute="leading" secondItem="VRW-rr-p3f" secondAttribute="leading" constant="8" id="mhg-mM-6R1"/>
                                         <constraint firstItem="o8P-UI-vvO" firstAttribute="trailing" secondItem="IMZ-2K-HBT" secondAttribute="trailing" id="p9B-bg-CKA"/>
                                         <constraint firstItem="LPi-ba-aVR" firstAttribute="top" secondItem="VRW-rr-p3f" secondAttribute="top" constant="8" id="r7t-de-ubs"/>
+                                        <constraint firstItem="BxR-rM-8Vd" firstAttribute="top" secondItem="aSu-7Z-EKE" secondAttribute="bottom" constant="20" id="une-JX-M4X"/>
                                         <constraint firstAttribute="trailing" secondItem="aSu-7Z-EKE" secondAttribute="trailing" constant="8" id="xBU-Ga-uAo"/>
                                         <constraint firstItem="LPi-ba-aVR" firstAttribute="leading" secondItem="VRW-rr-p3f" secondAttribute="leading" constant="8" id="xF8-y6-4q5"/>
                                         <constraint firstItem="7k1-lj-XgL" firstAttribute="leading" secondItem="rWv-kb-O7x" secondAttribute="leading" id="z73-d6-bY2"/>

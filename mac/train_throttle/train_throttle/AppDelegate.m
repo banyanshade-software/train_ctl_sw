@@ -547,7 +547,6 @@ typedef void (^respblk_t)(void);
     NSLog(@"changeParam %@ -> %d", x, (int)v);
     
     
-    //uint8_t chgfrm[80] = "|xT\0Pvvvv......";
     NSArray *pa = [self splitParamName:x];
     NSString *psel = [pa objectAtIndex:1];
     NSString *pn = [pa objectAtIndex:2];
@@ -622,6 +621,15 @@ typedef void (^respblk_t)(void);
 #endif
 }
 
+- (IBAction)commitTrains:(id)sender
+{
+    msg_64_t m = {0};
+    m.to = MA0_OAM(0);
+    m.from = MA3_UI_GEN;
+    m.cmd = CMD_PARAM_LUSER_COMMIT;
+    m.v1 = conf_lnum_train;
+    [self sendMsg64:m];
+}
 - (NSArray *) splitParamName:(NSString *)s
 {
     NSArray *pa = [s componentsSeparatedByString:@"_"];

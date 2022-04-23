@@ -506,10 +506,10 @@ static void store_local_read_fdesc(local_blk_desc_t *desc)
     for (;;) {
         uint32_t addr = W25qxx_BlockToSector(desc->b.block_num)+desc->b.startsect;
         addr = W25qxx_SectorToAddr(addr) + desc->b.idx;
-        W25qxx_ReadBytes((uint8_t *)&(desc->fdesc[desc->nbfiledesc]), desc->b.idx, sizeof(lfiledesc_t));
+        itm_debug2(DBG_OAM, "read desc", addr, sizeof(lfiledesc_t));
+        W25qxx_ReadBytes((uint8_t *)&(desc->fdesc[desc->nbfiledesc]), addr, sizeof(lfiledesc_t));
         desc->b.idx += sizeof(lfiledesc_t);
         if (desc->fdesc[desc->nbfiledesc].v32 == 0xFFFFFFFF) break;
-        itm_debug2(DBG_OAM, "read desc", addr, sizeof(lfiledesc_t));
         itm_debug3(DBG_OAM, "r /desc", desc->fdesc[desc->nbfiledesc].confnum, desc->fdesc[desc->nbfiledesc].offset32, desc->fdesc[desc->nbfiledesc].len);
         desc->nbfiledesc++;
     }

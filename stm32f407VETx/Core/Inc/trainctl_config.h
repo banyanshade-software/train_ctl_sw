@@ -9,6 +9,7 @@
 #define INC_TRAINCTL_CONFIG_H_
 
 #define TRN_BOARD_MAIN
+//#define TRN_BOARD_MAIN_ZERO		// same as main but nothing installed
 //#define TRN_BOARD_DISPATCHER
 //#define TRN_BOARD_UI
 
@@ -16,6 +17,29 @@
 // -----------------------------------------
 // -----------------------------------------
 // -----------------------------------------
+
+
+
+#ifdef TRN_BOARD_MAIN_ZERO
+
+#define STM32_F4
+
+#define BOARD_HAS_CAN
+#define BOARD_NUMBER 0
+
+#define CAN_DEVICE hcan1
+
+#define OAM_ONLY 1
+
+#endif // TRN_BOARD_MAIN_ZERO
+
+
+// -----------------------------------------
+// -----------------------------------------
+// -----------------------------------------
+// -----------------------------------------
+
+
 
 #ifdef TRN_BOARD_MAIN
 #define STM32_F4

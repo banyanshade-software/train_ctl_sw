@@ -9,6 +9,8 @@
 #define W25QXX_DUMMY_BYTE 0xA5
 
 w25qxx_t w25qxx;
+
+#ifdef SPI_RESET_CRC // ie. if SPI is included in cubeMX
 extern SPI_HandleTypeDef _W25QXX_SPI;
 
 
@@ -1047,3 +1049,53 @@ void W25qxx_ReadBlock(uint8_t *pBuffer, uint32_t Block_Address, uint32_t OffsetI
 #endif
 }
 //###################################################################################################################
+
+#else
+#warning no spi
+
+
+// dummy w25
+int W25qxx_Init(void)
+{
+	return 0;
+}
+
+void W25qxx_ReadPage(uint8_t *pBuffer, uint32_t Page_Address, uint32_t OffsetInByte, uint32_t NumByteToRead_up_to_PageSize)
+{
+
+}
+void W25qxx_EraseBlock(uint32_t BlockAddr)
+{
+
+}
+
+uint32_t W25qxx_BlockToSector(uint32_t BlockAddress)
+{
+	return 0;
+}
+uint32_t W25qxx_SectorToAddr(uint32_t SectorAddress)
+{
+	return 0;
+}
+void W25qxx_WriteByte(uint8_t pBuffer, uint32_t WriteAddr_inBytes)
+{
+
+}
+void W25qxx_ReadBytes(uint8_t *pBuffer, uint32_t ReadAddr, uint32_t NumByteToRead)
+{
+
+}
+uint32_t W25qxx_BlockToPage(uint32_t BlockAddress)
+{
+	return 0;
+}
+void W25qxx_WriteSector(uint8_t *pBuffer, uint32_t Sector_Address, uint32_t OffsetInByte, uint32_t NumByteToWrite_up_to_SectorSize)
+{
+
+}
+
+void W25qxx_WritePage(uint8_t *pBuffer, uint32_t Page_Address, uint32_t OffsetInByte, uint32_t NumByteToWrite_up_to_PageSize)
+{
+
+}
+#endif

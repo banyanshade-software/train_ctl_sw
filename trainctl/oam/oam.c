@@ -22,6 +22,8 @@
 #include "boards.h"
 #include "../config/propag.h"
 
+#include "../config/conf_globparam.h"
+#include "../config/conf_globparam.propag.h"
 
 int OAM_NeedsReschedule = 0;
 
@@ -125,8 +127,19 @@ void OAM_Tasklet(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_
         	}
 
         	oam_decode_val40(m.val40, &confnum, &confbrd, &instnum, &fieldnum, &v);
-        	v = oam_flashstore_get_value(confnum, fieldnum, confbrd, instnum);
-        	oam_encode_val40(&enc, confnum, confbrd, instnum, fieldnum, v);
+        	int normal = 1;
+        	if (confnum == conf_lnum_globparam) {
+        		// special handling for some param
+        		if (fieldnum == conf_numfield_globparam_oscillo) {
+        			extern int oscillo_enable;
+        			v = oscillo_enable;
+        			normal = 0;
+        		}
+        	}
+        	if (normal) {
+        		v = oam_flashstore_get_value(confnum, fieldnum, confbrd, instnum);
+        	}
+    		oam_encode_val40(&enc, confnum, confbrd, instnum, fieldnum, v);
         	m.to = m.from;
         	m.from = MA0_OAM(0);
         	m.cmd = CMD_PARAM_USER_VAL;
@@ -141,8 +154,16 @@ void OAM_Tasklet(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_
         		Error_Handler();
         		break;
         	}
-
         	oam_decode_val40(m.val40, &confnum, &confbrd, &instnum, &fieldnum, &v);
+
+        	if (confnum == conf_lnum_globparam) {
+        		// special handling for some param
+        		if (fieldnum == conf_numfield_globparam_oscillo) {
+        			extern int oscillo_enable;
+        			oscillo_enable = v;
+        			break;
+        		}
+        	}
         	// store in flash
         	oam_flashlocal_set_value(confnum, fieldnum,  instnum, v);
         	break;

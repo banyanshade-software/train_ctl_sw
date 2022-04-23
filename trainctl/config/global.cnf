@@ -36,7 +36,7 @@ c_code {
 
 
 
-attrib train store = normal
+attrib train store = local
 attrib train stnum = 1
 attrib canton store = normal
 attrib canton stnum = 2

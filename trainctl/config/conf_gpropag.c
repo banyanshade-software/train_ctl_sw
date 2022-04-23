@@ -36,9 +36,6 @@ void conf_propagate(unsigned int confnum, unsigned int fieldnum, unsigned int in
     case conf_pnum_turnout:
         conf_turnout_propagate(instnum, fieldnum, v);
         break;
-    case conf_pnum_train:
-        conf_train_propagate(instnum, fieldnum, v);
-        break;
     case conf_pnum_canton:
         conf_canton_propagate(instnum, fieldnum, v);
         break;
@@ -61,9 +58,6 @@ int32_t conf_default_value(unsigned int confnum, unsigned int fieldnum, unsigned
     case conf_pnum_turnout:
         return conf_turnout_default_value(instnum, fieldnum, board);
         break;
-    case conf_pnum_train:
-        return conf_train_default_value(instnum, fieldnum, board);
-        break;
     case conf_pnum_canton:
         return conf_canton_default_value(instnum, fieldnum, board);
         break;
@@ -82,6 +76,8 @@ void *conf_local_ptr(unsigned int lconfnum)
        return conf_utestloc_ptr();
     case conf_lnum_globparam:
        return conf_globparam_ptr();
+    case conf_lnum_train:
+       return conf_train_ptr();
     case conf_lnum_topology:
        return conf_topology_ptr();
     case conf_lnum_boards:
@@ -100,6 +96,8 @@ unsigned int conf_local_size(unsigned int lconfnum)
        return sizeof(conf_utestloc_t)*conf_utestloc_num_entries();
     case conf_lnum_globparam:
        return sizeof(conf_globparam_t)*conf_globparam_num_entries();
+    case conf_lnum_train:
+       return sizeof(conf_train_t)*conf_train_num_entries();
     case conf_lnum_topology:
        return sizeof(conf_topology_t)*conf_topology_num_entries();
     case conf_lnum_boards:
@@ -118,6 +116,8 @@ int32_t conf_local_get(unsigned int lconfnum, unsigned int fieldnum, unsigned in
        return conf_utestloc_local_get(fieldnum, instnum);
     case conf_lnum_globparam:
        return conf_globparam_local_get(fieldnum, instnum);
+    case conf_lnum_train:
+       return conf_train_local_get(fieldnum, instnum);
     case conf_lnum_topology:
        return conf_topology_local_get(fieldnum, instnum);
     case conf_lnum_boards:
@@ -137,6 +137,9 @@ void conf_local_set(unsigned int lconfnum, unsigned int fieldnum, unsigned int i
         break;
     case conf_lnum_globparam:
        conf_globparam_local_set(fieldnum, instnum, v);
+        break;
+    case conf_lnum_train:
+       conf_train_local_set(fieldnum, instnum, v);
         break;
     case conf_lnum_topology:
        conf_topology_local_set(fieldnum, instnum, v);

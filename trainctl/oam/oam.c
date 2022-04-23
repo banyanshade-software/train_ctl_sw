@@ -130,6 +130,7 @@ void OAM_Tasklet(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_
         	m.to = m.from;
         	m.from = MA0_OAM(0);
         	m.cmd = CMD_PARAM_USER_VAL;
+            m.val40 = enc;
         	mqf_write_from_oam(&m);
         	break;
 
@@ -170,6 +171,7 @@ void OAM_Tasklet(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_
         	m.to = m.from;
         	m.from = MA0_OAM(0);
         	m.cmd = CMD_PARAM_LUSER_VAL;
+            m.val40 = enc;
         	mqf_write_from_oam(&m);
         	break;
 

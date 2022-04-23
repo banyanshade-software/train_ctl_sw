@@ -499,7 +499,11 @@ static int _gen_lset(config_node_t *f, FILE *output, int num)
 {
     if (1 != f->configurable) return 0;
     fprintf(output, "    case conf_numfield_%s_%s:\n", f->parentconf->string, f->string);
-    fprintf(output, "        c->%s = v;\n", f->string);
+    if (f->parentconf && (f->parentconf->tag == CONFIG_NODE_SUBCONF)) {
+        fprintf(output, "        c->%s.%s = v;\n", f->parentconf->string, f->string);
+    } else {
+        fprintf(output, "        c->%s = v;\n", f->string);
+    }
     fprintf(output, "        break;\n");
     return 1;
 }
@@ -509,7 +513,11 @@ static int _gen_lget(config_node_t *f, FILE *output, int num)
 {
     if (1 != f->configurable) return 0;
     fprintf(output, "    case conf_numfield_%s_%s:\n", f->parentconf->string, f->string);
-    fprintf(output, "        return c->%s;\n", f->string);
+    if (f->parentconf && (f->parentconf->tag == CONFIG_NODE_SUBCONF)) {
+        fprintf(output, "        return c->%s.%s;\n", f->parentconf->string, f->string);
+    } else {
+        fprintf(output, "        return c->%s;\n", f->string);
+    }
     return 1;
 }
 

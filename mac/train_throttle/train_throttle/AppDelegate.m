@@ -26,6 +26,8 @@
 #include "conf_train.propag.h"
 #include "conf_canton.h"
 #include "conf_canton.propag.h"
+#include "conf_turnout.h"
+#include "conf_turnout.propag.h"
 #include "conf_globparam.h"
 #include "conf_globparam.propag.h"
 
@@ -544,7 +546,8 @@ typedef void (^respblk_t)(void);
     }
     NSLog(@"changeParam %@ -> %d", x, (int)v);
     
-    uint8_t chgfrm[80] = "|xT\0Pvvvv......";
+    
+    //uint8_t chgfrm[80] = "|xT\0Pvvvv......";
     NSArray *pa = [self splitParamName:x];
     NSString *psel = [pa objectAtIndex:1];
     NSString *pn = [pa objectAtIndex:2];
@@ -553,6 +556,54 @@ typedef void (^respblk_t)(void);
     }
     const char *cpsel = [psel cStringUsingEncoding:NSUTF8StringEncoding];
     const char *cpn = [pn cStringUsingEncoding:NSUTF8StringEncoding];
+    
+    int confnum = -1;
+    int instnum = cpsel[1]-'0';
+    int fieldnum = -1;
+    int boardnum = 0;
+    
+    
+    int loc = 0;
+    switch (cpsel[0]) {
+        case 'T':
+            loc = 1;
+            confnum = conf_lnum_train;
+            /*if (!strcmp(cpn, "ki")) cpn = "kI";
+             if (!strcmp(cpn, "kp")) cpn = "kP";
+             if (!strcmp(cpn, "kd")) cpn = "kD";
+             if (!strcmp(cpn, "en_pid")) cpn = "enable_pid";*/
+            fieldnum = conf_train_fieldnum(cpn);
+            break;
+        case 'G':
+            loc = 1;
+            confnum = conf_lnum_globparam;
+            fieldnum = conf_globparam_fieldnum(cpn);
+            break;
+        case 't':
+            confnum = conf_pnum_turnout;
+            fieldnum = conf_turnout_fieldnum(cpn);
+            break;
+        case 'C':
+            confnum = conf_pnum_canton;
+            fieldnum = conf_canton_fieldnum(cpn);
+            break;
+        default:
+            NSLog(@"bad param def");
+            break;
+    }
+    if ((confnum<0)||(fieldnum<0)) {
+        return;
+    }
+    uint64_t v40;
+    oam_encode_val40(&v40, confnum, boardnum, instnum, fieldnum, v);
+    msg_64_t m = {0};
+    m.to = MA0_OAM(0);
+    m.from = MA3_UI_GEN;
+    m.cmd = loc ? CMD_PARAM_LUSER_SET : CMD_PARAM_USER_SET;
+    m.val40 = v40;
+    [self sendMsg64:m];
+    
+#if 0
     NSUInteger nl = strlen(cpn);
     if (nl+4+1+1+4>=sizeof(chgfrm)) {
         return;
@@ -568,7 +619,7 @@ typedef void (^respblk_t)(void);
     [self sendFrame:chgfrm len:(int)(5+nl+4+2) blen:sizeof(chgfrm) then:^{
         NSLog(@"changed rc=%d", self->frm.retcode);
     }];
-    
+#endif
 }
 
 - (NSArray *) splitParamName:(NSString *)s
@@ -587,6 +638,11 @@ typedef void (^respblk_t)(void);
     [self getParams:0];
 }
 
+// TODO conf generator does not produce .h
+int conf_canton_fieldnum(const char *str);
+int conf_turnout_fieldnum(const char *str);
+int conf_train_fieldnum(const char *str);
+int conf_globparam_fieldnum(const char *str);
 
 - (void) getParams:(int)np1
 {
@@ -628,15 +684,12 @@ typedef void (^respblk_t)(void);
         int fieldnum = -1;
         int boardnum = 0;
         
-        // conf generator does not produce .h
-        int conf_canton_fieldnum(const char *str);
-        int conf_train_fieldnum(const char *str);
-        int conf_globparam_fieldnum(const char *str);
-
+        
         int loc = 0;
         switch (cpsel[0]) {
             case 'T':
-                confnum = conf_pnum_train;
+                loc = 1;
+                confnum = conf_lnum_train;
                 /*if (!strcmp(cpn, "ki")) cpn = "kI";
                 if (!strcmp(cpn, "kp")) cpn = "kP";
                 if (!strcmp(cpn, "kd")) cpn = "kD";
@@ -644,9 +697,17 @@ typedef void (^respblk_t)(void);
                 fieldnum = conf_train_fieldnum(cpn);
                 break;
             case 'G':
-                confnum = conf_lnum_globparam;
                 loc = 1;
+                confnum = conf_lnum_globparam;
                 fieldnum = conf_globparam_fieldnum(cpn);
+                break;
+            case 't':
+                confnum = conf_pnum_turnout;
+                fieldnum = conf_turnout_fieldnum(cpn);
+                break;
+            case 'C':
+                confnum = conf_pnum_canton;
+                fieldnum = conf_canton_fieldnum(cpn);
                 break;
             default:
                 NSLog(@"bad param def");
@@ -661,7 +722,7 @@ typedef void (^respblk_t)(void);
         msg_64_t m = {0};
         m.to = MA0_OAM(0);
         m.from = MA3_UI_GEN;
-        m.cmd = CMD_PARAM_USER_GET; // XXX loc
+        m.cmd = loc ? CMD_PARAM_LUSER_GET : CMD_PARAM_USER_GET;
         m.val40 = v40;
         [self sendMsg64:m];
         
@@ -717,7 +778,7 @@ typedef void (^respblk_t)(void);
     }];
 }
 
-- (void) paramUserVal:(msg_64_t)m
+- (void) paramUserVal:(msg_64_t)m locstore:(int)loc
 {
     self->nparamresp++;
     if (self->nparamresp==self->nparam) {
@@ -741,27 +802,41 @@ typedef void (^respblk_t)(void);
     int n = inst > 9 ? '-' : inst;
     const char *fld;
     
-    switch (fnum) {
-        case conf_pnum_train:
-            t = 'T';
-            fld = conf_train_fieldname(field);
-            break;
-        case conf_lnum_globparam: //XXX loc
-            t = 'G';
-            fld = conf_globparam_fieldname(field);
-            break;
-        default:
-            NSLog(@"bad conf num in paramUserVal");
-            return;
-            break;
+    if (loc) {
+        switch (fnum) {
+            case conf_lnum_train:
+                t = 'T';
+                fld = conf_train_fieldname(field);
+                break;
+            case conf_lnum_globparam: //XXX loc
+                t = 'G';
+                fld = conf_globparam_fieldname(field);
+                break;
+            default:
+                NSLog(@"bad conf num in paramUserVal");
+                return;
+                break;
+        }
+    } else {
+        switch (fnum) {
+            case conf_pnum_canton:
+                t = 'C';
+                fld = conf_canton_fieldname(field);
+                break;
+            case conf_pnum_turnout: //XXX loc
+                t = 't';
+                fld = conf_turnout_fieldname(field);
+                break;
+            default:
+                NSLog(@"bad conf num in paramUserVal");
+                return;
+                break;
+        }
     }
     NSString *pnam = [NSString stringWithFormat:@"par_%c%d_%s", t, n, fld];
     NSLog(@"val for '%@'", pnam);
     NSControl *c = parctl[pnam];
     [self setParameter:c value:v enable:YES];
-    
-    
-
 }
 
 - (void) setParameter:(NSControl *)c value:(int)v /*def:(int)def min:(int)min max:(int)max*/ enable:(BOOL)ena
@@ -1249,8 +1324,10 @@ static int frm_unescape(uint8_t *buf, int len)
             self.curspeed = v;
             break;
         case CMD_PARAM_USER_VAL:
-            //NSLog(@"PARAM VAL");
-            [self paramUserVal:m];
+            [self paramUserVal:m locstore:0];
+            break;
+        case CMD_PARAM_LUSER_VAL:
+            [self paramUserVal:m locstore:1];
             break;
         case CMD_SETRUN_MODE:
         case CMD_TRSTATE_NOTIF:

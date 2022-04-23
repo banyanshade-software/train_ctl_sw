@@ -14,7 +14,7 @@ int conf_train_propagate(unsigned int numinst, unsigned int numfield, int32_t va
 
 int32_t conf_train_default_value(unsigned int numinst, unsigned int numfield, unsigned int board);
 
-#define conf_pnum_train 1
+#define conf_lnum_train 1
 
 #define conf_numfield_pidctl_kP 		0
 #define conf_numfield_pidctl_kI 		1
@@ -32,6 +32,11 @@ int32_t conf_train_default_value(unsigned int numinst, unsigned int numfield, un
 #define conf_numfield_train_pose_per_cm 		13
 #define conf_numfield_train_trainlen_left 		14
 #define conf_numfield_train_trainlen_right 		15
+
+
+void *conf_train_ptr(void);
+int32_t conf_train_local_get(unsigned int fieldnum, unsigned int instnum);
+void conf_train_local_set(unsigned int fieldnum, unsigned int instnum, int32_t v);
 
 
 

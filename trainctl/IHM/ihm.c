@@ -44,8 +44,8 @@
 #include "../stm32/ina3221/ina3221.h"
 #endif
 
-//#include "railconfig.h"
 
+#ifdef BOARD_HAS_ROTARY_ENCODER
 #define MAX_ROTARY MAX_DISP
 #define UNSIGNED_ROT 0
 
@@ -57,12 +57,18 @@ static int16_t rot_position[MAX_ROTARY]={0x7FFF};
 static uint8_t  drive_mode[MAX_ROTARY]={1};
 extern TIM_HandleTypeDef htim4;
 
+#endif // BOARD_HAS_ROTARY_ENCODER
+
+
+
 static uint8_t needsrefresh_mask;
 
 #define SET_NEEDSREFRESH(_i) do { needsrefresh_mask = (needsrefresh_mask | (1<<(_i)));} while(0)
 #define NEEDSREFRESH(_i) ((needsrefresh_mask & (1<<(_i))) ? 1 : 0)
 
 // ----------------------------------------------------------------
+
+#ifdef BOARD_HAS_ROTARY_ENCODER
 
 #define ENC_MUL2  		1
 #define ENC_DIV2	 	0
@@ -99,6 +105,7 @@ static int16_t get_srotary(TIM_HandleTypeDef *ptdef)
 	return ((p<<ENC_MUL2)>>ENC_DIV2);//>>1;
 }
 
+#endif // BOARD_HAS_ROTARY_ENCODER
 
 
 
@@ -203,6 +210,7 @@ void ihm_runtick_normal(int init)
 	itm_debug1(DBG_UI, "UI tick", 0);
 
 	needsrefresh_mask = 0;
+#ifdef BOARD_HAS_ROTARY_ENCODER
 	// scan rotary encoder -----------
 	for (int i=0; i<MAX_ROTARY; i++) {
 #if UNSIGNED_ROT
@@ -247,8 +255,9 @@ void ihm_runtick_normal(int init)
 			}
 		}
 #endif
-
 	}
+#endif //  BOARD_HAS_ROTARY_ENCODER
+
 
 	// scan buttons ------------------
 
@@ -480,6 +489,7 @@ static void ihm_runtick_detect1(int init)
 		m.v2 = 0;
 		mqf_write_from_ui(&m);
 	}
+#ifdef BOARD_HAS_ROTARY_ENCODER
 	// rotary encoder
 	static  int16_t rotpos = 0x7FFF;
 	int16_t p = get_srotary(&htim4);
@@ -498,6 +508,7 @@ static void ihm_runtick_detect1(int init)
 		mqf_write_from_ui(&m);
 
 	}
+#endif
 	// process messages --------------
 	ui_process_msg_d1();
 

@@ -23,6 +23,7 @@
 //#include "low/canton_config.h"
 //#include "railconfig.h"
 #include "utils/framing.h"
+#include "config/conf_train.h"
 
 typedef struct {
     const stat_val_t *statval;

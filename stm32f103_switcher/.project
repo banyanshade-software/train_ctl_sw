@@ -29,4 +29,16 @@
 		<nature>org.eclipse.cdt.managedbuilder.core.managedBuildNature</nature>
 		<nature>org.eclipse.cdt.managedbuilder.core.ScannerConfigNature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>stm32dev</name>
+			<type>2</type>
+			<locationURI>PARENT-1-PROJECT_LOC/stm32dev</locationURI>
+		</link>
+		<link>
+			<name>trainctl</name>
+			<type>2</type>
+			<locationURI>PARENT-1-PROJECT_LOC/trainctl</locationURI>
+		</link>
+	</linkedResources>
 </projectDescription>

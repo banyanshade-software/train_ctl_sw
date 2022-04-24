@@ -480,9 +480,11 @@ void disp_layout(int numdisp)
 			write_sbargraph(v16s, -100, 100);
 			break;
 		case CODE_TIM4_CNT: {
+#ifdef BOARD_HAS_ROTARY_ENCODER
 			extern TIM_HandleTypeDef htim4;
 			v16u = htim4.Instance->CNT;
 			write_unum(v16u, curfont);
+#endif
 			break;
 		}
 		case CODE_PROFILE:

@@ -110,10 +110,10 @@ static int test_mode = 0;
 void StartUiTask(_UNUSED_ void *argument)
 {
 	// init
+#ifdef BOARD_HAS_ROTARY_ENCODER
 	extern TIM_HandleTypeDef htim4;
-
 	HAL_TIM_Encoder_Start(&htim4, TIM_CHANNEL_ALL);
-
+#endif
 
 	for (int i=0; i<MAX_DISP; i++) {
 		I2C_Scan();

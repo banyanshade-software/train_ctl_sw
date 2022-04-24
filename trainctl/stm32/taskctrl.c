@@ -16,6 +16,7 @@
 
 
 #include "cmsis_os.h"
+#include "trainctl_config.h"
 #include "main.h"
 #include "task.h"
 #include "taskctrl.h"
@@ -24,7 +25,6 @@
 
 
 //#include "../../../stm32dev/ina3221/ina3221.h"
-#include "trainctl_config.h"
 
 #ifdef BOARD_HAS_TURNOUTS
 #include "../low/turnout.h"
@@ -72,11 +72,15 @@ static void run_task_ctrl(void);
 
 
 static int cur_freqhz = 100;
-static int numsampling = 0;
-static int bemf_divisor = 1;
+
 int tsktick_freqhz = 100;
 
+#ifdef BOARD_HAS_CANTON
+static int numsampling = 0;
+static int bemf_divisor = 1;
 static int check_adc_order = 0;
+#endif
+
 
 /*
  *  max pwm (MAX_PWM) is 90% : min off time in µs = (1000000/pwmhz)*.1
@@ -106,6 +110,7 @@ static int check_adc_order = 0;
 
 
 
+#ifdef BOARD_HAS_CANTON
 
 static void TIM_ResetCounter(int tn, TIM_HandleTypeDef *htim)
 {
@@ -124,7 +129,6 @@ static void TIM_ResetCounter(int tn, TIM_HandleTypeDef *htim)
 	//TIMx->CR1 &= ~(TIM_CR1_DIR);
 	//itm_debug2(DBG_TIM, "CR1b : ", tn, (TIMx->CR1 & TIM_CR1_DIR) ? 1 : 0);
 }
-#ifdef BOARD_HAS_CANTON
 static int adc_nsmpl = 0;
 #endif
 
@@ -222,6 +226,7 @@ void StartCtrlTask(_UNUSED_ void const *argument)
 // #define __HAL_TIM_SET_PRESCALER(__HANDLE__, __PRESC__)       ((__HANDLE__)->Instance->PSC = (__PRESC__))
 void set_pwm_freq(int freqhz, int crit)
 {
+#ifdef BOARD_HAS_CANTON
 
 	//if ((1)) return;
 	if (!freqhz) {
@@ -278,6 +283,7 @@ void set_pwm_freq(int freqhz, int crit)
 
 	if (crit) portEXIT_CRITICAL();
 	itm_debug1(DBG_TIM|DBG_ERR, "freq ", cur_freqhz); // not an error but it is importanrt
+#endif
 }
 
 int get_pwm_freq(void)
@@ -325,7 +331,8 @@ static void run_task_ctrl(void)
 			}
 		}
 
-		uint32_t notif;
+		uint32_t notif = 0;
+#ifdef BOARD_HAS_CANTON
 		xTaskNotifyWait(0, 0xFFFFFFFF, &notif, portMAX_DELAY);
 		if ((1)) {
 			int n = 0;
@@ -337,7 +344,10 @@ static void run_task_ctrl(void)
 				if ((1)) continue; // skip this tick
 			}
 		}
-
+#else
+		// TODO : should be better defined
+		osDelay(10);
+#endif
 
 
 		cnt++;
@@ -357,10 +367,7 @@ static void run_task_ctrl(void)
 		int32_t dt = (oldt) ? (t-oldt) : 1;
 		oldt = t;
 
-		if ((0)) {
-			itm_debug2(DBG_LOWCTRL, "ctick", notif, dt);
-			//continue;
-		}
+
 
 		//-----------------------------------
 #ifdef BOARD_HAS_CANTON
@@ -540,6 +547,7 @@ void  HAL_ADC_ErrorCallback(_UNUSED_ ADC_HandleTypeDef *hadc)
 }
 #endif
 
+// TODO move somewhere else vApplicationStackOverflowHook
 void vApplicationStackOverflowHook(_UNUSED_ TaskHandle_t xTask, _UNUSED_ signed char *pcTaskName)
 {
 	itm_debug1(DBG_ERR, "STK OVF", 1);

@@ -29,6 +29,7 @@
 #define CANTON_H_
 
 #include <stdint.h>
+#include "trainctl_config.h"
 #include "../misc.h"
 
 #ifndef TRAIN_SIMU
@@ -45,6 +46,14 @@
 //#define CANTON_TYPE_DUMMY    (0)
 //#define CANTON_TYPE_REMOTE   (0xFF)
 //#define CANTON_TYPE_PROTO1   (1)
+
+
+
+#ifndef BOARD_HAS_CANTON
+#error BOARD_HAS_CANTON not defined, remove this file from build
+#endif
+
+
 
 #ifndef TRAIN_SIMU
 extern TIM_HandleTypeDef *CantonTimerHandles[8];

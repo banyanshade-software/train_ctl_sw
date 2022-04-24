@@ -17,6 +17,7 @@
 #define STM32_TASKCTRL_H_
 
 
+#ifdef BOARD_HAS_CANTON
 
 
 extern TIM_HandleTypeDef htim1;
@@ -26,6 +27,8 @@ extern TIM_HandleTypeDef htim4;
 extern TIM_HandleTypeDef htim8;
 extern TIM_HandleTypeDef htim12;
 extern ADC_HandleTypeDef hadc1;
+
+#endif // BOARD_HAS_CANTON
 
 extern osThreadId taskCtrlHandle;
 

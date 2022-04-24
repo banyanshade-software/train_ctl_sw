@@ -224,8 +224,8 @@ LFMQUEUE_DEF_H(from_ctrl, msg_64_t)
 //LFMQUEUE_DEF_H(to_forward, msg_64_t)
 //LFMQUEUE_DEF_H(from_forward, msg_64_t)
 
-LFMQUEUE_DEF_H(to_forward_usb, msg_64_t) // XXX
-LFMQUEUE_DEF_H(from_forward_usb, msg_64_t) // XXX
+//LFMQUEUE_DEF_H(to_forward_usb, msg_64_t) // XXX
+//LFMQUEUE_DEF_H(from_forward_usb, msg_64_t) // XXX
 
 
 LFMQUEUE_DEF_H(to_usb, msg_64_t)

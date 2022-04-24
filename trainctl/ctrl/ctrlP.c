@@ -186,7 +186,7 @@ void ctrl2_set_mode(int tidx, train_ctrl_t *tvar, train_mode_t mode)
     // notif UI
     msg_64_t m;
     m.from = MA1_CTRL(tidx);
-    m.to = MA3_UI_CTC; //(UISUB_TFT);
+    m.to = MA3_UI_GEN; //(UISUB_TFT);
     m.cmd = CMD_TRMODE_NOTIF;
     m.v1u = mode;
     mqf_write_from_ctrl(&m);

@@ -36,8 +36,8 @@ typedef enum {
     CMD_STOP_DETECTED,				// spdctl->ctrl		v32=POSE				stop condition (after pid and inertia) reached
     
     // 011 xxxxx
-    CMD_TURNOUT_A = 0x60,			// ctrl->turnout,ui	v2=tn					set turnout pos to straight (low level)
-    CMD_TURNOUT_B,					// ctrl->turnout,ui v2=tn					set turnout pos to turn (low level)
+    CMD_TURNOUT_A = 0x60,			// ctrl->turnout,ui	subc=tn					set turnout pos to straight (low level)
+    CMD_TURNOUT_B,					// ctrl->turnout,ui subc=tn					set turnout pos to turn (low level)
     CMD_TURNOUT_HI_A,				// ui,auto->ctrl	v1=tn					set turnout to straight (registering with occupency/train ctl)
     CMD_TURNOUT_HI_B,				// ui,auto->ctrl	v1=tn					set turnout to turn (registering with occupency/train ctl)
     CMD_TURNOUT_HI_TOG,				// ui->ctrl			v1=tn					toggle turnout pos

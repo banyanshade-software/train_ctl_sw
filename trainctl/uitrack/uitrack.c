@@ -47,10 +47,10 @@ void uitrack_run_tick(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UN
             uitrack_change_tn_reserv(m.v1, m.v2);
             break;
         case CMD_TURNOUT_A:
-        	uitrack_change_tn(m.v2, 0);
+        	uitrack_change_tn(m.subc, 0);
         	break;
         case CMD_TURNOUT_B:
-        	uitrack_change_tn(m.v2, 1);
+        	uitrack_change_tn(m.subc, 1);
         	break;
         }
     }

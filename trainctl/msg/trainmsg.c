@@ -32,8 +32,11 @@ LFMQUEUE_DEF_C(from_spdctl, msg_64_t, 	16, 0)
 //LFMQUEUE_DEF_C(to_forward, msg_64_t, 	8, 1) // XXX should not have silent drop
 //LFMQUEUE_DEF_C(from_forward, msg_64_t, 	8, 0)
 
-LFMQUEUE_DEF_C(to_forward_usb, msg_64_t,	8, 1)
-LFMQUEUE_DEF_C(from_forward_usb, msg_64_t,  16, 0)
+//LFMQUEUE_DEF_C(to_forward_usb, msg_64_t,	8, 1)
+//LFMQUEUE_DEF_C(from_forward_usb, msg_64_t,  16, 0)
+
+LFMQUEUE_DEF_C(to_usb, msg_64_t, 			8, 1)
+LFMQUEUE_DEF_C(from_usb, msg_64_t,			16, 1)
 
 
 LFMQUEUE_DEF_C(to_ctrl, msg_64_t, 		16, 0)
@@ -106,11 +109,11 @@ static const qdef_t qdef[NQDEF] = {
 		/* 1*/ { &to_canton,  &from_canton},
 		/* 2*/ { &to_spdctl,  &from_spdctl},
 #ifdef TRAIN_SIMU
-    /* 3*/ { &to_forward_usb, &from_forward_usb},
+    /* 3*/ { &to_usb, &from_usb},
 #else
     /* 3*/ { &to_canbus, &from_canbus},
 #endif
-        /* 4*/ { &to_forward_usb, &from_forward_usb},
+        /* 4*/ { &to_usb, &from_usb},
         /* 5*/ { &to_ctrl, &from_ctrl},
         /* 6*/ { &to_ui, &from_ui},
 		/* 7*/ { &to_ina3221, &from_ina3221},
@@ -135,7 +138,7 @@ static const qroute_t routes[NROUTES] = {
 		{0xF0,									MA1_CTRL(0), 			5},
 #ifdef TRAIN_SIMU
 		{0xFF,									MA3_UI_CTC,				8},
-		{0xFF,									MA3_UI_GEN,				8},
+		{0xFF,									MA3_UI_GEN,				3},
 #else
 		{0xFF,									MA3_UI_CTC,				4},
 		{0xFF,									MA3_UI_GEN,				4},

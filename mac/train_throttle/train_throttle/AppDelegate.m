@@ -2521,7 +2521,7 @@ didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic
 {
     if (_linkok<LINK_FRM) return;
     if (self.linkok == LINK_SIMULOW) {
-        mqf_write_from_forward_usb(&m);
+        mqf_write_from_usb(&m);
         return;
     }
     uint8_t buf9[9];

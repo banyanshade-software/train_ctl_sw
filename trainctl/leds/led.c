@@ -211,7 +211,7 @@ static uint8_t run_ledmachine(ledmachine_t *state)
     	rc = _run_one(state, &rerun);
     	if (!rerun) break;
     	if (c>1) {
-            Error_Handler();
+    		FatalError("LEDc", "c>1", Error_Ledc);
     	}
     }
     return rc;

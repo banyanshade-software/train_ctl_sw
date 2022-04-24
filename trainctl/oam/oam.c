@@ -52,6 +52,7 @@ static void exit_can_test(void)
 }
 
 
+static void customOam(msg_64_t *m);
 
 
 void OAM_Tasklet(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_ uint32_t dt)
@@ -100,6 +101,9 @@ void OAM_Tasklet(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_
         	}
         	break;
 
+        case CMD_OAM_CUSTOM:
+                customOam(&m);
+                break;
         case CMD_PARAM_USER_SET:
         	if (!oam_isMaster()) {
         		itm_debug1(DBG_OAM|DBG_ERR, "only master recv set", 0);
@@ -122,7 +126,7 @@ void OAM_Tasklet(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_
         case CMD_PARAM_USER_GET:
         	if (!oam_isMaster()) {
         		itm_debug1(DBG_OAM|DBG_ERR, "only master recv get", 0);
-        		Error_Handler();
+        		FatalError("NoMast", "only master should receive this", Error_NotMaster);
         		break;
         	}
 
@@ -155,7 +159,7 @@ void OAM_Tasklet(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_
         case CMD_PARAM_LUSER_SET:
         	if (!oam_isMaster()) {
         		itm_debug1(DBG_OAM|DBG_ERR, "only master recv set", 0);
-        		Error_Handler();
+        		FatalError("NoMast", "only master should receive this", Error_NotMaster);
         		break;
         	}
         	oam_decode_val40(m.val40, &confnum, &confbrd, &instnum, &fieldnum, &v);
@@ -178,7 +182,7 @@ void OAM_Tasklet(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_
         case CMD_PARAM_LUSER_COMMIT:
         	if (!oam_isMaster()) {
         		itm_debug1(DBG_OAM|DBG_ERR, "only master recv commit", 0);
-        		Error_Handler();
+        		FatalError("NoMast", "only master should receive this", Error_NotMaster);
         		break;
         	}
         	oam_flashlocal_commit(m.v1);
@@ -189,7 +193,7 @@ void OAM_Tasklet(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_
         case CMD_PARAM_LUSER_GET:
         	if (!oam_isMaster()) {
         		itm_debug1(DBG_OAM|DBG_ERR, "only master recv get", 0);
-        		Error_Handler();
+        		FatalError("NoMast", "only master should receive this", Error_NotMaster);
         		break;
         	}
         	oam_decode_val40(m.val40, &confnum, &confbrd, &instnum, &fieldnum, &v);
@@ -205,7 +209,7 @@ void OAM_Tasklet(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_
         case CMD_PARAM_PROPAG: {
         	if (oam_isMaster()) {
         		itm_debug1(DBG_OAM|DBG_ERR, "only slave recv propag", 0);
-        		Error_Handler();
+        		FatalError("NoSlv", "only slave should receive this", Error_NotSlave);
         		break;
         	}
         	unsigned int instnum;
@@ -337,4 +341,20 @@ uint32_t oam_getDeviceUniqueId(void)
 int oam_isMaster(void)
 {
     return 1; // TODO
+}
+
+
+
+
+
+static void customOam(msg_64_t *m)
+{
+	switch (m->subc) {
+	case 42:
+		FatalError("CUSTOM", "OAM custom error", 0x00);
+		break;
+	default:
+		itm_debug2(DBG_OAM, "custom", m->subc, m->from);
+		break;
+	}
 }

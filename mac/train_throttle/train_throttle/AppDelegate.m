@@ -1025,6 +1025,16 @@ int conf_globparam_fieldnum(const char *str);
 */
 }
 
+- (IBAction)sendOamCustom:(id)sender
+{
+    msg_64_t m = {0};
+    m.from = MA3_UI_GEN;
+    m.to = MA0_OAM(_oamCustomBrd);
+    m.cmd = CMD_OAM_CUSTOM;
+    m.subc = _oamCustomCmd;
+    [self sendMsg64:m];
+}
+
 #pragma mark -
 
 #define USBTTY1 "/dev/cu.usbmodem6D94487754571"
@@ -2656,6 +2666,10 @@ void impl_uitrack_change_tn_reserv(int tn, int train)
 
 @end
 
+void FatalError(const char *short4lettersmsg, const char *longmsg, uint8_t errcode)
+{
+    abort();
+}
 void Error_Handler(void)
 {
     //NSAssert(0, "Error handler");

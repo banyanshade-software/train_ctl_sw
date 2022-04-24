@@ -323,7 +323,7 @@ static void sub_presence_changed(_UNUSED_ uint32_t tick, _UNUSED_ uint8_t from_a
         lsblk_num_t c2s = {-1};
         if (tvar->can2_xaddr != 0xFF) {
             c2s = first_lsblk_with_canton(tvar->can2_xaddr, tvar->c1_sblk);
-            if (c2s.n == -1) Error_Handler();
+            if (c2s.n == -1) FatalError("Layout", "No c2s", Error_NoC2s);
             if (lsegnum == get_lsblk_ina3221(c2s)) {
                 is_s2 = 1;
             }

@@ -10,6 +10,7 @@
 #include <memory.h>
 #include "lf_mqueue.h"
 #include "itm_debug.h"
+#include "oam/oam_error.h"
 
 #define _UNUSED_ __attribute__((unused))
 
@@ -35,8 +36,7 @@ static inline int _mqf_len(const mqf_t *m)
 	}
 	if (l<0) {
 		itm_debug1(DBG_ERR|DBG_MSG, "big pb", 1);
-        void Error_Handler(void);
-		Error_Handler();
+		FatalError("Qpb", "msgq big problem", Error_MsgQBig);
 	}
 	return l;
 }
@@ -64,8 +64,7 @@ void mqf_qfull(mqf_t *mq, _UNUSED_ int t)
 int mqf_write(mqf_t *m, void *ptr)
 {
 	int l = _mqf_len(m);
-	void Error_Handler(void);
-	if (l<0) Error_Handler();
+	if (l<0) FatalError("Ql", "msgq len problem", Error_MsgQLen);
 	if (l > m->maxuse) m->maxuse = (int8_t) l;
 
     if (m->num == l) {

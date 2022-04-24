@@ -135,6 +135,13 @@ void ihm_runtick(void)
 }
 // -----------------------------------------------------------------------
 
+void local_ui_fatal(void)
+{
+	ihm_setlayout(0, LAYOUT_FATAL);
+	disp_layout(0);
+	for (;;);
+}
+
 static void ui_process_msg(void);
 
 typedef enum {

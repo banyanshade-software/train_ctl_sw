@@ -81,12 +81,12 @@ static void notif_blk_occup_chg(int blknum, canton_occ_t *co)
 void set_block_addr_occupency(uint8_t blkaddr, uint8_t v, uint8_t trnum, lsblk_num_t lsb)
 {
     int chg = 0;
-    if (0xFF == blkaddr) Error_Handler();
+    if (0xFF == blkaddr) FatalError("OccFF", "bad occupency", Error_Occupency);
     int blknum = addr_to_num(blkaddr);
     canton_occ_t *co = &canton_occ[addr_to_num(blkaddr)];
     if (co->occ != v) {
         if (USE_BLOCK_DELAY_FREE && (v==BLK_OCC_FREE)) {
-            if (co->occ >= BLK_OCC_DELAY1) Error_Handler();
+            if (co->occ >= BLK_OCC_DELAY1) FatalError("OccD1", "bad occupency", Error_OccDelay);
             co->occ = BLK_OCC_DELAYM;
             itm_debug1(DBG_CTRL, "delay free", blkaddr);
         } else {
@@ -115,7 +115,7 @@ void set_block_addr_occupency(uint8_t blkaddr, uint8_t v, uint8_t trnum, lsblk_n
 
 uint8_t get_block_addr_occupency(uint8_t blkaddr)
 {
-    if (0xFF == blkaddr) Error_Handler();
+    if (0xFF == blkaddr) FatalError("OccFF", "bad occupency", Error_Occupency);
     return canton_occ[addr_to_num(blkaddr)].occ;
 }
 uint8_t occupency_block_addr_info(uint8_t blkaddr, uint8_t *ptrn, uint8_t *psblk)
@@ -206,7 +206,7 @@ void occupency_turnout_release(uint8_t turnout, _UNUSED_ int8_t train)
 
 static void occupency_turnout_release_for_train_canton(int8_t train, uint8_t canton)
 {
-	if (train<0) Error_Handler();
+	if (train<0) FatalError("OccTrn", "bad train num", Error_OccTrn);
 	for (int tn = 0; tn<MAX_TOTAL_TURNOUTS; tn++) {
 		if (lockedby[tn] != train) continue;
 		uint8_t ca1, ca2, ca3;

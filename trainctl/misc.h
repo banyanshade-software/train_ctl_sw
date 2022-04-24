@@ -27,6 +27,7 @@
 #include "trainctl_config.h"
 
 #include "utils/itm_debug.h"
+#include "oam/oam_error.h"
 
 void flash_led(void);
 
@@ -138,7 +139,7 @@ static inline void debug_info(uint32_t sel, uint32_t num, char *msg, int v1, int
 }
 /* ================================================================= */
 
-void Error_Handler(void);
+//void Error_Handler(void);
 
 
 #ifndef TRAIN_SIMU

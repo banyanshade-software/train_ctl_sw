@@ -54,6 +54,8 @@
 @property (nonatomic) int numtrains;
 @property (nonatomic) int numcantons;
 
+@property (nonatomic) int oamCustomBrd;
+@property (nonatomic) int oamCustomCmd;
 
 @property (nonatomic) double T0_bemf_mv;
 //@property (nonatomic) double bemfiir_centivolts;

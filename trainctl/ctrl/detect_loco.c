@@ -121,7 +121,7 @@ static const conf_train_t trcfg[] ={
 const conf_train_t *detect_loco_conf(enum loco_detect_locos loco)
 {
     if (loco>=loco_end) {
-        Error_Handler();
+    	FatalError("Detect", "bad loco num", Error_DetectBadNum);
         return &trcfg[0];
     }
     return &trcfg[loco];

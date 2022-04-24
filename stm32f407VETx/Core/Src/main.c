@@ -86,9 +86,9 @@ osStaticThreadDef_t defaultTaskControlBlock;
 osThreadId ctrlTaskHandle;
 uint32_t ctrlTaskBuffer[ 256 ];
 osStaticThreadDef_t ctrlTaskControlBlock;
-osThreadId txrxFrameTaskHandle;
-uint32_t txrxFrameTaskBuffer[ 384 ];
-osStaticThreadDef_t txrxFrameTaskControlBlock;
+osThreadId usbTaskHandle;
+uint32_t usbTaskBuffer[ 384 ];
+osStaticThreadDef_t usbTaskControlBlock;
 osThreadId ina3221_taskHandle;
 uint32_t ina3221_taskBuffer[ 172 ];
 osStaticThreadDef_t ina3221_taskControlBlock;
@@ -107,7 +107,7 @@ osStaticThreadDef_t oamTaskControlBlock;
 uint32_t defaultTaskBuffer[] __attribute__((section(".ccmram")));
 uint32_t ledTaskBuffer[] __attribute__((section(".ccmram")));
 uint32_t oscilloBuffer[] __attribute__((section(".ccmram")));
-uint32_t txrxFrameTaskBuffer[] __attribute__((section(".ccmram")));
+uint32_t usbTaskBuffer[] __attribute__((section(".ccmram")));
 uint32_t ina3221_taskBuffer[] __attribute__((section(".ccmram")));
 uint32_t ctrlTaskBuffer[] __attribute__((section(".ccmram")));
 uint32_t oamTaskBuffer[] __attribute__((section(".ccmram")));
@@ -133,7 +133,7 @@ static void MX_ADC2_Init(void);
 static void MX_TIM5_Init(void);
 void StartUiTask(void const * argument);
 extern void StartCtrlTask(void const * argument);
-extern void StartTxRxFrameTask(void const * argument);
+extern void StartUsbTask(void const * argument);
 void ina3221_task_start(void const * argument);
 void start_led_task(void const * argument);
 void StartOscillo(void const * argument);
@@ -232,19 +232,19 @@ int main(void)
 
   /* Create the thread(s) */
   /* definition and creation of uiTask */
-  osThreadStaticDef(uiTask, StartUiTask, osPriorityLow, 0, 256, defaultTaskBuffer, &defaultTaskControlBlock);
+  osThreadStaticDef(uiTask, StartUiTask, osPriorityBelowNormal, 0, 256, defaultTaskBuffer, &defaultTaskControlBlock);
   uiTaskHandle = osThreadCreate(osThread(uiTask), NULL);
 
   /* definition and creation of ctrlTask */
   osThreadStaticDef(ctrlTask, StartCtrlTask, osPriorityRealtime, 0, 256, ctrlTaskBuffer, &ctrlTaskControlBlock);
   ctrlTaskHandle = osThreadCreate(osThread(ctrlTask), NULL);
 
-  /* definition and creation of txrxFrameTask */
-  osThreadStaticDef(txrxFrameTask, StartTxRxFrameTask, osPriorityLow, 0, 384, txrxFrameTaskBuffer, &txrxFrameTaskControlBlock);
-  txrxFrameTaskHandle = osThreadCreate(osThread(txrxFrameTask), NULL);
+  /* definition and creation of usbTask */
+  osThreadStaticDef(usbTask, StartUsbTask, osPriorityLow, 0, 384, usbTaskBuffer, &usbTaskControlBlock);
+  usbTaskHandle = osThreadCreate(osThread(usbTask), NULL);
 
   /* definition and creation of ina3221_task */
-  osThreadStaticDef(ina3221_task, ina3221_task_start, osPriorityRealtime, 0, 172, ina3221_taskBuffer, &ina3221_taskControlBlock);
+  osThreadStaticDef(ina3221_task, ina3221_task_start, osPriorityAboveNormal, 0, 172, ina3221_taskBuffer, &ina3221_taskControlBlock);
   ina3221_taskHandle = osThreadCreate(osThread(ina3221_task), NULL);
 
   /* definition and creation of ledTask */
@@ -1298,6 +1298,7 @@ static void MX_GPIO_Init(void)
 /* USER CODE END Header_StartUiTask */
 __weak void StartUiTask(void const * argument)
 {
+	(void) argument;
   /* init code for USB_DEVICE */
   MX_USB_DEVICE_Init();
   /* USER CODE BEGIN 5 */
@@ -1359,6 +1360,7 @@ __weak void ina3221_task_start(void const * argument)
 {
   /* USER CODE BEGIN ina3221_task_start */
   /* Infinite loop */
+	(void) argument;
   for(;;)
   {
     osDelay(1);
@@ -1377,6 +1379,7 @@ __weak void start_led_task(void const * argument)
 {
   /* USER CODE BEGIN start_led_task */
   /* Infinite loop */
+	(void) argument;
   for(;;)
   {
     osDelay(1);
@@ -1394,6 +1397,7 @@ __weak void start_led_task(void const * argument)
 __weak void StartOscillo(void const * argument)
 {
   /* USER CODE BEGIN StartOscillo */
+	(void) argument;
   /* Infinite loop */
   for(;;)
   {
@@ -1476,6 +1480,7 @@ void Error_Handler(void)
 {
   /* USER CODE BEGIN Error_Handler_Debug */
   /* User can add his own implementation to report the HAL error return state */
+	FatalError("EH", "Error_Handler", Error_Other);
 	for (;;) {
 
 	}

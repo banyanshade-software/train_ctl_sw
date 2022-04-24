@@ -3334,6 +3334,78 @@
                                                 <action selector="commitTrains:" target="Voe-Tx-rLC" id="9kV-JQ-1Of"/>
                                             </connections>
                                         </button>
+                                        <box borderType="line" title="OAM custom" translatesAutoresizingMaskIntoConstraints="NO" id="b5E-z8-gW1">
+                                            <rect key="frame" x="593" y="12" width="92" height="185"/>
+                                            <view key="contentView" id="4hG-0q-fWd">
+                                                <rect key="frame" x="3" y="3" width="86" height="167"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                <subviews>
+                                                    <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="TtX-Yv-xFM">
+                                                        <rect key="frame" x="8" y="106" width="70" height="21"/>
+                                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" drawsBackground="YES" id="l97-UG-I5m">
+                                                            <font key="font" usesAppearanceFont="YES"/>
+                                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                        </textFieldCell>
+                                                        <connections>
+                                                            <binding destination="Voe-Tx-rLC" name="value" keyPath="oamCustomBrd" id="GUG-MU-esP"/>
+                                                        </connections>
+                                                    </textField>
+                                                    <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="FpS-AT-hhW">
+                                                        <rect key="frame" x="8" y="45" width="70" height="21"/>
+                                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" drawsBackground="YES" id="w9T-iG-zyj">
+                                                            <font key="font" usesAppearanceFont="YES"/>
+                                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                        </textFieldCell>
+                                                        <connections>
+                                                            <binding destination="Voe-Tx-rLC" name="value" keyPath="oamCustomCmd" id="BVN-Qw-7sH"/>
+                                                        </connections>
+                                                    </textField>
+                                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="dCD-NC-Ohx">
+                                                        <rect key="frame" x="40" y="135" width="40" height="16"/>
+                                                        <textFieldCell key="cell" lineBreakMode="clipping" title="board" id="jQm-OP-y1g">
+                                                            <font key="font" usesAppearanceFont="YES"/>
+                                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                        </textFieldCell>
+                                                    </textField>
+                                                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Mg2-fV-7iL">
+                                                        <rect key="frame" x="14" y="5" width="70" height="32"/>
+                                                        <buttonCell key="cell" type="push" title="send" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="R23-OA-fkr">
+                                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                            <font key="font" metaFont="system"/>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="sendOamCustom:" target="Voe-Tx-rLC" id="wiC-X0-3lc"/>
+                                                        </connections>
+                                                    </button>
+                                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Gb0-l7-NlD">
+                                                        <rect key="frame" x="49" y="74" width="31" height="16"/>
+                                                        <textFieldCell key="cell" lineBreakMode="clipping" title="cmd" id="OhH-34-VPX">
+                                                            <font key="font" usesAppearanceFont="YES"/>
+                                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                        </textFieldCell>
+                                                    </textField>
+                                                </subviews>
+                                                <constraints>
+                                                    <constraint firstAttribute="trailing" secondItem="TtX-Yv-xFM" secondAttribute="trailing" constant="8" id="2OT-De-NmZ"/>
+                                                    <constraint firstItem="Mg2-fV-7iL" firstAttribute="top" secondItem="FpS-AT-hhW" secondAttribute="bottom" constant="12" id="9oC-mF-f7m"/>
+                                                    <constraint firstItem="Gb0-l7-NlD" firstAttribute="top" secondItem="TtX-Yv-xFM" secondAttribute="bottom" constant="16" id="9tJ-7V-RmY"/>
+                                                    <constraint firstItem="dCD-NC-Ohx" firstAttribute="top" secondItem="4hG-0q-fWd" secondAttribute="top" constant="16" id="BMc-OK-5FW"/>
+                                                    <constraint firstAttribute="bottom" secondItem="Mg2-fV-7iL" secondAttribute="bottom" constant="12" id="DVT-Dk-3Jb"/>
+                                                    <constraint firstItem="FpS-AT-hhW" firstAttribute="top" secondItem="Gb0-l7-NlD" secondAttribute="bottom" constant="8" id="Ef9-1W-7hP"/>
+                                                    <constraint firstItem="FpS-AT-hhW" firstAttribute="trailing" secondItem="TtX-Yv-xFM" secondAttribute="trailing" id="Faj-fy-8IQ"/>
+                                                    <constraint firstItem="Gb0-l7-NlD" firstAttribute="trailing" secondItem="TtX-Yv-xFM" secondAttribute="trailing" id="GAF-Ia-UjS"/>
+                                                    <constraint firstItem="TtX-Yv-xFM" firstAttribute="top" secondItem="dCD-NC-Ohx" secondAttribute="bottom" constant="8" id="Z2C-KQ-cb6"/>
+                                                    <constraint firstItem="Mg2-fV-7iL" firstAttribute="trailing" secondItem="TtX-Yv-xFM" secondAttribute="trailing" id="Zb7-Bs-c3c"/>
+                                                    <constraint firstItem="FpS-AT-hhW" firstAttribute="leading" secondItem="4hG-0q-fWd" secondAttribute="leading" constant="8" id="dao-Ho-2L1"/>
+                                                    <constraint firstItem="TtX-Yv-xFM" firstAttribute="leading" secondItem="4hG-0q-fWd" secondAttribute="leading" constant="8" id="kJN-Gq-yK9"/>
+                                                    <constraint firstItem="dCD-NC-Ohx" firstAttribute="trailing" secondItem="TtX-Yv-xFM" secondAttribute="trailing" id="yvd-TO-2ZG"/>
+                                                </constraints>
+                                            </view>
+                                        </box>
                                     </subviews>
                                     <constraints>
                                         <constraint firstItem="oSf-pS-IpB" firstAttribute="top" secondItem="tgY-qA-yhS" secondAttribute="bottom" constant="8" id="3jX-NI-ceN"/>
@@ -3349,6 +3421,7 @@
                                         <constraint firstItem="BxR-rM-8Vd" firstAttribute="leading" secondItem="VRW-rr-p3f" secondAttribute="leading" constant="12" id="Tql-hR-P5b"/>
                                         <constraint firstItem="IMZ-2K-HBT" firstAttribute="leading" secondItem="VRW-rr-p3f" secondAttribute="leading" constant="20" id="UQX-P4-DuH"/>
                                         <constraint firstItem="aSu-7Z-EKE" firstAttribute="leading" secondItem="VRW-rr-p3f" secondAttribute="leading" constant="8" id="X9o-JK-Uve"/>
+                                        <constraint firstAttribute="trailing" secondItem="b5E-z8-gW1" secondAttribute="trailing" constant="20" id="Zgt-w2-4Fw"/>
                                         <constraint firstItem="Un0-ZA-bOn" firstAttribute="leading" secondItem="7k1-lj-XgL" secondAttribute="leading" id="Zn6-bg-HyX"/>
                                         <constraint firstItem="rWv-kb-O7x" firstAttribute="top" relation="greaterThanOrEqual" secondItem="aSu-7Z-EKE" secondAttribute="bottom" constant="20" id="dmQ-5f-wZZ"/>
                                         <constraint firstItem="IMZ-2K-HBT" firstAttribute="top" secondItem="o8P-UI-vvO" secondAttribute="bottom" constant="6" id="ge2-iK-fr5"/>
@@ -3358,6 +3431,7 @@
                                         <constraint firstItem="oSf-pS-IpB" firstAttribute="leading" secondItem="VRW-rr-p3f" secondAttribute="leading" constant="8" id="mhg-mM-6R1"/>
                                         <constraint firstItem="o8P-UI-vvO" firstAttribute="trailing" secondItem="IMZ-2K-HBT" secondAttribute="trailing" id="p9B-bg-CKA"/>
                                         <constraint firstItem="LPi-ba-aVR" firstAttribute="top" secondItem="VRW-rr-p3f" secondAttribute="top" constant="8" id="r7t-de-ubs"/>
+                                        <constraint firstAttribute="bottom" secondItem="b5E-z8-gW1" secondAttribute="bottom" constant="16" id="rJZ-Na-PXr"/>
                                         <constraint firstItem="BxR-rM-8Vd" firstAttribute="top" secondItem="aSu-7Z-EKE" secondAttribute="bottom" constant="20" id="une-JX-M4X"/>
                                         <constraint firstAttribute="trailing" secondItem="aSu-7Z-EKE" secondAttribute="trailing" constant="8" id="xBU-Ga-uAo"/>
                                         <constraint firstItem="LPi-ba-aVR" firstAttribute="leading" secondItem="VRW-rr-p3f" secondAttribute="leading" constant="8" id="xF8-y6-4q5"/>

@@ -29,7 +29,7 @@ int boardIdToBoardNum(uint32_t uuid)
         // simu
         return 0;
     } else {
-		Error_Handler();
+		FatalError("BRD?", "unknown brd id", Error_BrdUnknown);
 	}
 	return -1;
 }

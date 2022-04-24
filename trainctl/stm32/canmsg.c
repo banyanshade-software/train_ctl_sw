@@ -62,14 +62,14 @@ static void can_init(void)
 	canfil.SlaveStartFilterBank = 14;
 
 	if (HAL_CAN_ConfigFilter(&CAN_DEVICE, &canfil)) {
-		Error_Handler();
+		FatalError("CANini", "CAN init failed", Error_CanInit);
 	}
 
 
 
 	if (HAL_CAN_Start(&CAN_DEVICE) != HAL_OK) {
 		/* Start Error */
-		Error_Handler();
+		FatalError("CANstart", "CAN start failed", Error_CanStart);
 	}
 
 	/* Activate CAN RX notification */
@@ -86,7 +86,7 @@ static void can_init(void)
 			|CAN_IT_LAST_ERROR_CODE
 			|CAN_IT_ERROR) != HAL_OK) {
 		/* Notification Error */
-		Error_Handler();
+		FatalError("CANact", "CAN act notif failed", Error_CanActNotif);
 	}
 
 
@@ -170,7 +170,7 @@ static uint32_t arbitration_id(msg_64_t *m)
 	} else if (MA0_ADDR_IS_BOARD_ADDR(m->to)) {
 		aid |= MA0_BOARD(m->to) << 4;
 	} else {
-		Error_Handler();
+		FatalError("CANid", "CAN id calc", Error_CanId);
 	}
 
 
@@ -195,7 +195,7 @@ static int _can_send_msg(msg_64_t *msg, int f)
 
 	if (HAL_CAN_AddTxMessage(&CAN_DEVICE, &txHeader, (uint8_t *)msg, &TxMailbox) != HAL_OK) {
 		//printf("Error: CAN can't send msg.\r\n");
-		Error_Handler();
+		FatalError("CANtx", "CAN tx ", Error_CanTx);
 		return 1;
 	}
 	if (f) itm_debug3(DBG_CAN, "Tx/I", msg->v1, msg->v2, TxMailbox);

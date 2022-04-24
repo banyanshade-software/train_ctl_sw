@@ -108,6 +108,7 @@
 #endif
 
 #define 	CODE_TIM4_CNT		0x88
+#define 	CODE_FATAL			0x89
 #define 	CODE_PROFILE		0x8F
 
 // followed by 1 byte, index to reg table, where a 8 or 16bit value is read
@@ -215,6 +216,11 @@ static const uint8_t layout_testcan[] = {
 		CODE_END
 };
 
+static const uint8_t layout_fatal[] = {
+		CODE_ZONE_STATUS, CODE_STR|36,
+		CODE_ZONE_TEXT1, CODE_FATAL,
+		CODE_END
+};
 
 void ihm_setlayout(int numdisp, int numlayout)
 {
@@ -248,6 +254,9 @@ void ihm_setlayout(int numdisp, int numlayout)
 		break;
 	case LAYOUT_TESTCAN:
 		p = layout_testcan;
+		break;
+	case LAYOUT_FATAL:
+		p = layout_fatal;
 		break;
 	default:
 		itm_debug1(DBG_ERR|DBG_UI, "bad layout", numlayout);
@@ -303,6 +312,7 @@ static const char *ui_strings[] = {
 /*34*/		"Hz",
 
 /* 35*/		"CAN:",
+/* 36*/		"/!\\ Fatal",
 };
 
 
@@ -341,6 +351,8 @@ static void write_snum4(int16_t v, FontDef *curfont);
 static void write_snum1000(int16_t v, FontDef *curfont);
 static void write_bargraph(int16_t v, int16_t min, int16_t max);
 static void write_sbargraph(int16_t v, int16_t min, int16_t max);
+
+__weak const char *_fatal = NULL;
 
 void disp_layout(int numdisp)
 {
@@ -477,6 +489,10 @@ void disp_layout(int numdisp)
 			write_unum((int16_t)last_dur1, curfont);
 			ssd1306_WriteChar('/', *curfont, White);
 			write_unum((int16_t)last_dur2, curfont);
+			break;
+		case CODE_FATAL:
+			if (_fatal) ssd1306_WriteString(_fatal, *curfont, White);
+			else        ssd1306_WriteString("---", *curfont, White);
 			break;
 		case CODE_DIR:
 			i+=1;

@@ -134,9 +134,9 @@ void StartCtrlTask(_UNUSED_ void const *argument)
 #ifdef BOARD_HAS_CANTON
 	adc_nsmpl = sizeof(train_adc_buf)/sizeof(uint16_t);
 
-	if (sizeof(train_adc_buf) != sizeof(uint16_t)*NUM_LOCAL_CANTONS_HW*8) Error_Handler();
-	if (adc_nsmpl != NUM_LOCAL_CANTONS_HW*2*4) Error_Handler();
-	if (NUM_LOCAL_CANTONS_HW != 6) Error_Handler();
+	if (sizeof(train_adc_buf) != sizeof(uint16_t)*NUM_LOCAL_CANTONS_HW*8) FatalError("sizeof", "adc buf", Error_Sizeof);
+	if (adc_nsmpl != NUM_LOCAL_CANTONS_HW*2*4) FatalError("sizeof", "adc buf", Error_Sizeof);
+	if (NUM_LOCAL_CANTONS_HW != 6) FatalError("sizeof", "adc buf", Error_Sizeof);
 
 
 

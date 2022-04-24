@@ -25,7 +25,8 @@ void oam_flash_init(void)
 	itm_debug1(DBG_OAM|DBG_ERR, "flash init", 0);
 	int rc = W25qxx_Init();
 	if (rc) {
-		Error_Handler();
+		FatalError("W25ini", "w25wxx_init", Error_FlashInit);
+
 	}
 	// PageSize = 256, PageCount = 8192, SectorSize = 4096, SectorCount = 512, BlockSize = 65536, BlockCount = 32, CapacityInKiloByte = 2048,
 #ifndef TRAIN_SIMU
@@ -500,7 +501,7 @@ uint32_t oam_flashlocal_get_value(int confnum, int fieldnum,  int instnum)
 
 static void store_local_read_fdesc(local_blk_desc_t *desc)
 {
-    if (sizeof(lfiledesc_t) != 4) Error_Handler();
+    if (sizeof(lfiledesc_t) != 4) FatalError("sizeof", "bad size", Error_Sizeof);
     store_rewind(&desc->b);
     desc->nbfiledesc = 0;
     for (;;) {
@@ -572,7 +573,7 @@ static int store_local_write(local_blk_desc_t *desc, int fnum, void *ptr, unsign
         W25qxx_WriteByte(0, addr+1);
     }
     // append new filedesc localy
-    if (desc->nbfiledesc >= 128) Error_Handler();
+    if (desc->nbfiledesc >= 128) FatalError("FLASH", "flash nbdesc", Error_FlashNbDesc);
     lfiledesc_t *fd = &desc->fdesc[desc->nbfiledesc];
 
     fd->confnum = fnum;

@@ -37,7 +37,7 @@
 extern USBD_HandleTypeDef hUsbDeviceFS;
 
 
-void StartTxRxFrameTask(_UNUSED_ void *argument)
+void StartUsbTask(_UNUSED_ const void *argument)
 {
 	MX_USB_DEVICE_Init();
 	for (;;) {

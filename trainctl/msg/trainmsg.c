@@ -205,12 +205,14 @@ static int  _local_disptach(msg_64_t *m, mqf_t *dont_send_to)
 
 static void dispatch_m64(msg_64_t *m, int f)
 {
+	/*
     if (m->cmd == CMD_PARAM_LUSER_GET) {
         itm_debug1(DBG_MSG, "brk here",0);
     }
     if (m->cmd == CMD_PARAM_LUSER_VAL) {
         itm_debug1(DBG_MSG, "brk here",0);
     }
+    */
     if (m->to == MA3_BROADCAST) {
         for (int i=0;; i++) {
             const qdef_t *qd = &qdefs[i];

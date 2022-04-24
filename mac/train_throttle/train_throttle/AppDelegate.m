@@ -1044,15 +1044,15 @@ int conf_globparam_fieldnum(const char *str);
         [self performSelector:@selector(openUsb) withObject:nil afterDelay:1.0];
         return;
     }
-#define START_CMD "version\n" // nmode frame\r"
-    write(fd, START_CMD, strlen(START_CMD));
+
     usb = [[NSFileHandle alloc]initWithFileDescriptor:fd closeOnDealloc:YES];
     //[usb readInBackgroundAndNotify];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(readUsbTty:) name:NSFileHandleDataAvailableNotification  object:usb];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(exceptionUsbTty:) name:NSFileHandleOperationException  object:usb];
     [usb waitForDataInBackgroundAndNotify];
     NSLog(@"connected");
-    [self performSelector:@selector(goFrame) withObject:nil afterDelay:0.5];
+    //[self performSelector:@selector(goFrame) withObject:nil afterDelay:0.5];
+    [self goFrame];
 }
 
 - (void) goFrame
@@ -1061,9 +1061,7 @@ int conf_globparam_fieldnum(const char *str);
     //nparam = 0;
     nparamresp = 0;
     self.transmit = 0;
-#define FRM_CMD "mode frame\n"
-    int fd = [usb fileDescriptor];
-    write(fd, FRM_CMD, strlen(FRM_CMD));
+
     self.linkok = LINK_FRM;
     //self.linkok = LINK_OK; // XXX
     [self performSelector:@selector(getParams) withObject:nil afterDelay:0.2];

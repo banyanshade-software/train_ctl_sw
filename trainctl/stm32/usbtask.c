@@ -51,7 +51,7 @@ int8_t impl_CDC_Receive_FS(uint8_t* Buf, uint32_t *Len)
 
 	uint8_t *p = Buf;
 	int32_t rlen = *Len;
-	for (; rlen > 0 ; p++) {
+	for (; rlen > 0 ; p++, rlen--) {
 		if (pendlen == -1) {
 			if (*p == 0x7E) {
 				pendlen = 0;

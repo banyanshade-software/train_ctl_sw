@@ -13,7 +13,7 @@
 #include "../utils/lf_mqueue.h"
 #include "notif.h"
 
-extern uint8_t localBoardNum;
+extern int localBoardNum;
 
 typedef uint8_t  msg_addr_t;
 // old

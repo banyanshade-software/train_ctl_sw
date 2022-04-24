@@ -12,7 +12,7 @@
 
 #define _UNUSED_ __attribute__((unused))
 
-uint8_t localBoardNum = BOARD_NUMBER; // TODO move to config
+int localBoardNum = BOARD_NUMBER; // TODO move to config/OAM
 
 
 
@@ -251,6 +251,10 @@ static void dispatch_m64(msg_64_t *m, int f)
     if (MA2_IS_LOCAL_ADDR(m->to)) {
         itm_debug1(DBG_ERR|DBG_MSG, "cant ma2 route", m->to);
         return;
+    }
+    if (localBoardNum<0) {
+    	itm_debug2(DBG_OAM, "skip no brd", m->to, m->cmd);
+    	return;
     }
     ok = 0;
 #ifdef BOARD_HAS_USB

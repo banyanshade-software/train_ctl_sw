@@ -2666,7 +2666,7 @@ void impl_uitrack_change_tn_reserv(int tn, int train)
 
 @end
 
-void FatalError(const char *short4lettersmsg, const char *longmsg, uint8_t errcode)
+void FatalError(const char *shortsmsg, const char *longmsg, enum fatal_error_code errcode)
 {
     abort();
 }

@@ -27,10 +27,10 @@ extern TIM_HandleTypeDef htim8;
 extern TIM_HandleTypeDef htim12;
 extern ADC_HandleTypeDef hadc1;
 
-extern osThreadId_t taskCtrlHandle;
+extern osThreadId taskCtrlHandle;
 
 //void run_task_ctrl(void);
-void StartCtrlTask(void *argument);
+void StartCtrlTask(void const *argument);
 
 
 void set_pwm_freq(int freqhz, int crit); // XXX prototype is also in tasckctrl.h

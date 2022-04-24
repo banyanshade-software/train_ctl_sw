@@ -26,7 +26,6 @@
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
-typedef StaticTask_t osStaticThreadDef_t;
 /* USER CODE BEGIN PTD */
 
 /* USER CODE END PTD */
@@ -54,18 +53,9 @@ TIM_HandleTypeDef htim1;
 TIM_HandleTypeDef htim2;
 TIM_HandleTypeDef htim3;
 
-/* Definitions for oamTask */
-osThreadId_t oamTaskHandle;
+osThreadId oamTaskHandle;
 uint32_t oamTaskBuffer[ 128 ];
 osStaticThreadDef_t oamTaskControlBlock;
-const osThreadAttr_t oamTask_attributes = {
-  .name = "oamTask",
-  .cb_mem = &oamTaskControlBlock,
-  .cb_size = sizeof(oamTaskControlBlock),
-  .stack_mem = &oamTaskBuffer[0],
-  .stack_size = sizeof(oamTaskBuffer),
-  .priority = (osPriority_t) osPriorityLow3,
-};
 /* USER CODE BEGIN PV */
 
 uint32_t oamTaskBuffer[] __attribute__((section(".ccmram")));
@@ -84,7 +74,7 @@ static void MX_TIM2_Init(void);
 static void MX_TIM3_Init(void);
 static void MX_CAN1_Init(void);
 static void MX_USB_OTG_FS_USB_Init(void);
-void StartOamTask(void *argument);
+void StartOamTask(void const * argument);
 
 /* USER CODE BEGIN PFP */
 
@@ -136,9 +126,6 @@ int main(void)
 
   /* USER CODE END 2 */
 
-  /* Init scheduler */
-  osKernelInitialize();
-
   /* USER CODE BEGIN RTOS_MUTEX */
   /* add mutexes, ... */
   /* USER CODE END RTOS_MUTEX */
@@ -156,16 +143,13 @@ int main(void)
   /* USER CODE END RTOS_QUEUES */
 
   /* Create the thread(s) */
-  /* creation of oamTask */
-  oamTaskHandle = osThreadNew(StartOamTask, NULL, &oamTask_attributes);
+  /* definition and creation of oamTask */
+  osThreadStaticDef(oamTask, StartOamTask, osPriorityLow, 0, 128, oamTaskBuffer, &oamTaskControlBlock);
+  oamTaskHandle = osThreadCreate(osThread(oamTask), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
   /* USER CODE END RTOS_THREADS */
-
-  /* USER CODE BEGIN RTOS_EVENTS */
-  /* add events, ... */
-  /* USER CODE END RTOS_EVENTS */
 
   /* Start scheduler */
   osKernelStart();
@@ -811,7 +795,7 @@ static void MX_GPIO_Init(void)
   * @retval None
   */
 /* USER CODE END Header_StartOamTask */
-__weak void StartOamTask(void *argument)
+__weak void StartOamTask(void const * argument)
 {
   /* USER CODE BEGIN 5 */
   /* Infinite loop */

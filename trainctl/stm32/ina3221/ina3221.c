@@ -15,7 +15,7 @@
 #include "stm32f1xx_hal_gpio.h"
 #endif
 
-#include "cmsis_os2.h"
+#include "cmsis_os.h"
 
 #include "ina3221.h"
 #include "ina3221_def.h"
@@ -82,7 +82,7 @@ static void ina3221_init_and_configure(void);
 
 
 
-extern osThreadId_t ina3221_taskHandle;
+extern osThreadId ina3221_taskHandle;
 static int lastErr = 0;
 //static int cvrf_dev = 0;
 

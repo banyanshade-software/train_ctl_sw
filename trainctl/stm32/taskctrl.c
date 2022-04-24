@@ -129,7 +129,7 @@ static int adc_nsmpl = 0;
 #endif
 
 
-void StartCtrlTask(_UNUSED_ void *argument)
+void StartCtrlTask(_UNUSED_ void const *argument)
 {
 #ifdef BOARD_HAS_CANTON
 	adc_nsmpl = sizeof(train_adc_buf)/sizeof(uint16_t);
@@ -436,7 +436,7 @@ static void run_task_ctrl(void)
 // ---------------------------------------------------------------
 
 
-extern osThreadId_t ctrlTaskHandle;
+extern osThreadId ctrlTaskHandle;
 
 static uint32_t nhalf=0;
 static uint32_t nfull=0;
@@ -540,7 +540,7 @@ void  HAL_ADC_ErrorCallback(_UNUSED_ ADC_HandleTypeDef *hadc)
 }
 #endif
 
-void vApplicationStackOverflowHook(_UNUSED_ xTaskHandle xTask, _UNUSED_ signed char *pcTaskName)
+void vApplicationStackOverflowHook(_UNUSED_ TaskHandle_t xTask, _UNUSED_ signed char *pcTaskName)
 {
 	itm_debug1(DBG_ERR, "STK OVF", 1);
 	for (;;) {

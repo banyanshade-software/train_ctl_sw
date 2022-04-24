@@ -81,20 +81,20 @@ typedef struct {
 
 
 #ifdef TRN_BOARD_MAIN_ZERO
-#define NQDEF 3
+#define NQDEF 2
 static const qdef_t qdef[NQDEF] = {
 		/* 0*/ { &to_canbus, &from_canbus},
         /* 1*/ { &to_oam, &from_oam},
-		/* 2*/ { &to_forward_usb, &from_forward_usb},
-		/* 3*/ { NULL, &from_nowhere}
+		///* 2*/ { &to_forward_usb, &from_forward_usb},
+		/* 2*/ { NULL, &from_nowhere}
 };
 
 #define _BOARD 0 // TODO
 #define NROUTES 4
 static const qroute_t routes[NROUTES] = {
 		{0xFF,							MA0_OAM(_BOARD),		1},
-		{0xFF,							MA3_UI_GEN,				2},
-		{0xFF,							MA3_UI_CTC,				2},
+		{0xFF,							MA3_UI_GEN,				0},
+		{0xFF,							MA3_UI_CTC,				0},
 		{0,								0,						0}
 
 };

@@ -44,8 +44,6 @@
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
-typedef StaticTask_t osStaticThreadDef_t;
-typedef StaticQueue_t osStaticMessageQDef_t;
 /* USER CODE BEGIN PTD */
 
 volatile uint8_t oscillo_evtt1;
@@ -82,101 +80,27 @@ TIM_HandleTypeDef htim5;
 TIM_HandleTypeDef htim8;
 TIM_HandleTypeDef htim12;
 
-/* Definitions for uiTask */
-osThreadId_t uiTaskHandle;
+osThreadId uiTaskHandle;
 uint32_t defaultTaskBuffer[ 256 ];
 osStaticThreadDef_t defaultTaskControlBlock;
-const osThreadAttr_t uiTask_attributes = {
-  .name = "uiTask",
-  .cb_mem = &defaultTaskControlBlock,
-  .cb_size = sizeof(defaultTaskControlBlock),
-  .stack_mem = &defaultTaskBuffer[0],
-  .stack_size = sizeof(defaultTaskBuffer),
-  .priority = (osPriority_t) osPriorityLow6,
-};
-/* Definitions for ctrlTask */
-osThreadId_t ctrlTaskHandle;
+osThreadId ctrlTaskHandle;
 uint32_t ctrlTaskBuffer[ 256 ];
 osStaticThreadDef_t ctrlTaskControlBlock;
-const osThreadAttr_t ctrlTask_attributes = {
-  .name = "ctrlTask",
-  .cb_mem = &ctrlTaskControlBlock,
-  .cb_size = sizeof(ctrlTaskControlBlock),
-  .stack_mem = &ctrlTaskBuffer[0],
-  .stack_size = sizeof(ctrlTaskBuffer),
-  .priority = (osPriority_t) osPriorityRealtime1,
-};
-/* Definitions for txrxFrameTask */
-osThreadId_t txrxFrameTaskHandle;
+osThreadId txrxFrameTaskHandle;
 uint32_t txrxFrameTaskBuffer[ 384 ];
 osStaticThreadDef_t txrxFrameTaskControlBlock;
-const osThreadAttr_t txrxFrameTask_attributes = {
-  .name = "txrxFrameTask",
-  .cb_mem = &txrxFrameTaskControlBlock,
-  .cb_size = sizeof(txrxFrameTaskControlBlock),
-  .stack_mem = &txrxFrameTaskBuffer[0],
-  .stack_size = sizeof(txrxFrameTaskBuffer),
-  .priority = (osPriority_t) osPriorityLow3,
-};
-/* Definitions for ina3221_task */
-osThreadId_t ina3221_taskHandle;
+osThreadId ina3221_taskHandle;
 uint32_t ina3221_taskBuffer[ 172 ];
 osStaticThreadDef_t ina3221_taskControlBlock;
-const osThreadAttr_t ina3221_task_attributes = {
-  .name = "ina3221_task",
-  .cb_mem = &ina3221_taskControlBlock,
-  .cb_size = sizeof(ina3221_taskControlBlock),
-  .stack_mem = &ina3221_taskBuffer[0],
-  .stack_size = sizeof(ina3221_taskBuffer),
-  .priority = (osPriority_t) osPriorityRealtime2,
-};
-/* Definitions for ledTask */
-osThreadId_t ledTaskHandle;
+osThreadId ledTaskHandle;
 uint32_t ledTaskBuffer[ 128 ];
 osStaticThreadDef_t ledTaskControlBlock;
-const osThreadAttr_t ledTask_attributes = {
-  .name = "ledTask",
-  .cb_mem = &ledTaskControlBlock,
-  .cb_size = sizeof(ledTaskControlBlock),
-  .stack_mem = &ledTaskBuffer[0],
-  .stack_size = sizeof(ledTaskBuffer),
-  .priority = (osPriority_t) osPriorityRealtime4,
-};
-/* Definitions for oscillo */
-osThreadId_t oscilloHandle;
+osThreadId oscilloHandle;
 uint32_t oscilloBuffer[ 128 ];
 osStaticThreadDef_t oscilloControlBlock;
-const osThreadAttr_t oscillo_attributes = {
-  .name = "oscillo",
-  .cb_mem = &oscilloControlBlock,
-  .cb_size = sizeof(oscilloControlBlock),
-  .stack_mem = &oscilloBuffer[0],
-  .stack_size = sizeof(oscilloBuffer),
-  .priority = (osPriority_t) osPriorityNormal,
-};
-/* Definitions for oamTask */
-osThreadId_t oamTaskHandle;
+osThreadId oamTaskHandle;
 uint32_t oamTaskBuffer[ 256 ];
 osStaticThreadDef_t oamTaskControlBlock;
-const osThreadAttr_t oamTask_attributes = {
-  .name = "oamTask",
-  .cb_mem = &oamTaskControlBlock,
-  .cb_size = sizeof(oamTaskControlBlock),
-  .stack_mem = &oamTaskBuffer[0],
-  .stack_size = sizeof(oamTaskBuffer),
-  .priority = (osPriority_t) osPriorityLow,
-};
-/* Definitions for frameQueue */
-osMessageQueueId_t frameQueueHandle;
-uint8_t frameQueueBuffer[ 48 * sizeof( frame_msg_t ) ];
-osStaticMessageQDef_t frameQueueControlBlock;
-const osMessageQueueAttr_t frameQueue_attributes = {
-  .name = "frameQueue",
-  .cb_mem = &frameQueueControlBlock,
-  .cb_size = sizeof(frameQueueControlBlock),
-  .mq_mem = &frameQueueBuffer,
-  .mq_size = sizeof(frameQueueBuffer)
-};
 /* USER CODE BEGIN PV */
 
 
@@ -186,7 +110,7 @@ uint32_t oscilloBuffer[] __attribute__((section(".ccmram")));
 uint32_t txrxFrameTaskBuffer[] __attribute__((section(".ccmram")));
 uint32_t ina3221_taskBuffer[] __attribute__((section(".ccmram")));
 uint32_t ctrlTaskBuffer[] __attribute__((section(".ccmram")));
-uint32_t ctrlOamBuffer[] __attribute__((section(".ccmram")));
+uint32_t oamTaskBuffer[] __attribute__((section(".ccmram")));
 
 /* USER CODE END PV */
 
@@ -207,13 +131,13 @@ static void MX_TIM12_Init(void);
 static void MX_CAN1_Init(void);
 static void MX_ADC2_Init(void);
 static void MX_TIM5_Init(void);
-void StartUiTask(void *argument);
-extern void StartCtrlTask(void *argument);
-extern void StartTxRxFrameTask(void *argument);
-void ina3221_task_start(void *argument);
-void start_led_task(void *argument);
-void StartOscillo(void *argument);
-extern void StartOamTask(void *argument);
+void StartUiTask(void const * argument);
+extern void StartCtrlTask(void const * argument);
+extern void StartTxRxFrameTask(void const * argument);
+void ina3221_task_start(void const * argument);
+void start_led_task(void const * argument);
+void StartOscillo(void const * argument);
+extern void StartOamTask(void const * argument);
 
 /* USER CODE BEGIN PFP */
 
@@ -290,9 +214,6 @@ int main(void)
 
   /* USER CODE END 2 */
 
-  /* Init scheduler */
-  osKernelInitialize();
-
   /* USER CODE BEGIN RTOS_MUTEX */
   /* add mutexes, ... */
   /* USER CODE END RTOS_MUTEX */
@@ -305,43 +226,42 @@ int main(void)
   /* start timers, add new ones, ... */
   /* USER CODE END RTOS_TIMERS */
 
-  /* Create the queue(s) */
-  /* creation of frameQueue */
-  frameQueueHandle = osMessageQueueNew (48, sizeof(frame_msg_t), &frameQueue_attributes);
-
   /* USER CODE BEGIN RTOS_QUEUES */
   /* add queues, ... */
   /* USER CODE END RTOS_QUEUES */
 
   /* Create the thread(s) */
-  /* creation of uiTask */
-  uiTaskHandle = osThreadNew(StartUiTask, NULL, &uiTask_attributes);
+  /* definition and creation of uiTask */
+  osThreadStaticDef(uiTask, StartUiTask, osPriorityLow, 0, 256, defaultTaskBuffer, &defaultTaskControlBlock);
+  uiTaskHandle = osThreadCreate(osThread(uiTask), NULL);
 
-  /* creation of ctrlTask */
-  ctrlTaskHandle = osThreadNew(StartCtrlTask, NULL, &ctrlTask_attributes);
+  /* definition and creation of ctrlTask */
+  osThreadStaticDef(ctrlTask, StartCtrlTask, osPriorityRealtime, 0, 256, ctrlTaskBuffer, &ctrlTaskControlBlock);
+  ctrlTaskHandle = osThreadCreate(osThread(ctrlTask), NULL);
 
-  /* creation of txrxFrameTask */
-  txrxFrameTaskHandle = osThreadNew(StartTxRxFrameTask, NULL, &txrxFrameTask_attributes);
+  /* definition and creation of txrxFrameTask */
+  osThreadStaticDef(txrxFrameTask, StartTxRxFrameTask, osPriorityLow, 0, 384, txrxFrameTaskBuffer, &txrxFrameTaskControlBlock);
+  txrxFrameTaskHandle = osThreadCreate(osThread(txrxFrameTask), NULL);
 
-  /* creation of ina3221_task */
-  ina3221_taskHandle = osThreadNew(ina3221_task_start, NULL, &ina3221_task_attributes);
+  /* definition and creation of ina3221_task */
+  osThreadStaticDef(ina3221_task, ina3221_task_start, osPriorityRealtime, 0, 172, ina3221_taskBuffer, &ina3221_taskControlBlock);
+  ina3221_taskHandle = osThreadCreate(osThread(ina3221_task), NULL);
 
-  /* creation of ledTask */
-  ledTaskHandle = osThreadNew(start_led_task, NULL, &ledTask_attributes);
+  /* definition and creation of ledTask */
+  osThreadStaticDef(ledTask, start_led_task, osPriorityRealtime, 0, 128, ledTaskBuffer, &ledTaskControlBlock);
+  ledTaskHandle = osThreadCreate(osThread(ledTask), NULL);
 
-  /* creation of oscillo */
-  oscilloHandle = osThreadNew(StartOscillo, NULL, &oscillo_attributes);
+  /* definition and creation of oscillo */
+  osThreadStaticDef(oscillo, StartOscillo, osPriorityNormal, 0, 128, oscilloBuffer, &oscilloControlBlock);
+  oscilloHandle = osThreadCreate(osThread(oscillo), NULL);
 
-  /* creation of oamTask */
-  oamTaskHandle = osThreadNew(StartOamTask, NULL, &oamTask_attributes);
+  /* definition and creation of oamTask */
+  osThreadStaticDef(oamTask, StartOamTask, osPriorityLow, 0, 256, oamTaskBuffer, &oamTaskControlBlock);
+  oamTaskHandle = osThreadCreate(osThread(oamTask), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
   /* USER CODE END RTOS_THREADS */
-
-  /* USER CODE BEGIN RTOS_EVENTS */
-  /* add events, ... */
-  /* USER CODE END RTOS_EVENTS */
 
   /* Start scheduler */
   osKernelStart();
@@ -1376,7 +1296,7 @@ static void MX_GPIO_Init(void)
   * @retval None
   */
 /* USER CODE END Header_StartUiTask */
-__weak void StartUiTask(_UNUSED_ void *argument)
+__weak void StartUiTask(void const * argument)
 {
   /* init code for USB_DEVICE */
   MX_USB_DEVICE_Init();
@@ -1435,7 +1355,7 @@ __weak void StartUiTask(_UNUSED_ void *argument)
 * @retval None
 */
 /* USER CODE END Header_ina3221_task_start */
-__weak void ina3221_task_start(_UNUSED_ void *argument)
+__weak void ina3221_task_start(void const * argument)
 {
   /* USER CODE BEGIN ina3221_task_start */
   /* Infinite loop */
@@ -1453,7 +1373,7 @@ __weak void ina3221_task_start(_UNUSED_ void *argument)
 * @retval None
 */
 /* USER CODE END Header_start_led_task */
-__weak void start_led_task(_UNUSED_ void *argument)
+__weak void start_led_task(void const * argument)
 {
   /* USER CODE BEGIN start_led_task */
   /* Infinite loop */
@@ -1471,7 +1391,7 @@ __weak void start_led_task(_UNUSED_ void *argument)
 * @retval None
 */
 /* USER CODE END Header_StartOscillo */
-__weak void StartOscillo(_UNUSED_ void *argument)
+__weak void StartOscillo(void const * argument)
 {
   /* USER CODE BEGIN StartOscillo */
   /* Infinite loop */
@@ -1507,7 +1427,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 	  itm_debug1(DBG_TIM, "tim8",0);
   }
   if (htim->Instance == TIM1) {
-	  static int igncnt=0;
+	  //static int igncnt=0;
 	  static uint32_t lasttick = 0;
 	  uint32_t t1 = __HAL_TIM_GET_COUNTER(&htim1);
 	  uint32_t t = HAL_GetTick();
@@ -1521,6 +1441,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 
 	  }
 
+	  /*
 	  if ((0)) {
 		  static uint32_t lasttick = 0;
 		  if (t >= lasttick+5000) { // not faster than 20Hz, whatever the frequency is
@@ -1541,6 +1462,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 			  itm_debug3(DBG_TIM,"tim", t1, t2, t3);
 		  }
 	  }
+	  */
 
   }
   /* USER CODE END Callback 1 */

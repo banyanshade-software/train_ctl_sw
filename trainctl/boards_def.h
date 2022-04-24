@@ -35,6 +35,7 @@
 #define BOARD_HAS_LED
 #define BOARD_HAS_TRKPLN
 //#define BOARD_HAS_OSCILLO
+//#define BOARD_HAS_USB_HOST
 
 #endif
 
@@ -53,6 +54,7 @@
 #define BOARD_NUMBER 0
 
 #define CAN_DEVICE hcan1
+#define BOARD_HAS_USB_HOST
 
 #define OAM_ONLY 1
 
@@ -81,6 +83,7 @@
 #define BOARD_HAS_LED
 #define BOARD_HAS_TRKPLN
 #define BOARD_HAS_OSCILLO
+//#define BOARD_HAS_USB_HOST
 /*
  * number of local block per board
  * NUM_LOCAL_CANTONS_HW : really configured blocked (used for ADC)
@@ -117,6 +120,7 @@
 //#define BOARD_HAS_IHM
 #define BOARD_HAS_LED
 //#define BOARD_HAS_TRKPLN
+//#define BOARD_HAS_USB_HOST
 /*
  * number of local block per board
  * NUM_LOCAL_CANTONS_HW : really configured blocked (used for ADC)

@@ -550,7 +550,7 @@ void CAN_Tasklet(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_
 	send_messages_if_any();
 
 #ifdef TRN_BOARD_DISPATCHER
-	if ((0)) {
+	/*if ((0)) {
 		static uint32_t lt = 0;
 		if (!lt) {
 			lt = tick;
@@ -568,7 +568,7 @@ void CAN_Tasklet(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_
 			m.v2 = 1000+i;
 			mqf_write_to_canbus(&m);
 		}
-	}
+	}*/
 #endif
 }
 

@@ -14,7 +14,7 @@
 #include <stdlib.h>
 #include "../misc.h"
 #ifndef TRAIN_SIMU
-#include "cmsis_os2.h"
+#include "cmsis_os.h"
 #endif
 #include "trainctl_config.h"
 

@@ -20,7 +20,7 @@
 #else
 #include "stm32f1xx_hal.h"
 #endif
-#include "cmsis_os2.h"                  // ::CMSIS:RTOS2
+#include "cmsis_os.h"
 #endif
 #include <string.h>
 #include <memory.h>
@@ -98,4 +98,28 @@ void startCycleCounter(void)
 #endif
 }
 
+
+
+
+/*
+ * CMSISv2 / DEBUG 		RELEASE		frameQ removed		CMSISv1
+ * stack :
+ * uiTask	304
+ * ctrlTask 536
+ * txrx     280
+ * ina      328
+ * led		136
+ * oscillo  128
+ * oam      380
+ *
+ * MEM
+ * CCRAM 7.83K			 7.83			7.83			8.82 (oam stack in ccm)
+ * RAM   53.95K			53.73			52.11			44.61
+ * (tot)								(60)			(53.43)
+ * FLASH 153.7K			93.48			93.22			90.62
+ *
+ * oscillo buffer uses 28K
+ *
+ *
+ */
 

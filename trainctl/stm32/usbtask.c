@@ -8,6 +8,11 @@
 
 
 #include "cmsis_os.h"
+#include "trainctl_config.h"
+
+#ifndef BOARD_HAS_USB
+#error board has no usb, remove from build
+#endif
 
 #include "usbd_cdc_if.h"
 #include "usb_device.h"
@@ -27,6 +32,7 @@
 
 #include "utils/framing.h"
 #include "usbtask.h"
+
 
 extern USBD_HandleTypeDef hUsbDeviceFS;
 

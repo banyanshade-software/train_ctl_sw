@@ -4,8 +4,9 @@
 
 #include <stdint.h>
 #include <stddef.h>
-#include "conf_canton.h"
-#include "conf_canton.propag.h"
+#include <string.h>
+#include "../conf_canton.h"
+#include "../conf_canton.propag.h"
 
 
 

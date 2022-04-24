@@ -4,8 +4,9 @@
 
 #include <stdint.h>
 #include <stddef.h>
-#include "conf_topology.h"
-#include "conf_topology.propag.h"
+#include <string.h>
+#include "../conf_topology.h"
+#include "../conf_topology.propag.h"
 
 
 

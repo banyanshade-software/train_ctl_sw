@@ -4,8 +4,9 @@
 
 #include <stdint.h>
 #include <stddef.h>
-#include "conf_utest.h"
-#include "conf_utest.propag.h"
+#include <string.h>
+#include "../conf_utest.h"
+#include "../conf_utest.propag.h"
 
 
 

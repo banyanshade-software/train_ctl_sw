@@ -151,7 +151,6 @@
 
 // common config, should be moved out
 
-#define NUM_TRAINS	8
 
 
 #define USE_INA3221 		1

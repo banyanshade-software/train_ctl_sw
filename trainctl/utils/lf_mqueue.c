@@ -10,7 +10,7 @@
 #include <memory.h>
 #include "lf_mqueue.h"
 #include "itm_debug.h"
-#include "oam/oam_error.h"
+#include "../oam/oam_error.h"
 
 #define _UNUSED_ __attribute__((unused))
 

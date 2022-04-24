@@ -4,8 +4,9 @@
 
 #include <stdint.h>
 #include <stddef.h>
-#include "conf_globparam.h"
-#include "conf_globparam.propag.h"
+#include <string.h>
+#include "../conf_globparam.h"
+#include "../conf_globparam.propag.h"
 
 
 

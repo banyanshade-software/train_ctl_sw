@@ -72,10 +72,14 @@ static FILE *genfile_c_create(config_node_t *confnode, config_node_t *root, int 
     filename_for(n, confnode, fn ? "fields.c" : "c", fn ? "_str/" : "");
     FILE *F = fopen(n, "w");
     assert(F);
+    char *path = "";
+    if (fn) path="../";
     fprintf(F, "// this file is generated automatically by config\n// DO NOT EDIT\n\n\n");
-    fprintf(F, "#include <stdint.h>\n#include <stddef.h>\n#include \"conf_%s.h\"\n", confnode->string);
+    fprintf(F, "#include <stdint.h>\n#include <stddef.h>\n");
+    if (fn) fprintf(F, "#include <string.h>\n");
+    fprintf(F, "#include \"%sconf_%s.h\"\n", path, confnode->string);
     if (confnode->tag == CONFIG_NODE_CONF) {
-        fprintf(F, "#include \"conf_%s.propag.h\"\n", confnode->string);
+        fprintf(F, "#include \"%sconf_%s.propag.h\"\n", path, confnode->string);
     }
     fprintf(F, "\n\n");
     include_code(F, root->globattrib, 2);

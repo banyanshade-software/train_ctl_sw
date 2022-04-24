@@ -4,8 +4,9 @@
 
 #include <stdint.h>
 #include <stddef.h>
-#include "conf_train.h"
-#include "conf_train.propag.h"
+#include <string.h>
+#include "../conf_train.h"
+#include "../conf_train.propag.h"
 
 
 

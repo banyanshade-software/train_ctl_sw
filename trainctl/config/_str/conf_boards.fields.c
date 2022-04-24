@@ -4,8 +4,9 @@
 
 #include <stdint.h>
 #include <stddef.h>
-#include "conf_boards.h"
-#include "conf_boards.propag.h"
+#include <string.h>
+#include "../conf_boards.h"
+#include "../conf_boards.propag.h"
 
 
 

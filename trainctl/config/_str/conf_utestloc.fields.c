@@ -4,8 +4,9 @@
 
 #include <stdint.h>
 #include <stddef.h>
-#include "conf_utestloc.h"
-#include "conf_utestloc.propag.h"
+#include <string.h>
+#include "../conf_utestloc.h"
+#include "../conf_utestloc.propag.h"
 
 
 

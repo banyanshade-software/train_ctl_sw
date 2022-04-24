@@ -4,8 +4,9 @@
 
 #include <stdint.h>
 #include <stddef.h>
-#include "conf_led.h"
-#include "conf_led.propag.h"
+#include <string.h>
+#include "../conf_led.h"
+#include "../conf_led.propag.h"
 
 
 

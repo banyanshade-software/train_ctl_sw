@@ -4,8 +4,9 @@
 
 #include <stdint.h>
 #include <stddef.h>
-#include "conf_turnout.h"
-#include "conf_turnout.propag.h"
+#include <string.h>
+#include "../conf_turnout.h"
+#include "../conf_turnout.propag.h"
 
 
 

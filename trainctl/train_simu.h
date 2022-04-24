@@ -25,7 +25,7 @@ extern uint32_t SimuTick;
 
 //#define USE_INA3221
 
-#define NUM_TRAINS 8
+//#define NUM_TRAINS 8
 
 #define NOTIF_VOFF 0
 

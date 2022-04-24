@@ -12,12 +12,15 @@
 .depend
 stm32_f103_display/
 stm32f407VETx/Debug
-stm32f407VETx/Debug
+stm32f407VETx/Release/
 stm32f4_test_store/Debug/
 stm32f4_test_store/Release/
+stm32f103_switcher/Debug/
+stm32f103_switcher/Release/
+stm32f103_dispatchboard/Debug/
+stm32f103_dispatchboard/Release/
 tmp/
 stm32f407VET_TestPins/Debug/
-stm32f407VETx/Release/
 mac/layoutexport/layoutexport.xcodeproj/xcuserdata/danielbraun.xcuserdatad/xcdebugger/
 mac/train_throttle/train_throttle.xcodeproj/xcshareddata/
 .DS_Store

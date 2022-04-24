@@ -109,7 +109,7 @@ typedef uint8_t  msg_addr_t;
 #define MA1_IS_SPDCTL(_addr)  	(((_addr) & 0xF0) == MA1_SPDCTL(0))
 
 
-#define MA2_IS_LOCAL_ADDR(_addr)	(0xB8 == (_addr) & 0xF8))
+#define MA2_IS_LOCAL_ADDR(_addr)	(0xB8 == ((_addr) & 0xF8))
 #define MA2_UI_LOCAL			(0xB8 | 0x00)
 #define MA2_OAM_LOCAL			(0xB8 | 0x01)
 #define MA2_USB_LOCAL			(0xB8 | 0x02)
@@ -199,61 +199,63 @@ typedef enum {
 	runmode_testcan,			// test CAN bus
 } runmode_t;
 
+#ifdef BOARD_HAS_CAN
 LFMQUEUE_DEF_H(to_canbus, msg_64_t)
 LFMQUEUE_DEF_H(from_canbus, msg_64_t)
+#endif
 
 
+#ifdef BOARD_HAS_USB
+LFMQUEUE_DEF_H(to_usb, msg_64_t)
+LFMQUEUE_DEF_H(from_usb, msg_64_t)
+#endif
 
+
+#ifdef BOARD_HAS_TURNOUTS
 LFMQUEUE_DEF_H(to_turnout, msg_64_t)
 LFMQUEUE_DEF_H(from_turnout, msg_64_t)
+#endif
 
-
+#ifdef BOARD_HAS_CANTON
 LFMQUEUE_DEF_H(to_canton, msg_64_t)
 LFMQUEUE_DEF_H(from_canton, msg_64_t)
+#endif
 
+#ifdef BOARD_HAS_INA3221
+LFMQUEUE_DEF_H(to_ina3221, msg_64_t)
+LFMQUEUE_DEF_H(from_ina3221, msg_64_t)
+#endif
 
+#ifdef BOARD_HAS_LED
+LFMQUEUE_DEF_H(to_led, msg_64_t)
+LFMQUEUE_DEF_H(from_led, msg_64_t)
+#endif
+
+#ifdef BOARD_HAS_CTRL
 LFMQUEUE_DEF_H(to_spdctl, msg_64_t)
 LFMQUEUE_DEF_H(from_spdctl, msg_64_t)
 
-
 LFMQUEUE_DEF_H(to_ctrl, msg_64_t)
 LFMQUEUE_DEF_H(from_ctrl, msg_64_t)
+#endif
 
 
-
-//LFMQUEUE_DEF_H(to_forward, msg_64_t)
-//LFMQUEUE_DEF_H(from_forward, msg_64_t)
-
-//LFMQUEUE_DEF_H(to_forward_usb, msg_64_t) // XXX
-//LFMQUEUE_DEF_H(from_forward_usb, msg_64_t) // XXX
-
-
-LFMQUEUE_DEF_H(to_usb, msg_64_t)
-LFMQUEUE_DEF_H(from_usb, msg_64_t)
-
-
+#ifdef BOARD_HAS_IHM
 LFMQUEUE_DEF_H(to_ui, msg_64_t)
 LFMQUEUE_DEF_H(from_ui, msg_64_t)
 
-
 LFMQUEUE_DEF_H(to_ui_track, msg_64_t)
 LFMQUEUE_DEF_H(from_ui_track, msg_64_t)
+#endif
 
 
-LFMQUEUE_DEF_H(to_ina3221, msg_64_t)
-LFMQUEUE_DEF_H(from_ina3221, msg_64_t)
 
-
-LFMQUEUE_DEF_H(to_led, msg_64_t)
-LFMQUEUE_DEF_H(from_led, msg_64_t)
-
-
+#ifdef BOARD_HAS_OSCILLO
+LFMQUEUE_DEF_H(from_oscillo, msg_64_t)
+#endif
 
 LFMQUEUE_DEF_H(to_oam, msg_64_t)
 LFMQUEUE_DEF_H(from_oam, msg_64_t)
-
-LFMQUEUE_DEF_H(from_oscillo, msg_64_t)
-
 
 void msgsrv_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt);
 

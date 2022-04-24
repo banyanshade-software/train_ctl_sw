@@ -55,6 +55,6 @@ int mqf_read(mqf_t *, void *);
 
 int mqf_write(mqf_t *, void *);
 
-int mqf_len(mqf_t *m);
+int mqf_len(const mqf_t *m);
 
 #endif /* UTILS_LF_MQUEUE_H_ */

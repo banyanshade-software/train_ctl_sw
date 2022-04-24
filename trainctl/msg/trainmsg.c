@@ -15,225 +15,260 @@
 uint8_t localBoardNum = BOARD_NUMBER; // TODO move to config
 
 
-// LFMQUEUE_DEF_C(_name, _type,_num, _sil)
 
-
+#ifdef BOARD_HAS_TURNOUTS
 LFMQUEUE_DEF_C(to_turnout, msg_64_t, 	12, 0)
 LFMQUEUE_DEF_C(from_turnout, msg_64_t, 	1, 0)
+#endif
 
-
+#ifdef BOARD_HAS_CANTON
 LFMQUEUE_DEF_C(to_canton, msg_64_t, 	16, 0)
 LFMQUEUE_DEF_C(from_canton, msg_64_t, 	8, 0)
+#endif
 
-
+#ifdef BOARD_HAS_CTRL
 LFMQUEUE_DEF_C(to_spdctl, msg_64_t, 	16, 0)
 LFMQUEUE_DEF_C(from_spdctl, msg_64_t, 	16, 0)
 
-//LFMQUEUE_DEF_C(to_forward, msg_64_t, 	8, 1) // XXX should not have silent drop
-//LFMQUEUE_DEF_C(from_forward, msg_64_t, 	8, 0)
+LFMQUEUE_DEF_C(to_ctrl, msg_64_t,         16, 0)
+LFMQUEUE_DEF_C(from_ctrl, msg_64_t,     32, 0)
+#endif
 
-//LFMQUEUE_DEF_C(to_forward_usb, msg_64_t,	8, 1)
-//LFMQUEUE_DEF_C(from_forward_usb, msg_64_t,  16, 0)
-
+#ifdef BOARD_HAS_USB
 LFMQUEUE_DEF_C(to_usb, msg_64_t, 			8, 1)
 LFMQUEUE_DEF_C(from_usb, msg_64_t,			16, 1)
+#endif
 
-
-LFMQUEUE_DEF_C(to_ctrl, msg_64_t, 		16, 0)
-LFMQUEUE_DEF_C(from_ctrl, msg_64_t, 	32, 0)
-
-
+#ifdef BOARD_HAS_IHM
 LFMQUEUE_DEF_C(to_ui, msg_64_t, 		64, 1)
 LFMQUEUE_DEF_C(from_ui, msg_64_t, 		4,  0)
 
 LFMQUEUE_DEF_C(to_ui_track, msg_64_t,   8, 1)
 LFMQUEUE_DEF_C(from_ui_track, msg_64_t, 2, 0)
+#endif
 
-LFMQUEUE_DEF_C(from_nowhere, msg_64_t, 	4, 0)
 
-
+#ifdef BOARD_HAS_INA3221
 LFMQUEUE_DEF_C(to_ina3221, msg_64_t, 	5, 0)
 LFMQUEUE_DEF_C(from_ina3221, msg_64_t, 	64,  1)
+#endif
 
-
+#ifdef BOARD_HAS_LED
 LFMQUEUE_DEF_C(to_led,   msg_64_t, 		8, 0)
 LFMQUEUE_DEF_C(from_led, msg_64_t, 		1, 0)
+#endif
 
-
+#ifdef BOARD_HAS_CAN
 LFMQUEUE_DEF_C(to_canbus, msg_64_t, 8, 0)
 LFMQUEUE_DEF_C(from_canbus, msg_64_t, 8, 0)
+#endif
+
+#ifdef BOARD_HAS_OSCILLO
+LFMQUEUE_DEF_C(from_oscillo, msg_64_t, 2, 1)
+#endif
 
 
 LFMQUEUE_DEF_C(to_oam, msg_64_t, 8, 0)
 LFMQUEUE_DEF_C(from_oam, msg_64_t, 12, 0)
 
-LFMQUEUE_DEF_C(from_oscillo, msg_64_t, 2, 1)
+LFMQUEUE_DEF_C(from_nowhere, msg_64_t,     4, 0)
 
 
 typedef struct {
-	mqf_t *to;
 	mqf_t *from;
+	mqf_t *to;
+    uint8_t isforwd;
 } qdef_t;
 
 typedef struct {
     uint8_t mask; uint8_t value; uint8_t destq;
 } qroute_t;
 
-
-#ifdef TRN_BOARD_MAIN_ZERO
-#define NQDEF 2
-static const qdef_t qdef[NQDEF] = {
-		/* 0*/ { &to_canbus, &from_canbus},
-        /* 1*/ { &to_oam, &from_oam},
-		///* 2*/ { &to_forward_usb, &from_forward_usb},
-		/* 2*/ { NULL, &from_nowhere}
-};
-
-#define _BOARD 0 // TODO
-#define NROUTES 4
-static const qroute_t routes[NROUTES] = {
-		{0xFF,							MA0_OAM(_BOARD),		1},
-		{0xFF,							MA3_UI_GEN,				0},
-		{0xFF,							MA3_UI_CTC,				0},
-		{0,								0,						0}
-
-};
-
-#endif // TRN_BOARD_MAIN_ZERO
-
-
-#if defined(TRN_BOARD_MAIN) || defined(TRN_BOARD_SIMU)
-#define NQDEF 13
-static const qdef_t qdef[NQDEF] = {
-		/* 0*/ { &to_turnout, &from_turnout },
-		/* 1*/ { &to_canton,  &from_canton},
-		/* 2*/ { &to_spdctl,  &from_spdctl},
-#ifdef TRAIN_SIMU
-    /* 3*/ { &to_usb, &from_usb},
-#else
-    /* 3*/ { &to_canbus, &from_canbus},
+static const qdef_t qdefs[] = {
+    // forward q must be first
+#ifdef BOARD_HAS_CAN
+    {&from_canbus, &to_canbus,  1},
 #endif
-        /* 4*/ { &to_usb, &from_usb},
-        /* 5*/ { &to_ctrl, &from_ctrl},
-        /* 6*/ { &to_ui, &from_ui},
-		/* 7*/ { &to_ina3221, &from_ina3221},
-        /* 8*/ { &to_ui_track, &from_ui_track},
-        /* 9*/ { &to_led, &from_led},
-        /*10*/ { &to_oam, &from_oam},
-        /*11*/ { NULL, &from_oscillo},
-		/*12*/ { NULL, &from_nowhere}
-};
-
-#define _BOARD 0  // XXX
-
-#define NROUTES 11
-static const qroute_t routes[NROUTES] = {
-		{0xFF,									MA0_TURNOUT(_BOARD),	0},
-		{0xFF,									MA0_CANTON(_BOARD),		1},
-		{0xFF,									MA0_INA(_BOARD),		7},
-		{0xFF,									MA0_LED(_BOARD),		9},
-		{0xFF,									MA0_OAM(_BOARD),	   10},
-		{0xFF,									MA0_RELAY(_BOARD),		0},
-		{0xF0,									MA1_SPDCTL(0), 			2},
-		{0xF0,									MA1_CTRL(0), 			5},
-#ifdef TRAIN_SIMU
-		{0xFF,									MA3_UI_CTC,				8},
-		{0xFF,									MA3_UI_GEN,				3},
-#else
-		{0xFF,									MA3_UI_CTC,				4},
-		{0xFF,									MA3_UI_GEN,				4},
+#ifdef BOARD_HAS_USB
+    {&from_usb, &to_usb,        1},
 #endif
-		{0x00,									0,						3},
-};
-
-#endif // TRN_BOARD_MAIN
-
-#ifdef TRN_BOARD_DISPATCHER
-#define NQDEF 6
-static const qdef_t qdef[NQDEF] = {
-        /* 0*/ { &to_turnout, &from_turnout },
-        /* 1*/ { &to_canton,  &from_canton},
-        /* 2*/ { &to_canbus, &from_canbus},
-        /* 3*/ { &to_ina3221, &from_ina3221},
-        /* 4*/ { &to_led, &from_led},
-        /* 5*/ { NULL, &from_nowhere}
-};
-#define NROUTES 6
-static const qroute_t routes[NROUTES] = {
-        {MA_ADDR_MASK_2|MA_ADDR_MASK_BOARD,        MA_ADDR_2_TURNOUT|1,    0},
-        {MA_ADDR_MASK_2|MA_ADDR_MASK_BOARD,        MA_ADDR_2_CANTON|1,     1},
-
-        {MA_ADDR_MASK_2,                        MA_ADDR_2_TURNOUT,         2},
-        {MA_ADDR_MASK_2,                        MA_ADDR_2_CANTON,          2},
-        {MA_ADDR_MASK_8,                        MA_ADDR_5_LED|0,           4},
-        {MA_ADDR_MASK_5,                        MA_ADDR_5_LED,             2}
-
-};
+    
+#ifdef BOARD_HAS_TURNOUTS
+    {&from_turnout, &to_turnout,    0},
 #endif
-
-
-#ifdef TRN_BOARD_UI
-#define NQDEF 4
-static const qdef_t qdef[NQDEF] = {
-		/* 0*/ { &to_canbus, &from_canbus},
-        /* 1*/ { &to_ui, &from_ui},
-        /* 2*/ { &to_forward_usb, &from_forward_usb},
-		/* 3*/ { NULL, &from_nowhere}
-};
-
-#define NROUTES 3
-static const qroute_t routes[NROUTES] = {
-        {MA_ADDR_MASK_3|0x1F,                   MA_ADDR_3_UI|1,         1},
-#ifdef TRAIN_SIMU
-        {MA_ADDR_MASK_3|0x1F,                   MA_ADDR_3_UI|2,         1},
-#else
-        {MA_ADDR_MASK_3|0x1F,                   MA_ADDR_3_UI|2,         2},
+#ifdef BOARD_HAS_CANTON
+    {&from_canton, &to_canton,      0},
 #endif
-        {0,                        				0,           0}, // default to canbu
-
+#ifdef BOARD_HAS_INA3221
+    {&from_ina3221, &to_ina3221,    0},
+#endif
+#ifdef BOARD_HAS_LED
+    {&from_led, &to_led,            0},
+#endif
+#ifdef BOARD_HAS_CTRL
+    {&from_spdctl, &to_spdctl,      0},
+    {&from_ctrl, &to_ctrl,          0},
+#endif
+#ifdef BOARD_HAS_IHM
+    {&from_ui,  &to_ui,             0},
+    {&from_ui_track, &to_ui_track,  0},
+#endif
+#ifdef BOARD_HAS_OSCILLO
+    {&from_oscillo, NULL,           0},
+#endif
+    
+    {&from_oam, &to_oam,            0},
+    {&from_nowhere, NULL,           0},
+    {NULL, NULL,0}
 };
-#endif // TRN_BOARD_UI
 
 
 
-static void msg_error(_UNUSED_ const char *msg)
+
+
+
+
+static int  _local_disptach(msg_64_t *m, mqf_t *dont_send_to)
 {
-
+    mqf_t *dest = NULL;
+    int cont = 0;
+    if (MA0_ADDR_IS_BOARD_ADDR(m->to)) {
+        int dbrd = MA0_BOARD(m->to);
+        if (dbrd != localBoardNum) return 0;
+        if ((0)) {
+#ifdef BOARD_HAS_CANTON
+        } else if (MA0_IS_CANTON(m->to)) {
+            dest = &to_canton;
+#endif
+#ifdef BOARD_HAS_TURNOUTS
+        } else if (MA0_IS_TURNOUT(m->to)) {
+            dest = &to_turnout;
+#endif
+#ifdef BOARD_HAS_RELAY
+        } else if (MA0_IS_RELAY(m->to)) {
+            dest = &to_relay;
+#endif
+#ifdef BOARD_HAS_INA3221
+        } else if (MA0_IS_INA(m->to)) {
+            dest = &to_ina3221;
+#endif
+#ifdef BOARD_HAS_LED
+        } else if (MA0_IS_LED(m->to)) {
+            dest = &to_led;
+#endif
+        } else if (MA0_IS_OAM(m->to)) {
+            dest = &to_oam;
+        }
+        
+        
+    } else if (MA1_ADDR_IS_TRAIN_ADDR(m->to)) {
+#ifdef BOARD_HAS_CTRL
+        if (MA1_IS_CTRL(m->to)) dest =     &to_ctrl;
+        else if (MA1_SPDCTL(m->to)) dest = &to_spdctl;
+#else
+        return 0;
+#endif
+        
+        
+    } else if (MA2_IS_LOCAL_ADDR(m->to)) {
+#ifdef BOARD_HAS_LOCALUI
+        if (MA2_UI_LOCAL == m->to) dest = &to_ui;
+#endif
+        if (MA2_OAM_LOCAL) dest = &to_oam;
+#ifdef BOARD_HAS_USB
+        if (MA2_USB_LOCAL) dest = &to_usb;
+#endif
+    } else if (MA3_IS_GLOB_ADDR(m->to)) {
+#ifdef BOARD_HAS_IHM
+        if (MA3_UI_GEN == m->to) {cont = 1; dest = &to_ui;}
+        if (MA3_UI_CTC == m->to) {cont = 1; dest = &to_ui_track;}
+#else
+        return 0;
+#endif
+    }
+    if (!dest) {
+        // message should be locally routable but is not
+        itm_debug1(DBG_ERR|DBG_MSG, "no local", m->to);
+        return -1;
+    }
+    if (dest == dont_send_to) {
+        itm_debug1(DBG_ERR|DBG_MSG, "loop local", m->to);
+        return -1;
+    }
+    mqf_write(dest, m);
+    if (cont) {
+        // UI shall be sent on canbus as there can by several UI boards
+        return 0;
+    }
+    return 1;
 }
-
 
 static void dispatch_m64(msg_64_t *m, int f)
 {
-	if ((1)) {
-		if (m->cmd == 0x52) {
-			itm_debug1(DBG_USB, "disp A2", m->cmd);
-		}
-	}
+    if (m->cmd == CMD_PARAM_LUSER_GET) {
+        itm_debug1(DBG_MSG, "brk here",0);
+    }
+    if (m->cmd == CMD_PARAM_LUSER_VAL) {
+        itm_debug1(DBG_MSG, "brk here",0);
+    }
     if (m->to == MA3_BROADCAST) {
-        for (int i=0; i<NQDEF; i++) {
+        for (int i=0;; i++) {
+            const qdef_t *qd = &qdefs[i];
+            if (!qd->from && !qd->to) break;
             if (i == f) {
                 continue;
             }
-            mqf_t *q = qdef[i].to;
+            mqf_t *q = qd->to;
             if (!q) continue;
             mqf_write(q, m);
         }
         return;
     }
-	for (int i=0; i<NROUTES; i++) {
-		if ((m->to & routes[i].mask) == routes[i].value) {
-			if (f==routes[i].destq) {
-				// loop
-				itm_debug1(DBG_ERR|DBG_MSG, "loop", f);
-				return;
-			}
-			mqf_t *q = qdef[routes[i].destq].to;
-			if (q) mqf_write(q, m);
-			return;
-		}
-	}
-	itm_debug1(DBG_ERR|DBG_MSG, "no route", m->to);
-	msg_error("no route");
+    if (m->to == MA2_LOCAL_BCAST) {
+        for (int i=0;; i++) {
+            const qdef_t *qd = &qdefs[i];
+            if (!qd->from && !qd->to) break;
+            if (i == f) {
+                continue;
+            }
+            if (qd->isforwd) continue;
+            mqf_t *q = qd->to;
+            if (!q) continue;
+            mqf_write(q, m);
+        }
+        return;
+    }
+    int ok = _local_disptach(m, qdefs[f].to);
+    if (ok<0) {
+        itm_debug1(DBG_ERR|DBG_MSG, "cant route local", m->to);
+        return;
+    }
+    if (ok) return;
+    
+    // no forward for MA2 local
+    if (MA2_IS_LOCAL_ADDR(m->to)) {
+        itm_debug1(DBG_ERR|DBG_MSG, "cant ma2 route", m->to);
+        return;
+    }
+    ok = 0;
+#ifdef BOARD_HAS_USB
+    if ((MA3_UI_GEN == m->to) || (MA3_UI_CTC == m->to)) {
+        if (qdefs[f].from != &from_usb) {
+            mqf_write(&to_usb, m);
+            ok = 1;
+        }
+        //return; also send on CAN
+    }
+#endif
+#ifdef BOARD_HAS_CAN
+    if ((0) && (qdefs[f].from != &from_canbus)) { // XXX disable CAN forwarding until ok
+        mqf_write(&to_canbus, m);
+        ok =  1;
+    }
+#endif
+    if (!ok) {
+        itm_debug1(DBG_ERR|DBG_MSG, "cant route", m->to);
+    }
 }
 
 
@@ -243,43 +278,39 @@ static void dump_qusage(int i, int d, mqf_t *q)
 	q->maxuse = 0;
 }
 
+#ifndef TRAIN_SIMU
+static_assert(sizeof(msg_64_t) == 8);
+#else
+typedef char compile_assert[(sizeof(msg_64_t) == 8) ? 1 : -1];
+#endif
+
+
 void msgsrv_tick(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_ uint32_t dt)
 {
-    static int first = 1;
-    if (first) {
-        if (sizeof(msg_64_t) != 8) {
-#ifdef TRAIN_SIMU
-            void abort(void);
-        	abort();
-#else
-        	itm_debug1(DBG_ERR|DBG_MSG, "bad size", sizeof(msg_64_t));
-        	for (;;);
-#endif
+	for (int i=0; ; i++) {
+        const qdef_t *qd = &qdefs[i];
+        if (!qd->from && !qd->to) break;
+        mqf_t *q = qd->from;
+        //itm_debug2(DBG_MSG, "mlen1",i, mqf_len(q));
+        //itm_debug3(DBG_MSG, "mth1 ", i, q->head, q->tail);
+        for (;;) {
+            msg_64_t m;
+            int rc = mqf_read(q, &m);
+            if (rc) break;
+            
+            dispatch_m64(&m, i);
         }
+        //itm_debug2(DBG_MSG, "mlen2",i, mqf_len(q));
+        //itm_debug3(DBG_MSG, "mth2 ", i, q->head, q->tail);
     }
-	for (int i=0; i<NQDEF; i++) {
-		mqf_t *q = qdef[i].from;
-
-		itm_debug2(DBG_MSG, "mlen1",i, mqf_len(q));
-		itm_debug3(DBG_MSG, "mth1 ", i, q->head, q->tail);
-		for (;;) {
-				msg_64_t m;
-				int rc = mqf_read(q, &m);
-				if (rc) break;
-				if (i==5) {
-					itm_debug1(DBG_MSG, "from ctrl", m.cmd);
-				}
-				dispatch_m64(&m, i);
-			}
-		itm_debug2(DBG_MSG, "mlen2",i, mqf_len(q));
-		itm_debug3(DBG_MSG, "mth2 ", i, q->head, q->tail);
-	}
 	if ((0)) {
 		static uint32_t last=0;
 		if (tick>=last+10000) {
-			for (int i=0; i<NQDEF; i++) {
-				dump_qusage(i, 0, qdef[i].from);
-				dump_qusage(i, 1, qdef[i].to);
+			for (int i=0; ; i++) {
+                const qdef_t *qd = &qdefs[i];
+                if (!qd->from && !qd->to) break;
+				dump_qusage(i, 0, qd->from);
+				dump_qusage(i, 1, qd->to);
 			}
 			last = tick;
 		}

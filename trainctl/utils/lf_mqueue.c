@@ -25,7 +25,7 @@ void mqf_clear(mqf_t *m)
 }
 
 
-static inline int _mqf_len(mqf_t *m)
+static inline int _mqf_len(const mqf_t *m)
 {
 	int l;
 	if (m->head >= m->tail) {
@@ -40,7 +40,7 @@ static inline int _mqf_len(mqf_t *m)
 	}
 	return l;
 }
-int mqf_len(mqf_t *m)
+int mqf_len(const mqf_t *m)
 {
 	return _mqf_len(m);
 }

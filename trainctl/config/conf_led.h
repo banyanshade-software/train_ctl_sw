@@ -42,9 +42,15 @@ const conf_led_t *conf_led_get(int num);
 
 
 
-#ifdef TRN_BOARD_MAIN
+#ifdef TRN_BOARD_MAINV04
+#define NUM_LEDS 0 // 0 
+#endif // TRN_BOARD_MAINV04
+
+
+
+#ifdef TRN_BOARD_MAINV0
 #define NUM_LEDS 3 // 3 
-#endif // TRN_BOARD_MAIN
+#endif // TRN_BOARD_MAINV0
 
 
 

@@ -32,7 +32,22 @@
 
 
 
-#ifdef TRN_BOARD_MAIN
+#ifdef TRN_BOARD_MAINV04
+
+unsigned int conf_topology_num_entries(void)
+{
+    return 0; // 0 
+}
+
+static conf_topology_t conf_topology[0] = {
+};
+
+#endif // TRN_BOARD_MAINV04
+
+
+
+
+#ifdef TRN_BOARD_MAINV0
 
 unsigned int conf_topology_num_entries(void)
 {
@@ -938,7 +953,7 @@ static conf_topology_t conf_topology[64] = {
   }
 };
 
-#endif // TRN_BOARD_MAIN
+#endif // TRN_BOARD_MAINV0
 
 
 

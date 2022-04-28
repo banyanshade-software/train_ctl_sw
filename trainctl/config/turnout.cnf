@@ -8,23 +8,23 @@
 
 config turnout {
 	const GPIO_TypeDef *cmd_port
-		= (main:*) table(tpin_main, port)
+		= (mainV0:*) table(tpin_mainV0, port)
 		= (default) NULL;
 	const uint16_t pinA
-		= (main:*) table(tpin_main, bA)
+		= (mainV0:*) table(tpin_mainV0, bA)
 		= (default) 0;
 	const uint16_t pinB
-		= (main:*) table(tpin_main, bB)
+		= (mainV0:*) table(tpin_mainV0, bB)
 		= (default) 0;
     user uint8_t reverse
         = (default) 0;
 
-} num = (main) 3
+} num = (mainV0) 3
       = (simu) 4
       = (dispatcher) 0          # TODO
       = (default) 0;
 
-table tpin_main 
+table tpin_mainV0 
 	( port,     bA,         bB)
     ( GPIOA,    GPIO_PIN_9, GPIO_PIN_10 )
     ( GPIOE,    GPIO_PIN_0, GPIO_PIN_1  )

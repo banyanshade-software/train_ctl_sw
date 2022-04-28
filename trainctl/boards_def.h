@@ -71,8 +71,11 @@
 // -----------------------------------------
 
 
-
 #ifdef TRN_BOARD_MAIN
+#error obsolete, use MAINV0 or MAINV04
+#endif
+
+#if defined(TRN_BOARD_MAINV0) || defined(TRN_BOARD_MAINV04)
 #define STM32_F4
 #define STM32F4
 

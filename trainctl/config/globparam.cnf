@@ -3,6 +3,6 @@ config globparam {
     user uint16_t pwmfreq = (default) 100;
     user int test_mode = (default) 0;
     user int oscillo = (default) 0;
-} num = (main) 1
+} num = (mainV0) 1
       = (simu) 1
       = (default) 0;

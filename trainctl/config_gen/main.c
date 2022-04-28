@@ -116,8 +116,8 @@ int main(int argc, char **argv) {
 
             config_node_t *bm;
             config_node_t *pbm = NULL;
-            //static const char *boards = { "mainV0", "mainV04", "dispatcher", "switcher", "main_zero", "simu", NULL};
-            static const char *boards[] = { "simu", "main_zero", "switcher", "dispatcher", "main", NULL};
+            static const char *boards[] = { "simu", "main_zero", "switcher", "dispatcher", "mainV0", "mainV04", NULL};
+            //static const char *boards[] = { "simu", "main_zero", "switcher", "dispatcher", "main", NULL};
             for (int i=0; boards[i]; i++) {
                 printf(".......%s\n", boards[i]);
 			    bm = create_config_node_string(&system, CONFIG_NODE_BOARD, boards[i]);

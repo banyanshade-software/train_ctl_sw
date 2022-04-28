@@ -3,6 +3,6 @@ config boards {
     user uint32_t uuid          = (default) 0;
     user uint8_t board_type     = (default) 0;
     user uint8_t disable        = (default) 0;
-} num = (main) 8
+} num = (mainV0) 8
       = (default) 0;
 

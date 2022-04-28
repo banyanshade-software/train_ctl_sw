@@ -29,9 +29,15 @@ const conf_boards_t *conf_boards_get(int num);
 
 
 
-#ifdef TRN_BOARD_MAIN
+#ifdef TRN_BOARD_MAINV04
+#define NUM_BOARDSS 0 // 0 
+#endif // TRN_BOARD_MAINV04
+
+
+
+#ifdef TRN_BOARD_MAINV0
 #define NUM_BOARDSS 8 // 8 
-#endif // TRN_BOARD_MAIN
+#endif // TRN_BOARD_MAINV0
 
 
 

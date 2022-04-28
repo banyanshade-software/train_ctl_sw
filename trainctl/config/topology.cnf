@@ -40,7 +40,7 @@ config topology {
 
     user int p0 = (default) table(topo,p0);
     disk coord_t points[4] = (default) table(topo, pts);
-} num = (main) 64
+} num = (mainV0) 64
       = (simu) 64
       = (default) 0;
 

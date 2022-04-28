@@ -24,37 +24,37 @@ config canton {
 		= (all) { 1000, 770, 621,  538, 451, 413, 379, 355};
 
 	const GPIO_TypeDef *volt_port_b0
-		= (main:*) table(vpin_main, p0)
+		= (mainV0:*) table(vpin_mainV0, p0)
 		= (default) NULL;
 	const uint16_t volt_b0
-		= (main:*) table(vpin_main, b0)
+		= (mainV0:*) table(vpin_mainV0, b0)
 		= (default) 0;
 
 	const GPIO_TypeDef *volt_port_b1
-		= (main:*) table(vpin_main, p1)
+		= (mainV0:*) table(vpin_mainV0, p1)
 		= (default) NULL;
 	const uint16_t volt_b1
-		= (main:*) table(vpin_main, b1)
+		= (mainV0:*) table(vpin_mainV0, b1)
 		= (default) 0;
 
 	const GPIO_TypeDef *volt_port_b2
-		= (main:*) table(vpin_main, p2)
+		= (mainV0:*) table(vpin_mainV0, p2)
 		= (default) NULL;
 	const uint16_t volt_b2
-		= (main:*) table(vpin_main, b2)
+		= (mainV0:*) table(vpin_mainV0, b2)
 		= (default) 0;
 
     const  uint8_t pwm_timer_num // 1.. index in CantonTimerHandles
         = (default) 1
-        = (main:*) table(vpin_main,tim);
+        = (mainV0:*) table(vpin_mainV0,tim);
 
     const uint32_t ch0
         = (default) TIM_CHANNEL_1
-        = (main:*) table(vpin_main, ch0);
+        = (mainV0:*) table(vpin_mainV0, ch0);
 
     const uint32_t ch1
         = (default) TIM_CHANNEL_1
-        = (main:*) table(vpin_main, ch1);
+        = (mainV0:*) table(vpin_mainV0, ch1);
 
     const uint8_t notif_bemf:1
         = (all) 0;
@@ -62,12 +62,12 @@ config canton {
     user uint8_t reverse_bemf:1
 		= (default) 1;
 
-} num = (main) 6
+} num = (mainV0) 6
       = (simu) 6
       = (dispatcher) 1
       = (default) 0;
 
-table vpin_main 
+table vpin_mainV0 
 	( p0,    b0,   	            p1,    b1,  	    p2,    b2,			    tim, ch0, ch1)
     ( GPIOD, GPIO_PIN_0,		GPIOD, GPIO_PIN_1,	GPIOD, GPIO_PIN_2,		1, TIM_CHANNEL_1, TIM_CHANNEL_2)    // 0
     ( GPIOD, GPIO_PIN_3,		GPIOD, GPIO_PIN_4,	GPIOD, GPIO_PIN_5,		1, TIM_CHANNEL_3, TIM_CHANNEL_4)    // 1

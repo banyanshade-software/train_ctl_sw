@@ -29,9 +29,15 @@ const conf_utestloc_t *conf_utestloc_get(int num);
 
 
 
-#ifdef TRN_BOARD_MAIN
+#ifdef TRN_BOARD_MAINV04
+#define NUM_UTESTLOCS 0 // 0 
+#endif // TRN_BOARD_MAINV04
+
+
+
+#ifdef TRN_BOARD_MAINV0
 #define NUM_UTESTLOCS 4 // 4 
-#endif // TRN_BOARD_MAIN
+#endif // TRN_BOARD_MAINV0
 
 
 

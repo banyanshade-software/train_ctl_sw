@@ -21,7 +21,22 @@
 
 
 
-#ifdef TRN_BOARD_MAIN
+#ifdef TRN_BOARD_MAINV04
+
+unsigned int conf_turnout_num_entries(void)
+{
+    return 0; // 0 
+}
+
+static conf_turnout_t conf_turnout[0] = {
+};
+
+#endif // TRN_BOARD_MAINV04
+
+
+
+
+#ifdef TRN_BOARD_MAINV0
 
 unsigned int conf_turnout_num_entries(void)
 {
@@ -49,7 +64,7 @@ static conf_turnout_t conf_turnout[3] = {
   }
 };
 
-#endif // TRN_BOARD_MAIN
+#endif // TRN_BOARD_MAINV0
 
 
 

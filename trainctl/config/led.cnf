@@ -8,19 +8,19 @@
 
 config led {
 	const GPIO_TypeDef *port_led
-		= (main:*) table(lpin_main, port)
+		= (mainV0:*) table(lpin_mainV0, port)
 		= (default) NULL;
 	const uint16_t pin_led
-		= (main:*) table(lpin_main, pin)
+		= (mainV0:*) table(lpin_mainV0, pin)
 		= (default) 0;
     user uint8_t defprog
         = (default) 0;
-} num = (main) 3
+} num = (mainV0) 3
       = (simu) 3
       = (dispatcher) 0          # TODO
       = (default) 0;
 
-table lpin_main 
+table lpin_mainV0 
 	( port,     pin)
     ( GPIOA,    GPIO_PIN_7)
 ;

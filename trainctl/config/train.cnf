@@ -109,7 +109,7 @@ config train {
         = (all:0) 18
         = (all:1) 2;
     
-} num = (main) 8
+} num = (mainV0) 8
       = (simu) 4
       = (default) 0;
 

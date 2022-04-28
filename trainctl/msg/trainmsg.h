@@ -13,7 +13,7 @@
 #include "../utils/lf_mqueue.h"
 #include "notif.h"
 
-extern int localBoardNum;
+extern int localBoardNum(void);
 
 typedef uint8_t  msg_addr_t;
 // old
@@ -243,7 +243,9 @@ LFMQUEUE_DEF_H(from_ctrl, msg_64_t)
 #ifdef BOARD_HAS_IHM
 LFMQUEUE_DEF_H(to_ui, msg_64_t)
 LFMQUEUE_DEF_H(from_ui, msg_64_t)
+#endif
 
+#ifdef BOARD_HAS_UI_CTC
 LFMQUEUE_DEF_H(to_ui_track, msg_64_t)
 LFMQUEUE_DEF_H(from_ui_track, msg_64_t)
 #endif

@@ -12,8 +12,11 @@
 
 #define _UNUSED_ __attribute__((unused))
 
-int localBoardNum = BOARD_NUMBER; // TODO move to config/OAM
+int localBoardNum(void)
+{
+    return BOARD_NUMBER; // TODO move to config/OAM
 
+}
 
 
 #ifdef BOARD_HAS_TURNOUTS
@@ -42,7 +45,9 @@ LFMQUEUE_DEF_C(from_usb, msg_64_t,			16, 1)
 #ifdef BOARD_HAS_IHM
 LFMQUEUE_DEF_C(to_ui, msg_64_t, 		64, 1)
 LFMQUEUE_DEF_C(from_ui, msg_64_t, 		4,  0)
+#endif
 
+#ifdef BOARD_HAS_UI_CTC
 LFMQUEUE_DEF_C(to_ui_track, msg_64_t,   8, 1)
 LFMQUEUE_DEF_C(from_ui_track, msg_64_t, 2, 0)
 #endif
@@ -111,6 +116,8 @@ static const qdef_t qdefs[] = {
 #endif
 #ifdef BOARD_HAS_IHM
     {&from_ui,  &to_ui,             0},
+#endif
+#ifdef BOARD_HAS_UI_CTC
     {&from_ui_track, &to_ui_track,  0},
 #endif
 #ifdef BOARD_HAS_OSCILLO
@@ -134,7 +141,7 @@ static int  _local_disptach(msg_64_t *m, mqf_t *dont_send_to)
     int cont = 0;
     if (MA0_ADDR_IS_BOARD_ADDR(m->to)) {
         int dbrd = MA0_BOARD(m->to);
-        if (dbrd != localBoardNum) return 0;
+        if (dbrd != localBoardNum()) return 0;
         if ((0)) {
 #ifdef BOARD_HAS_CANTON
         } else if (MA0_IS_CANTON(m->to)) {
@@ -171,20 +178,30 @@ static int  _local_disptach(msg_64_t *m, mqf_t *dont_send_to)
         
         
     } else if (MA2_IS_LOCAL_ADDR(m->to)) {
-#ifdef BOARD_HAS_LOCALUI
+#ifdef BOARD_HAS_IHM
         if (MA2_UI_LOCAL == m->to) dest = &to_ui;
 #endif
         if (MA2_OAM_LOCAL) dest = &to_oam;
 #ifdef BOARD_HAS_USB
         if (MA2_USB_LOCAL) dest = &to_usb;
 #endif
+
+
     } else if (MA3_IS_GLOB_ADDR(m->to)) {
-#ifdef BOARD_HAS_IHM
-        if (MA3_UI_GEN == m->to) {cont = 1; dest = &to_ui;}
-        if (MA3_UI_CTC == m->to) {cont = 1; dest = &to_ui_track;}
+    	if (MA3_UI_GEN == m->to) {
+#ifdef BOARD_HAS_UI_GEN
+    		cont = 1; dest = &to_ui;
 #else
-        return 0;
+    		return 0;
 #endif
+    	}
+    	if (MA3_UI_CTC == m->to) {
+#ifdef BOARD_HAS_UI_CTC
+    		cont = 1; dest = &to_ui_track;
+#else
+        	return 0;
+#endif
+    	}
     }
     if (!dest) {
         // message should be locally routable but is not
@@ -252,7 +269,7 @@ static void dispatch_m64(msg_64_t *m, int f)
         itm_debug1(DBG_ERR|DBG_MSG, "cant ma2 route", m->to);
         return;
     }
-    if (localBoardNum<0) {
+    if (localBoardNum()<0) {
     	itm_debug2(DBG_OAM, "skip no brd", m->to, m->cmd);
     	return;
     }

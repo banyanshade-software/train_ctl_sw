@@ -9,6 +9,7 @@
 #import "SimTrain.h"
 #import "railconfig.h"
 #include "topology.h"
+#include "conf_train.h"
 
 @interface SimTrain ()
 //@property (nonatomic,readwrite) double speed;

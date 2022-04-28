@@ -261,7 +261,7 @@ void detect2_process_tick(uint32_t tick)
         	uint16_t inas = get_ina_bitfield_for_canton(detect_canton);
             msg_64_t m = {0};
             m.from = MA1_CONTROL();
-            m.to = MA0_INA(localBoardNum); // XXX board to be added
+            m.to = MA0_INA(localBoardNum()); // XXX board to be added
             m.cmd = CMD_START_INA_MONITOR;
             m.v1u = inas;
             mqf_write_from_ctrl(&m);
@@ -302,7 +302,7 @@ void detect2_process_tick(uint32_t tick)
             	// stop monitoring current (INA3221)
             	msg_64_t m = {0};
             	m.from = MA1_CONTROL();
-            	m.to = MA0_INA(localBoardNum); // XXX board to be added
+            	m.to = MA0_INA(localBoardNum()); // XXX board to be added
             	m.cmd = CMD_START_INA_MONITOR;
             	m.v1u = 0;
             	mqf_write_from_ctrl(&m);

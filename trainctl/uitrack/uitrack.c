@@ -15,8 +15,8 @@
 
 
 
-#ifndef BOARD_HAS_IHM
-#error BOARD_HAS_IHM not defined, remove this file from build
+#ifndef BOARD_HAS_UI_CTC
+#error BOARD_HAS_UI_CTC not defined, remove this file from build
 #endif
 
 

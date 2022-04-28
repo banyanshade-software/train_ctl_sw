@@ -11,5 +11,6 @@
 int boardIdToBoardNum(uint32_t uuid);
 
 
+extern int localBoardNum(void);
 
 #endif /* OAM_BOARDS_H_ */

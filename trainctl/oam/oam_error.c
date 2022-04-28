@@ -19,6 +19,7 @@ __weak void local_ui_fatal(void)
 
 }
 
+#ifndef TRAIN_SIMU
 void FatalError( const char *short4lettersmsg, _UNUSED_ const char *longmsg, _UNUSED_ enum fatal_error_code errcode)
 {
 	if (!_fatal) {
@@ -29,6 +30,7 @@ void FatalError( const char *short4lettersmsg, _UNUSED_ const char *longmsg, _UN
 		}
 	}
 }
+#endif
 
 // Error_Handler
 

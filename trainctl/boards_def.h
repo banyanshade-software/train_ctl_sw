@@ -32,10 +32,13 @@
 #define BOARD_HAS_USB
 //#define BOARD_HAS_CAN
 #define BOARD_HAS_IHM
+//#define BOARD_HAS_UI_GEN
+#define BOARD_HAS_UI_CTC
 #define BOARD_HAS_LED
 #define BOARD_HAS_TRKPLN
 //#define BOARD_HAS_OSCILLO
 //#define BOARD_HAS_USB_HOST
+
 
 #endif
 
@@ -74,19 +77,22 @@
 #define STM32F4
 
 #define BOARD_NUMBER 0
+
 #define BOARD_HAS_CANTON
 #define BOARD_HAS_TURNOUTS
 #define BOARD_HAS_INA3221
 #define BOARD_HAS_CTRL
 #define BOARD_HAS_TOPOLOGY
 #define BOARD_HAS_USB
+//#define BOARD_HAS_USB_HOST
 #define BOARD_HAS_CAN
 #define BOARD_HAS_IHM
+#define BOARD_HAS_ROTARY_ENCODER
+#define BOARD_HAS_UI_GEN
+//#define BOARD_HAS_UI_CTC
 #define BOARD_HAS_LED
 #define BOARD_HAS_TRKPLN
 #define BOARD_HAS_OSCILLO
-//#define BOARD_HAS_USB_HOST
-#define BOARD_HAS_ROTARY_ENCODER
 
 
 /*
@@ -122,12 +128,14 @@
 //#define BOARD_HAS_CTRL
 //#define BOARD_HAS_TOPOLOGY
 //#define BOARD_HAS_USB
+//#define BOARD_HAS_USB_HOST
 #define BOARD_HAS_CAN
 //#define BOARD_HAS_IHM
+//#define BOARD_HAS_ROTARY_ENCODER
+//#define BOARD_HAS_UI_GEN
+//#define BOARD_HAS_UI_CTC
 #define BOARD_HAS_LED
 //#define BOARD_HAS_TRKPLN
-//#define BOARD_HAS_USB_HOST
-//#define BOARD_HAS_ROTARY_ENCODER
 
 /*
  * number of local block per board
@@ -166,12 +174,13 @@
 //#define BOARD_HAS_USB
 //#define BOARD_HAS_USB_HOST
 #define BOARD_HAS_CAN
-#define BOARD_HAS_TFT
 #define BOARD_HAS_IHM
+//#define BOARD_HAS_ROTARY_ENCODER
+//#define BOARD_HAS_UI_GEN
+//#define BOARD_HAS_UI_CTC
 #define BOARD_HAS_LED
 //#define BOARD_HAS_TRKPLN
-//#define BOARD_HAS_USB_HOST
-//#define BOARD_HAS_ROTARY_ENCODER
+
 #define SSD1306_I2C_PORT        hi2c1
 
 /*

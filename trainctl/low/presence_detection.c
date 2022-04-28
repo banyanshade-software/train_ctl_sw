@@ -100,7 +100,7 @@ void presdect_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
     		presence[i] = p;
     		// notify change
     		msg_64_t m;
-    		m.from = MA_CANTON(localBoardNum, 0);
+    		m.from = MA_CANTON(localBoardNum(), 0);
     		m.to = MA_CONTROL();
     		m.cmd = CMD_PRESENCE_CHANGE;
     		m.sub = i;
@@ -120,7 +120,7 @@ void presdect_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt)
     		}
     	}
     	if ((1)) v[7] = cnt;
-    	m.from = MA_CANTON(localBoardNum, 0);
+    	m.from = MA_CANTON(localBoardNum(), 0);
     	m.to = MA_UI(1);
     	m.cmd = CMD_INA3221_REPORT;
     	m.v32u = (uint32_t) v;

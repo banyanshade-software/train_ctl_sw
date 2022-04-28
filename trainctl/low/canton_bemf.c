@@ -256,7 +256,7 @@ static void process_adc(volatile adc_result_t *buf, _UNUSED_ uint32_t deltaticks
 			cnt++;
 			if ((cnt%32)==0) {
 				msg_64_t m;
-				m.from = MA0_CANTON(localBoardNum());
+				m.from = MA0_CANTON(oam_localBoardNum());
 				m.subc = i;
 				m.to = MA3_UI_GEN;
 				m.cmd = CMD_VOFF_NOTIF;
@@ -266,7 +266,7 @@ static void process_adc(volatile adc_result_t *buf, _UNUSED_ uint32_t deltaticks
 			}
 		}
 		msg_64_t m = {0};
-		m.from = MA0_CANTON(localBoardNum());
+		m.from = MA0_CANTON(oam_localBoardNum());
 		m.subc = i;
 		m.to = bemf_to[i];
 		m.cmd = CMD_BEMF_NOTIF;

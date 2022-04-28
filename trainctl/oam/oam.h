@@ -17,7 +17,6 @@ extern int OAM_NeedsReschedule;
 uint32_t oam_getDeviceUniqueId(void); // returns unique uint32_t
 
 
-int oam_isMaster(void);
 
 /*
 * file:    4bit

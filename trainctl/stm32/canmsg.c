@@ -154,7 +154,7 @@ static uint32_t arbitration_id(msg_64_t *m)
 	// prio from msg
 	uint32_t aid = (m->cmd & 0xE0) << 3;
 
-	int lb = localBoardNum(); // -1 if unknown
+	int lb = oam_localBoardNum(); // -1 if unknown
 
 	if ((0)) {
 	} else if (MA3_IS_GLOB_ADDR(m->to)) {

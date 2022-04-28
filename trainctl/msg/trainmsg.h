@@ -13,7 +13,8 @@
 #include "../utils/lf_mqueue.h"
 #include "notif.h"
 
-extern int localBoardNum(void);
+
+extern int oam_localBoardNum(void);
 
 typedef uint8_t  msg_addr_t;
 // old
@@ -191,6 +192,8 @@ typedef char compile_assert[(sizeof(msg_64_t) == 8) ? 1 : -1];
 
 typedef enum {
 	runmode_off,				// when switching mode
+    runmode_master,
+    runmode_slave,
 	runmode_normal,
 	runmode_testcanton,
 	runmode_detect_experiment,	// obsolete, used for experimentation

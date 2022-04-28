@@ -12,11 +12,6 @@
 
 #define _UNUSED_ __attribute__((unused))
 
-int localBoardNum(void)
-{
-    return BOARD_NUMBER; // TODO move to config/OAM
-
-}
 
 
 #ifdef BOARD_HAS_TURNOUTS
@@ -141,7 +136,7 @@ static int  _local_disptach(msg_64_t *m, mqf_t *dont_send_to)
     int cont = 0;
     if (MA0_ADDR_IS_BOARD_ADDR(m->to)) {
         int dbrd = MA0_BOARD(m->to);
-        if (dbrd != localBoardNum()) return 0;
+        if (dbrd != oam_localBoardNum()) return 0;
         if ((0)) {
 #ifdef BOARD_HAS_CANTON
         } else if (MA0_IS_CANTON(m->to)) {
@@ -269,7 +264,7 @@ static void dispatch_m64(msg_64_t *m, int f)
         itm_debug1(DBG_ERR|DBG_MSG, "cant ma2 route", m->to);
         return;
     }
-    if (localBoardNum()<0) {
+    if (oam_localBoardNum()<0) {
     	itm_debug2(DBG_OAM, "skip no brd", m->to, m->cmd);
     	return;
     }

@@ -29,7 +29,6 @@ int OAM_NeedsReschedule = 0;
 
 static runmode_t run_mode = 0;
 
-static  int master = 0;
 static int initdone = 0;
 
 void OAM_Init(void)
@@ -53,6 +52,13 @@ static void exit_can_test(void)
 
 
 static void customOam(msg_64_t *m);
+static void handle_slave_msg(msg_64_t *m);
+static void handle_slave_tick(uint32_t tick);
+
+static void handle_testcan_tick(uint32_t tick);
+static void handle_testcan_msg(msg_64_t *m);
+
+static int respok = 0;
 
 
 void OAM_Tasklet(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_ uint32_t dt)
@@ -61,21 +67,22 @@ void OAM_Tasklet(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_
         OAM_Init();
     }
 	static int first = 1;
-	static int respok = 0;
 	if ((first)) {
-		uint32_t myid = oam_getDeviceUniqueId();
-		int myboard = boardIdToBoardNum(myid);
-		if (0==myboard) {
-			master = 1;
-		}
+		//uint32_t myid = oam_getDeviceUniqueId();
+		//int myboard = boardIdToBoardNum(myid);
+    
 		first = 0;
 		msg_64_t m;
 		m.from = MA3_BROADCAST;
-		m.to = MA3_BROADCAST;
+		m.to = MA2_LOCAL_BCAST;
 		m.cmd = CMD_SETRUN_MODE;
-        m.v1u =  runmode_normal; //runmode_testcan; // runmode_normal; runmode_detect2; runmode_off
-
-		mqf_write_from_nowhere(&m); // from_nowher, otherwise it wont be sent to self
+        if (oam_isMaster()) {
+            m.v1u =  runmode_master; //runmode_normal; //runmode_testcan; // runmode_normal; runmode_detect2; runmode_off
+            m.v1u = runmode_normal; // XXX temp, delete me
+        } else {
+            m.v1u = runmode_slave;
+        }
+        mqf_write_from_nowhere(&m); // from_nowher, otherwise it wont be sent to self
 	}
 
 
@@ -223,50 +230,74 @@ void OAM_Tasklet(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_
         break;
 
 
-        case CMD_CANTEST:
-        	if ((0)) { // XXX test relat
-        		static int cnt=0;
-        		cnt++;
-        		if (0==(cnt%4)) {
-        			static int a = 0;
-        			msg_64_t m = {0};
-        			m.to = MA0_TURNOUT(1);
-        			m.subc = 0;
-        			m.from = MA0_OAM(1);
-        			m.cmd = a ? CMD_TURNOUT_A : CMD_TURNOUT_B;
-        			a = a ? 0 : 1;
-        			mqf_write_from_oam(&m);
-        		}
-        	}
-        	if (run_mode != runmode_testcan) break;
-        	if (master) break;
-        	m.cmd = CMD_CANTEST_RESP;
-        	m.v2u = m.v1u*2;
-        	mqf_write_from_oam(&m);
-        	break;
-
-        case CMD_CANTEST_RESP:
-        	// also handled by IHM
-        	if (run_mode == runmode_testcan) {
-        		respok++;
-        		if (respok > 20) {
-        			respok = 0;
-        			exit_can_test();
-        		}
-        	}
-        	break;
-
         default:
         	break;
         }
+        if (runmode_testcan == run_mode) {
+            handle_testcan_msg(&m);
+        } else if (oam_isMaster()) {
+            // TODO
+        } else {
+            handle_slave_msg(&m);
+        }
 	}
 	switch (run_mode) {
-	case runmode_testcan: break;
+	case runmode_testcan:
+            handle_testcan_tick(tick);
+            break;
+        case runmode_master:
+            break;
+        case runmode_slave:
+            handle_slave_tick(tick);
+            break;
 	default:
 		return;
 	}
+}
 
-	if (!master) return;
+static void handle_testcan_msg(msg_64_t *m)
+{
+	switch (m->cmd)  {
+	default: break;
+	case CMD_CANTEST:
+		if ((0)) { // XXX test relat
+			static int cnt=0;
+			cnt++;
+			if (0==(cnt%4)) {
+				static int a = 0;
+				msg_64_t m = {0};
+				m.to = MA0_TURNOUT(1);
+				m.subc = 0;
+				m.from = MA0_OAM(1);
+				m.cmd = a ? CMD_TURNOUT_A : CMD_TURNOUT_B;
+				a = a ? 0 : 1;
+				mqf_write_from_oam(&m);
+			}
+		}
+		if (run_mode != runmode_testcan) break;
+		if (oam_isMaster()) break;
+		m->cmd = CMD_CANTEST_RESP;
+		m->v2u = m->v1u*2;
+		mqf_write_from_oam(m);
+		break;
+
+	case CMD_CANTEST_RESP:
+		// also handled by IHM
+		if (run_mode == runmode_testcan) {
+			respok++;
+			if (respok > 20) {
+				respok = 0;
+				exit_can_test();
+			}
+		}
+		break;
+	}
+}
+    
+    
+static void handle_testcan_tick(uint32_t tick)
+{
+	if (!oam_isMaster()) return;
 
 	// send ping
 	static uint32_t lasttick = 0;
@@ -338,13 +369,8 @@ uint32_t oam_getDeviceUniqueId(void)
 #endif
 }
 
-int oam_isMaster(void)
-{
-    return 1; // TODO
-}
 
-
-
+// --------------------------------------------------------------
 
 
 static void customOam(msg_64_t *m)
@@ -358,3 +384,47 @@ static void customOam(msg_64_t *m)
 		break;
 	}
 }
+
+
+// --------------------------------------------------------------
+
+/* O&M slave handling */
+
+static uint32_t lastBcast = 0;
+enum oam_slv_state {
+    oam_slv_bcast,
+};
+static enum oam_slv_state slvState = oam_slv_bcast;
+
+static void handle_slave_tick(uint32_t tick)
+{
+    if (slvState == oam_slv_bcast) {
+        if (tick > lastBcast+200) {
+            lastBcast = tick;
+            msg_64_t m = {0};
+            m.cmd = CMD_OAM_SLAVE;
+            m.v32u = oam_getDeviceUniqueId();
+            m.from = MA3_BROADCAST;
+            m.to = MA0_OAM(0);
+            mqf_write_from_oam(&m);
+        }
+    }
+}
+
+static void handle_slave_msg(msg_64_t *m)
+{
+	switch (m->cmd) {
+	default: break;
+	case CMD_OAM_BNUM:
+		if (oam_getDeviceUniqueId() != m->v32u) {
+			itm_debug2(DBG_ERR|DBG_OAM, "bad uniq", m->v32u, oam_getDeviceUniqueId());
+			return;
+		}
+		oam_store_slave_local_boardnum(m->subc);
+		break;
+
+	}
+}
+// --------------------------------------------------------------
+// --------------------------------------------------------------
+// --------------------------------------------------------------

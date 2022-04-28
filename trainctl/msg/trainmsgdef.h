@@ -90,6 +90,11 @@ typedef enum {
 
 	CMD_USB_STATS,					// any -> usb								send stats
 	CMD_USB_OSCILLO,				// any -> usb								send oscillo values
+    
+    CMD_OAM_MASTER,
+    CMD_OAM_SLAVE,
+    CMD_OAM_BNUM,
+    CMD_OAM_OK,
     CMD_OAM_CUSTOM,                 // any -> OAM(), not defined (for test)
 } cmd_msg_t;
 

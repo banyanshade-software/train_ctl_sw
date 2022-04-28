@@ -114,11 +114,16 @@ int main(int argc, char **argv) {
             }
 
 
-			config_node_t *bm = create_config_node_string(&system, CONFIG_NODE_BOARD, "main");
-			bm->next = create_config_node_string(&system, CONFIG_NODE_BOARD, "dispatcher");
-			bm->next->next = create_config_node_string(&system, CONFIG_NODE_BOARD, "switcher");
-			bm->next->next->next = create_config_node_string(&system, CONFIG_NODE_BOARD, "main_zero");
-			bm->next->next->next->next = create_config_node_string(&system, CONFIG_NODE_BOARD, "simu");
+            config_node_t *bm;
+            config_node_t *pbm = NULL;
+            //static const char *boards = { "mainV0", "mainV04", "dispatcher", "switcher", "main_zero", "simu", NULL};
+            static const char *boards[] = { "simu", "main_zero", "switcher", "dispatcher", "main", NULL};
+            for (int i=0; boards[i]; i++) {
+                printf(".......%s\n", boards[i]);
+			    bm = create_config_node_string(&system, CONFIG_NODE_BOARD, boards[i]);
+                bm->next = pbm;
+                pbm = bm;
+            }
 
 			generate_hfiles(root, bm);
 			generate_cfile(root, 1, bm);

@@ -7,11 +7,17 @@
 
 
 config turnout {
-	const GPIO_TypeDef *cmd_port
-		= (mainV0:*) table(tpin_mainV0, port)
+	const GPIO_TypeDef *cmd_portA
+		= (mainV0:*) table(tpin_mainV0, portA)
+		= (mainV04:*) table(tpin_mainV04, portA)
+		= (default) NULL;
+	const GPIO_TypeDef *cmd_portB
+		= (mainV0:*) table(tpin_mainV0, portB)
+		= (mainV04:*) table(tpin_mainV04, portB)
 		= (default) NULL;
 	const uint16_t pinA
 		= (mainV0:*) table(tpin_mainV0, bA)
+		= (mainV04:*) table(tpin_mainV04, bA)
 		= (default) 0;
 	const uint16_t pinB
 		= (mainV0:*) table(tpin_mainV0, bB)
@@ -26,12 +32,21 @@ config turnout {
       = (default) 0;
 
 table tpin_mainV0 
-	( port,     bA,         bB)
-    ( GPIOA,    GPIO_PIN_9, GPIO_PIN_10 )
-    ( GPIOE,    GPIO_PIN_0, GPIO_PIN_1  )
-    ( GPIOE,    GPIO_PIN_8, GPIO_PIN_7  )
+	( portA,    portB,      bA,         bB)
+    ( GPIOA,    GPIOA,      GPIO_PIN_9, GPIO_PIN_10 )
+    ( GPIOE,    GPIOE,      GPIO_PIN_0, GPIO_PIN_1  )
+    ( GPIOE,    GPIOE,      GPIO_PIN_8, GPIO_PIN_7  )
 ;
 
+table tpin_mainV04
+	( portA,    portB,       bA,          bB)
+    ( GPIOE,    GPIOE,      GPIO_PIN_0,  GPIO_PIN_1)  // TURN1 PE0,PE1
+    ( GPIOD,    GPIOD,      GPIO_PIN_0,  GPIO_PIN_1)  // TURN2 PD0,PD1
+    ( GPIOC,    GPIOC,      GPIO_PIN_13, GPIO_PIN_11) // TURN3 PC13, PC11
+    ( GPIOA,    GPIOA,      GPIO_PIN_6,  GPIO_PIN_7)  // TURN4 PA6,PA7
+    ( GPIOA,    GPIOB,      GPIO_PIN_15, GPIO_PIN_15) // TURN5 PA15,PB15
+    ( GPIOC,    GPIOC,      GPIO_PIN_10, GPIO_PIN_12) // TURN6 PC10,PC12
+;
 
 attrib turnout h_code {
 

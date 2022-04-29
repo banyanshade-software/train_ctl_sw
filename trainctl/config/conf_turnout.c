@@ -30,38 +30,44 @@ unsigned int conf_turnout_num_entries(void)
 
 static conf_turnout_t conf_turnout[6] = {
   {     // 0
-     .cmd_port = NULL,
-     .pinA = 0,
+     .cmd_portA = GPIOE,
+     .cmd_portB = GPIOE,
+     .pinA = GPIO_PIN_0,
      .pinB = 0,
      .reverse = 0,
   },
   {     // 1
-     .cmd_port = NULL,
-     .pinA = 0,
+     .cmd_portA = GPIOD,
+     .cmd_portB = GPIOD,
+     .pinA = GPIO_PIN_0,
      .pinB = 0,
      .reverse = 0,
   },
   {     // 2
-     .cmd_port = NULL,
-     .pinA = 0,
+     .cmd_portA = GPIOC,
+     .cmd_portB = GPIOC,
+     .pinA = GPIO_PIN_13,
      .pinB = 0,
      .reverse = 0,
   },
   {     // 3
-     .cmd_port = NULL,
-     .pinA = 0,
+     .cmd_portA = GPIOA,
+     .cmd_portB = GPIOA,
+     .pinA = GPIO_PIN_6,
      .pinB = 0,
      .reverse = 0,
   },
   {     // 4
-     .cmd_port = NULL,
-     .pinA = 0,
+     .cmd_portA = GPIOA,
+     .cmd_portB = GPIOB,
+     .pinA = GPIO_PIN_15,
      .pinB = 0,
      .reverse = 0,
   },
   {     // 5
-     .cmd_port = NULL,
-     .pinA = 0,
+     .cmd_portA = GPIOC,
+     .cmd_portB = GPIOC,
+     .pinA = GPIO_PIN_10,
      .pinB = 0,
      .reverse = 0,
   }
@@ -81,19 +87,22 @@ unsigned int conf_turnout_num_entries(void)
 
 static conf_turnout_t conf_turnout[3] = {
   {     // 0
-     .cmd_port = GPIOA,
+     .cmd_portA = GPIOA,
+     .cmd_portB = GPIOA,
      .pinA = GPIO_PIN_9,
      .pinB = GPIO_PIN_10,
      .reverse = 0,
   },
   {     // 1
-     .cmd_port = GPIOE,
+     .cmd_portA = GPIOE,
+     .cmd_portB = GPIOE,
      .pinA = GPIO_PIN_0,
      .pinB = GPIO_PIN_1,
      .reverse = 0,
   },
   {     // 2
-     .cmd_port = GPIOE,
+     .cmd_portA = GPIOE,
+     .cmd_portB = GPIOE,
      .pinA = GPIO_PIN_8,
      .pinB = GPIO_PIN_7,
      .reverse = 0,
@@ -159,25 +168,29 @@ unsigned int conf_turnout_num_entries(void)
 
 static conf_turnout_t conf_turnout[4] = {
   {     // 0
-     .cmd_port = NULL,
+     .cmd_portA = NULL,
+     .cmd_portB = NULL,
      .pinA = 0,
      .pinB = 0,
      .reverse = 0,
   },
   {     // 1
-     .cmd_port = NULL,
+     .cmd_portA = NULL,
+     .cmd_portB = NULL,
      .pinA = 0,
      .pinB = 0,
      .reverse = 0,
   },
   {     // 2
-     .cmd_port = NULL,
+     .cmd_portA = NULL,
+     .cmd_portB = NULL,
      .pinA = 0,
      .pinB = 0,
      .reverse = 0,
   },
   {     // 3
-     .cmd_port = NULL,
+     .cmd_portA = NULL,
+     .cmd_portB = NULL,
      .pinA = 0,
      .pinB = 0,
      .reverse = 0,

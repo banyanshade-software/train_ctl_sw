@@ -418,7 +418,7 @@ static void MX_ADC1_Init(void)
 
   /** Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time.
   */
-  sConfig.Channel = ADC_CHANNEL_8;
+  sConfig.Channel = ADC_CHANNEL_10;
   sConfig.Rank = 7;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
@@ -427,7 +427,7 @@ static void MX_ADC1_Init(void)
 
   /** Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time.
   */
-  sConfig.Channel = ADC_CHANNEL_10;
+  sConfig.Channel = ADC_CHANNEL_11;
   sConfig.Rank = 8;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
@@ -436,7 +436,7 @@ static void MX_ADC1_Init(void)
 
   /** Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time.
   */
-  sConfig.Channel = ADC_CHANNEL_11;
+  sConfig.Channel = ADC_CHANNEL_12;
   sConfig.Rank = 9;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
@@ -445,7 +445,7 @@ static void MX_ADC1_Init(void)
 
   /** Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time.
   */
-  sConfig.Channel = ADC_CHANNEL_12;
+  sConfig.Channel = ADC_CHANNEL_13;
   sConfig.Rank = 10;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
@@ -454,7 +454,7 @@ static void MX_ADC1_Init(void)
 
   /** Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time.
   */
-  sConfig.Channel = ADC_CHANNEL_13;
+  sConfig.Channel = ADC_CHANNEL_14;
   sConfig.Rank = 11;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
@@ -463,7 +463,7 @@ static void MX_ADC1_Init(void)
 
   /** Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time.
   */
-  sConfig.Channel = ADC_CHANNEL_14;
+  sConfig.Channel = ADC_CHANNEL_15;
   sConfig.Rank = 12;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
@@ -1165,10 +1165,6 @@ static void MX_TIM12_Init(void)
   {
     Error_Handler();
   }
-  if (HAL_TIM_PWM_ConfigChannel(&htim12, &sConfigOC, TIM_CHANNEL_2) != HAL_OK)
-  {
-    Error_Handler();
-  }
   /* USER CODE BEGIN TIM12_Init 2 */
 
   /* USER CODE END TIM12_Init 2 */
@@ -1213,31 +1209,27 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOD_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOE, VOLT_4_SEL0_Pin|VOLT_4_SEL1_Pin|VOLT_4_SEL2_Pin|GPIO_PIN_6
-                          |TURN3B_Pin|TURN3A_Pin|TURN4A_Pin|TURN4B_Pin
-                          |TURN2A_Pin|TURN2B_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOE, VOLT_4_SEL0_Pin|VOLT_4_SEL1_Pin|VOLT_4_SEL2_Pin|TURN1A_Pin
+                          |TURN1B_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, BOARD_LED_Pin|LED0_Pin|TURN1A_Pin|TURN1B_Pin
-                          |GPIO_PIN_15, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOC, TURN3A_Pin|TURN6A_Pin|TURN3B_Pin|TURN6B_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_2|GPIO_PIN_12|GPIO_PIN_13, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOA, TURN4A_BOARD_LED_Pin|TURN4B_Pin|TURN5A_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_2|GPIO_PIN_12|GPIO_PIN_13|TURN5B_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOD, VOLT_2_SEL2_Pin|VOLT_3_SEL0_Pin|VOLT_3_SEL1_Pin|VOLT_3_SEL2_Pin
-                          |VOLT_0_SEL0_Pin|VOLT_0_SEL1_Pin|VOLT_0_SEL2_Pin|VOLT_1_SEL0_Pin
+                          |TURN2A_Pin|TURN2B_Pin|VOLT_0_SEL2_Pin|VOLT_1_SEL0_Pin
                           |VOLT_1_SEL1_Pin|VOLT_1_SEL2_Pin|VOLT_2_SEL0_Pin|VOLT_2_SEL1_Pin, GPIO_PIN_RESET);
 
-  /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_12, GPIO_PIN_RESET);
-
-  /*Configure GPIO pins : VOLT_4_SEL0_Pin VOLT_4_SEL1_Pin VOLT_4_SEL2_Pin PE6
-                           TURN3B_Pin TURN3A_Pin TURN4A_Pin TURN4B_Pin
-                           TURN2A_Pin TURN2B_Pin */
-  GPIO_InitStruct.Pin = VOLT_4_SEL0_Pin|VOLT_4_SEL1_Pin|VOLT_4_SEL2_Pin|GPIO_PIN_6
-                          |TURN3B_Pin|TURN3A_Pin|TURN4A_Pin|TURN4B_Pin
-                          |TURN2A_Pin|TURN2B_Pin;
+  /*Configure GPIO pins : VOLT_4_SEL0_Pin VOLT_4_SEL1_Pin VOLT_4_SEL2_Pin TURN1A_Pin
+                           TURN1B_Pin */
+  GPIO_InitStruct.Pin = VOLT_4_SEL0_Pin|VOLT_4_SEL1_Pin|VOLT_4_SEL2_Pin|TURN1A_Pin
+                          |TURN1B_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
@@ -1249,39 +1241,37 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_PULLUP;
   HAL_GPIO_Init(USER_BTN_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : BOARD_LED_Pin LED0_Pin TURN1A_Pin TURN1B_Pin
-                           PA15 */
-  GPIO_InitStruct.Pin = BOARD_LED_Pin|LED0_Pin|TURN1A_Pin|TURN1B_Pin
-                          |GPIO_PIN_15;
+  /*Configure GPIO pins : TURN3A_Pin TURN6A_Pin TURN3B_Pin TURN6B_Pin */
+  GPIO_InitStruct.Pin = TURN3A_Pin|TURN6A_Pin|TURN3B_Pin|TURN6B_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : TURN4A_BOARD_LED_Pin TURN4B_Pin TURN5A_Pin */
+  GPIO_InitStruct.Pin = TURN4A_BOARD_LED_Pin|TURN4B_Pin|TURN5A_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : PB2 PB12 PB13 */
-  GPIO_InitStruct.Pin = GPIO_PIN_2|GPIO_PIN_12|GPIO_PIN_13;
+  /*Configure GPIO pins : PB2 PB12 PB13 TURN5B_Pin */
+  GPIO_InitStruct.Pin = GPIO_PIN_2|GPIO_PIN_12|GPIO_PIN_13|TURN5B_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
   /*Configure GPIO pins : VOLT_2_SEL2_Pin VOLT_3_SEL0_Pin VOLT_3_SEL1_Pin VOLT_3_SEL2_Pin
-                           VOLT_0_SEL0_Pin VOLT_0_SEL1_Pin VOLT_0_SEL2_Pin VOLT_1_SEL0_Pin
+                           TURN2A_Pin TURN2B_Pin VOLT_0_SEL2_Pin VOLT_1_SEL0_Pin
                            VOLT_1_SEL1_Pin VOLT_1_SEL2_Pin VOLT_2_SEL0_Pin VOLT_2_SEL1_Pin */
   GPIO_InitStruct.Pin = VOLT_2_SEL2_Pin|VOLT_3_SEL0_Pin|VOLT_3_SEL1_Pin|VOLT_3_SEL2_Pin
-                          |VOLT_0_SEL0_Pin|VOLT_0_SEL1_Pin|VOLT_0_SEL2_Pin|VOLT_1_SEL0_Pin
+                          |TURN2A_Pin|TURN2B_Pin|VOLT_0_SEL2_Pin|VOLT_1_SEL0_Pin
                           |VOLT_1_SEL1_Pin|VOLT_1_SEL2_Pin|VOLT_2_SEL0_Pin|VOLT_2_SEL1_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
-
-  /*Configure GPIO pin : PC12 */
-  GPIO_InitStruct.Pin = GPIO_PIN_12;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
 }
 

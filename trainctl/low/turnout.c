@@ -132,15 +132,16 @@ static void process_turnout_cmd(msg_64_t *m, _UNUSED_ uint32_t tick, _UNUSED_ ui
 	}
 	if ((DBG_MSG_TURNOUT)) debug_info('A', 0, "CMD", tidx, m->cmd, avars->value);
 #ifndef TRAIN_SIMU
-	if (!aconf->cmd_port) return;
+	if (!aconf->cmd_portA) return;
+	if (!aconf->cmd_portB) return;
 #endif
 	switch (m->cmd) {
 	case CMD_TURNOUT_A:
 		itm_debug2(DBG_TURNOUT, "TA", tidx, avars->value);
 		avars->value = -1;
 #ifndef TRAIN_SIMU
-	    HAL_GPIO_WritePin(aconf->cmd_port, aconf->pinA, GPIO_PIN_RESET);
-	    HAL_GPIO_WritePin(aconf->cmd_port, aconf->pinB, GPIO_PIN_RESET);
+	    HAL_GPIO_WritePin(aconf->cmd_portA, aconf->pinA, GPIO_PIN_RESET);
+	    HAL_GPIO_WritePin(aconf->cmd_portB, aconf->pinB, GPIO_PIN_RESET);
 #endif
 		avars->st = ST_SETA;
 		break;
@@ -148,8 +149,8 @@ static void process_turnout_cmd(msg_64_t *m, _UNUSED_ uint32_t tick, _UNUSED_ ui
 		itm_debug2(DBG_TURNOUT, "TB", tidx, avars->value);
 		avars->value = -1;
 #ifndef TRAIN_SIMU
-	    HAL_GPIO_WritePin(aconf->cmd_port, aconf->pinA, GPIO_PIN_RESET);
-	    HAL_GPIO_WritePin(aconf->cmd_port, aconf->pinB, GPIO_PIN_RESET);
+	    HAL_GPIO_WritePin(aconf->cmd_portA, aconf->pinA, GPIO_PIN_RESET);
+	    HAL_GPIO_WritePin(aconf->cmd_portB, aconf->pinB, GPIO_PIN_RESET);
 #endif
 		avars->st = ST_SETB;
 		break;
@@ -172,10 +173,11 @@ static void turnout_reset(void)
 			continue;
 		}
 #ifndef TRAIN_SIMU
-		if (!aconf->cmd_port) return;
+		if (!aconf->cmd_portA) return;
+		if (!aconf->cmd_portB) return;
 
-		HAL_GPIO_WritePin(aconf->cmd_port, aconf->pinA, GPIO_PIN_RESET);
-		HAL_GPIO_WritePin(aconf->cmd_port, aconf->pinB, GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(aconf->cmd_portA, aconf->pinA, GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(aconf->cmd_portB, aconf->pinB, GPIO_PIN_RESET);
 #endif
 		itm_debug1(DBG_TURNOUT, "A/RESET", tidx);
 		debug_info('A', 0, "RESET", 0, 0,0);
@@ -199,14 +201,15 @@ static void process_turnout_timers(_UNUSED_ uint32_t tick, _UNUSED_ uint32_t dt)
 	for (int i=0; i<NUM_TURNOUTS; i++) {
 		USE_TURNOUT(i)		// aconf , avars
 #ifndef TRAIN_SIMU
-        if (!aconf->cmd_port) continue;
+        if (!aconf->cmd_portA) continue;
+		if (!aconf->cmd_portB) continue;
 #endif
 		switch (avars->st) {
 		case ST_IDLE:
 			break;
 		case ST_SETA:
 #ifndef TRAIN_SIMU
-			HAL_GPIO_WritePin(aconf->cmd_port, aconf->pinA, GPIO_PIN_SET);
+			HAL_GPIO_WritePin(aconf->cmd_portA, aconf->pinA, GPIO_PIN_SET);
 #else
 			(void)aconf; // unused in SIMU
 #endif
@@ -216,7 +219,7 @@ static void process_turnout_timers(_UNUSED_ uint32_t tick, _UNUSED_ uint32_t dt)
 			break;
 		case ST_SETB:
 #ifndef TRAIN_SIMU
-			HAL_GPIO_WritePin(aconf->cmd_port, aconf->pinB, GPIO_PIN_SET);
+			HAL_GPIO_WritePin(aconf->cmd_portB, aconf->pinB, GPIO_PIN_SET);
 #endif
 			avars->st = ST_RESETB;
 			itm_debug1(DBG_TURNOUT, "A/SETB", i);
@@ -224,7 +227,7 @@ static void process_turnout_timers(_UNUSED_ uint32_t tick, _UNUSED_ uint32_t dt)
 			break;
 		case ST_RESETA:
 #ifndef TRAIN_SIMU
-			HAL_GPIO_WritePin(aconf->cmd_port, aconf->pinA, GPIO_PIN_RESET);
+			HAL_GPIO_WritePin(aconf->cmd_portA, aconf->pinA, GPIO_PIN_RESET);
 #endif
 			avars->st = ST_IDLE;
 			itm_debug1(DBG_TURNOUT, "A/RESETA", i);
@@ -232,7 +235,7 @@ static void process_turnout_timers(_UNUSED_ uint32_t tick, _UNUSED_ uint32_t dt)
 			break;
 		case ST_RESETB:
 #ifndef TRAIN_SIMU
-			HAL_GPIO_WritePin(aconf->cmd_port, aconf->pinB, GPIO_PIN_RESET);
+			HAL_GPIO_WritePin(aconf->cmd_portB, aconf->pinB, GPIO_PIN_RESET);
 #endif
 			avars->st = ST_IDLE;
 			itm_debug1(DBG_TURNOUT, "A/RESETB", i);

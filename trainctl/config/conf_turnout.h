@@ -31,7 +31,8 @@ typedef void *GPIO_TypeDef;
 
 
 typedef struct conf_turnout {
-    GPIO_TypeDef *cmd_port;
+    GPIO_TypeDef *cmd_portA;
+    GPIO_TypeDef *cmd_portB;
     uint16_t pinA;
     uint16_t pinB;
     uint8_t reverse;

@@ -26,6 +26,14 @@
 #include <memory.h>
 
 
+#ifndef BOARD_LED_GPIO_Port
+#ifdef TURN4A_BOARD_LED_GPIO_Port
+#define BOARD_LED_GPIO_Port TURN4A_BOARD_LED_GPIO_Port
+#define BOARD_LED_Pin		TURN4A_BOARD_LED_Pin
+#endif
+#endif
+
+
 void flash_led(void)
 {
 #ifndef TRAIN_SIMU

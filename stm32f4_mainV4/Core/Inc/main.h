@@ -100,6 +100,8 @@ void Error_Handler(void);
 #define ADC_5_V0_GPIO_Port GPIOC
 #define ADC_5_V1_Pin GPIO_PIN_5
 #define ADC_5_V1_GPIO_Port GPIOC
+#define FLASH_CS_Pin GPIO_PIN_0
+#define FLASH_CS_GPIO_Port GPIOB
 #define PWM_4_1_Pin GPIO_PIN_1
 #define PWM_4_1_GPIO_Port GPIOB
 #define CT0_3_Pin GPIO_PIN_7
@@ -140,6 +142,10 @@ void Error_Handler(void);
 #define CT5_2_GPIO_Port GPIOD
 #define CT5_3_Pin GPIO_PIN_11
 #define CT5_3_GPIO_Port GPIOD
+#define ROT1_Pin GPIO_PIN_12
+#define ROT1_GPIO_Port GPIOD
+#define ROT2_Pin GPIO_PIN_13
+#define ROT2_GPIO_Port GPIOD
 #define PWM_3_0_Pin GPIO_PIN_6
 #define PWM_3_0_GPIO_Port GPIOC
 #define PWM_3_1_Pin GPIO_PIN_7
@@ -158,6 +164,12 @@ void Error_Handler(void);
 #define TURN2A_GPIO_Port GPIOD
 #define TURN2B_Pin GPIO_PIN_1
 #define TURN2B_GPIO_Port GPIOD
+#define CT4_1_Pin GPIO_PIN_2
+#define CT4_1_GPIO_Port GPIOD
+#define CT4_2_Pin GPIO_PIN_3
+#define CT4_2_GPIO_Port GPIOD
+#define CT4_3_Pin GPIO_PIN_4
+#define CT4_3_GPIO_Port GPIOD
 #define CT3_1_Pin GPIO_PIN_5
 #define CT3_1_GPIO_Port GPIOD
 #define CT3_2_Pin GPIO_PIN_6

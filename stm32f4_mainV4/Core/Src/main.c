@@ -77,7 +77,6 @@ TIM_HandleTypeDef htim1;
 TIM_HandleTypeDef htim2;
 TIM_HandleTypeDef htim3;
 TIM_HandleTypeDef htim4;
-TIM_HandleTypeDef htim5;
 TIM_HandleTypeDef htim8;
 TIM_HandleTypeDef htim12;
 
@@ -131,7 +130,6 @@ static void MX_I2C3_Init(void);
 static void MX_TIM12_Init(void);
 static void MX_CAN1_Init(void);
 static void MX_ADC2_Init(void);
-static void MX_TIM5_Init(void);
 void StartUiTask(void const * argument);
 extern void StartCtrlTask(void const * argument);
 extern void StartUsbTask(void const * argument);
@@ -210,7 +208,6 @@ int main(void)
   MX_TIM12_Init();
   MX_CAN1_Init();
   MX_ADC2_Init();
-  MX_TIM5_Init();
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
@@ -1023,54 +1020,6 @@ static void MX_TIM4_Init(void)
 }
 
 /**
-  * @brief TIM5 Initialization Function
-  * @param None
-  * @retval None
-  */
-static void MX_TIM5_Init(void)
-{
-
-  /* USER CODE BEGIN TIM5_Init 0 */
-
-  /* USER CODE END TIM5_Init 0 */
-
-  TIM_MasterConfigTypeDef sMasterConfig = {0};
-  TIM_OC_InitTypeDef sConfigOC = {0};
-
-  /* USER CODE BEGIN TIM5_Init 1 */
-
-  /* USER CODE END TIM5_Init 1 */
-  htim5.Instance = TIM5;
-  htim5.Init.Prescaler = 0;
-  htim5.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim5.Init.Period = 10000;
-  htim5.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
-  htim5.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_ENABLE;
-  if (HAL_TIM_OC_Init(&htim5) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  sMasterConfig.MasterOutputTrigger = TIM_TRGO_UPDATE;
-  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_ENABLE;
-  if (HAL_TIMEx_MasterConfigSynchronization(&htim5, &sMasterConfig) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  sConfigOC.OCMode = TIM_OCMODE_ACTIVE;
-  sConfigOC.Pulse = 2900;
-  sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
-  sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
-  if (HAL_TIM_OC_ConfigChannel(&htim5, &sConfigOC, TIM_CHANNEL_1) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /* USER CODE BEGIN TIM5_Init 2 */
-
-  /* USER CODE END TIM5_Init 2 */
-
-}
-
-/**
   * @brief TIM8 Initialization Function
   * @param None
   * @retval None
@@ -1224,12 +1173,12 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(GPIOA, TURN4A_BOARD_LED_Pin|TURN4B_Pin|TURN5A_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOB, CT2_1_Pin|CT2_2_Pin|TURN5B_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOB, FLASH_CS_Pin|CT2_1_Pin|CT2_2_Pin|TURN5B_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOD, LED1_Pin|CT5_1_Pin|CT5_2_Pin|CT5_3_Pin
-                          |TURN2A_Pin|TURN2B_Pin|CT3_1_Pin|CT3_2_Pin
-                          |CT3_3_Pin, GPIO_PIN_RESET);
+                          |TURN2A_Pin|TURN2B_Pin|CT4_1_Pin|CT4_2_Pin
+                          |CT3_1_Pin|CT3_2_Pin|CT3_3_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pins : CT1_3_Pin CT1_2_Pin CT0_1_Pin CT1_1_Pin
                            CT0_2_Pin CT0_3_Pin LED5_Pin LED4_Pin
@@ -1256,23 +1205,35 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : CT2_1_Pin CT2_2_Pin TURN5B_Pin */
-  GPIO_InitStruct.Pin = CT2_1_Pin|CT2_2_Pin|TURN5B_Pin;
+  /*Configure GPIO pins : FLASH_CS_Pin CT2_1_Pin CT2_2_Pin TURN5B_Pin */
+  GPIO_InitStruct.Pin = FLASH_CS_Pin|CT2_1_Pin|CT2_2_Pin|TURN5B_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
   /*Configure GPIO pins : LED1_Pin CT5_1_Pin CT5_2_Pin CT5_3_Pin
-                           TURN2A_Pin TURN2B_Pin CT3_1_Pin CT3_2_Pin
-                           CT3_3_Pin */
+                           TURN2A_Pin TURN2B_Pin CT4_1_Pin CT4_2_Pin
+                           CT3_1_Pin CT3_2_Pin CT3_3_Pin */
   GPIO_InitStruct.Pin = LED1_Pin|CT5_1_Pin|CT5_2_Pin|CT5_3_Pin
-                          |TURN2A_Pin|TURN2B_Pin|CT3_1_Pin|CT3_2_Pin
-                          |CT3_3_Pin;
+                          |TURN2A_Pin|TURN2B_Pin|CT4_1_Pin|CT4_2_Pin
+                          |CT3_1_Pin|CT3_2_Pin|CT3_3_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : ROT1_Pin ROT2_Pin */
+  GPIO_InitStruct.Pin = ROT1_Pin|ROT2_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : CT4_3_Pin */
+  GPIO_InitStruct.Pin = CT4_3_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(CT4_3_GPIO_Port, &GPIO_InitStruct);
 
 }
 

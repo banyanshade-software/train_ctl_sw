@@ -37,6 +37,12 @@
 
 static train_ctrl_t trctl[NUM_TRAINS] = {0};
 
+
+#if NUM_TRAINS == 0
+#error ctrl is included in build, but NUM_TRAINS is zero. check train.cnf and other cnf files
+#endif
+
+
 //static lsblk_num_t snone = {-1};
 
 // -----------------------------------------------------------

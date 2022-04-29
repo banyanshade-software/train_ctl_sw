@@ -147,7 +147,7 @@ void StartCtrlTask(_UNUSED_ void const *argument)
 	CantonTimerHandles[1]=&htim1;
 	CantonTimerHandles[2]=&htim2;
 	CantonTimerHandles[3]=&htim3;
-	CantonTimerHandles[4]=&htim12;
+	CantonTimerHandles[4]=&htim4;
 	//CantonTimerHandles[3]=&htim3;
 	//XXX railconfig_setup_default();
 

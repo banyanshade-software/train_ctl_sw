@@ -17,10 +17,10 @@ extern uint32_t SimuTick;
 #define HAL_GetTick() (SimuTick)
 
 //#define NUM_LOCAL_CANTONS 8
-#define NUM_LOCAL_CANTONS_HW 5
-#define NUM_LOCAL_CANTONS_SW 6 // XXX
+//#define NUM_LOCAL_CANTONS_HW 5
+//#define NUM_LOCAL_CANTONS_SW 6 // XXX
 
-#define NUM_LOCAL_TURNOUTS 8
+//#define NUM_LOCAL_TURNOUTS 8
 
 
 //#define USE_INA3221
@@ -29,7 +29,8 @@ extern uint32_t SimuTick;
 
 #define NOTIF_VOFF 0
 
-#include "low/canton_bemf.h"
+//#include "conf_canton.h"
+//#include "low/canton_bemf.h"
 #include "low/canton.h"
 #include "low/turnout.h"
 #include "spdctl/spdctl.h"

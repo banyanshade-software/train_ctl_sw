@@ -32,6 +32,8 @@
 #include "conf_globparam.propag.h"
 #include "framing.h"
 #include "oam.h"
+#include "conf_canton.h"
+#include "canton_bemf.h"
 
 uint16_t dummy[3];
 
@@ -2004,7 +2006,7 @@ uint32_t SimuTick = 0;
     }
     
     [_simTrain0 computeTrainsAfter:mdt sinceStart:mt];
-    for (int nc = 0; nc < NUM_LOCAL_CANTONS_HW; nc++) {
+    for (int nc = 0; nc < NUM_CANTONS; nc++) {
         double bemf = [_simTrain0 bemfForCantonNum:nc];
         int bemfi = -(bemf/4.545) * 3.3 *4096;
 #if NEW_ADC_AVG
@@ -2582,7 +2584,7 @@ didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic
     if (testCanton == _testCanton) return;
     _testCanton = testCanton;
     if (_runMode == 1) {
-        for (int i = 0; i<NUM_LOCAL_CANTONS_HW; i++) {
+        for (int i = 0; i<NUM_CANTONS; i++) {
             if (i==testCanton) continue;
             msg_64_t m;
             TO_CANTON(m, i);

@@ -44,7 +44,7 @@ const conf_turnout_t *conf_turnout_get(int num);
 
 
 #ifdef TRN_BOARD_MAINV04
-#define NUM_TURNOUTS 0 // 0 
+#define NUM_TURNOUTS 6 // 6 
 #endif // TRN_BOARD_MAINV04
 
 
@@ -78,7 +78,7 @@ const conf_turnout_t *conf_turnout_get(int num);
 #endif // TRN_BOARD_SIMU
 
 
-#define MAX_TURNOUTS 4
+#define MAX_TURNOUTS 6
 
 
 

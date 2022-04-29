@@ -40,6 +40,7 @@
 #include "stm32/taskdisp.h"
 //#include "../../../stm32dev/ina3221/ina3221.h"
 #include "msg/notif.h"
+#include "config/conf_canton.h"
 
 /* USER CODE END Includes */
 
@@ -469,7 +470,7 @@ static void MX_ADC1_Init(void)
     Error_Handler();
   }
   /* USER CODE BEGIN ADC1_Init 2 */
-  if (hadc1.Init.NbrOfConversion != NUM_LOCAL_CANTONS_HW*2) {
+  if (hadc1.Init.NbrOfConversion != NUM_CANTONS*2) {
 	    Error_Handler();
   }
   /* USER CODE END ADC1_Init 2 */

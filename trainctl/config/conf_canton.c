@@ -25,10 +25,94 @@
 
 unsigned int conf_canton_num_entries(void)
 {
-    return 0; // 0 
+    return 6; // 6 
 }
 
-static conf_canton_t conf_canton[0] = {
+static conf_canton_t conf_canton[6] = {
+  {     // 0
+     .volts_cv = { 1000, 770, 621,  538, 451, 413, 379, 355},
+     .volt_port_b0 = NULL,
+     .volt_b0 = 0,
+     .volt_port_b1 = NULL,
+     .volt_b1 = 0,
+     .volt_port_b2 = NULL,
+     .volt_b2 = 0,
+     .pwm_timer_num = 1,
+     .ch0 = TIM_CHANNEL_1,
+     .ch1 = TIM_CHANNEL_1,
+     .notif_bemf = 0,
+     .reverse_bemf = 1,
+  },
+  {     // 1
+     .volts_cv = { 1000, 770, 621,  538, 451, 413, 379, 355},
+     .volt_port_b0 = NULL,
+     .volt_b0 = 0,
+     .volt_port_b1 = NULL,
+     .volt_b1 = 0,
+     .volt_port_b2 = NULL,
+     .volt_b2 = 0,
+     .pwm_timer_num = 1,
+     .ch0 = TIM_CHANNEL_1,
+     .ch1 = TIM_CHANNEL_1,
+     .notif_bemf = 0,
+     .reverse_bemf = 1,
+  },
+  {     // 2
+     .volts_cv = { 1000, 770, 621,  538, 451, 413, 379, 355},
+     .volt_port_b0 = NULL,
+     .volt_b0 = 0,
+     .volt_port_b1 = NULL,
+     .volt_b1 = 0,
+     .volt_port_b2 = NULL,
+     .volt_b2 = 0,
+     .pwm_timer_num = 1,
+     .ch0 = TIM_CHANNEL_1,
+     .ch1 = TIM_CHANNEL_1,
+     .notif_bemf = 0,
+     .reverse_bemf = 1,
+  },
+  {     // 3
+     .volts_cv = { 1000, 770, 621,  538, 451, 413, 379, 355},
+     .volt_port_b0 = NULL,
+     .volt_b0 = 0,
+     .volt_port_b1 = NULL,
+     .volt_b1 = 0,
+     .volt_port_b2 = NULL,
+     .volt_b2 = 0,
+     .pwm_timer_num = 1,
+     .ch0 = TIM_CHANNEL_1,
+     .ch1 = TIM_CHANNEL_1,
+     .notif_bemf = 0,
+     .reverse_bemf = 1,
+  },
+  {     // 4
+     .volts_cv = { 1000, 770, 621,  538, 451, 413, 379, 355},
+     .volt_port_b0 = NULL,
+     .volt_b0 = 0,
+     .volt_port_b1 = NULL,
+     .volt_b1 = 0,
+     .volt_port_b2 = NULL,
+     .volt_b2 = 0,
+     .pwm_timer_num = 1,
+     .ch0 = TIM_CHANNEL_1,
+     .ch1 = TIM_CHANNEL_1,
+     .notif_bemf = 0,
+     .reverse_bemf = 1,
+  },
+  {     // 5
+     .volts_cv = { 1000, 770, 621,  538, 451, 413, 379, 355},
+     .volt_port_b0 = NULL,
+     .volt_b0 = 0,
+     .volt_port_b1 = NULL,
+     .volt_b1 = 0,
+     .volt_port_b2 = NULL,
+     .volt_b2 = 0,
+     .pwm_timer_num = 1,
+     .ch0 = TIM_CHANNEL_1,
+     .ch1 = TIM_CHANNEL_1,
+     .notif_bemf = 0,
+     .reverse_bemf = 1,
+  }
 };
 
 #endif // TRN_BOARD_MAINV04

@@ -24,6 +24,7 @@
 //#include "railconfig.h"
 #include "utils/framing.h"
 #include "config/conf_train.h"
+#include "config/conf_canton.h"
 
 typedef struct {
     const stat_val_t *statval;
@@ -47,7 +48,7 @@ static meta_stat_t meta[NUM_META+1] = {
     {statval_spdctrl, 0, 0, MIN(3,NUM_TRAINS)},
 #endif
 #ifdef BOARD_HAS_CANTON
-    {statval_canton, 0, 0, MIN(4,NUM_LOCAL_CANTONS_HW)},
+    {statval_canton, 0, 0, MIN(4,NUM_CANTONS)},
 #endif
     {statval_ina3221, 0, 0, 1},
     {NULL, 0, 0, 0}

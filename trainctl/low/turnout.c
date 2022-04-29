@@ -53,6 +53,11 @@
 #error BOARD_HAS_TURNOUTS not defined, remove this file from build
 #endif
 
+
+#if (NUM_TURNOUTS == 0)
+#error turnouts code included but NUM_TURNOUTS iz zero
+#endif
+
 static void turnout_reset(void);
 static void process_turnout_timers(uint32_t tick, uint32_t dt);
 static void process_turnout_cmd(msg_64_t *m, uint32_t tick, uint32_t dt);
@@ -99,7 +104,7 @@ typedef struct turnout_vars {
 	uint8_t st;
 } turnout_vars_t;
 
-static turnout_vars_t tvars[NUM_LOCAL_TURNOUTS]={0};
+static turnout_vars_t tvars[NUM_TURNOUTS]={0};
 
 
 #define ST_IDLE		0
@@ -157,7 +162,7 @@ static void process_turnout_cmd(msg_64_t *m, _UNUSED_ uint32_t tick, _UNUSED_ ui
 
 static void turnout_reset(void)
 {
-	for (int tidx=0; tidx<NUM_LOCAL_TURNOUTS; tidx++) {
+	for (int tidx=0; tidx<NUM_TURNOUTS; tidx++) {
 		USE_TURNOUT(tidx) 	// aconf avars
 		memset(avars, 0, sizeof(*avars));
 		avars->value = 0;
@@ -191,7 +196,7 @@ int turnout_state(int tidx)
 
 static void process_turnout_timers(_UNUSED_ uint32_t tick, _UNUSED_ uint32_t dt)
 {
-	for (int i=0; i<NUM_LOCAL_TURNOUTS; i++) {
+	for (int i=0; i<NUM_TURNOUTS; i++) {
 		USE_TURNOUT(i)		// aconf , avars
 #ifndef TRAIN_SIMU
         if (!aconf->cmd_port) continue;

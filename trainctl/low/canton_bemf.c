@@ -35,11 +35,7 @@ volatile adc_buf_t train_adc_buf[2]; // double buffer
 runmode_t bemf_run_mode = runmode_off;
 uint8_t bemf_test_all = 0;
 
-#if NUM_LOCAL_CANTONS_SW == 1
-static uint8_t bemf_to[NUM_LOCAL_CANTONS_SW] = {0xFF};
-#else
-static uint8_t bemf_to[NUM_LOCAL_CANTONS_SW] = {0xFF, 0xFF, 0xFF, 0xFF,  0xFF, 0xFF, 0xFF, 0xFF};
-#endif
+static uint8_t bemf_to[NUM_CANTONS] = {0};
 
 static void process_adc(volatile adc_result_t *buf, uint32_t deltaticks);
 
@@ -50,7 +46,7 @@ static void process_adc(volatile adc_result_t *buf, uint32_t deltaticks);
 
 void bemf_reset(void)
 {
-	for (int i=0; i<NUM_LOCAL_CANTONS_SW; i++) {
+	for (int i=0; i<NUM_CANTONS; i++) {
 		bemf_to[i]=0xFF;
 	}
 }
@@ -190,7 +186,7 @@ static void process_adc(volatile adc_result_t *buf, _UNUSED_ uint32_t deltaticks
 	static int cnt=0;
 	cnt++; // for debug, allow us to print msg every x adc conversiont
 
-	for (int i=0; i<NUM_LOCAL_CANTONS_HW; i++) {
+	for (int i=0; i<NUM_CANTONS; i++) {
 		USE_CANTON(i)
 
 		// process intensity / presence

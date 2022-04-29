@@ -51,6 +51,11 @@
 #error BOARD_HAS_CANTON not defined, remove this file from build
 #endif
 
+
+#if (NUM_CANTONS == 0)
+#error canton code included but NUM_CANTONS iz zero
+#endif
+
 #ifndef TRAIN_SIMU
 TIM_HandleTypeDef *CantonTimerHandles[8] = {NULL};
 #endif
@@ -65,7 +70,7 @@ typedef struct canton_vars {
 	int32_t selected_centivolt;
 } canton_vars_t;
 
-static canton_vars_t canton_vars[NUM_LOCAL_CANTONS_SW]={0};
+static canton_vars_t canton_vars[NUM_CANTONS]={0};
 
 // ------------------------------------------------------
 
@@ -102,7 +107,7 @@ static uint8_t testerAddr;
 
 static void canton_reset(void)
 {
-	for (int i = 0; i<NUM_LOCAL_CANTONS_SW; i++) {
+	for (int i = 0; i<NUM_CANTONS; i++) {
 		USE_CANTON(i)
 		cvars->cur_dir = 99;
 		canton_set_pwm(i, cconf, cvars, 0, 0);
@@ -262,7 +267,7 @@ static void handle_msg_cantontest(msg_64_t *m)
     if (cidx>=0) handle_canton_cmd(cidx, m);
     else {
     	// broadcast
-    	for (int i=0; i<NUM_LOCAL_CANTONS_HW; i++) {
+    	for (int i=0; i<NUM_CANTONS; i++) {
     		handle_canton_cmd(i, m);
     	}
     }

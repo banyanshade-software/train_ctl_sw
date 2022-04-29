@@ -103,11 +103,11 @@
  * NUM_LOCAL_CANTONS_HW : really configured blocked (used for ADC)
  * NUM_LOCAL_CANTONS_SW : max available in software
  */
-#define NUM_LOCAL_CANTONS_HW 6
-#define NUM_LOCAL_CANTONS_SW 8
+//#define NUM_LOCAL_CANTONS_HW 6
+//#define NUM_LOCAL_CANTONS_SW 8
 
 
-#define NUM_LOCAL_TURNOUTS 8
+//#define NUM_LOCAL_TURNOUTS 8
 
 #define CAN_DEVICE hcan1
 
@@ -145,11 +145,7 @@
  * NUM_LOCAL_CANTONS_HW : really configured blocked (used for ADC)
  * NUM_LOCAL_CANTONS_SW : max available in software
  */
-#define NUM_LOCAL_CANTONS_HW 1
-#define NUM_LOCAL_CANTONS_SW 1
 
-
-#define NUM_LOCAL_TURNOUTS 8
 
 #define CAN_DEVICE hcan
 
@@ -191,11 +187,6 @@
  * NUM_LOCAL_CANTONS_HW : really configured blocked (used for ADC)
  * NUM_LOCAL_CANTONS_SW : max available in software
  */
-#define NUM_LOCAL_CANTONS_HW 1
-#define NUM_LOCAL_CANTONS_SW 1
-
-
-#define NUM_LOCAL_TURNOUTS 8
 
 #define CAN_DEVICE hcan
 

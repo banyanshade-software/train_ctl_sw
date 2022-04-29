@@ -58,7 +58,7 @@ config canton {
     const uint32_t ch0
         = (default) TIM_CHANNEL_1
         = (mainV0:*) table(vpin_mainV0, ch0)
-        = (mainV04:*) table(vpin_mainV05, ch0);
+        = (mainV04:*) table(vpin_mainV04, ch0);
 
     const uint32_t ch1
         = (default) TIM_CHANNEL_1

@@ -1315,7 +1315,7 @@ __weak void StartUiTask(void const * argument)
   /* init code for USB_DEVICE */
   MX_USB_DEVICE_Init();
   /* USER CODE BEGIN 5 */
-
+  (void) argument; // unused
     //RunBleTask(&huart4, &hdma_uart4_rx, &hdma_uart4_tx, bleRespQueueHandle);
 #if 0
 	for (;;) {
@@ -1458,7 +1458,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 
 	  }
 
-	  /*
+	  /* SWJ
 	  if ((0)) {
 		  static uint32_t lasttick = 0;
 		  if (t >= lasttick+5000) { // not faster than 20Hz, whatever the frequency is

@@ -25,10 +25,35 @@
 
 unsigned int conf_led_num_entries(void)
 {
-    return 0; // 0 
+    return 5; // 5 
 }
 
-static conf_led_t conf_led[0] = {
+static conf_led_t conf_led[5] = {
+  {     // 0
+     .port_led = GPIOD,
+     .pin_led = GPIO_PIN_8,
+     .defprog = 0,
+  },
+  {     // 1
+     .port_led = GPIOE,
+     .pin_led = GPIO_PIN_15,
+     .defprog = 0,
+  },
+  {     // 2
+     .port_led = GPIOE,
+     .pin_led = GPIO_PIN_12,
+     .defprog = 0,
+  },
+  {     // 3
+     .port_led = GPIOE,
+     .pin_led = GPIO_PIN_10,
+     .defprog = 0,
+  },
+  {     // 4
+     .port_led = GPIOE,
+     .pin_led = GPIO_PIN_8,
+     .defprog = 0,
+  }
 };
 
 #endif // TRN_BOARD_MAINV04

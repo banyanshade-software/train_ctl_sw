@@ -43,7 +43,7 @@ const conf_led_t *conf_led_get(int num);
 
 
 #ifdef TRN_BOARD_MAINV04
-#define NUM_LEDS 0 // 0 
+#define NUM_LEDS 5 // 5 
 #endif // TRN_BOARD_MAINV04
 
 
@@ -77,7 +77,7 @@ const conf_led_t *conf_led_get(int num);
 #endif // TRN_BOARD_SIMU
 
 
-#define MAX_LEDS 3
+#define MAX_LEDS 5
 
 
 

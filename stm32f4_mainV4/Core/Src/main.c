@@ -1214,7 +1214,8 @@ static void MX_GPIO_Init(void)
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOE, CT1_3_Pin|CT1_2_Pin|CT0_1_Pin|CT1_1_Pin
-                          |CT0_2_Pin|CT0_3_Pin|TURN1A_Pin|TURN1B_Pin, GPIO_PIN_RESET);
+                          |CT0_2_Pin|CT0_3_Pin|LED5_Pin|LED4_Pin
+                          |LED3_Pin|LED2_Pin|TURN1A_Pin|TURN1B_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOC, TURN3A_Pin|TURN6A_Pin|TURN3B_Pin|TURN6B_Pin, GPIO_PIN_RESET);
@@ -1223,17 +1224,19 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(GPIOA, TURN4A_BOARD_LED_Pin|TURN4B_Pin|TURN5A_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_2|CT2_1_Pin|CT2_2_Pin|TURN5B_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOB, CT2_1_Pin|CT2_2_Pin|TURN5B_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOD, GPIO_PIN_8|CT5_1_Pin|CT5_2_Pin|CT5_3_Pin
-                          |TURN2A_Pin|TURN2B_Pin|GPIO_PIN_2|GPIO_PIN_3
-                          |GPIO_PIN_4|CT3_1_Pin|CT3_2_Pin|CT3_3_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOD, LED1_Pin|CT5_1_Pin|CT5_2_Pin|CT5_3_Pin
+                          |TURN2A_Pin|TURN2B_Pin|CT3_1_Pin|CT3_2_Pin
+                          |CT3_3_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pins : CT1_3_Pin CT1_2_Pin CT0_1_Pin CT1_1_Pin
-                           CT0_2_Pin CT0_3_Pin TURN1A_Pin TURN1B_Pin */
+                           CT0_2_Pin CT0_3_Pin LED5_Pin LED4_Pin
+                           LED3_Pin LED2_Pin TURN1A_Pin TURN1B_Pin */
   GPIO_InitStruct.Pin = CT1_3_Pin|CT1_2_Pin|CT0_1_Pin|CT1_1_Pin
-                          |CT0_2_Pin|CT0_3_Pin|TURN1A_Pin|TURN1B_Pin;
+                          |CT0_2_Pin|CT0_3_Pin|LED5_Pin|LED4_Pin
+                          |LED3_Pin|LED2_Pin|TURN1A_Pin|TURN1B_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
@@ -1253,19 +1256,19 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : PB2 CT2_1_Pin CT2_2_Pin TURN5B_Pin */
-  GPIO_InitStruct.Pin = GPIO_PIN_2|CT2_1_Pin|CT2_2_Pin|TURN5B_Pin;
+  /*Configure GPIO pins : CT2_1_Pin CT2_2_Pin TURN5B_Pin */
+  GPIO_InitStruct.Pin = CT2_1_Pin|CT2_2_Pin|TURN5B_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : PD8 CT5_1_Pin CT5_2_Pin CT5_3_Pin
-                           TURN2A_Pin TURN2B_Pin PD2 PD3
-                           PD4 CT3_1_Pin CT3_2_Pin CT3_3_Pin */
-  GPIO_InitStruct.Pin = GPIO_PIN_8|CT5_1_Pin|CT5_2_Pin|CT5_3_Pin
-                          |TURN2A_Pin|TURN2B_Pin|GPIO_PIN_2|GPIO_PIN_3
-                          |GPIO_PIN_4|CT3_1_Pin|CT3_2_Pin|CT3_3_Pin;
+  /*Configure GPIO pins : LED1_Pin CT5_1_Pin CT5_2_Pin CT5_3_Pin
+                           TURN2A_Pin TURN2B_Pin CT3_1_Pin CT3_2_Pin
+                           CT3_3_Pin */
+  GPIO_InitStruct.Pin = LED1_Pin|CT5_1_Pin|CT5_2_Pin|CT5_3_Pin
+                          |TURN2A_Pin|TURN2B_Pin|CT3_1_Pin|CT3_2_Pin
+                          |CT3_3_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;

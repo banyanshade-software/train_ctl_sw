@@ -9,13 +9,16 @@
 config led {
 	const GPIO_TypeDef *port_led
 		= (mainV0:*) table(lpin_mainV0, port)
+		= (mainV04:*) table(lpin_mainV04, port)
 		= (default) NULL;
 	const uint16_t pin_led
 		= (mainV0:*) table(lpin_mainV0, pin)
+		= (mainV04:*) table(lpin_mainV04, pin)
 		= (default) 0;
     user uint8_t defprog
         = (default) 0;
 } num = (mainV0) 3
+      = (mainV04) 5
       = (simu) 3
       = (dispatcher) 0          # TODO
       = (default) 0;
@@ -23,6 +26,14 @@ config led {
 table lpin_mainV0 
 	( port,     pin)
     ( GPIOA,    GPIO_PIN_7)
+;
+table lpin_mainV04
+	( port,     pin)
+    ( GPIOD,    GPIO_PIN_8)     // LED1
+    ( GPIOE,    GPIO_PIN_15)    // LED2
+    ( GPIOE,    GPIO_PIN_12)    // LED3
+    ( GPIOE,    GPIO_PIN_10)    // LED4
+    ( GPIOE,    GPIO_PIN_8)     // LED5
 ;
 
 

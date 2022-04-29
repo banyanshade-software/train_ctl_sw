@@ -971,28 +971,29 @@ static void MX_TIM4_Init(void)
 
   /* USER CODE END TIM4_Init 0 */
 
-  TIM_Encoder_InitTypeDef sConfig = {0};
+  TIM_ClockConfigTypeDef sClockSourceConfig = {0};
   TIM_MasterConfigTypeDef sMasterConfig = {0};
+  TIM_OC_InitTypeDef sConfigOC = {0};
 
   /* USER CODE BEGIN TIM4_Init 1 */
 
   /* USER CODE END TIM4_Init 1 */
   htim4.Instance = TIM4;
-  htim4.Init.Prescaler = 0;
-  htim4.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim4.Init.Period = 0xffff;
+  htim4.Init.Prescaler = 1199;
+  htim4.Init.CounterMode = TIM_COUNTERMODE_CENTERALIGNED3;
+  htim4.Init.Period = 200;
   htim4.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim4.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_ENABLE;
-  sConfig.EncoderMode = TIM_ENCODERMODE_TI1;
-  sConfig.IC1Polarity = TIM_ICPOLARITY_RISING;
-  sConfig.IC1Selection = TIM_ICSELECTION_DIRECTTI;
-  sConfig.IC1Prescaler = TIM_ICPSC_DIV1;
-  sConfig.IC1Filter = 10;
-  sConfig.IC2Polarity = TIM_ICPOLARITY_RISING;
-  sConfig.IC2Selection = TIM_ICSELECTION_DIRECTTI;
-  sConfig.IC2Prescaler = TIM_ICPSC_DIV1;
-  sConfig.IC2Filter = 10;
-  if (HAL_TIM_Encoder_Init(&htim4, &sConfig) != HAL_OK)
+  if (HAL_TIM_Base_Init(&htim4) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
+  if (HAL_TIM_ConfigClockSource(&htim4, &sClockSourceConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  if (HAL_TIM_PWM_Init(&htim4) != HAL_OK)
   {
     Error_Handler();
   }
@@ -1002,9 +1003,22 @@ static void MX_TIM4_Init(void)
   {
     Error_Handler();
   }
+  sConfigOC.OCMode = TIM_OCMODE_PWM1;
+  sConfigOC.Pulse = 0;
+  sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
+  sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
+  if (HAL_TIM_PWM_ConfigChannel(&htim4, &sConfigOC, TIM_CHANNEL_3) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  if (HAL_TIM_PWM_ConfigChannel(&htim4, &sConfigOC, TIM_CHANNEL_4) != HAL_OK)
+  {
+    Error_Handler();
+  }
   /* USER CODE BEGIN TIM4_Init 2 */
 
   /* USER CODE END TIM4_Init 2 */
+  HAL_TIM_MspPostInit(&htim4);
 
 }
 
@@ -1020,7 +1034,6 @@ static void MX_TIM5_Init(void)
 
   /* USER CODE END TIM5_Init 0 */
 
-  TIM_ClockConfigTypeDef sClockSourceConfig = {0};
   TIM_MasterConfigTypeDef sMasterConfig = {0};
   TIM_OC_InitTypeDef sConfigOC = {0};
 
@@ -1033,15 +1046,6 @@ static void MX_TIM5_Init(void)
   htim5.Init.Period = 10000;
   htim5.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim5.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_ENABLE;
-  if (HAL_TIM_Base_Init(&htim5) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
-  if (HAL_TIM_ConfigClockSource(&htim5, &sClockSourceConfig) != HAL_OK)
-  {
-    Error_Handler();
-  }
   if (HAL_TIM_OC_Init(&htim5) != HAL_OK)
   {
     Error_Handler();
@@ -1209,8 +1213,8 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOD_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOE, VOLT_4_SEL0_Pin|VOLT_4_SEL1_Pin|VOLT_4_SEL2_Pin|TURN1A_Pin
-                          |TURN1B_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOE, CT1_3_Pin|CT1_2_Pin|CT0_1_Pin|CT1_1_Pin
+                          |CT0_2_Pin|CT0_3_Pin|TURN1A_Pin|TURN1B_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOC, TURN3A_Pin|TURN6A_Pin|TURN3B_Pin|TURN6B_Pin, GPIO_PIN_RESET);
@@ -1219,27 +1223,21 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(GPIOA, TURN4A_BOARD_LED_Pin|TURN4B_Pin|TURN5A_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_2|GPIO_PIN_12|GPIO_PIN_13|TURN5B_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_2|CT2_1_Pin|CT2_2_Pin|TURN5B_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOD, VOLT_2_SEL2_Pin|VOLT_3_SEL0_Pin|VOLT_3_SEL1_Pin|VOLT_3_SEL2_Pin
-                          |TURN2A_Pin|TURN2B_Pin|VOLT_0_SEL2_Pin|VOLT_1_SEL0_Pin
-                          |VOLT_1_SEL1_Pin|VOLT_1_SEL2_Pin|VOLT_2_SEL0_Pin|VOLT_2_SEL1_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOD, GPIO_PIN_8|CT5_1_Pin|CT5_2_Pin|CT5_3_Pin
+                          |TURN2A_Pin|TURN2B_Pin|GPIO_PIN_2|GPIO_PIN_3
+                          |GPIO_PIN_4|CT3_1_Pin|CT3_2_Pin|CT3_3_Pin, GPIO_PIN_RESET);
 
-  /*Configure GPIO pins : VOLT_4_SEL0_Pin VOLT_4_SEL1_Pin VOLT_4_SEL2_Pin TURN1A_Pin
-                           TURN1B_Pin */
-  GPIO_InitStruct.Pin = VOLT_4_SEL0_Pin|VOLT_4_SEL1_Pin|VOLT_4_SEL2_Pin|TURN1A_Pin
-                          |TURN1B_Pin;
+  /*Configure GPIO pins : CT1_3_Pin CT1_2_Pin CT0_1_Pin CT1_1_Pin
+                           CT0_2_Pin CT0_3_Pin TURN1A_Pin TURN1B_Pin */
+  GPIO_InitStruct.Pin = CT1_3_Pin|CT1_2_Pin|CT0_1_Pin|CT1_1_Pin
+                          |CT0_2_Pin|CT0_3_Pin|TURN1A_Pin|TURN1B_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
-
-  /*Configure GPIO pin : USER_BTN_Pin */
-  GPIO_InitStruct.Pin = USER_BTN_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_PULLUP;
-  HAL_GPIO_Init(USER_BTN_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pins : TURN3A_Pin TURN6A_Pin TURN3B_Pin TURN6B_Pin */
   GPIO_InitStruct.Pin = TURN3A_Pin|TURN6A_Pin|TURN3B_Pin|TURN6B_Pin;
@@ -1255,19 +1253,19 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : PB2 PB12 PB13 TURN5B_Pin */
-  GPIO_InitStruct.Pin = GPIO_PIN_2|GPIO_PIN_12|GPIO_PIN_13|TURN5B_Pin;
+  /*Configure GPIO pins : PB2 CT2_1_Pin CT2_2_Pin TURN5B_Pin */
+  GPIO_InitStruct.Pin = GPIO_PIN_2|CT2_1_Pin|CT2_2_Pin|TURN5B_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : VOLT_2_SEL2_Pin VOLT_3_SEL0_Pin VOLT_3_SEL1_Pin VOLT_3_SEL2_Pin
-                           TURN2A_Pin TURN2B_Pin VOLT_0_SEL2_Pin VOLT_1_SEL0_Pin
-                           VOLT_1_SEL1_Pin VOLT_1_SEL2_Pin VOLT_2_SEL0_Pin VOLT_2_SEL1_Pin */
-  GPIO_InitStruct.Pin = VOLT_2_SEL2_Pin|VOLT_3_SEL0_Pin|VOLT_3_SEL1_Pin|VOLT_3_SEL2_Pin
-                          |TURN2A_Pin|TURN2B_Pin|VOLT_0_SEL2_Pin|VOLT_1_SEL0_Pin
-                          |VOLT_1_SEL1_Pin|VOLT_1_SEL2_Pin|VOLT_2_SEL0_Pin|VOLT_2_SEL1_Pin;
+  /*Configure GPIO pins : PD8 CT5_1_Pin CT5_2_Pin CT5_3_Pin
+                           TURN2A_Pin TURN2B_Pin PD2 PD3
+                           PD4 CT3_1_Pin CT3_2_Pin CT3_3_Pin */
+  GPIO_InitStruct.Pin = GPIO_PIN_8|CT5_1_Pin|CT5_2_Pin|CT5_3_Pin
+                          |TURN2A_Pin|TURN2B_Pin|GPIO_PIN_2|GPIO_PIN_3
+                          |GPIO_PIN_4|CT3_1_Pin|CT3_2_Pin|CT3_3_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;

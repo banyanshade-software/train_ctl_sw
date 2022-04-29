@@ -1298,7 +1298,6 @@ static void MX_GPIO_Init(void)
 /* USER CODE END Header_StartUiTask */
 __weak void StartUiTask(void const * argument)
 {
-	(void) argument;
   /* init code for USB_DEVICE */
   MX_USB_DEVICE_Init();
   /* USER CODE BEGIN 5 */

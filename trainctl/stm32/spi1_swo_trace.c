@@ -10,6 +10,13 @@
 
 #include "../oam/oam_flash.h"
 
+#ifndef SPI_RESET_CRC
+#warning no SPI defined
+#endif
+
+#ifdef SPI_RESET_CRC
+
+
 extern SPI_HandleTypeDef hspi1;
 
 static void MX_SPI1_Init(void)
@@ -112,3 +119,5 @@ void oam_flash_unneeded(void)
 	HAL_SPI_DeInit(&hspi1);
 	switch_to_swo_trace();
 }
+
+#endif //SPI_RESET_CRC

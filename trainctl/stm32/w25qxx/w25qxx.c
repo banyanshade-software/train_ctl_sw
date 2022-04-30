@@ -13,10 +13,11 @@ w25qxx_t w25qxx;
 
 
 
+#ifndef SPI_RESET_CRC
+#warning no SPI defined (dummy flash mockup will be used)
+#endif
 
-#define xxSPI_RESET_CRC
-
-#ifdef xxSPI_RESET_CRC // ie. if SPI is included in cubeMX
+#ifdef SPI_RESET_CRC // ie. if SPI is included in cubeMX
 extern SPI_HandleTypeDef _W25QXX_SPI;
 
 

@@ -14,25 +14,11 @@ w25qxx_t w25qxx;
 
 
 
+#define xxSPI_RESET_CRC
 
-
-#ifdef SPI_RESET_CRC // ie. if SPI is included in cubeMX
+#ifdef xxSPI_RESET_CRC // ie. if SPI is included in cubeMX
 extern SPI_HandleTypeDef _W25QXX_SPI;
 
-
-
-static int flashcnt = 0;
-
-void oam_flash_begin(void)
-{
-	if (flashcnt) Error_Handler();
-	flashcnt++;
-}
-void oam_flash_end(void)
-{
-	if (flashcnt != 1) Error_Handler();
-	flashcnt--;
-}
 
 
 #if (_W25QXX_USE_FREERTOS == 1)

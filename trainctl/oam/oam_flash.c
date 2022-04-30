@@ -626,5 +626,10 @@ __weak void oam_flash_end(void)
 {
 }
 
+__weak void oam_flash_unneeded(void)
+{
+}
+
+
 
     

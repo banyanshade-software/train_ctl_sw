@@ -36,10 +36,15 @@ void oam_flashlocal_commit(int confnum);
 void oam_flashlocal_set_value(int confnum, int fieldnum, int instnum, int32_t v);
 uint32_t oam_flashlocal_get_value(int confnum, int fieldnum,  int instnum);
 
-// hooks
+// Hooks and function
+// allowing swapping between SPI1 and SWO (PB3)
+// functions are weakly defined in OAM, and can be redefined (in spi1_swo_trace.c)
+// oam_flash_begin() and oam_flash_end() hooks are called before and after flash access
+// oam_flash_unneeded() may be called manually at init, to enable SWO
 
 void oam_flash_begin(void);
 void oam_flash_end(void);
+void oam_flash_unneeded(void);
 
 
 #endif /* OAM_OAM_FLASH_H_ */

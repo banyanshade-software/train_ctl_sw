@@ -22,9 +22,11 @@ void oam_flash_deinit(void)
 }
 void oam_flash_init(void)
 {
+	oam_flash_begin();
 	itm_debug1(DBG_OAM|DBG_ERR, "flash init", 0);
 	int rc = W25qxx_Init();
 	if (rc) {
+		oam_flash_end();
 		FatalError("W25ini", "w25wxx_init", Error_FlashInit);
 
 	}
@@ -84,7 +86,7 @@ void oam_flash_init(void)
 			itm_debug3(DBG_OAM, "rd", fieldnum, instnum, v);
 		}
 	}
-
+	oam_flash_end();
 }
 
 /*
@@ -183,12 +185,14 @@ static void format_store_block(int blocknum, uint32_t magic, blk_desc_t *blkdesc
 
 void oam_flash_erase(void)
 {
+	oam_flash_begin();
     W25qxx_EraseChip();
     memset(&blk_bup0_loc, 0, sizeof(blk_bup0_loc));
     memset(&blk_bup0_str, 0, sizeof(blk_bup0_str));
     memset(&blk_n1_str, 0, sizeof(blk_n1_str));
     memset(&blk_n1_loc, 0, sizeof(blk_n1_loc));
     check_store_init(1);
+	oam_flash_end();
 }
 
 
@@ -315,10 +319,11 @@ static void store_append_field(blk_desc_t *d, uint8_t *buf);
 
 void oam_flashstore_set_value(int confnum, int fieldnum, int confbrd, int instnum, int32_t v)
 {
+	oam_flash_begin();
 
-	//
 	blk_desc_t *desc = use_backup ? &blk_bup0_str : &blk_n1_str;
 	if (!desc->valid) {
+		oam_flash_end();
 		itm_debug1(DBG_OAM|DBG_ERR, "blk not valid", desc->block_num);
 		return;
 	}
@@ -344,12 +349,17 @@ void oam_flashstore_set_value(int confnum, int fieldnum, int confbrd, int instnu
 		store_encode(buf, confnum, confbrd, instnum, fieldnum, v);
 		store_append_field(desc, buf);
 	}
+
+	oam_flash_end();
 }
 
 uint32_t oam_flashstore_get_value(int confnum, int fieldnum, int confbrd, int instnum)
 {
+	oam_flash_begin();
+
     blk_desc_t *desc = use_backup ? &blk_bup0_str : &blk_n1_str;
     if (!desc->valid) {
+		oam_flash_end();
         itm_debug1(DBG_OAM|DBG_ERR, "blk not valid", desc->block_num);
         return 0;
     }
@@ -364,10 +374,12 @@ uint32_t oam_flashstore_get_value(int confnum, int fieldnum, int confbrd, int in
         if (!store_isvalid(buf)) continue;
         if (store_is_field(buf, confnum, confbrd, instnum, fieldnum, &ov)) {
             v = ov;
+    		oam_flash_end();
             if ((1)) return v;
         }
     }
     // XXX TODO default value
+	oam_flash_end();
     return v;
 }
 
@@ -410,19 +422,23 @@ static void store_append_field(blk_desc_t *d, uint8_t *buf)
 
 void oam_flashstore_rd_rewind(void)
 {
+	oam_flash_begin();
 	blk_desc_t *desc = use_backup ? &blk_bup0_str : &blk_n1_str;
 	if (!desc->valid) {
 		itm_debug1(DBG_OAM|DBG_ERR, "blk not valid", desc->block_num);
 		return;
 	}
 	store_rewind(desc);
+	oam_flash_end();
 }
 
 int  oam_flashstore_rd_next(unsigned int *confnum, unsigned int *fieldnum, unsigned int *confbrd, unsigned int *instnum, int32_t *v)
 {
+	oam_flash_begin();
 	blk_desc_t *desc = use_backup ? &blk_bup0_str : &blk_n1_str;
 	if (!desc->valid) {
 		itm_debug1(DBG_OAM|DBG_ERR, "blk not valid", desc->block_num);
+		oam_flash_end();
 		return -1;
 	}
 	for (;;)  {
@@ -433,8 +449,10 @@ int  oam_flashstore_rd_next(unsigned int *confnum, unsigned int *fieldnum, unsig
 
 
 		store_decode(buf, confnum, confbrd, instnum, fieldnum, v);
+		oam_flash_end();
 		return 0;
 	}
+	oam_flash_end();
 }
 
 
@@ -456,6 +474,7 @@ static void _oam_flashlocal_read(unsigned int confnum)
 }
 void oam_flashlocal_read(int confnum)
 {
+	oam_flash_begin();
     if (-1 == confnum) {
         for (int i=0; i<16; i++) {
             _oam_flashlocal_read((unsigned int) i);
@@ -463,6 +482,7 @@ void oam_flashlocal_read(int confnum)
     } else {
         _oam_flashlocal_read((unsigned int) confnum);
     }
+	oam_flash_end();
 }
 
 
@@ -477,14 +497,15 @@ static void _oam_flashlocal_commit(unsigned int confnum)
 }
 void oam_flashlocal_commit(int confnum)
 {
+	oam_flash_begin();
     if (-1 == confnum) {
         for (int i=0; i<16; i++) {
             _oam_flashlocal_commit((unsigned int)i);
-            
         }
     } else {
         _oam_flashlocal_commit((unsigned int)confnum);
     }
+    oam_flash_end();
 }
 
 
@@ -595,5 +616,15 @@ static int store_local_write(local_blk_desc_t *desc, int fnum, void *ptr, unsign
     _local_write(desc, fd, ptr, s);
     return 0;
 }
+
+
+
+__weak void oam_flash_begin(void)
+{
+}
+__weak void oam_flash_end(void)
+{
+}
+
 
     

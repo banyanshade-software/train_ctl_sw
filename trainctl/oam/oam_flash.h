@@ -36,5 +36,10 @@ void oam_flashlocal_commit(int confnum);
 void oam_flashlocal_set_value(int confnum, int fieldnum, int instnum, int32_t v);
 uint32_t oam_flashlocal_get_value(int confnum, int fieldnum,  int instnum);
 
+// hooks
+
+void oam_flash_begin(void);
+void oam_flash_end(void);
+
 
 #endif /* OAM_OAM_FLASH_H_ */

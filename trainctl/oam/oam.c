@@ -24,6 +24,7 @@
 
 #include "../config/conf_globparam.h"
 #include "../config/conf_globparam.propag.h"
+#include "../config/conf_utest.propag.h"
 
 int OAM_NeedsReschedule = 0;
 
@@ -33,10 +34,22 @@ static int initdone = 0;
 
 void OAM_Init(void)
 {
+	itm_debug1(DBG_OAM, "OAM init", 0);
 	oam_flash_init();
     initdone=1;
+	itm_debug1(DBG_OAM, "OAM loc rd", 0);
     oam_flashlocal_read(-1);
     // TODO propag normal store if master
+	itm_debug1(DBG_OAM, "OAM ready", 0);
+	if ((1)) {
+		// void oam_flashstore_set_value(int confnum, int fieldnum, int confbrd, int instnum, int32_t v)
+		// uint32_t oam_flashstore_get_value(int confnum, int fieldnum, int confbrd, int instnum)
+		oam_flashstore_set_value(conf_pnum_utest, conf_numfield_utest_beta, 0, 0, 4242);
+		itm_debug1(DBG_OAM, "T/store", 0);
+		int32_t v = oam_flashstore_get_value(conf_pnum_utest, conf_numfield_utest_beta, 0, 0);
+		itm_debug1(DBG_OAM, "T/read", v);
+
+	}
 }
 
 

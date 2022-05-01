@@ -168,9 +168,13 @@ void StartCtrlTask(_UNUSED_ void const *argument)
 	HAL_TIM_PWM_Stop(&htim3, TIM_CHANNEL_2);
 	HAL_TIM_PWM_Stop(&htim3, TIM_CHANNEL_3);
 	HAL_TIM_PWM_Stop(&htim3, TIM_CHANNEL_4);
+	HAL_TIM_PWM_Stop(&htim4, TIM_CHANNEL_1);
+	HAL_TIM_PWM_Stop(&htim4, TIM_CHANNEL_2);
+	HAL_TIM_PWM_Stop(&htim4, TIM_CHANNEL_3);
+	HAL_TIM_PWM_Stop(&htim4, TIM_CHANNEL_4);
 
-	HAL_TIM_PWM_Stop(&htim12, TIM_CHANNEL_1);
-	HAL_TIM_PWM_Stop(&htim12, TIM_CHANNEL_2);
+	//HAL_TIM_PWM_Stop(&htim12, TIM_CHANNEL_1);
+	//HAL_TIM_PWM_Stop(&htim12, TIM_CHANNEL_2);
 
 	set_pwm_freq(100, 1);
 
@@ -256,16 +260,19 @@ void set_pwm_freq(int freqhz, int crit)
 	HAL_TIM_Base_Stop(&htim1);
 	HAL_TIM_Base_Stop(&htim2);
 	HAL_TIM_Base_Stop(&htim3);
+	HAL_TIM_Base_Stop(&htim4);
 	HAL_TIM_Base_Stop(&htim8);
 
 	__HAL_TIM_SET_PRESCALER(&htim2, ps);
 	__HAL_TIM_SET_PRESCALER(&htim3, ps);
+	__HAL_TIM_SET_PRESCALER(&htim4, ps);
 	__HAL_TIM_SET_PRESCALER(&htim8, ps);
 	__HAL_TIM_SET_PRESCALER(&htim1, ps);
 
 	TIM_ResetCounter(8, &htim8);
 	TIM_ResetCounter(2, &htim2);
 	TIM_ResetCounter(3, &htim3);
+	TIM_ResetCounter(3, &htim4);
 	TIM_ResetCounter(1, &htim1);
 
 
@@ -273,10 +280,12 @@ void set_pwm_freq(int freqhz, int crit)
 	htim8.Instance->EGR = TIM_EGR_UG;
 	htim2.Instance->EGR = TIM_EGR_UG;
 	htim3.Instance->EGR = TIM_EGR_UG;
+	htim4.Instance->EGR = TIM_EGR_UG;
 	htim1.Instance->EGR = TIM_EGR_UG;
 
 	HAL_TIM_Base_Start(&htim2);
 	HAL_TIM_Base_Start(&htim3);
+	HAL_TIM_Base_Start(&htim4);
 	HAL_TIM_Base_Start(&htim8);
 	HAL_TIM_Base_Start_IT(&htim1);
 	check_adc_order = 1;

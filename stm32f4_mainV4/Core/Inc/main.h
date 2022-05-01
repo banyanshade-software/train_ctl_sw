@@ -164,12 +164,12 @@ void Error_Handler(void);
 #define TURN2A_GPIO_Port GPIOD
 #define TURN2B_Pin GPIO_PIN_1
 #define TURN2B_GPIO_Port GPIOD
-#define CT4_1_Pin GPIO_PIN_2
-#define CT4_1_GPIO_Port GPIOD
+#define CT4_3_Pin GPIO_PIN_2
+#define CT4_3_GPIO_Port GPIOD
 #define CT4_2_Pin GPIO_PIN_3
 #define CT4_2_GPIO_Port GPIOD
-#define CT4_3_Pin GPIO_PIN_4
-#define CT4_3_GPIO_Port GPIOD
+#define CT4_1_Pin GPIO_PIN_4
+#define CT4_1_GPIO_Port GPIOD
 #define CT3_1_Pin GPIO_PIN_5
 #define CT3_1_GPIO_Port GPIOD
 #define CT3_2_Pin GPIO_PIN_6

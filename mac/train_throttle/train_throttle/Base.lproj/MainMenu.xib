@@ -3502,7 +3502,7 @@
                     </textField>
                     <stepper horizontalHuggingPriority="750" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="E2K-gG-0P1">
                         <rect key="frame" x="133" y="175" width="19" height="28"/>
-                        <stepperCell key="cell" continuous="YES" alignment="left" maxValue="4" id="HYz-uq-rNO"/>
+                        <stepperCell key="cell" continuous="YES" alignment="left" maxValue="6" id="HYz-uq-rNO"/>
                         <connections>
                             <binding destination="Voe-Tx-rLC" name="value" keyPath="testCanton" id="76b-xX-a9e"/>
                         </connections>
@@ -3515,7 +3515,7 @@
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="ChK-A9-WCq">
                             <numberFormatter key="formatter" formatterBehavior="default10_4" numberStyle="decimal" minimumIntegerDigits="1" maximumIntegerDigits="2000000000" maximumFractionDigits="3" id="oIV-o4-5wz">
                                 <real key="minimum" value="0.0"/>
-                                <real key="maximum" value="4"/>
+                                <real key="maximum" value="6"/>
                             </numberFormatter>
                             <font key="font" metaFont="system"/>
                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>

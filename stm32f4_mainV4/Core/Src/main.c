@@ -1188,7 +1188,6 @@ static void MX_TIM12_Init(void)
   /* USER CODE END TIM12_Init 0 */
 
   TIM_SlaveConfigTypeDef sSlaveConfig = {0};
-  TIM_OC_InitTypeDef sConfigOC = {0};
 
   /* USER CODE BEGIN TIM12_Init 1 */
 
@@ -1203,28 +1202,15 @@ static void MX_TIM12_Init(void)
   {
     Error_Handler();
   }
-  if (HAL_TIM_PWM_Init(&htim12) != HAL_OK)
-  {
-    Error_Handler();
-  }
   sSlaveConfig.SlaveMode = TIM_SLAVEMODE_DISABLE;
   sSlaveConfig.InputTrigger = TIM_TS_ITR0;
   if (HAL_TIM_SlaveConfigSynchro(&htim12, &sSlaveConfig) != HAL_OK)
   {
     Error_Handler();
   }
-  sConfigOC.OCMode = TIM_OCMODE_PWM1;
-  sConfigOC.Pulse = 0;
-  sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
-  sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
-  if (HAL_TIM_PWM_ConfigChannel(&htim12, &sConfigOC, TIM_CHANNEL_1) != HAL_OK)
-  {
-    Error_Handler();
-  }
   /* USER CODE BEGIN TIM12_Init 2 */
 
   /* USER CODE END TIM12_Init 2 */
-  HAL_TIM_MspPostInit(&htim12);
 
 }
 
@@ -1276,12 +1262,13 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(GPIOA, TURN4A_BOARD_LED_Pin|TURN4B_Pin|TURN5A_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOB, FLASH_CS_Pin|CT2_1_Pin|CT2_2_Pin|TURN5B_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOB, FLASH_CS_Pin|CT2_1_Pin|CT2_2_Pin|CT2_3_Pin
+                          |TURN5B_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOD, LED1_Pin|CT5_1_Pin|CT5_2_Pin|CT5_3_Pin
-                          |TURN2A_Pin|TURN2B_Pin|CT4_1_Pin|CT4_2_Pin
-                          |CT3_1_Pin|CT3_2_Pin|CT3_3_Pin, GPIO_PIN_RESET);
+                          |TURN2A_Pin|TURN2B_Pin|CT4_3_Pin|CT4_2_Pin
+                          |CT4_1_Pin|CT3_1_Pin|CT3_2_Pin|CT3_3_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pins : CT1_3_Pin CT1_2_Pin CT0_1_Pin CT1_1_Pin
                            CT0_2_Pin CT0_3_Pin LED5_Pin LED4_Pin
@@ -1308,19 +1295,21 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : FLASH_CS_Pin CT2_1_Pin CT2_2_Pin TURN5B_Pin */
-  GPIO_InitStruct.Pin = FLASH_CS_Pin|CT2_1_Pin|CT2_2_Pin|TURN5B_Pin;
+  /*Configure GPIO pins : FLASH_CS_Pin CT2_1_Pin CT2_2_Pin CT2_3_Pin
+                           TURN5B_Pin */
+  GPIO_InitStruct.Pin = FLASH_CS_Pin|CT2_1_Pin|CT2_2_Pin|CT2_3_Pin
+                          |TURN5B_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
   /*Configure GPIO pins : LED1_Pin CT5_1_Pin CT5_2_Pin CT5_3_Pin
-                           TURN2A_Pin TURN2B_Pin CT4_1_Pin CT4_2_Pin
-                           CT3_1_Pin CT3_2_Pin CT3_3_Pin */
+                           TURN2A_Pin TURN2B_Pin CT4_3_Pin CT4_2_Pin
+                           CT4_1_Pin CT3_1_Pin CT3_2_Pin CT3_3_Pin */
   GPIO_InitStruct.Pin = LED1_Pin|CT5_1_Pin|CT5_2_Pin|CT5_3_Pin
-                          |TURN2A_Pin|TURN2B_Pin|CT4_1_Pin|CT4_2_Pin
-                          |CT3_1_Pin|CT3_2_Pin|CT3_3_Pin;
+                          |TURN2A_Pin|TURN2B_Pin|CT4_3_Pin|CT4_2_Pin
+                          |CT4_1_Pin|CT3_1_Pin|CT3_2_Pin|CT3_3_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
@@ -1331,12 +1320,6 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
-
-  /*Configure GPIO pin : CT4_3_Pin */
-  GPIO_InitStruct.Pin = CT4_3_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(CT4_3_GPIO_Port, &GPIO_InitStruct);
 
 }
 

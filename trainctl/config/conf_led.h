@@ -61,7 +61,7 @@ const conf_led_t *conf_led_get(int num);
 
 
 #ifdef TRN_BOARD_SWITCHER
-#define NUM_LEDS 0 // 0 
+#define NUM_LEDS 6 // 6 
 #endif // TRN_BOARD_SWITCHER
 
 
@@ -77,7 +77,7 @@ const conf_led_t *conf_led_get(int num);
 #endif // TRN_BOARD_SIMU
 
 
-#define MAX_LEDS 5
+#define MAX_LEDS 6
 
 
 

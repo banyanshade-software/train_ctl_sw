@@ -33,42 +33,42 @@ static conf_turnout_t conf_turnout[6] = {
      .cmd_portA = GPIOE,
      .cmd_portB = GPIOE,
      .pinA = GPIO_PIN_0,
-     .pinB = 0,
+     .pinB = GPIO_PIN_1,
      .reverse = 0,
   },
   {     // 1
      .cmd_portA = GPIOD,
      .cmd_portB = GPIOD,
      .pinA = GPIO_PIN_0,
-     .pinB = 0,
+     .pinB = GPIO_PIN_1,
      .reverse = 0,
   },
   {     // 2
      .cmd_portA = GPIOC,
      .cmd_portB = GPIOC,
      .pinA = GPIO_PIN_13,
-     .pinB = 0,
+     .pinB = GPIO_PIN_11,
      .reverse = 0,
   },
   {     // 3
      .cmd_portA = GPIOA,
      .cmd_portB = GPIOA,
      .pinA = GPIO_PIN_6,
-     .pinB = 0,
+     .pinB = GPIO_PIN_7,
      .reverse = 0,
   },
   {     // 4
      .cmd_portA = GPIOA,
      .cmd_portB = GPIOB,
      .pinA = GPIO_PIN_15,
-     .pinB = 0,
+     .pinB = GPIO_PIN_15,
      .reverse = 0,
   },
   {     // 5
      .cmd_portA = GPIOC,
      .cmd_portB = GPIOC,
      .pinA = GPIO_PIN_10,
-     .pinB = 0,
+     .pinB = GPIO_PIN_12,
      .reverse = 0,
   }
 };
@@ -133,10 +133,66 @@ static conf_turnout_t conf_turnout[0] = {
 
 unsigned int conf_turnout_num_entries(void)
 {
-    return 0; // 0 
+    return 8; // 8 
 }
 
-static conf_turnout_t conf_turnout[0] = {
+static conf_turnout_t conf_turnout[8] = {
+  {     // 0
+     .cmd_portA = GPIOB,
+     .cmd_portB = GPIOB,
+     .pinA = GPIO_PIN_5,
+     .pinB = 0,
+     .reverse = 0,
+  },
+  {     // 1
+     .cmd_portA = GPIOA,
+     .cmd_portB = GPIOA,
+     .pinA = GPIO_PIN_6,
+     .pinB = 0,
+     .reverse = 0,
+  },
+  {     // 2
+     .cmd_portA = GPIOA,
+     .cmd_portB = GPIOA,
+     .pinA = GPIO_PIN_11,
+     .pinB = 0,
+     .reverse = 0,
+  },
+  {     // 3
+     .cmd_portA = GPIOA,
+     .cmd_portB = GPIOA,
+     .pinA = GPIO_PIN_9,
+     .pinB = 0,
+     .reverse = 0,
+  },
+  {     // 4
+     .cmd_portA = GPIOB,
+     .cmd_portB = GPIOB,
+     .pinA = GPIO_PIN_0,
+     .pinB = 0,
+     .reverse = 0,
+  },
+  {     // 5
+     .cmd_portA = GPIOA,
+     .cmd_portB = GPIOA,
+     .pinA = GPIO_PIN_5,
+     .pinB = 0,
+     .reverse = 0,
+  },
+  {     // 6
+     .cmd_portA = GPIOB,
+     .cmd_portB = GPIOB,
+     .pinA = GPIO_PIN_10,
+     .pinB = 0,
+     .reverse = 0,
+  },
+  {     // 7
+     .cmd_portA = GPIOB,
+     .cmd_portB = GPIOB,
+     .pinA = GPIO_PIN_13,
+     .pinB = 0,
+     .reverse = 0,
+  }
 };
 
 #endif // TRN_BOARD_SWITCHER

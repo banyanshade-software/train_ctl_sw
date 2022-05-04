@@ -63,7 +63,7 @@ const conf_turnout_t *conf_turnout_get(int num);
 
 
 #ifdef TRN_BOARD_SWITCHER
-#define NUM_TURNOUTS 0 // 0 
+#define NUM_TURNOUTS 8 // 8 
 #endif // TRN_BOARD_SWITCHER
 
 
@@ -79,7 +79,7 @@ const conf_turnout_t *conf_turnout_get(int num);
 #endif // TRN_BOARD_SIMU
 
 
-#define MAX_TURNOUTS 6
+#define MAX_TURNOUTS 8
 
 
 

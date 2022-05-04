@@ -10,17 +10,21 @@ config turnout {
 	const GPIO_TypeDef *cmd_portA
 		= (mainV0:*) table(tpin_mainV0, portA)
 		= (mainV04:*) table(tpin_mainV04, portA)
+		= (switcher:*) table(tpin_switcher, portA)
 		= (default) NULL;
 	const GPIO_TypeDef *cmd_portB
 		= (mainV0:*) table(tpin_mainV0, portB)
 		= (mainV04:*) table(tpin_mainV04, portB)
+		= (switcher:*) table(tpin_switcher, portB)
 		= (default) NULL;
 	const uint16_t pinA
 		= (mainV0:*) table(tpin_mainV0, bA)
 		= (mainV04:*) table(tpin_mainV04, bA)
+		= (switcher:*) table(tpin_switcher, bA)
 		= (default) 0;
 	const uint16_t pinB
 		= (mainV0:*) table(tpin_mainV0, bB)
+		= (mainV04:*) table(tpin_mainV04, bB)
 		= (default) 0;
     user uint8_t reverse
         = (default) 0;
@@ -29,6 +33,7 @@ config turnout {
       = (mainV04) 6
       = (simu) 4
       = (dispatcher) 0          # TODO
+      = (switcher) 8
       = (default) 0;
 
 table tpin_mainV0 
@@ -47,6 +52,19 @@ table tpin_mainV04
     ( GPIOA,    GPIOB,      GPIO_PIN_15, GPIO_PIN_15) // TURN5 PA15,PB15
     ( GPIOC,    GPIOC,      GPIO_PIN_10, GPIO_PIN_12) // TURN6 PC10,PC12
 ;
+
+table tpin_switcher
+	( portA,    portB,       bA,          bB)
+    ( GPIOB,    GPIOB,      GPIO_PIN_5, GPIO_PIN_4)     // TURN1
+    ( GPIOA,    GPIOA,      GPIO_PIN_6, GPIO_PIN_12)    // TURN2
+    ( GPIOA,    GPIOA,      GPIO_PIN_11,GPIO_PIN_10)    // TURN3
+    ( GPIOA,    GPIOA,      GPIO_PIN_9, GPIO_PIN_8)     // TURN4
+    ( GPIOB,    GPIOB,      GPIO_PIN_0, GPIO_PIN_1)     // TURN5
+    ( GPIOA,    GPIOA,      GPIO_PIN_5, GPIO_PIN_4)     // TURN6
+    ( GPIOB,    GPIOB,      GPIO_PIN_10,GPIO_PIN_11)    // TURN7
+    ( GPIOB,    GPIOB,      GPIO_PIN_13, GPIO_PIN_12)   // TURN8
+;
+
 
 attrib turnout h_code {
 

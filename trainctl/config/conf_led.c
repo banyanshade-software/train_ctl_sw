@@ -110,10 +110,40 @@ static conf_led_t conf_led[0] = {
 
 unsigned int conf_led_num_entries(void)
 {
-    return 0; // 0 
+    return 6; // 6 
 }
 
-static conf_led_t conf_led[0] = {
+static conf_led_t conf_led[6] = {
+  {     // 0
+     .port_led = GPIOA,
+     .pin_led = GPIO_PIN_15,
+     .defprog = 0,
+  },
+  {     // 1
+     .port_led = GPIOA,
+     .pin_led = GPIO_PIN_3,
+     .defprog = 0,
+  },
+  {     // 2
+     .port_led = GPIOC,
+     .pin_led = GPIO_PIN_13,
+     .defprog = 0,
+  },
+  {     // 3
+     .port_led = GPIOC,
+     .pin_led = GPIO_PIN_14,
+     .defprog = 0,
+  },
+  {     // 4
+     .port_led = GPIOC,
+     .pin_led = GPIO_PIN_15,
+     .defprog = 0,
+  },
+  {     // 5
+     .port_led = GPIOA,
+     .pin_led = GPIO_PIN_2,
+     .defprog = 0,
+  }
 };
 
 #endif // TRN_BOARD_SWITCHER

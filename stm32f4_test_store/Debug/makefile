@@ -70,8 +70,8 @@ all: main-build
 main-build: stm32f4_test_store.elf secondary-outputs
 
 # Tool invocations
-stm32f4_test_store.elf stm32f4_test_store.map: $(OBJS) $(USER_OBJS) /Users/danielbraun/devel/train/sw1/stm32f4_test_store/STM32F407VETX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "stm32f4_test_store.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"/Users/danielbraun/devel/train/sw1/stm32f4_test_store/STM32F407VETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="stm32f4_test_store.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+stm32f4_test_store.elf stm32f4_test_store.map: $(OBJS) $(USER_OBJS) /Users/danielbraun/devel/train/sw/stm32f4_test_store/STM32F407VETX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "stm32f4_test_store.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"/Users/danielbraun/devel/train/sw/stm32f4_test_store/STM32F407VETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="stm32f4_test_store.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 

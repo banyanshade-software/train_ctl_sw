@@ -39,7 +39,7 @@ int oam_localBoardNum(void);
 /// slave boards starts in oam_slave mode
 /// slave regularly sends CMD_OAM_SLAVE with board unique id to OAM(0)
 /// if board is known in config, master reply with CMD_OAM_BNUM, v32=unique id, subc=boad number
-/// boards goes to runmode_off and sends CMD_OAM_OK, from=OAM(bnum) to=OAM(0)  v1=version
+/// slv boards goes to runmode_off and sends CMD_OAM_SLV_OK, from=OAM(bnum) to=OAM(0)  v1=version
 /// if board is unknown : master reply with CMD_OAM_BNUM, v32=unique id, subc=0xFF
 /// master propagate params to slave
 
@@ -47,7 +47,7 @@ int oam_localBoardNum(void);
 
 /// for slave, store the assigned board number
 /// @param bnum assigned board number (received in subc of CMD_OAM_BNUM)
-void oam_store_slave_local_boardnum(uint8_t bnum);
+void oam_localBoardNum_set(uint8_t bnum);
 
 
 int oam_isMaster(void);

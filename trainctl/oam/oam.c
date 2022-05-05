@@ -95,8 +95,8 @@ void OAM_Tasklet(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_
 		m.to = MA2_LOCAL_BCAST;
 		m.cmd = CMD_SETRUN_MODE;
         if (oam_isMaster()) {
-            m.v1u =  runmode_master; //runmode_normal; //runmode_testcan; // runmode_normal; runmode_detect2; runmode_off
-            m.v1u = runmode_normal; // XXX temp, delete me
+            m.v1u = runmode_master;  //runmode_normal; //runmode_testcan; // runmode_normal; runmode_detect2; runmode_off
+            m.v1u = runmode_normal;  // XXX temp, delete me
         } else {
             m.v1u = runmode_slave;
         }
@@ -109,12 +109,12 @@ void OAM_Tasklet(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_
 		int rc = mqf_read_to_oam(&m);
 		if (rc) break;
 
-        unsigned int instnum;
-        unsigned int confnum;
-        unsigned int fieldnum;
-        unsigned int confbrd;
-        int32_t v;
-        uint64_t enc;
+        _UNUSED_ unsigned int instnum;
+        _UNUSED_ unsigned int confnum;
+        _UNUSED_ unsigned int fieldnum;
+        _UNUSED_ unsigned int confbrd;
+        _UNUSED_ int32_t v;
+        _UNUSED_ uint64_t enc;
 
         switch (m.cmd) {
         case CMD_SETRUN_MODE:
@@ -413,13 +413,21 @@ static void customOam(msg_64_t *m)
 static uint32_t lastBcast = 0;
 enum oam_slv_state {
     oam_slv_bcast,
+	oam_slv_unknown, // board is not known by master, continue bcast but with lower freq
+	oam_slv_ok
 };
 static enum oam_slv_state slvState = oam_slv_bcast;
 
 static void handle_slave_tick(uint32_t tick)
 {
-    if (slvState == oam_slv_bcast) {
-        if (tick > lastBcast+200) {
+	int tbc = 200;
+	switch (slvState) {
+	case oam_slv_bcast: tbc = 200; break;
+	case oam_slv_unknown: tbc = 2000; break;
+	default: tbc = 0; break;
+	}
+    if (tbc) {
+        if (tick > lastBcast+tbc) {
             lastBcast = tick;
             msg_64_t m = {0};
             m.cmd = CMD_OAM_SLAVE;
@@ -431,6 +439,16 @@ static void handle_slave_tick(uint32_t tick)
     }
 }
 
+static void _send_slv_ok(void)
+{
+	msg_64_t m = {0};
+	m.cmd = CMD_OAM_SLV_OK;
+	m.from = MA0_OAM(oam_localBoardNum());
+	m.to = MA0_OAM(0);
+	m.v32u = oam_getDeviceUniqueId();
+	mqf_write_from_oam(&m);
+}
+
 static void handle_slave_msg(msg_64_t *m)
 {
 	switch (m->cmd) {
@@ -440,7 +458,26 @@ static void handle_slave_msg(msg_64_t *m)
 			itm_debug2(DBG_ERR|DBG_OAM, "bad uniq", m->v32u, oam_getDeviceUniqueId());
 			return;
 		}
-		oam_store_slave_local_boardnum(m->subc);
+		switch (slvState) {
+		case oam_slv_bcast:   break;
+		case oam_slv_unknown: break;
+		default:
+			itm_debug3(DBG_OAM, "BNUM/slvst", slvState, m->subc, oam_localBoardNum());
+			if (m->subc != oam_localBoardNum()) {
+				itm_debug3(DBG_OAM|DBG_ERR, "BNUM/slvst2", slvState, m->subc, oam_localBoardNum());
+				// what to do here ?
+				return;
+			}
+			_send_slv_ok();
+			return;
+		}
+		if (m->subc != 0xFF) {
+			oam_localBoardNum_set(m->subc);
+			slvState = oam_slv_ok;
+			_send_slv_ok();
+		} else {
+			slvState = oam_slv_unknown;
+		}
 		break;
 
 	}

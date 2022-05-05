@@ -45,6 +45,8 @@ static int local_msg_process(msg_64_t *m, int localmsg);
  * ABOM
  */
 
+static int need_reconf_filter = 0;
+
 static void can_init(void)
 {
 
@@ -578,6 +580,10 @@ static int local_msg_process(msg_64_t *m, _UNUSED_ int loc)
 	if (m->cmd == CMD_SETRUN_MODE) {
 		run_mode = (runmode_t) m->v1u;
 		return 0; // always broadcast it
+	}
+	if (m->cmd == CMD_OAM_SLV_OK) {
+		need_reconf_filter = 1;
+		return 0;
 	}
 	switch (run_mode) {
 	case runmode_off:

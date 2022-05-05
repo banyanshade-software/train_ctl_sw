@@ -94,7 +94,7 @@ typedef enum {
     CMD_OAM_MASTER,
     CMD_OAM_SLAVE,
     CMD_OAM_BNUM,
-    CMD_OAM_OK,
+	CMD_OAM_SLV_OK,
     CMD_OAM_CUSTOM,                 // any -> OAM(), not defined (for test)
 } cmd_msg_t;
 

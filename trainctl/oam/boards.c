@@ -6,8 +6,9 @@
  */
 
 
-
 #include <stdint.h>
+#include "trainctl_config.h"
+
 #include <memory.h>
 
 #include "../misc.h"
@@ -40,20 +41,32 @@ int boardIdToBoardNum(uint32_t uuid)
 
 int oam_isMaster(void)
 {
-    return 1; // TODO
+#ifndef BOARD_CAN_BE_MASTER
+	return 0;
+#endif
+    return 1; // TODO there should be only one master
 }
 
 // XXX BOARD_NUMBER should be removed
 static int _boardNumber = BOARD_NUMBER;
 
-void oam_store_slave_local_boardnum(uint8_t bnum)
+void oam_localBoardNum_set(uint8_t bnum)
 {
+	if (oam_isMaster()) {
+		FatalError("mBDN", "master calling local_board_num", Error_BrdSlvMaster);
+		return;
+	}
     _boardNumber = bnum;
 }
 
 
 int oam_localBoardNum(void)
 {
+	if (oam_isMaster()) {
+		return 0;
+	}
     return _boardNumber;
-
 }
+
+
+

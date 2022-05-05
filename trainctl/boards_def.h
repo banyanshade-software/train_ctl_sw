@@ -39,6 +39,7 @@
 //#define BOARD_HAS_OSCILLO
 //#define BOARD_HAS_USB_HOST
 #define BOARD_HAS_FLASH
+#define BOARD_CAN_BE_MASTER
 
 
 #endif
@@ -61,6 +62,7 @@
 #define CAN_DEVICE hcan1
 #define BOARD_HAS_USB_HOST
 #define BOARD_HAS_FLASH
+#define BOARD_CAN_BE_MASTER
 
 #define OAM_ONLY 1
 
@@ -91,6 +93,7 @@
 #define BOARD_HAS_USB
 //#define BOARD_HAS_USB_HOST
 #define BOARD_HAS_FLASH
+#define BOARD_CAN_BE_MASTER
 #define BOARD_HAS_CAN
 #define BOARD_HAS_IHM
 #define BOARD_HAS_ROTARY_ENCODER
@@ -143,6 +146,8 @@
 //#define BOARD_HAS_UI_CTC
 #define BOARD_HAS_LED
 //#define BOARD_HAS_TRKPLN
+// #define BOARD_CAN_BE_MASTER
+
 
 /*
  * number of local block per board
@@ -184,6 +189,7 @@
 //#define BOARD_HAS_UI_CTC
 #define BOARD_HAS_LED
 //#define BOARD_HAS_TRKPLN
+// #define BOARD_CAN_BE_MASTER
 
 #define SSD1306_I2C_PORT        hi2c1
 

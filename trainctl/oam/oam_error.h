@@ -32,7 +32,8 @@ enum fatal_error_code {
 	Error_OccDelay,
 	Error_OccTrn,
 	Error_MsgQBig,
-	Error_MsgQLen
+	Error_MsgQLen,
+	Error_BrdSlvMaster,
 };
 
 

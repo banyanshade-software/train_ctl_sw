@@ -18,7 +18,10 @@
 
 
 #include "oam.h"
+#ifdef BOARD_HAS_FLASH
 #include "oam_flash.h"
+#endif
+
 #include "boards.h"
 #include "../config/propag.h"
 

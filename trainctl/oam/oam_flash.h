@@ -10,6 +10,10 @@
 
 #include <stdint.h>
 
+#include "trainctl_config.h"
+#ifndef BOARD_HAS_FLASH
+#error BOARD_HAS_FLASH is not defined but oam_flash.c included in build
+#endif
 
 void oam_flash_init(void);
 void oam_flash_deinit(void);

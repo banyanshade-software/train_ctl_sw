@@ -5,8 +5,12 @@
  *      Author: danielbraun
  */
 
-
+#include "trainctl_config.h"
 #include "main.h"
+
+#ifndef BOARD_HAS_FLASH
+#error BOARD_HAS_FLASH is not defined but oam_flash.c included in build
+#endif
 
 #include "../oam/oam_flash.h"
 

@@ -1,3 +1,11 @@
+
+
+#include "trainctl_config.h"
+#ifndef BOARD_HAS_FLASH
+#error BOARD_HAS_FLASH is not defined but oam_flash.c included in build
+#endif
+
+
 #ifndef _W25QXXCONFIG_H
 #define _W25QXXCONFIG_H
 
@@ -8,3 +16,4 @@
 #define _W25QXX_DEBUG                 0
 
 #endif
+

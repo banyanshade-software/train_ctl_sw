@@ -38,6 +38,7 @@
 #define BOARD_HAS_TRKPLN
 //#define BOARD_HAS_OSCILLO
 //#define BOARD_HAS_USB_HOST
+#define BOARD_HAS_FLASH
 
 
 #endif
@@ -59,6 +60,7 @@
 
 #define CAN_DEVICE hcan1
 #define BOARD_HAS_USB_HOST
+#define BOARD_HAS_FLASH
 
 #define OAM_ONLY 1
 
@@ -88,6 +90,7 @@
 #define BOARD_HAS_TOPOLOGY
 #define BOARD_HAS_USB
 //#define BOARD_HAS_USB_HOST
+#define BOARD_HAS_FLASH
 #define BOARD_HAS_CAN
 #define BOARD_HAS_IHM
 #define BOARD_HAS_ROTARY_ENCODER
@@ -132,6 +135,7 @@
 //#define BOARD_HAS_TOPOLOGY
 //#define BOARD_HAS_USB
 //#define BOARD_HAS_USB_HOST
+//#define BOARD_HAS_FLASH
 #define BOARD_HAS_CAN
 //#define BOARD_HAS_IHM
 //#define BOARD_HAS_ROTARY_ENCODER
@@ -172,6 +176,7 @@
 //#define BOARD_HAS_TOPOLOGY
 //#define BOARD_HAS_USB
 //#define BOARD_HAS_USB_HOST
+//#define BOARD_HAS_FLASH
 #define BOARD_HAS_CAN
 #define BOARD_HAS_IHM
 //#define BOARD_HAS_ROTARY_ENCODER

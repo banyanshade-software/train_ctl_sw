@@ -4,6 +4,10 @@
 #include "../misc.h"
 
 
+#ifndef BOARD_HAS_FLASH
+#error BOARD_HAS_FLASH is not defined but oam_flash.c included in build
+#endif
+
 #ifndef TRAIN_SIMU
 #include "../stm32/w25qxx/w25qxx.h"
 #else

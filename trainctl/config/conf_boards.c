@@ -25,10 +25,106 @@
 
 unsigned int conf_boards_num_entries(void)
 {
-    return 0; // 0 
+    return 16; // 16 
 }
 
-static conf_boards_t conf_boards[0] = {
+static conf_boards_t conf_boards[16] = {
+  {     // 0
+     .uuid = 0,
+     .btype = 0,
+     .disable = 1,
+     .master = 1,
+  },
+  {     // 1
+     .uuid = 0,
+     .btype = 0,
+     .disable = 1,
+     .master = 0,
+  },
+  {     // 2
+     .uuid = 0,
+     .btype = 0,
+     .disable = 1,
+     .master = 0,
+  },
+  {     // 3
+     .uuid = 0,
+     .btype = 0,
+     .disable = 1,
+     .master = 0,
+  },
+  {     // 4
+     .uuid = 0,
+     .btype = 0,
+     .disable = 1,
+     .master = 0,
+  },
+  {     // 5
+     .uuid = 0,
+     .btype = 0,
+     .disable = 1,
+     .master = 0,
+  },
+  {     // 6
+     .uuid = 0,
+     .btype = 0,
+     .disable = 1,
+     .master = 0,
+  },
+  {     // 7
+     .uuid = 0,
+     .btype = 0,
+     .disable = 1,
+     .master = 0,
+  },
+  {     // 8
+     .uuid = 0,
+     .btype = 0,
+     .disable = 1,
+     .master = 0,
+  },
+  {     // 9
+     .uuid = 0,
+     .btype = 0,
+     .disable = 1,
+     .master = 0,
+  },
+  {     // 10
+     .uuid = 0,
+     .btype = 0,
+     .disable = 1,
+     .master = 0,
+  },
+  {     // 11
+     .uuid = 0,
+     .btype = 0,
+     .disable = 1,
+     .master = 0,
+  },
+  {     // 12
+     .uuid = 0,
+     .btype = 0,
+     .disable = 1,
+     .master = 0,
+  },
+  {     // 13
+     .uuid = 0,
+     .btype = 0,
+     .disable = 1,
+     .master = 0,
+  },
+  {     // 14
+     .uuid = 0,
+     .btype = 0,
+     .disable = 1,
+     .master = 0,
+  },
+  {     // 15
+     .uuid = 0,
+     .btype = 0,
+     .disable = 1,
+     .master = 0,
+  }
 };
 
 #endif // TRN_BOARD_MAINV04
@@ -40,49 +136,105 @@ static conf_boards_t conf_boards[0] = {
 
 unsigned int conf_boards_num_entries(void)
 {
-    return 8; // 8 
+    return 16; // 16 
 }
 
-static conf_boards_t conf_boards[8] = {
+static conf_boards_t conf_boards[16] = {
   {     // 0
      .uuid = 0,
-     .board_type = 0,
-     .disable = 0,
+     .btype = 0,
+     .disable = 1,
+     .master = 0,
   },
   {     // 1
      .uuid = 0,
-     .board_type = 0,
-     .disable = 0,
+     .btype = 0,
+     .disable = 1,
+     .master = 0,
   },
   {     // 2
      .uuid = 0,
-     .board_type = 0,
-     .disable = 0,
+     .btype = 0,
+     .disable = 1,
+     .master = 0,
   },
   {     // 3
      .uuid = 0,
-     .board_type = 0,
-     .disable = 0,
+     .btype = 0,
+     .disable = 1,
+     .master = 0,
   },
   {     // 4
      .uuid = 0,
-     .board_type = 0,
-     .disable = 0,
+     .btype = 0,
+     .disable = 1,
+     .master = 0,
   },
   {     // 5
      .uuid = 0,
-     .board_type = 0,
-     .disable = 0,
+     .btype = 0,
+     .disable = 1,
+     .master = 0,
   },
   {     // 6
      .uuid = 0,
-     .board_type = 0,
-     .disable = 0,
+     .btype = 0,
+     .disable = 1,
+     .master = 0,
   },
   {     // 7
      .uuid = 0,
-     .board_type = 0,
-     .disable = 0,
+     .btype = 0,
+     .disable = 1,
+     .master = 0,
+  },
+  {     // 8
+     .uuid = 0,
+     .btype = 0,
+     .disable = 1,
+     .master = 0,
+  },
+  {     // 9
+     .uuid = 0,
+     .btype = 0,
+     .disable = 1,
+     .master = 0,
+  },
+  {     // 10
+     .uuid = 0,
+     .btype = 0,
+     .disable = 1,
+     .master = 0,
+  },
+  {     // 11
+     .uuid = 0,
+     .btype = 0,
+     .disable = 1,
+     .master = 0,
+  },
+  {     // 12
+     .uuid = 0,
+     .btype = 0,
+     .disable = 1,
+     .master = 0,
+  },
+  {     // 13
+     .uuid = 0,
+     .btype = 0,
+     .disable = 1,
+     .master = 0,
+  },
+  {     // 14
+     .uuid = 0,
+     .btype = 0,
+     .disable = 1,
+     .master = 0,
+  },
+  {     // 15
+     .uuid = 0,
+     .btype = 0,
+     .disable = 1,
+     .master = 0,
   }
 };
 
@@ -177,10 +329,12 @@ int32_t conf_boards_local_get(unsigned int fieldnum, unsigned int instnum)
     default: break;
     case conf_numfield_boards_uuid:
         return c->uuid;
-    case conf_numfield_boards_board_type:
-        return c->board_type;
+    case conf_numfield_boards_btype:
+        return c->btype;
     case conf_numfield_boards_disable:
         return c->disable;
+    case conf_numfield_boards_master:
+        return c->master;
     }
     return 0;
 }
@@ -197,11 +351,14 @@ void conf_boards_local_set(unsigned int fieldnum, unsigned int instnum, int32_t 
     case conf_numfield_boards_uuid:
         c->uuid = v;
         break;
-    case conf_numfield_boards_board_type:
-        c->board_type = v;
+    case conf_numfield_boards_btype:
+        c->btype = v;
         break;
     case conf_numfield_boards_disable:
         c->disable = v;
+        break;
+    case conf_numfield_boards_master:
+        c->master = v;
         break;
     }
 

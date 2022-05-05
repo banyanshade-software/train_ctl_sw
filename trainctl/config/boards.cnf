@@ -1,8 +1,26 @@
 
 config boards {
     user uint32_t uuid          = (default) 0;
-    user uint8_t board_type     = (default) 0;
-    user uint8_t disable        = (default) 0;
-} num = (mainV0) 8
+    user board_type_t  btype    = (default) 0;
+    user uint8_t  disable:1     = (default) 1;
+    user uint8_t  master:1      
+        = (mainV04:0) 1
+        = (default) 0;
+} num = (mainV0) 16
+      = (mainV04) 16
       = (default) 0;
+
+
+attrib boards h_code {
+typedef enum {
+    board_unknown = 0, // not used
+    board_mainV04  = 1,
+    board_switcher = 16,
+    board_dispatcher = 32,
+    board_ui = 48,
+
+    // will be removed
+    board_mainV0  = 250,
+} board_type_t;
+}
 

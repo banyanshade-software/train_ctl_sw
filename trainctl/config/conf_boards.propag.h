@@ -17,8 +17,9 @@ int32_t conf_boards_default_value(unsigned int numinst, unsigned int numfield, u
 #define conf_lnum_boards 11
 
 #define conf_numfield_boards_uuid 		0
-#define conf_numfield_boards_board_type 		1
+#define conf_numfield_boards_btype 		1
 #define conf_numfield_boards_disable 		2
+#define conf_numfield_boards_master 		3
 
 
 void *conf_boards_ptr(void);

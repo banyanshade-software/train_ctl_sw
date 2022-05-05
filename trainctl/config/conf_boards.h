@@ -16,11 +16,23 @@
 #include "trainctl_config.h"
 
 
+typedef enum {
+    board_unknown = 0, // not used
+    board_mainV04  = 1,
+    board_switcher = 16,
+    board_dispatcher = 32,
+    board_ui = 48,
+
+    // will be removed
+    board_mainV0  = 250,
+} board_type_t;
+
 
 typedef struct conf_boards {
     uint32_t uuid;
-    uint8_t board_type;
-    uint8_t disable;
+    board_type_t btype;
+    uint8_t disable:1;
+    uint8_t master:1;
 } conf_boards_t;
 
 
@@ -30,13 +42,13 @@ const conf_boards_t *conf_boards_get(int num);
 
 
 #ifdef TRN_BOARD_MAINV04
-#define NUM_BOARDSS 0 // 0 
+#define NUM_BOARDSS 16 // 16 
 #endif // TRN_BOARD_MAINV04
 
 
 
 #ifdef TRN_BOARD_MAINV0
-#define NUM_BOARDSS 8 // 8 
+#define NUM_BOARDSS 16 // 16 
 #endif // TRN_BOARD_MAINV0
 
 
@@ -64,7 +76,7 @@ const conf_boards_t *conf_boards_get(int num);
 #endif // TRN_BOARD_SIMU
 
 
-#define MAX_BOARDSS 8
+#define MAX_BOARDSS 16
 
 
 

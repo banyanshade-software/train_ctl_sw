@@ -35,15 +35,16 @@ static runmode_t run_mode = 0;
 
 static int initdone = 0;
 
+
 void OAM_Init(void)
 {
+    initdone=1;
+#ifdef BOARD_HAS_FLASH
 	itm_debug1(DBG_OAM, "OAM init", 0);
 	oam_flash_init();
-    initdone=1;
 	itm_debug1(DBG_OAM, "OAM loc rd", 0);
     oam_flashlocal_read(-1);
     // TODO propag normal store if master
-	itm_debug1(DBG_OAM, "OAM ready", 0);
 	if ((1)) {
 		// void oam_flashstore_set_value(int confnum, int fieldnum, int confbrd, int instnum, int32_t v)
 		// uint32_t oam_flashstore_get_value(int confnum, int fieldnum, int confbrd, int instnum)
@@ -51,8 +52,9 @@ void OAM_Init(void)
 		itm_debug1(DBG_OAM, "T/store", 0);
 		int32_t v = oam_flashstore_get_value(conf_pnum_utest, conf_numfield_utest_beta, 0, 0);
 		itm_debug1(DBG_OAM, "T/read", v);
-
 	}
+#endif
+	itm_debug1(DBG_OAM, "OAM ready", 0);
 }
 
 
@@ -127,6 +129,7 @@ void OAM_Tasklet(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_
         case CMD_OAM_CUSTOM:
                 customOam(&m);
                 break;
+#ifdef BOARD_HAS_FLASH
         case CMD_PARAM_USER_SET:
         	if (!oam_isMaster()) {
         		itm_debug1(DBG_OAM|DBG_ERR, "only master recv set", 0);
@@ -227,6 +230,7 @@ void OAM_Tasklet(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_
         	m.cmd = CMD_PARAM_LUSER_VAL;
             m.val40 = enc;
         	mqf_write_from_oam(&m);
+#endif
         	break;
 
         case CMD_PARAM_PROPAG: {

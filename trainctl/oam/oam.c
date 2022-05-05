@@ -72,6 +72,8 @@ static void exit_can_test(void)
 static void customOam(msg_64_t *m);
 static void handle_slave_msg(msg_64_t *m);
 static void handle_slave_tick(uint32_t tick);
+static void handle_master_msg(msg_64_t *m);
+static void handle_master_tick(uint32_t tick);
 
 static void handle_testcan_tick(uint32_t tick);
 static void handle_testcan_msg(msg_64_t *m);
@@ -256,7 +258,7 @@ void OAM_Tasklet(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_
         if (runmode_testcan == run_mode) {
             handle_testcan_msg(&m);
         } else if (oam_isMaster()) {
-            // TODO
+            handle_master_msg(&m);
         } else {
             handle_slave_msg(&m);
         }
@@ -266,6 +268,7 @@ void OAM_Tasklet(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_
             handle_testcan_tick(tick);
             break;
         case runmode_master:
+            handle_master_tick(tick);
             break;
         case runmode_slave:
             handle_slave_tick(tick);
@@ -483,5 +486,101 @@ static void handle_slave_msg(msg_64_t *m)
 	}
 }
 // --------------------------------------------------------------
+
+enum slave_state {
+	slave_unconfigured,
+	slave_notpreset,
+	slave_seen,
+	slave_config0,
+	slave_config,
+	slave_ok,
+};
+
+static enum slave_state slv_state[16] = { slave_notpreset };
+
+static void handle_master_msg(msg_64_t *m)
+{
+	int bnum;
+	uint8_t unum;
+	switch (m->cmd) {
+	default: break;
+	case CMD_OAM_SLAVE:
+		bnum = oam_boardForUuid(m->v32u);
+		if (bnum == -1) {
+			// board unknown
+			// TODO notif UI
+			unum = 0xFF;
+		} else {
+			if (bnum<=0) FatalError("nBN", "null bnum", Error_NumBnum);
+			if (bnum>15) FatalError("hBN", "15 bnum", Error_NumBnum);
+			slv_state[bnum] = slave_seen;
+			unum = (uint8_t) bnum;
+		}
+		msg_64_t r = {0};
+		r.cmd = CMD_OAM_BNUM;
+		r.from = MA0_OAM(0);
+		r.to = MA3_SLV_OAM;
+		r.v32u = m->v32u;
+		mqf_write_from_oam(&r);
+		break;
+	case CMD_OAM_SLV_OK:
+		unum = MA0_BOARD(m->from);
+		if (unum > 15) FatalError("hrBN", "15 rbnum", Error_NumBnum2);
+		slv_state[unum] = slave_config;
+		break;
+	}
+}
+
+static void handle_master_tick(_UNUSED_ uint32_t tick)
+{
+#ifdef BOARD_HAS_FLASH
+	int rc = 0;
+	unsigned int confnum; unsigned int fieldnum;
+	unsigned int confbrd; unsigned int instnum;
+	int32_t v;
+
+	for (unsigned int b = 1; b<16; b++) {
+		switch (slv_state[b]) {
+		default: continue;
+		case slave_config0:
+			oam_flashstore_rd_rewind();
+			slv_state[b] = slave_config;
+			// do NOT continue loop for board because
+			// oam_flashstore_rd_rewind()/read() handles only one ptr
+			// and thus we configure one board at a time
+			OAM_NeedsReschedule = 1;
+			return;
+		case slave_config:
+			for (;;) {
+				rc = oam_flashstore_rd_next(&confnum, &fieldnum, &confbrd, &instnum, &v);
+				if (rc<0) {
+					// EOF
+					// this time we can loop on board
+					break;
+				}
+				if (confbrd != b) continue;
+				break;
+			}
+			if (rc<0) {
+				slv_state[b] = slave_ok;
+				OAM_NeedsReschedule = 0;
+				continue;
+			}
+			msg_64_t m = {0};
+			m.to = MA0_OAM(b);
+			m.from = MA0_OAM(0);
+			m.cmd = CMD_PARAM_PROPAG;
+			uint64_t enc;
+    		oam_encode_val40(&enc, confnum, confbrd, instnum, fieldnum, v);
+            m.val40 = enc;
+        	mqf_write_from_oam(&m);
+			return;
+		}
+	}
+#else
+	FatalError("NoFl", "no flash on master", Error_NoFlash);
+#endif
+}
+
 // --------------------------------------------------------------
 // --------------------------------------------------------------

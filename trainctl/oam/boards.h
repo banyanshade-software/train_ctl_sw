@@ -49,7 +49,8 @@ int oam_localBoardNum(void);
 /// @param bnum assigned board number (received in subc of CMD_OAM_BNUM)
 void oam_localBoardNum_set(uint8_t bnum);
 
-
-int oam_isMaster(void);
+/// on master, return the board number of a slave, given its unique id
+/// returns -1 if board unique id is unknown
+int oam_boardForUuid(uint32_t uniquid);
 
 #endif /* OAM_BOARDS_H_ */

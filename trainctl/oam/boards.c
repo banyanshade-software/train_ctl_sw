@@ -68,5 +68,9 @@ int oam_localBoardNum(void)
     return _boardNumber;
 }
 
+int oam_boardForUuid(uint32_t uid)
+{
+	return -1; // TODO
+}
 
 

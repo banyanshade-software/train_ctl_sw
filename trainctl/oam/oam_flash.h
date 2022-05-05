@@ -26,7 +26,11 @@ void oam_flashstore_set_value(int confnum, int fieldnum, int confbrd, int instnu
 uint32_t oam_flashstore_get_value(int confnum, int fieldnum, int confbrd, int instnum);
 
 // stepped read, with single hidden read pointer
+
+/// rewind flash store (read index is stored locally)
 void oam_flashstore_rd_rewind(void);
+
+/// read one item in flash store, returns -1 at EOF
 int  oam_flashstore_rd_next(unsigned int *confnum, unsigned int *fieldnum, unsigned int *confbrd, unsigned int *instnum, int32_t *v);
 
 

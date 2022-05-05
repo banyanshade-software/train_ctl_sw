@@ -34,6 +34,9 @@ enum fatal_error_code {
 	Error_MsgQBig,
 	Error_MsgQLen,
 	Error_BrdSlvMaster,
+	Error_NumBnum,
+	Error_NumBnum2,
+	Error_NoFlash,
 };
 
 

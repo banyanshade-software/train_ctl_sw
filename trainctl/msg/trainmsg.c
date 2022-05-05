@@ -197,6 +197,14 @@ static int  _local_disptach(msg_64_t *m, mqf_t *dont_send_to)
         	return 0;
 #endif
     	}
+    	if (MA3_SLV_OAM == m->to) {
+    		if (oam_isMaster()) {
+    			return 0; // must be sent to CAN
+    		} else {
+    			// slave, route to OAM
+    			dest = &to_oam;
+    		}
+    	}
     }
     if (!dest) {
         // message should be locally routable but is not
@@ -279,7 +287,7 @@ static void dispatch_m64(msg_64_t *m, int f)
     }
 #endif
 #ifdef BOARD_HAS_CAN
-    if ((0) && (qdefs[f].from != &from_canbus)) { // XXX disable CAN forwarding until ok
+    if ((1) && (qdefs[f].from != &from_canbus)) { // XXX disable CAN forwarding until ok
         mqf_write(&to_canbus, m);
         ok =  1;
     }

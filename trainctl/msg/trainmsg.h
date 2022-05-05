@@ -66,6 +66,7 @@ typedef uint8_t  msg_addr_t;
    	    1 1 1 1  0 0 x x 	UI (ch)
    	    		     0 0    UI general
    	    		   	 0 1    UI ctc
+   	    1 1 1 1  0 1 0 0    all slave OAM (sent only by master)
 
    	    1 1 1 1  1 1 1 1   	global broadcast
         
@@ -119,6 +120,7 @@ typedef uint8_t  msg_addr_t;
 #define MA3_IS_GLOB_ADDR(_addr) (0xF0 == ((_addr) & 0xF0))
 #define MA3_UI_GEN				(0xF0 | 0x00)
 #define MA3_UI_CTC				(0xF0 | 0x01)
+#define MA3_SLV_OAM				(0xF0 | 0x04)	// sent only by master
 #define MA3_BROADCAST			(0xFF)
 
 

@@ -379,11 +379,11 @@ uint32_t oam_flashstore_get_value(int confnum, int fieldnum, int confbrd, int in
         if (store_is_field(buf, confnum, confbrd, instnum, fieldnum, &ov)) {
             v = ov;
     		oam_flash_end();
-            if ((1)) return v;
+            return v;
         }
     }
-    // XXX TODO default value
 	oam_flash_end();
+	// value not found, get and return global default value (v is initialized with it)
     return v;
 }
 

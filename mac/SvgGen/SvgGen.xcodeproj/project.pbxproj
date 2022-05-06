@@ -16,6 +16,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		1BBD4A892824F4C0005320EB /* boards_def.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = boards_def.h; sourceTree = "<group>"; };
 		1BD7CD3D27368D480035CF0A /* SvgGen.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SvgGen.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1BD7CD4027368D480035CF0A /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		1BD7CD4127368D490035CF0A /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -45,6 +46,7 @@
 		1BD7CD3427368D480035CF0A = {
 			isa = PBXGroup;
 			children = (
+				1BBD4A892824F4C0005320EB /* boards_def.h */,
 				1BD7CD52273690A10035CF0A /* topology.c */,
 				1BD7CD53273690A10035CF0A /* topology.h */,
 				1BD7CD51273690A10035CF0A /* topologyP.h */,

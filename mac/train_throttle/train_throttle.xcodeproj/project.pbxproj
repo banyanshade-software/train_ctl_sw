@@ -82,7 +82,6 @@
 		1B7D0A8E2814A0B6008EEDD4 /* framing.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B7D0A8C2814A0B6008EEDD4 /* framing.c */; };
 		1B7D0A932815A175008EEDD4 /* oam_error.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B7D0A922815A175008EEDD4 /* oam_error.c */; };
 		1B812B3D273FA77B00924749 /* cautoP.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B812B3C273FA77B00924749 /* cautoP.c */; };
-		1B8707A227CA2C1C00253DDF /* train-svgrepo-com.svg in Resources */ = {isa = PBXBuildFile; fileRef = 1B8707A127CA2C1C00253DDF /* train-svgrepo-com.svg */; };
 		1B92EA2B2631A02900558716 /* spdctl.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B92EA292631A02900558716 /* spdctl.c */; };
 		1B92EA302631A0BA00558716 /* ctrl.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B92EA2E2631A0BA00558716 /* ctrl.c */; };
 		1BA0FCB12724B0380002DF4C /* TestPid.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BA0FCB02724B0380002DF4C /* TestPid.m */; };
@@ -246,7 +245,6 @@
 		1B812B3B273FA77B00924749 /* cautoP.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = cautoP.h; sourceTree = "<group>"; };
 		1B812B3C273FA77B00924749 /* cautoP.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = cautoP.c; sourceTree = "<group>"; };
 		1B82CBE6276A96FB000304A8 /* trainmsgdef.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = trainmsgdef.h; sourceTree = "<group>"; };
-		1B8707A127CA2C1C00253DDF /* train-svgrepo-com.svg */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = "train-svgrepo-com.svg"; path = "../../../../../../Downloads/train-svgrepo-com.svg"; sourceTree = "<group>"; };
 		1B92EA292631A02900558716 /* spdctl.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = spdctl.c; sourceTree = "<group>"; };
 		1B92EA2A2631A02900558716 /* spdctl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = spdctl.h; sourceTree = "<group>"; };
 		1B92EA2E2631A0BA00558716 /* ctrl.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ctrl.c; sourceTree = "<group>"; };
@@ -617,7 +615,6 @@
 		1BED2A9525173CF40080FC97 /* train_throttle */ = {
 			isa = PBXGroup;
 			children = (
-				1B8707A127CA2C1C00253DDF /* train-svgrepo-com.svg */,
 				1BA4B4A02551DE810043D763 /* NSCalendar+Gmt.h */,
 				1BA4B4A12551DE810043D763 /* NSCalendar+Gmt.m */,
 				1BA4B49D2551DAF70043D763 /* StringExtension.h */,
@@ -755,7 +752,6 @@
 				1BED2A9D25173D1F0080FC97 /* MainMenu.xib in Resources */,
 				1BD93C772546FF44006C4D70 /* readme.txt in Resources */,
 				1BED2AA8251804310080FC97 /* stop.png in Resources */,
-				1B8707A227CA2C1C00253DDF /* train-svgrepo-com.svg in Resources */,
 				1B46F7EA28074DCF00BAD6E8 /* topology.cnf in Resources */,
 				1B46F7E428074DCF00BAD6E8 /* .configdone in Resources */,
 				1B46F7E728074DCF00BAD6E8 /* turnout.cnf in Resources */,

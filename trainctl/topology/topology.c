@@ -18,17 +18,18 @@
 
 #ifdef TOPOLOGY_SVG
 #define TRACKPLAN_TESTPGM
+#define BOARD_HAS_TOPOLOGY
+#include "boards_def.h"
 #endif
 
 
 #ifndef TRACKPLAN_TESTPGM
 #include "../railconfig.h"
 #else
-
 #include <stdio.h>
 #include <stdlib.h>
 
-#define NUM_TURNOUTS 16
+//#define NUM_TURNOUTS 16
 #define DBG_TURNOUTS 1
 #define itm_debug3(_fl, _msg, _a, _b, _c) do {printf(_msg  "%d %d %d", _a, _b, _c);} while(0)
 #endif

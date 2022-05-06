@@ -184,12 +184,10 @@ typedef union {
 	uint64_t raw;
 } msg_64_t;
 
-#ifndef TRAIN_SIMU
-static_assert(sizeof(msg_64_t) == 8);
-#else
-//#define COMPILE_TIME_ASSERT(expr) {typedef char COMP_TIME_ASSERT[(expr) ? 1 : 0];}
-//COMPILE_TIME_ASSERT(sizeof(msg_64_t) == 8);
+#if defined(TRAIN_SIMU) || defined (TOPOLOGY_SVG)
 typedef char compile_assert[(sizeof(msg_64_t) == 8) ? 1 : -1];
+#else
+static_assert(sizeof(msg_64_t) == 8);
 #endif
 
 typedef enum {

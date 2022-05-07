@@ -81,8 +81,8 @@ typedef struct train_vars {
 	pidctl_vars_t pidvars;
 	inertia_vars_t inertiavars;
 
-    uint8_t C1x;	// current canton adress
-	uint8_t C2x; // next canton address
+	xblkaddr_t C1x;	// current canton adress
+	xblkaddr_t C2x; // next canton address
 	// TODO add C2alt, alternative next canton (manual turnout / detect defect in turnout)
 	int8_t  C1_dir; // -1 or +1
 	int8_t  C2_dir;
@@ -139,17 +139,22 @@ const stat_val_t statval_spdctrl[] = {
 static void train_periodic_control(int numtrain, uint32_t dt);
 static void _set_speed(int tidx, const conf_train_t *cnf, train_vars_t *vars);
 static void spdctl_reset(void);
-static void set_c1_c2(int num, train_vars_t *tvars, uint8_t c1, int8_t dir1, uint8_t c2, int8_t dir2);
+static void set_c1_c2(int tidx, train_vars_t *tvars, xblkaddr_t c1, int8_t dir1, xblkaddr_t c2, int8_t dir2);
 
 static void pose_check_trig(int numtrain, train_vars_t *tvars, int32_t lastincr);
 
-
+static inline xblkaddr_t to_xblk(uint8_t val)
+{
+	xblkaddr_t x;
+	x.v = val;
+	return x;
+}
 static void spdctl_reset(void)
 {
 	memset(trspc_vars, 0, sizeof(trspc_vars));
 	for (int  i = 0; i<NUM_TRAINS; i++) {
-		trspc_vars[i].C1x = 0xFF;
-		trspc_vars[i].C2x = 0xFF;
+		trspc_vars[i].C1x.v = 0xFF;
+		trspc_vars[i].C2x.v = 0xFF;
 	}
 }
 
@@ -207,17 +212,17 @@ void spdctl_run_tick(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, uint
         if (MA1_ADDR_IS_TRAIN_ADDR(m.to)) {
             int tidx = MA1_TRAIN(m.to);
             USE_TRAIN(tidx)
-            int cfrom = FROM_CANTON(m);
+            xblkaddr_t cfrom = FROM_CANTON(m);
             switch (m.cmd) {
                 case CMD_BEMF_NOTIF:
-                    if (cfrom == tvars->C1x) {
+                    if (cfrom.v == tvars->C1x.v) {
                     	if (!tidx) oscillo_t0bemf = m.v1;
                     	else if (1==tidx) oscillo_t1bemf = m.v1;
 
                         itm_debug3(DBG_PID, "st bemf", tidx, m.v1, m.from);
                         if (!tvars->c2bemf) tvars->bemf_mv = m.v1;
                         break;
-                    } else if (cfrom == tvars->C2x) {
+                    } else if (cfrom.v == tvars->C2x.v) {
                         itm_debug3(DBG_PID|DBG_CTRL, "c2 bemf", tidx, m.v1, m.from);
                         if (tvars->c2bemf) {
                         	tvars->bemf_mv = m.v1;
@@ -231,7 +236,7 @@ void spdctl_run_tick(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, uint
                             	m.from = MA1_SPDCTL(tidx);
                             	m.to = MA1_CTRL(tidx);
                         		m.cmd = CMD_BEMF_DETECT_ON_C2;
-                            	m.v1u = tvars->C2x;
+                            	m.v1u = tvars->C2x.v;
                             	int32_t p = tvars->position_estimate / 100;
                             	if (abs(p)>0x7FFF) {
                             		// TODO: problem here pose is > 16bits
@@ -264,8 +269,8 @@ void spdctl_run_tick(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, uint
                     break;
                 case CMD_SET_C1_C2:
                     itm_debug3(DBG_SPDCTL|DBG_CTRL, "set_c1_c2", tidx, m.vbytes[0], m.vbytes[2]);
-                    //static void set_c1_c2(int tidx, train_vars_t *tvars, uint8_t c1, int8_t dir1, uint8_t c2, int8_t dir2)
-                    set_c1_c2(tidx, tvars, m.vbytes[0], m.vbytes[1], m.vbytes[2], m.vbytes[3]);
+                    //set_c1_c2(int tidx, train_vars_t *tvars, xblkaddr_t c1, int8_t dir1, xblkaddr_t c2, int8_t dir2)
+                    set_c1_c2(tidx, tvars, to_xblk(m.vbytes[0]), m.vbytes[1], to_xblk(m.vbytes[2]), m.vbytes[3]);
                     break;
                 case CMD_POSE_SET_TRIG0:
                 	itm_debug2(DBG_POSEC, "POSE set0", tidx, m.v32);
@@ -461,17 +466,17 @@ static void train_periodic_control(int numtrain, uint32_t dt)
 }
 
 
-static void set_c1_c2(int tidx, train_vars_t *tvars, uint8_t c1, int8_t dir1, uint8_t c2, int8_t dir2)
+static void set_c1_c2(int tidx, train_vars_t *tvars, xblkaddr_t c1, int8_t dir1, xblkaddr_t c2, int8_t dir2)
 {
 	msg_64_t m;
 	m.from = MA1_SPDCTL(tidx);
 
-	itm_debug3(DBG_SPDCTL, "s-c1", tidx, c1, dir1);
-	itm_debug3(DBG_SPDCTL, "s-c2", tidx, c2, dir2);
+	itm_debug3(DBG_SPDCTL, "s-c1", tidx, c1.v, dir1);
+	itm_debug3(DBG_SPDCTL, "s-c2", tidx, c2.v, dir2);
 
 	tvars->c2bemf = 0;
 
-	if ((tvars->C1x != 0xFF) && (tvars->C1x != c1)  && (tvars->C1x != c2)) {
+	if ((tvars->C1x.v != 0xFF) && (tvars->C1x.v != c1.v)  && (tvars->C1x.v != c2.v)) {
 		TO_CANTON(m, tvars->C1x);
 		itm_debug1(DBG_SPDCTL, "stp c1", tidx);
 		m.cmd = CMD_STOP;
@@ -479,7 +484,7 @@ static void set_c1_c2(int tidx, train_vars_t *tvars, uint8_t c1, int8_t dir1, ui
 		m.cmd = CMD_BEMF_OFF;
 		mqf_write_from_spdctl(&m);
 	}
-	if ((tvars->C2x != 0xFF) && (tvars->C2x != c1)  && (tvars->C2x != c2)) {
+	if ((tvars->C2x.v != 0xFF) && (tvars->C2x.v != c1.v)  && (tvars->C2x.v != c2.v)) {
 		TO_CANTON(m, tvars->C2x);
 		itm_debug1(DBG_SPDCTL, "stp c2", tidx);
 		m.cmd = CMD_STOP;
@@ -487,18 +492,18 @@ static void set_c1_c2(int tidx, train_vars_t *tvars, uint8_t c1, int8_t dir1, ui
 		m.cmd = CMD_BEMF_OFF;
 		mqf_write_from_spdctl(&m);
 	}
-	if ((c1 != 0xFF) && (c1 != tvars->C1x) && (c1 != tvars->C2x)) {
+	if ((c1.v != 0xFF) && (c1.v != tvars->C1x.v) && (c1.v != tvars->C2x.v)) {
 		TO_CANTON(m, c1);
 		m.cmd = CMD_BEMF_ON;
 		mqf_write_from_spdctl(&m);
 	}
-	if ((c2 != 0xFF) && (c2 != tvars->C1x) && (c2 != tvars->C2x)) {
+	if ((c2.v != 0xFF) && (c2.v != tvars->C1x.v) && (c2.v != tvars->C2x.v)) {
 		TO_CANTON(m, c2);
 		//m.to = c2;
 		m.cmd = CMD_BEMF_ON;
 		mqf_write_from_spdctl(&m);
 	}
-    if (c1 != tvars->C1x) {
+    if (c1.v != tvars->C1x.v) {
         tvars->position_estimate = 0; // reset POSE
     }
 	tvars->C1x = c1;
@@ -522,8 +527,8 @@ static void _set_speed(int tidx, const conf_train_t *cnf, train_vars_t *vars)
     c1 =  conf_canton_template(); //conf_canton_get(vars->C1);
     c2 =  c1; // conf_canton_template(); // conf_canton_get(vars->C2);
     
-    if (vars->C1x == 0xFF) c1 = NULL;
-    if (vars->C2x == 0xFF) c2 = NULL;
+    if (vars->C1x.v == 0xFF) c1 = NULL;
+    if (vars->C2x.v == 0xFF) c2 = NULL;
     
     if (!c1) {
     	itm_debug1(DBG_ERR|DBG_SPDCTL, "no canton", sv100);
@@ -640,7 +645,7 @@ static void pose_check_trig(int numtrain, train_vars_t *tvars, int32_t lastincr)
     m.to = MA1_CTRL(numtrain);
     m.cmd = CMD_POSE_TRIGGERED;
     m.subc = r;
-    m.v1u = tvars->C1x;
+    m.v1u = tvars->C1x.v;
     int32_t p = tvars->position_estimate / 100;
     if (abs(p)>0x7FFF) {
         // TODO: problem here pose is > 16bits

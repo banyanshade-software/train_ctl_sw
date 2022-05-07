@@ -64,11 +64,11 @@ lsblk_num_t next_lsblk(lsblk_num_t blknum, uint8_t left, uint8_t *palternate);
 
 // ---------------------------------------------------------------------
 
-uint8_t canton_for_lsblk(lsblk_num_t n);
+xblkaddr_t canton_for_lsblk(lsblk_num_t n);
 
-lsblk_num_t first_lsblk_with_canton(uint8_t ca, lsblk_num_t fromblk);
+lsblk_num_t first_lsblk_with_canton(xblkaddr_t ca, lsblk_num_t fromblk);
 
-lsblk_num_t any_lsblk_with_canton(uint8_t ca);
+lsblk_num_t any_lsblk_with_canton(xblkaddr_t ca);
 
 
 // ---------------------------------------------------------------------
@@ -95,7 +95,7 @@ void topology_get_cantons_for_turnout(uint8_t turnout, uint8_t *head, uint8_t *s
 uint8_t  get_lsblk_ina3221(lsblk_num_t num);
 
 // for presence detection, retrive all ina3221 belonging to a canton
-uint16_t get_ina_bitfield_for_canton(int cnum);
+uint16_t get_ina_bitfield_for_canton(int cnum); // XXX TODO not ok for multiboard
 
 // get lsblk associated with a given ina3221
 // several lsblk may share the same ina3221 (using POSE only between these lsblk)

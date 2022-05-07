@@ -128,12 +128,8 @@ typedef uint8_t  msg_addr_t;
 
 #define CNUM(_board, _canton)  ((((_board) & 0x0F)<<4) | ((_canton) & 0x0F))
 
-#define FROM_CANTON(m) ((MA0_BOARD((m).from) << 4) | ((m).subc & 0x0F))
+//#define FROM_CANTON(m) ((MA0_BOARD((m).from) << 4) | ((m).subc & 0x0F))
 
-#define TO_CANTON(_m, _cnum) do {	\
-	(m).to = MA0_CANTON((_cnum) >> 4);	\
-	(m).subc = ((_cnum) & 0x0F);		\
-} while (0)							\
 
 
 // check
@@ -270,5 +266,42 @@ void purge_all_queue(void);
 LFMQUEUE_DEF_H(from_nowhere, msg_64_t)
 
 #include "trainmsgdef.h"
+
+
+
+
+// new type xblkaddr_t, castable to uint8_t, replaces old uint8_t to avoid confusion and error
+typedef union {
+	struct {
+		uint8_t board:4;
+		uint8_t canton:4;
+	};
+	uint8_t v;
+} xblkaddr_t;
+
+
+#ifndef TRAIN_SIMU
+static_assert(sizeof(xblkaddr_t) == 1);
+#else
+typedef char compile_assert[(sizeof(xblkaddr_t) == 1) ? 0 : -1];
+#endif
+
+#define FROM_CANTON(m) (_from_canton(&m))
+
+static inline xblkaddr_t _from_canton(msg_64_t *m)
+{
+	xblkaddr_t r;
+	r.board = MA0_BOARD(m->from);
+	r.canton = m->subc;
+	return r;
+}
+
+#define TO_CANTON(_m, _caddr) do {	\
+	(m).to = MA0_CANTON((_caddr).board);	\
+	(m).subc = (_caddr).canton;		\
+} while (0)							\
+
+
+
 
 #endif /* MSG_TRAINMSG_H_ */

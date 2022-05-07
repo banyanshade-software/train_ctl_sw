@@ -18,6 +18,8 @@
 #include <memory.h>
 
 #include "statval.h"
+#include "msg/trainmsg.h"
+
 //#include "train.h"
 #include "spdctl/spdctl.h"
 //#include "low/canton_config.h"

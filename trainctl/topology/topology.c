@@ -203,10 +203,15 @@ lsblk_num_t next_lsblk(lsblk_num_t blknum, uint8_t left, uint8_t *palternate)
 }
 
 
-uint8_t canton_for_lsblk(lsblk_num_t n)
+xblkaddr_t canton_for_lsblk(lsblk_num_t n)
 {
-    if (n.n<0) return 0xFF;
-    return Topology(n)->canton_addr;
+    if (n.n<0) {
+    	xblkaddr_t r = { .v = 0xFF };
+    	return r;
+    }
+    xblkaddr_t r;
+    r.v = Topology(n)->canton_addr;
+    return r;
 }
 
 static lsblk_num_t _first_lsblk_with_canton(uint8_t ca,  lsblk_num_t fromblk)
@@ -252,21 +257,21 @@ static inline lsblk_num_t _lsblk(int n)
     return r;
 }
 
-lsblk_num_t first_lsblk_with_canton(uint8_t ca,  lsblk_num_t fromblk)
+lsblk_num_t first_lsblk_with_canton(xblkaddr_t ca,  lsblk_num_t fromblk)
 {
-    lsblk_num_t rs = _first_lsblk_with_canton(ca, fromblk);
+    lsblk_num_t rs = _first_lsblk_with_canton(ca.v, fromblk);
     if (rs.n >= 0) return rs;
     // try with canton num
-    uint8_t fc = canton_for_lsblk(fromblk);
+    xblkaddr_t fc = canton_for_lsblk(fromblk);
     for (int i=0; i<numTopology(); i++) {
         lsblk_num_t n;
         n.n = i;
         const topo_lsblk_t *t = Topology(n);
-        if (t->canton_addr != ca) continue;
-        if ((canton_for_lsblk(_lsblk(t->left1)) != fc)
-            && (canton_for_lsblk(_lsblk(t->left2))  != fc)
-            && (canton_for_lsblk(_lsblk(t->right1)) != fc)
-            && (canton_for_lsblk(_lsblk(t->right2)) != fc)) continue;
+        if (t->canton_addr != ca.v) continue;
+        if ((canton_for_lsblk(_lsblk(t->left1)).v != fc.v)
+            && (canton_for_lsblk(_lsblk(t->left2)).v  != fc.v)
+            && (canton_for_lsblk(_lsblk(t->right1)).v != fc.v)
+            && (canton_for_lsblk(_lsblk(t->right2)).v != fc.v)) continue;
         return n;
     }
     lsblk_num_t n = {-1};
@@ -274,9 +279,9 @@ lsblk_num_t first_lsblk_with_canton(uint8_t ca,  lsblk_num_t fromblk)
     
 }
 
-lsblk_num_t any_lsblk_with_canton(uint8_t ca)
+lsblk_num_t any_lsblk_with_canton(xblkaddr_t ca)
 {
-    if (0xFF == ca) {
+    if (0xFF == ca.v) {
         lsblk_num_t n = {-1};
         return n;
     }
@@ -284,19 +289,22 @@ lsblk_num_t any_lsblk_with_canton(uint8_t ca)
         lsblk_num_t n;
         n.n = i;
         const topo_lsblk_t *t = Topology(n);
-        if (t->canton_addr != ca) continue;
+        if (t->canton_addr != ca.v) continue;
         return n;
     }
     lsblk_num_t n = {-1};
     return n;
 }
 
-uint8_t next_block_addr(uint8_t blkaddr, uint8_t left)
+xblkaddr_t next_block_addr(xblkaddr_t blkaddr, uint8_t left)
 {
     // slow should not be used ?
     lsblk_num_t f = any_lsblk_with_canton(blkaddr);
     lsblk_num_t n = next_lsblk(f, left, NULL);
-    if (n.n<0) return 0xFF;
+    if (n.n<0) {
+    	xblkaddr_t r = { .v = 0xFF };
+    	return r;
+    }
     return canton_for_lsblk(n);
 }
 // --------------------------------------------------------------------------------------

@@ -327,7 +327,7 @@ static void sub_presence_changed(_UNUSED_ uint32_t tick, _UNUSED_ uint8_t from_a
             is_s1 = 1;
         }
         lsblk_num_t c2s = {-1};
-        if (tvar->can2_xaddr != 0xFF) {
+        if (tvar->can2_xaddr.v != 0xFF) {
             c2s = first_lsblk_with_canton(tvar->can2_xaddr, tvar->c1_sblk);
             if (c2s.n == -1) FatalError("Layout", "No c2s", Error_NoC2s);
             if (lsegnum == get_lsblk_ina3221(c2s)) {
@@ -543,9 +543,9 @@ void ctrl_run_tick(_UNUSED_ uint32_t notif_flags, uint32_t tick, _UNUSED_ uint32
             case CMD_BEMF_DETECT_ON_C2: {
                 itm_debug2(DBG_CTRL,"BEMF/C2", tidx,  m.v1u);
                 train_ctrl_t *tvar = &trctl[tidx];
-                if (m.v1u != tvar->can2_xaddr) {
+                if (m.v1u != tvar->can2_xaddr.v) {
                     // typ. because we already switch to c2 (msg SET_C1_C2 and CMD_BEMF_DETECT_ON_C2 cross over
-                    itm_debug3(DBG_CTRL, "not c2", tidx, m.v1u, tvar->can2_xaddr);
+                    itm_debug3(DBG_CTRL, "not c2", tidx, m.v1u, tvar->can2_xaddr.v);
                     break;
                 }
                 if (tvar->measure_pose_percm) {
@@ -563,7 +563,8 @@ void ctrl_run_tick(_UNUSED_ uint32_t notif_flags, uint32_t tick, _UNUSED_ uint32
 
             case CMD_POSE_TRIGGERED:
                 itm_debug3(DBG_POSE, "Trig", m.v1u, m.v2u, m.subc);
-                ctrl2_evt_pose_triggered(tidx, tvar, m.v1u, m.subc, m.v2);
+                xblkaddr_t tb = {.v = m.v1u};
+                ctrl2_evt_pose_triggered(tidx, tvar, tb, m.subc, m.v2);
                 break;
             case CMD_STOP_DETECTED:
                 ctrl2_evt_stop_detected(tidx, tvar, m.v32);

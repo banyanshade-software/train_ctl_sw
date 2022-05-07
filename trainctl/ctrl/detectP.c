@@ -35,7 +35,7 @@ static const int freqs[DETECT_NUM_FREQS] = { 100, 200, 400 };
 #define USE_INA_FOR_DETECT 1
 
 static int detect_state = 0;
-static int detect_canton = -1;
+static xblkaddr_t detect_canton = {.v=0xFF};
 static uint32_t detect_ltick = 0;
 
 
@@ -80,7 +80,7 @@ static int setfreqi(int fi)
 void detect2_init(void)
 {
     detect_state = 0;
-    detect_canton = -1;
+    detect_canton.v = 0xFF;
     detect_ltick = 0;
     save_freq = get_pwm_freq();
     freqindex = 0;
@@ -99,12 +99,12 @@ static inline int32_t divp(int32_t a, int32_t b)
 static void analyse_bemf(int cnum, int frequi)
 {
     if (!dst.voff.count) {
-        itm_debug1(DBG_DETECT|DBG_ERR, "no bemf", detect_canton);
+        itm_debug1(DBG_DETECT|DBG_ERR, "no bemf", detect_canton.v);
         return;
     }
     int freq = get_pwm_freq();
     int rf = dst.voff.count * 1000 / MEAS_DURATION;
-    itm_debug1(DBG_DETECT, "Z canton", detect_canton);
+    itm_debug1(DBG_DETECT, "Z canton", detect_canton.v);
     itm_debug3(DBG_DETECT, "Z freq", freq, rf, dst.voff.count);
     itm_debug3(DBG_DETECT, "Z bemf", dst.voff.min, measval_avg(&dst.voff), dst.voff.max);
     itm_debug3(DBG_DETECT, "Z von",  dst.von.min, measval_avg(&dst.von), dst.von.max);
@@ -174,7 +174,8 @@ void analyse_bemf_final(void)
         
         int altrnum = 0;  // for now trainnum are given in order
         if (bemf_anal[cnum].d != loco_none) {
-            lsblk_num_t sblk = any_lsblk_with_canton(cnum);
+        	xblkaddr_t bnum = {.v=cnum};
+            lsblk_num_t sblk = any_lsblk_with_canton(bnum);
             // train num XXX TODO
             int trnum = altrnum;
             altrnum++;
@@ -184,7 +185,8 @@ void analyse_bemf_final(void)
             ctrl2_set_mode(trnum, tvar, train_manual);
             
             // set occupency
-            set_block_addr_occupency(cnum, BLK_OCC_STOP, trnum, sblk);
+        	//xblkaddr_t bn = {.v=cnum};
+            set_block_addr_occupency(bnum, BLK_OCC_STOP, trnum, sblk);
             
             // train params
             const conf_train_t *tconf = conf_train_get(trnum);
@@ -203,7 +205,7 @@ void detect2_process_tick(uint32_t tick)
 	} else if (-1 == detect_state) {
 		return;
 	} else if (0 == detect_state) {
-        detect_canton++;
+        detect_canton.v++;
         lsblk_num_t lsb = any_lsblk_with_canton(detect_canton);
 
         if (lsb.n<0) {
@@ -243,22 +245,22 @@ void detect2_process_tick(uint32_t tick)
             }
 
             itm_debug3(DBG_DETECT, "*freq", freqindex, freqs[freqindex], get_pwm_freq());
-            detect_canton = 0;
+            detect_canton.v = 0;
 
         }
-        if (bemf_anal[detect_canton].d) {
-        	itm_debug2(DBG_DETECT, "already", detect_canton, bemf_anal[detect_canton].d);
+        if (bemf_anal[detect_canton.v].d) {
+        	itm_debug2(DBG_DETECT, "already", detect_canton.v, bemf_anal[detect_canton.v].d);
             detect_state = 0;
 			return;
         }
 
         // start detection on new canton
         detect_ltick = tick;
-        itm_debug1(DBG_DETECT, "DETECT", detect_canton);
+        itm_debug1(DBG_DETECT, "DETECT", detect_canton.v);
 
         if ((USE_INA_FOR_DETECT)) {
         	// start monitoring current (INA3221) on concerned sub blocks
-        	uint16_t inas = get_ina_bitfield_for_canton(detect_canton);
+        	uint16_t inas = get_ina_bitfield_for_canton(detect_canton.v);
             msg_64_t m = {0};
             m.from = MA1_CONTROL();
             m.to = MA0_INA(oam_localBoardNum()); // XXX board to be added
@@ -278,7 +280,7 @@ void detect2_process_tick(uint32_t tick)
 
         // notify UI
         m.cmd = CMD_UI_DETECT;
-        m.v1 = detect_canton;
+        m.v1 = detect_canton.v;
         m.v2u = get_pwm_freq();;
         m.to = MA3_UI_GEN; //(UISUB_TFT);
         mqf_write_from_ctrl(&m);
@@ -294,7 +296,7 @@ void detect2_process_tick(uint32_t tick)
             m.from = MA1_CONTROL();
             m.cmd = CMD_STOP_DETECT_TRAIN;
             mqf_write_from_ctrl(&m);
-            itm_debug2(DBG_DETECT, "END", detect_canton, detect_ltick);
+            itm_debug2(DBG_DETECT, "END", detect_canton.v, detect_ltick);
             detect_ltick = tick;
             detect_state = 2;
 
@@ -308,7 +310,7 @@ void detect2_process_tick(uint32_t tick)
             	mqf_write_from_ctrl(&m);
             }
             // analyse results
-            analyse_bemf(detect_canton, freqindex);
+            analyse_bemf(detect_canton.v, freqindex);
         }
     } else if (detect_state==2) {
     	// relax time
@@ -332,15 +334,15 @@ void detect2_process_msg(msg_64_t *m)
                 itm_debug2(DBG_DETECT, "bad state", detect_state, m->from);
                 break;
             }
-            uint8_t fc = FROM_CANTON(*m);
-            if (fc != detect_canton) {
-                itm_debug3(DBG_DETECT, "bad from", detect_canton, m->from, fc);
+            xblkaddr_t fc = FROM_CANTON(*m);
+            if (fc.v != detect_canton.v) {
+                itm_debug3(DBG_DETECT, "bad from", detect_canton.v, m->from, fc.v);
                 break;
             }
             measval_addvalue(&dst.voff, m->v1);
             measval_addvalue(&dst.von, m->v2);
             if ((1)) {
-            	if (!freqindex && (detect_canton == 0) && (dst.voff.count > 20) && (m->v1 > 2000)) {
+            	if (!freqindex && (detect_canton.v == 0) && (dst.voff.count > 20) && (m->v1 > 2000)) {
             		extern volatile int oscillo_trigger_start;
             		oscillo_trigger_start = 1;
             	}

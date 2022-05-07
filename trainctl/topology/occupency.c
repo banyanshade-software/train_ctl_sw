@@ -54,22 +54,22 @@ static void _block_freed(int cnum, canton_occ_t *co)
 }
 
 
-static inline uint8_t addr_to_num(uint8_t addr)
+static inline uint8_t addr_to_num(xblkaddr_t addr)
 {
-    return addr; // TODO : compact it as actually on 6 canton per board and << 8 boards
+    return addr.v; // TODO : compact it as actually on 6 canton per board and << 8 boards
 }
 
 static uint8_t notif_blk_reset = 1;
 uint8_t notify_occupency_change = 1;
 
-static void notif_blk_occup_chg(int blknum, canton_occ_t *co)
+static void notif_blk_occup_chg(xblkaddr_t blk, canton_occ_t *co)
 {
     if (!notify_occupency_change) return;
     msg_64_t m = {0};
     m.from = MA1_CONTROL();
     m.to = MA3_UI_CTC;
     m.cmd = CMD_BLK_CHG_NOTIF;
-    m.vbytes[0] = blknum;
+    m.vbytes[0] = blk.v;
     m.vbytes[1] = co->occ;
     m.vbytes[2] = co->trnum;
     m.vbytes[3] = co->lsblk.n;
@@ -78,17 +78,17 @@ static void notif_blk_occup_chg(int blknum, canton_occ_t *co)
 }
 
 
-void set_block_addr_occupency(uint8_t blkaddr, uint8_t v, uint8_t trnum, lsblk_num_t lsb)
+void set_block_addr_occupency(xblkaddr_t blkaddr, uint8_t v, uint8_t trnum, lsblk_num_t lsb)
 {
     int chg = 0;
-    if (0xFF == blkaddr) FatalError("OccFF", "bad occupency", Error_Occupency);
+    if (0xFF == blkaddr.v) FatalError("OccFF", "bad occupency", Error_Occupency);
     int blknum = addr_to_num(blkaddr);
     canton_occ_t *co = &canton_occ[addr_to_num(blkaddr)];
     if (co->occ != v) {
         if (USE_BLOCK_DELAY_FREE && (v==BLK_OCC_FREE)) {
             if (co->occ >= BLK_OCC_DELAY1) FatalError("OccD1", "bad occupency", Error_OccDelay);
             co->occ = BLK_OCC_DELAYM;
-            itm_debug1(DBG_CTRL, "delay free", blkaddr);
+            itm_debug1(DBG_CTRL, "delay free", blkaddr.v);
         } else {
             co->occ = v;
             chg = 1;
@@ -113,12 +113,12 @@ void set_block_addr_occupency(uint8_t blkaddr, uint8_t v, uint8_t trnum, lsblk_n
 
 
 
-uint8_t get_block_addr_occupency(uint8_t blkaddr)
+uint8_t get_block_addr_occupency(xblkaddr_t blkaddr)
 {
-    if (0xFF == blkaddr) FatalError("OccFF", "bad occupency", Error_Occupency);
+    if (0xFF == blkaddr.v) FatalError("OccFF", "bad occupency", Error_Occupency);
     return canton_occ[addr_to_num(blkaddr)].occ;
 }
-uint8_t occupency_block_addr_info(uint8_t blkaddr, uint8_t *ptrn, uint8_t *psblk)
+uint8_t occupency_block_addr_info(xblkaddr_t blkaddr, uint8_t *ptrn, uint8_t *psblk)
 {
     canton_occ_t *occ = &canton_occ[addr_to_num(blkaddr)];
     if (ptrn) *ptrn = occ->trnum;
@@ -127,7 +127,7 @@ uint8_t occupency_block_addr_info(uint8_t blkaddr, uint8_t *ptrn, uint8_t *psblk
 }
 
 
-uint8_t occupency_block_is_free(uint8_t blkaddr, uint8_t trnum)
+uint8_t occupency_block_is_free(xblkaddr_t blkaddr, uint8_t trnum)
 {
     canton_occ_t *oc = &canton_occ[addr_to_num(blkaddr)];
     if (BLK_OCC_FREE == oc->occ) return 1;
@@ -151,7 +151,8 @@ void check_block_delayed(_UNUSED_ uint32_t tick)
             canton_occ[i].trnum = 0xFF;
             canton_occ[i].lsblk.n = -1;
             topology_or_occupency_changed = 1;
-            notif_blk_occup_chg(i, &canton_occ[i]);
+            xblkaddr_t bi = {.v = i};
+            notif_blk_occup_chg(bi, &canton_occ[i]);
         } else if (canton_occ[i].occ > BLK_OCC_DELAY1) {
             canton_occ[i].occ --;
         }

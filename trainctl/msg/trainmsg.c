@@ -9,6 +9,7 @@
 #include "trainmsg.h"
 #include "../misc.h"
 #include "../utils/itm_debug.h"
+#include "../oam/oam.h"
 
 #define _UNUSED_ __attribute__((unused))
 

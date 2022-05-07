@@ -475,14 +475,15 @@ static void ihm_runtick_detect1(int init)
 		msg_64_t m;
 		m.from = MA3_UI_GEN; //(1);
 		//m.to = MA0_CANTON(0);
-		TO_CANTON(m, 0);
+		xblkaddr_t tb0 = {.v = 0 };
+		TO_CANTON(m, tb0);
 		m.subc = 1;
 		m.cmd = CMD_BEMF_ON;
 		mqf_write_from_ui(&m);
 
 		m.from = MA3_UI_GEN;//(1);
 		//m.to = MA_CANTON(0);
-		TO_CANTON(m, 0);
+		TO_CANTON(m, tb0);
 		m.subc = 1;
 		m.cmd = CMD_SETVPWM;
 		m.v1u = voltidx;
@@ -501,7 +502,8 @@ static void ihm_runtick_detect1(int init)
 
 		msg_64_t m;
 		m.from = MA3_UI_GEN; //(1);
-		TO_CANTON(m, 1);
+		xblkaddr_t tb1 = {.v = 1};
+		TO_CANTON(m, tb1);
 		m.cmd = CMD_SETVPWM;
 		m.v1u = voltidx;
 		m.v2 = rotpos;

@@ -1,5 +1,5 @@
 /*
- * cantest.c
+ * oam.c
  *
  *  Created on: 2 avr. 2022
  *      Author: danielbraun
@@ -98,7 +98,7 @@ void OAM_Tasklet(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_
 		m.cmd = CMD_SETRUN_MODE;
         if (oam_isMaster()) {
             m.v1u = runmode_master;  //runmode_normal; //runmode_testcan; // runmode_normal; runmode_detect2; runmode_off
-            m.v1u = runmode_normal;  // XXX temp, delete me
+            //m.v1u = runmode_normal;  // XXX temp, delete me
         } else {
             m.v1u = runmode_slave;
         }
@@ -533,6 +533,16 @@ static void handle_master_msg(msg_64_t *m)
 
 static void handle_master_tick(_UNUSED_ uint32_t tick)
 {
+	static uint32_t lbsc = 0;
+	if (tick>lbsc+1000) {
+		lbsc = tick;
+		msg_64_t m = {0};
+		m.cmd = CMD_OAM_MASTER;
+		m.v32u = oam_getDeviceUniqueId();
+		m.from = MA0_OAM(0);
+		m.to = MA3_SLV_OAM;
+    	mqf_write_from_oam(&m);
+	}
 #ifdef BOARD_HAS_FLASH
 	int rc = 0;
 	unsigned int confnum; unsigned int fieldnum;

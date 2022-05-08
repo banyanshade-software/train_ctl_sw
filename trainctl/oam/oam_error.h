@@ -13,6 +13,7 @@
 enum fatal_error_code {
 	Error_None = 0,
 	Error_Other,		// Error_Handler
+	Error_Check,
 	Error_NoC2s,
 	Error_DetectBadNum,
 	Error_Ledc,

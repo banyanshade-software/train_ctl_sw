@@ -177,9 +177,9 @@ static int  _local_disptach(msg_64_t *m, mqf_t *dont_send_to)
 #ifdef BOARD_HAS_IHM
         if (MA2_UI_LOCAL == m->to) dest = &to_ui;
 #endif
-        if (MA2_OAM_LOCAL) dest = &to_oam;
+        if (MA2_OAM_LOCAL == m->to) dest = &to_oam;
 #ifdef BOARD_HAS_USB
-        if (MA2_USB_LOCAL) dest = &to_usb;
+        if (MA2_USB_LOCAL== m->to) dest = &to_usb;
 #endif
 
 
@@ -284,7 +284,7 @@ static void dispatch_m64(msg_64_t *m, int f)
             mqf_write(&to_usb, m);
             ok = 1;
         }
-        //return; also send on CAN
+        if ((1)) return; // XXX disable return so also send on CAN
     }
 #endif
 #ifdef BOARD_HAS_CAN

@@ -17,12 +17,6 @@
 extern int oam_localBoardNum(void);
 
 typedef uint8_t  msg_addr_t;
-// old
-// first 2 bits :
-// M2:  0 x : (6bits) bbb xxx		CANTON (00) and TURNOUT (01)
-// M3   1 0 x : (5bits)				UI
-// M5   1 1 0 x x : (3 bits)		SPD_CTL (110 01) + trn,  CTRL (110 10) + trn , LED (110 11)+brd, INA (110 00)+brd
-// M8   1 1 1 1 1 x x x				OAM
 
 /* new: (#15)
  
@@ -273,8 +267,8 @@ LFMQUEUE_DEF_H(from_nowhere, msg_64_t)
 // new type xblkaddr_t, castable to uint8_t, replaces old uint8_t to avoid confusion and error
 typedef union {
 	struct {
-		uint8_t board:4;
 		uint8_t canton:4;
+		uint8_t board:4;
 	};
 	uint8_t v;
 } xblkaddr_t;
@@ -306,8 +300,8 @@ static inline xblkaddr_t _from_canton(msg_64_t *m)
 
 typedef union {
 	struct {
-		uint8_t board:4;
 		uint8_t turnout:4;
+		uint8_t board:4;
 	};
 	uint8_t v;
 } xtrnaddr_t;

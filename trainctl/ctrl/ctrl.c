@@ -238,6 +238,16 @@ static const uint8_t route_2_T0[] = {
 
 static void ctrl_init(void)
 {
+	if ((1)) {
+		xblkaddr_t t;
+		t.v = 0x24;
+		if (t.board != 2) FatalError("chk1", "check xblkaddr_t", Error_Check);
+		if (t.canton != 4) FatalError("chk2", "check xblkaddr_t", Error_Check);
+		xtrnaddr_t b;
+		b.v = 0x47;
+		if (b.board != 4) FatalError("chk3", "check xblkaddr_t", Error_Check);
+		if (b.turnout != 7) FatalError("chk4", "check xblkaddr_t", Error_Check);
+	}
 	memset(trctl, 0, sizeof(train_ctrl_t)*NUM_TRAINS);
 	ctrl_set_mode(0, train_manual);
 	//ctrl_set_mode(1, train_auto);

@@ -49,8 +49,8 @@ static inline uint8_t occupied(int dir)
 }
 
 
-int occupency_turnout_reserve(uint8_t turnout, int8_t train);
-void occupency_turnout_release(uint8_t turnout, int8_t train);
+int occupency_turnout_reserve(xtrnaddr_t turnout, int8_t train);
+void occupency_turnout_release(xtrnaddr_t turnout, int8_t train);
 
 
 #endif /* occupency_h */

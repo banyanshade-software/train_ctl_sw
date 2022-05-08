@@ -38,7 +38,7 @@ static void route_end(int tidx, train_ctrl_t *tvars)
 int cauto_update_turnouts(_UNUSED_ int tidx, lsblk_num_t cur, uint8_t left, uint8_t next)
 {
     lsblk_num_t ta, tb;
-    int tn;
+    xtrnaddr_t tn;
     next_lsblk_nums(cur, left, &ta, &tb, &tn);
     if (ta.n == next) {
         int v = topology_get_turnout(tn);

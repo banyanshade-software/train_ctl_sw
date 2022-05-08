@@ -105,7 +105,7 @@ static void sub_presence_changed(uint32_t tick, uint8_t from_addr, uint8_t segnu
 
 // ----------------------------------------------------------------------------
 // turnouts
-static int set_turnout(int tn, int v, int train);
+static int set_turnout(xtrnaddr_t tn, int v, int train);
 
 // ----------------------------------------------------------------------------
 // behaviour
@@ -241,8 +241,10 @@ static void ctrl_init(void)
 	memset(trctl, 0, sizeof(train_ctrl_t)*NUM_TRAINS);
 	ctrl_set_mode(0, train_manual);
 	//ctrl_set_mode(1, train_auto);
-    set_turnout(0, 0, -1);
-    set_turnout(1, 0, -1);
+	xtrnaddr_t t0 = { .v = 0};
+	xtrnaddr_t t1 = { .v = 1};
+    set_turnout(t0, 0, -1);
+    set_turnout(t1, 0, -1);
     lsblk_num_t s0 = {0};
     lsblk_num_t s2 = {2};
     lsblk_num_t _UNUSED_ s3 = {3};
@@ -482,17 +484,21 @@ void ctrl_run_tick(_UNUSED_ uint32_t notif_flags, uint32_t tick, _UNUSED_ uint32
        
         // mode_normal processing
         // -----------------------------------------
+        xtrnaddr_t turnout;
         switch (m.cmd) {
             default:
                 break;
             case CMD_TURNOUT_HI_A:
-                set_turnout(m.v1u, 0, -1);
+            	turnout.v = m.v1u;
+                set_turnout(turnout, 0, -1);
                 break;
             case CMD_TURNOUT_HI_B:
-                set_turnout(m.v1u, 1, -1);
+            	turnout.v = m.v1u;
+                set_turnout(turnout, 1, -1);
                 break;
             case CMD_TURNOUT_HI_TOG:
-                set_turnout(m.v1u, topology_get_turnout(m.v1u) ? 0 : 1, -1);
+            	turnout.v = m.v1u;
+                set_turnout(turnout, topology_get_turnout(turnout) ? 0 : 1, -1);
                 break;
         }
         // -----------------------------------------
@@ -712,34 +718,34 @@ static void evt_timer(int tidx, train_ctrl_t *tvar, int tnum)
 // - sends info to UI (cto)
 
 
-static int set_turnout(int tn, int v, int train)
+static int set_turnout(xtrnaddr_t tn, int v, int train)
 {
-	itm_debug2(DBG_CTRL, "TURN", tn, v);
-	if (tn<0) fatal();
-	if (tn>=MAX_TOTAL_TURNOUTS) fatal();
+	itm_debug2(DBG_CTRL, "TURN", tn.v, v);
+	if (tn.v == 0xFF) fatal();
+	if (tn.v>=MAX_TOTAL_TURNOUTS) fatal();
 
 	int rc = topology_set_turnout(tn, v, train);
     if (rc) {
-    	itm_debug3(DBG_CTRL, "tn busy", train, tn, rc);
+    	itm_debug3(DBG_CTRL, "tn busy", train, tn.v, rc);
     	return rc;
     }
 
 	// send to turnout
     msg_64_t m = {0};
 	m.from = MA1_CONTROL();
-	m.to = MA0_TURNOUT(0); // TODO board num
-	m.subc = tn;
+	m.to = MA0_TURNOUT(tn.board); // TODO board num
+	m.subc = tn.turnout;
 	m.cmd = v ? CMD_TURNOUT_B : CMD_TURNOUT_A;
 	mqf_write_from_ctrl(&m);
 
     // forward to UI/CTO
     m.to = MA3_UI_CTC;
-    m.v2 = tn;
+    m.v2 = tn.v;
     mqf_write_from_ctrl(&m);
     return 0;
 }
 
-int ctrl2_set_turnout(int tn, int v, int train)
+int ctrl2_set_turnout(xtrnaddr_t tn, int v, int train)
 {
     return set_turnout(tn, v, train);
 }

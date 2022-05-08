@@ -144,11 +144,11 @@ int topology_num_sblkd(void)
     return numTopology();
 }
 
-void next_lsblk_nums(lsblk_num_t blknum, uint8_t left, lsblk_num_t *pb1, lsblk_num_t *pb2, int *tn)
+void next_lsblk_nums(lsblk_num_t blknum, uint8_t left, lsblk_num_t *pb1, lsblk_num_t *pb2, xtrnaddr_t *tn)
 {
     pb1->n = -1;
     pb2->n = -1;
-    *tn = -1;
+    tn->v = -1;
     if (blknum.n<0) {
         abort();
         return;
@@ -156,11 +156,11 @@ void next_lsblk_nums(lsblk_num_t blknum, uint8_t left, lsblk_num_t *pb1, lsblk_n
     if (left) {
         pb1->n = Topology(blknum)->left1;
         pb2->n = Topology(blknum)->left2;
-        *tn =  Topology(blknum)->ltn;
+        tn->v =  Topology(blknum)->ltn;
     } else {
         pb1->n = Topology(blknum)->right1;
         pb2->n = Topology(blknum)->right2;
-        *tn =  Topology(blknum)->rtn;
+        tn->v =  Topology(blknum)->rtn;
     }
     if ((pb1->n>=0) && (Topology(*pb1)->canton_addr == 0xFF)) {
         pb1->n = -1; // inactive/future lsblk
@@ -168,8 +168,8 @@ void next_lsblk_nums(lsblk_num_t blknum, uint8_t left, lsblk_num_t *pb1, lsblk_n
     if ((pb2->n>=0) && (Topology(*pb2)->canton_addr == 0xFF)) {
         pb2->n = -1; // inactive/future lsblk
     }
-    if (*tn>=4) *tn = -1; // XXX
-    if (*tn  == 0xFF) *tn  = -1;
+    if (tn->v>=4) tn->v = -1; // XXX
+    // if (*tn  == 0xFF) tn  = -1;
 }
 
 int get_lsblk_len(lsblk_num_t blknum, int8_t *psteep)
@@ -186,9 +186,9 @@ lsblk_num_t next_lsblk(lsblk_num_t blknum, uint8_t left, uint8_t *palternate)
     if (blknum.n == -1) return blknum;
     
     lsblk_num_t a, b;
-    int tn;
+    xtrnaddr_t tn;
     next_lsblk_nums(blknum, left, &a, &b, &tn);
-    if (tn>=0) {
+    if (tn.v != 0xFF) {
         if (palternate) *palternate = 1;
         a = topology_get_turnout(tn) ? b : a;
     }
@@ -313,62 +313,62 @@ static volatile uint32_t turnoutvals = 0; // bit field
 
 uint8_t topology_or_occupency_changed = 0;
 
-int topology_set_turnout(int tn, int v, int numtrain)
+int topology_set_turnout(xtrnaddr_t turnout, int v, int numtrain)
 {
-	if (tn >= MAX_TOTAL_TURNOUTS) return -1;
-	if (tn<0) return -1;
-	if (tn>31) return -1;
+	if (turnout.v >= MAX_TOTAL_TURNOUTS) return -1;
+	if (turnout.v == 0xFF) return -1;
+	if (turnout.v>31) return -1; // XXX
 
 	if (numtrain>=0) {
-		int rc = occupency_turnout_reserve(tn, numtrain);
+		int rc = occupency_turnout_reserve(turnout, numtrain);
 		if (rc) {
 			return -1;
 		}
 	}
 	if (v) {
-		__sync_fetch_and_or(&turnoutvals, (1U<<tn));
+		__sync_fetch_and_or(&turnoutvals, (1U<<turnout.v));
 	} else {
-		__sync_fetch_and_and(&turnoutvals, ~(1U<<tn));
+		__sync_fetch_and_and(&turnoutvals, ~(1U<<turnout.v));
 	}
     topology_or_occupency_changed = 1;
-	itm_debug3(DBG_TURNOUT, "tt",tn,v, topology_get_turnout(tn));
+	itm_debug2(DBG_TURNOUT, "tt", turnout.v, topology_get_turnout(turnout));
 	return 0;
 }
 
 
 
-int topology_get_turnout(int tn)
+int topology_get_turnout(xtrnaddr_t turnout)
 {
-	if (tn >= MAX_TOTAL_TURNOUTS) return 0;
-	if (tn<0) return 0;
-	if (tn>31) return 0;
+	if (turnout.v >= MAX_TOTAL_TURNOUTS) return 0;
+	if (turnout.v == 0xFF) return 0;
+	if (turnout.v > 31) return 0;
 
 	uint32_t b = turnoutvals;
-	return (b & (1<<tn)) ? 1 : 0;
+	return (b & (1<<turnout.v)) ? 1 : 0;
 }
 
-void topology_get_cantons_for_turnout(uint8_t turnout, uint8_t *head, uint8_t *straight, uint8_t *turn)
+void topology_get_cantons_for_turnout(xtrnaddr_t turnout, xblkaddr_t *head, xblkaddr_t *straight, xblkaddr_t *turn)
 {
-	*head = 0xFF;
-	*straight = 0xFF;
-	*turn = 0xFF;
+	head->v = 0xFF;
+	straight->v = 0xFF;
+	turn->v = 0xFF;
 
 	int n=0;
 	for (int i=0; i<numTopology(); i++) {
 		lsblk_num_t b = {i};
 		const topo_lsblk_t *t = Topology(b);
 		uint8_t fc = t->canton_addr;
-		if (t->ltn == turnout) {
+		if (t->ltn == turnout.v) {
 			n++;
-			if (t->left2 == -1) *straight = fc;
-			else if (t->left1 == -1) *turn = fc;
-			else *head = fc;
+			if (t->left2 == -1) straight->v = fc;
+			else if (t->left1 == -1) turn->v = fc;
+			else head->v = fc;
 		}
-		if (t->rtn == turnout) {
+		if (t->rtn == turnout.v) {
 			n++;
-			if (t->right2 == -1) *straight = fc;
-			else if (t->right1 == -1) *turn = fc;
-			else *head = fc;
+			if (t->right2 == -1) straight->v = fc;
+			else if (t->right1 == -1) turn->v = fc;
+			else head->v = fc;
 		}
 		if (n==3) return;
 	}

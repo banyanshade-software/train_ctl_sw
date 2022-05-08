@@ -50,7 +50,7 @@ typedef struct {
 /// @param pb1 returns next lsblk if turnout=0
 /// @param pb2 returns next lsblk if turnout=1
 /// @param ptn returns turnout number, 0xFF if none
-void next_lsblk_nums(lsblk_num_t blknum, uint8_t left, lsblk_num_t *pb1, lsblk_num_t *pb2, int *ptn);
+void next_lsblk_nums(lsblk_num_t blknum, uint8_t left, lsblk_num_t *pb1, lsblk_num_t *pb2, xtrnaddr_t *ptn);
 
 
 /// next_lsblk
@@ -83,11 +83,11 @@ int get_lsblk_len(lsblk_num_t num, int8_t *psteep);
 // the turnout. ctrl.c does this
 // 0=straight (TURNOUT_A), 1=turn (TURNOUT_B)
 
-int topology_set_turnout(int tn, int v, int numtrain);
-int topology_get_turnout(int tn);
+int topology_set_turnout(xtrnaddr_t tn, int v, int numtrain);
+int topology_get_turnout(xtrnaddr_t tn);
 
 
-void topology_get_cantons_for_turnout(uint8_t turnout, uint8_t *head, uint8_t *straight, uint8_t *turn);
+void topology_get_cantons_for_turnout(xtrnaddr_t turnout, xblkaddr_t *head, xblkaddr_t *straight, xblkaddr_t *turn);
 
 // ---------------------------------------------------------------------
 

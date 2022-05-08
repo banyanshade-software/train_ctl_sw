@@ -35,7 +35,7 @@ typedef struct {
 static  canton_occ_t canton_occ[0x40] = {0};
 static volatile uint8_t  lockedby[MAX_TOTAL_TURNOUTS]; // XXX TODO this should be total number of turnouts
 
-static void occupency_turnout_release_for_train_canton(int8_t train, uint8_t canton);
+static void occupency_turnout_release_for_train_canton(int train, xblkaddr_t canton);
 
 
 //uint8_t occupency_changed = 0; replaced by topology_or_occupency_changed
@@ -48,16 +48,18 @@ void occupency_clear(void)
     memset((void *)lockedby, 0xFF, sizeof(lockedby));
 }
 
-static void _block_freed(int cnum, canton_occ_t *co)
+static void _block_freed(xblkaddr_t cnum, canton_occ_t *co)
 {
 	occupency_turnout_release_for_train_canton(co->trnum, cnum);
 }
 
+/*
 
 static inline uint8_t addr_to_num(xblkaddr_t addr)
 {
     return addr.v; // TODO : compact it as actually on 6 canton per board and << 8 boards
 }
+*/
 
 static uint8_t notif_blk_reset = 1;
 uint8_t notify_occupency_change = 1;
@@ -82,8 +84,8 @@ void set_block_addr_occupency(xblkaddr_t blkaddr, uint8_t v, uint8_t trnum, lsbl
 {
     int chg = 0;
     if (0xFF == blkaddr.v) FatalError("OccFF", "bad occupency", Error_Occupency);
-    int blknum = addr_to_num(blkaddr);
-    canton_occ_t *co = &canton_occ[addr_to_num(blkaddr)];
+    //int blknum = addr_to_num(blkaddr);
+    canton_occ_t *co = &canton_occ[blkaddr.v];
     if (co->occ != v) {
         if (USE_BLOCK_DELAY_FREE && (v==BLK_OCC_FREE)) {
             if (co->occ >= BLK_OCC_DELAY1) FatalError("OccD1", "bad occupency", Error_OccDelay);
@@ -93,7 +95,7 @@ void set_block_addr_occupency(xblkaddr_t blkaddr, uint8_t v, uint8_t trnum, lsbl
             co->occ = v;
             chg = 1;
             if (BLK_OCC_FREE == co->occ) {
-            	_block_freed(blknum, co);
+            	_block_freed(blkaddr, co);
                 // non delayed free, untested
                 trnum = -1;
                 lsb.n = -1;
@@ -116,11 +118,11 @@ void set_block_addr_occupency(xblkaddr_t blkaddr, uint8_t v, uint8_t trnum, lsbl
 uint8_t get_block_addr_occupency(xblkaddr_t blkaddr)
 {
     if (0xFF == blkaddr.v) FatalError("OccFF", "bad occupency", Error_Occupency);
-    return canton_occ[addr_to_num(blkaddr)].occ;
+    return canton_occ[blkaddr.v].occ;
 }
 uint8_t occupency_block_addr_info(xblkaddr_t blkaddr, uint8_t *ptrn, uint8_t *psblk)
 {
-    canton_occ_t *occ = &canton_occ[addr_to_num(blkaddr)];
+    canton_occ_t *occ = &canton_occ[blkaddr.v];
     if (ptrn) *ptrn = occ->trnum;
     if (psblk) *psblk = occ->lsblk.n;
     return occ->occ;
@@ -129,7 +131,7 @@ uint8_t occupency_block_addr_info(xblkaddr_t blkaddr, uint8_t *ptrn, uint8_t *ps
 
 uint8_t occupency_block_is_free(xblkaddr_t blkaddr, uint8_t trnum)
 {
-    canton_occ_t *oc = &canton_occ[addr_to_num(blkaddr)];
+    canton_occ_t *oc = &canton_occ[blkaddr.v];
     if (BLK_OCC_FREE == oc->occ) return 1;
     if (trnum == oc->trnum) return 1;
     return 0;
@@ -146,12 +148,12 @@ void check_block_delayed(_UNUSED_ uint32_t tick)
     for (int i=0; i<0x40; i++) {
         if (canton_occ[i].occ == BLK_OCC_DELAY1) {
             itm_debug1(DBG_CTRL, "FREE(d)", i);
-        	_block_freed(i, &canton_occ[i]);
+            xblkaddr_t bi = {.v= i};
+        	_block_freed(bi, &canton_occ[i]);
             canton_occ[i].occ = BLK_OCC_FREE;
             canton_occ[i].trnum = 0xFF;
             canton_occ[i].lsblk.n = -1;
             topology_or_occupency_changed = 1;
-            xblkaddr_t bi = {.v = i};
             notif_blk_occup_chg(bi, &canton_occ[i]);
         } else if (canton_occ[i].occ > BLK_OCC_DELAY1) {
             canton_occ[i].occ --;
@@ -162,11 +164,11 @@ void check_block_delayed(_UNUSED_ uint32_t tick)
 
 
 
-static  void _notify_chg_owner(uint8_t turnout, int8_t numtrain)
+static  void _notify_chg_owner(xtrnaddr_t turnout, uint8_t numtrain)
 {
     msg_64_t m = {0};
     m.cmd = CMD_TN_RESER_NOTIF;
-    m.v1 = turnout;
+    m.v1 = turnout.v;
     m.v2 = numtrain;
     m.to = MA3_UI_CTC;
     m.from = MA1_CONTROL();
@@ -174,18 +176,18 @@ static  void _notify_chg_owner(uint8_t turnout, int8_t numtrain)
 }
 
 
-int occupency_turnout_reserve(uint8_t turnout, int8_t numtrain)
+int occupency_turnout_reserve(xtrnaddr_t turnout, int8_t numtrain)
 {
-	if (turnout >= MAX_TOTAL_TURNOUTS) return -1;
+	if (turnout.v >= MAX_TOTAL_TURNOUTS) return -1;
 	//if (turnout<0) return -1;
-	if (turnout>31) return -1;
+	if (turnout.v>31) return -1;
 
 	if (numtrain>=0) {
 		uint8_t expected = numtrain;
-		int ok = __atomic_compare_exchange_n(&lockedby[turnout], &expected, numtrain, 0 /*weak*/, __ATOMIC_ACQUIRE/*success memorder*/, __ATOMIC_ACQUIRE/*fail memorder*/ );
+		int ok = __atomic_compare_exchange_n(&lockedby[turnout.v], &expected, numtrain, 0 /*weak*/, __ATOMIC_ACQUIRE/*success memorder*/, __ATOMIC_ACQUIRE/*fail memorder*/ );
 		if (!ok) {
 			expected = 0xFF;
-			ok = __atomic_compare_exchange_n(&lockedby[turnout], &expected, numtrain, 0 /*weak*/, __ATOMIC_ACQUIRE/*success memorder*/, __ATOMIC_ACQUIRE/*fail memorder*/ );
+			ok = __atomic_compare_exchange_n(&lockedby[turnout.v], &expected, numtrain, 0 /*weak*/, __ATOMIC_ACQUIRE/*success memorder*/, __ATOMIC_ACQUIRE/*fail memorder*/ );
             _notify_chg_owner(turnout, numtrain);
 		}
 		if (!ok) {
@@ -196,24 +198,25 @@ int occupency_turnout_reserve(uint8_t turnout, int8_t numtrain)
 }
 
 
-void occupency_turnout_release(uint8_t turnout, _UNUSED_ int8_t train)
+void occupency_turnout_release(xtrnaddr_t turnout, _UNUSED_ int8_t train)
 {
-    int l = lockedby[turnout];
-	lockedby[turnout] = 0xFF;
+    int l = lockedby[turnout.v];
+	lockedby[turnout.v] = 0xFF;
     if (l != 0xFF) {
         _notify_chg_owner(turnout, -1);
     }
 }
 
-static void occupency_turnout_release_for_train_canton(int8_t train, uint8_t canton)
+static void occupency_turnout_release_for_train_canton(int train, xblkaddr_t canton)
 {
 	if (train<0) FatalError("OccTrn", "bad train num", Error_OccTrn);
 	for (int tn = 0; tn<MAX_TOTAL_TURNOUTS; tn++) {
 		if (lockedby[tn] != train) continue;
-		uint8_t ca1, ca2, ca3;
-		topology_get_cantons_for_turnout(tn, &ca1, &ca2, &ca3);
-		if ((ca1 == canton) || (ca2 == canton) || (ca3 == canton)) {
-			occupency_turnout_release(tn, train);
+		xblkaddr_t ca1, ca2, ca3;
+		xtrnaddr_t xtn = {.v = tn};
+		topology_get_cantons_for_turnout(xtn, &ca1, &ca2, &ca3);
+		if ((ca1.v == canton.v) || (ca2.v == canton.v) || (ca3.v == canton.v)) {
+			occupency_turnout_release(xtn, train);
 		}
 	}
 }

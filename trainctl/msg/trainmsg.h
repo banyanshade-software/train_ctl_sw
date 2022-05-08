@@ -268,7 +268,7 @@ LFMQUEUE_DEF_H(from_nowhere, msg_64_t)
 #include "trainmsgdef.h"
 
 
-
+// ---------------
 
 // new type xblkaddr_t, castable to uint8_t, replaces old uint8_t to avoid confusion and error
 typedef union {
@@ -302,6 +302,15 @@ static inline xblkaddr_t _from_canton(msg_64_t *m)
 } while (0)							\
 
 
+// ---------------
+
+typedef union {
+	struct {
+		uint8_t board:4;
+		uint8_t turnout:4;
+	};
+	uint8_t v;
+} xtrnaddr_t;
 
 
 #endif /* MSG_TRAINMSG_H_ */

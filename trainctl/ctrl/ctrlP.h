@@ -143,7 +143,7 @@ extern uint8_t ctrl_flag_notify_speed ;
 
 
 // provided by ctrl.c
-extern int ctrl2_set_turnout(int tn, int v, int train_num); // ctrl.c
+extern int ctrl2_set_turnout(xtrnaddr_t tn, int v, int train_num); // ctrl.c
 extern void ctrl2_send_led(uint8_t led_num, uint8_t prog_num);
 
 

@@ -91,6 +91,7 @@ int mqf_write(mqf_t *m, void *ptr)
 
 int mqf_read(mqf_t *m, void *ptr)
 {
+	if (!m) return -1;
 	if (!_mqf_len(m)) return -1;
     void *p = &(m->msgbuf[m->tail*m->msgsiz]);
     memcpy(ptr, p, m->msgsiz);

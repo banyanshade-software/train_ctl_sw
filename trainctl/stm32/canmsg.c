@@ -548,7 +548,14 @@ void CAN_Tasklet(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_
 		init = 0;
 		can_init();
 	}
-
+	// read canbus_loc (messages for us, not to be forwarded)
+	for (;;) {
+		msg_64_t m;
+		int rc = mqf_read_to_canbus_loc(&m);
+		if (rc) break;
+		local_msg_process(&m, 2);
+	}
+	// read and forward to_canbus msg
 	send_messages_if_any();
 
 #ifdef TRN_BOARD_DISPATCHER

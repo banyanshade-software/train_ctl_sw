@@ -193,6 +193,7 @@ typedef enum {
 } runmode_t;
 
 #ifdef BOARD_HAS_CAN
+LFMQUEUE_DEF_H(to_canbus_loc, msg_64_t)
 LFMQUEUE_DEF_H(to_canbus, msg_64_t)
 LFMQUEUE_DEF_H(from_canbus, msg_64_t)
 #endif

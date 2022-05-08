@@ -60,6 +60,7 @@ LFMQUEUE_DEF_C(from_led, msg_64_t, 		1, 0)
 #endif
 
 #ifdef BOARD_HAS_CAN
+LFMQUEUE_DEF_C(to_canbus_loc, msg_64_t, 3, 0)
 LFMQUEUE_DEF_C(to_canbus, msg_64_t, 8, 0)
 LFMQUEUE_DEF_C(from_canbus, msg_64_t, 8, 0)
 #endif
@@ -89,6 +90,7 @@ static const qdef_t qdefs[] = {
     // forward q must be first
 #ifdef BOARD_HAS_CAN
     {&from_canbus, &to_canbus,  1},
+    {NULL,   &to_canbus_loc,    0},
 #endif
 #ifdef BOARD_HAS_USB
     {&from_usb, &to_usb,        1},
@@ -318,6 +320,7 @@ void msgsrv_tick(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_
         const qdef_t *qd = &qdefs[i];
         if (!qd->from && !qd->to) break;
         mqf_t *q = qd->from;
+        if (!q) continue;
         //itm_debug2(DBG_MSG, "mlen1",i, mqf_len(q));
         //itm_debug3(DBG_MSG, "mth1 ", i, q->head, q->tail);
         for (;;) {

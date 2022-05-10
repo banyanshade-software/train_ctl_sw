@@ -4,12 +4,14 @@
 *.map
 *.list
 *.swp
+*.launch
 # *.cproject
 .settings
 # *.project
 # *.mxproject
 .metadata/
 .depend
+.gitignore.sav
 stm32_f103_display/
 stm32f407VETx/Debug
 stm32f407VETx/Release/
@@ -25,3 +27,6 @@ mac/layoutexport/layoutexport.xcodeproj/xcuserdata/danielbraun.xcuserdatad/xcdeb
 mac/train_throttle/train_throttle.xcodeproj/xcshareddata/
 .DS_Store
 tags
+xcdebugger
+xcuserdata
+mac/trackplan2/imported/

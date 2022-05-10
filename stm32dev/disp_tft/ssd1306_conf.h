@@ -26,6 +26,7 @@
 // TODO move port to boards_def.h
 #ifndef SSD1306_I2C_PORT
 #define SSD1306_I2C_PORT        hi2c1
+#error define it in board_def.h
 #endif
 #define SSD1306_I2C_ADDR        (0x3C << 1)
 

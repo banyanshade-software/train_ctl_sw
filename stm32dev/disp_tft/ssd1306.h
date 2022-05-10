@@ -42,6 +42,7 @@ _BEGIN_STD_C
 
 #ifndef SSD1306_I2C_PORT
 #define SSD1306_I2C_PORT        hi2c1
+#error define it in board_def.h
 #endif
 
 #ifndef SSD1306_I2C_ADDR

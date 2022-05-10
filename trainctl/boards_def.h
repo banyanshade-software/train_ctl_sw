@@ -103,6 +103,8 @@
 #define BOARD_HAS_TRKPLN
 #define BOARD_HAS_OSCILLO
 
+#define SSD1306_I2C_PORT (hi2c3)
+#define INA3221_I2C_PORT (hi2c1)
 
 /*
  * number of local block per board

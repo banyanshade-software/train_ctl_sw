@@ -94,9 +94,13 @@
 //#define BOARD_HAS_USB_HOST
 #define BOARD_HAS_FLASH
 #define BOARD_CAN_BE_MASTER
+
 #define BOARD_HAS_CAN
 #define BOARD_HAS_IHM
+#ifdef TRN_BOARD_MAINV0
 #define BOARD_HAS_ROTARY_ENCODER
+#endif
+
 #define BOARD_HAS_UI_GEN
 //#define BOARD_HAS_UI_CTC
 #define BOARD_HAS_LED

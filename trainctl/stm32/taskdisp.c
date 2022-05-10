@@ -56,7 +56,7 @@ static void I2C_Scan(void)
 {
     HAL_StatusTypeDef res;
     for(uint16_t i = 0; i < 128; i++) {
-        res = HAL_I2C_IsDeviceReady(&hi2c1, i << 1, 1, 10);
+        res = HAL_I2C_IsDeviceReady(&SSD1306_I2C_PORT, i << 1, 1, 10);
         if(res == HAL_OK) {
         	i2c_ready(i);
         } else {

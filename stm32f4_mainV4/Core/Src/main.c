@@ -122,19 +122,19 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_DMA_Init(void);
 static void MX_ADC1_Init(void);
-static void MX_I2C1_Init(void);
 static void MX_TIM1_Init(void);
 static void MX_TIM2_Init(void);
 static void MX_TIM3_Init(void);
 static void MX_RTC_Init(void);
 static void MX_TIM4_Init(void);
 static void MX_TIM8_Init(void);
-static void MX_I2C3_Init(void);
 static void MX_TIM12_Init(void);
 static void MX_CAN1_Init(void);
 static void MX_ADC2_Init(void);
 static void MX_TIM5_Init(void);
 static void MX_SPI1_Init(void);
+static void MX_I2C3_Init(void);
+static void MX_I2C1_Init(void);
 void StartUiTask(void const * argument);
 extern void StartCtrlTask(void const * argument);
 extern void StartUsbTask(void const * argument);
@@ -202,19 +202,19 @@ int main(void)
   MX_GPIO_Init();
   MX_DMA_Init();
   MX_ADC1_Init();
-  MX_I2C1_Init();
   MX_TIM1_Init();
   MX_TIM2_Init();
   MX_TIM3_Init();
   MX_RTC_Init();
   MX_TIM4_Init();
   MX_TIM8_Init();
-  MX_I2C3_Init();
   MX_TIM12_Init();
   MX_CAN1_Init();
   MX_ADC2_Init();
   MX_TIM5_Init();
   MX_SPI1_Init();
+  MX_I2C3_Init();
+  MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
@@ -648,7 +648,7 @@ static void MX_I2C3_Init(void)
   /* USER CODE END I2C3_Init 1 */
   hi2c3.Instance = I2C3;
   hi2c3.Init.ClockSpeed = 400000;
-  hi2c3.Init.DutyCycle = I2C_DUTYCYCLE_16_9;
+  hi2c3.Init.DutyCycle = I2C_DUTYCYCLE_2;
   hi2c3.Init.OwnAddress1 = 0;
   hi2c3.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
   hi2c3.Init.DualAddressMode = I2C_DUALADDRESS_DISABLE;

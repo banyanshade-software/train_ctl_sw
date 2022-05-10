@@ -18,6 +18,7 @@
 #define STATVAL_H_
 
 #include <sys/types.h>
+#include "trainctl_config.h"
 
 #define REDUCE_STAT 1
 
@@ -59,8 +60,9 @@ typedef struct {
 extern const stat_val_t statval_ctrl[];
 extern const stat_val_t statval_spdctrl[];
 extern const stat_val_t statval_canton[];
+#ifdef BOARD_HAS_INA3221
 extern const stat_val_t statval_ina3221[];
-
+#endif
 extern uint32_t gtick;
 
 #endif /* STATVAL_H_ */

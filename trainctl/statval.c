@@ -52,7 +52,9 @@ static meta_stat_t meta[NUM_META+1] = {
 #ifdef BOARD_HAS_CANTON
     {statval_canton, 0, 0, MIN(4,NUM_CANTONS)},
 #endif
+#ifdef BOARD_HAS_INA3221
     {statval_ina3221, 0, 0, 1},
+#endif
     {NULL, 0, 0, 0}
 };
 

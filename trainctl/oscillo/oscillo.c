@@ -69,6 +69,13 @@ int oscillo_running(void)
 volatile int oscillo_enable = 0;
 volatile int oscillo_trigger_start = 0;
 
+
+
+__weak volatile int16_t oscillo_ina0;
+__weak volatile int16_t oscillo_ina1;
+__weak volatile int16_t oscillo_ina2;
+
+
 void StartOscillo(_UNUSED_ void *argument)
 {
 

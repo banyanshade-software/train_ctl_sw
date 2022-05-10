@@ -58,7 +58,7 @@ void OAM_Init(void)
 }
 
 
-static void exit_can_test(void)
+static void _bcast_normal(void)
 {
 	msg_64_t m;
 	m.from = MA3_BROADCAST;
@@ -67,7 +67,10 @@ static void exit_can_test(void)
 	m.v1u =  runmode_normal;
 	mqf_write_from_nowhere(&m);
 }
-
+static void exit_can_test(void)
+{
+	_bcast_normal();
+}
 
 static void customOam(msg_64_t *m);
 static void handle_slave_msg(msg_64_t *m);
@@ -535,6 +538,11 @@ static void handle_master_tick(_UNUSED_ uint32_t tick)
 {
 	static uint32_t lbsc = 0;
 	if (tick>lbsc+1000) {
+		static int cnt = 0;
+		if (cnt++>10) {
+			_bcast_normal();
+			return;
+		}
 		lbsc = tick;
 		msg_64_t m = {0};
 		m.cmd = CMD_OAM_MASTER;

@@ -222,6 +222,24 @@ static const uint8_t layout_fatal[] = {
 		CODE_END
 };
 
+static const uint8_t layout_master[] = {
+		CODE_ZONE_STATUS, CODE_STR|37,
+		CODE_ZONE_TEXT1,  CODE_STR|40,
+		CODE_END
+};
+
+static const uint8_t layout_slave[] = {
+		CODE_ZONE_STATUS, CODE_STR|38,
+		CODE_END
+};
+
+static const uint8_t layout_testcanton[] = {
+		CODE_ZONE_STATUS, CODE_STR|39, CODE_DIGIT, 0,
+		CODE_ZONE_TEXT1, CODE_SVAL, 1,
+		CODE_ZONE_TEXT2, CODE_SVAL, 2,
+		CODE_END
+};
+
 void ihm_setlayout(int numdisp, int numlayout)
 {
 	const uint8_t *p = NULL;
@@ -258,6 +276,16 @@ void ihm_setlayout(int numdisp, int numlayout)
 	case LAYOUT_FATAL:
 		p = layout_fatal;
 		break;
+	case LAYOUT_MASTER:
+		p = layout_master;
+		break;
+	case LAYOUT_SLAVE:
+		p = layout_slave;
+		break;
+	case LAYOUT_TESTCANTON:
+		p = layout_testcanton;
+		break;
+
 	default:
 		itm_debug1(DBG_ERR|DBG_UI, "bad layout", numlayout);
 		break;
@@ -313,6 +341,11 @@ static const char *ui_strings[] = {
 
 /* 35*/		"CAN:",
 /* 36*/		"/!\\ Fatal",
+
+/* 37 */ 	"Master",
+/* 38 */	"Slave",
+/* 39 */	"TC (mV off/on)",
+/* 40 */	"Wait...",
 };
 
 

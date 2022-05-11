@@ -119,11 +119,13 @@ static runmode_t run_mode = 0;
 
 static void ihm_runtick_normal(int);
 static void ihm_runtick_off(int);
-static void ihm_runtick_testcanton(int);
 //static void ihm_runtick_detect(int);
 static void ihm_runtick_detect1(int);
 static void ihm_runtick_detect2(int);
 static void ihm_runtick_testcan(int);
+static void ihm_runtick_master(int);
+static void ihm_runtick_slave(int);
+static void ihm_runtick_testcanton(int);
 
 void ihm_runtick(void)
 {
@@ -133,10 +135,13 @@ void ihm_runtick(void)
 	case runmode_normal:	ihm_runtick_normal(performInit); 		break;
 	default: // FALLTHRU
 	case runmode_off:		ihm_runtick_off(performInit); 			break;
-	case runmode_testcanton:ihm_runtick_testcanton(performInit); 	break;
 	case runmode_detect_experiment:	ihm_runtick_detect1(performInit);	break;
 	case runmode_detect2:	ihm_runtick_detect2(performInit);		break;
 	case runmode_testcan:	ihm_runtick_testcan(performInit);		break;
+	case runmode_master:	ihm_runtick_master(performInit);		break;
+	case runmode_slave:		ihm_runtick_slave(performInit);			break;
+	case runmode_testcanton:ihm_runtick_testcanton(performInit); 	break;
+
 	}
 	performInit = (run_mode == orm) ? 0 : 1;
 }
@@ -443,15 +448,6 @@ void ihm_runtick_off(int init)
 
 
 // ---------------------------------
-// run mode Cantontest
-// ---------------------------------
-
-static void ihm_runtick_testcanton(int f)
-{
-	ihm_runtick_off(f);
-}
-
-// ---------------------------------
 // run mode detect1
 // ---------------------------------
 
@@ -635,11 +631,10 @@ static void ui_process_msg_d2(void)
 }
 
 
-
 // ---------------------------------
 // run mode runmode_testcan
 // ---------------------------------
-static void ui_process_msg_tc(void);
+static void ui_process_msg_testcan(void);
 
 static void ihm_runtick_testcan(int init)
 {
@@ -656,7 +651,7 @@ static void ihm_runtick_testcan(int init)
 
 	}
 	// process messages --------------
-	ui_process_msg_tc();
+	ui_process_msg_testcan();
 
 	// update displays ---------------
 	for (int i=0; i<MAX_DISP; i++) {
@@ -667,7 +662,7 @@ static void ihm_runtick_testcan(int init)
 }
 
 
-static void ui_process_msg_tc(void)
+static void ui_process_msg_testcan(void)
 {
 	for (;;) {
 		msg_64_t m;
@@ -683,13 +678,181 @@ static void ui_process_msg_tc(void)
         case CMD_CANTEST:
         	ihm_setvar(0, 0, m.v1u);
         	SET_NEEDSREFRESH(0);
-			break;
+        	break;
         case CMD_CANTEST_RESP:
         	ihm_setvar(0, 1, m.v1u);
         	ihm_setvar(0, 2, m.v2u);
         	SET_NEEDSREFRESH(0);
         	break;
 
+        default:
+        	itm_debug1(DBG_ERR|DBG_UI, "unhndld msg", m.cmd);
+        	break;
+		}
+	}
+}
+
+
+
+
+// ---------------------------------
+// run mode runmode_master
+// ---------------------------------
+static void ui_process_msg_master(void);
+
+static void ihm_runtick_master(int init)
+{
+	needsrefresh_mask = 0;
+
+	if (init) {
+		itm_debug1(DBG_UI, "UI init", 0);
+		ihm_setlayout(0, LAYOUT_MASTER);
+    	SET_NEEDSREFRESH(0);
+
+		for (int i = 0; i<DISP_MAX_REGS; i++) {
+			ihm_setvar(0, i, 0);
+		}
+
+	}
+	// process messages --------------
+	ui_process_msg_master();
+
+	// update displays ---------------
+	for (int i=0; i<MAX_DISP; i++) {
+		if (NEEDSREFRESH(i)) {
+			disp_layout(i);
+		}
+	}
+}
+
+
+static void ui_process_msg_master(void)
+{
+	for (;;) {
+		msg_64_t m;
+		int rc = mqf_read_to_ui(&m);
+		if (rc) break;
+
+		switch(m.cmd) {
+
+        case CMD_SETRUN_MODE:
+            run_mode = m.v1u;
+            return;
+            break;
+
+        default:
+        	itm_debug1(DBG_ERR|DBG_UI, "unhndld msg", m.cmd);
+        	break;
+		}
+	}
+}
+
+// ---------------------------------
+// run mode runmode_slave
+// ---------------------------------
+static void ui_process_msg_slave(void);
+
+static void ihm_runtick_slave(int init)
+{
+	needsrefresh_mask = 0;
+
+	if (init) {
+		itm_debug1(DBG_UI, "UI init", 0);
+		ihm_setlayout(0, LAYOUT_SLAVE);
+    	SET_NEEDSREFRESH(0);
+
+		for (int i = 0; i<DISP_MAX_REGS; i++) {
+			ihm_setvar(0, i, 0);
+		}
+
+	}
+	// process messages --------------
+	ui_process_msg_slave();
+
+	// update displays ---------------
+	for (int i=0; i<MAX_DISP; i++) {
+		if (NEEDSREFRESH(i)) {
+			disp_layout(i);
+		}
+	}
+}
+
+
+static void ui_process_msg_slave(void)
+{
+	for (;;) {
+		msg_64_t m;
+		int rc = mqf_read_to_ui(&m);
+		if (rc) break;
+
+		switch(m.cmd) {
+
+        case CMD_SETRUN_MODE:
+            run_mode = m.v1u;
+            return;
+            break;
+
+        default:
+        	itm_debug1(DBG_ERR|DBG_UI, "unhndld msg", m.cmd);
+        	break;
+		}
+	}
+}
+
+// ---------------------------------
+// run mode runmode_testcanton
+// ---------------------------------
+static void ui_process_msg_testcanton(void);
+
+static void ihm_runtick_testcanton(int init)
+{
+	needsrefresh_mask = 0;
+
+	if (init) {
+		itm_debug1(DBG_UI, "UI init", 0);
+		ihm_setlayout(0, LAYOUT_TESTCANTON);
+    	SET_NEEDSREFRESH(0);
+
+		for (int i = 0; i<DISP_MAX_REGS; i++) {
+			ihm_setvar(0, i, 0);
+		}
+
+	}
+	// process messages --------------
+	ui_process_msg_testcanton();
+
+	// update displays ---------------
+	for (int i=0; i<MAX_DISP; i++) {
+		if (NEEDSREFRESH(i)) {
+			disp_layout(i);
+		}
+	}
+}
+
+
+static void ui_process_msg_testcanton(void)
+{
+	for (;;) {
+		msg_64_t m;
+		int rc = mqf_read_to_ui(&m);
+		if (rc) break;
+
+		switch(m.cmd) {
+
+        case CMD_SETRUN_MODE:
+            run_mode = m.v1u;
+            return;
+            break;
+
+        case CMD_BEMF_NOTIF:
+        	itm_debug3(DBG_UI, "BEMF", m.subc, m.v1, m.v2);
+        	int32_t voff = m.v1;
+        	int32_t von = m.v2;
+        	ihm_setvar(0, 0, m.subc);
+			ihm_setvar(0, 1, von);
+			ihm_setvar(0, 2, voff);
+			SET_NEEDSREFRESH(0);
+        	break;
         default:
         	itm_debug1(DBG_ERR|DBG_UI, "unhndld msg", m.cmd);
         	break;

@@ -30,6 +30,10 @@ void disp_layout(int numdisp);
 #define LAYOUT_TESTCAN  7
 #define LAYOUT_FATAL	8
 
+#define LAYOUT_MASTER	9
+#define LAYOUT_SLAVE	10
+#define LAYOUT_TESTCANTON 11
+
 #define LAYOUT_INA3221_DETECT	200
 #define	LAYOUT_INA3221_VAL		201
 

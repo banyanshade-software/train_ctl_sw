@@ -2595,7 +2595,8 @@ didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic
         for (int i = 0; i<NUM_CANTONS; i++) {
             if (i==testCanton) continue;
             msg_64_t m;
-            TO_CANTON(m, i);
+            xblkaddr_t bi = {.v = i};
+            TO_CANTON(m, bi);
             //m.to = MA_CANTON(0, i);
             m.from = MA3_UI_GEN; //(UISUB_USB);
             m.cmd = CMD_SETVPWM;
@@ -2627,7 +2628,8 @@ didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic
 {
     msg_64_t m = {0};
     if (_runMode == 1) {
-        TO_CANTON(m, _testCanton);
+        xblkaddr_t tc = {.v = _testCanton};
+        TO_CANTON(m, tc);
     } else {
         m.to = MA3_BROADCAST;
     }

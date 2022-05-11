@@ -278,7 +278,7 @@ typedef union {
 #ifndef TRAIN_SIMU
 static_assert(sizeof(xblkaddr_t) == 1);
 #else
-typedef char compile_assert[(sizeof(xblkaddr_t) == 1) ? 0 : -1];
+typedef char xcompile_assert[(sizeof(xblkaddr_t) == 1) ? 0 : -1];
 #endif
 
 #define FROM_CANTON(m) (_from_canton(&m))

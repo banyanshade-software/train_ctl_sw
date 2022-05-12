@@ -3395,8 +3395,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "57"
             endingLineNumber = "57"
-            landmarkName = "unknown"
-            landmarkType = "0">
+            landmarkName = "bemf_msg(m)"
+            landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -4096,7 +4096,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "114"
             endingLineNumber = "114"
-            landmarkName = "handle_canton_cmd(cidx, m)"
+            landmarkName = "canton_reset()"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -5673,6 +5673,38 @@
             startingLineNumber = "1126"
             endingLineNumber = "1126"
             landmarkName = "-readUsbTty:"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "7D289747-77CF-494D-BA2B-FDE4A86527BD"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "train_throttle/AppDelegate.m"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "2612"
+            endingLineNumber = "2612"
+            landmarkName = "-setTestCanton:"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "9C1AE69F-5B2E-4BCB-A58B-CA1223CF3016"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "train_throttle/AppDelegate.m"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "2601"
+            endingLineNumber = "2601"
+            landmarkName = "-setTestCanton:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

@@ -33,13 +33,34 @@
 #include "utils/framing.h"
 #include "usbtask.h"
 
+#include "main.h"
+#include "stm32f4xx_hal_gpio.h"
 
 extern USBD_HandleTypeDef hUsbDeviceFS;
 
 
+static void Force_USB_Enumerate(void)
+{
+	// https://stackoverflow.com/questions/20195175/stm32f107-usb-re-enumerate#20197455
+#ifdef STM32F4
+	GPIO_InitTypeDef GPIO_InitStructure;
+	GPIO_InitStructure.Pin = GPIO_PIN_12;
+	GPIO_InitStructure.Mode = GPIO_MODE_OUTPUT_PP;
+	GPIO_InitStructure.Speed = GPIO_SPEED_FREQ_HIGH;
+	HAL_GPIO_Init(GPIOA, &GPIO_InitStructure);
+	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_12, GPIO_PIN_RESET);
+	osDelay(5);
+#else
+#error check USB DP  is PA12
+#endif
+}
+
 void StartUsbTask(_UNUSED_ const void *argument)
 {
+	Force_USB_Enumerate();
 	MX_USB_DEVICE_Init();
+	//CDC_Init_FS();
+	//USBD_CDC_Init()
 	for (;;) {
 		osDelay(10);
 		USB_Tasklet(0, 0, 0);
@@ -81,10 +102,17 @@ int8_t impl_CDC_Receive_FS(uint8_t* Buf, uint32_t *Len)
 
 static void _send_bytes(const uint8_t *b, int len)
 {
+	uint8_t rc;
+	if (!CDC_Class_Init_Ok()) {
+		return;
+	}
 	for (;;) {
-		uint8_t rc = CDC_Transmit_FS((uint8_t *)b, len);
+		rc = CDC_Transmit_FS((uint8_t *)b, len);
 		if (rc != USBD_BUSY) break;
-		osDelay(1);
+		osDelay(2);
+	}
+	if (rc != USBD_OK) {
+		itm_debug2(DBG_ERR|DBG_USB, "TXerr", len, rc);
 	}
 }
 

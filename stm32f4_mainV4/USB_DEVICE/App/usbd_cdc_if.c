@@ -112,6 +112,14 @@ extern USBD_HandleTypeDef hUsbDeviceFS;
 
 /* USER CODE BEGIN EXPORTED_VARIABLES */
 
+int CDC_Class_Init_Ok(void)
+{
+	USBD_CDC_HandleTypeDef *hcdc = (USBD_CDC_HandleTypeDef*)hUsbDeviceFS.pClassData;
+	if (!hcdc) return 0;
+
+	return 1;
+}
+
 /* USER CODE END EXPORTED_VARIABLES */
 
 /**

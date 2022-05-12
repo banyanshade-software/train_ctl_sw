@@ -2590,15 +2590,26 @@ didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic
 {
     if (_runMode != 1) return;
     if (testCanton == _testCanton) return;
+    NSUInteger oldCanton = _testCanton;
     _testCanton = testCanton;
     if (_runMode == 1) {
         for (int i = 0; i<NUM_CANTONS; i++) {
+            if (i==oldCanton) {
+                msg_64_t m;
+                xblkaddr_t bi = {.v = i};
+                TO_CANTON(m, bi);
+                m.from = MA3_UI_GEN; //(UISUB_USB);
+                m.cmd = CMD_BEMF_OFF;
+                [self sendMsg64:m];
+                continue;
+            }
             if (i==testCanton) continue;
             msg_64_t m;
             xblkaddr_t bi = {.v = i};
             TO_CANTON(m, bi);
-            //m.to = MA_CANTON(0, i);
             m.from = MA3_UI_GEN; //(UISUB_USB);
+            m.cmd = CMD_BEMF_ON;
+            [self sendMsg64:m];
             m.cmd = CMD_SETVPWM;
             m.v1u = 7;
             m.v2 = 0;

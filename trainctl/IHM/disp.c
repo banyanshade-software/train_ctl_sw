@@ -347,7 +347,7 @@ static const char *ui_strings[] = {
 
 /* 37 */ 	"Master",
 /* 38 */	"Slave",
-/* 39 */	"mV01 C",
+/* 39 */	"mV10 C",
 /* 40 */	"Wait...",
 /* 41 */    " v",
 /* 42 */	" p=",
@@ -689,7 +689,7 @@ static void write_snum1000_2(int16_t v, FontDef *curfont)
 {
 	if (v<-9999) v=-9999;
 	if (v>9999) v=9999;
-	v = v/100;
+	v = v/10;
 	if (v < 0) {
 		ssd1306_WriteChar('-', *curfont, White);
 	} else {

@@ -121,9 +121,12 @@
 #define		CODE_SVAL			0xC5
 #define		CODE_SVAL4			0xC6
 #define		CODE_SVAL1000		0xC7	// millivolt, signed
-#define		CODE_GRAPH_LEVEL	0xC8
-#define		CODE_GRAPH_SLEVEL	0xC9
-#define		CODE_SPTR			0xCA	// strnum in register
+#define		CODE_SVAL1000		0xC7	// millivolt, signed
+#define		CODE_SVAL1000_2		0xC8	// millivolt, signed, 0.00
+
+#define		CODE_GRAPH_LEVEL	0xC9
+#define		CODE_GRAPH_SLEVEL	0xCA
+#define		CODE_SPTR			0xCB	// strnum in register
 
 
 #define		CODE_END			0xFE
@@ -234,9 +237,9 @@ static const uint8_t layout_slave[] = {
 };
 
 static const uint8_t layout_testcanton[] = {
-		CODE_ZONE_STATUS, CODE_STR|39, CODE_DIGIT, 0,
-		CODE_ZONE_TEXT1, CODE_SVAL, 1,
-		CODE_ZONE_TEXT2, CODE_SVAL, 2,
+		CODE_ZONE_STATUS, CODE_STR|39, CODE_DIGIT, 0, CODE_STR|41, CODE_UVAL, 3, CODE_STR|42, CODE_SVAL, 4,
+		CODE_ZONE_TEXT1, CODE_SVAL1000_2, 1,
+		CODE_ZONE_TEXT2, CODE_SVAL1000_2, 2,
 		CODE_END
 };
 
@@ -344,8 +347,10 @@ static const char *ui_strings[] = {
 
 /* 37 */ 	"Master",
 /* 38 */	"Slave",
-/* 39 */	"TC (mV off/on)",
+/* 39 */	"mV01 C",
 /* 40 */	"Wait...",
+/* 41 */    " v",
+/* 42 */	" p=",
 };
 
 
@@ -382,6 +387,7 @@ static void write_unum1000(uint16_t v, FontDef *curfont);
 static void write_snum(int16_t v, FontDef *curfont);
 static void write_snum4(int16_t v, FontDef *curfont);
 static void write_snum1000(int16_t v, FontDef *curfont);
+static void write_snum1000_2(int16_t v, FontDef *curfont);
 static void write_bargraph(int16_t v, int16_t min, int16_t max);
 static void write_sbargraph(int16_t v, int16_t min, int16_t max);
 
@@ -486,6 +492,11 @@ void disp_layout(int numdisp)
 			i++;
 			v16s = (int16_t) _GET_REG(numdisp, d[i]);
 			write_snum1000(v16s, curfont);
+			break;
+		case CODE_SVAL1000_2:
+			i++;
+			v16s = (int16_t) _GET_REG(numdisp, d[i]);
+			write_snum1000_2(v16s, curfont);
 			break;
 		case CODE_UVAL:
 			i++;
@@ -597,7 +608,10 @@ static void _write_unum(uint16_t v, FontDef *curfont, uint8_t hzero, uint8_t fp1
 {
 	int f = 0;
 	int ns = 1000;
-	if (fp1000) {
+	if (fp1000==2) {
+		ns = 100;
+		hzero = 1;
+	} else if (fp1000) {
 		ns = 1000;
 		hzero = 1;
 	}
@@ -668,6 +682,20 @@ static void write_snum1000(int16_t v, FontDef *curfont)
 		ssd1306_WriteChar('+', *curfont, White);
 	}
 	_write_unum(abs(v), curfont, 1, 1);
+}
+
+
+static void write_snum1000_2(int16_t v, FontDef *curfont)
+{
+	if (v<-9999) v=-9999;
+	if (v>9999) v=9999;
+	v = v/100;
+	if (v < 0) {
+		ssd1306_WriteChar('-', *curfont, White);
+	} else {
+		ssd1306_WriteChar('+', *curfont, White);
+	}
+	_write_unum(abs(v), curfont, 1, 2);
 }
 
 static void write_bargraph(int16_t v, int16_t min, int16_t max)

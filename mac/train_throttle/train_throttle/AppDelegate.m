@@ -2603,7 +2603,7 @@ didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic
                 [self sendMsg64:m];
                 continue;
             }
-            if (i==testCanton) continue;
+            if (i!=testCanton) continue;
             msg_64_t m;
             xblkaddr_t bi = {.v = i};
             TO_CANTON(m, bi);

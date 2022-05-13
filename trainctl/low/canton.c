@@ -259,6 +259,7 @@ static void handle_msg_cantontest(msg_64_t *m)
 	}
     if (CMD_SETVPWM == m->cmd) {
     	// in test mode, forward CMD_SETVPWM to UI for display
+    	// handling actually done in handle_canton_cmd()
     	msg_64_t m2 = *m;
     	m2.from = m2.to;
     	m2.to = MA3_UI_GEN;

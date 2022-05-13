@@ -196,7 +196,7 @@ static void process_adc(volatile adc_result_t *buf, _UNUSED_ uint32_t deltaticks
 #error ohla
 #endif
 		int skp = 0;
-		if ((bemf_run_mode == runmode_testcanton) && (i<6)) {
+		if ((bemf_run_mode == runmode_testcanton) && (i>5)) {
 			skp = 1;
 		}
 

@@ -853,6 +853,14 @@ static void ui_process_msg_testcanton(void)
 			ihm_setvar(0, 2, voff);
 			SET_NEEDSREFRESH(0);
         	break;
+        case CMD_TRMODE_NOTIF: break;
+        case CMD_SETVPWM:
+        	// forwarded by canton for displau
+        	itm_debug2(DBG_ERR|DBG_UI, "pvm", m.cmd, m.subc);
+        	// we should check m.subc but we dont
+        	ihm_setvar(0, 3, m.v1u);	// volt idx
+        	ihm_setvar(0, 4, m.v2);		// pwm
+        	break;
         default:
         	itm_debug1(DBG_ERR|DBG_UI, "unhndld msg", m.cmd);
         	break;

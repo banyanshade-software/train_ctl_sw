@@ -29,6 +29,12 @@ const conf_globparam_t *conf_globparam_get(int num);
 
 
 
+#ifdef TRN_BOARD_UI
+#define NUM_GLOBPARAMS 0 // 0 
+#endif // TRN_BOARD_UI
+
+
+
 #ifdef TRN_BOARD_MAINV04
 #define NUM_GLOBPARAMS 0 // 0 
 #endif // TRN_BOARD_MAINV04

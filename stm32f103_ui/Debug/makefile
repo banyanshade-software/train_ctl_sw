@@ -13,12 +13,11 @@ RM := rm -rf
 -include trainctl/stm32/subdir.mk
 -include trainctl/oam/subdir.mk
 -include trainctl/msg/subdir.mk
--include trainctl/low/subdir.mk
--include trainctl/leds/subdir.mk
 -include trainctl/config/_str/subdir.mk
 -include trainctl/config/subdir.mk
 -include trainctl/IHM/subdir.mk
 -include trainctl/subdir.mk
+-include stm32dev/disp_tft/subdir.mk
 -include USB_DEVICE/Target/subdir.mk
 -include USB_DEVICE/App/subdir.mk
 -include Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/subdir.mk

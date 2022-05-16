@@ -78,6 +78,7 @@
 							<tool id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.objcopy.symbolsrec.1007834707" name="MCU Output Converter Motorola S-rec with symbols" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.objcopy.symbolsrec"/>
 						</toolChain>
 					</folderInfo>
+					<fileInfo id="com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.debug.1484597756.1656947104" name="taskled.h" rcbsApplicability="disable" resourcePath="trainctl/stm32/taskled.h" toolsToInvoke=""/>
 					<fileInfo id="com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.debug.1484597756.155469565" name="usbtask.h" rcbsApplicability="disable" resourcePath="trainctl/stm32/usbtask.h" toolsToInvoke=""/>
 					<fileInfo id="com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.debug.1484597756.168716545" name="canton.h" rcbsApplicability="disable" resourcePath="trainctl/low/canton.h" toolsToInvoke=""/>
 					<fileInfo id="com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.debug.1484597756.1820843853" name="canton_bemf.h" rcbsApplicability="disable" resourcePath="trainctl/low/canton_bemf.h" toolsToInvoke=""/>
@@ -85,10 +86,11 @@
 					<fileInfo id="com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.debug.1484597756.1334734154" name="oam_flash.h" rcbsApplicability="disable" resourcePath="trainctl/oam/oam_flash.h" toolsToInvoke=""/>
 					<sourceEntries>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Core"/>
-						<entry excluding="stm32/spi1_swo_trace.c|oam/oam_flash.c|oam/oam_flash.h|stm32/w25qxx|config/conf_canton.c|ctrl|low/presence_detection.h|low/presence_detection.c|low/canton.h|low/canton.c|low/canton_bemf.h|low/canton_bemf.c|oscillo|obsolete|spdctl|stm32/usbtask.h|stm32/usbtask.c|stm32/ina3221|uitrack|topology|trkpln|config_gen" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="trainctl"/>
-						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Middlewares"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Drivers"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Middlewares"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="USB_DEVICE"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="stm32dev"/>
+						<entry excluding="low|stm32/taskled.h|stm32/taskled.c|leds|stm32/spi1_swo_trace.c|oam/oam_flash.c|oam/oam_flash.h|stm32/w25qxx|config/conf_canton.c|ctrl|low/presence_detection.h|low/presence_detection.c|low/canton.h|low/canton.c|low/canton_bemf.h|low/canton_bemf.c|oscillo|obsolete|spdctl|stm32/usbtask.h|stm32/usbtask.c|stm32/ina3221|uitrack|topology|trkpln|config_gen" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="trainctl"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -166,6 +168,7 @@
 							<tool id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.objcopy.symbolsrec.1828488078" name="MCU Output Converter Motorola S-rec with symbols" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.objcopy.symbolsrec"/>
 						</toolChain>
 					</folderInfo>
+					<fileInfo id="com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.release.50793822.159293377" name="taskled.h" rcbsApplicability="disable" resourcePath="trainctl/stm32/taskled.h" toolsToInvoke=""/>
 					<fileInfo id="com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.release.50793822.1479041134" name="usbtask.h" rcbsApplicability="disable" resourcePath="trainctl/stm32/usbtask.h" toolsToInvoke=""/>
 					<fileInfo id="com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.release.50793822.1440103369" name="canton.h" rcbsApplicability="disable" resourcePath="trainctl/low/canton.h" toolsToInvoke=""/>
 					<fileInfo id="com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.release.50793822.2044110637" name="canton_bemf.h" rcbsApplicability="disable" resourcePath="trainctl/low/canton_bemf.h" toolsToInvoke=""/>
@@ -173,10 +176,11 @@
 					<fileInfo id="com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.release.50793822.316659174" name="oam_flash.h" rcbsApplicability="disable" resourcePath="trainctl/oam/oam_flash.h" toolsToInvoke=""/>
 					<sourceEntries>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Core"/>
-						<entry excluding="stm32/spi1_swo_trace.c|oam/oam_flash.c|oam/oam_flash.h|stm32/w25qxx|config/conf_canton.c|ctrl|low/presence_detection.h|low/presence_detection.c|low/canton.h|low/canton.c|low/canton_bemf.h|low/canton_bemf.c|oscillo|obsolete|spdctl|stm32/usbtask.h|stm32/usbtask.c|stm32/ina3221|uitrack|topology|trkpln|config_gen" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="trainctl"/>
-						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Middlewares"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Drivers"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Middlewares"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="USB_DEVICE"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="stm32dev"/>
+						<entry excluding="low|stm32/taskled.h|stm32/taskled.c|leds|stm32/spi1_swo_trace.c|oam/oam_flash.c|oam/oam_flash.h|stm32/w25qxx|config/conf_canton.c|ctrl|low/presence_detection.h|low/presence_detection.c|low/canton.h|low/canton.c|low/canton_bemf.h|low/canton_bemf.c|oscillo|obsolete|spdctl|stm32/usbtask.h|stm32/usbtask.c|stm32/ina3221|uitrack|topology|trkpln|config_gen" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="trainctl"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>

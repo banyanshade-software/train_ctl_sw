@@ -212,6 +212,49 @@
 
 #endif // TRN_BOARD_SWITCHER
 
+
+// -----------------------------------------
+// -----------------------------------------
+// -----------------------------------------
+// -----------------------------------------
+
+#ifdef TRN_BOARD_UI
+#define STM32_F103
+#define STM32F1
+
+#define BOARD_NUMBER 1 //xxx
+
+//#define BOARD_HAS_CANTON
+//#define BOARD_HAS_TURNOUTS
+//#define BOARD_HAS_INA3221
+//#define BOARD_HAS_CTRL
+//#define BOARD_HAS_TOPOLOGY
+//#define BOARD_HAS_USB
+//#define BOARD_HAS_USB_HOST
+//#define BOARD_HAS_FLASH
+#define BOARD_HAS_CAN
+#define BOARD_HAS_IHM
+//#define BOARD_HAS_ROTARY_ENCODER
+#define BOARD_HAS_UI_GEN
+#define BOARD_HAS_UI_CTC
+//#define BOARD_HAS_LED
+//#define BOARD_HAS_TRKPLN
+// #define BOARD_CAN_BE_MASTER
+
+#define SSD1306_I2C_PORT        hi2c1
+
+/*
+ * number of local block per board
+ * NUM_LOCAL_CANTONS_HW : really configured blocked (used for ADC)
+ * NUM_LOCAL_CANTONS_SW : max available in software
+ */
+
+#define CAN_DEVICE hcan
+
+// -----------------------------------------
+
+
+#endif // TRN_BOARD_UI
 // -----------------------------------------
 // -----------------------------------------
 // -----------------------------------------

@@ -31,11 +31,10 @@ Middlewares/Third_Party/FreeRTOS/Source \
 Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3 \
 USB_DEVICE/App \
 USB_DEVICE/Target \
+stm32dev/disp_tft \
 trainctl/IHM \
 trainctl/config/_str \
 trainctl/config \
-trainctl/leds \
-trainctl/low \
 trainctl \
 trainctl/msg \
 trainctl/oam \

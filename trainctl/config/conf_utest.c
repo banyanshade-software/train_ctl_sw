@@ -25,6 +25,26 @@
 
 
 
+#ifdef TRN_BOARD_UI
+
+unsigned int conf_utest_num_entries(void)
+{
+    return 1; // 1 
+}
+
+static conf_utest_t conf_utest[1] = {
+  {     // 0
+     .fixed = 42,
+     .alpha = 1001,
+     .beta = 1001,
+  }
+};
+
+#endif // TRN_BOARD_UI
+
+
+
+
 #ifdef TRN_BOARD_MAINV04
 
 unsigned int conf_utest_num_entries(void)

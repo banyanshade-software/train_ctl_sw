@@ -21,6 +21,21 @@
 
 
 
+#ifdef TRN_BOARD_UI
+
+unsigned int conf_boards_num_entries(void)
+{
+    return 0; // 0 
+}
+
+static conf_boards_t conf_boards[0] = {
+};
+
+#endif // TRN_BOARD_UI
+
+
+
+
 #ifdef TRN_BOARD_MAINV04
 
 unsigned int conf_boards_num_entries(void)

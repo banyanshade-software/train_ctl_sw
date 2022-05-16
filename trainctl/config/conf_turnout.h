@@ -44,6 +44,12 @@ const conf_turnout_t *conf_turnout_get(int num);
 
 
 
+#ifdef TRN_BOARD_UI
+#define NUM_TURNOUTS 0 // 0 
+#endif // TRN_BOARD_UI
+
+
+
 #ifdef TRN_BOARD_MAINV04
 #define NUM_TURNOUTS 6 // 6 
 #endif // TRN_BOARD_MAINV04

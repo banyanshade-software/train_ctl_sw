@@ -5,17 +5,19 @@
 
 #if defined(SSD1306_USE_I2C)
 
-void ssd1306_Reset(void) {
+static void ssd1306_Reset(uint8_t devnum) {
     /* for I2C - do nothing */
 }
 
 // Send a byte to the command register
-void ssd1306_WriteCommand(uint8_t byte) {
+static void ssd1306_WriteCommand(uint8_t devnum, uint8_t byte) {
+	// TODO devnum
     HAL_I2C_Mem_Write(&SSD1306_I2C_PORT, SSD1306_I2C_ADDR, 0x00, 1, &byte, 1, HAL_MAX_DELAY);
 }
 
 // Send data
-void ssd1306_WriteData(uint8_t* buffer, size_t buff_size) {
+static void ssd1306_WriteData(uint8_t devnum, uint8_t* buffer, size_t buff_size) {
+	// TODO devnum
     HAL_I2C_Mem_Write(&SSD1306_I2C_PORT, SSD1306_I2C_ADDR, 0x40, 1, buffer, buff_size, HAL_MAX_DELAY);
 }
 
@@ -60,7 +62,7 @@ static uint8_t SSD1306_Buffer[SSD1306_BUFFER_SIZE];
 static SSD1306_t SSD1306;
 
 /* Fills the Screenbuffer with values from a given buffer of a fixed length */
-SSD1306_Error_t ssd1306_FillBuffer(uint8_t* buf, uint32_t len) {
+SSD1306_Error_t ssd1306_FillBuffer(uint8_t devnum, uint8_t* buf, uint32_t len) {
     SSD1306_Error_t ret = SSD1306_ERR;
     if (len <= SSD1306_BUFFER_SIZE) {
         memcpy(SSD1306_Buffer,buf,len);
@@ -70,99 +72,99 @@ SSD1306_Error_t ssd1306_FillBuffer(uint8_t* buf, uint32_t len) {
 }
 
 // Initialize the oled screen
-void ssd1306_Init(void) {
+void ssd1306_Init(uint8_t devnum) {
     // Reset OLED
-    ssd1306_Reset();
+    ssd1306_Reset(devnum);
 
     // Wait for the screen to boot
     HAL_Delay(100);
 
     // Init OLED
-    ssd1306_SetDisplayOn(0); //display off
+    ssd1306_SetDisplayOn(devnum, 0); //display off
 
-    ssd1306_WriteCommand(0x20); //Set Memory Addressing Mode
-    ssd1306_WriteCommand(0x00); // 00b,Horizontal Addressing Mode; 01b,Vertical Addressing Mode;
+    ssd1306_WriteCommand(devnum, 0x20); //Set Memory Addressing Mode
+    ssd1306_WriteCommand(devnum, 0x00); // 00b,Horizontal Addressing Mode; 01b,Vertical Addressing Mode;
                                 // 10b,Page Addressing Mode (RESET); 11b,Invalid
 
-    ssd1306_WriteCommand(0xB0); //Set Page Start Address for Page Addressing Mode,0-7
+    ssd1306_WriteCommand(devnum, 0xB0); //Set Page Start Address for Page Addressing Mode,0-7
 
 #ifdef SSD1306_MIRROR_VERT
-    ssd1306_WriteCommand(0xC0); // Mirror vertically
+    ssd1306_WriteCommand(devnum, 0xC0); // Mirror vertically
 #else
-    ssd1306_WriteCommand(0xC8); //Set COM Output Scan Direction
+    ssd1306_WriteCommand(devnum, 0xC8); //Set COM Output Scan Direction
 #endif
 
-    ssd1306_WriteCommand(0x00); //---set low column address
-    ssd1306_WriteCommand(0x10); //---set high column address
+    ssd1306_WriteCommand(devnum, 0x00); //---set low column address
+    ssd1306_WriteCommand(devnum, 0x10); //---set high column address
 
-    ssd1306_WriteCommand(0x40); //--set start line address - CHECK
+    ssd1306_WriteCommand(devnum, 0x40); //--set start line address - CHECK
 
-    ssd1306_SetContrast(0xFF);
+    ssd1306_SetContrast(devnum, 0xFF);
 
 #ifdef SSD1306_MIRROR_HORIZ
-    ssd1306_WriteCommand(0xA0); // Mirror horizontally
+    ssd1306_WriteCommand(devnum, 0xA0); // Mirror horizontally
 #else
-    ssd1306_WriteCommand(0xA1); //--set segment re-map 0 to 127 - CHECK
+    ssd1306_WriteCommand(devnum, 0xA1); //--set segment re-map 0 to 127 - CHECK
 #endif
 
 #ifdef SSD1306_INVERSE_COLOR
-    ssd1306_WriteCommand(0xA7); //--set inverse color
+    ssd1306_WriteCommand(devnum, 0xA7); //--set inverse color
 #else
-    ssd1306_WriteCommand(0xA6); //--set normal color
+    ssd1306_WriteCommand(devnum, 0xA6); //--set normal color
 #endif
 
 // Set multiplex ratio.
 #if (SSD1306_HEIGHT == 128)
     // Found in the Luma Python lib for SH1106.
-    ssd1306_WriteCommand(0xFF);
+    ssd1306_WriteCommand(devnum, 0xFF);
 #else
-    ssd1306_WriteCommand(0xA8); //--set multiplex ratio(1 to 64) - CHECK
+    ssd1306_WriteCommand(devnum, 0xA8); //--set multiplex ratio(1 to 64) - CHECK
 #endif
 
 #if (SSD1306_HEIGHT == 32)
-    ssd1306_WriteCommand(0x1F); //
+    ssd1306_WriteCommand(devnum, 0x1F); //
 #elif (SSD1306_HEIGHT == 64)
-    ssd1306_WriteCommand(0x3F); //
+    ssd1306_WriteCommand(devnum, 0x3F); //
 #elif (SSD1306_HEIGHT == 128)
-    ssd1306_WriteCommand(0x3F); // Seems to work for 128px high displays too.
+    ssd1306_WriteCommand(devnum, 0x3F); // Seems to work for 128px high displays too.
 #else
 #error "Only 32, 64, or 128 lines of height are supported!"
 #endif
 
-    ssd1306_WriteCommand(0xA4); //0xa4,Output follows RAM content;0xa5,Output ignores RAM content
+    ssd1306_WriteCommand(devnum, 0xA4); //0xa4,Output follows RAM content;0xa5,Output ignores RAM content
 
-    ssd1306_WriteCommand(0xD3); //-set display offset - CHECK
-    ssd1306_WriteCommand(0x00); //-not offset
+    ssd1306_WriteCommand(devnum, 0xD3); //-set display offset - CHECK
+    ssd1306_WriteCommand(devnum, 0x00); //-not offset
 
-    ssd1306_WriteCommand(0xD5); //--set display clock divide ratio/oscillator frequency
-    ssd1306_WriteCommand(0xF0); //--set divide ratio
+    ssd1306_WriteCommand(devnum, 0xD5); //--set display clock divide ratio/oscillator frequency
+    ssd1306_WriteCommand(devnum, 0xF0); //--set divide ratio
 
-    ssd1306_WriteCommand(0xD9); //--set pre-charge period
-    ssd1306_WriteCommand(0x22); //
+    ssd1306_WriteCommand(devnum, 0xD9); //--set pre-charge period
+    ssd1306_WriteCommand(devnum, 0x22); //
 
-    ssd1306_WriteCommand(0xDA); //--set com pins hardware configuration - CHECK
+    ssd1306_WriteCommand(devnum, 0xDA); //--set com pins hardware configuration - CHECK
 #if (SSD1306_HEIGHT == 32)
-    ssd1306_WriteCommand(0x02);
+    ssd1306_WriteCommand(devnum, 0x02);
 #elif (SSD1306_HEIGHT == 64)
-    ssd1306_WriteCommand(0x12);
+    ssd1306_WriteCommand(devnum, 0x12);
 #elif (SSD1306_HEIGHT == 128)
-    ssd1306_WriteCommand(0x12);
+    ssd1306_WriteCommand(devnum, 0x12);
 #else
 #error "Only 32, 64, or 128 lines of height are supported!"
 #endif
 
-    ssd1306_WriteCommand(0xDB); //--set vcomh
-    ssd1306_WriteCommand(0x20); //0x20,0.77xVcc
+    ssd1306_WriteCommand(devnum, 0xDB); //--set vcomh
+    ssd1306_WriteCommand(devnum, 0x20); //0x20,0.77xVcc
 
-    ssd1306_WriteCommand(0x8D); //--set DC-DC enable
-    ssd1306_WriteCommand(0x14); //
-    ssd1306_SetDisplayOn(1); //--turn on SSD1306 panel
+    ssd1306_WriteCommand(devnum, 0x8D); //--set DC-DC enable
+    ssd1306_WriteCommand(devnum, 0x14); //
+    ssd1306_SetDisplayOn(devnum, 1); //--turn on SSD1306 panel
 
     // Clear screen
-    ssd1306_Fill(Black);
+    ssd1306_Fill(devnum, Black);
     
     // Flush buffer to screen
-    ssd1306_UpdateScreen();
+    ssd1306_UpdateScreen(devnum);
     
     // Set default values for screen object
     SSD1306.CurrentX = 0;
@@ -172,7 +174,7 @@ void ssd1306_Init(void) {
 }
 
 // Fill the whole screen with the given color
-void ssd1306_Fill(SSD1306_COLOR color) {
+void ssd1306_Fill(uint8_t devnum, SSD1306_COLOR color) {
     /* Set memory */
     uint32_t i;
 
@@ -182,7 +184,7 @@ void ssd1306_Fill(SSD1306_COLOR color) {
 }
 
 
-void ssd1306_FillZone(uint8_t x, uint8_t y, uint8_t wx, uint8_t wy, SSD1306_COLOR color)
+void ssd1306_FillZone(uint8_t devnum, uint8_t x, uint8_t y, uint8_t wx, uint8_t wy, SSD1306_COLOR color)
 {
     uint32_t xi;
     uint32_t yi;
@@ -213,7 +215,7 @@ void ssd1306_FillZone(uint8_t x, uint8_t y, uint8_t wx, uint8_t wy, SSD1306_COLO
 }
 
 // Write the screenbuffer with changed to the screen
-void ssd1306_UpdateScreen(void) {
+void ssd1306_UpdateScreen(uint8_t devnum) {
     // Write data to each page of RAM. Number of pages
     // depends on the screen height:
     //
@@ -221,10 +223,10 @@ void ssd1306_UpdateScreen(void) {
     //  * 64px   ==  8 pages
     //  * 128px  ==  16 pages
     for(uint8_t i = 0; i < SSD1306_HEIGHT/8; i++) {
-        ssd1306_WriteCommand(0xB0 + i); // Set the current RAM page address.
-        ssd1306_WriteCommand(0x00);
-        ssd1306_WriteCommand(0x10);
-        ssd1306_WriteData(&SSD1306_Buffer[SSD1306_WIDTH*i],SSD1306_WIDTH);
+        ssd1306_WriteCommand(devnum, 0xB0 + i); // Set the current RAM page address.
+        ssd1306_WriteCommand(devnum, 0x00);
+        ssd1306_WriteCommand(devnum, 0x10);
+        ssd1306_WriteData(devnum, &SSD1306_Buffer[SSD1306_WIDTH*i],SSD1306_WIDTH);
     }
 }
 
@@ -232,7 +234,7 @@ void ssd1306_UpdateScreen(void) {
 //    X => X Coordinate
 //    Y => Y Coordinate
 //    color => Pixel color
-void ssd1306_DrawPixel(uint8_t x, uint8_t y, SSD1306_COLOR color) {
+void ssd1306_DrawPixel(uint8_t devnum, uint8_t x, uint8_t y, SSD1306_COLOR color) {
     if(x >= SSD1306_WIDTH || y >= SSD1306_HEIGHT) {
         // Don't write outside the buffer
         return;
@@ -255,7 +257,7 @@ void ssd1306_DrawPixel(uint8_t x, uint8_t y, SSD1306_COLOR color) {
 // ch       => char om weg te schrijven
 // Font     => Font waarmee we gaan schrijven
 // color    => Black or White
-char ssd1306_WriteChar(char ch, FontDef Font, SSD1306_COLOR color) {
+char ssd1306_WriteChar(uint8_t devnum, char ch, FontDef Font, SSD1306_COLOR color) {
     uint32_t i, b, j;
     
     // Check if character is valid
@@ -275,9 +277,9 @@ char ssd1306_WriteChar(char ch, FontDef Font, SSD1306_COLOR color) {
         b = Font.data[(ch - 32) * Font.FontHeight + i];
         for(j = 0; j < Font.FontWidth; j++) {
             if((b << j) & 0x8000)  {
-                ssd1306_DrawPixel(SSD1306.CurrentX + j, (SSD1306.CurrentY + i), (SSD1306_COLOR) color);
+                ssd1306_DrawPixel(devnum, SSD1306.CurrentX + j, (SSD1306.CurrentY + i), (SSD1306_COLOR) color);
             } else {
-                ssd1306_DrawPixel(SSD1306.CurrentX + j, (SSD1306.CurrentY + i), (SSD1306_COLOR)!color);
+                ssd1306_DrawPixel(devnum, SSD1306.CurrentX + j, (SSD1306.CurrentY + i), (SSD1306_COLOR)!color);
             }
         }
     }
@@ -290,12 +292,12 @@ char ssd1306_WriteChar(char ch, FontDef Font, SSD1306_COLOR color) {
 }
 
 // Write full string to screenbuffer
-char ssd1306_WriteNString(const char* str, int max, FontDef Font, SSD1306_COLOR color) {
+char ssd1306_WriteNString(uint8_t devnum, const char* str, int max, FontDef Font, SSD1306_COLOR color) {
     // Write until null-byte
     while (*str) {
     	if (!max) break;
     	max--;
-        if (ssd1306_WriteChar(*str, Font, color) != *str) {
+        if (ssd1306_WriteChar(devnum, *str, Font, color) != *str) {
             // Char could not be written
             return *str;
         }
@@ -307,10 +309,10 @@ char ssd1306_WriteNString(const char* str, int max, FontDef Font, SSD1306_COLOR 
     // Everything ok
     return *str;
 }
-char ssd1306_WriteString(const char* str, FontDef Font, SSD1306_COLOR color) {
+char ssd1306_WriteString(uint8_t devnum, const char* str, FontDef Font, SSD1306_COLOR color) {
     // Write until null-byte
     while (*str) {
-        if (ssd1306_WriteChar(*str, Font, color) != *str) {
+        if (ssd1306_WriteChar(devnum, *str, Font, color) != *str) {
             // Char could not be written
             return *str;
         }
@@ -324,22 +326,22 @@ char ssd1306_WriteString(const char* str, FontDef Font, SSD1306_COLOR color) {
 }
 
 // Position the cursor
-void ssd1306_SetCursor(uint8_t x, uint8_t y) {
+void ssd1306_SetCursor(uint8_t devnum, uint8_t x, uint8_t y) {
     SSD1306.CurrentX = x;
     SSD1306.CurrentY = y;
 }
 
-uint8_t ssd1306_GetCursorX(void)
+uint8_t ssd1306_GetCursorX(uint8_t devnum)
 {
 	return SSD1306.CurrentX;
 }
-uint8_t ssd1306_GetCursorY(void)
+uint8_t ssd1306_GetCursorY(uint8_t devnum)
 {
 	return SSD1306.CurrentY;
 }
 
 // Draw line by Bresenhem's algorithm
-void ssd1306_Line(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2, SSD1306_COLOR color) {
+void ssd1306_Line(uint8_t devnum, uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2, SSD1306_COLOR color) {
   int32_t deltaX = abs(x2 - x1);
   int32_t deltaY = abs(y2 - y1);
   int32_t signX = ((x1 < x2) ? 1 : -1);
@@ -347,10 +349,10 @@ void ssd1306_Line(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2, SSD1306_COLOR 
   int32_t error = deltaX - deltaY;
   int32_t error2;
     
-  ssd1306_DrawPixel(x2, y2, color);
+  ssd1306_DrawPixel(devnum, x2, y2, color);
     while((x1 != x2) || (y1 != y2))
     {
-    ssd1306_DrawPixel(x1, y1, color);
+    ssd1306_DrawPixel(devnum, x1, y1, color);
     error2 = error * 2;
     if(error2 > -deltaY)
     {
@@ -375,11 +377,11 @@ void ssd1306_Line(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2, SSD1306_COLOR 
   return;
 }
 //Draw polyline
-void ssd1306_Polyline(const SSD1306_VERTEX *par_vertex, uint16_t par_size, SSD1306_COLOR color) {
+void ssd1306_Polyline(uint8_t devnum, const SSD1306_VERTEX *par_vertex, uint16_t par_size, SSD1306_COLOR color) {
   uint16_t i;
   if(par_vertex != 0){
     for(i = 1; i < par_size; i++){
-      ssd1306_Line(par_vertex[i - 1].x, par_vertex[i - 1].y, par_vertex[i].x, par_vertex[i].y, color);
+      ssd1306_Line(devnum, par_vertex[i - 1].x, par_vertex[i - 1].y, par_vertex[i].x, par_vertex[i].y, color);
     }
   }
   else
@@ -410,7 +412,7 @@ static uint16_t ssd1306_NormalizeTo0_360(uint16_t par_deg) {
  * start_angle in degree
  * sweep in degree
  */
-void ssd1306_DrawArc(uint8_t x, uint8_t y, uint8_t radius, uint16_t start_angle, uint16_t sweep, SSD1306_COLOR color) {
+void ssd1306_DrawArc(uint8_t devnum, uint8_t x, uint8_t y, uint8_t radius, uint16_t start_angle, uint16_t sweep, SSD1306_COLOR color) {
     #define CIRCLE_APPROXIMATION_SEGMENTS 36
     float approx_degree;
     uint32_t approx_segments;
@@ -441,13 +443,13 @@ void ssd1306_DrawArc(uint8_t x, uint8_t y, uint8_t radius, uint16_t start_angle,
         }
         xp2 = x + (int8_t)(sin(rad)*radius);
         yp2 = y + (int8_t)(cos(rad)*radius);    
-        ssd1306_Line(xp1,yp1,xp2,yp2,color);
+        ssd1306_Line(devnum, xp1,yp1,xp2,yp2,color);
     }
     
     return;
 }
 //Draw circle by Bresenhem's algorithm
-void ssd1306_DrawCircle(uint8_t par_x,uint8_t par_y,uint8_t par_r,SSD1306_COLOR par_color) {
+void ssd1306_DrawCircle(uint8_t devnum, uint8_t par_x,uint8_t par_y,uint8_t par_r,SSD1306_COLOR par_color) {
   int32_t x = -par_r;
   int32_t y = 0;
   int32_t err = 2 - 2 * par_r;
@@ -458,10 +460,10 @@ void ssd1306_DrawCircle(uint8_t par_x,uint8_t par_y,uint8_t par_r,SSD1306_COLOR 
   }
 
     do {
-      ssd1306_DrawPixel(par_x - x, par_y + y, par_color);
-      ssd1306_DrawPixel(par_x + x, par_y + y, par_color);
-      ssd1306_DrawPixel(par_x + x, par_y - y, par_color);
-      ssd1306_DrawPixel(par_x - x, par_y - y, par_color);
+      ssd1306_DrawPixel(devnum, par_x - x, par_y + y, par_color);
+      ssd1306_DrawPixel(devnum, par_x + x, par_y + y, par_color);
+      ssd1306_DrawPixel(devnum, par_x + x, par_y - y, par_color);
+      ssd1306_DrawPixel(devnum, par_x - x, par_y - y, par_color);
         e2 = err;
         if (e2 <= y) {
             y++;
@@ -492,22 +494,22 @@ void ssd1306_DrawCircle(uint8_t par_x,uint8_t par_y,uint8_t par_r,SSD1306_COLOR 
 }
 
 //Draw rectangle
-void ssd1306_DrawRectangle(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2, SSD1306_COLOR color) {
-  ssd1306_Line(x1,y1,x2,y1,color);
-  ssd1306_Line(x2,y1,x2,y2,color);
-  ssd1306_Line(x2,y2,x1,y2,color);
-  ssd1306_Line(x1,y2,x1,y1,color);
+void ssd1306_DrawRectangle(uint8_t devnum, uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2, SSD1306_COLOR color) {
+  ssd1306_Line(devnum, x1,y1,x2,y1,color);
+  ssd1306_Line(devnum, x2,y1,x2,y2,color);
+  ssd1306_Line(devnum, x2,y2,x1,y2,color);
+  ssd1306_Line(devnum, x1,y2,x1,y1,color);
 
   return;
 }
 
-void ssd1306_SetContrast(const uint8_t value) {
+void ssd1306_SetContrast(uint8_t devnum, const uint8_t value) {
     const uint8_t kSetContrastControlRegister = 0x81;
-    ssd1306_WriteCommand(kSetContrastControlRegister);
-    ssd1306_WriteCommand(value);
+    ssd1306_WriteCommand(devnum, kSetContrastControlRegister);
+    ssd1306_WriteCommand(devnum, value);
 }
 
-void ssd1306_SetDisplayOn(const uint8_t on) {
+void ssd1306_SetDisplayOn(uint8_t devnum, const uint8_t on) {
     uint8_t value;
     if (on) {
         value = 0xAF;   // Display on
@@ -516,9 +518,9 @@ void ssd1306_SetDisplayOn(const uint8_t on) {
         value = 0xAE;   // Display off
         SSD1306.DisplayOn = 0;
     }
-    ssd1306_WriteCommand(value);
+    ssd1306_WriteCommand(devnum, value);
 }
 
-uint8_t ssd1306_GetDisplayOn() {
+uint8_t ssd1306_GetDisplayOn(uint8_t devnum) {
     return SSD1306.DisplayOn;
 }

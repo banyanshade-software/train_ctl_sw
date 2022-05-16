@@ -117,7 +117,7 @@ void StartUiTask(_UNUSED_ void *argument)
 
 	for (int i=0; i<MAX_DISP; i++) {
 		I2C_Scan();
-		ssd1306_Init();
+		ssd1306_Init(i);
 	}
 	for (;;) {
 		static TickType_t lasttick = 0;

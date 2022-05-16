@@ -130,50 +130,50 @@ typedef struct {
 } SSD1306_VERTEX;
 
 // Procedure definitions
-void ssd1306_Init(void);
-void ssd1306_Fill(SSD1306_COLOR color);
-void ssd1306_UpdateScreen(void);
-void ssd1306_DrawPixel(uint8_t x, uint8_t y, SSD1306_COLOR color);
-char ssd1306_WriteChar(char ch, FontDef Font, SSD1306_COLOR color);
-char ssd1306_WriteString(const char* str, FontDef Font, SSD1306_COLOR color);
-char ssd1306_WriteNString(const char* str, int max, FontDef Font, SSD1306_COLOR color);
-void ssd1306_SetCursor(uint8_t x, uint8_t y);
-void ssd1306_Line(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2, SSD1306_COLOR color);
-void ssd1306_DrawArc(uint8_t x, uint8_t y, uint8_t radius, uint16_t start_angle, uint16_t sweep, SSD1306_COLOR color);
-void ssd1306_DrawCircle(uint8_t par_x, uint8_t par_y, uint8_t par_r, SSD1306_COLOR color);
-void ssd1306_Polyline(const SSD1306_VERTEX *par_vertex, uint16_t par_size, SSD1306_COLOR color);
-void ssd1306_DrawRectangle(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2, SSD1306_COLOR color);
+void ssd1306_Init(uint8_t devnum);
+void ssd1306_Fill(uint8_t devnum, SSD1306_COLOR color);
+void ssd1306_UpdateScreen(uint8_t devnum);
+void ssd1306_DrawPixel(uint8_t devnum, uint8_t x, uint8_t y, SSD1306_COLOR color);
+char ssd1306_WriteChar(uint8_t devnum, char ch, FontDef Font, SSD1306_COLOR color);
+char ssd1306_WriteString(uint8_t devnum, const char* str, FontDef Font, SSD1306_COLOR color);
+char ssd1306_WriteNString(uint8_t devnum, const char* str, int max, FontDef Font, SSD1306_COLOR color);
+void ssd1306_SetCursor(uint8_t devnum, uint8_t x, uint8_t y);
+void ssd1306_Line(uint8_t devnum, uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2, SSD1306_COLOR color);
+void ssd1306_DrawArc(uint8_t devnum, uint8_t x, uint8_t y, uint8_t radius, uint16_t start_angle, uint16_t sweep, SSD1306_COLOR color);
+void ssd1306_DrawCircle(uint8_t devnum, uint8_t par_x, uint8_t par_y, uint8_t par_r, SSD1306_COLOR color);
+void ssd1306_Polyline(uint8_t devnum, const SSD1306_VERTEX *par_vertex, uint16_t par_size, SSD1306_COLOR color);
+void ssd1306_DrawRectangle(uint8_t devnum, uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2, SSD1306_COLOR color);
 /**
  * @brief Sets the contrast of the display.
  * @param[in] value contrast to set.
  * @note Contrast increases as the value increases.
  * @note RESET = 7Fh.
  */
-void ssd1306_SetContrast(const uint8_t value);
+void ssd1306_SetContrast(uint8_t devnum, const uint8_t value);
 /**
  * @brief Set Display ON/OFF.
  * @param[in] on 0 for OFF, any for ON.
  */
-void ssd1306_SetDisplayOn(const uint8_t on);
+void ssd1306_SetDisplayOn(uint8_t devnum, const uint8_t on);
 /**
  * @brief Reads DisplayOn state.
  * @return  0: OFF.
  *          1: ON.
  */
-uint8_t ssd1306_GetDisplayOn();
+uint8_t ssd1306_GetDisplayOn(uint8_t devnum);
 
 // Low-level procedures
-void ssd1306_Reset(void);
-void ssd1306_WriteCommand(uint8_t byte);
-void ssd1306_WriteData(uint8_t* buffer, size_t buff_size);
-SSD1306_Error_t ssd1306_FillBuffer(uint8_t* buf, uint32_t len);
+//void ssd1306_Reset(void);
+//void ssd1306_WriteCommand(uint8_t byte);
+//void ssd1306_WriteData(uint8_t* buffer, size_t buff_size);
+SSD1306_Error_t ssd1306_FillBuffer(uint8_t devnum, uint8_t* buf, uint32_t len);
 
 /* ---------- DBN addon -------- */
 
 // fill a zone. y and wy are supposed to be multiple of 8
-void ssd1306_FillZone(uint8_t x, uint8_t y, uint8_t wx, uint8_t wy, SSD1306_COLOR color);
-uint8_t ssd1306_GetCursorX(void);
-uint8_t ssd1306_GetCursorY(void);
+void ssd1306_FillZone(uint8_t devnum, uint8_t x, uint8_t y, uint8_t wx, uint8_t wy, SSD1306_COLOR color);
+uint8_t ssd1306_GetCursorX(uint8_t devnum);
+uint8_t ssd1306_GetCursorY(uint8_t devnum);
 
 
 _END_STD_C

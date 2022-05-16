@@ -381,25 +381,25 @@ uint16_t ihm_getvar(int numdisp, int varnum)
 #define RIGHT_X 64
 
 //static void write_num(char *buf, uint32_t v, int ndigit);
-static void write_unum(uint16_t v, FontDef *curfont);
-static void write_unum4(uint16_t v, FontDef *curfont);
-static void write_unum1000(uint16_t v, FontDef *curfont);
-static void write_snum(int16_t v, FontDef *curfont);
-static void write_snum4(int16_t v, FontDef *curfont);
-static void write_snum1000(int16_t v, FontDef *curfont);
-static void write_snum1000_2(int16_t v, FontDef *curfont);
-static void write_bargraph(int16_t v, int16_t min, int16_t max);
-static void write_sbargraph(int16_t v, int16_t min, int16_t max);
+static void write_unum(uint8_t devnum, uint16_t v, FontDef *curfont);
+static void write_unum4(uint8_t devnum, uint16_t v, FontDef *curfont);
+static void write_unum1000(uint8_t devnum, uint16_t v, FontDef *curfont);
+static void write_snum(uint8_t devnum, int16_t v, FontDef *curfont);
+static void write_snum4(uint8_t devnum, int16_t v, FontDef *curfont);
+static void write_snum1000(uint8_t devnum, int16_t v, FontDef *curfont);
+static void write_snum1000_2(uint8_t devnum, int16_t v, FontDef *curfont);
+static void write_bargraph(uint8_t devnum, int16_t v, int16_t min, int16_t max);
+static void write_sbargraph(uint8_t devnum, int16_t v, int16_t min, int16_t max);
 
 __weak const char *_fatal = NULL;
 
-void disp_layout(int numdisp)
+void disp_layout(int devnum)
 {
 	uint32_t t0 = HAL_GetTick();
-	const uint8_t *d = disp[numdisp];
+	const uint8_t *d = disp[devnum];
 	if (!d) d = default_layout;
-	ssd1306_Fill(Black);
-	ssd1306_SetCursor(0, 0);
+	ssd1306_Fill(devnum, Black);
+	ssd1306_SetCursor(devnum, 0, 0);
 	FontDef *curfont = &Font_7x10;
 	uint16_t v16u;
 	int16_t v16s;
@@ -411,38 +411,38 @@ void disp_layout(int numdisp)
 		if (CODE_END == d[i]) break;
 		if ((d[i] & 0x80)==0) { // CODE_STR
 			const char * stri = ui_strings[d[i]&0x7F];
-			ssd1306_WriteString(stri, *curfont, White);
+			ssd1306_WriteString(devnum, stri, *curfont, White);
 			continue;
 		}
 		switch (d[i]) {
 		case CODE_NOP: break;
 		case CODE_ZONE_STATUS:
-			ssd1306_SetCursor(0, 0);
+			ssd1306_SetCursor(devnum, 0, 0);
 			curfont = &Font_7x10;
 			break;
 		case CODE_ZONE_MODE:
-			ssd1306_SetCursor(RIGHT_X, 0);
+			ssd1306_SetCursor(devnum, RIGHT_X, 0);
 			curfont = &Font_7x10;
 			break;
 		case CODE_ZONE_TEXT1:
-			ssd1306_SetCursor(0, TEXT_Y);
+			ssd1306_SetCursor(devnum, 0, TEXT_Y);
 			curfont = &Font_11x18;
 			break;
 		case CODE_ZONE_TEXT2:
-			ssd1306_SetCursor(RIGHT_X, TEXT_Y);
+			ssd1306_SetCursor(devnum, RIGHT_X, TEXT_Y);
 			curfont = &Font_11x18;
 			break;
 		case CODE_ZONE_TEXT1s:
-			ssd1306_SetCursor(0, TEXT_Y);
+			ssd1306_SetCursor(devnum, 0, TEXT_Y);
 			curfont = &Font_7x10;
 			break;
 		case CODE_ZONE_TEXT2s:
-			ssd1306_SetCursor(RIGHT_X, TEXT_Y);
+			ssd1306_SetCursor(devnum, RIGHT_X, TEXT_Y);
 			curfont = &Font_7x10;
 			break;
 		case CODE_ZONE_TEXT3s:
 #ifdef SSD1306_INCLUDE_FONT_6x8
-			ssd1306_SetCursor(0, TEXT_Y+12);
+			ssd1306_SetCursor(devnum, 0, TEXT_Y+12);
 			curfont = &Font_6x8;
 #else
 			ssd1306_SetCursor(0, TEXT_Y+10);
@@ -451,77 +451,77 @@ void disp_layout(int numdisp)
 			break;
 		case CODE_ZONE_TEXT4s:
 #ifdef SSD1306_INCLUDE_FONT_6x8
-			ssd1306_SetCursor(RIGHT_X, TEXT_Y+12);
+			ssd1306_SetCursor(devnum, RIGHT_X, TEXT_Y+12);
 			curfont = &Font_6x8;
 #else
-			ssd1306_SetCursor(RIGHT_X, TEXT_Y+10);
+			ssd1306_SetCursor(devnum, RIGHT_X, TEXT_Y+10);
 			curfont = &Font_7x10;
 #endif
 			break;
 #ifdef SSD1306_INCLUDE_FONT_16x26
 		case CODE_ZONE_TEXTBIG:
-			ssd1306_SetCursor(0,0);
+			ssd1306_SetCursor(devnum, 0,0);
 			curfont = &Font_16x26;
 			break;
 #endif
 
 		case CODE_SPTR:
 			i++;
-			v16u = (int16_t) _GET_REG(numdisp, d[i]);
+			v16u = (int16_t) _GET_REG(devnum, d[i]);
 			if (v16u<10) v16u = 10;
 			if (v16u>100) v16u = 100;
 			const char * stri = ui_strings[v16u];
-			ssd1306_WriteString(stri, *curfont, White);
+			ssd1306_WriteString(devnum, stri, *curfont, White);
 			break;
 		case CODE_DIGIT:
 			i++;
-			v16u = (int16_t) _GET_REG(numdisp, d[i]);
-			ssd1306_WriteChar('0'+(v16u & 0xF) , *curfont, White);
+			v16u = (int16_t) _GET_REG(devnum, d[i]);
+			ssd1306_WriteChar(devnum, '0'+(v16u & 0xF) , *curfont, White);
 			break;
 		case CODE_SVAL:
 			i++;
-			v16s = (int16_t) _GET_REG(numdisp, d[i]);
-			write_snum(v16s, curfont);
+			v16s = (int16_t) _GET_REG(devnum, d[i]);
+			write_snum(devnum, v16s, curfont);
 			break;
 		case CODE_SVAL4:
 			i++;
-			v16s = (int16_t) _GET_REG(numdisp, d[i]);
-			write_snum4(v16s, curfont);
+			v16s = (int16_t) _GET_REG(devnum, d[i]);
+			write_snum4(devnum, v16s, curfont);
 			break;
 		case CODE_SVAL1000:
 			i++;
-			v16s = (int16_t) _GET_REG(numdisp, d[i]);
-			write_snum1000(v16s, curfont);
+			v16s = (int16_t) _GET_REG(devnum, d[i]);
+			write_snum1000(devnum, v16s, curfont);
 			break;
 		case CODE_SVAL1000_2:
 			i++;
-			v16s = (int16_t) _GET_REG(numdisp, d[i]);
-			write_snum1000_2(v16s, curfont);
+			v16s = (int16_t) _GET_REG(devnum, d[i]);
+			write_snum1000_2(devnum, v16s, curfont);
 			break;
 		case CODE_UVAL:
 			i++;
-			v16u = _GET_REG(numdisp, d[i]);
-			write_unum(v16u, curfont);
+			v16u = _GET_REG(devnum, d[i]);
+			write_unum(devnum, v16u, curfont);
 			break;
 		case CODE_UVAL4:
 			i++;
-			v16u = _GET_REG(numdisp, d[i]);
-			write_unum4(v16u, curfont);
+			v16u = _GET_REG(devnum, d[i]);
+			write_unum4(devnum, v16u, curfont);
 			break;
 		case CODE_UVAL1000:
 			i++;
-			v16u = _GET_REG(numdisp, d[i]);
-			write_unum1000(v16u, curfont);
+			v16u = _GET_REG(devnum, d[i]);
+			write_unum1000(devnum, v16u, curfont);
 			break;
 		case CODE_GRAPH_LEVEL:
 			i++;
-			v16u = _GET_REG(numdisp, d[i]);
-			write_bargraph(v16u, 0, 100);
+			v16u = _GET_REG(devnum, d[i]);
+			write_bargraph(devnum, v16u, 0, 100);
 			break;
 		case CODE_GRAPH_SLEVEL:
 			i++;
-			v16s = _GET_REG(numdisp, d[i]);
-			write_sbargraph(v16s, -100, 100);
+			v16s = _GET_REG(devnum, d[i]);
+			write_sbargraph(devnum, v16s, -100, 100);
 			break;
 		case CODE_TIM4_CNT: {
 #ifdef BOARD_HAS_ROTARY_ENCODER
@@ -532,20 +532,20 @@ void disp_layout(int numdisp)
 			break;
 		}
 		case CODE_PROFILE:
-			write_unum((int16_t)last_dur1, curfont);
-			ssd1306_WriteChar('/', *curfont, White);
-			write_unum((int16_t)last_dur2, curfont);
+			write_unum(devnum, (int16_t)last_dur1, curfont);
+			ssd1306_WriteChar(devnum, '/', *curfont, White);
+			write_unum(devnum, (int16_t)last_dur2, curfont);
 			break;
 		case CODE_FATAL:
-			if (_fatal) ssd1306_WriteString(_fatal, *curfont, White);
-			else        ssd1306_WriteString("---", *curfont, White);
+			if (_fatal) ssd1306_WriteString(devnum,_fatal, *curfont, White);
+			else        ssd1306_WriteString(devnum,"---", *curfont, White);
 			break;
 		case CODE_DIR:
 			i+=1;
-			v16s = _GET_REG(numdisp, d[i]);
-			if (v16s > 0) ssd1306_WriteChar('>', *curfont, White);
-			else if (v16s < 0) ssd1306_WriteChar('<', *curfont, White);
-			else ssd1306_WriteChar('|', *curfont, White);
+			v16s = _GET_REG(devnum, d[i]);
+			if (v16s > 0) ssd1306_WriteChar(devnum,'>', *curfont, White);
+			else if (v16s < 0) ssd1306_WriteChar(devnum,'<', *curfont, White);
+			else ssd1306_WriteChar(devnum,'|', *curfont, White);
 			break;
 
 
@@ -560,7 +560,7 @@ void disp_layout(int numdisp)
 		}
 	}
 	uint32_t t1 = HAL_GetTick();
-	ssd1306_UpdateScreen();
+	ssd1306_UpdateScreen(devnum);
 	uint32_t t2 = HAL_GetTick();
 	last_dur1 = t2-t0;
 	last_dur2 = t2-t1;
@@ -604,7 +604,7 @@ static void write_num(char *buf, uint32_t v, int ndigit)
 }
 */
 
-static void _write_unum(uint16_t v, FontDef *curfont, uint8_t hzero, uint8_t fp1000)
+static void _write_unum(uint8_t devnum, uint16_t v, FontDef *curfont, uint8_t hzero, uint8_t fp1000)
 {
 	int f = 0;
 	int ns = 1000;
@@ -620,96 +620,96 @@ static void _write_unum(uint16_t v, FontDef *curfont, uint8_t hzero, uint8_t fp1
 		if (!n && !f && (i>1)) {
 			if (!hzero) continue;
 			if (hzero == ' ') {
-				ssd1306_WriteChar(' ', *curfont, White);
+				ssd1306_WriteChar(devnum, ' ', *curfont, White);
 				continue;
 			}
 		}
-		ssd1306_WriteChar(n+'0', *curfont, White);
+		ssd1306_WriteChar(devnum, n+'0', *curfont, White);
 		if ((f==0) && fp1000) {
-			ssd1306_WriteChar(',', *curfont, White);
+			ssd1306_WriteChar(devnum, ',', *curfont, White);
 			hzero = 1;
 		}
 		f++;
 		v = v - i*n;
 	}
 }
-static void write_unum(uint16_t v, FontDef *curfont)
+static void write_unum(uint8_t devnum, uint16_t v, FontDef *curfont)
 {
-	_write_unum(v, curfont, 0, 0);
+	_write_unum(devnum, v, curfont, 0, 0);
 }
-static void write_unum4(uint16_t v, FontDef *curfont)
-{
-	if (v>9999) v=9999;
-	_write_unum(v, curfont, 1, 0);
-}
-static void write_unum1000(uint16_t v, FontDef *curfont)
+static void write_unum4(uint8_t devnum, uint16_t v, FontDef *curfont)
 {
 	if (v>9999) v=9999;
-	_write_unum(v, curfont, 1, 1);
+	_write_unum(devnum, v, curfont, 1, 0);
 }
-static void write_snum(int16_t v, FontDef *curfont)
+static void write_unum1000(uint8_t devnum, uint16_t v, FontDef *curfont)
+{
+	if (v>9999) v=9999;
+	_write_unum(devnum, v, curfont, 1, 1);
+}
+static void write_snum(uint8_t devnum, int16_t v, FontDef *curfont)
 {
 	if ((v<-5000)||(v>5000)) {
 		itm_debug1(DBG_UI|DBG_ERR, "strange here", v);
 	}
 	if (v < 0) {
-		ssd1306_WriteChar('-', *curfont, White);
+		ssd1306_WriteChar(devnum, '-', *curfont, White);
 	} else {
-		ssd1306_WriteChar('+', *curfont, White);
+		ssd1306_WriteChar(devnum, '+', *curfont, White);
 	}
-	write_unum(abs(v), curfont);
+	write_unum(devnum, abs(v), curfont);
 }
 
-static void write_snum4(int16_t v, FontDef *curfont)
+static void write_snum4(uint8_t devnum, int16_t v, FontDef *curfont)
 {
 	if (v<-9999) v=-9999;
 	if (v>9999) v=9999;
 	if (v < 0) {
-		ssd1306_WriteChar('-', *curfont, White);
+		ssd1306_WriteChar(devnum, '-', *curfont, White);
 	} else {
-		ssd1306_WriteChar('+', *curfont, White);
+		ssd1306_WriteChar(devnum, '+', *curfont, White);
 	}
-	_write_unum(abs(v), curfont, 1, 0);
+	_write_unum(devnum, abs(v), curfont, 1, 0);
 }
 
-static void write_snum1000(int16_t v, FontDef *curfont)
+static void write_snum1000(uint8_t devnum, int16_t v, FontDef *curfont)
 {
 	if (v<-9999) v=-9999;
 	if (v>9999) v=9999;
 	if (v < 0) {
-		ssd1306_WriteChar('-', *curfont, White);
+		ssd1306_WriteChar(devnum, '-', *curfont, White);
 	} else {
-		ssd1306_WriteChar('+', *curfont, White);
+		ssd1306_WriteChar(devnum, '+', *curfont, White);
 	}
-	_write_unum(abs(v), curfont, 1, 1);
+	_write_unum(devnum, abs(v), curfont, 1, 1);
 }
 
 
-static void write_snum1000_2(int16_t v, FontDef *curfont)
+static void write_snum1000_2(uint8_t devnum, int16_t v, FontDef *curfont)
 {
 	if (v<-9999) v=-9999;
 	if (v>9999) v=9999;
 	v = v/10;
 	if (v < 0) {
-		ssd1306_WriteChar('-', *curfont, White);
+		ssd1306_WriteChar(devnum, '-', *curfont, White);
 	} else {
-		ssd1306_WriteChar('+', *curfont, White);
+		ssd1306_WriteChar(devnum, '+', *curfont, White);
 	}
-	_write_unum(abs(v), curfont, 1, 2);
+	_write_unum(devnum, abs(v), curfont, 1, 2);
 }
 
-static void write_bargraph(int16_t v, int16_t min, int16_t max)
+static void write_bargraph(uint8_t devnum, int16_t v, int16_t min, int16_t max)
 {
-	uint8_t x0 = ssd1306_GetCursorX();
-	uint8_t y0 = ssd1306_GetCursorY();
+	uint8_t x0 = ssd1306_GetCursorX(devnum);
+	uint8_t y0 = ssd1306_GetCursorY(devnum);
 	const uint8_t w = 50;
 	const uint8_t h = 11; //y0+=3;
-	ssd1306_DrawRectangle(x0, y0, x0+w, y0+h, White);
+	ssd1306_DrawRectangle(devnum, x0, y0, x0+w, y0+h, White);
 
 	if (v>max) v=max;
 	if (v<min) v=min;
 	int l = ((int)w*(v-min))/(max-min);
-	if (l>0) ssd1306_FillZone(x0, y0, l, h, White);
+	if (l>0) ssd1306_FillZone(devnum, x0, y0, l, h, White);
 	if ((min<0) && (max>0)) {
 		l = ((int)w*(0-min))/(max-min);
 		/// TODO ?
@@ -718,21 +718,21 @@ static void write_bargraph(int16_t v, int16_t min, int16_t max)
 
 
 
-static void write_sbargraph(int16_t v, int16_t min, int16_t max)
+static void write_sbargraph(uint8_t devnum, int16_t v, int16_t min, int16_t max)
 {
-	uint8_t x0 = ssd1306_GetCursorX();
-	uint8_t y0 = ssd1306_GetCursorY();
+	uint8_t x0 = ssd1306_GetCursorX(devnum);
+	uint8_t y0 = ssd1306_GetCursorY(devnum);
 	const uint8_t w = 50;
 	const uint8_t h = 11; //y0+=3;
-	ssd1306_DrawRectangle(x0, y0, x0+w, y0+h, White);
+	ssd1306_DrawRectangle(devnum, x0, y0, x0+w, y0+h, White);
 
 	if (v>max) v=max;
 	if (v<min) v=min;
 	int m = ((int)w*(0-min))/(max-min);
 	int l = ((int)w*(v-min))/(max-min);
-	if (l>m) ssd1306_FillZone(x0+m, y0, l-m, h, White);
-	else ssd1306_FillZone(x0+l, y0, m-l, h, White);
-	ssd1306_Line(x0+m, y0-1, x0+m, y0+h+2, White);
+	if (l>m) ssd1306_FillZone(devnum, x0+m, y0, l-m, h, White);
+	else ssd1306_FillZone(devnum, x0+l, y0, m-l, h, White);
+	ssd1306_Line(devnum, x0+m, y0-1, x0+m, y0+h+2, White);
 	if ((min<0) && (max>0)) {
 		l = ((int)w*(0-min))/(max-min);
 		/// TODO

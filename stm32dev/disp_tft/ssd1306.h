@@ -117,13 +117,7 @@ typedef enum {
 } SSD1306_Error_t;
 
 // Struct to store transformations
-typedef struct {
-    uint16_t CurrentX;
-    uint16_t CurrentY;
-    uint8_t Inverted;
-    uint8_t Initialized;
-    uint8_t DisplayOn;
-} SSD1306_t;
+
 typedef struct {
     uint8_t x;
     uint8_t y;

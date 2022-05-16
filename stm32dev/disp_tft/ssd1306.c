@@ -54,18 +54,35 @@ void ssd1306_WriteData(uint8_t* buffer, size_t buff_size) {
 #error "You should define SSD1306_USE_SPI or SSD1306_USE_I2C macro"
 #endif
 
+typedef struct {
+    uint16_t CurrentX;
+    uint16_t CurrentY;
+    uint8_t Inverted;
+    uint8_t Initialized;
+    uint8_t DisplayOn;
+    uint8_t buffer[SSD1306_BUFFER_SIZE];
+} SSD1306_t;
+
 
 // Screenbuffer
-static uint8_t SSD1306_Buffer[SSD1306_BUFFER_SIZE];
+//static uint8_t SSD1306_Buffer[SSD1306_BUFFER_SIZE];
 
 // Screen object
-static SSD1306_t SSD1306;
+
+#ifdef TRN_BOARD_UI
+#define MAX_DISPLAY 4
+#else
+#define MAX_DISPLAY 1
+#endif
+
+static SSD1306_t SSD1306[MAX_DISPLAY];
 
 /* Fills the Screenbuffer with values from a given buffer of a fixed length */
 SSD1306_Error_t ssd1306_FillBuffer(uint8_t devnum, uint8_t* buf, uint32_t len) {
     SSD1306_Error_t ret = SSD1306_ERR;
     if (len <= SSD1306_BUFFER_SIZE) {
-        memcpy(SSD1306_Buffer,buf,len);
+        //memcpy(SSD1306_Buffer,buf,len);
+        memcpy(SSD1306[devnum].buffer, buf,len);
         ret = SSD1306_OK;
     }
     return ret;
@@ -167,10 +184,10 @@ void ssd1306_Init(uint8_t devnum) {
     ssd1306_UpdateScreen(devnum);
     
     // Set default values for screen object
-    SSD1306.CurrentX = 0;
-    SSD1306.CurrentY = 0;
+    SSD1306[devnum].CurrentX = 0;
+    SSD1306[devnum].CurrentY = 0;
     
-    SSD1306.Initialized = 1;
+    SSD1306[devnum].Initialized = 1;
 }
 
 // Fill the whole screen with the given color
@@ -178,8 +195,8 @@ void ssd1306_Fill(uint8_t devnum, SSD1306_COLOR color) {
     /* Set memory */
     uint32_t i;
 
-    for(i = 0; i < sizeof(SSD1306_Buffer); i++) {
-        SSD1306_Buffer[i] = (color == Black) ? 0x00 : 0xFF;
+    for(i = 0; i < sizeof(SSD1306[devnum].buffer); i++) {
+        SSD1306[devnum].buffer[i] = (color == Black) ? 0x00 : 0xFF;
     }
 }
 
@@ -205,9 +222,9 @@ void ssd1306_FillZone(uint8_t devnum, uint8_t x, uint8_t y, uint8_t wx, uint8_t 
     		int i = yi*SSD1306_WIDTH+xi;
     		if (i>=SSD1306_BUFFER_SIZE) break;
     		if (color == Black) {
-    			SSD1306_Buffer[i] &= ~b;
+    			SSD1306[devnum].buffer[i] &= ~b;
     		} else {
-    			SSD1306_Buffer[i] |= b;
+    			SSD1306[devnum].buffer[i] |= b;
     		}
     	}
     }
@@ -226,7 +243,7 @@ void ssd1306_UpdateScreen(uint8_t devnum) {
         ssd1306_WriteCommand(devnum, 0xB0 + i); // Set the current RAM page address.
         ssd1306_WriteCommand(devnum, 0x00);
         ssd1306_WriteCommand(devnum, 0x10);
-        ssd1306_WriteData(devnum, &SSD1306_Buffer[SSD1306_WIDTH*i],SSD1306_WIDTH);
+        ssd1306_WriteData(devnum, &SSD1306[devnum].buffer[SSD1306_WIDTH*i],SSD1306_WIDTH);
     }
 }
 
@@ -241,15 +258,15 @@ void ssd1306_DrawPixel(uint8_t devnum, uint8_t x, uint8_t y, SSD1306_COLOR color
     }
     
     // Check if pixel should be inverted
-    if(SSD1306.Inverted) {
+    if(SSD1306[devnum].Inverted) {
         color = (SSD1306_COLOR)!color;
     }
     
     // Draw in the right color
     if(color == White) {
-        SSD1306_Buffer[x + (y / 8) * SSD1306_WIDTH] |= 1 << (y % 8);
+        SSD1306[devnum].buffer[x + (y / 8) * SSD1306_WIDTH] |= 1 << (y % 8);
     } else { 
-        SSD1306_Buffer[x + (y / 8) * SSD1306_WIDTH] &= ~(1 << (y % 8));
+        SSD1306[devnum].buffer[x + (y / 8) * SSD1306_WIDTH] &= ~(1 << (y % 8));
     }
 }
 
@@ -265,8 +282,8 @@ char ssd1306_WriteChar(uint8_t devnum, char ch, FontDef Font, SSD1306_COLOR colo
         return 0;
     
     // Check remaining space on current line
-    if (SSD1306_WIDTH < (SSD1306.CurrentX + Font.FontWidth) ||
-        SSD1306_HEIGHT < (SSD1306.CurrentY + Font.FontHeight))
+    if (SSD1306_WIDTH < (SSD1306[devnum].CurrentX + Font.FontWidth) ||
+        SSD1306_HEIGHT < (SSD1306[devnum].CurrentY + Font.FontHeight))
     {
         // Not enough space on current line
         return 0;
@@ -277,15 +294,15 @@ char ssd1306_WriteChar(uint8_t devnum, char ch, FontDef Font, SSD1306_COLOR colo
         b = Font.data[(ch - 32) * Font.FontHeight + i];
         for(j = 0; j < Font.FontWidth; j++) {
             if((b << j) & 0x8000)  {
-                ssd1306_DrawPixel(devnum, SSD1306.CurrentX + j, (SSD1306.CurrentY + i), (SSD1306_COLOR) color);
+                ssd1306_DrawPixel(devnum, SSD1306[devnum].CurrentX + j, (SSD1306[devnum].CurrentY + i), (SSD1306_COLOR) color);
             } else {
-                ssd1306_DrawPixel(devnum, SSD1306.CurrentX + j, (SSD1306.CurrentY + i), (SSD1306_COLOR)!color);
+                ssd1306_DrawPixel(devnum, SSD1306[devnum].CurrentX + j, (SSD1306[devnum].CurrentY + i), (SSD1306_COLOR)!color);
             }
         }
     }
     
     // The current space is now taken
-    SSD1306.CurrentX += Font.FontWidth;
+    SSD1306[devnum].CurrentX += Font.FontWidth;
     
     // Return written char for validation
     return ch;
@@ -327,17 +344,17 @@ char ssd1306_WriteString(uint8_t devnum, const char* str, FontDef Font, SSD1306_
 
 // Position the cursor
 void ssd1306_SetCursor(uint8_t devnum, uint8_t x, uint8_t y) {
-    SSD1306.CurrentX = x;
-    SSD1306.CurrentY = y;
+    SSD1306[devnum].CurrentX = x;
+    SSD1306[devnum].CurrentY = y;
 }
 
 uint8_t ssd1306_GetCursorX(uint8_t devnum)
 {
-	return SSD1306.CurrentX;
+	return SSD1306[devnum].CurrentX;
 }
 uint8_t ssd1306_GetCursorY(uint8_t devnum)
 {
-	return SSD1306.CurrentY;
+	return SSD1306[devnum].CurrentY;
 }
 
 // Draw line by Bresenhem's algorithm
@@ -513,14 +530,14 @@ void ssd1306_SetDisplayOn(uint8_t devnum, const uint8_t on) {
     uint8_t value;
     if (on) {
         value = 0xAF;   // Display on
-        SSD1306.DisplayOn = 1;
+        SSD1306[devnum].DisplayOn = 1;
     } else {
         value = 0xAE;   // Display off
-        SSD1306.DisplayOn = 0;
+        SSD1306[devnum].DisplayOn = 0;
     }
     ssd1306_WriteCommand(devnum, value);
 }
 
 uint8_t ssd1306_GetDisplayOn(uint8_t devnum) {
-    return SSD1306.DisplayOn;
+    return SSD1306[devnum].DisplayOn;
 }

@@ -40,14 +40,6 @@ _BEGIN_STD_C
 
 /* vvv I2C config vvv */
 
-#ifndef SSD1306_I2C_PORT
-#define SSD1306_I2C_PORT        hi2c1
-#error define it in board_def.h
-#endif
-
-#ifndef SSD1306_I2C_ADDR
-#define SSD1306_I2C_ADDR        (0x3C << 1)
-#endif
 
 /* ^^^ I2C config ^^^ */
 
@@ -81,7 +73,7 @@ _BEGIN_STD_C
 /* ^^^ SPI config ^^^ */
 
 #if defined(SSD1306_USE_I2C)
-extern I2C_HandleTypeDef SSD1306_I2C_PORT;
+//extern I2C_HandleTypeDef SSD1306_I2C_PORT;
 #elif defined(SSD1306_USE_SPI)
 extern SPI_HandleTypeDef SSD1306_SPI_PORT;
 #else

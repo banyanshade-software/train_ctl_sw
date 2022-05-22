@@ -8,6 +8,12 @@
 
 #include "trainctl_config.h"
 
+
+#ifdef TRN_BOARD_UI
+#define MAX_DISPLAY 4
+#else
+#define MAX_DISPLAY 1
+#endif
 // Choose a microcontroller family
 //#define STM32F0
 //#define STM32F1
@@ -24,11 +30,13 @@
 
 // I2C Configuration
 // TODO move port to boards_def.h
-#ifndef SSD1306_I2C_PORT
-#define SSD1306_I2C_PORT        hi2c1
+#ifndef SSD1306_I2C_PORTS
+#define SSD1306_I2C_PORTS       { &hi2c1 }
 #error define it in board_def.h
 #endif
-#define SSD1306_I2C_ADDR        (0x3C << 1)
+#ifndef SSD1306_I2C_ADDRS
+#define SSD1306_I2C_ADDRS       { (0x3C << 1) }
+#endif
 
 // Mirror the screen if needed
 // #define SSD1306_MIRROR_VERT

@@ -5,20 +5,25 @@
 
 #if defined(SSD1306_USE_I2C)
 
+SSD1306_I2C_PORTS_DECL;
+static  I2C_HandleTypeDef *ssd1306_i2c_port[MAX_DISPLAY] = SSD1306_I2C_PORTS;
+static const uint8_t ssd1306_i2C_addr[MAX_DISPLAY] = SSD1306_I2C_ADDRS;
+
 static void ssd1306_Reset(uint8_t devnum) {
+	(void) devnum; // unused
     /* for I2C - do nothing */
 }
 
 // Send a byte to the command register
 static void ssd1306_WriteCommand(uint8_t devnum, uint8_t byte) {
 	// TODO devnum
-    HAL_I2C_Mem_Write(&SSD1306_I2C_PORT, SSD1306_I2C_ADDR, 0x00, 1, &byte, 1, HAL_MAX_DELAY);
+    HAL_I2C_Mem_Write(ssd1306_i2c_port[devnum], ssd1306_i2C_addr[devnum], 0x00, 1, &byte, 1, HAL_MAX_DELAY);
 }
 
 // Send data
 static void ssd1306_WriteData(uint8_t devnum, uint8_t* buffer, size_t buff_size) {
 	// TODO devnum
-    HAL_I2C_Mem_Write(&SSD1306_I2C_PORT, SSD1306_I2C_ADDR, 0x40, 1, buffer, buff_size, HAL_MAX_DELAY);
+    HAL_I2C_Mem_Write(ssd1306_i2c_port[devnum], ssd1306_i2C_addr[devnum], 0x40, 1, buffer, buff_size, HAL_MAX_DELAY);
 }
 
 #elif defined(SSD1306_USE_SPI)
@@ -69,11 +74,6 @@ typedef struct {
 
 // Screen object
 
-#ifdef TRN_BOARD_UI
-#define MAX_DISPLAY 4
-#else
-#define MAX_DISPLAY 1
-#endif
 
 static SSD1306_t SSD1306[MAX_DISPLAY];
 

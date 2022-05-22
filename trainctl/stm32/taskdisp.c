@@ -47,13 +47,15 @@ static uint8_t needsrefresh_mask;
 
 #endif
 /// ----------------------------------
-
+#if 0
 static void i2c_ready(_UNUSED_ int a)
 {
 
 }
+#endif
 static void I2C_Scan(void)
 {
+#if 0
     HAL_StatusTypeDef res;
     for(uint16_t i = 0; i < 128; i++) {
         res = HAL_I2C_IsDeviceReady(&SSD1306_I2C_PORT, i << 1, 1, 10);
@@ -62,6 +64,7 @@ static void I2C_Scan(void)
         } else {
         }
     }
+#endif
 }
 
 

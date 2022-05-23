@@ -410,8 +410,8 @@ static const conf_canton_t canton_template = {
      .volt_port_b2 = NULL,
      .volt_b2 = 0,
      .pwm_timer_num = 1,
-     .ch0 = TIM_CHANNEL_1,
-     .ch1 = TIM_CHANNEL_1,
+     .ch0 = 0,//TIM_CHANNEL_1,
+     .ch1 = 0,//TIM_CHANNEL_1,
      .notif_bemf = 0,
      .reverse_bemf = 1,
   };

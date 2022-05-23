@@ -44,9 +44,15 @@
 
 I2C_HandleTypeDef hi2c1;
 
-osThreadId defaultTaskHandle;
-uint32_t defaultTaskBuffer[ 128 ];
+osThreadId uiTaskHandle;
+uint32_t defaultTaskBuffer[ 256 ];
 osStaticThreadDef_t defaultTaskControlBlock;
+osThreadId oamTaskHandle;
+uint32_t oamTaskBuffer[ 256 ];
+osStaticThreadDef_t oamTaskControlBlock;
+osThreadId ctrlTaskHandle;
+uint32_t ctrlTaskBuffer[ 256 ];
+osStaticThreadDef_t ctrlTaskControlBlock;
 /* USER CODE BEGIN PV */
 
 /* USER CODE END PV */
@@ -56,7 +62,9 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_CAN_Init(void);
 static void MX_I2C1_Init(void);
-void StartDefaultTask(void const * argument);
+void StartUiTask(void const * argument);
+extern void StartOamTask(void const * argument);
+extern void StartCtrlTask(void const * argument);
 
 /* USER CODE BEGIN PFP */
 
@@ -118,9 +126,17 @@ int main(void)
   /* USER CODE END RTOS_QUEUES */
 
   /* Create the thread(s) */
-  /* definition and creation of defaultTask */
-  osThreadStaticDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 128, defaultTaskBuffer, &defaultTaskControlBlock);
-  defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
+  /* definition and creation of uiTask */
+  osThreadStaticDef(uiTask, StartUiTask, osPriorityBelowNormal, 0, 256, defaultTaskBuffer, &defaultTaskControlBlock);
+  uiTaskHandle = osThreadCreate(osThread(uiTask), NULL);
+
+  /* definition and creation of oamTask */
+  osThreadStaticDef(oamTask, StartOamTask, osPriorityLow, 0, 256, oamTaskBuffer, &oamTaskControlBlock);
+  oamTaskHandle = osThreadCreate(osThread(oamTask), NULL);
+
+  /* definition and creation of ctrlTask */
+  osThreadStaticDef(ctrlTask, StartCtrlTask, osPriorityRealtime, 0, 256, ctrlTaskBuffer, &ctrlTaskControlBlock);
+  ctrlTaskHandle = osThreadCreate(osThread(ctrlTask), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -311,14 +327,14 @@ static void MX_GPIO_Init(void)
 
 /* USER CODE END 4 */
 
-/* USER CODE BEGIN Header_StartDefaultTask */
+/* USER CODE BEGIN Header_StartUiTask */
 /**
-  * @brief  Function implementing the defaultTask thread.
+  * @brief  Function implementing the uiTask thread.
   * @param  argument: Not used
   * @retval None
   */
-/* USER CODE END Header_StartDefaultTask */
-void StartDefaultTask(void const * argument)
+/* USER CODE END Header_StartUiTask */
+__weak void StartUiTask(void const * argument)
 {
   /* USER CODE BEGIN 5 */
   /* Infinite loop */
@@ -327,6 +343,27 @@ void StartDefaultTask(void const * argument)
     osDelay(1);
   }
   /* USER CODE END 5 */
+}
+
+/**
+  * @brief  Period elapsed callback in non blocking mode
+  * @note   This function is called  when TIM1 interrupt took place, inside
+  * HAL_TIM_IRQHandler(). It makes a direct call to HAL_IncTick() to increment
+  * a global variable "uwTick" used as application time base.
+  * @param  htim : TIM handle
+  * @retval None
+  */
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+{
+  /* USER CODE BEGIN Callback 0 */
+
+  /* USER CODE END Callback 0 */
+  if (htim->Instance == TIM1) {
+    HAL_IncTick();
+  }
+  /* USER CODE BEGIN Callback 1 */
+
+  /* USER CODE END Callback 1 */
 }
 
 /**

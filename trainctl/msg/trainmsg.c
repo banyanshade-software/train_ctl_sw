@@ -291,7 +291,7 @@ static void dispatch_m64(msg_64_t *m, int f)
     }
 #endif
 #ifdef BOARD_HAS_CAN
-    if ((0) && (qdefs[f].from != &from_canbus)) { // XXX disable CAN forwarding until ok
+    if ((1) && (qdefs[f].from != &from_canbus)) { // XXX put 0 to disable CAN forwarding until ok
         mqf_write(&to_canbus, m);
         ok =  1;
     }

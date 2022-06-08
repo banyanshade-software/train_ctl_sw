@@ -63,4 +63,8 @@ static inline void itm_debug3(uint32_t f, const char *msg, int32_t v1, int32_t v
 
 void itm_write(const char *str, int len);
 
+#ifdef TRAIN_SIMU
+char* itoa ( int32_t  value,  char str[],  int radix);
+#endif
+
 #endif /* UTILS_ITM_DEBUG_H_ */

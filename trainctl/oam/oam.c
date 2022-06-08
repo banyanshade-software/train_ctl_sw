@@ -138,6 +138,7 @@ void OAM_Tasklet(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_
         case CMD_PARAM_USER_SET:
         	if (!oam_isMaster()) {
         		itm_debug1(DBG_OAM|DBG_ERR, "only master recv set", 0);
+                extern void Error_Handler(void);
         		Error_Handler();
         		break;
         	}

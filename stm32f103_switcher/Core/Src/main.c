@@ -22,6 +22,20 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include <memory.h>
+
+
+#include "trainctl_iface.h"
+//#include "traincontrol.h"
+//#include "canton.h"
+//#include "stm32/txrxtask.h"
+#include "stm32/usbtask.h"
+//#include "stm32/taskauto.h"
+#include "stm32/taskctrl.h"
+#include "stm32/taskdisp.h"
+//#include "../../../stm32dev/ina3221/ina3221.h"
+#include "msg/notif.h"
+//#include "config/conf_canton.h"
 
 /* USER CODE END Includes */
 
@@ -60,8 +74,8 @@ osStaticThreadDef_t ctrlTaskControlBlock;
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
-static void MX_CAN_Init(void);
 static void MX_I2C1_Init(void);
+static void MX_CAN_Init(void);
 void StartUiTask(void const * argument);
 extern void StartOamTask(void const * argument);
 extern void StartCtrlTask(void const * argument);
@@ -91,7 +105,7 @@ int main(void)
   HAL_Init();
 
   /* USER CODE BEGIN Init */
-
+//VTOR
   /* USER CODE END Init */
 
   /* Configure the system clock */
@@ -103,8 +117,8 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_CAN_Init();
   MX_I2C1_Init();
+  MX_CAN_Init();
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
@@ -205,7 +219,20 @@ static void MX_CAN_Init(void)
 {
 
   /* USER CODE BEGIN CAN_Init 0 */
+#if 0
+#define DEMCR                 *((volatile uint32_t*) 0xE000EDFCu)
+#define ITM_TRACE_EN          *((volatile uint32_t*) 0xE0000E00u)
 
+	// Enable TRCENA
+	DEMCR |= ( 1 << 24);
+	// Enable stimulus port 0
+	ITM_TRACE_EN |= ( 1 << 0);
+
+    //while (ITM->TCR & ITM_TCR_BUSY_Msk);
+#endif
+	//for (int i=0; i<1000; ) {
+		itm_debug1(DBG_CAN, "MXcan", 0);
+	//}
   /* USER CODE END CAN_Init 0 */
 
   /* USER CODE BEGIN CAN_Init 1 */
@@ -228,6 +255,7 @@ static void MX_CAN_Init(void)
     Error_Handler();
   }
   /* USER CODE BEGIN CAN_Init 2 */
+	itm_debug1(DBG_CAN, "MXcan", 1);
 
   /* USER CODE END CAN_Init 2 */
 
@@ -347,7 +375,7 @@ __weak void StartUiTask(void const * argument)
 
 /**
   * @brief  Period elapsed callback in non blocking mode
-  * @note   This function is called  when TIM1 interrupt took place, inside
+  * @note   This function is called  when TIM4 interrupt took place, inside
   * HAL_TIM_IRQHandler(). It makes a direct call to HAL_IncTick() to increment
   * a global variable "uwTick" used as application time base.
   * @param  htim : TIM handle
@@ -358,7 +386,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
   /* USER CODE BEGIN Callback 0 */
 
   /* USER CODE END Callback 0 */
-  if (htim->Instance == TIM1) {
+  if (htim->Instance == TIM4) {
     HAL_IncTick();
   }
   /* USER CODE BEGIN Callback 1 */

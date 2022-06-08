@@ -542,7 +542,7 @@ void HAL_CAN_ErrorCallback(CAN_HandleTypeDef *hcan)
 
 void CAN_Tasklet(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_ uint32_t dt)
 {
-	//if ((0)) return; //XXX XXX
+	if ((0)) return; //XXX XXX
 	static int init = 1;
 	if (init) {
 		init = 0;

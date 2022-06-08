@@ -47,7 +47,6 @@
 		1B455A272810B6F300F09E33 /* conf_train.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B46F7FD280752D600BAD6E8 /* conf_train.c */; };
 		1B46EE552692684F00FAC813 /* topology.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B46EE542692684E00FAC813 /* topology.c */; };
 		1B46F7E228074DCF00BAD6E8 /* canton.cnf in Resources */ = {isa = PBXBuildFile; fileRef = 1B46F7D928074DCF00BAD6E8 /* canton.cnf */; };
-		1B46F7E428074DCF00BAD6E8 /* .configdone in Resources */ = {isa = PBXBuildFile; fileRef = 1B46F7DB28074DCF00BAD6E8 /* .configdone */; };
 		1B46F7E528074DCF00BAD6E8 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = 1B46F7DC28074DCF00BAD6E8 /* .gitignore */; };
 		1B46F7E628074DCF00BAD6E8 /* boards.cnf in Resources */ = {isa = PBXBuildFile; fileRef = 1B46F7DD28074DCF00BAD6E8 /* boards.cnf */; };
 		1B46F7E728074DCF00BAD6E8 /* turnout.cnf in Resources */ = {isa = PBXBuildFile; fileRef = 1B46F7DE28074DCF00BAD6E8 /* turnout.cnf */; };
@@ -753,7 +752,6 @@
 				1BD93C772546FF44006C4D70 /* readme.txt in Resources */,
 				1BED2AA8251804310080FC97 /* stop.png in Resources */,
 				1B46F7EA28074DCF00BAD6E8 /* topology.cnf in Resources */,
-				1B46F7E428074DCF00BAD6E8 /* .configdone in Resources */,
 				1B46F7E728074DCF00BAD6E8 /* turnout.cnf in Resources */,
 				1B46F7E828074DCF00BAD6E8 /* train.cnf in Resources */,
 				1B18115126BFFCC00008F21C /* uitrack.html in Resources */,

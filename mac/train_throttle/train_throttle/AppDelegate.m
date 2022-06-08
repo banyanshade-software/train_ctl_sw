@@ -809,6 +809,7 @@ int conf_globparam_fieldnum(const char *str);
     const char *conf_globparam_fieldname(int f);
     const char *conf_boards_fieldname(int f);
     const char *conf_canton_fieldname(int f);
+    const char *conf_turnout_fieldname(int f);
 
     char t;
     int n = inst > 9 ? '-' : inst;

@@ -550,13 +550,18 @@ static void _set_speed(int tidx, const conf_train_t *cnf, train_vars_t *vars)
     msg_64_t m = {0};
     m.from = MA1_SPDCTL(tidx);
     TO_CANTON(m, vars->C1x);
-    if (7==m.subc) Error_Handler(); // XXX
+    if ((1)) {
+        extern void Error_Handler(void);
+        if (7==m.subc) Error_Handler(); // XXX
+    }
     //m.to = vars->C1;
     m.cmd = CMD_SETVPWM;
     m.v1u = pvi1;
     m.v2 = dir1*pwm_duty;
-    if (7==m.subc) Error_Handler(); // XXX
-	itm_debug3(DBG_SPDCTL, "setvpwm", m.v1u, m.v2, m.to);
+    if ((1)) {
+        extern void Error_Handler(void);
+        if (7==m.subc) Error_Handler(); // XXX
+    }	itm_debug3(DBG_SPDCTL, "setvpwm", m.v1u, m.v2, m.to);
     mqf_write_from_spdctl(&m);
 
     if (c2) {

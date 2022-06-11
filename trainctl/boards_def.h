@@ -9,6 +9,10 @@
 #error please include Core/Inc/trainctl_config.h first
 #endif
 
+/*
+ definition of each feature to include for a given build (typ. a given board)
+ the build is defined in trainctl_config.h (outside trainctl directory)
+ */
 
 #ifndef INC_TBOARDS_H_
 #define INC_TBOARDS_H_

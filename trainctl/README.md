@@ -95,6 +95,6 @@ We also have a global stat  val mechanism (statval.c) which allows continuous re
 
 Datas are sent continously on USB, as soon as USB is free (no pending msg)
 
-### RTOS montioring
+### RTOS montoring
 
 Not yet implemented (typ. we need to monitor %idle on each PWM pulse and average)

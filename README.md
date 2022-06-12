@@ -18,3 +18,18 @@ We use "traditional" analog control, where track is divided in blocks, and we ca
 between so-called cantons and logical sub-blocks (see trainctl)
 
 Choice had been made to have one power board (including PWM and volt control) for each canton
+
+## related project
+
+[train_ctl_hw](https://github.com/banyanshade-software/train_ctl_hw) contains boards schematic and PCBs,
+thus boards have several not yet resolved issues in this repositiory.
+
+Schematics are defined using [KiCad](https://www.kicad.org)
+
+[train_ctl_cad](https://github.com/banyanshade-software/train_ctl_cad) contains laser cut train layout (which
+is definetly usable only for my own layout) as well as some laser cut houses and building that are ready to be 
+used (card board laser cut, 1mm width)
+
+## License
+
+All this is GPLv3 (well, see LICENSE file)

@@ -8,7 +8,10 @@ mostly :
 
 - ina3221 code
 
-- w25qxx code
+- w25qxx external serial (SPI) flash code
+
+- CAN bus handling
 
 code for ssd1306 is outside trainctl, because it is usable in other projects
 
+TODO : synchronisation of PWM through CAN messages

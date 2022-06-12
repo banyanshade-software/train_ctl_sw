@@ -4,7 +4,7 @@ this is main part of the project
 
 code is organized with several ''tasklet''  : functions, implementing a FSM, that shall be call regularly, and
 communicate by message only, through a messaging  tasklet.
-(This is closed to ITU Z-100 SDL model)
+(This is closed to [ITU Z-100 SDL](https://fr.wikipedia.org/wiki/Specification_and_Description_Language) model)
 
 ## Features
 

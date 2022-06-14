@@ -24,7 +24,7 @@
 void StartOamTask(_UNUSED_ void *argument)
 {
 
-	OAM_Init();
+	// OAM_Init(); called by OAM_Tasklet
 
 	uint32_t lt = 0;
 	for (;;) {

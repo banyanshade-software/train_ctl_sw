@@ -172,7 +172,7 @@ static void run_ina_task(void)
 			case CMD_SETRUN_MODE:
 				if (run_mode != m.v1u) {
 					run_mode = m.v1u;
-					itm_debug1(DBG_INA3221, "mode", run_mode);
+					itm_debug1(DBG_INA3221, "INA:mode", run_mode);
 					testerAddr = m.from;
 				}
 				continue;
@@ -221,7 +221,11 @@ static void handle_ina_notif(uint32_t notif)
 		*/
 	}
 	if (notif & NOTIF_INA_READ) {
-		//itm_debug1(DBG_DETECT|DBG_INA3221, "INA READ", notif);
+		/*
+		 * NOTIF_INA_READ is set by TIM1 interrupt
+		 * it triggers reading all INA devices (and all channels on each device)
+		 */
+		if ((1)) itm_debug1(DBG_INA3221, "INA:N:RD", notif);
 		int dev = _next_dev(-1);
 		if (dev >= 0) {
 			state = state_rd_0 + dev * 3;
@@ -232,7 +236,7 @@ static void handle_ina_notif(uint32_t notif)
 		}
 	}
 	if (notif & NOTIF_INA_RDCOMPL) {
-		itm_debug1(DBG_INA3221, "RDcpl", state);
+		itm_debug1(DBG_INA3221, "INA:N:CPL", state);
 
 		if ((state >= state_rd_0) && (state <= state_rd_11)) {
 			int reg = (state - state_rd_0) % 3;
@@ -382,8 +386,12 @@ static void _reg_read(int dev, int nreg)
 	HAL_StatusTypeDef status;
 
 	if (__HAL_I2C_GET_FLAG(&INA3221_I2C_PORT, I2C_FLAG_BUSY) != RESET) {
-		itm_debug1(DBG_ERR|DBG_INA3221, "busy", 0);
+		itm_debug2(DBG_ERR|DBG_INA3221, "busy", dev, nreg);
 		// TODO _end_next_reg(1);
+		/*
+		 * if this happens systematically, including on first read : check that i2c IRQ
+		 * are enabled !
+		 */
 		return;
 	}
 
@@ -401,7 +409,7 @@ static void _reg_read(int dev, int nreg)
 static void _read_complete(_UNUSED_ int err)
 {
 	static int8_t presence[INA3221_NUM_VALS] = {0};
-
+	itm_debug1(DBG_INA3221, "rd:cpl", 0);
 	for (int i = 0; i<INA3221_NUM_VALS; i++) {
 		ina_svalues[i] = (int16_t) __builtin_bswap16(ina_uvalues[i]);
 	}

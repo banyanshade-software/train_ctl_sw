@@ -39,8 +39,9 @@ extern uint32_t debug_flags;
 
 /*
  * inline func for debug msg using ITM macrocell (SWO output)
- * messages shall be very short (12 chars) to limit stack usage
- *
+ * messages shall be very short (12 chars) to limit stack usage and SWO bandwidth
+ * (SWO async traces are supposed to have a light overweight (compared to uart or usb) but....
+ * using traces in IRQ is possible, but the amount of msg shall be strictly limited
  */
 
 void _itm_debug3(int err, const char *msg, int32_t v1, int32_t v2, int32_t v3, int n);

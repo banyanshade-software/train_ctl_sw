@@ -38,7 +38,7 @@ static int local_msg_process(msg_64_t *m, int localmsg);
 /*
  *
  *
- *
+ * for CAN timing (in .ioc file) refer to :
  *
  * http://www.bittiming.can-wiki.info
  *
@@ -71,10 +71,13 @@ static void can_init(void)
 
 	if (HAL_CAN_Start(&CAN_DEVICE) != HAL_OK) {
 		/* Start Error */
+		itm_debug1(DBG_CAN|DBG_ERR, "CAN str", CAN_DEVICE.ErrorCode);
 		FatalError("CANstart", "CAN start failed", Error_CanStart);
 	}
 
-	/* Activate CAN RX notification */
+	/* Activate CAN RX notification (interrupts)
+	 * unclear for now which notifications are really needed
+	 */
 	if (HAL_CAN_ActivateNotification(&CAN_DEVICE,
 			 CAN_IT_RX_FIFO0_MSG_PENDING
 			|CAN_IT_RX_FIFO0_FULL
@@ -93,32 +96,11 @@ static void can_init(void)
 
 
 }
-/*
-
-void StartCanTask(_UNUSED_ void *argument)
-{
-	//can_init();
-	for (;;) osDelay(1000);
-}
-
-*/
-
-/*
-static int boardForAddr(uint8_t addr)
-{
-	if (0==(addr & 0x80)) {
-		return MA_2_BOARD(addr);
-	}
-	if ((addr & MA_ADDR_MASK_5) == MA_ADDR_5_LED) { // XXX
-		return (addr & 0x07);
-	}
-	return 0;
-}
-*/
 
 
 /*
- * arbitration id (11 bit)
+ * arbitration id (11 bit) for a given message
+ *
  * - it is mandatory that 2 stations never send msg with same id at the same time
  * - lower id have priority over higher id in CAN contention resolution
  *
@@ -182,8 +164,13 @@ static uint32_t arbitration_id(msg_64_t *m)
 	return aid;
 }
 
-static uint32_t TxMailbox;
+static uint32_t TxMailbox = 0;
 
+/*
+ * _can_send_msg() is where the msg is really sent
+ * it is called either from ISR or from task, with
+ * interrupt disabled. The f flag, used for debug, is set to 1 when called from ISR
+ */
 static int _can_send_msg(msg_64_t *msg, int f)
 {
 	CAN_TxHeaderTypeDef txHeader;
@@ -204,38 +191,12 @@ static int _can_send_msg(msg_64_t *msg, int f)
 	else   itm_debug3(DBG_CAN, "Tx/p", msg->v1, msg->v2, TxMailbox);
 	return 0;
 }
-// HAL_NVIC_SetPriority SVCall
 
 
-#if 0
-void CanTest(void) // XXX to be removed
-{
-	msg_64_t m = {0};
-	m.from = MA_CONTROL_T(1);
-	m.to = MA_UI(0);
-	m.cmd = CMD_NOOP;
-	m.v1 = 422;
-	m.v2 = -4242;
-
-	can_init();
-	TxMailbox = 42;
-	_can_send_msg(&m,0);
-
-	int i;
-	for (i=0; i<100; i++) {
-		if (HAL_CAN_IsTxMessagePending(&CAN_DEVICE, TxMailbox)) {
-			itm_debug2(DBG_CAN, "sent", TxMailbox, i);
-			break;
-		}
-		osDelay(10);
-	}
-	if (i==100) {
-		itm_debug1(DBG_CAN|DBG_ERR, "CAN KO", TxMailbox);
-	}
-}
-#endif
-
-
+/*
+ * send up to 3 pending messages (useing _can_send_msg)
+ * called either from ISR (fromirq=1) or from normal task (with disabled interrupt)
+ */
 static void _send_msg_if_any(int fromirq)
 {
 	for (int i = 0; i<3; i++) {
@@ -249,27 +210,36 @@ static void _send_msg_if_any(int fromirq)
 	}
 }
 
-
+/*
+ * send_messages_if_any() is called from task only
+ * before calling _send_msg_if_any(0) it checks if mailboxes are free
+ * if no mailboxes are free for a long time (1s), it goes to
+ * to a "tx lock" state where messages are consumed locally
+ * (thus avoiding a fifo full condition when CAN is not connected)
+ */
 static void send_messages_if_any(void)
 {
 	if (!mqf_len(&to_canbus)) return;
-	/*
-	 * TODO : if CAN Tx is stuck (eg because not connected to transceiver)
-	 * we will stop reading msgq and have a q full condition here !!
-	 */
+
 	static uint32_t tlocked = 0;
 
 	if (!HAL_CAN_GetTxMailboxesFreeLevel(&CAN_DEVICE))  {
-		if (!tlocked) tlocked = HAL_GetTick();
-		else {
+		if (!tlocked) {
+			// CAN is busy for now, if busy condition stays for more than 1s, we consider
+			// it is locked (typ. no board connected)
+			itm_debug1(DBG_ERR|DBG_CAN, "CAN lock", 1);
+			tlocked = HAL_GetTick();
+		} else {
 			if (HAL_GetTick() > tlocked+1000) {
 				// no free mbox for 1 second at least
 				// probably CAN is stuck (eg no transciever connected)
+				// we just drop all messages (after local handling)
 				itm_debug1(DBG_ERR|DBG_CAN, "CAN lock", 0);
 				for (;;) {
 					msg_64_t m;
 					int rc = mqf_read_to_canbus(&m);
 					if (rc) break;
+					itm_debug1(DBG_CAN, "lck:dmp", m.cmd);
 					local_msg_process(&m, 1);
 				}
 				tlocked = 0;
@@ -397,6 +367,20 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
 	  itm_debug1(DBG_CAN|DBG_ERR, "Rx Err", 0);
 	  return;
   }
+
+  if ((1)) {
+	  static uint32_t lastId = 0;
+	  static int cnt= 0;
+	  if (lastId == rxHeader.StdId) {
+		  itm_debug2(DBG_CAN, "dup msg", lastId, m.cmd);
+		  cnt++;
+		  if (cnt>1000) lastId = 0;
+		  return;
+	  }
+	  cnt = 0;
+	  lastId = rxHeader.StdId;
+  }
+
   if ((0)) {
 	  if ((m.from == MA1_CTRL(1))
 			  &&(m.to == MA3_UI_GEN)
@@ -421,7 +405,7 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
 		  itm_debug3(DBG_CAN, "other", m.cmd, m.v1, m.v2);
 	  }
   }
-  flash_led();
+  //flash_led();
 
   int rc = local_msg_process(&m, 0);
   if (!rc) mqf_write_from_canbus(&m);
@@ -532,9 +516,15 @@ void HAL_CAN_ErrorCallback(CAN_HandleTypeDef *hcan)
 {
 	static int errcnt = 0;
 	if (errcnt++ < 500) {  // stop display error if too many
-		itm_debug1(DBG_CAN, "CAN ERR", hcan->ErrorCode);
+		itm_debug1(DBG_CAN|DBG_ERR, "CAN ERR", hcan->ErrorCode);
 	}
 	bh();
+	if (hcan->ErrorCode & HAL_CAN_ERROR_RX_FOV0) {
+		FatalError("CNrO", "CAN Rx Overrun", Error_CAN_Rx_Overrun0);
+	}
+	if (hcan->ErrorCode & HAL_CAN_ERROR_RX_FOV1) {
+		FatalError("CNrO", "CAN Rx Overrun", Error_CAN_Rx_Overrun1);
+	}
 	HAL_CAN_ResetError(hcan);
 }
 

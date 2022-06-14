@@ -9,7 +9,9 @@
 #ifndef led_h
 #define led_h
 
+#ifdef TRAIN_SIMU
 #include <stdio.h>
+#endif
 
 void led_run_all(void);
 void led_reset_all(void);
@@ -29,6 +31,6 @@ void led_start_prog(uint8_t lednum, uint8_t prognum);
 #define LED_PRG_DIMON  8
 #define LED_PRG_FLASH  9
 
-extern void led_io(uint8_t lednum, uint8_t v);
+//extern void led_io(uint8_t lednum, uint8_t v);
 
 #endif /* led_h */

@@ -38,6 +38,9 @@ enum fatal_error_code {
 	Error_NumBnum,
 	Error_NumBnum2,
 	Error_NoFlash,
+
+	Error_CAN_Rx_Overrun0,
+	Error_CAN_Rx_Overrun1,
 };
 
 

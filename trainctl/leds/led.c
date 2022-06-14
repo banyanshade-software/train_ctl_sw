@@ -10,7 +10,7 @@
 #include "../misc.h"
 #include "../config/conf_led.h"
 #include "led.h"
-
+#include "ledio.h"
 
 
 #ifndef BOARD_HAS_LED

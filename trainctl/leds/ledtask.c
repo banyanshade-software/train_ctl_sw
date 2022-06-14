@@ -24,7 +24,7 @@ static uint8_t testerAddr;
 
 
 
-void led_run_tick(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_ uint32_t dt)
+void led_tasklet(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_ uint32_t dt)
 {
 	itm_debug1(DBG_LED ,"------- tk", (int) notif_flags);
 	if ((0)) {

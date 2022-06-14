@@ -63,7 +63,7 @@ static void process_turnout_timers(uint32_t tick, uint32_t dt);
 static void process_turnout_cmd(msg_64_t *m, uint32_t tick, uint32_t dt);
 
 
-void turnout_tick(_UNUSED_ uint32_t notif_flags, uint32_t tick, uint32_t dt)
+void turnout_tasklet(_UNUSED_ uint32_t notif_flags, uint32_t tick, uint32_t dt)
 {
 	static int first=1;
 	if (first) {
@@ -72,7 +72,7 @@ void turnout_tick(_UNUSED_ uint32_t notif_flags, uint32_t tick, uint32_t dt)
 	}
 	static int cnt = 0;
 	cnt ++;
-	if (cnt%4) return; // half freq
+	if (cnt%4) return; // divide freq
 	// TODO we need a fixed freq for turnout
 
 	process_turnout_timers(tick, dt);
@@ -92,26 +92,42 @@ void turnout_tick(_UNUSED_ uint32_t notif_flags, uint32_t tick, uint32_t dt)
 				break;
 			}
 		} else {
-			// error
+			itm_debug1(DBG_TURNOUT|DBG_ERR, "turnout un/cmd", m.cmd);
 		}
 	}
 }
 
 // ----------------------------------------------------------------------------------------------
 
+
+/*
+ * state variables for each turnout
+ */
+
 typedef struct turnout_vars {
 	int8_t value;	// -1 = A, 1 = B, 0 = unknown
 	uint8_t st;
 } turnout_vars_t;
 
+
+/*
+ * state info for all (local board) turnouts
+ * NUM_TURNOUTS is defined by configuration generator (config/conf_turnout.h)
+ */
+
 static turnout_vars_t tvars[NUM_TURNOUTS]={0};
 
+/* states
+ * state machine handles sending only a short burst to turnout
+ * (turnout would (probably) not handle a long continuous 12V)
+ */
 
 #define ST_IDLE		0
 #define ST_SETA 	1
 #define ST_RESETA 	2
 #define ST_SETB 	3
 #define ST_RESETB	4
+
 // #define ST_TEST		10
 
 #define DBG_MSG_TURNOUT 0
@@ -132,8 +148,11 @@ static void process_turnout_cmd(msg_64_t *m, _UNUSED_ uint32_t tick, _UNUSED_ ui
 	}
 	if ((DBG_MSG_TURNOUT)) debug_info('A', 0, "CMD", tidx, m->cmd, avars->value);
 #ifndef TRAIN_SIMU
-	if (!aconf->cmd_portA) return;
-	if (!aconf->cmd_portB) return;
+	// unconfigured turnout
+	if ((!aconf->cmd_portA) || (!aconf->cmd_portB)) {
+		itm_debug2(DBG_ERR|DBG_TURNOUT, "unconf turn", tidx, m->cmd);
+		return;
+	}
 #endif
 	switch (m->cmd) {
 	case CMD_TURNOUT_A:

@@ -9,7 +9,7 @@
 #include "ledio.h"
 #include "led.h"
 #include "../misc.h"
-//#include "trainctl_iface.h"
+
 #include "../config/conf_led.h"
 
 #ifndef BOARD_HAS_LED
@@ -25,7 +25,6 @@ void led_io(uint8_t lednum, uint8_t v)
 		FatalError("LEDn", "LED bad cled", Error_LEdn);
 	}
 	HAL_GPIO_WritePin(cled->port_led, cled->pin_led, (v) ? GPIO_PIN_SET : GPIO_PIN_RESET);
-	//HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, GPIO_PIN_SET);
 #endif
 }
 

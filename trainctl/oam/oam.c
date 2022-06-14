@@ -12,6 +12,7 @@
 
 #include <stdint.h>
 #include <memory.h>
+#include <utils/itm_debug.h>
 
 #include "../misc.h"
 #include "../msg/trainmsg.h"
@@ -45,7 +46,7 @@ void OAM_Init(void)
 	itm_debug1(DBG_OAM, "OAM loc rd", 0);
     oam_flashlocal_read(-1);
     // TODO propag normal store if master
-	if ((1)) {
+	if ((0)) {
 		// void oam_flashstore_set_value(int confnum, int fieldnum, int confbrd, int instnum, int32_t v)
 		// uint32_t oam_flashstore_get_value(int confnum, int fieldnum, int confbrd, int instnum)
 		oam_flashstore_set_value(conf_pnum_utest, conf_numfield_utest_beta, 0, 0, 4242);
@@ -121,6 +122,7 @@ void OAM_Tasklet(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_
         _UNUSED_ int32_t v;
         _UNUSED_ uint64_t enc;
 
+        int handled = 0;
         switch (m.cmd) {
         case CMD_SETRUN_MODE:
         	if (m.v1u != run_mode) {
@@ -129,10 +131,12 @@ void OAM_Tasklet(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_
         			respok = 0;
         		}
         	}
+            handled = 1;
         	break;
 
         case CMD_OAM_CUSTOM:
                 customOam(&m);
+                handled = 1;
                 break;
 #ifdef BOARD_HAS_FLASH
         case CMD_PARAM_USER_SET:
@@ -154,6 +158,7 @@ void OAM_Tasklet(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_
         		m.to = MA0_OAM(confbrd);
         		mqf_write_from_oam(&m);
         	}
+            handled = 1;
         	break;
         case CMD_PARAM_USER_GET:
         	if (!oam_isMaster()) {
@@ -185,6 +190,7 @@ void OAM_Tasklet(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_
         	m.cmd = CMD_PARAM_USER_VAL;
             m.val40 = enc;
         	mqf_write_from_oam(&m);
+            handled = 1;
         	break;
 
 
@@ -208,6 +214,7 @@ void OAM_Tasklet(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_
         	}
         	// store in flash
         	oam_flashlocal_set_value(confnum, fieldnum,  instnum, v);
+            handled = 1;
         	break;
 
 
@@ -218,6 +225,7 @@ void OAM_Tasklet(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_
         		break;
         	}
         	oam_flashlocal_commit(m.v1);
+            handled = 1;
         	break;
 
 
@@ -236,10 +244,11 @@ void OAM_Tasklet(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_
         	m.cmd = CMD_PARAM_LUSER_VAL;
             m.val40 = enc;
         	mqf_write_from_oam(&m);
-#endif
+            handled = 1;
+#endif // BOARD_HAS_FLASH
         	break;
 
-        case CMD_PARAM_PROPAG: {
+        case CMD_PARAM_PROPAG:
         	if (oam_isMaster()) {
         		itm_debug1(DBG_OAM|DBG_ERR, "only slave recv propag", 0);
         		FatalError("NoSlv", "only slave should receive this", Error_NotSlave);
@@ -252,19 +261,22 @@ void OAM_Tasklet(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_
         	int32_t v;
         	oam_decode_val40(m.val40, &confnum, &confbrd, &instnum, &fieldnum, &v);
         	conf_propagate(confnum, fieldnum, instnum, v);
-        }
-        break;
+        	handled = 1;
+        	break;
 
 
         default:
         	break;
         }
-        if (runmode_testcan == run_mode) {
-            handle_testcan_msg(&m);
-        } else if (oam_isMaster()) {
-            handle_master_msg(&m);
-        } else {
-            handle_slave_msg(&m);
+
+        if (!handled) {
+        	if (runmode_testcan == run_mode) {
+        		handle_testcan_msg(&m);
+        	} else if (oam_isMaster()) {
+        		handle_master_msg(&m);
+        	} else {
+        		handle_slave_msg(&m);
+        	}
         }
 	}
 	switch (run_mode) {
@@ -507,10 +519,13 @@ static void handle_master_msg(msg_64_t *m)
 	int bnum;
 	uint8_t unum;
 	switch (m->cmd) {
-	default: break;
+	default:
+		itm_debug1(DBG_OAM|DBG_ERR, "oam unk msg",m->cmd);
+		break;
 	case CMD_OAM_SLAVE:
 		bnum = oam_boardForUuid(m->v32u);
 		if (bnum == -1) {
+			itm_debug1(DBG_OAM, "SLV/unk", m->v32u);
 			// board unknown
 			// TODO notif UI
 			unum = 0xFF;
@@ -520,6 +535,7 @@ static void handle_master_msg(msg_64_t *m)
 			slv_state[bnum] = slave_seen;
 			unum = (uint8_t) bnum;
 		}
+		itm_debug2(DBG_OAM, "SLV/k", bnum, m->v32u);
 		msg_64_t r = {0};
 		r.cmd = CMD_OAM_BNUM;
 		r.from = MA0_OAM(0);
@@ -539,13 +555,14 @@ static void handle_master_tick(_UNUSED_ uint32_t tick)
 {
 	static uint32_t lbsc = 0;
 	if (tick>lbsc+1000) {
+		lbsc = tick;
 		static int cnt = 0;
 		if (cnt++>10) {
 			_bcast_normal();
 			return;
 		}
-		lbsc = tick;
 		msg_64_t m = {0};
+		itm_debug2(DBG_OAM, "send MST", tick, CMD_OAM_MASTER);
 		m.cmd = CMD_OAM_MASTER;
 		m.v32u = oam_getDeviceUniqueId();
 		m.from = MA0_OAM(0);

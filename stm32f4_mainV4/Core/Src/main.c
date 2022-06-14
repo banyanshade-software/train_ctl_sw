@@ -241,7 +241,7 @@ int main(void)
   uiTaskHandle = osThreadCreate(osThread(uiTask), NULL);
 
   /* definition and creation of ctrlTask */
-  osThreadStaticDef(ctrlTask, StartCtrlTask, osPriorityRealtime, 0, 256, ctrlTaskBuffer, &ctrlTaskControlBlock);
+  osThreadStaticDef(ctrlTask, StartCtrlTask, osPriorityHigh, 0, 256, ctrlTaskBuffer, &ctrlTaskControlBlock);
   ctrlTaskHandle = osThreadCreate(osThread(ctrlTask), NULL);
 
   /* definition and creation of usbTask */

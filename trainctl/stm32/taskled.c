@@ -45,7 +45,7 @@ void start_led_task(_UNUSED_ void *argument)
 	  if (!t0) t0 = t;
 	  int32_t dt = (oldt) ? (t-oldt) : 1;
 	  oldt = t;
-	  led_run_tick(NOTIF_SYSTICK, t, dt);
+	  led_tasklet(NOTIF_SYSTICK, t, dt);
   }
   /* USER CODE END start_led_task */
 }

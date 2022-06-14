@@ -527,7 +527,7 @@ void disp_layout(int devnum)
 #ifdef BOARD_HAS_ROTARY_ENCODER
 			extern TIM_HandleTypeDef htim4;
 			v16u = htim4.Instance->CNT;
-			write_unum(v16u, curfont);
+			write_unum(devnum, v16u, curfont);
 #endif
 			break;
 		}

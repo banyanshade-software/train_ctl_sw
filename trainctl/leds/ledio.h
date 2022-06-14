@@ -9,6 +9,12 @@
 #ifndef ledio_h
 #define ledio_h
 
+#ifdef TRAIN_SIMU
 #include <stdio.h>
+#endif
+
+#include <stdint.h>
+
+void led_io(uint8_t lednum, uint8_t v);
 
 #endif /* ledio_h */

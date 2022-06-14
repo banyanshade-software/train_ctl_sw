@@ -32,7 +32,7 @@
 #include "main.h"
 #endif
 
-void turnout_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt);
+void turnout_tasklet(uint32_t notif_flags, uint32_t tick, uint32_t dt);
 
 
 #endif /* TURNOUT_H_ */

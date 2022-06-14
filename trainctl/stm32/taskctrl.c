@@ -300,8 +300,13 @@ int get_pwm_freq(void)
 	return cur_freqhz;
 }
 
+
 void ADC_IRQ_UserHandler(void)
 {
+	/* debug only. IRQ should not be enabled, instead
+	 * we rely on the DMA complete interrupt
+	 * (HAL_ADC_ConvCpltCallback)
+	 */
 	itm_debug1(DBG_TIM, "ADC compl", 0);
 }
 
@@ -309,20 +314,15 @@ void ADC_IRQ_UserHandler(void)
 
 volatile uint32_t t0ctrl = 0;
 
-/*static const int ckcpu = 1;
-static int t_1;
-static int t_2;
-static int t_3;
-static int t_4;
-static int t_5;
-*/
+
+/*
+ * main tasklet loop
+ *
+ */
 static void run_task_ctrl(void)
 {
 	int cnt = 0;
 	//if ((0))   calibrate_bemf(); //XXX
-
-
-
 
 	for (;;) {
 		if ((1)) { // measure actual frequency
@@ -354,7 +354,18 @@ static void run_task_ctrl(void)
 			}
 		}
 #else
-		// TODO : should be better defined
+		/*
+		 * ctrl task is normally waked up by ADC conversion (when DMA transfer is complete)
+		 * possibly with a clock divider when PWM freq is > 100Hz (see "bemf_divisor" bellow)
+		 *
+		 * on a board without canton (typically dispatcher board), we simply use
+		 * an osDelay(10) which give us an imprecise polling rate of 100Hz (slightly lower since
+		 * processing time is not taken in account), but this is very ok since it is used only to
+		 * handle turnouts
+		 *
+		 * TODO : a more precise wakeup (through timer) would however be better
+		 */
+
 		osDelay(10);
 #endif
 
@@ -400,7 +411,7 @@ static void run_task_ctrl(void)
 
 #ifdef BOARD_HAS_TURNOUTS
 		//itm_debug1(DBG_LOWCTRL, "--trnout", dt);
-		turnout_tick(notif, t, dt);
+		turnout_tasklet(notif, t, dt);
 #endif
 
 #ifdef BOARD_HAS_CTRL

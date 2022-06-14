@@ -63,7 +63,7 @@ LFMQUEUE_DEF_C(from_led, msg_64_t, 		1, 0)
 #ifdef BOARD_HAS_CAN
 LFMQUEUE_DEF_C(to_canbus_loc, msg_64_t, 3, 0)
 LFMQUEUE_DEF_C(to_canbus, msg_64_t, 8, 0)
-LFMQUEUE_DEF_C(from_canbus, msg_64_t, 8, 0)
+LFMQUEUE_DEF_C(from_canbus, msg_64_t, 16, 0)
 #endif
 
 #ifdef BOARD_HAS_OSCILLO
@@ -314,7 +314,11 @@ static_assert(sizeof(msg_64_t) == 8);
 typedef char compile_assert[(sizeof(msg_64_t) == 8) ? 1 : -1];
 #endif
 
-
+/*
+ * msgsrv_tick() : the heart of the system
+ * simply polls a all queue to msgsrv, and dispatch them
+ * (all routing and smart things (if any) are in dispatch_m64()
+ */
 void msgsrv_tick(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_ uint32_t dt)
 {
 	for (int i=0; ; i++) {
@@ -322,8 +326,7 @@ void msgsrv_tick(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_
         if (!qd->from && !qd->to) break;
         mqf_t *q = qd->from;
         if (!q) continue;
-        //itm_debug2(DBG_MSG, "mlen1",i, mqf_len(q));
-        //itm_debug3(DBG_MSG, "mth1 ", i, q->head, q->tail);
+
         for (;;) {
             msg_64_t m;
             int rc = mqf_read(q, &m);
@@ -331,9 +334,10 @@ void msgsrv_tick(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_
             
             dispatch_m64(&m, i);
         }
-        //itm_debug2(DBG_MSG, "mlen2",i, mqf_len(q));
-        //itm_debug3(DBG_MSG, "mth2 ", i, q->head, q->tail);
+
     }
+
+	// optional dump for debug
 	if ((0)) {
 		static uint32_t last=0;
 		if (tick>=last+10000) {
@@ -353,6 +357,6 @@ void dump_msg(mqf_t *mq, int n)
 {
 	int i = ( n + mq->tail ) % mq->num;
 	msg_64_t *msg = (msg_64_t *) &(mq->msgbuf[i*mq->msgsiz]);
-	itm_debug3(DBG_ERR, "q", i, msg->cmd, msg->from);
+	itm_debug3(DBG_ERR, "q:icf", i, msg->cmd, msg->from);
 }
 

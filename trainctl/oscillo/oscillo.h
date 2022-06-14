@@ -9,6 +9,12 @@
 #ifndef oscillo_h
 #define oscillo_h
 
+/**
+ This is "internal" oscilloscope module
+ oscilloscope uses ADC2 (on STM32F4)  to record volt values on track segment
+ and can also record internal values (TIMers values, ina3221 reported values, etc...
+ frequency of oscilloscope is configurable but typically  much higher than PWM freq
+ */
 
 typedef struct {
     int16_t vadc[4]; // Va,Vb on Canton 0 and 1

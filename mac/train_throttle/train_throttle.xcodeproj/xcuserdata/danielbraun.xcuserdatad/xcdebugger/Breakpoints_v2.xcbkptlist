@@ -910,8 +910,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "41"
             endingLineNumber = "41"
-            landmarkName = "occupency_clear()"
-            landmarkType = "9">
+            landmarkName = "unknown"
+            landmarkType = "0">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -1563,8 +1563,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "182"
             endingLineNumber = "182"
-            landmarkName = "next_lsblk(blknum, left, palternate)"
-            landmarkType = "9">
+            landmarkName = "unknown"
+            landmarkType = "0">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -4670,7 +4670,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "299"
             endingLineNumber = "299"
-            landmarkName = "store_is_field(buf8, confnum, brd, inst, field, pv)"
+            landmarkName = "store_decode(buf8, confnum, brd, inst, field, v)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -4700,7 +4700,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "223"
             endingLineNumber = "223"
-            landmarkName = "check_block(blocknum, magic, blkdesc)"
+            landmarkName = "check_store_init(force)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -4716,7 +4716,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "246"
             endingLineNumber = "246"
-            landmarkName = "format_store_block(blocknum, magic, blkdesc, erase)"
+            landmarkName = "check_block(blocknum, magic, blkdesc)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -4890,7 +4890,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "551"
             endingLineNumber = "551"
-            landmarkName = "store_local_read(desc, fnum, ptr, s)"
+            landmarkName = "_local_read(desc, fd, ptr, s)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -4906,7 +4906,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "549"
             endingLineNumber = "549"
-            landmarkName = "store_local_read(desc, fnum, ptr, s)"
+            landmarkName = "_local_read(desc, fd, ptr, s)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -5080,7 +5080,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "474"
             endingLineNumber = "474"
-            landmarkName = "_oam_flashlocal_commit(confnum)"
+            landmarkName = "_oam_flashlocal_read(confnum)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -5128,8 +5128,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "514"
             endingLineNumber = "514"
-            landmarkName = "store_local_read_fdesc(desc)"
-            landmarkType = "9">
+            landmarkName = "unknown"
+            landmarkType = "0">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -5144,7 +5144,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "510"
             endingLineNumber = "510"
-            landmarkName = "store_local_read_fdesc(desc)"
+            landmarkName = "oam_flashlocal_commit(confnum)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -5270,7 +5270,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "496"
             endingLineNumber = "496"
-            landmarkName = "oam_flashlocal_get_value(confnum, fieldnum, instnum)"
+            landmarkName = "_oam_flashlocal_commit(confnum)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -5350,7 +5350,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "449"
             endingLineNumber = "449"
-            landmarkName = "_oam_flashlocal_read(confnum)"
+            landmarkName = "oam_flashstore_rd_next(confnum, fieldnum, confbrd, instnum, v)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -5366,8 +5366,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "185"
             endingLineNumber = "185"
-            landmarkName = "oam_flash_erase()"
-            landmarkType = "9">
+            landmarkName = "unknown"
+            landmarkType = "0">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy

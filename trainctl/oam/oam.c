@@ -37,7 +37,7 @@ static runmode_t run_mode = 0;
 static int initdone = 0;
 
 
-void OAM_Init(void)
+static void OAM_Init(void)
 {
     initdone=1;
 #ifdef BOARD_HAS_FLASH

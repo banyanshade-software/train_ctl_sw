@@ -8,13 +8,25 @@
 #ifndef OAM_OAM_H_
 #define OAM_OAM_H_
 
-void OAM_Init(void);
+// void OAM_Init(void); now static
 
 void OAM_Tasklet(uint32_t notif_flags, uint32_t tick, uint32_t dt);
 
+/// OAM_NeedsReschedule global var (defined in oam..c) is set by oam.c to indicate it needs to be
+/// reschedule. This is typically the case during 'multiboard' config file read : file is read parameter by parameter
+/// and OAM_Tasklet would read only a single parameter at a time (triggering CAN msg sending to the concerned board)
+/// tasklet needs to be reschedule 'quickly' to read next param, while it usually need only low frequency running
+///
+/// typ. whend OAM_NeedsReschedule=1 : schedule at 100Hz (or more)
+/// otherwise : 10Hz
+///
 extern int OAM_NeedsReschedule;
 
-uint32_t oam_getDeviceUniqueId(void); // returns unique uint32_t
+
+/// returns a unique device id on 32 bits
+///
+/// TODO : this is a very naive 96bits->32bits hash, we need something more robust (at least a CRC)
+uint32_t oam_getDeviceUniqueId(void); 
 
 
 

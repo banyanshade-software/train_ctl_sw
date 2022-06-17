@@ -27,12 +27,14 @@
 #define TURNOUT_H_
 
 #include "../misc.h"
+#include "../msg/tasklet.h"
 
 #ifndef TRAIN_SIMU
 #include "main.h"
 #endif
 
-void turnout_tasklet(uint32_t notif_flags, uint32_t tick, uint32_t dt);
+//void turnout_tasklet(uint32_t notif_flags, uint32_t tick, uint32_t dt);
+extern tasklet_t turnout_tasklet;
 
 
 #endif /* TURNOUT_H_ */

@@ -972,8 +972,8 @@
             filePath = "../../trainctl/spdctl/spdctl.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "251"
-            endingLineNumber = "251"
+            startingLineNumber = "360"
+            endingLineNumber = "360"
             landmarkName = "spdctl_run_tick(notif_flags, tick, dt)"
             landmarkType = "9">
          </BreakpointContent>
@@ -988,10 +988,10 @@
             filePath = "../../trainctl/ctrl/ctrl.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "310"
-            endingLineNumber = "310"
-            landmarkName = "unknown"
-            landmarkType = "0">
+            startingLineNumber = "349"
+            endingLineNumber = "349"
+            landmarkName = "ctrl_init()"
+            landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -1029,38 +1029,6 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "307DB15F-BFB6-401E-8DC8-EE451A6DF88F"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../../trainctl/spdctl/spdctl.c"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "190"
-            endingLineNumber = "190"
-            landmarkName = "spdctl_run_tick(notif_flags, tick, dt)"
-            landmarkType = "9">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "F893F4AC-604A-4891-A7F3-17A1509083EF"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../../trainctl/spdctl/spdctl.c"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "195"
-            endingLineNumber = "195"
-            landmarkName = "spdctl_run_tick(notif_flags, tick, dt)"
-            landmarkType = "9">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
             uuid = "901CD095-7031-4ABD-AEA5-87AF997891B5"
             shouldBeEnabled = "No"
             ignoreCount = "0"
@@ -1068,9 +1036,9 @@
             filePath = "../../trainctl/ctrl/ctrl.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "405"
-            endingLineNumber = "405"
-            landmarkName = "posecm_measured(tidx, pose, blk1, blk2)"
+            startingLineNumber = "444"
+            endingLineNumber = "444"
+            landmarkName = "sub_presence_changed(from_addr, lsegnum, p, ival)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1100,9 +1068,9 @@
             filePath = "../../trainctl/ctrl/ctrl.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "355"
-            endingLineNumber = "355"
-            landmarkName = "sub_presence_changed(tick, from_addr, lsegnum, p, ival)"
+            startingLineNumber = "394"
+            endingLineNumber = "394"
+            landmarkName = "sub_presence_changed(from_addr, lsegnum, p, ival)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1340,9 +1308,9 @@
             filePath = "../../trainctl/spdctl/spdctl.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "596"
-            endingLineNumber = "596"
-            landmarkName = "train_set_target_speed(numtrain, target)"
+            startingLineNumber = "705"
+            endingLineNumber = "705"
+            landmarkName = "_set_speed(tidx, cnf, vars)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1593,8 +1561,8 @@
             filePath = "../../trainctl/spdctl/spdctl.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "232"
-            endingLineNumber = "232"
+            startingLineNumber = "341"
+            endingLineNumber = "341"
             landmarkName = "spdctl_run_tick(notif_flags, tick, dt)"
             landmarkType = "9">
          </BreakpointContent>
@@ -1609,8 +1577,8 @@
             filePath = "../../trainctl/spdctl/spdctl.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "226"
-            endingLineNumber = "226"
+            startingLineNumber = "335"
+            endingLineNumber = "335"
             landmarkName = "spdctl_run_tick(notif_flags, tick, dt)"
             landmarkType = "9">
          </BreakpointContent>
@@ -1625,9 +1593,9 @@
             filePath = "../../trainctl/spdctl/spdctl.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "535"
-            endingLineNumber = "535"
-            landmarkName = "_set_speed(tidx, cnf, vars)"
+            startingLineNumber = "644"
+            endingLineNumber = "644"
+            landmarkName = "set_c1_c2(tidx, tvars, c1, dir1, c2, dir2)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1641,8 +1609,8 @@
             filePath = "../../trainctl/spdctl/spdctl.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "559"
-            endingLineNumber = "559"
+            startingLineNumber = "668"
+            endingLineNumber = "668"
             landmarkName = "_set_speed(tidx, cnf, vars)"
             landmarkType = "9">
          </BreakpointContent>
@@ -1971,8 +1939,8 @@
             filePath = "../../trainctl/ctrl/ctrl.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "272"
-            endingLineNumber = "272"
+            startingLineNumber = "311"
+            endingLineNumber = "311"
             landmarkName = "ctrl_init()"
             landmarkType = "9">
          </BreakpointContent>
@@ -1987,8 +1955,8 @@
             filePath = "../../trainctl/ctrl/ctrl.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "270"
-            endingLineNumber = "270"
+            startingLineNumber = "309"
+            endingLineNumber = "309"
             landmarkName = "ctrl_init()"
             landmarkType = "9">
          </BreakpointContent>
@@ -2035,10 +2003,10 @@
             filePath = "../../trainctl/ctrl/ctrl.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "283"
-            endingLineNumber = "283"
-            landmarkName = "unknown"
-            landmarkType = "0">
+            startingLineNumber = "322"
+            endingLineNumber = "322"
+            landmarkName = "ctrl_init()"
+            landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -2051,8 +2019,8 @@
             filePath = "../../trainctl/ctrl/ctrl.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "279"
-            endingLineNumber = "279"
+            startingLineNumber = "318"
+            endingLineNumber = "318"
             landmarkName = "ctrl_init()"
             landmarkType = "9">
          </BreakpointContent>
@@ -2067,10 +2035,10 @@
             filePath = "../../trainctl/ctrl/ctrl.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "256"
-            endingLineNumber = "256"
-            landmarkName = "ctrl_init()"
-            landmarkType = "9">
+            startingLineNumber = "295"
+            endingLineNumber = "295"
+            landmarkName = "unknown"
+            landmarkType = "0">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -2083,9 +2051,9 @@
             filePath = "../../trainctl/ctrl/ctrl.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "344"
-            endingLineNumber = "344"
-            landmarkName = "sub_presence_changed(tick, from_addr, lsegnum, p, ival)"
+            startingLineNumber = "383"
+            endingLineNumber = "383"
+            landmarkName = "check_timers(tick, dt)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -3153,8 +3121,8 @@
             filePath = "../../trainctl/spdctl/spdctl.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "239"
-            endingLineNumber = "239"
+            startingLineNumber = "348"
+            endingLineNumber = "348"
             landmarkName = "spdctl_run_tick(notif_flags, tick, dt)"
             landmarkType = "9">
          </BreakpointContent>
@@ -3169,8 +3137,8 @@
             filePath = "../../trainctl/spdctl/spdctl.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "245"
-            endingLineNumber = "245"
+            startingLineNumber = "354"
+            endingLineNumber = "354"
             landmarkName = "spdctl_run_tick(notif_flags, tick, dt)"
             landmarkType = "9">
          </BreakpointContent>
@@ -3185,9 +3153,9 @@
             filePath = "../../trainctl/spdctl/spdctl.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "594"
-            endingLineNumber = "594"
-            landmarkName = "train_set_target_speed(numtrain, target)"
+            startingLineNumber = "703"
+            endingLineNumber = "703"
+            landmarkName = "_set_speed(tidx, cnf, vars)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -3201,8 +3169,8 @@
             filePath = "../../trainctl/spdctl/spdctl.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "599"
-            endingLineNumber = "599"
+            startingLineNumber = "708"
+            endingLineNumber = "708"
             landmarkName = "unknown"
             landmarkType = "0">
          </BreakpointContent>
@@ -3217,10 +3185,10 @@
             filePath = "../../trainctl/spdctl/spdctl.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "603"
-            endingLineNumber = "603"
-            landmarkName = "_pose_check_trig(numtrain, tvars, lastincr, pose)"
-            landmarkType = "9">
+            startingLineNumber = "712"
+            endingLineNumber = "712"
+            landmarkName = "unknown"
+            landmarkType = "0">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -3233,9 +3201,9 @@
             filePath = "../../trainctl/spdctl/spdctl.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "590"
-            endingLineNumber = "590"
-            landmarkName = "train_set_target_speed(numtrain, target)"
+            startingLineNumber = "699"
+            endingLineNumber = "699"
+            landmarkName = "_set_speed(tidx, cnf, vars)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -3249,9 +3217,9 @@
             filePath = "../../trainctl/spdctl/spdctl.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "587"
-            endingLineNumber = "587"
-            landmarkName = "train_set_target_speed(numtrain, target)"
+            startingLineNumber = "696"
+            endingLineNumber = "696"
+            landmarkName = "_set_speed(tidx, cnf, vars)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -3265,8 +3233,8 @@
             filePath = "../../trainctl/spdctl/spdctl.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "275"
-            endingLineNumber = "275"
+            startingLineNumber = "384"
+            endingLineNumber = "384"
             landmarkName = "spdctl_run_tick(notif_flags, tick, dt)"
             landmarkType = "9">
          </BreakpointContent>
@@ -3281,8 +3249,8 @@
             filePath = "../../trainctl/spdctl/spdctl.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "199"
-            endingLineNumber = "199"
+            startingLineNumber = "308"
+            endingLineNumber = "308"
             landmarkName = "spdctl_run_tick(notif_flags, tick, dt)"
             landmarkType = "9">
          </BreakpointContent>
@@ -3297,8 +3265,8 @@
             filePath = "../../trainctl/spdctl/spdctl.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "197"
-            endingLineNumber = "197"
+            startingLineNumber = "306"
+            endingLineNumber = "306"
             landmarkName = "spdctl_run_tick(notif_flags, tick, dt)"
             landmarkType = "9">
          </BreakpointContent>
@@ -3409,8 +3377,8 @@
             filePath = "../../trainctl/spdctl/spdctl.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "458"
-            endingLineNumber = "458"
+            startingLineNumber = "567"
+            endingLineNumber = "567"
             landmarkName = "train_periodic_control(numtrain, dt)"
             landmarkType = "9">
          </BreakpointContent>
@@ -3425,8 +3393,8 @@
             filePath = "../../trainctl/spdctl/spdctl.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "463"
-            endingLineNumber = "463"
+            startingLineNumber = "572"
+            endingLineNumber = "572"
             landmarkName = "train_periodic_control(numtrain, dt)"
             landmarkType = "9">
          </BreakpointContent>
@@ -4142,8 +4110,8 @@
             filePath = "../../trainctl/spdctl/spdctl.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "545"
-            endingLineNumber = "545"
+            startingLineNumber = "654"
+            endingLineNumber = "654"
             landmarkName = "_set_speed(tidx, cnf, vars)"
             landmarkType = "9">
          </BreakpointContent>
@@ -4174,8 +4142,8 @@
             filePath = "../../trainctl/spdctl/spdctl.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "546"
-            endingLineNumber = "546"
+            startingLineNumber = "655"
+            endingLineNumber = "655"
             landmarkName = "_set_speed(tidx, cnf, vars)"
             landmarkType = "9">
          </BreakpointContent>

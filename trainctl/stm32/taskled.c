@@ -15,6 +15,7 @@
 #include "../misc.h"
 #include "../leds/ledtask.h"
 #include "../msg/notif.h"
+#include "../msg/tasklet.h"
 
 
 
@@ -38,14 +39,15 @@ void start_led_task(_UNUSED_ void *argument)
 	  // 200Hz is minimal to have 25% on PWM without flickering
 	  // 250Hz selected
 
-	  static uint32_t oldt = 0;
-	  static uint32_t t0 = 0;
+	  //static uint32_t oldt = 0;
+	  //static uint32_t t0 = 0;
 	  uint32_t t = HAL_GetTick();
 	  // XXX we should have a global t0
-	  if (!t0) t0 = t;
-	  int32_t dt = (oldt) ? (t-oldt) : 1;
-	  oldt = t;
-	  led_tasklet(NOTIF_SYSTICK, t, dt);
+	  //if (!t0) t0 = t;
+	  //int32_t dt = (oldt) ? (t-oldt) : 1;
+	  //oldt = t;
+	 //led_tasklet(NOTIF_SYSTICK, t, dt);
+	  tasklet_run(&led_tasklet, t);
   }
   /* USER CODE END start_led_task */
 }

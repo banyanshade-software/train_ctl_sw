@@ -8,7 +8,10 @@
 #ifndef CTRL_CTRL_H_
 #define CTRL_CTRL_H_
 
-void ctrl_run_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt);
+#include "../msg/tasklet.h"
+
+extern tasklet_t ctrl_tasklet;
+//void ctrl_run_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt);
 
 
 

@@ -58,17 +58,59 @@
 #error turnouts code included but NUM_TURNOUTS iz zero
 #endif
 
-static void turnout_reset(void);
+
+// ------------------------------------------------------
+
+static void turnout_init(void);
+static void turnout_enter_runmode(runmode_t m);
 static void process_turnout_timers(uint32_t tick, uint32_t dt);
-static void process_turnout_cmd(msg_64_t *m, uint32_t tick, uint32_t dt);
+static int turnout_poll_divisor(uint32_t tick, uint32_t dt);
+static void process_turnout_cmd(msg_64_t *m); //, uint32_t tick, uint32_t dt);
 
 
+static const tasklet_def_t turnout_tdef = {
+		.init 				= turnout_init,
+		.poll_divisor		= turnout_poll_divisor,
+		.emergency_stop 	= turnout_init,
+		.enter_runmode		= turnout_enter_runmode,
+		.pre_tick_handler	= process_turnout_timers,
+		.default_msg_handler = process_turnout_cmd,
+		.default_tick_handler = NULL,
+		.msg_handler_for	= NULL,
+		.tick_handler_for 	= NULL
+
+};
+tasklet_t turnout_tasklet = { .def = &turnout_tdef, .init_done = 0, .queue=&to_turnout};
+
+
+static void turnout_enter_runmode(_UNUSED_ runmode_t m)
+{
+	turnout_init();
+}
+
+
+// ------------------------------------------------------
+
+
+//static void process_turnout_timers(uint32_t tick, uint32_t dt);
+//static void process_turnout_cmd(msg_64_t *m, uint32_t tick, uint32_t dt);
+
+static int turnout_poll_divisor(_UNUSED_ uint32_t tick, _UNUSED_ uint32_t dt)
+{
+	// TODO use dt
+	static int cnt = 0;
+	cnt ++;
+	if (cnt%4) return 1; // skip
+	return 0;
+}
+
+/*
 void turnout_tasklet(_UNUSED_ uint32_t notif_flags, uint32_t tick, uint32_t dt)
 {
 	static int first=1;
 	if (first) {
 		first = 0;
-		turnout_reset();
+		turnout_init();
 	}
 	static int cnt = 0;
 	cnt ++;
@@ -88,14 +130,15 @@ void turnout_tasklet(_UNUSED_ uint32_t notif_flags, uint32_t tick, uint32_t dt)
 				break;
 			case CMD_RESET: // FALLTHRU
 			case CMD_EMERGENCY_STOP:
-				turnout_reset();
+				turnout_init();
 				break;
 			}
 		} else {
 			itm_debug1(DBG_TURNOUT|DBG_ERR, "turnout un/cmd", m.cmd);
 		}
 	}
-}
+}*/
+
 
 // ----------------------------------------------------------------------------------------------
 
@@ -138,8 +181,14 @@ static turnout_vars_t tvars[NUM_TURNOUTS]={0};
 		turnout_vars_t       *avars = &tvars[_idx];
 
 
-static void process_turnout_cmd(msg_64_t *m, _UNUSED_ uint32_t tick, _UNUSED_ uint32_t dt)
+static void process_turnout_cmd(msg_64_t *m)
 {
+	if (!MA0_IS_TURNOUT(m->to)) {
+		return;
+	}
+	if (turnout_tasklet.runmode == runmode_off) {
+		return;
+	}
 	uint8_t tidx = m->subc;
 	USE_TURNOUT(tidx)
 	if (!aconf || !avars) {
@@ -180,7 +229,7 @@ static void process_turnout_cmd(msg_64_t *m, _UNUSED_ uint32_t tick, _UNUSED_ ui
 }
 
 
-static void turnout_reset(void)
+static void turnout_init(void)
 {
 	for (int tidx=0; tidx<NUM_TURNOUTS; tidx++) {
 		USE_TURNOUT(tidx) 	// aconf avars

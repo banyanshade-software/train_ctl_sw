@@ -12,7 +12,7 @@
 
 #include "cmsis_os.h"
 
-#include "../trainctl_iface.h"
+//#include "../trainctl_iface.h"
 
 
 void CAN_Tasklet(uint32_t notif_flags, uint32_t tick, uint32_t dt);

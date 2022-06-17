@@ -18,12 +18,58 @@
 #endif
 
 // ----------------------------------------------------------------------------------
+
+static void led_enter_runmode(_UNUSED_ runmode_t m)
+{
+	led_reset_all();
+}
+static void handle_led_msg(msg_64_t *m);
+static void led_tick(_UNUSED_ uint32_t tick, _UNUSED_ uint32_t dt);
+
+static const tasklet_def_t led_tdef = {
+		.init 				= led_reset_all,
+		.poll_divisor		= NULL,
+		.emergency_stop 	= led_reset_all,
+		.enter_runmode		= led_enter_runmode,
+		.pre_tick_handler	= NULL,
+		.default_msg_handler = handle_led_msg,
+		.default_tick_handler = led_tick,
+		.msg_handler_for	= NULL,
+		.tick_handler_for 	= NULL
+
+};
+tasklet_t led_tasklet = { .def = &led_tdef, .init_done = 0, .queue=&to_led};
+
+
+
+// ----------------------------------------------------------------------------------
 // global run mode, each tasklet implement this
-static runmode_t run_mode = 0;
-static uint8_t testerAddr;
+//static runmode_t run_mode = 0;
+//static uint8_t testerAddr;
 
+static void handle_led_msg(msg_64_t *m)
+{
+	if (led_tasklet.runmode == runmode_off) {
+		return;
+	}
+	switch (m->cmd) {
+	case CMD_LED_RUN:
+		led_start_prog(m->v1u, m->v2u);
+		break;
+	 default:
+		 break;
+	}
+}
 
+static void led_tick(_UNUSED_ uint32_t tick, _UNUSED_ uint32_t dt)
+{
+	if (led_tasklet.runmode == runmode_off) {
+		return;
+	}
+	led_run_all();
+}
 
+#if 0
 void led_tasklet(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_ uint32_t dt)
 {
 	itm_debug1(DBG_LED ,"------- tk", (int) notif_flags);
@@ -88,3 +134,4 @@ void led_tasklet(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_
         }
 	}
 }
+#endif

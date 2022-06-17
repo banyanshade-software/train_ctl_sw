@@ -12,7 +12,7 @@
 
 #include <stdint.h>
 #include <memory.h>
-#include <utils/itm_debug.h>
+#include "../utils/itm_debug.h"
 
 #include "../misc.h"
 #include "../msg/trainmsg.h"

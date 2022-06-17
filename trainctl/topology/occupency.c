@@ -138,7 +138,7 @@ uint8_t occupency_block_is_free(xblkaddr_t blkaddr, uint8_t trnum)
 }
 
 
-void check_block_delayed(_UNUSED_ uint32_t tick)
+void check_block_delayed(_UNUSED_ uint32_t tick, _UNUSED_ uint32_t dt)
 {
     if (!USE_BLOCK_DELAY_FREE) return;
 

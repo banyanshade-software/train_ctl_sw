@@ -64,12 +64,76 @@ const stat_val_t statval_ctrl[] = {
 };
 
 
+// ------------------------------------------------------
+
+static void ctrl_init(void);
+static void ctrl_enter_runmode(runmode_t m);
+static void check_timers(uint32_t tick, _UNUSED_ uint32_t dt);
+
+static msg_handler_t msg_handler_selector(runmode_t);
+
+static const tasklet_def_t ctrl_tdef = {
+		.init 				= ctrl_init,
+		.poll_divisor		= NULL,
+		.emergency_stop 	= ctrl_init,
+		.enter_runmode		= ctrl_enter_runmode,
+		.pre_tick_handler	= check_block_delayed,
+		.default_msg_handler = NULL,
+		.default_tick_handler = check_timers,
+		.msg_handler_for	=  msg_handler_selector,
+		.tick_handler_for 	= NULL
+
+};
+tasklet_t ctrl_tasklet = { .def = &ctrl_tdef, .init_done = 0, .queue=&to_ctrl};
+
+// ------------------------------------------------------
+static void normal_process_msg(msg_64_t *m);
+
+
+msg_handler_t msg_handler_selector(runmode_t m)
+{
+    switch (m) {
+        case runmode_detect2:
+            return detect2_process_msg;
+            break;
+        case runmode_normal:
+            return normal_process_msg;
+            break;
+        default:
+            return NULL;
+            break;
+    }
+}
+// ------------------------------------------------------
+
+static void ctrl_set_mode(int trnum, train_mode_t mode);
+
+static void ctrl_enter_runmode(runmode_t m)
+{
+    if (m != runmode_normal) {
+        for (int i=0; i<NUM_TRAINS; i++) {
+            ctrl_set_mode(i, train_notrunning);
+        }
+    }
+    switch (m) {
+        default:
+            break;
+        case runmode_normal:
+            ctrl_init();
+            break;
+        case runmode_detect2:
+            detect2_init();
+            break;
+            
+    }
+}
+// ------------------------------------------------------
 
 // global run mode, each tasklet implement this
-static runmode_t run_mode = 0;
-static uint8_t testerAddr;
+//static runmode_t run_mode = 0;
+//static uint8_t testerAddr;
 
-static void ctrl_reset(void);
+//static void ctrl_reset(void);
 
 
 static void fatal(void)
@@ -92,12 +156,11 @@ static void evt_timer(int tidx, train_ctrl_t *tvar, int tnum);
 
 //static void ctrl_reset_timer(int tidx, train_ctrl_t *tvar, int numtimer);
 //static void ctrl_set_timer(int tidx, train_ctrl_t *tvar, int numtimer, uint32_t tval);
-static void check_timers(uint32_t tick);
 
 // ----------------------------------------------------------------------------
 // sub block presence handling
 
-static void sub_presence_changed(uint32_t tick, uint8_t from_addr, uint8_t segnum, uint16_t v, int16_t ival);
+static void sub_presence_changed(uint8_t from_addr, uint8_t segnum, uint16_t v, int16_t ival);
 
 // ----------------------------------------------------------------------------
 //  block occupency
@@ -110,13 +173,9 @@ static int set_turnout(xtrnaddr_t tn, int v, int train);
 // ----------------------------------------------------------------------------
 // behaviour
 
-static void check_behaviour(uint32_t tick);
 
 
-static void ctrl_reset(void)
-{
-	//TODO
-}
+
 // ----------------------------------------------------------------------------
 
 
@@ -307,7 +366,7 @@ train_ctrl_t *ctrl_get_tvar(int trnum)
 // timers
 
 
-static void check_timers(uint32_t tick)
+static void check_timers(uint32_t tick, _UNUSED_ uint32_t dt)
 {
 	//uint32_t t = HAL_GetTick();
 	for (int tidx = 0; tidx<NUM_TRAINS; tidx++) {
@@ -328,7 +387,7 @@ static void check_timers(uint32_t tick)
 
 
 
-static void sub_presence_changed(_UNUSED_ uint32_t tick, _UNUSED_ uint8_t from_addr, _UNUSED_ uint8_t lsegnum, _UNUSED_ uint16_t p, _UNUSED_ int16_t ival)
+static void sub_presence_changed(_UNUSED_ uint8_t from_addr,  uint8_t lsegnum,  uint16_t p, _UNUSED_ int16_t ival)
 {
 	for (int tidx=0; tidx < NUM_TRAINS; tidx++) {
 		train_ctrl_t *tvar = &trctl[tidx];
@@ -439,6 +498,92 @@ static void posecm_measured(int tidx, int32_t pose, lsblk_num_t blk1, lsblk_num_
 
 // ----------------------------------------------------------------------------
 
+static void normal_process_msg(msg_64_t *m)
+{
+    if (MA1_IS_CTRL(m->to)) {
+        //if (test_mode) continue;
+        int tidx = MA1_TRAIN(m->to);
+        train_ctrl_t *tvar = &trctl[tidx];
+
+        switch (m->cmd) {
+        case CMD_SET_TRAIN_MODE:
+            ctrl_set_mode(m->v1u, m->v2u);
+            break;
+        case CMD_START_AUTO:
+            switch (m->v1u) {
+            case 0:
+                trctl[0].route = route_0_T0;
+                trctl[1].route = route_0_T1;
+                break;
+            default:
+            case 1:
+                trctl[0].route = route_1_T0;
+                trctl[1].route = route_1_T1;
+                break;
+            case 2:
+                trctl[0].route = route_2_T0;
+                trctl[1].route = route_2_T1;
+                break;
+            }
+            trctl[0].routeidx = 0;
+            trctl[0].got_u1 = 0;
+            trctl[0].trigu1 = 0;
+            trctl[0].got_texp = 0;
+            trctl[1].routeidx = 0;
+            trctl[1].got_u1 = 0;
+            trctl[1].trigu1 = 0;
+            trctl[1].got_texp = 0;
+            ctrl_set_mode(0, train_auto);
+            ctrl_set_mode(1, train_auto);
+            break;
+        case CMD_PRESENCE_SUB_CHANGE:
+            if ((1)) {
+                debug_info('I', m->subc, "INA", m->v1u, m->v2, 0);
+            }
+            if (ignore_ina_presence) break;
+            sub_presence_changed(m->from, m->subc, m->v1u, m->v2);
+            break;
+    
+        case CMD_BEMF_DETECT_ON_C2: {
+            itm_debug2(DBG_CTRL,"BEMF/C2", tidx,  m->v1u);
+            train_ctrl_t *tvar = &trctl[tidx];
+            if (m->v1u != tvar->can2_xaddr.v) {
+                // typ. because we already switch to c2 (msg SET_C1_C2 and CMD_BEMF_DETECT_ON_C2 cross over
+                itm_debug3(DBG_CTRL, "not c2", tidx, m->v1u, tvar->can2_xaddr.v);
+                break;
+            }
+            if (tvar->measure_pose_percm) {
+                tvar->measure_pose_percm = 0;
+                lsblk_num_t s1 = {1};
+                lsblk_num_t s4 = {4};
+                posecm_measured(tidx, m->v2*10, s1, s4);
+            }
+            ctrl2_evt_entered_c2(tidx, tvar, 1);
+            break;
+        }
+        case CMD_MDRIVE_SPEED_DIR:
+            ctrl2_upcmd_set_desired_speed(tidx, tvar, m->v2*m->v1u);
+            break;
+
+        case CMD_POSE_TRIGGERED:
+            itm_debug3(DBG_POSE, "Trig", m->v1u, m->v2u, m->subc);
+            xblkaddr_t tb = {.v = m->v1u};
+            ctrl2_evt_pose_triggered(tidx, tvar, tb, m->subc, m->v2);
+            break;
+        case CMD_STOP_DETECTED:
+            ctrl2_evt_stop_detected(tidx, tvar, m->v32);
+            break;
+        default:
+            break;
+
+        }
+    } else {
+        itm_debug1(DBG_MSG|DBG_CTRL, "bad msg", m->to);
+    }
+}
+
+
+#if 0
 void ctrl_run_tick(_UNUSED_ uint32_t notif_flags, uint32_t tick, _UNUSED_ uint32_t dt)
 {
 	
@@ -447,7 +592,6 @@ void ctrl_run_tick(_UNUSED_ uint32_t notif_flags, uint32_t tick, _UNUSED_ uint32
     if (first) {
         first = 0;
         ctrl_init();
-        ctrl_reset();
     }
     
     if (run_mode==runmode_normal) check_block_delayed(tick);
@@ -489,7 +633,7 @@ void ctrl_run_tick(_UNUSED_ uint32_t notif_flags, uint32_t tick, _UNUSED_ uint32
         case runmode_normal:
         	break; // keep on processing
         }
-        
+
 
        
         // mode_normal processing
@@ -651,6 +795,8 @@ void ctrl_run_tick(_UNUSED_ uint32_t notif_flags, uint32_t tick, _UNUSED_ uint32
 	}
 }
 
+#endif
+
 __weak int can_send_stat(void)
 {
     static int cnt = 0;
@@ -774,10 +920,9 @@ void ctrl2_send_led(uint8_t led_num, uint8_t prog_num)
 }
 
 // ---------------------------------------------------------------
-
+#ifdef OLD_CTRL
 static void check_behaviour(_UNUSED_ uint32_t tick)
 {
-#ifdef OLD_CTRL
 	for (int tidx = 0; tidx<NUM_TRAINS; tidx++) {
 		const conf_train_t *tconf = conf_train_get(tidx);
 		if (!tconf->enabled) continue;
@@ -861,10 +1006,9 @@ static void check_behaviour(_UNUSED_ uint32_t tick)
 			}
 		}
 	}
-#else
-    // TODO abort();
-#endif
+
 }
+#endif
 
 
 

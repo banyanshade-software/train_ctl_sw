@@ -31,6 +31,7 @@
 #include <stdint.h>
 #include "trainctl_config.h"
 #include "../misc.h"
+#include "../msg/tasklet.h"
 
 #ifndef TRAIN_SIMU
 #ifdef STM32_F4
@@ -59,9 +60,9 @@
 extern TIM_HandleTypeDef *CantonTimerHandles[8];
 #endif
 
-void canton_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt);
+//void canton_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt);
 
-
+extern tasklet_t canton_tasklet;
 
 #define MAX_PWM 90
 

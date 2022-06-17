@@ -22,7 +22,7 @@
 #include "taskctrl.h"
 
 #include "../msg/trainmsg.h"
-
+#include "../msg/tasklet.h"
 
 //#include "../../../stm32dev/ina3221/ina3221.h"
 
@@ -401,22 +401,26 @@ static void run_task_ctrl(void)
 
 #ifdef BOARD_HAS_CTRL
 		//itm_debug1(DBG_LOWCTRL, "--spdctl", dt);
-		spdctl_run_tick(notif, t, dt);
+		//spdctl_run_tick(notif, t, dt);
+		tasklet_run(&spdctl_tasklet, t);
 #endif
 
 #ifdef BOARD_HAS_CANTON
 		//itm_debug1(DBG_LOWCTRL, "--canton", dt);
-		canton_tick(notif, t, dt);
+		tasklet_run(&canton_tasklet, t);
+		//canton_tick(notif, t, dt);
 #endif
 
 #ifdef BOARD_HAS_TURNOUTS
 		//itm_debug1(DBG_LOWCTRL, "--trnout", dt);
-		turnout_tasklet(notif, t, dt);
+		//turnout_tasklet(notif, t, dt);
+		tasklet_run(&turnout_tasklet, t);
 #endif
 
 #ifdef BOARD_HAS_CTRL
 		//itm_debug1(DBG_LOWCTRL, "--ctrl", dt);
-		ctrl_run_tick(notif, t, dt);
+		tasklet_run(&ctrl_tasklet, t);
+		//ctrl_run_tick(notif, t, dt);
 #endif
 
 #ifdef BOARD_HAS_CAN

@@ -34,6 +34,7 @@
 #include "../trainctl_iface.h"
 #include "canton.h"
 #include "canton_bemf.h"
+#include "../msg/tasklet.h"
 #ifndef TRAIN_SIMU
 #ifdef STM32_F4
 #include "stm32f4xx_hal.h"
@@ -59,6 +60,51 @@
 #ifndef TRAIN_SIMU
 TIM_HandleTypeDef *CantonTimerHandles[8] = {NULL};
 #endif
+
+
+// ------------------------------------------------------
+
+static void canton_init(void);
+static void handle_msg_normal(msg_64_t *m);
+static msg_handler_t msg_handler_selector(runmode_t);
+static void canton_enter_runmode(runmode_t m);
+
+static const tasklet_def_t canton_tdef = {
+		.init 				= canton_init,
+		.poll_divisor		= NULL,
+		.emergency_stop 	= canton_init,
+		.enter_runmode		= canton_enter_runmode,
+		.pre_tick_handler	= NULL,
+		.default_msg_handler = handle_msg_normal,
+		.default_tick_handler = NULL,
+		.msg_handler_for	= msg_handler_selector,
+		.tick_handler_for 	= NULL
+
+};
+tasklet_t canton_tasklet = { .def = &canton_tdef, .init_done = 0, .queue=&to_canton};
+
+
+
+
+static void handle_msg_cantontest(msg_64_t *m);
+static void handle_msg_detect1(msg_64_t *m);
+static void handle_msg_detect2(msg_64_t *m);
+static void handle_msg_off(msg_64_t *m);
+
+static msg_handler_t msg_handler_selector(runmode_t m)
+{
+	switch (m) {
+	default:  			return NULL;
+	case runmode_off:	return handle_msg_off;
+	case runmode_normal:return NULL; //default is normal
+	case runmode_detect_experiment: return handle_msg_detect1;
+	case runmode_detect2: return handle_msg_detect2;
+	case runmode_testcanton: return handle_msg_cantontest;
+	}
+}
+
+
+// ------------------------------------------------------
 
 
 // ------------------------------------------------------
@@ -99,8 +145,8 @@ void canton_set_volt(int cn, const conf_canton_t *c, canton_vars_t *v, int volti
 
 //--------------------------------------------
 // global run mode, each tasklet implement this
-static runmode_t run_mode = 0;
-static uint8_t testerAddr;
+//static runmode_t run_mode = 0;
+//static uint8_t testerAddr;
 //--------------------------------------------
 
 
@@ -114,6 +160,19 @@ static void canton_reset(void)
 		canton_set_volt(i, cconf, cvars,  7);
 	}
 }
+
+static void canton_init(void)
+{
+	canton_reset();
+	bemf_reset();
+}
+
+static void canton_enter_runmode(runmode_t m)
+{
+	bemf_run_mode = m;
+}
+
+//--------------------------------------------
 
 static void handle_canton_cmd(int cidx, msg_64_t *m)
 {
@@ -146,61 +205,11 @@ static void handle_canton_cmd(int cidx, msg_64_t *m)
 	}
 }
 
-
-static void handle_msg_normal(msg_64_t *m);
-static void handle_msg_cantontest(msg_64_t *m);
-static void handle_msg_detect1(msg_64_t *m);
-static void handle_msg_detect2(msg_64_t *m);
-
-void canton_tick(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_ uint32_t dt)
+static void handle_msg_off(_UNUSED_ msg_64_t *m)
 {
-	static int first=1;
-	if (first) {
-		first = 0;
-		canton_reset();
-		bemf_reset();
-	}
-	for (;;) {
-		msg_64_t m;
-		int rc = mqf_read_to_canton(&m);
-		if (rc) break;
-        switch (m.cmd) {
-        case CMD_RESET: // FALLTHRU
-        case CMD_EMERGENCY_STOP:
-            canton_reset();
-            bemf_reset();
-            break;
-        case CMD_SETRUN_MODE:
-        	if (m.v1u != run_mode) {
-        		run_mode = m.v1u;
-        		testerAddr = m.from;
-        		bemf_run_mode = run_mode; //(m.to == MA_BROADCAST) ? 1 : 0;
-        		bemf_reset();
-        		first = 1;
-        	}
-            break;
-        default:
-        	break;
-        }
-        switch (run_mode) {
-        default: // FALLTHRU
-        case runmode_off:
-        	break;
-        case runmode_normal:
-        	handle_msg_normal(&m);
-        	break;
-        case runmode_detect_experiment:
-        	handle_msg_detect1(&m);
-        	break;
-        case runmode_detect2:
-            handle_msg_detect2(&m);
-        	break;
-        case runmode_testcanton:
-        	handle_msg_cantontest(&m);
-        	break;
-        }
-	}
+	// no handling
 }
+
 
 
 static void handle_msg_normal(msg_64_t *m)

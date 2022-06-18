@@ -51,6 +51,10 @@
 #include "../utils/adc_mean.h"
 #endif
 
+#ifdef BOARD_HAS_USB
+#include "usbtask.h"
+#endif
+
 
 #include "../oam/oam.h"
 /*
@@ -420,6 +424,7 @@ static void run_task_ctrl(void)
 #ifdef BOARD_HAS_CTRL
 		//itm_debug1(DBG_LOWCTRL, "--ctrl", dt);
 		tasklet_run(&ctrl_tasklet, t);
+		tasklet_run(&stattx_tasklet, t);
 		//ctrl_run_tick(notif, t, dt);
 #endif
 

@@ -8,9 +8,13 @@
 #ifndef STM32_USBTASK_H_
 #define STM32_USBTASK_H_
 
+#include "../msg/tasklet.h"
+
 void StartUsbTask(const void *arg);
 void USB_Tasklet(uint32_t notif_flags, uint32_t tick, uint32_t dt);
 
-int can_send_stat(void);
+//int can_send_stat(void);
+
+extern tasklet_t stattx_tasklet;
 
 #endif /* STM32_USBTASK_H_ */

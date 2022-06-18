@@ -9,8 +9,11 @@
 #define OAM_OAM_H_
 
 // void OAM_Init(void); now static
+#include "../msg/tasklet.h"
 
-void OAM_Tasklet(uint32_t notif_flags, uint32_t tick, uint32_t dt);
+extern tasklet_t OAM_tasklet;
+
+//void OAM_Tasklet(uint32_t notif_flags, uint32_t tick, uint32_t dt);
 
 /// OAM_NeedsReschedule global var (defined in oam..c) is set by oam.c to indicate it needs to be
 /// reschedule. This is typically the case during 'multiboard' config file read : file is read parameter by parameter

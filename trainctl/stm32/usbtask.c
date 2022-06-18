@@ -29,6 +29,7 @@
 
 
 #include "../msg/trainmsg.h"
+#include "../msg/tasklet.h"
 
 #include "utils/framing.h"
 #include "usbtask.h"
@@ -37,6 +38,28 @@
 #include "stm32f4xx_hal_gpio.h"
 
 extern USBD_HandleTypeDef hUsbDeviceFS;
+
+
+
+// ------------------------------------------------------
+static void stat_poll(uint32_t t, uint32_t dt);
+
+static const tasklet_def_t stattx_tdef = {
+		.init 				= NULL,
+		.poll_divisor		= NULL,
+		.emergency_stop 	= NULL,
+		.enter_runmode		= NULL,
+		.pre_tick_handler	= NULL,
+		.default_msg_handler = NULL,
+		.default_tick_handler = stat_poll,
+		.msg_handler_for	= NULL,
+		.tick_handler_for 	= NULL
+
+};
+tasklet_t stattx_tasklet = { .def = &stattx_tdef, .init_done = 0, .queue=NULL};
+
+
+// ------------------------------------------------------
 
 
 static void Force_USB_Enumerate(void)
@@ -179,12 +202,26 @@ __weak int oscillo_running(void)
 	return 0;
 }
 
-int can_send_stat(void)
+static int can_send_stat(void)
 {
 	return 0; // XXX
 	if (sending_stats) return 0;
 	if (sending_oscillo) return 0;
 	if (oscillo_running()) return 0;
 	return 1;
+}
+
+
+
+static void stat_poll(_UNUSED_ uint32_t t, _UNUSED_ uint32_t dt)
+{
+	int st = can_send_stat();
+	if (st) {
+		msg_64_t m = {0};
+		m.from = MA1_CONTROL();
+		m.to = MA2_USB_LOCAL;
+		m.cmd = CMD_USB_STATS;
+        mqf_write_from_ctrl(&m);
+	}
 }
 

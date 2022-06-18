@@ -26,31 +26,40 @@
     WKNavigation *nv = [_ctoWebView loadHTMLString:ctohtml baseURL:nil];
     NSAssert(nv, @"load failed");
     
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        // hide all info from this blk
-        NSString *js = @"Array.from(document.getElementsByClassName('trinfo'), el => el.style.visibility = 'hidden')";
-        [self->_ctoWebView evaluateJavaScript:js completionHandler:^(id v, NSError *err) {
-            if (err) {
-                NSLog(@"js error : %@\n", err);
-            }
-        }];
-        js = @"Array.from(document.getElementsByClassName('track'), el => el.style.stroke = 'darkgray')";
-        [self->_ctoWebView evaluateJavaScript:js completionHandler:^(id v, NSError *err) {
-            if (err) {
-                NSLog(@"js error : %@\n", err);
-            }
-        }];
-        // add callback for turnouts
-        js = @"Array.from(document.getElementsByClassName('tncircle'), el => el.addEventListener(\"click\", function () {\
-           window.webkit.messageHandlers.ctc.postMessage(\"c\"+el.getAttribute('id'));} ));";
-        [self->_ctoWebView evaluateJavaScript:js completionHandler:^(id v, NSError *err) {
-            if (err) {
-                NSLog(@"js error : %@\n", err);
-            }
-        }];
-    });
+    /*dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [self installJavascript];
+    });*/
     wkuserctrl = _ctoWebView.configuration.userContentController;
     [wkuserctrl addScriptMessageHandler:self name:@"ctc"];
+}
+
+- (void) installJavascript
+{
+    // hide all info from this blk
+    NSString *js = @"Array.from(document.getElementsByClassName('trinfo'), el => el.style.visibility = 'hidden')";
+    [self->_ctoWebView evaluateJavaScript:js completionHandler:^(id v, NSError *err) {
+        if (err) {
+            NSLog(@"js error : %@\n", err);
+        }
+    }];
+    js = @"Array.from(document.getElementsByClassName('track'), el => el.style.stroke = 'darkgray')";
+    [self->_ctoWebView evaluateJavaScript:js completionHandler:^(id v, NSError *err) {
+        if (err) {
+            NSLog(@"js error : %@\n", err);
+        }
+    }];
+    // add callback for turnouts
+    js = @"Array.from(document.getElementsByClassName('tncircle'), el => el.addEventListener(\"click\", function () {\
+       window.webkit.messageHandlers.ctc.postMessage(\"c\"+el.getAttribute('id'));} ));";
+    [self->_ctoWebView evaluateJavaScript:js completionHandler:^(id v, NSError *err) {
+        if (err) {
+            NSLog(@"js error : %@\n", err);
+        }
+    }];
+}
+- (void)webView:(WKWebView *)webView didFinishNavigation:(null_unspecified WKNavigation *)navigation
+{
+    [self installJavascript];
 }
 
 

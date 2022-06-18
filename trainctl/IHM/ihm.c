@@ -64,6 +64,7 @@ extern TIM_HandleTypeDef htim4;
 static void ihm_enter_runmode(runmode_t m);
 static void ihm_init(void);
 static void ihm_postmsg_tick(uint32_t, uint32_t);
+static void ihm_handle_inputs(uint32_t, uint32_t);
 
 static msg_handler_t msghandler_for_mode(runmode_t m);
 
@@ -72,7 +73,7 @@ static const tasklet_def_t ihm_tdef = {
 		.poll_divisor		= NULL,
 		.emergency_stop 	= NULL,
 		.enter_runmode		= ihm_enter_runmode,
-		.pre_tick_handler	= NULL,
+		.pre_tick_handler	= ihm_handle_inputs,
 		.default_msg_handler = NULL,
 		.default_tick_handler = ihm_postmsg_tick,
 		.msg_handler_for	= msghandler_for_mode,
@@ -156,6 +157,8 @@ static void ihm_postmsg_tick(_UNUSED_ uint32_t t, _UNUSED_ uint32_t dt)
 	}
 }
 // ----------------------------------------------------------------
+
+
 // ----------------------------------------------------------------
 // ----------------------------------------------------------------
 
@@ -449,6 +452,61 @@ static int16_t get_srotary(TIM_HandleTypeDef *ptdef)
 }
 
 #endif // BOARD_HAS_ROTARY_ENCODER
+
+
+static void ihm_handle_inputs(_UNUSED_ uint32_t t, _UNUSED_ uint32_t dt)
+{
+#ifdef BOARD_HAS_ROTARY_ENCODER
+	// scan rotary encoder -----------
+	for (int i=0; i<MAX_ROTARY; i++) {
+#if UNSIGNED_ROT
+		// obsolete and untested now
+		uint16_t p = get_rotary(&htim4);
+		if (p != rot_position[i]) {
+			// pos changed
+			rot_position[i] = p;
+			if (ihm_mode==0) {
+				ihm_setvar(0, 1, rot_position[0]);
+				//ihm_setvar(0, 1, ((int)rot0_position - 50));
+				SET_NEEDSREFRESH(0);
+			}
+			if (drive_mode[i]) {
+				msg_64_t m;
+				m.from = MA_UI(i);
+				m.to = MA_CONTROL_T(i);
+				m.cmd = CMD_MDRIVE_SPEED;
+				m.v1u = rot_position[i];
+				mqf_write_from_ui(&m);
+			}
+		}
+#else
+		int16_t p = get_srotary(&htim4);
+		if (p != rot_position[i]) {
+			// pos changed
+			rot_position[i] = p;
+			if (ihm_dispmode==mode_manual) {
+				ihm_setvar(0, 1, (uint16_t) rot_position[0]);
+				//ihm_setvar(0, 1, ((int)rot0_position - 50));
+				SET_NEEDSREFRESH(0);
+			}
+			if (drive_mode[i]) {	// TODO refactor drive_mode
+				msg_64_t m;
+				m.from = MA3_UI_GEN;//(i);
+				m.to = MA1_CTRL(i);
+				m.cmd = CMD_MDRIVE_SPEED_DIR;
+				m.v1u = abs(rot_position[i]);
+				m.v2 = SIGNOF0(rot_position[i]);
+				// TODO handle dir
+				mqf_write_from_ui(&m);
+			}
+		}
+#endif
+	}
+#endif //  BOARD_HAS_ROTARY_ENCODER
+#ifdef BOARD_HAS_TWO_BUTTONS
+#endif
+}
+
 
 
 

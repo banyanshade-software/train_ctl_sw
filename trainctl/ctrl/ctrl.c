@@ -68,7 +68,7 @@ const stat_val_t statval_ctrl[] = {
 
 static void ctrl_init(void);
 static void ctrl_enter_runmode(runmode_t m);
-static void check_timers(uint32_t tick, _UNUSED_ uint32_t dt);
+static void ctrl_tick(uint32_t tick, _UNUSED_ uint32_t dt);
 
 static msg_handler_t msg_handler_selector(runmode_t);
 
@@ -79,7 +79,7 @@ static const tasklet_def_t ctrl_tdef = {
 		.enter_runmode		= ctrl_enter_runmode,
 		.pre_tick_handler	= check_block_delayed,
 		.default_msg_handler = NULL,
-		.default_tick_handler = check_timers,
+		.default_tick_handler = ctrl_tick,
 		.msg_handler_for	=  msg_handler_selector,
 		.tick_handler_for 	= NULL
 
@@ -366,7 +366,7 @@ train_ctrl_t *ctrl_get_tvar(int trnum)
 // timers
 
 
-static void check_timers(uint32_t tick, _UNUSED_ uint32_t dt)
+static void check_timers(uint32_t tick)
 {
 	//uint32_t t = HAL_GetTick();
 	for (int tidx = 0; tidx<NUM_TRAINS; tidx++) {
@@ -383,6 +383,26 @@ static void check_timers(uint32_t tick, _UNUSED_ uint32_t dt)
 	}
 }
 
+
+static void ctrl_tick(uint32_t tick, _UNUSED_ uint32_t dt)
+{
+    check_timers(tick);
+    
+    
+    uint8_t occ = topology_or_occupency_changed;
+    topology_or_occupency_changed = 0;
+    
+    if (occ) {
+        itm_debug1(DBG_CTRL, "ct/occ", 0);
+    }
+    for (int tidx = 0; tidx<NUM_TRAINS; tidx++) {
+        train_ctrl_t *tvars = &trctl[tidx];
+        const conf_train_t *tconf = conf_train_get(tidx);
+        if (!tconf->enabled) continue;
+        if (tvars->_mode == train_notrunning) continue;
+        ctrl2_tick_process(tidx, tvars, tconf, occ);
+    }
+}
 // ----------------------------------------------------------------------------
 
 
@@ -500,6 +520,25 @@ static void posecm_measured(int tidx, int32_t pose, lsblk_num_t blk1, lsblk_num_
 
 static void normal_process_msg(msg_64_t *m)
 {
+    // -----------------------------------------
+    xtrnaddr_t turnout;
+    switch (m->cmd) {
+        default:
+            break;
+        case CMD_TURNOUT_HI_A:
+            turnout.v = m->v1u;
+            set_turnout(turnout, 0, -1);
+            break;
+        case CMD_TURNOUT_HI_B:
+            turnout.v = m->v1u;
+            set_turnout(turnout, 1, -1);
+            break;
+        case CMD_TURNOUT_HI_TOG:
+            turnout.v = m->v1u;
+            set_turnout(turnout, topology_get_turnout(turnout) ? 0 : 1, -1);
+            break;
+    }
+    // -----------------------------------------
     if (MA1_IS_CTRL(m->to)) {
         //if (test_mode) continue;
         int tidx = MA1_TRAIN(m->to);

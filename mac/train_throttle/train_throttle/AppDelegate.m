@@ -2033,14 +2033,20 @@ uint32_t SimuTick = 0;
    
     bemf_tick(notif,        mt, mdt);
     msgsrv_tick(notif,      mt, mdt);
-    OAM_Tasklet(notif, mt, mdt);
+    tasklet_run(&OAM_tasklet, mt);
+    tasklet_run(&spdctl_tasklet, mt);
+    tasklet_run(&canton_tasklet, mt);
+    tasklet_run(&turnout_tasklet, mt);
+    tasklet_run(&ctrl_tasklet,  mt);
+    /*
+    //OAM_Tasklet(notif, mt, mdt);
     spdctl_run_tick(notif,  mt, mdt);
     //msgsrv_tick(notif,    mt, mdt);
     canton_tick(notif,      mt, mdt);
     turnout_tick(notif,     mt, mdt);
     //usbPollQueues();
     ctrl_run_tick(notif,    mt, mdt);
-
+     */
     uitrack_run_tick(notif, mt, mdt);
 }
 

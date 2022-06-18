@@ -126,7 +126,8 @@ void StartUiTask(_UNUSED_ void *argument)
 		static TickType_t lasttick = 0;
 		vTaskDelayUntil(&lasttick, 100);
 		//lasttick = HAL_GetTick(); done by vTaskDelayUntil
-		ihm_runtick();
+		tasklet_run(&ihm_tasklet, lasttick);
+		//ihm_runtick();
 	}
 }
 

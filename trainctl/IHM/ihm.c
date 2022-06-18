@@ -59,6 +59,85 @@ extern TIM_HandleTypeDef htim4;
 
 #endif // BOARD_HAS_ROTARY_ENCODER
 
+// ----------------------------------------------------------------
+
+static void ihm_enter_runmode(runmode_t m);
+static void ihm_init(void);
+static void ihm_postmsg_tick(uint32_t, uint32_t);
+
+static msg_handler_t msghandler_for_mode(runmode_t m);
+
+static const tasklet_def_t ihm_tdef = {
+		.init 				= ihm_init,
+		.poll_divisor		= NULL,
+		.emergency_stop 	= NULL,
+		.enter_runmode		= ihm_enter_runmode,
+		.pre_tick_handler	= NULL,
+		.default_msg_handler = NULL,
+		.default_tick_handler = ihm_postmsg_tick,
+		.msg_handler_for	= msghandler_for_mode,
+		.tick_handler_for 	= NULL
+
+};
+tasklet_t ihm_tasklet = { .def = &ihm_tdef, .init_done = 0, .queue=&to_ui};
+
+static void ihmmsg_normal(msg_64_t *m);
+static void ihmmsg_master(msg_64_t *m);
+static void ihmmsg_slave(msg_64_t *m);
+static void ihmmsg_testcan(msg_64_t *m);
+static void ihmmsg_testcanton(msg_64_t *m);
+static void ihmmsg_detect2(msg_64_t *m);
+
+static msg_handler_t msghandler_for_mode(runmode_t m)
+{
+	switch (m) {
+	default:	//FALLTHRU
+	case runmode_off: 		return NULL;
+	case runmode_normal:	return ihmmsg_normal;
+	case runmode_master:	return ihmmsg_master;
+	case runmode_slave:		return ihmmsg_slave;
+	case runmode_testcan:	return ihmmsg_testcan;
+	case runmode_testcanton:return ihmmsg_testcanton;
+	case runmode_detect2:	return ihmmsg_detect2;
+	}
+}
+// ----------------------------------------------------------------
+
+static void ihm_init(void)
+{
+	itm_debug1(DBG_UI, "UI init", 0);
+	// xxx set_dispmode(mode_init);
+	for (int i = 0; i<DISP_MAX_REGS; i++) {
+		ihm_setvar(0, i, 0);
+	}
+}
+
+static void ihm_enter_runmode(runmode_t m)
+{
+	for (int i = 0; i<DISP_MAX_REGS; i++) {
+		ihm_setvar(0, i, 0);
+	}
+	int l = -1;
+	switch (m) {
+	default: //FALLTHRU
+	case runmode_off: 				l = LAYOUT_OFF;  break;
+	case runmode_normal:			l = LAYOUT_AUTO; break;
+	case runmode_detect2:			l = LAYOUT_DETECT1; break;
+	case runmode_detect_experiment: l = LAYOUT_DETECT1; break;
+	case runmode_master:			l = LAYOUT_MASTER; break;
+	case runmode_slave:				l = LAYOUT_SLAVE; break;
+	case runmode_testcan:			l = LAYOUT_TESTCAN; break;
+	case runmode_testcanton:		l = LAYOUT_TESTCANTON; break;
+	/*LAYOUT_DEFAULT
+	LAYOUT_INA3221_DETECT
+	LAYOUT_INA3221_VAL
+	LAYOUT_MANUAL
+	LAYOUT_AUTO*/
+	}
+	ihm_setlayout(0, l);
+}
+
+// ----------------------------------------------------------------
 
 
 static uint8_t needsrefresh_mask;
@@ -66,7 +145,271 @@ static uint8_t needsrefresh_mask;
 #define SET_NEEDSREFRESH(_i) do { needsrefresh_mask = (needsrefresh_mask | (1<<(_i)));} while(0)
 #define NEEDSREFRESH(_i) ((needsrefresh_mask & (1<<(_i))) ? 1 : 0)
 
+
+
+static void ihm_postmsg_tick(_UNUSED_ uint32_t t, _UNUSED_ uint32_t dt)
+{
+	for (int i=0; i<MAX_DISP; i++) {
+		if (NEEDSREFRESH(i)) {
+			disp_layout(i);
+		}
+	}
+}
 // ----------------------------------------------------------------
+// ----------------------------------------------------------------
+// ----------------------------------------------------------------
+
+
+static void ihmmsg_master(_UNUSED_ msg_64_t *m)
+{
+
+}
+static void ihmmsg_slave(_UNUSED_ msg_64_t *m)
+{
+
+}
+static void ihmmsg_testcan(msg_64_t *m)
+{
+
+	switch(m->cmd) {
+    case CMD_CANTEST:
+    	ihm_setvar(0, 0, m->v1u);
+    	SET_NEEDSREFRESH(0);
+    	break;
+    case CMD_CANTEST_RESP:
+    	ihm_setvar(0, 1, m->v1u);
+    	ihm_setvar(0, 2, m->v2u);
+    	SET_NEEDSREFRESH(0);
+    	break;
+
+    default:
+    	itm_debug1(DBG_ERR|DBG_UI, "unhndld msg", m->cmd);
+    	break;
+	}
+}
+
+
+static void ihmmsg_testcanton(msg_64_t *m)
+{
+	switch(m->cmd) {
+
+	case CMD_BEMF_NOTIF:
+		itm_debug3(DBG_UI, "BEMF", m->subc, m->v1, m->v2);
+		int32_t voff = m->v1;
+		int32_t von = m->v2;
+		ihm_setvar(0, 0, m->subc);
+		ihm_setvar(0, 1, von);
+		ihm_setvar(0, 2, voff);
+		SET_NEEDSREFRESH(0);
+		break;
+	case CMD_TRMODE_NOTIF: break;
+	case CMD_SETVPWM:
+		// forwarded by canton for displau
+		itm_debug2(DBG_ERR|DBG_UI, "pvm", m->cmd, m->subc);
+		// we should check m->subc but we dont
+		ihm_setvar(0, 3, m->v1u);	// volt idx
+		ihm_setvar(0, 4, m->v2);		// pwm
+		break;
+	default:
+		itm_debug1(DBG_ERR|DBG_UI, "unhndld msg", m->cmd);
+		break;
+	}
+}
+
+static void ihmmsg_detect2(msg_64_t *m)
+{
+	switch(m->cmd) {
+
+	case CMD_TRMODE_NOTIF:
+		break;
+	case CMD_UI_DETECT:
+		if (m->v1 >= 0) {
+			ihm_setvar(0, 0, m->v1u);
+			ihm_setvar(0, 1, m->v2u);
+		} else {
+			ihm_setvar(0, 0, 999);
+		}
+		SET_NEEDSREFRESH(0);
+		break;
+
+		/*
+        case CMD_BEMF_NOTIF:
+    		ihm_setvar(0, 5, m->v2); //Von
+    		ihm_setvar(0, 6, m->v1); //Voff
+    		SET_NEEDSREFRESH(0);
+    		break;
+        case CMD_INA3221_VAL1:
+        	ihm_setvar(0, 7, m->v1);
+        	SET_NEEDSREFRESH(0);
+        	break;
+		 */
+
+	default:
+		itm_debug1(DBG_ERR|DBG_UI, "unhndld msg", m->cmd);
+		break;
+	}
+}
+
+
+typedef enum {
+	mode_init = 0,
+	mode_ina_detect,
+	mode_ina_val,
+	mode_manual,
+	mode_auto
+} ihm_mode_t;
+
+// TODO : change this for per display struct
+static ihm_mode_t ihm_dispmode = mode_init;
+//static int ihm_train = 0;
+
+static void set_displayout(void)
+{
+	switch (ihm_dispmode) {
+	default:
+	case mode_init: 	  	ihm_setlayout(0, LAYOUT_INIT); break;
+	case mode_ina_detect:	ihm_setlayout(0, LAYOUT_INA3221_DETECT); break;
+	case mode_ina_val:		ihm_setlayout(0, LAYOUT_INA3221_VAL); break;
+
+	case mode_manual:		ihm_setlayout(0, LAYOUT_MANUAL); break;
+	case mode_auto: 		ihm_setlayout(0, LAYOUT_AUTO); break;
+	}
+	SET_NEEDSREFRESH(0);
+}
+
+static int is_special_dispmode(void)
+{
+	switch (ihm_dispmode) {
+	default:
+	case mode_init: 	  	return 0;
+	case mode_ina_detect:	return 1;
+	case mode_ina_val:		return 1;
+
+	case mode_manual:		return 0;
+	case mode_auto: 		return 0;
+	}
+}
+
+static void set_dispmode(ihm_mode_t m)
+{
+	if (ihm_dispmode == m) return;
+	ihm_dispmode = m;
+	set_displayout();
+}
+
+static void ihmmsg_normal(msg_64_t *m)
+{
+	switch(m->cmd) {
+	default:
+		break;
+
+	case CMD_SETVPWM:	// TODO remove
+	//if (test_mode) ui_canton_pwm(m->from, m->v1u, m->v2);
+		return;
+		break;
+	case CMD_VOFF_NOTIF:
+		if (NOTIF_VOFF && (!is_special_dispmode())) {
+			ihm_setvar(0, 2, m->v1/2);
+			SET_NEEDSREFRESH(0);
+		}
+		return;
+		break;
+	}
+	if (MA1_IS_CTRL(m->from)) {
+		int trnum = MA1_TRAIN(m->from);
+		if (trnum != 0) return; // TODO here we only display train 0
+		switch (m->cmd) {
+		case CMD_TRTSPD_NOTIF:
+			itm_debug2(DBG_UI|DBG_CTRL, "rx tspd notif", trnum, m->v1u);
+			// TODO trnum -> display num
+			if (!NOTIF_VOFF && ((ihm_dispmode == mode_manual) || (ihm_dispmode == mode_auto))) {
+				ihm_setvar(0, 2, m->v2 * m->v1u);
+				SET_NEEDSREFRESH(0);
+			}
+			return;
+			break;
+
+		case CMD_TRMODE_NOTIF:
+			// TODO
+			if (!is_special_dispmode()) {
+				train_mode_t cm = (train_mode_t) m->v1u;
+				switch (cm) {
+				default:
+				case train_notrunning:
+					set_dispmode(mode_init);
+					break;
+				case train_manual:
+				case train_fullmanual:
+					set_dispmode(mode_manual);
+					break;
+				case train_auto:
+					set_dispmode(mode_auto);
+					break;
+				}
+			}
+			return;
+			break;
+		case CMD_TRSTATE_NOTIF:
+			if (!is_special_dispmode()) {
+				ihm_setvar(0, 3, 10+m->v1u);
+				SET_NEEDSREFRESH(0);
+			}
+			return;
+			break;
+			//case CMD_UI_MSG:
+			//	break; // see below
+		default:
+			itm_debug1(DBG_UI, "unk ctl", m->cmd);
+			return;
+			break;
+		}
+	}
+	if (MA3_UI_GEN == m->to) {
+		int dn = m->to & 0x1F;
+		if (dn != 1) {
+			itm_debug1(DBG_UI, "?dn", dn);
+			return;
+		}
+		switch (m->cmd) {
+		//case CMD_UI_MSG:
+		//	//ui_msg5(dn, (char *) m->rbytes+1);
+		break;
+		case CMD_INA3221_REPORT:
+			if (ihm_dispmode == mode_ina_val) {
+				int16_t *values = (int16_t *) m->v32u;
+				for (int i =0; i<12; i++) {
+					ihm_setvar(0, i, values[i]);
+				}
+				SET_NEEDSREFRESH(0);
+			}
+			break;
+
+		default:
+			itm_debug1(DBG_UI, "cmd?", m->cmd);
+			break;
+		}
+	} else {
+		itm_debug1(DBG_UI, "non ui msg", 0);
+	}
+}
+
+
+
+
+// ----------------------------------------------------------------
+// ----------------------------------------------------------------
+
+void local_ui_fatal(void)
+{
+	ihm_setlayout(0, LAYOUT_FATAL);
+	disp_layout(0);
+	Error_Handler();
+	for (;;);
+}
+
+// ----------------------------------------------------------------
+// ----------------------------------------------------------------
+
 
 #ifdef BOARD_HAS_ROTARY_ENCODER
 
@@ -109,14 +452,7 @@ static int16_t get_srotary(TIM_HandleTypeDef *ptdef)
 
 
 
-// ----------------------------------------------------------------------------------
-// global run mode, each tasklet implement this
-static runmode_t run_mode = 0;
-//static uint8_t testerAddr;
-
-
-// ----------------------------------------------------------------------------------
-
+#if 0
 static void ihm_runtick_normal(int);
 static void ihm_runtick_off(int);
 //static void ihm_runtick_detect(int);
@@ -147,6 +483,10 @@ void ihm_runtick(void)
 }
 // -----------------------------------------------------------------------
 
+#endif
+
+#if 0 // OLD
+
 void local_ui_fatal(void)
 {
 	ihm_setlayout(0, LAYOUT_FATAL);
@@ -154,6 +494,7 @@ void local_ui_fatal(void)
 	Error_Handler();
 	for (;;);
 }
+
 
 static void ui_process_msg(void);
 
@@ -868,3 +1209,5 @@ static void ui_process_msg_testcanton(void)
 		}
 	}
 }
+
+#endif // OLD

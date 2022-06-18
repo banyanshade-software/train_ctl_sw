@@ -20,7 +20,7 @@
 #include "main.h"
 #include "task.h"
 #include "taskctrl.h"
-
+#include "../misc.h"
 #include "../msg/trainmsg.h"
 #include "../msg/tasklet.h"
 
@@ -323,6 +323,28 @@ volatile uint32_t t0ctrl = 0;
  * main tasklet loop
  *
  */
+
+static const tasklet_t *ctrlTasklets[] = {
+#ifdef BOARD_HAS_CTRL
+		&spdctl_tasklet,
+#endif
+#ifdef BOARD_HAS_CANTON
+		&canton_tasklet,
+#endif
+
+#ifdef BOARD_HAS_TURNOUTS
+		&turnout_tasklet,
+#endif
+#ifdef BOARD_HAS_CTRL
+		&ctrl_tasklet,
+		&stattx_tasklet,
+#endif
+
+#ifdef BOARD_HAS_CAN
+
+#endif
+		NULL
+};
 static void run_task_ctrl(void)
 {
 	int cnt = 0;

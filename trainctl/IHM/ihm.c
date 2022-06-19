@@ -18,7 +18,7 @@
 #include "../utils/itm_debug.h"
 #include "../msg/trainmsg.h"
 
-
+#include "button.h"
 
 #ifndef BOARD_HAS_IHM
 #error BOARD_HAS_IHM not defined, remove this file from build
@@ -453,6 +453,14 @@ static int16_t get_srotary(TIM_HandleTypeDef *ptdef)
 
 #endif // BOARD_HAS_ROTARY_ENCODER
 
+#ifdef BOARD_HAS_TWO_BUTTONS
+static const ihm_button_def_t b1def = { .port = ROT1_GPIO_Port, .pin = ROT1_Pin};
+static ihm_button_t button1 = { .def = &b1def };
+static const ihm_button_def_t b2def = { .port = ROT2_GPIO_Port, .pin = ROT2_Pin};
+static ihm_button_t button2 = { .def = &b2def };
+
+#endif
+
 
 static void ihm_handle_inputs(_UNUSED_ uint32_t t, _UNUSED_ uint32_t dt)
 {
@@ -504,6 +512,9 @@ static void ihm_handle_inputs(_UNUSED_ uint32_t t, _UNUSED_ uint32_t dt)
 	}
 #endif //  BOARD_HAS_ROTARY_ENCODER
 #ifdef BOARD_HAS_TWO_BUTTONS
+	int b1 = ihm_poll_button(&button1, t);
+	int b2 = ihm_poll_button(&button2, t);
+
 #endif
 }
 

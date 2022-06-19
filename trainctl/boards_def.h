@@ -103,6 +103,8 @@
 #define BOARD_HAS_IHM
 #ifdef TRN_BOARD_MAINV0
 #define BOARD_HAS_ROTARY_ENCODER
+#else
+#define BOARD_HAS_TWO_BUTTONS
 #endif
 
 #define BOARD_HAS_UI_GEN

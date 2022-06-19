@@ -39,8 +39,8 @@
 #endif
 
 // Mirror the screen if needed
-// #define SSD1306_MIRROR_VERT
-// #define SSD1306_MIRROR_HORIZ
+#define SSD1306_MIRROR_VERT
+#define SSD1306_MIRROR_HORIZ
 
 // Set inverse color if needed
 // # define SSD1306_INVERSE_COLOR

@@ -547,7 +547,7 @@ static void ui_process_msg_d1(void)
         	break;
 
         default:
-        	itm_debug1(DBG_ERR|DBG_UI, "unhndld msg", m.cmd);
+        	itm_debug1(DBG_ERR|DBG_UI, "unhnd msgd1", m.cmd);
         	break;
 		}
 	}
@@ -625,7 +625,7 @@ static void ui_process_msg_d2(void)
         	*/
 
         default:
-        	itm_debug1(DBG_ERR|DBG_UI, "unhndld msg", m.cmd);
+        	itm_debug1(DBG_ERR|DBG_UI, "unhnd msgd2", m.cmd);
         	break;
 		}
 	}
@@ -687,7 +687,7 @@ static void ui_process_msg_testcan(void)
         	break;
 
         default:
-        	itm_debug1(DBG_ERR|DBG_UI, "unhndld msg", m.cmd);
+        	itm_debug1(DBG_ERR|DBG_UI, "unhnd msgc", m.cmd);
         	break;
 		}
 	}
@@ -741,8 +741,12 @@ static void ui_process_msg_master(void)
             return;
             break;
 
+        case CMD_PARAM_LUSER_VAL:
+        	break; /* TODO: when OS X GUI request param values, reply is sent to both
+        			* USB and local GUI. Fix this by using separate address ?
+        			*/
         default:
-        	itm_debug1(DBG_ERR|DBG_UI, "unhndld msg", m.cmd);
+        	itm_debug1(DBG_ERR|DBG_UI, "unhnd msgm", m.cmd);
         	break;
 		}
 	}
@@ -794,7 +798,7 @@ static void ui_process_msg_slave(void)
             break;
 
         default:
-        	itm_debug1(DBG_ERR|DBG_UI, "unhndld msg", m.cmd);
+        	itm_debug1(DBG_ERR|DBG_UI, "unhand msgs", m.cmd);
         	break;
 		}
 	}
@@ -863,7 +867,7 @@ static void ui_process_msg_testcanton(void)
         	ihm_setvar(0, 4, m.v2);		// pwm
         	break;
         default:
-        	itm_debug1(DBG_ERR|DBG_UI, "unhndld msg", m.cmd);
+        	itm_debug1(DBG_ERR|DBG_UI, "unhnd msgt", m.cmd);
         	break;
 		}
 	}

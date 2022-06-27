@@ -111,6 +111,8 @@ static void ihm_init(void)
 	for (int i = 0; i<DISP_MAX_REGS; i++) {
 		ihm_setvar(0, i, 0);
 	}
+	ihm_setlayout(0, LAYOUT_DEFAULT);
+	disp_layout(0);
 }
 
 static void ihm_enter_runmode(runmode_t m)
@@ -141,7 +143,7 @@ static void ihm_enter_runmode(runmode_t m)
 // ----------------------------------------------------------------
 
 
-static uint8_t needsrefresh_mask;
+static uint8_t needsrefresh_mask = 0;
 
 #define SET_NEEDSREFRESH(_i) do { needsrefresh_mask = (needsrefresh_mask | (1<<(_i)));} while(0)
 #define NEEDSREFRESH(_i) ((needsrefresh_mask & (1<<(_i))) ? 1 : 0)
@@ -155,6 +157,7 @@ static void ihm_postmsg_tick(_UNUSED_ uint32_t t, _UNUSED_ uint32_t dt)
 			disp_layout(i);
 		}
 	}
+	needsrefresh_mask = 0;
 }
 // ----------------------------------------------------------------
 
@@ -512,8 +515,11 @@ static void ihm_handle_inputs(_UNUSED_ uint32_t t, _UNUSED_ uint32_t dt)
 	}
 #endif //  BOARD_HAS_ROTARY_ENCODER
 #ifdef BOARD_HAS_TWO_BUTTONS
-	int b1 = ihm_poll_button(&button1, t);
-	int b2 = ihm_poll_button(&button2, t);
+	int bt1 = ihm_poll_button(&button1, t);
+	int bt2 = ihm_poll_button(&button2, t);
+	if (bt1 || bt2) {
+		itm_debug2(DBG_UI, "button", bt1, bt2);
+	}
 
 #endif
 }

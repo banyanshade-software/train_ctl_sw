@@ -244,7 +244,8 @@ static void handle_ina_notif(uint32_t notif)
 			if (reg==2){
 				dev = _next_dev(dev);
 				if (dev >= 0) {
-					state = (state_rd_0 + dev) * 3;
+					// state = (state_rd_0 + dev) * 3; oups !!!
+					state = state_rd_0 + dev * 3;
 					_reg_read(dev, 0);
 				} else {
 					_read_complete(0);
@@ -302,22 +303,40 @@ static void _ina3221_configure(int a, int continuous)
     }
     _UNUSED_ uint16_t cnfar = ina3221_read16(a,  INA3221_REG_CONFIG);
 
-    w16 = INA3221_CONF_CH1_EN | INA3221_CONF_CH2_EN | INA3221_CONF_CH3_EN
+
+    const int usealrm = 0;
+    // by setting MODE_SHUNT and configuring CH1_CRIT_LIM, we can
+    // use the "critical" led, which will twinckle e.g. to identify physical module
+
+    if ((!usealrm)) {
+    	w16 = INA3221_CONF_CH1_EN | INA3221_CONF_CH2_EN | INA3221_CONF_CH3_EN
     		| INA3221_CONF_VS_CT_140u
 			| INA3221_CONF_MODE_SHUNT;
+    } else {
+    	w16 = INA3221_CONF_CH1_EN | INA3221_CONF_CH2_EN | INA3221_CONF_CH3_EN
+    		| INA3221_CONF_VS_CT_140u
+			| INA3221_CONF_MODE_SHUNT
+			| INA3221_CONF_MODE_BUSV
+			;
+    }
     w16 |= (continuous ? INA3221_CONF_AVG16 : INA3221_CONF_AVG1);
 
     if (continuous) w16 |= INA3221_CONF_MODE_CONTINUOUS;
 	ina_conf_val = w16;
 	int rc = ina3221_write16(a, INA3221_REG_CONFIG, w16);
     if ((0)) osDelay(100*1);
+
+    if ((usealrm)) {
+    	ina3221_write16(a, INA3221_REG_CH1_CRIT_LIM, 1);
+    }
+
     if (rc) bkpoint(101, rc);
     rc = ina3221_write16(a, INA3221_REG_MASK_ENABLE, 0);
     if (rc) bkpoint(102, rc);
 
     _UNUSED_ uint16_t cnfac = ina3221_read16(a,  INA3221_REG_CONFIG);
 
-    return;
+
 }
 
 void _ina3221_init(int continuous)
@@ -330,13 +349,25 @@ void _ina3221_init(int continuous)
         res = HAL_I2C_IsDeviceReady(&INA3221_I2C_PORT, addr << 1, 1, 10);
         if (res == HAL_OK) {
         	_ina3221_configure(addr, continuous);
-        	itm_debug2(DBG_PRES|DBG_INA3221, "INA@", dev, addr);
+        	itm_debug2(DBG_PRES|DBG_INA3221, "INA@", dev, addr); // 0x40 0x43
         	ina3221_devices[dev]=1;
         } else {
         	ina3221_devices[dev]=0;
         }
 	}
 	ina3221_init_done = 1;
+
+	/*if ((0)) {
+		for (;;) {
+			for (int dev=0; dev<4; dev++) {
+				if (!ina3221_devices[dev]) continue;
+				osDelay(500);
+				int addr = 0x40 + dev;
+				uint16_t me = ina3221_read16(addr,  INA3221_REG_MASK_ENABLE);
+				itm_debug2(DBG_INA3221, "me", dev, me);
+			}
+		}
+	}*/
 }
 
 static void ina3221_init_and_configure(void)

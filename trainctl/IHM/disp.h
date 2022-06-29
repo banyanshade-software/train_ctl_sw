@@ -42,11 +42,11 @@ void disp_layout(int numdisp);
 #define LAYOUT_FATAL	22	// diag : fatal error display
 
 
-void ihm_setlayout(int numdisp, int numlayout);
+void disp_setlayout(int numdisp, int numlayout);
 
 #define DISP_MAX_REGS 16
-void ihm_setvar(int numdisp, int varnum, uint16_t val);
-uint16_t ihm_getvar(int numdisp, int varnum);
+void disp_setvar(int numdisp, int varnum, uint16_t val);
+uint16_t disp_getvar(int numdisp, int varnum);
 
 /* ihm vars for init/manual/auto :
 0 = train num

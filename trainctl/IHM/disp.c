@@ -248,7 +248,7 @@ static const uint8_t layout_testcanton[] = {
 		CODE_END
 };
 
-void ihm_setlayout(int numdisp, int numlayout)
+void disp_setlayout(int numdisp, int numlayout)
 {
 	const uint8_t *p = NULL;
 	switch (numlayout) {
@@ -367,20 +367,20 @@ static const char *ui_strings[] = {
 
 static uint16_t regs[DISP_MAX_REGS][MAX_DISP];
 
-void ihm_setvar(int numdisp, int varnum, uint16_t val)
+void disp_setvar(int numdisp, int varnum, uint16_t val)
 {
 	if (varnum>DISP_MAX_REGS) return;
 	if (numdisp>MAX_DISP) return;
 	regs[varnum][numdisp] = val;
 }
-uint16_t ihm_getvar(int numdisp, int varnum)
+uint16_t disp_getvar(int numdisp, int varnum)
 {
 	if (varnum>DISP_MAX_REGS) return 0;
 	if (numdisp>MAX_DISP) return 0;
 	return regs[varnum][numdisp];
 }
 
-#define _GET_REG(_disp, _reg) (ihm_getvar(_disp, _reg))
+#define _GET_REG(_disp, _reg) (disp_getvar(_disp, _reg))
 
 // ----------------------------------------------------------------
 

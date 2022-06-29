@@ -111,7 +111,7 @@ static msg_handler_t msghandler_for_mode(runmode_t m)
 // ----------------------------------------------------------------
 // ----------------------------------------------------------------
 
-static ihm_disp_state_t disp_state[MAX_DISP];
+static ihm_disp_state_t ihmdisp_state[MAX_DISP];
 
 // ----------------------------------------------------------------
 // ----------------------------------------------------------------
@@ -122,16 +122,16 @@ static ihm_disp_state_t disp_state[MAX_DISP];
 static void ihm_init(void)
 {
 	itm_debug1(DBG_UI, "UI init", 0);
-	memset(disp_state, 0, sizeof(disp_state));
+	memset(ihmdisp_state, 0, sizeof(ihmdisp_state));
 
 	// xxx set_dispmode(mode_init);
 	for (int d=0; d < MAX_DISP; d++) {
 		for (int i = 0; i<DISP_MAX_REGS; i++) {
-			ihm_setvar(0, i, 0);
+			disp_setvar(0, i, 0);
 		}
-		disp_state[d].screen = &ihm_screen_init;
-		ihm_screen_set_train_mode(&disp_state[d], train_notrunning);
-		ihm_setlayout(d, disp_state[d].screen->layout);
+		ihmdisp_state[d].screen = &ihm_screen_init;
+		ihm_screen_set_train_mode(&ihmdisp_state[d], train_notrunning);
+		disp_setlayout(d, ihmdisp_state[d].screen->layout);
 		disp_layout(d);
 
 	}
@@ -150,9 +150,9 @@ static uint8_t needsrefresh_mask = 0;
 static void ihm_postmsg_tick(_UNUSED_ uint32_t t, _UNUSED_ uint32_t dt)
 {
 	for (int i=0; i<MAX_DISP; i++) {
-		int rc = ihm_screen_handle(&disp_state[i]);
+		int rc = ihm_screen_handle(&ihmdisp_state[i]);
 		if (rc) {
-			ihm_setlayout(i, disp_state[i].screen->layout);
+			disp_setlayout(i, ihmdisp_state[i].screen->layout);
 			SET_NEEDSREFRESH(i);
 		}
 		if (NEEDSREFRESH(i)) {
@@ -167,7 +167,7 @@ static void ihm_postmsg_tick(_UNUSED_ uint32_t t, _UNUSED_ uint32_t dt)
 static void ihm_enter_runmode(runmode_t m)
 {
 	for (int i = 0; i<DISP_MAX_REGS; i++) {
-		ihm_setvar(0, i, 0);
+		disp_setvar(0, i, 0);
 	}
 	const screen_t *s = NULL;
 	switch (m) {
@@ -187,8 +187,8 @@ static void ihm_enter_runmode(runmode_t m)
 	LAYOUT_AUTO*/
 	}
 	if (s) {
-		disp_state[0].screen = s;
-		ihm_setlayout(0, disp_state[0].screen->layout);
+		ihmdisp_state[0].screen = s;
+		disp_setlayout(0, ihmdisp_state[0].screen->layout);
 		SET_NEEDSREFRESH(0);
 	}
 	// TODO : other display
@@ -209,7 +209,7 @@ static int  ihmmsg_common(msg_64_t *m)
 			// TODO
 			tn = MA1_TRAIN(m->from);
 			if (tn >= MAX_DISP) break;
-			ihm_screen_set_train_mode(&disp_state[tn], (train_mode_t) m->v1u);
+			ihm_screen_set_train_mode(&ihmdisp_state[tn], (train_mode_t) m->v1u);
 			break;
 			/*
 			if (!is_special_dispmode()) {
@@ -255,12 +255,12 @@ static void ihmmsg_testcan(msg_64_t *m)
 
 	switch(m->cmd) {
     case CMD_CANTEST:
-    	ihm_setvar(0, 0, m->v1u);
+    	disp_setvar(0, 0, m->v1u);
     	SET_NEEDSREFRESH(0);
     	break;
     case CMD_CANTEST_RESP:
-    	ihm_setvar(0, 1, m->v1u);
-    	ihm_setvar(0, 2, m->v2u);
+    	disp_setvar(0, 1, m->v1u);
+    	disp_setvar(0, 2, m->v2u);
     	SET_NEEDSREFRESH(0);
     	break;
 
@@ -281,17 +281,17 @@ static void ihmmsg_testcanton(msg_64_t *m)
 		itm_debug3(DBG_UI, "BEMF", m->subc, m->v1, m->v2);
 		int32_t voff = m->v1;
 		int32_t von = m->v2;
-		ihm_setvar(0, 0, m->subc);
-		ihm_setvar(0, 1, von);
-		ihm_setvar(0, 2, voff);
+		disp_setvar(0, 0, m->subc);
+		disp_setvar(0, 1, von);
+		disp_setvar(0, 2, voff);
 		SET_NEEDSREFRESH(0);
 		break;
 	case CMD_SETVPWM:
 		// forwarded by canton for displau
 		itm_debug2(DBG_ERR|DBG_UI, "pvm", m->cmd, m->subc);
 		// we should check m->subc but we dont
-		ihm_setvar(0, 3, m->v1u);	// volt idx
-		ihm_setvar(0, 4, m->v2);		// pwm
+		disp_setvar(0, 3, m->v1u);	// volt idx
+		disp_setvar(0, 4, m->v2);		// pwm
 		break;
 	default:
 		itm_debug1(DBG_ERR|DBG_UI, "unhndld msg", m->cmd);
@@ -308,18 +308,18 @@ static void ihmmsg_detect2(msg_64_t *m)
 
 	case CMD_UI_DETECT:
 		if (m->v1 >= 0) {
-			ihm_setvar(0, 0, m->v1u);
-			ihm_setvar(0, 1, m->v2u);
+			disp_setvar(0, 0, m->v1u);
+			disp_setvar(0, 1, m->v2u);
 		} else {
-			ihm_setvar(0, 0, 999);
+			disp_setvar(0, 0, 999);
 		}
 		SET_NEEDSREFRESH(0);
 		break;
 
 		/*
         case CMD_BEMF_NOTIF:
-    		ihm_setvar(0, 5, m->v2); //Von
-    		ihm_setvar(0, 6, m->v1); //Voff
+    		disp_setvar(0, 5, m->v2); //Von
+    		disp_setvar(0, 6, m->v1); //Voff
     		SET_NEEDSREFRESH(0);
     		break;
         case CMD_INA3221_VAL1:
@@ -397,7 +397,7 @@ static void ihmmsg_normal(msg_64_t *m)
 		break;
 	case CMD_VOFF_NOTIF:
 		if (NOTIF_VOFF /*&& (!is_special_dispmode())*/) {
-			ihm_setvar(0, 2, m->v1/2);
+			disp_setvar(0, 2, m->v1/2);
 			SET_NEEDSREFRESH(0);
 		}
 		return;
@@ -411,7 +411,7 @@ static void ihmmsg_normal(msg_64_t *m)
 			itm_debug2(DBG_UI|DBG_CTRL, "rx tspd notif", trnum, m->v1u);
 			// TODO trnum -> display num
 			if (!NOTIF_VOFF /*&& ((ihm_dispmode == mode_manual) || (ihm_dispmode == mode_auto))*/) {
-				ihm_setvar(0, 2, m->v2 * m->v1u);
+				disp_setvar(0, 2, m->v2 * m->v1u);
 				SET_NEEDSREFRESH(0);
 			}
 			return;
@@ -421,7 +421,7 @@ static void ihmmsg_normal(msg_64_t *m)
 
 		case CMD_TRSTATE_NOTIF:
 			if (/*!is_special_dispmode()*/(1)) {
-				ihm_setvar(0, 3, 10+m->v1u);
+				disp_setvar(0, 3, 10+m->v1u);
 				SET_NEEDSREFRESH(0);
 			}
 			return;
@@ -471,7 +471,7 @@ static void ihmmsg_normal(msg_64_t *m)
 
 void local_ui_fatal(void)
 {
-	ihm_setlayout(0, LAYOUT_FATAL);
+	disp_setlayout(0, LAYOUT_FATAL);
 	disp_layout(0);
 	Error_Handler();
 	for (;;);
@@ -583,8 +583,8 @@ static void ihm_handle_inputs(_UNUSED_ uint32_t t, _UNUSED_ uint32_t dt)
 	int bt2 = ihm_poll_button(&button2, t);
 	// button1 and button2 are linked to display 0
 	// TODO : a more generic button->display mapping
-	if (bt1) disp_state[0].pending_events |= IHM_EVT_BUTTON_A;
-	if (bt2) disp_state[0].pending_events |= IHM_EVT_BUTTON_B;
+	if (bt1) ihmdisp_state[0].pending_events |= IHM_EVT_BUTTON_A;
+	if (bt2) ihmdisp_state[0].pending_events |= IHM_EVT_BUTTON_B;
 	if (bt1 || bt2) {
 		itm_debug2(DBG_UI, "button", bt1, bt2);
 	}
@@ -632,7 +632,7 @@ void ihm_runtick(void)
 
 void local_ui_fatal(void)
 {
-	ihm_setlayout(0, LAYOUT_FATAL);
+	disp_setlayout(0, LAYOUT_FATAL);
 	disp_layout(0);
 	Error_Handler();
 	for (;;);
@@ -657,12 +657,12 @@ static void set_displayout(void)
 {
 	switch (ihm_dispmode) {
 	default:
-	case mode_init: 	  	ihm_setlayout(0, LAYOUT_INIT); break;
-	case mode_ina_detect:	ihm_setlayout(0, LAYOUT_INA3221_DETECT); break;
-	case mode_ina_val:		ihm_setlayout(0, LAYOUT_INA3221_VAL); break;
+	case mode_init: 	  	disp_setlayout(0, LAYOUT_INIT); break;
+	case mode_ina_detect:	disp_setlayout(0, LAYOUT_INA3221_DETECT); break;
+	case mode_ina_val:		disp_setlayout(0, LAYOUT_INA3221_VAL); break;
 
-	case mode_manual:		ihm_setlayout(0, LAYOUT_MANUAL); break;
-	case mode_auto: 		ihm_setlayout(0, LAYOUT_AUTO); break;
+	case mode_manual:		disp_setlayout(0, LAYOUT_MANUAL); break;
+	case mode_auto: 		disp_setlayout(0, LAYOUT_AUTO); break;
 	}
 	SET_NEEDSREFRESH(0);
 }
@@ -914,7 +914,7 @@ void ihm_runtick_off(int init)
 
 	if (init) {
 		itm_debug1(DBG_UI, "UI init", 0);
-		ihm_setlayout(0, LAYOUT_OFF);
+		disp_setlayout(0, LAYOUT_OFF);
 		for (int i = 0; i<DISP_MAX_REGS; i++) {
 			ihm_setvar(0, i, 0);
 		}
@@ -947,7 +947,7 @@ static void ihm_runtick_detect1(int init)
 		voltidx = 7;
 		osDelay(500); // ugly : make sure other tasklet are ready. TODO : fix this
 		itm_debug1(DBG_UI, "UI init", 0);
-		ihm_setlayout(0, LAYOUT_DETECT1);
+		disp_setlayout(0, LAYOUT_DETECT1);
 		for (int i = 0; i<DISP_MAX_REGS; i++) {
 			ihm_setvar(0, i, 0);
 		}
@@ -1051,7 +1051,7 @@ static void ihm_runtick_detect2(int init)
 	if (init) {
 		//osDelay(500); // ugly : make sure other tasklet are ready. TODO : fix this
 		itm_debug1(DBG_UI, "UI init", 0);
-		ihm_setlayout(0, LAYOUT_DETECT2);
+		disp_setlayout(0, LAYOUT_DETECT2);
     	SET_NEEDSREFRESH(0);
 
 		for (int i = 0; i<DISP_MAX_REGS; i++) {
@@ -1127,7 +1127,7 @@ static void ihm_runtick_testcan(int init)
 
 	if (init) {
 		itm_debug1(DBG_UI, "UI init", 0);
-		ihm_setlayout(0, LAYOUT_TESTCAN);
+		disp_setlayout(0, LAYOUT_TESTCAN);
     	SET_NEEDSREFRESH(0);
 
 		for (int i = 0; i<DISP_MAX_REGS; i++) {
@@ -1191,7 +1191,7 @@ static void ihm_runtick_master(int init)
 
 	if (init) {
 		itm_debug1(DBG_UI, "UI init", 0);
-		ihm_setlayout(0, LAYOUT_MASTER);
+		disp_setlayout(0, LAYOUT_MASTER);
     	SET_NEEDSREFRESH(0);
 
 		for (int i = 0; i<DISP_MAX_REGS; i++) {
@@ -1247,7 +1247,7 @@ static void ihm_runtick_slave(int init)
 
 	if (init) {
 		itm_debug1(DBG_UI, "UI init", 0);
-		ihm_setlayout(0, LAYOUT_SLAVE);
+		disp_setlayout(0, LAYOUT_SLAVE);
     	SET_NEEDSREFRESH(0);
 
 		for (int i = 0; i<DISP_MAX_REGS; i++) {
@@ -1299,7 +1299,7 @@ static void ihm_runtick_testcanton(int init)
 
 	if (init) {
 		itm_debug1(DBG_UI, "UI init", 0);
-		ihm_setlayout(0, LAYOUT_TESTCANTON);
+		disp_setlayout(0, LAYOUT_TESTCANTON);
     	SET_NEEDSREFRESH(0);
 
 		for (int i = 0; i<DISP_MAX_REGS; i++) {

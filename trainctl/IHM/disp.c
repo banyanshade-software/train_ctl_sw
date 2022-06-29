@@ -179,6 +179,11 @@ static const uint8_t layout_auto[] = {
 		CODE_END
 };
 
+static const uint8_t layout_no_train[] = {
+		CODE_ZONE_STATUS, 	CODE_STR|4, CODE_DIGIT, 0, CODE_STR|10,
+		CODE_END
+};
+
 static const uint8_t layout_ina3221_i2c[] = {
 		CODE_ZONE_TEXT0Ls, CODE_STR|21, CODE_DIGIT, 0,
 		CODE_ZONE_TEXT0Rs, CODE_STR|22, CODE_DIGIT, 1,
@@ -252,11 +257,17 @@ void ihm_setlayout(int numdisp, int numlayout)
 	case LAYOUT_INIT:
 		p = layout_init;
 		break;
+	case LAYOUT_OFF:
+		p = layout_off;
+		break;
 	case LAYOUT_MANUAL: // speed mode
 		p = layout_manual;
 		break;
 	case LAYOUT_AUTO:
 		p = layout_auto;
+		break;
+	case LAYOUT_NO_TRAIN:
+		p = layout_no_train;
 		break;
 	case LAYOUT_INA3221_DETECT: // ina3221 I2C detection
 		p = layout_ina3221_i2c;
@@ -264,9 +275,7 @@ void ihm_setlayout(int numdisp, int numlayout)
 	case LAYOUT_INA3221_VAL:
 		p = layout_ina3221_val;
 		break;
-	case LAYOUT_OFF:
-		p = layout_off;
-		break;
+
 	case LAYOUT_DETECT1:
 		p = layout_detect1;
 		break;

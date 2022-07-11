@@ -23,8 +23,11 @@ typedef struct screen {
 #define IHM_EVT_BUTTON_A		(1<<1)
 #define IHM_EVT_BUTTON_B		(1<<2)
 
+#define SCREEN_STACK 3
+
 typedef struct {
 	const screen_t *screen;
+	const screen_t *stack[SCREEN_STACK];
 	uint32_t pending_events;
 	train_mode_t trainmode;
 } ihm_disp_state_t;

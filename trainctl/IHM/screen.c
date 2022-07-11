@@ -14,6 +14,9 @@
 #include "../ctrl/ctrl.h"
 #include "screen.h"
 
+// dummy screen to use stack pop
+const screen_t screen_return = { 0 };
+
 const screen_t ihm_screen_init = {
 		.layout = LAYOUT_DEFAULT,
 };
@@ -24,26 +27,31 @@ const screen_t ihm_screen_off = {
 
 const screen_t *_handle_normal_trainmode(train_mode_t tm);
 
+
+
+const screen_t ihm_screen_master = {
+		.layout = LAYOUT_MASTER,
+		.button_a_screen = &screen_return,
+};
+
 const screen_t ihm_screen_train_auto = {
 		.layout = LAYOUT_AUTO,
 		.handle_trainmode = _handle_normal_trainmode,
+		.button_a_screen = &ihm_screen_master,
 };
 
 
 const screen_t ihm_screen_train_manual = {
 		.layout = LAYOUT_AUTO,
-		.handle_trainmode = _handle_normal_trainmode
+		.handle_trainmode = _handle_normal_trainmode,
+		.button_a_screen = &ihm_screen_master,
 };
 
 
 const screen_t ihm_screen_train_off = {
 		.layout = LAYOUT_NO_TRAIN,
-		.handle_trainmode = _handle_normal_trainmode
-};
-
-
-const screen_t ihm_screen_master = {
-		.layout = LAYOUT_MASTER,
+		.handle_trainmode = _handle_normal_trainmode,
+		.button_a_screen = &ihm_screen_master,
 };
 
 
@@ -80,6 +88,35 @@ const screen_t *_handle_normal_trainmode(train_mode_t tm)
 
 
 // ----------------------------------
+static void screen_push(ihm_disp_state_t *state)
+{
+	for (int i=SCREEN_STACK-1; i>0; i--) {
+		state->stack[i]=state->stack[i-1];
+	}
+	state->stack[0] = state->screen;
+}
+
+static const screen_t *screen_pop(ihm_disp_state_t *state)
+{
+	const screen_t *r = NULL;
+	r = state->stack[0];
+	if (!r) return r;
+	for (int i=0; i<SCREEN_STACK-2; i++) {
+		state->stack[i] = state->stack[i+1];
+	}
+	/*
+	 * note : last item is kept and dup when popping
+	 *  A                A (instead of nil)
+	 *  B	=== pop ==>  A
+	 *  C                B
+	 *  we're ok with that (at least for now
+	 *  (enable line below to set last element of stack to nil )
+	 */
+	if ((0)) state->stack[SCREEN_STACK-1] = NULL;
+	return r;
+
+}
+// ----------------------------------
 
 // events that should be cleared when we change screen
 // typic. user buttons, since their meaning is screen dependant
@@ -89,6 +126,13 @@ const screen_t *_handle_normal_trainmode(train_mode_t tm)
 static int screen_change(ihm_disp_state_t *state, const screen_t *ns)
 {
 	if (ns == state->screen) return 0;
+	if (ns == &screen_return) {
+		ns = screen_pop(state);
+		if (!ns) return 0;
+	}
+	if ((1)) {
+		screen_push(state);
+	}
 	state->screen = ns;
 	state->pending_events &= ~TRANSIANT_EVENT;
 	return 1;

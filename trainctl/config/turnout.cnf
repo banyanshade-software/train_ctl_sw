@@ -44,7 +44,7 @@ table tpin_mainV0
 ;
 
 table tpin_mainV04
-	( portA,    portB,       bA,          bB)
+    ( portA,    portB,       bA,          bB)
     ( GPIOE,    GPIOE,      GPIO_PIN_0,  GPIO_PIN_1)  // TURN1 PE0,PE1
     ( GPIOD,    GPIOD,      GPIO_PIN_0,  GPIO_PIN_1)  // TURN2 PD0,PD1
     ( GPIOC,    GPIOC,      GPIO_PIN_13, GPIO_PIN_11) // TURN3 PC13, PC11

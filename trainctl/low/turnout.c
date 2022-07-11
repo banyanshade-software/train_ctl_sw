@@ -97,11 +97,18 @@ static void turnout_enter_runmode(_UNUSED_ runmode_t m)
 
 static int turnout_poll_divisor(_UNUSED_ uint32_t tick, _UNUSED_ uint32_t dt)
 {
-	// TODO use dt
+	// now use dt
+	if (dt>=45) {
+		return 0;
+	}
+	return 1;
+	/*
 	static int cnt = 0;
 	cnt ++;
+	itm_debug2(DBG_TURNOUT, "tdiv", cnt, dt);
 	if (cnt%4) return 1; // skip
 	return 0;
+	*/
 }
 
 /*
@@ -207,6 +214,7 @@ static void process_turnout_cmd(msg_64_t *m)
 	case CMD_TURNOUT_A:
 		itm_debug2(DBG_TURNOUT, "TA", tidx, avars->value);
 		avars->value = -1;
+		// reset both, and set state. set will be done on timer (TODO: we could set it directly here ?)
 #ifndef TRAIN_SIMU
 	    HAL_GPIO_WritePin(aconf->cmd_portA, aconf->pinA, GPIO_PIN_RESET);
 	    HAL_GPIO_WritePin(aconf->cmd_portB, aconf->pinB, GPIO_PIN_RESET);

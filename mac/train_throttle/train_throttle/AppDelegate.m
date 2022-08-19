@@ -379,6 +379,7 @@ typedef void (^respblk_t)(void);
     int tag = (int) [sender tag];
     int ledNum = 0;
     int brdNum = 0;
+#if 0
     switch (tag) {
         default:
         case 0:
@@ -388,6 +389,9 @@ typedef void (^respblk_t)(void);
             ledNum = 0; brdNum = 1;
             break;
     }
+#else
+    ledNum = tag;
+#endif
     msg_64_t m = {0};
     m.to = MA0_LED(brdNum);
     m.from = MA3_UI_GEN; //(0);

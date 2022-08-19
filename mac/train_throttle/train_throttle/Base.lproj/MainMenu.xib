@@ -846,8 +846,8 @@
                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                     </textField>
-                    <box borderType="bezel" title="Commands" translatesAutoresizingMaskIntoConstraints="NO" id="QAh-kS-wgj">
-                        <rect key="frame" x="155" y="303" width="107" height="55"/>
+                    <box misplaced="YES" borderType="bezel" title="Commands" translatesAutoresizingMaskIntoConstraints="NO" id="QAh-kS-wgj">
+                        <rect key="frame" x="154" y="326" width="107" height="55"/>
                         <view key="contentView" id="WX6-is-BuM">
                             <rect key="frame" x="3" y="3" width="101" height="37"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1821,84 +1821,6 @@
                             </constraints>
                         </view>
                     </box>
-                    <box misplaced="YES" borderType="line" title="LED" translatesAutoresizingMaskIntoConstraints="NO" id="C3N-WJ-29f">
-                        <rect key="frame" x="149" y="160" width="117" height="83"/>
-                        <view key="contentView" id="9au-X2-ook">
-                            <rect key="frame" x="3" y="3" width="111" height="65"/>
-                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                            <subviews>
-                                <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="zmV-ts-69t">
-                                    <rect key="frame" x="6" y="34" width="99" height="25"/>
-                                    <popUpButtonCell key="cell" type="push" title="Off" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="rZI-tR-AtI" id="ggg-3B-Wu3">
-                                        <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                                        <font key="font" metaFont="menu"/>
-                                        <menu key="menu" id="OSM-Od-2nS">
-                                            <items>
-                                                <menuItem title="Off" state="on" id="rZI-tR-AtI"/>
-                                                <menuItem title="25%" id="xsX-pU-Xla"/>
-                                                <menuItem title="50%" id="1MN-q4-b8R"/>
-                                                <menuItem title="On" id="tzd-AM-u5O">
-                                                    <modifierMask key="keyEquivalentModifierMask"/>
-                                                </menuItem>
-                                                <menuItem title="(off2)" id="cds-2M-Esh">
-                                                    <modifierMask key="keyEquivalentModifierMask"/>
-                                                </menuItem>
-                                                <menuItem title="(tst)" id="b0t-yt-AyE">
-                                                    <modifierMask key="keyEquivalentModifierMask"/>
-                                                </menuItem>
-                                                <menuItem title="On/néon" id="fub-LF-5D0">
-                                                    <modifierMask key="keyEquivalentModifierMask"/>
-                                                </menuItem>
-                                                <menuItem title="Off/dim" id="n49-PC-ebo">
-                                                    <modifierMask key="keyEquivalentModifierMask"/>
-                                                </menuItem>
-                                                <menuItem title="On/dim" id="rm6-zq-TBr">
-                                                    <modifierMask key="keyEquivalentModifierMask"/>
-                                                </menuItem>
-                                                <menuItem title="Flash" id="peJ-QB-1LT">
-                                                    <modifierMask key="keyEquivalentModifierMask"/>
-                                                </menuItem>
-                                            </items>
-                                        </menu>
-                                    </popUpButtonCell>
-                                    <connections>
-                                        <binding destination="Voe-Tx-rLC" name="selectedIndex" keyPath="ledProg" id="3A0-V0-NgN"/>
-                                    </connections>
-                                </popUpButton>
-                                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="go4-ET-1Uh">
-                                    <rect key="frame" x="2" y="1" width="58" height="32"/>
-                                    <buttonCell key="cell" type="push" title="G0" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="U3D-0d-dsO">
-                                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                        <font key="font" metaFont="system"/>
-                                    </buttonCell>
-                                    <connections>
-                                        <action selector="sendLed:" target="Voe-Tx-rLC" id="0eS-8Z-PyV"/>
-                                    </connections>
-                                </button>
-                                <button verticalHuggingPriority="750" tag="1" translatesAutoresizingMaskIntoConstraints="NO" id="cM6-FG-veN">
-                                    <rect key="frame" x="54" y="1" width="56" height="32"/>
-                                    <buttonCell key="cell" type="push" title="G1" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="0i8-pN-4hu">
-                                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                        <font key="font" metaFont="system"/>
-                                    </buttonCell>
-                                    <connections>
-                                        <action selector="sendLed:" target="Voe-Tx-rLC" id="Psu-Gt-bv7"/>
-                                    </connections>
-                                </button>
-                            </subviews>
-                            <constraints>
-                                <constraint firstItem="zmV-ts-69t" firstAttribute="leading" secondItem="9au-X2-ook" secondAttribute="leading" constant="8" id="0SK-Ll-ROr"/>
-                                <constraint firstItem="go4-ET-1Uh" firstAttribute="leading" secondItem="zmV-ts-69t" secondAttribute="leading" id="63L-Yg-Qm1"/>
-                                <constraint firstItem="cM6-FG-veN" firstAttribute="leading" secondItem="go4-ET-1Uh" secondAttribute="trailing" constant="6" id="8gK-oW-rFG"/>
-                                <constraint firstAttribute="trailing" secondItem="cM6-FG-veN" secondAttribute="trailing" constant="6" id="DOy-dq-NcK"/>
-                                <constraint firstItem="zmV-ts-69t" firstAttribute="top" secondItem="9au-X2-ook" secondAttribute="top" constant="8" id="Gyw-iE-M4G"/>
-                                <constraint firstItem="go4-ET-1Uh" firstAttribute="top" secondItem="zmV-ts-69t" secondAttribute="bottom" constant="8" id="Vcp-6Z-3c5"/>
-                                <constraint firstAttribute="trailing" secondItem="zmV-ts-69t" secondAttribute="trailing" constant="8" id="Xbb-bz-qFU"/>
-                                <constraint firstAttribute="bottom" secondItem="go4-ET-1Uh" secondAttribute="bottom" constant="8" id="XfA-D8-fS3"/>
-                                <constraint firstItem="cM6-FG-veN" firstAttribute="firstBaseline" secondItem="go4-ET-1Uh" secondAttribute="firstBaseline" id="cSm-Kj-ahZ"/>
-                            </constraints>
-                        </view>
-                    </box>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="aAb-iR-Shy">
                         <rect key="frame" x="153" y="540" width="69" height="16"/>
                         <buttonCell key="cell" type="push" title="Force Cnx" bezelStyle="rounded" alignment="center" controlSize="mini" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="MRY-Y7-F9M">
@@ -1980,6 +1902,108 @@
                             </constraints>
                         </view>
                     </box>
+                    <box misplaced="YES" borderType="line" title="LED" translatesAutoresizingMaskIntoConstraints="NO" id="C3N-WJ-29f">
+                        <rect key="frame" x="149" y="160" width="117" height="124"/>
+                        <view key="contentView" id="9au-X2-ook">
+                            <rect key="frame" x="3" y="3" width="111" height="106"/>
+                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                            <subviews>
+                                <popUpButton verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="zmV-ts-69t">
+                                    <rect key="frame" x="6" y="74" width="99" height="25"/>
+                                    <popUpButtonCell key="cell" type="push" title="Off" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="rZI-tR-AtI" id="ggg-3B-Wu3">
+                                        <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                        <font key="font" metaFont="menu"/>
+                                        <menu key="menu" id="OSM-Od-2nS">
+                                            <items>
+                                                <menuItem title="Off" state="on" id="rZI-tR-AtI"/>
+                                                <menuItem title="25%" id="xsX-pU-Xla"/>
+                                                <menuItem title="50%" id="1MN-q4-b8R"/>
+                                                <menuItem title="On" id="tzd-AM-u5O">
+                                                    <modifierMask key="keyEquivalentModifierMask"/>
+                                                </menuItem>
+                                                <menuItem title="(off2)" id="cds-2M-Esh">
+                                                    <modifierMask key="keyEquivalentModifierMask"/>
+                                                </menuItem>
+                                                <menuItem title="(tst)" id="b0t-yt-AyE">
+                                                    <modifierMask key="keyEquivalentModifierMask"/>
+                                                </menuItem>
+                                                <menuItem title="On/néon" id="fub-LF-5D0">
+                                                    <modifierMask key="keyEquivalentModifierMask"/>
+                                                </menuItem>
+                                                <menuItem title="Off/dim" id="n49-PC-ebo">
+                                                    <modifierMask key="keyEquivalentModifierMask"/>
+                                                </menuItem>
+                                                <menuItem title="On/dim" id="rm6-zq-TBr">
+                                                    <modifierMask key="keyEquivalentModifierMask"/>
+                                                </menuItem>
+                                                <menuItem title="Flash" id="peJ-QB-1LT">
+                                                    <modifierMask key="keyEquivalentModifierMask"/>
+                                                </menuItem>
+                                            </items>
+                                        </menu>
+                                    </popUpButtonCell>
+                                    <connections>
+                                        <binding destination="Voe-Tx-rLC" name="selectedIndex" keyPath="ledProg" id="3A0-V0-NgN"/>
+                                    </connections>
+                                </popUpButton>
+                                <button verticalHuggingPriority="750" misplaced="YES" tag="1" translatesAutoresizingMaskIntoConstraints="NO" id="cM6-FG-veN">
+                                    <rect key="frame" x="54" y="36" width="53" height="32"/>
+                                    <buttonCell key="cell" type="push" title="L1" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="0i8-pN-4hu">
+                                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                        <font key="font" metaFont="system"/>
+                                    </buttonCell>
+                                    <connections>
+                                        <action selector="sendLed:" target="Voe-Tx-rLC" id="Psu-Gt-bv7"/>
+                                    </connections>
+                                </button>
+                                <button verticalHuggingPriority="750" misplaced="YES" tag="3" translatesAutoresizingMaskIntoConstraints="NO" id="ICQ-cs-HHR">
+                                    <rect key="frame" x="52" y="3" width="56" height="32"/>
+                                    <buttonCell key="cell" type="push" title="L3" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="7DI-uT-lFt">
+                                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                        <font key="font" metaFont="system"/>
+                                    </buttonCell>
+                                    <connections>
+                                        <action selector="sendLed:" target="Voe-Tx-rLC" id="sqB-BY-Uxs"/>
+                                    </connections>
+                                </button>
+                                <button verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="go4-ET-1Uh">
+                                    <rect key="frame" x="2" y="36" width="56" height="32"/>
+                                    <buttonCell key="cell" type="push" title="L0" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="U3D-0d-dsO">
+                                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                        <font key="font" metaFont="system"/>
+                                    </buttonCell>
+                                    <connections>
+                                        <action selector="sendLed:" target="Voe-Tx-rLC" id="0eS-8Z-PyV"/>
+                                    </connections>
+                                </button>
+                                <button verticalHuggingPriority="750" misplaced="YES" tag="2" translatesAutoresizingMaskIntoConstraints="NO" id="UAB-qA-u6A">
+                                    <rect key="frame" x="2" y="3" width="56" height="32"/>
+                                    <buttonCell key="cell" type="push" title="L2" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Lyg-kc-ZsH">
+                                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                        <font key="font" metaFont="system"/>
+                                    </buttonCell>
+                                    <connections>
+                                        <action selector="sendLed:" target="Voe-Tx-rLC" id="An4-08-auI"/>
+                                    </connections>
+                                </button>
+                            </subviews>
+                            <constraints>
+                                <constraint firstItem="zmV-ts-69t" firstAttribute="leading" secondItem="9au-X2-ook" secondAttribute="leading" constant="8" id="0SK-Ll-ROr"/>
+                                <constraint firstItem="go4-ET-1Uh" firstAttribute="leading" secondItem="zmV-ts-69t" secondAttribute="leading" id="63L-Yg-Qm1"/>
+                                <constraint firstItem="cM6-FG-veN" firstAttribute="leading" secondItem="go4-ET-1Uh" secondAttribute="trailing" constant="6" id="8gK-oW-rFG"/>
+                                <constraint firstItem="UAB-qA-u6A" firstAttribute="leading" secondItem="go4-ET-1Uh" secondAttribute="leading" id="D2i-X7-FeL"/>
+                                <constraint firstAttribute="trailing" secondItem="cM6-FG-veN" secondAttribute="trailing" constant="6" id="DOy-dq-NcK"/>
+                                <constraint firstItem="ICQ-cs-HHR" firstAttribute="leading" secondItem="UAB-qA-u6A" secondAttribute="trailing" constant="6" id="EH3-Cc-1jl"/>
+                                <constraint firstItem="zmV-ts-69t" firstAttribute="top" secondItem="9au-X2-ook" secondAttribute="top" constant="8" id="Gyw-iE-M4G"/>
+                                <constraint firstItem="ICQ-cs-HHR" firstAttribute="firstBaseline" secondItem="UAB-qA-u6A" secondAttribute="firstBaseline" id="Kov-vX-5Ah"/>
+                                <constraint firstItem="UAB-qA-u6A" firstAttribute="top" secondItem="go4-ET-1Uh" secondAttribute="bottom" constant="6" id="Lwq-5B-e7i"/>
+                                <constraint firstAttribute="bottom" secondItem="ICQ-cs-HHR" secondAttribute="bottom" constant="6" id="QsU-d2-fGA"/>
+                                <constraint firstItem="go4-ET-1Uh" firstAttribute="top" secondItem="zmV-ts-69t" secondAttribute="bottom" constant="8" id="Vcp-6Z-3c5"/>
+                                <constraint firstAttribute="trailing" secondItem="zmV-ts-69t" secondAttribute="trailing" constant="8" id="Xbb-bz-qFU"/>
+                                <constraint firstItem="cM6-FG-veN" firstAttribute="firstBaseline" secondItem="go4-ET-1Uh" secondAttribute="firstBaseline" id="cSm-Kj-ahZ"/>
+                            </constraints>
+                        </view>
+                    </box>
                 </subviews>
                 <constraints>
                     <constraint firstItem="6XJ-qb-ztK" firstAttribute="centerX" secondItem="bUt-k0-TMM" secondAttribute="centerX" id="0U0-Nv-T4w"/>
@@ -2055,7 +2079,7 @@
                     <constraint firstItem="NEf-Jx-eCJ" firstAttribute="leading" secondItem="EiT-Mj-1SZ" secondAttribute="leading" constant="16" id="yut-xP-5uj"/>
                 </constraints>
             </view>
-            <point key="canvasLocation" x="946" y="-1307"/>
+            <point key="canvasLocation" x="946" y="-1307.5"/>
         </window>
         <userDefaultsController representsSharedInstance="YES" id="L3A-ct-2Ge"/>
         <menuItem isSeparatorItem="YES" id="AgD-VD-m9I"/>

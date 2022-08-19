@@ -392,7 +392,7 @@ static void ihmmsg_normal(msg_64_t *m)
 		break;
 
 	case CMD_SETVPWM:	// TODO remove
-	//if (test_mode) ui_canton_pwm(m->from, m->v1u, m->v2);
+		//if (test_mode) ui_canton_pwm(m->from, m->v1u, m->v2);
 		return;
 		break;
 	case CMD_VOFF_NOTIF:
@@ -555,15 +555,15 @@ static void ihm_handle_inputs(_UNUSED_ uint32_t t, _UNUSED_ uint32_t dt)
 			}
 		}
 #else
+		// unmaintained too, rotary display is not ok for speed control
 		int16_t p = get_srotary(&htim4);
 		if (p != rot_position[i]) {
 			// pos changed
 			rot_position[i] = p;
-			if (ihm_dispmode==mode_manual) {
-				ihm_setvar(0, 1, (uint16_t) rot_position[0]);
-				//ihm_setvar(0, 1, ((int)rot0_position - 50));
-				SET_NEEDSREFRESH(0);
-			}
+			//if (ihm_dispmode==mode_manual) {
+			disp_setvar(0, 1, (uint16_t) rot_position[0]);
+			SET_NEEDSREFRESH(0);
+			//}
 			if (drive_mode[i]) {	// TODO refactor drive_mode
 				msg_64_t m;
 				m.from = MA3_UI_GEN;//(i);

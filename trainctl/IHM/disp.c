@@ -151,14 +151,14 @@ static const uint8_t layout_off[] = {
 static const uint8_t default_layout[] = {
 		CODE_ZONE_STATUS, 	CODE_STR|0,
 		CODE_ZONE_TEXT1s,	CODE_STR|1,
-		CODE_ZONE_TEXT2s,	CODE_STR|2,
+		CODE_ZONE_TEXT3s,	CODE_STR|2,
 		CODE_END
 };
 
 static const uint8_t layout_init[] = {
 		CODE_ZONE_STATUS, 	CODE_STR|0,
 		CODE_ZONE_TEXT1s,	CODE_STR|1,
-		CODE_ZONE_TEXT2s,	CODE_STR|2,
+		CODE_ZONE_TEXT3s,	CODE_STR|2,
 		CODE_END
 };
 
@@ -304,12 +304,8 @@ void disp_setlayout(int numdisp, int numlayout)
 	}
 	disp[numdisp] = p;
 }
-/*
- *
 
 
- *
- */
 static const char *ui_strings[] = {
 /*0*/		"ATC-Z",
 /*1*/		__DATE__,

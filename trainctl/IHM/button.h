@@ -14,7 +14,7 @@ typedef struct {
 } ihm_button_def_t;
 
 typedef struct {
-	ihm_button_def_t *def;
+	const ihm_button_def_t *def;
 	uint8_t laststate;
 	uint32_t tpush;
 } ihm_button_t;

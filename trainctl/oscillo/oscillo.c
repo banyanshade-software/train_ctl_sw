@@ -182,8 +182,8 @@ void tim5_elapsed(void)
 	oscillo_buf[oscillo_index].t1bemf = oscillo_t1bemf;
 
 	oscillo_buf[oscillo_index].ina0 = oscillo_ina0;
-	oscillo_buf[oscillo_index].ina0 = oscillo_ina1;
-	oscillo_buf[oscillo_index].ina0 = oscillo_ina2;
+	oscillo_buf[oscillo_index].ina1 = oscillo_ina1;
+	oscillo_buf[oscillo_index].ina2 = oscillo_ina2;
 	//itm_debug3(DBG_TIM, "oscina", oscillo_ina0, oscillo_ina1, oscillo_ina2);
 
 	if (oscillo_buf[oscillo_index].t0bemf > 7000) {

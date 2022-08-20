@@ -314,8 +314,9 @@ static void ctrl_init(void)
 	xtrnaddr_t t1 = { .v = 1};
     set_turnout(t0, 0, -1);
     set_turnout(t1, 0, -1);
-    lsblk_num_t s0 = {0};
+    _UNUSED_ lsblk_num_t s0 = {0};
     lsblk_num_t s2 = {2};
+    _UNUSED_ lsblk_num_t s5 = {5};
     lsblk_num_t _UNUSED_ s3 = {3};
 	if ((1)) {
 #ifdef TRAIN_SIMU
@@ -323,6 +324,7 @@ static void ctrl_init(void)
         ctrl_set_mode(0, train_manual);
 #else
         ctrl2_init_train(0, &trctl[0], s0);
+        //ctrl2_init_train(0, &trctl[0], s5 /*s0*/);
         ctrl2_init_train(1, &trctl[1], s2);
         ctrl_set_mode(0, train_manual);
         ctrl_set_mode(1, train_manual);
@@ -915,13 +917,13 @@ static void evt_timer(int tidx, train_ctrl_t *tvar, int tnum)
 
 static int set_turnout(xtrnaddr_t tn, int v, int train)
 {
-	itm_debug2(DBG_CTRL, "TURN", tn.v, v);
+	itm_debug2(DBG_CTRL|DBG_TURNOUT, "TURN", tn.v, v);
 	if (tn.v == 0xFF) fatal();
 	if (tn.v>=MAX_TOTAL_TURNOUTS) fatal();
 
 	int rc = topology_set_turnout(tn, v, train);
     if (rc) {
-    	itm_debug3(DBG_CTRL, "tn busy", train, tn.v, rc);
+    	itm_debug3(DBG_CTRL||DBG_TURNOUT, "tn busy", train, tn.v, rc);
     	return rc;
     }
 

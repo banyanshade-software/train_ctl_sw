@@ -70,6 +70,7 @@ int oam_localBoardNum(void)
 
 int oam_boardForUuid(uint32_t uid)
 {
+	(void) uid; // unused for now
 	return -1; // TODO
 }
 

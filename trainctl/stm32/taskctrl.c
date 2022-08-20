@@ -324,7 +324,9 @@ volatile uint32_t t0ctrl = 0;
  *
  */
 
-static const tasklet_t *ctrlTasklets[] = {
+
+// TODO convert to tasklet_run_all() and use  ctrlTasklets
+static _UNUSED_ const tasklet_t *ctrlTasklets[] = {
 #ifdef BOARD_HAS_CTRL
 		&spdctl_tasklet,
 #endif
@@ -345,6 +347,9 @@ static const tasklet_t *ctrlTasklets[] = {
 #endif
 		NULL
 };
+
+
+
 static void run_task_ctrl(void)
 {
 	int cnt = 0;
@@ -424,6 +429,9 @@ static void run_task_ctrl(void)
 
 		//itm_debug1(DBG_LOWCTRL, "--oam", dt);
 		// OAM_Tasklet(notif, t, dt); OAM on its own stack
+
+		// TODO: use tasklet_run_all() ans ctrlTasklets definition
+		// still need to convert bemf_tick() and magsrv_tick
 
 #ifdef BOARD_HAS_CTRL
 		//itm_debug1(DBG_LOWCTRL, "--spdctl", dt);

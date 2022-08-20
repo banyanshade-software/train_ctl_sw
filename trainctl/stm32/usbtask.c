@@ -175,7 +175,7 @@ void USB_Tasklet(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_
 		case CMD_USB_STATS: {
 			sending_stats = 1;
 			const uint8_t b[]="|S";
-			_send_bytes(b, 6);
+			_send_bytes(b, 2);
 			frame_send_stat(_send_bytes, t);
 			_send_bytes((uint8_t *)"|", 1);
 			sending_stats = 0;
@@ -184,7 +184,7 @@ void USB_Tasklet(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_
 		case CMD_USB_OSCILLO: {
 			sending_oscillo = 1;
 			const uint8_t b[]="|V"; //
-			_send_bytes(b, 6);
+			_send_bytes(b, 2);
 			frame_send_oscillo(_send_bytes);
 			_send_bytes((uint8_t *)"|", 1);
 			sending_oscillo = 0;

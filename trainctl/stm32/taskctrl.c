@@ -325,8 +325,7 @@ volatile uint32_t t0ctrl = 0;
  */
 
 
-// TODO convert to tasklet_run_all() and use  ctrlTasklets
-static _UNUSED_ const tasklet_t *ctrlTasklets[] = {
+static tasklet_t *ctrlTasklets[] = {
 #ifdef BOARD_HAS_CTRL
 		&spdctl_tasklet,
 #endif
@@ -427,36 +426,12 @@ static void run_task_ctrl(void)
 		//itm_debug1(DBG_LOWCTRL, "--msg", dt);
 		msgsrv_tick(notif, t, dt);
 
-		//itm_debug1(DBG_LOWCTRL, "--oam", dt);
-		// OAM_Tasklet(notif, t, dt); OAM on its own stack
 
-		// TODO: use tasklet_run_all() ans ctrlTasklets definition
-		// still need to convert bemf_tick() and magsrv_tick
+		// TODO: ctrlTasklet() does not include CAN and presdect()
+		// TODO: should bemf_tick() and msgsrv_tick() be converted to tasklet ?
+		tasklet_run_all(ctrlTasklets);
 
-#ifdef BOARD_HAS_CTRL
-		//itm_debug1(DBG_LOWCTRL, "--spdctl", dt);
-		//spdctl_run_tick(notif, t, dt);
-		tasklet_run(&spdctl_tasklet, t);
-#endif
 
-#ifdef BOARD_HAS_CANTON
-		//itm_debug1(DBG_LOWCTRL, "--canton", dt);
-		tasklet_run(&canton_tasklet, t);
-		//canton_tick(notif, t, dt);
-#endif
-
-#ifdef BOARD_HAS_TURNOUTS
-		//itm_debug1(DBG_LOWCTRL, "--trnout", dt);
-		//turnout_tasklet(notif, t, dt);
-		tasklet_run(&turnout_tasklet, t);
-#endif
-
-#ifdef BOARD_HAS_CTRL
-		//itm_debug1(DBG_LOWCTRL, "--ctrl", dt);
-		tasklet_run(&ctrl_tasklet, t);
-		tasklet_run(&stattx_tasklet, t);
-		//ctrl_run_tick(notif, t, dt);
-#endif
 
 #ifdef BOARD_HAS_CAN
 		//itm_debug1(DBG_LOWCTRL, "--CAN", dt);

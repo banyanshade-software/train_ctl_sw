@@ -90,7 +90,8 @@ typedef enum {
 
 	CMD_USB_STATS,					// any -> usb								send stats
 	CMD_USB_OSCILLO,				// any -> usb								send oscillo values
-    
+    CMD_USB_RECORD_MSG,				// any -> usb								dump recorded msg if enabled (see msgrecord.h)
+
     CMD_OAM_MASTER,
     CMD_OAM_SLAVE,
     CMD_OAM_BNUM,

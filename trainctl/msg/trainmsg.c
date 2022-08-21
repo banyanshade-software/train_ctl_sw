@@ -80,7 +80,8 @@ LFMQUEUE_DEF_C(from_nowhere, msg_64_t,     4, 0)
 typedef struct {
 	mqf_t *from;
 	mqf_t *to;
-    uint8_t isforwd;
+    uint8_t isforwd:1;		// mostly used for local broadcast
+    uint8_t allow_loop:1;
 } qdef_t;
 
 typedef struct {
@@ -90,42 +91,42 @@ typedef struct {
 static const qdef_t qdefs[] = {
     // forward q must be first
 #ifdef BOARD_HAS_CAN
-    {&from_canbus, &to_canbus,  1},
-    {NULL,   &to_canbus_loc,    0},
+    {&from_canbus, &to_canbus,  	1, 0},
+    {NULL,   &to_canbus_loc,    	0, 0},
 #endif
 #ifdef BOARD_HAS_USB
-    {&from_usb, &to_usb,        1},
+    {&from_usb, &to_usb,        	1, 1},
 #endif
     
 #ifdef BOARD_HAS_TURNOUTS
-    {&from_turnout, &to_turnout,    0},
+    {&from_turnout, &to_turnout,    0, 0},
 #endif
 #ifdef BOARD_HAS_CANTON
-    {&from_canton, &to_canton,      0},
+    {&from_canton, &to_canton,      0, 0},
 #endif
 #ifdef BOARD_HAS_INA3221
-    {&from_ina3221, &to_ina3221,    0},
+    {&from_ina3221, &to_ina3221,    0, 0},
 #endif
 #ifdef BOARD_HAS_LED
-    {&from_led, &to_led,            0},
+    {&from_led, &to_led,            0, 0},
 #endif
 #ifdef BOARD_HAS_CTRL
-    {&from_spdctl, &to_spdctl,      0},
-    {&from_ctrl, &to_ctrl,          0},
+    {&from_spdctl, &to_spdctl,      0, 0},
+    {&from_ctrl, &to_ctrl,          0, 0},
 #endif
 #ifdef BOARD_HAS_IHM
-    {&from_ui,  &to_ui,             0},
+    {&from_ui,  &to_ui,             0, 0},
 #endif
 #ifdef BOARD_HAS_UI_CTC
-    {&from_ui_track, &to_ui_track,  0},
+    {&from_ui_track, &to_ui_track,  0, 0},
 #endif
 #ifdef BOARD_HAS_OSCILLO
-    {&from_oscillo, NULL,           0},
+    {&from_oscillo, NULL,           0, 0},
 #endif
     
-    {&from_oam, &to_oam,            0},
-    {&from_nowhere, NULL,           0},
-    {NULL, NULL,0}
+    {&from_oam, &to_oam,            0, 0},
+    {&from_nowhere, NULL,           0, 0},
+    {NULL, NULL,0,0}
 };
 
 
@@ -134,9 +135,12 @@ static const qdef_t qdefs[] = {
 
 
 
-static int  _local_disptach(msg_64_t *m, mqf_t *dont_send_to)
+static int  _local_disptach(msg_64_t *m, mqf_t *dont_send_to, uint8_t allow_loop)
 {
     mqf_t *dest = NULL;
+    if (allow_loop) {
+    	dont_send_to = NULL;
+    }
     int cont = 0;
     if (MA0_ADDR_IS_BOARD_ADDR(m->to)) {
         int dbrd = MA0_BOARD(m->to);
@@ -264,7 +268,7 @@ static void dispatch_m64(msg_64_t *m, int f)
         }
         return;
     }
-    int ok = _local_disptach(m, qdefs[f].to);
+    int ok = _local_disptach(m, qdefs[f].to,  qdefs[f].allow_loop);
     if (ok<0) {
         itm_debug1(DBG_ERR|DBG_MSG, "cant route local", m->to);
         return;

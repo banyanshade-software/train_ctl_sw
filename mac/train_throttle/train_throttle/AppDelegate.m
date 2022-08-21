@@ -34,6 +34,7 @@
 #include "oam.h"
 #include "conf_canton.h"
 #include "canton_bemf.h"
+#include "msgrecord.h"
 
 uint16_t dummy[3];
 
@@ -1246,6 +1247,9 @@ int conf_globparam_fieldnum(const char *str);
         case 'V':
             [self processOscilloFrame:frm];
             break;
+        case 'M':
+            [self processMsgRecordFrame:frm];
+            break;
     }
 }
 
@@ -1731,6 +1735,8 @@ int convert_to_mv_raw(int m)
     return fu;
 }
 
+#pragma  mark -
+
 volatile int oscillo_trigger_start = 0;
 volatile int oscillo_enable = 0;
 
@@ -1872,7 +1878,16 @@ volatile int oscillo_enable = 0;
     }
     return n;
 }
-
+#pragma mark -
+- (void) processMsgRecordFrame:(NSData *)dta
+{
+    NSUInteger len = [dta length];
+    if (len<8) return; // no recorded msg
+    int rs = len % sizeof(msgrecord_t);
+    NSAssert(!rs, @"bad size");
+    NSUInteger ns = len / sizeof(msgrecord_t);
+    //TODO
+}
 
 #pragma mark -
 
@@ -2667,7 +2682,7 @@ didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic
 
 - (IBAction) triggerOscillo:(id)sender
 {
-    msg_64_t m;
+    msg_64_t m = {0};
     m.to = MA1_SPDCTL(0);
     m.from = MA3_UI_GEN; //(UISUB_USB);
     m.cmd = CMD_TRIG_OSCILLO;
@@ -2676,6 +2691,14 @@ didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic
     [self sendMsg64:m];
 }
 
+- (IBAction) recordMsg:(id)sender
+{
+    msg_64_t m = {0};
+    m.to = MA2_USB_LOCAL;
+    m.from = MA3_UI_GEN; //(UISUB_USB);
+    m.cmd = CMD_USB_RECORD_MSG;
+    [self sendMsg64:m];
+}
 
 #pragma mark -
 

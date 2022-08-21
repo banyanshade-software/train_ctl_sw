@@ -31,15 +31,26 @@ typedef struct {
 #define MQF_ATTRIB
 #endif
 
+#ifndef RECORD_MSG
+#define RECORD_MSG 0
+#endif
+
+extern void record_msg_read(void *ptr);
+extern void record_msg_write(void *ptr);
+
+
 #define LFMQUEUE_DEF_H(_name, _type) 						\
     extern mqf_t  _name; 									\
     														\
 	static inline int mqf_read_ ## _name(_type *ptr)		\
 	{														\
-		return mqf_read(&_name, ptr);						\
+		int rc = mqf_read(&_name, ptr);						\
+    	if (RECORD_MSG && !rc) record_msg_read(ptr);		\
+    	return rc;											\
 	}														\
 	static inline int mqf_write_ ## _name(_type *ptr)		\
 	{														\
+		if (RECORD_MSG) record_msg_write(ptr);				\
 		return mqf_write(&_name, (void *)ptr);				\
 	}
 

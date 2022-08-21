@@ -7,6 +7,7 @@
 
 #include "../misc.h"
 #include "tasklet.h"
+#include "../msg/msgrecord.h"
 
 static int handle_common_msg(tasklet_t *tasklet, const tasklet_def_t *td, msg_64_t *m)
 {
@@ -58,7 +59,9 @@ void tasklet_run(tasklet_t *tasklet, uint32_t tick)
 		msg_64_t msg;
 		int rc = mqf_read(tasklet->queue, &msg);
 		if (rc) break;
-
+		if (td->recordmsg) {
+			record_msg_read(&msg);
+		}
 		if (handle_common_msg(tasklet, td, &msg)) continue;
 		if (mh) mh(&msg);
 	}

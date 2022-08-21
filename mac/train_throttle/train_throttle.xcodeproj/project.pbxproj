@@ -37,6 +37,7 @@
 		1B238C8A285E54F6000DA9B8 /* tasklet.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B238C88285E54F6000DA9B8 /* tasklet.c */; };
 		1B255145273262B30015B4FA /* TestOccupency.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B255144273262B30015B4FA /* TestOccupency.m */; };
 		1B3657BB275BED540042491A /* CTCManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3657BA275BED540042491A /* CTCManager.m */; };
+		1B43530028B22C77008811C1 /* msgrecord.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B4352FE28B22C76008811C1 /* msgrecord.c */; };
 		1B455A0D280F563400F09E33 /* conf_globparam.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B455A0B280F563400F09E33 /* conf_globparam.c */; };
 		1B455A20280F671000F09E33 /* conf_canton.fields.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B455A19280F671000F09E33 /* conf_canton.fields.c */; };
 		1B455A21280F671000F09E33 /* conf_globparam.fields.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B455A1A280F671000F09E33 /* conf_globparam.fields.c */; };
@@ -156,6 +157,8 @@
 		1B255144273262B30015B4FA /* TestOccupency.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TestOccupency.m; sourceTree = "<group>"; };
 		1B3657B9275BED540042491A /* CTCManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CTCManager.h; sourceTree = "<group>"; };
 		1B3657BA275BED540042491A /* CTCManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CTCManager.m; sourceTree = "<group>"; };
+		1B4352FE28B22C76008811C1 /* msgrecord.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = msgrecord.c; sourceTree = "<group>"; };
+		1B4352FF28B22C76008811C1 /* msgrecord.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = msgrecord.h; sourceTree = "<group>"; };
 		1B455A0A280F563300F09E33 /* conf_globparam.propag.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = conf_globparam.propag.h; sourceTree = "<group>"; };
 		1B455A0B280F563400F09E33 /* conf_globparam.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = conf_globparam.c; sourceTree = "<group>"; };
 		1B455A0C280F563400F09E33 /* conf_globparam.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = conf_globparam.h; sourceTree = "<group>"; };
@@ -451,6 +454,8 @@
 		1B7A29F3262D58F6004E0481 /* msg */ = {
 			isa = PBXGroup;
 			children = (
+				1B4352FE28B22C76008811C1 /* msgrecord.c */,
+				1B4352FF28B22C76008811C1 /* msgrecord.h */,
 				1B238C88285E54F6000DA9B8 /* tasklet.c */,
 				1B238C89285E54F6000DA9B8 /* tasklet.h */,
 				1B7A29F4262D58F6004E0481 /* notif.h */,
@@ -858,6 +863,7 @@
 				1BED2AA025173D1F0080FC97 /* main.m in Sources */,
 				1BC9031D2720BFDA0087CEA7 /* ledio.c in Sources */,
 				1B138EE62811C0A500DC181B /* conf_utest.c in Sources */,
+				1B43530028B22C77008811C1 /* msgrecord.c in Sources */,
 				1B455A24280F671000F09E33 /* conf_topology.fields.c in Sources */,
 				1B455A22280F671000F09E33 /* conf_turnout.fields.c in Sources */,
 				1BD93C732546FF44006C4D70 /* train.c in Sources */,

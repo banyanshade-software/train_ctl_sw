@@ -5,6 +5,7 @@
  *      Author: danielbraun
  */
 
+#define RECORD_MSG 1
 
 
 #include "../misc.h"
@@ -35,7 +36,9 @@ static const tasklet_def_t led_tdef = {
 		.default_msg_handler = handle_led_msg,
 		.default_tick_handler = led_tick,
 		.msg_handler_for	= NULL,
-		.tick_handler_for 	= NULL
+		.tick_handler_for 	= NULL,
+
+		.recordmsg			= RECORD_MSG,
 
 };
 tasklet_t led_tasklet = { .def = &led_tdef, .init_done = 0, .queue=&to_led};

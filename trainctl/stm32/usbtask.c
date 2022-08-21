@@ -33,6 +33,7 @@
 
 #include "utils/framing.h"
 #include "usbtask.h"
+#include "../msg/msgrecord.h"
 
 #include "main.h"
 #include "stm32f4xx_hal_gpio.h"
@@ -114,6 +115,9 @@ int8_t impl_CDC_Receive_FS(uint8_t* Buf, uint32_t *Len)
 			msg_64_t msg;
 			pendlen = -1;
 			memcpy(&msg, pendmsg, 8);
+			//if (msg.cmd == CMD_USB_RECORD_MSG) {
+			//	itm_debug1(DBG_ERR, "plop", 0);
+			//}
 			mqf_write_from_usb(&msg);
 		}
 	}
@@ -140,17 +144,30 @@ static void _send_bytes(const uint8_t *b, int len)
 }
 
 
+// ---------------------------------------------------------------------------------------------------
+
+
 __weak void frame_send_oscillo(_UNUSED_ void(*cb)(const uint8_t *d, int l))
 {
 }
 __weak void frame_send_stat(_UNUSED_ void(*cb)(const uint8_t *d, int l), _UNUSED_ uint32_t tick)
 {
 }
-
+__weak void frame_send_recordmsg(_UNUSED_ void(*cb)(const uint8_t *d, int l))
+{
+}
 
 static int initdone = 1;
-static volatile int sending_oscillo = 0;
-static volatile int sending_stats = 0;
+
+enum special_txmode {
+	txnormal = 0,
+	sending_stats,
+	sending_oscillo,
+	sending_recordmsg
+};
+
+static volatile enum special_txmode sending_longframe = txnormal;
+
 
 void USB_Tasklet(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_ uint32_t dt)
 {
@@ -173,24 +190,35 @@ void USB_Tasklet(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_
 			_send_bytes(buf, 9);
 			break;
 		case CMD_USB_STATS: {
-			sending_stats = 1;
+			if (sending_longframe != txnormal) break;
+			sending_longframe = sending_stats;
 			const uint8_t b[]="|S";
 			_send_bytes(b, 2);
 			frame_send_stat(_send_bytes, t);
 			_send_bytes((uint8_t *)"|", 1);
-			sending_stats = 0;
+			sending_longframe = txnormal;
 			}
 			break;
 		case CMD_USB_OSCILLO: {
-			sending_oscillo = 1;
+			if (sending_longframe != txnormal) break;
+			sending_longframe = sending_oscillo;
 			const uint8_t b[]="|V"; //
 			_send_bytes(b, 2);
 			frame_send_oscillo(_send_bytes);
 			_send_bytes((uint8_t *)"|", 1);
-			sending_oscillo = 0;
+			sending_longframe = txnormal;
 			}
 			break;
-
+		case CMD_USB_RECORD_MSG: {
+			if (sending_longframe != txnormal) break;
+			sending_longframe = sending_oscillo;
+			const uint8_t b[]="|M"; //
+			_send_bytes(b, 2);
+			frame_send_recordmsg(_send_bytes);
+			_send_bytes((uint8_t *)"|", 1);
+			sending_longframe = txnormal;
+			}
+			break;
 		}
 	}
 }

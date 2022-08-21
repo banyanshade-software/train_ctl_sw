@@ -27,6 +27,8 @@ typedef struct {
 	msg_handler_t	(*msg_handler_for)(runmode_t);
 	tick_handler_t	(*tick_handler_for)(runmode_t);
 
+	uint8_t			recordmsg:1;
+
 } tasklet_def_t;
 
 typedef struct {

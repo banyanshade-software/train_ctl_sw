@@ -56,6 +56,7 @@ static conf_canton_t conf_canton[6] = {
      .ch0 = TIM_CHANNEL_1,
      .ch1 = TIM_CHANNEL_2,
      .notif_bemf = 0,
+     .reverse = 0,
      .reverse_bemf = 1,
   },
   {     // 1
@@ -70,6 +71,7 @@ static conf_canton_t conf_canton[6] = {
      .ch0 = TIM_CHANNEL_3,
      .ch1 = TIM_CHANNEL_4,
      .notif_bemf = 0,
+     .reverse = 0,
      .reverse_bemf = 1,
   },
   {     // 2
@@ -84,6 +86,7 @@ static conf_canton_t conf_canton[6] = {
      .ch0 = TIM_CHANNEL_3,
      .ch1 = TIM_CHANNEL_4,
      .notif_bemf = 0,
+     .reverse = 0,
      .reverse_bemf = 1,
   },
   {     // 3
@@ -98,6 +101,7 @@ static conf_canton_t conf_canton[6] = {
      .ch0 = TIM_CHANNEL_1,
      .ch1 = TIM_CHANNEL_2,
      .notif_bemf = 0,
+     .reverse = 0,
      .reverse_bemf = 1,
   },
   {     // 4
@@ -112,6 +116,7 @@ static conf_canton_t conf_canton[6] = {
      .ch0 = TIM_CHANNEL_3,
      .ch1 = TIM_CHANNEL_4,
      .notif_bemf = 0,
+     .reverse = 0,
      .reverse_bemf = 1,
   },
   {     // 5
@@ -126,6 +131,7 @@ static conf_canton_t conf_canton[6] = {
      .ch0 = TIM_CHANNEL_3,
      .ch1 = TIM_CHANNEL_4,
      .notif_bemf = 0,
+     .reverse = 0,
      .reverse_bemf = 1,
   }
 };
@@ -155,6 +161,7 @@ static conf_canton_t conf_canton[6] = {
      .ch0 = TIM_CHANNEL_1,
      .ch1 = TIM_CHANNEL_2,
      .notif_bemf = 0,
+     .reverse = 0,
      .reverse_bemf = 1,
   },
   {     // 1
@@ -169,6 +176,7 @@ static conf_canton_t conf_canton[6] = {
      .ch0 = TIM_CHANNEL_3,
      .ch1 = TIM_CHANNEL_4,
      .notif_bemf = 0,
+     .reverse = 0,
      .reverse_bemf = 1,
   },
   {     // 2
@@ -183,6 +191,7 @@ static conf_canton_t conf_canton[6] = {
      .ch0 = TIM_CHANNEL_3,
      .ch1 = TIM_CHANNEL_4,
      .notif_bemf = 0,
+     .reverse = 0,
      .reverse_bemf = 1,
   },
   {     // 3
@@ -197,6 +206,7 @@ static conf_canton_t conf_canton[6] = {
      .ch0 = TIM_CHANNEL_1,
      .ch1 = TIM_CHANNEL_2,
      .notif_bemf = 0,
+     .reverse = 0,
      .reverse_bemf = 1,
   },
   {     // 4
@@ -211,6 +221,7 @@ static conf_canton_t conf_canton[6] = {
      .ch0 = TIM_CHANNEL_3,
      .ch1 = TIM_CHANNEL_4,
      .notif_bemf = 0,
+     .reverse = 0,
      .reverse_bemf = 1,
   },
   {     // 5
@@ -225,6 +236,7 @@ static conf_canton_t conf_canton[6] = {
      .ch0 = 0,
      .ch1 = 0,
      .notif_bemf = 0,
+     .reverse = 0,
      .reverse_bemf = 1,
   }
 };
@@ -254,6 +266,7 @@ static conf_canton_t conf_canton[1] = {
      .ch0 = TIM_CHANNEL_1,
      .ch1 = TIM_CHANNEL_1,
      .notif_bemf = 0,
+     .reverse = 0,
      .reverse_bemf = 1,
   }
 };
@@ -313,6 +326,7 @@ static conf_canton_t conf_canton[6] = {
      .ch0 = TIM_CHANNEL_1,
      .ch1 = TIM_CHANNEL_1,
      .notif_bemf = 0,
+     .reverse = 0,
      .reverse_bemf = 1,
   },
   {     // 1
@@ -327,6 +341,7 @@ static conf_canton_t conf_canton[6] = {
      .ch0 = TIM_CHANNEL_1,
      .ch1 = TIM_CHANNEL_1,
      .notif_bemf = 0,
+     .reverse = 0,
      .reverse_bemf = 1,
   },
   {     // 2
@@ -341,6 +356,7 @@ static conf_canton_t conf_canton[6] = {
      .ch0 = TIM_CHANNEL_1,
      .ch1 = TIM_CHANNEL_1,
      .notif_bemf = 0,
+     .reverse = 0,
      .reverse_bemf = 1,
   },
   {     // 3
@@ -355,6 +371,7 @@ static conf_canton_t conf_canton[6] = {
      .ch0 = TIM_CHANNEL_1,
      .ch1 = TIM_CHANNEL_1,
      .notif_bemf = 0,
+     .reverse = 0,
      .reverse_bemf = 1,
   },
   {     // 4
@@ -369,6 +386,7 @@ static conf_canton_t conf_canton[6] = {
      .ch0 = TIM_CHANNEL_1,
      .ch1 = TIM_CHANNEL_1,
      .notif_bemf = 0,
+     .reverse = 0,
      .reverse_bemf = 1,
   },
   {     // 5
@@ -383,6 +401,7 @@ static conf_canton_t conf_canton[6] = {
      .ch0 = TIM_CHANNEL_1,
      .ch1 = TIM_CHANNEL_1,
      .notif_bemf = 0,
+     .reverse = 0,
      .reverse_bemf = 1,
   }
 };
@@ -413,6 +432,7 @@ static const conf_canton_t canton_template = {
      .ch0 = TIM_CHANNEL_1,
      .ch1 = TIM_CHANNEL_1,
      .notif_bemf = 0,
+     .reverse = 0,
      .reverse_bemf = 1,
   };
 const conf_canton_t *conf_canton_template(void)
@@ -427,6 +447,9 @@ int conf_canton_propagate(unsigned int numinst, unsigned int numfield, int32_t v
     conf_canton_t *conf = &conf_canton[numinst];
     switch (numfield) {
     default: return -1;
+    case conf_numfield_canton_reverse:
+        conf->reverse = value;
+        break;
     case conf_numfield_canton_reverse_bemf:
         conf->reverse_bemf = value;
         break;
@@ -442,6 +465,8 @@ int32_t conf_canton_default_value(unsigned int numinst, unsigned int numfield, u
     //if (numinst>=conf_canton_num_entries()) return 0;
     switch (numfield) {
     default: return 0;
+    case conf_numfield_canton_reverse:
+        return 0;
     case conf_numfield_canton_reverse_bemf:
         return 1;
     }

@@ -16,7 +16,8 @@ int32_t conf_canton_default_value(unsigned int numinst, unsigned int numfield, u
 
 #define conf_pnum_canton 2
 
-#define conf_numfield_canton_reverse_bemf 		0
+#define conf_numfield_canton_reverse 		0
+#define conf_numfield_canton_reverse_bemf 		1
 
 
 

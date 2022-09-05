@@ -42,6 +42,7 @@ typedef struct conf_canton {
     uint32_t ch0;
     uint32_t ch1;
     uint8_t notif_bemf:1;
+    uint8_t reverse:1;
     uint8_t reverse_bemf:1;
 } conf_canton_t;
 

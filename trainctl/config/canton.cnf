@@ -68,6 +68,9 @@ config canton {
     const uint8_t notif_bemf:1
         = (all) 0;
 
+    user uint8_t reverse:1
+		= (default) 0;
+
     user uint8_t reverse_bemf:1
 		= (default) 1;
 

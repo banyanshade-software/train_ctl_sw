@@ -29,6 +29,8 @@ int conf_globparam_fieldnum(const char *str)
          return conf_numfield_globparam_test_mode;
     } else if (!strcmp(str, "oscillo")) {
          return conf_numfield_globparam_oscillo;
+    } else if (!strcmp(str, "ignoreIna3221")) {
+         return conf_numfield_globparam_ignoreIna3221;
     }
     return -1;
 }
@@ -42,6 +44,8 @@ const char *conf_globparam_fieldname(int f)
          return "test_mode";
     } else if (f == conf_numfield_globparam_oscillo) {
          return "oscillo";
+    } else if (f == conf_numfield_globparam_ignoreIna3221) {
+         return "ignoreIna3221";
     }
     return NULL;
 }

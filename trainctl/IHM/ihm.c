@@ -5,6 +5,8 @@
  *      Author: danielbraun
  */
 
+// #define RECORD_MSG 1
+
 #include <stdint.h>
 
 #include "trainctl_config.h"
@@ -80,7 +82,9 @@ static const tasklet_def_t ihm_tdef = {
 		.default_msg_handler = NULL,
 		.default_tick_handler = ihm_postmsg_tick,
 		.msg_handler_for	= msghandler_for_mode,
-		.tick_handler_for 	= NULL
+		.tick_handler_for 	= NULL,
+
+		.recordmsg			= RECORD_MSG,
 
 };
 tasklet_t ihm_tasklet = { .def = &ihm_tdef, .init_done = 0, .queue=&to_ui};

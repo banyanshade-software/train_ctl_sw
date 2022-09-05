@@ -46,6 +46,7 @@ typedef struct {
 #define OSC_NUM_SAMPLES 1024
 
 extern volatile int oscillo_trigger_start;
+extern volatile int oscillo_canton_of_interest;
 
 extern volatile int16_t oscillo_t0bemf;
 extern volatile int16_t oscillo_t1bemf;

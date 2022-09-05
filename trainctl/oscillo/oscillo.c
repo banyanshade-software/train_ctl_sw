@@ -68,8 +68,7 @@ int oscillo_running(void)
 
 volatile int oscillo_enable = 0;
 volatile int oscillo_trigger_start = 0;
-
-
+volatile int oscillo_canton_of_interest = 0; // TODO unimpemented for now. step 1 would be ADC
 
 __weak volatile int16_t oscillo_ina0;
 __weak volatile int16_t oscillo_ina1;

@@ -27,6 +27,7 @@
  *  		  - remote block for multiple MCU system
  */
 
+//#define RECORD_MSG 1
 
 #include <stddef.h>
 #include <memory.h>
@@ -78,7 +79,9 @@ static const tasklet_def_t canton_tdef = {
 		.default_msg_handler = handle_msg_normal,
 		.default_tick_handler = NULL,
 		.msg_handler_for	= msg_handler_selector,
-		.tick_handler_for 	= NULL
+		.tick_handler_for 	= NULL,
+
+		.recordmsg			= RECORD_MSG,
 
 };
 tasklet_t canton_tasklet = { .def = &canton_tdef, .init_done = 0, .queue=&to_canton};
@@ -332,6 +335,9 @@ HAL_StatusTypeDef my_HAL_TIM_PWM_Stop(TIM_HandleTypeDef *htim, uint32_t Channel)
 
 static void canton_set_pwm(int cidx, const conf_canton_t *c, canton_vars_t *v,  int8_t dir, int duty)
 {
+	if (c->reverse) {
+		dir=-dir;
+	}
 	itm_debug3(DBG_LOWCTRL, "c/set_pwm", cidx, dir, duty);
 	int t = 2*duty; // with centered pwm (or normal)
 

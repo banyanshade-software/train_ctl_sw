@@ -17,6 +17,8 @@
  * 			target_speed -> inertia -> BEMF feedback -> volt + pwm
  */
 
+// #define RECORD_MSG 1
+
 #include <stdint.h>
 #include <memory.h>
 
@@ -60,7 +62,9 @@ static const tasklet_def_t spdctl_tdef = {
 		.default_msg_handler = spdctl_handle_msg,
 		.default_tick_handler = spdctrl_handle_tick,
 		.msg_handler_for	= NULL,
-		.tick_handler_for 	= NULL
+		.tick_handler_for 	= NULL,
+
+		.recordmsg			= RECORD_MSG,
 
 };
 tasklet_t spdctl_tasklet = { .def = &spdctl_tdef, .init_done = 0, .queue=&to_spdctl};
@@ -188,8 +192,9 @@ static void spdctl_reset(void)
 
 volatile int16_t oscillo_t0bemf = 0;
 volatile int16_t oscillo_t1bemf = 0;
-extern volatile int oscillo_trigger_start;
 
+extern volatile int oscillo_trigger_start;
+extern volatile int oscillo_canton_of_interest;
 
 
 static void spdctl_handle_msg(msg_64_t *m)
@@ -197,6 +202,7 @@ static void spdctl_handle_msg(msg_64_t *m)
 	// msg handled in any state / from & to conditions
 	switch (m->cmd) {
 	case CMD_TRIG_OSCILLO:
+		oscillo_canton_of_interest = m->v1u;
 		oscillo_trigger_start = 1;
 		break;
 	default:

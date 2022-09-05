@@ -101,7 +101,10 @@ static int flashcnt = 0;
 
 void oam_flash_begin(void)
 {
-	if (flashcnt) Error_Handler();
+	if (flashcnt) {
+		FatalError("FL2", "Flash rentered", Error_FlashRentered);
+		return;
+	}
 	flashcnt++;
 	// -----
 	MX_SPI1_Init();

@@ -6,6 +6,9 @@
  */
 
 
+// #define RECORD_MSG 1
+
+
 
 #include "../misc.h"
 #include "../msg/trainmsg.h"
@@ -24,7 +27,7 @@
 #include "detectP.h"
 
 #include "../leds/led.h"
-
+#include "../config/conf_globparam.h"
 
 
 #ifndef BOARD_HAS_CTRL
@@ -81,7 +84,9 @@ static const tasklet_def_t ctrl_tdef = {
 		.default_msg_handler = NULL,
 		.default_tick_handler = ctrl_tick,
 		.msg_handler_for	=  msg_handler_selector,
-		.tick_handler_for 	= NULL
+		.tick_handler_for 	= NULL,
+
+		.recordmsg			= RECORD_MSG,
 
 };
 tasklet_t ctrl_tasklet = { .def = &ctrl_tdef, .init_done = 0, .queue=&to_ctrl};
@@ -581,7 +586,7 @@ static void normal_process_msg(msg_64_t *m)
             if ((1)) {
                 debug_info('I', m->subc, "INA", m->v1u, m->v2, 0);
             }
-            if (ignore_ina_presence) break;
+            if (ignore_ina_presence || conf_globparam_get(0)->ignoreIna3221) break;
             sub_presence_changed(m->from, m->subc, m->v1u, m->v2);
             break;
     
@@ -854,7 +859,7 @@ __weak int can_send_stat(void)
 
 static void evt_tleave(int tidx, train_ctrl_t *tvars)
 {
-    if (ignore_ina_presence || (get_lsblk_ina3221(tvars->c1_sblk) == 0xFF)) {
+    if (ignore_ina_presence || conf_globparam_get(0)->ignoreIna3221 || (get_lsblk_ina3221(tvars->c1_sblk) == 0xFF)) {
         itm_debug2(DBG_ERR|DBG_CTRL, "TLeave", tidx, tvars->_state);
         ctrl2_evt_leaved_c1(tidx, tvars);
     } else if (tvars->c1c2){
@@ -923,7 +928,7 @@ static int set_turnout(xtrnaddr_t tn, int v, int train)
 
 	int rc = topology_set_turnout(tn, v, train);
     if (rc) {
-    	itm_debug3(DBG_CTRL||DBG_TURNOUT, "tn busy", train, tn.v, rc);
+    	itm_debug3(DBG_CTRL|DBG_TURNOUT, "tn busy", train, tn.v, rc);
     	return rc;
     }
 

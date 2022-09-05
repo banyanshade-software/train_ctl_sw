@@ -83,7 +83,7 @@ typedef enum {
     CMD_VOFF_NOTIF,					// canton->ui (debug)						used if NOTIF_VOFF=1
     CMD_INA3221_VAL1,
     CMD_NOTIF_SPEED,				// spdctl->ui	(debug)
-	CMD_TRIG_OSCILLO,				// any -> spdctl
+	CMD_TRIG_OSCILLO,				// any -> spdctl	v1=canton_of_interest
 
 	CMD_CANTEST,					// any (cantest) -> any (cantest)
 	CMD_CANTEST_RESP,				// any - > any (ui)

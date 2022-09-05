@@ -42,7 +42,8 @@
 @property (nonatomic, weak) IBOutlet NSSlider *sliderTarget2;
 @property (nonatomic, weak) IBOutlet NSSlider *sliderTarget3;
 
-@property (nonatomic, weak) IBOutlet NSView *paramView;
+@property (nonatomic, weak) IBOutlet NSView *paramView1;
+@property (nonatomic, weak) IBOutlet NSView *paramView2;
 @property (nonatomic, weak) IBOutlet NSTableView *cantonTableView;
 @property (nonatomic, weak) IBOutlet NSTableView *trainTableView;
 

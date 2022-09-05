@@ -505,18 +505,27 @@ typedef void (^respblk_t)(void);
 
 #pragma mark -
 
-- (void) performForChildOf:(NSView *)parent having:(BOOL (^)(NSView *))cond action:(void(^)(NSView *))action
+- (void) performForChildOf:(NSArray <NSView  *> *)parents having:(BOOL (^)(NSView *))cond action:(void(^)(NSView *))action
+{
+    for (NSView *parent in parents) {
+        [self performForChildOf1:parent having:cond action:action];
+    }
+}
+
+
+
+- (void) performForChildOf1:(NSView  *)parent having:(BOOL (^)(NSView *))cond action:(void(^)(NSView *))action
 {
     NSArray *sa = [parent subviews];
     for (NSView *sv in sa) {
-        [self performForChildOf:sv having:cond action:action];
+        [self performForChildOf1:sv having:cond action:action];
         if (cond(sv)) action(sv);
     }
 }
 
 - (void) forAllParamsDo:(void(^)(NSControl *))action
 {
-    [self performForChildOf:self.paramView having:^(NSView *v) {
+    [self performForChildOf:@[self.paramView1, self.paramView2] having:^(NSView *v) {
         NSString *s = v.identifier;
         if (![s isKindOfClass:[NSString class]]) return NO;
         if (![s hasPrefix:@"par_"]) return NO;
@@ -528,7 +537,7 @@ typedef void (^respblk_t)(void);
 - (void) forParams:(NSArray *)parlist do:(void(^)(NSControl *))action
 {
     NSSet *parset = [NSSet setWithArray:parlist];
-    [self performForChildOf:self.paramView having:^(NSView *v) {
+    [self performForChildOf:@[self.paramView1, self.paramView2]  having:^(NSView *v) {
         NSString *s = v.identifier;
         if (![s isKindOfClass:[NSString class]]) return NO;
         if (![s hasPrefix:@"par_"]) return NO;
@@ -1714,14 +1723,18 @@ int convert_to_mv_raw(int m)
 
 - (NSURL *) createTempCsvFile:(NSString *)basename second:(NSString *)secname retfile:(NSFileHandle **)retfile
 {
-    if (retfile) *retfile = nil;
-    NSURL * tdir = [[NSFileManager defaultManager]temporaryDirectory];
     NSString *s = basename;
     if (secname) {
         s = [s stringByAppendingFormat:@".%@", secname];
     }
     s = [s stringByAppendingString:@".csv"];
-    NSURL *fu = [tdir URLByAppendingPathComponent:s];
+    return [self createTempFile:s retfile:retfile];
+}
+- (NSURL *) createTempFile:(NSString *)filename  retfile:(NSFileHandle **)retfile
+{
+    if (retfile) *retfile = nil;
+    NSURL * tdir = [[NSFileManager defaultManager]temporaryDirectory];
+    NSURL *fu = [tdir URLByAppendingPathComponent:filename];
     NSLog(@"file : %@", fu);
     if (retfile) {
         NSError *err;
@@ -1739,6 +1752,7 @@ int convert_to_mv_raw(int m)
 
 volatile int oscillo_trigger_start = 0;
 volatile int oscillo_enable = 0;
+volatile int oscillo_canton_of_interest = 0;
 
 - (void) processOscilloFrame:(NSData *)dta
 {
@@ -1886,7 +1900,32 @@ volatile int oscillo_enable = 0;
     int rs = len % sizeof(msgrecord_t);
     NSAssert(!rs, @"bad size");
     NSUInteger ns = len / sizeof(msgrecord_t);
-    //TODO
+    // - (NSURL *) createTempFile:(NSString *)filename  retfile:(NSFileHandle **)retfile
+    NSFileHandle *r = nil;
+    NSString *filename = [NSString stringWithFormat:@"recordmsg.txt"]; // TODO date, more info
+    NSURL *url = [self createTempFile:filename retfile:&r];
+    msgrecord_t *records = (msgrecord_t *) [dta bytes];
+    for (NSInteger i = 0; i<ns; i++) {
+        msgrecord_t *rec = &records[i];
+        const char *mdir;
+        switch (rec->dir) {
+            case 1: mdir = "W"; break;
+            case 0: mdir = "R"; break;
+            default: mdir = "?"; break;
+        }
+        NSString *smsg = [self convertMsg64ToString:rec->m];
+        NSString *line = [NSString stringWithFormat:@"%s %d %@",
+                          mdir, rec->ts, smsg];
+        [r writeData:[line dataUsingEncoding:NSUTF8StringEncoding]];
+    }
+    [r closeFile];
+    NSLog(@"recordmsg file : %@", url);
+}
+
+- (NSString *) convertMsg64ToString:(msg_64_t)m
+{
+    // TODO
+    return nil;
 }
 
 #pragma mark -
@@ -2687,7 +2726,7 @@ didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic
     m.from = MA3_UI_GEN; //(UISUB_USB);
     m.cmd = CMD_TRIG_OSCILLO;
     m.v1u = 0;
-    m.v2 = 9;
+    //m.v2 = 9;
     [self sendMsg64:m];
 }
 

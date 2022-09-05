@@ -289,13 +289,13 @@ static void store_encode(uint8_t *buf8, unsigned int  confnum, unsigned int  brd
 }
 
 
-static void store_decode(uint8_t *buf8, unsigned int *confnum, unsigned int *brd, unsigned int *inst, unsigned int *field, int32_t *v)
+static void store_decode(uint8_t *buf8, unsigned int *confnum, unsigned int *brd, unsigned int *inst, unsigned int *field, int32_t *pv)
 {
 	*confnum = buf8[0] & 0x3F;
 	*brd = buf8[1];
 	*inst = buf8[2];
 	*field = buf8[3];
-	memcpy(&v, buf8+4, 4);
+	memcpy(pv, buf8+4, 4);
 }
 
 static int store_isvalid(uint8_t *buf8)
@@ -320,7 +320,6 @@ static void store_rewind(blk_desc_t *d);
 static int  store_read(blk_desc_t *d, uint8_t *buf);
 static void store_disable_lastfield(blk_desc_t *d);
 static void store_append_field(blk_desc_t *d, uint8_t *buf);
-
 void oam_flashstore_set_value(int confnum, int fieldnum, int confbrd, int instnum, int32_t v)
 {
 	oam_flash_begin();
@@ -430,6 +429,7 @@ void oam_flashstore_rd_rewind(void)
 	blk_desc_t *desc = use_backup ? &blk_bup0_str : &blk_n1_str;
 	if (!desc->valid) {
 		itm_debug1(DBG_OAM|DBG_ERR, "blk not valid", desc->block_num);
+		oam_flash_end();
 		return;
 	}
 	store_rewind(desc);
@@ -448,7 +448,10 @@ int  oam_flashstore_rd_next(unsigned int *confnum, unsigned int *fieldnum, unsig
 	for (;;)  {
 		uint8_t buf[8];
 		int rc = store_read(desc, buf);
-		if (rc) return rc;
+		if (rc) {
+			oam_flash_end();
+			return rc;
+		}
 		if (!store_isvalid(buf)) continue;
 
 

@@ -8,7 +8,7 @@
 
 
 
-
+//#define RECORD_MSG 1
 
 #include <stdint.h>
 #include <memory.h>
@@ -53,7 +53,9 @@ static const tasklet_def_t oam_tdef = {
 		.default_msg_handler = NULL,
 		.default_tick_handler = NULL,
 		.msg_handler_for	= msg_handler_selector,
-		.tick_handler_for 	= tick_handler_selector
+		.tick_handler_for 	= tick_handler_selector,
+
+		.recordmsg			= RECORD_MSG,
 
 };
 tasklet_t OAM_tasklet = { .def = &oam_tdef, .init_done = 0, .queue=&to_oam};
@@ -114,7 +116,7 @@ static void OAM_Init(void)
 	oam_flash_init();
 	itm_debug1(DBG_OAM, "OAM loc rd", 0);
     oam_flashlocal_read(-1);
-    // TODO propag normal store if master
+
 	if ((0)) {
 		// void oam_flashstore_set_value(int confnum, int fieldnum, int confbrd, int instnum, int32_t v)
 		// uint32_t oam_flashstore_get_value(int confnum, int fieldnum, int confbrd, int instnum)
@@ -122,6 +124,25 @@ static void OAM_Init(void)
 		itm_debug1(DBG_OAM, "T/store", 0);
 		int32_t v = oam_flashstore_get_value(conf_pnum_utest, conf_numfield_utest_beta, 0, 0);
 		itm_debug1(DBG_OAM, "T/read", v);
+	}
+
+	if (oam_isMaster()) {
+	    //  propag normal store locally if master
+		oam_flashstore_rd_rewind();
+		for (;;) {
+			unsigned int confnum; unsigned int fieldnum;
+			unsigned int confbrd; unsigned int instnum;
+			int32_t v;
+
+			int rc = oam_flashstore_rd_next(&confnum, &fieldnum, &confbrd, &instnum, &v);
+			if (rc<0) {
+				// EOF
+				break;
+			}
+			if (confbrd != 0) continue;
+			conf_propagate(confnum, fieldnum, instnum, v);
+		}
+		oam_flashstore_rd_rewind();
 	}
 #endif
     
@@ -959,6 +980,7 @@ static void handle_master_tick(_UNUSED_ uint32_t tick, _UNUSED_ uint32_t dt)
 			OAM_NeedsReschedule = 1;
 			return;
 		case slave_config:
+			// oam_flashstore_rd_rewind();
 			for (;;) {
 				rc = oam_flashstore_rd_next(&confnum, &fieldnum, &confbrd, &instnum, &v);
 				if (rc<0) {

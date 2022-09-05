@@ -19,6 +19,7 @@ int32_t conf_globparam_default_value(unsigned int numinst, unsigned int numfield
 #define conf_numfield_globparam_pwmfreq 		0
 #define conf_numfield_globparam_test_mode 		1
 #define conf_numfield_globparam_oscillo 		2
+#define conf_numfield_globparam_ignoreIna3221 		3
 
 
 void *conf_globparam_ptr(void);

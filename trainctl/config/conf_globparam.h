@@ -21,6 +21,7 @@ typedef struct conf_globparam {
     uint16_t pwmfreq;
     int test_mode;
     int oscillo;
+    int ignoreIna3221;
 } conf_globparam_t;
 
 
@@ -36,7 +37,7 @@ const conf_globparam_t *conf_globparam_get(int num);
 
 
 #ifdef TRN_BOARD_MAINV04
-#define NUM_GLOBPARAMS 0 // 0 
+#define NUM_GLOBPARAMS 1 // 1 
 #endif // TRN_BOARD_MAINV04
 
 

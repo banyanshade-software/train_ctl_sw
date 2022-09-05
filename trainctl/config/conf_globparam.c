@@ -40,10 +40,16 @@ static conf_globparam_t conf_globparam[0] = {
 
 unsigned int conf_globparam_num_entries(void)
 {
-    return 0; // 0 
+    return 1; // 1 
 }
 
-static conf_globparam_t conf_globparam[0] = {
+static conf_globparam_t conf_globparam[1] = {
+  {     // 0
+     .pwmfreq = 100,
+     .test_mode = 0,
+     .oscillo = 0,
+     .ignoreIna3221 = 0,
+  }
 };
 
 #endif // TRN_BOARD_MAINV04
@@ -63,6 +69,7 @@ static conf_globparam_t conf_globparam[1] = {
      .pwmfreq = 100,
      .test_mode = 0,
      .oscillo = 0,
+     .ignoreIna3221 = 0,
   }
 };
 
@@ -128,6 +135,7 @@ static conf_globparam_t conf_globparam[1] = {
      .pwmfreq = 100,
      .test_mode = 0,
      .oscillo = 0,
+     .ignoreIna3221 = 0,
   }
 };
 
@@ -166,6 +174,8 @@ int32_t conf_globparam_local_get(unsigned int fieldnum, unsigned int instnum)
         return c->test_mode;
     case conf_numfield_globparam_oscillo:
         return c->oscillo;
+    case conf_numfield_globparam_ignoreIna3221:
+        return c->ignoreIna3221;
     }
     return 0;
 }
@@ -187,6 +197,9 @@ void conf_globparam_local_set(unsigned int fieldnum, unsigned int instnum, int32
         break;
     case conf_numfield_globparam_oscillo:
         c->oscillo = v;
+        break;
+    case conf_numfield_globparam_ignoreIna3221:
+        c->ignoreIna3221 = v;
         break;
     }
 

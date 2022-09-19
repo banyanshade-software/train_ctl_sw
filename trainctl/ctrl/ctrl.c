@@ -528,11 +528,12 @@ static void posecm_measured(int tidx, int32_t pose, lsblk_num_t blk1, lsblk_num_
 static void normal_process_msg(msg_64_t *m)
 {
     // -----------------------------------------
-    xtrnaddr_t turnout;
+    xtrnaddr_t turnout = {0};
     switch (m->cmd) {
         default:
             break;
         case CMD_TURNOUT_HI_A:
+        	// TODO : board
             turnout.v = m->v1u;
             set_turnout(turnout, 0, -1);
             break;

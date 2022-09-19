@@ -45,12 +45,12 @@ table tpin_mainV0
 
 table tpin_mainV04
     ( portA,    portB,       bA,          bB)
-    ( GPIOE,    GPIOE,      GPIO_PIN_0,  GPIO_PIN_1)  // TURN1 PE0,PE1
-    ( GPIOD,    GPIOD,      GPIO_PIN_0,  GPIO_PIN_1)  // TURN2 PD0,PD1
-    ( GPIOC,    GPIOC,      GPIO_PIN_13, GPIO_PIN_11) // TURN3 PC13, PC11
-    ( GPIOA,    GPIOA,      GPIO_PIN_6,  GPIO_PIN_7)  // TURN4 PA6,PA7
-    ( GPIOA,    GPIOB,      GPIO_PIN_15, GPIO_PIN_15) // TURN5 PA15,PB15
-    ( GPIOC,    GPIOC,      GPIO_PIN_10, GPIO_PIN_12) // TURN6 PC10,PC12
+    ( GPIOE,    GPIOE,      GPIO_PIN_0,  GPIO_PIN_1)  // TURN0 PE0,PE1
+    ( GPIOD,    GPIOD,      GPIO_PIN_0,  GPIO_PIN_1)  // TURN1 PD0,PD1
+    ( GPIOC,    GPIOC,      GPIO_PIN_13, GPIO_PIN_11) // TURN2 PC13, PC11
+    ( GPIOA,    GPIOA,      GPIO_PIN_6,  GPIO_PIN_7)  // TURN3 PA6,PA7
+    ( GPIOA,    GPIOB,      GPIO_PIN_15, GPIO_PIN_15) // TURN4 PA15,PB15
+    ( GPIOC,    GPIOC,      GPIO_PIN_10, GPIO_PIN_12) // TURN5 PC10,PC12
 ;
 
 table tpin_switcher

@@ -155,7 +155,7 @@ void turnout_tasklet(_UNUSED_ uint32_t notif_flags, uint32_t tick, uint32_t dt)
  */
 
 typedef struct turnout_vars {
-	int8_t value;	// -1 = A, 1 = B, 0 = unknown
+	int8_t value;	// -1 = A, 1 = B, 0 = unknown ; currently this is set but not used
 	uint8_t st;
 } turnout_vars_t;
 
@@ -219,16 +219,16 @@ static void process_turnout_cmd(msg_64_t *m)
 	    HAL_GPIO_WritePin(aconf->cmd_portA, aconf->pinA, GPIO_PIN_RESET);
 	    HAL_GPIO_WritePin(aconf->cmd_portB, aconf->pinB, GPIO_PIN_RESET);
 #endif
-		avars->st = ST_SETA;
+		avars->st = aconf->reverse ? ST_SETB : ST_SETA;
 		break;
 	case CMD_TURNOUT_B:
 		itm_debug2(DBG_TURNOUT, "TB", tidx, avars->value);
-		avars->value = -1;
+		avars->value = 1;
 #ifndef TRAIN_SIMU
 	    HAL_GPIO_WritePin(aconf->cmd_portA, aconf->pinA, GPIO_PIN_RESET);
 	    HAL_GPIO_WritePin(aconf->cmd_portB, aconf->pinB, GPIO_PIN_RESET);
 #endif
-		avars->st = ST_SETB;
+		avars->st = aconf->reverse ? ST_SETA : ST_SETB;
 		break;
 	default:
 		itm_debug1(DBG_ERR|DBG_TURNOUT, "inv cmd", m->cmd);

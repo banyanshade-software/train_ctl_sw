@@ -10,7 +10,10 @@
 #define topologyP_h
 
 //#define TOPOLOGY_SVG
+#include "../config/conf_topology.h"
 
+#if 0
+// old, before config conf_topology
 #ifdef TOPOLOGY_SVG
 typedef struct {
     int l;
@@ -39,7 +42,9 @@ typedef struct {
     coord_t points[MAX_POINTS];
 #endif
 } topo_lsblk_t;
+#endif
 
+typedef conf_topology_t topo_lsblk_t;
 
 const topo_lsblk_t *topology_get_sblkd(int lsblk);
 

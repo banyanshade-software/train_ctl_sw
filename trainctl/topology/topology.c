@@ -31,7 +31,7 @@
 
 //#define NUM_TURNOUTS 16
 #define DBG_TURNOUTS 1
-#define itm_debug3(_fl, _msg, _a, _b, _c) do {printf(_msg  "%d %d %d", _a, _b, _c);} while(0)
+//#define itm_debug3(_fl, _msg, _a, _b, _c) do {printf(_msg  "%d %d %d", _a, _b, _c);} while(0)
 #endif
 
 
@@ -61,6 +61,9 @@
  * ina1 on C1 (B1, B4)
  * ina2 on C0 (B0)
  */
+
+#if 0
+// before topology.cnf
 
 static const topo_lsblk_t _Topology[] = {
 #ifdef UNIT_TEST
@@ -111,19 +114,31 @@ static const topo_lsblk_t _Topology[] = {
 #endif
     
 };
+#endif // obsolete before topology.cnf
 
+/*
+unsigned int conf_topology_num_entries(void);
+const conf_topology_t *conf_topology_get(int num);
+ */
+
+static  const topo_lsblk_t *_Topology = NULL;
+static  int _numTopology = 0;
+
+static void _readTopology(void)
+{
+	_numTopology = conf_topology_num_entries();
+	_Topology = conf_topology_get(0);
+}
 
 static inline  int numTopology(void)
 {
-    static int s=0;
-    if (!s) {
-        s = sizeof(_Topology)/sizeof(topo_lsblk_t);
-    }
-    return s;
+	if (!_Topology) _readTopology();
+    return _numTopology;
 }
 
 static inline const topo_lsblk_t *Topology(lsblk_num_t blknum)
 {
+	if (!_Topology) _readTopology();
     return &_Topology[blknum.n];
 }
 
@@ -133,6 +148,7 @@ const topo_lsblk_t *topology_get_sblkd(int lsblk)
     n.n = lsblk;
     return Topology(n);
 }
+
 uint8_t get_lsblk_ina3221(lsblk_num_t num)
 {
     return topology_get_sblkd(num.n)->ina_segnum;

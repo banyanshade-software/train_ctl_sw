@@ -26,7 +26,7 @@ typedef struct {
 
 typedef struct conf_topology {
     uint8_t canton_addr;
-    int8_t ina_segnum;
+    uint8_t ina_segnum;
     int8_t steep;
     uint8_t length_cm;
     int8_t left1;
@@ -52,7 +52,7 @@ const conf_topology_t *conf_topology_get(int num);
 
 
 #ifdef TRN_BOARD_MAINV04
-#define NUM_TOPOLOGYS 0 // 0 
+#define NUM_TOPOLOGYS 64 // 64 
 #endif // TRN_BOARD_MAINV04
 
 

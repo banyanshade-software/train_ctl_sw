@@ -26,7 +26,7 @@ typedef struct {
 
 config topology {
     user uint8_t canton_addr                    = (default) table(topo,canton);
-    user int8_t ina_segnum                      = (default) table(topo,ina);
+    user uint8_t ina_segnum                      = (default) table(topo,ina);
     
     user int8_t steep                           = (default) table(topo,stp);
     user uint8_t length_cm                      = (default) table(topo,len);
@@ -41,6 +41,7 @@ config topology {
     user int p0 = (default) table(topo,p0);
     disk coord_t points[4] = (default) table(topo, pts);
 } num = (mainV0) 64
+      = (mainV04) 64
       = (simu) 64
       = (default) 0;
 
@@ -92,7 +93,11 @@ typedef struct {
 
 attrib topology c_code {
 
+#ifndef TOPOLOGY_SVG
 #include "../msg/trainmsg.h"
+#else
+#define CNUM(_board, _canton)  ((((_board) & 0x0F)<<4) | ((_canton) & 0x0F))
+#endif
 
 #define _PTS(pi, ...)  ,pi,{__VA_ARGS__}
 #define _VP {-1, -1}

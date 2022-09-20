@@ -70,6 +70,7 @@ const stat_val_t statval_ctrl[] = {
 // ------------------------------------------------------
 
 static void ctrl_init(void);
+static void _ctrl_init(int normalmode);
 static void ctrl_enter_runmode(runmode_t m);
 static void ctrl_tick(uint32_t tick, _UNUSED_ uint32_t dt);
 
@@ -124,7 +125,7 @@ static void ctrl_enter_runmode(runmode_t m)
         default:
             break;
         case runmode_normal:
-            ctrl_init();
+            _ctrl_init(1);
             break;
         case runmode_detect2:
             detect2_init();
@@ -302,7 +303,13 @@ static const uint8_t route_2_T0[] = {
 
 static void ctrl_init(void)
 {
+	_ctrl_init(0);
+}
+
+static void _ctrl_init(int normalmode)
+{
 	if ((1)) {
+		// sanity check
 		xblkaddr_t t;
 		t.v = 0x24;
 		if (t.board != 2) FatalError("chk1", "check xblkaddr_t", Error_Check);
@@ -312,56 +319,60 @@ static void ctrl_init(void)
 		if (b.board != 4) FatalError("chk3", "check xblkaddr_t", Error_Check);
 		if (b.turnout != 7) FatalError("chk4", "check xblkaddr_t", Error_Check);
 	}
+
 	memset(trctl, 0, sizeof(train_ctrl_t)*NUM_TRAINS);
-	ctrl_set_mode(0, train_manual);
-	//ctrl_set_mode(1, train_auto);
-	xtrnaddr_t t0 = { .v = 0};
-	xtrnaddr_t t1 = { .v = 1};
-    set_turnout(t0, 0, -1);
-    set_turnout(t1, 0, -1);
-    _UNUSED_ lsblk_num_t s0 = {0};
-    lsblk_num_t s2 = {2};
-    _UNUSED_ lsblk_num_t s5 = {5};
-    lsblk_num_t _UNUSED_ s3 = {3};
-	if ((1)) {
+
+	if (normalmode) {
+		ctrl_set_mode(0, train_manual);
+		//ctrl_set_mode(1, train_auto);
+		xtrnaddr_t t0 = { .v = 0};
+		xtrnaddr_t t1 = { .v = 1};
+		set_turnout(t0, 0, -1);
+		set_turnout(t1, 0, -1);
+		_UNUSED_ lsblk_num_t s0 = {0};
+		lsblk_num_t s2 = {2};
+		_UNUSED_ lsblk_num_t s5 = {5};
+		lsblk_num_t _UNUSED_ s3 = {3};
+		if ((1)) {
 #ifdef TRAIN_SIMU
-        ctrl2_init_train(0, &trctl[0], s2);
-        ctrl_set_mode(0, train_manual);
+			ctrl2_init_train(0, &trctl[0], s2);
+			ctrl_set_mode(0, train_manual);
 #else
-        ctrl2_init_train(0, &trctl[0], s0);
-        //ctrl2_init_train(0, &trctl[0], s5 /*s0*/);
-        ctrl2_init_train(1, &trctl[1], s2);
-        ctrl_set_mode(0, train_manual);
-        ctrl_set_mode(1, train_manual);
+			ctrl2_init_train(0, &trctl[0], s0);
+			//ctrl2_init_train(0, &trctl[0], s5 /*s0*/);
+			ctrl2_init_train(1, &trctl[1], s2);
+			ctrl_set_mode(0, train_manual);
+			ctrl_set_mode(1, train_manual);
 #endif
 
-        if ((0)) {
-            
-            trctl[0].routeidx = 0;
-            trctl[0].route = route_0_T0;
-            // ctrl_set_mode(0, train_auto);
-            
-            
-            trctl[1].routeidx = 0;
-            trctl[1].route = route_0_T1;
-        }
-        
-        if ((1)) {
-            
-            
-            trctl[0].routeidx = 0;
-            trctl[0].route = route_1_T0;
-            
-            trctl[1].routeidx = 0;
-            trctl[1].route = route_1_T1;
-        }
-        
+			if ((0)) {
 
-	} else {
-        ctrl2_init_train(0, &trctl[0], s0);
-        //ctrl2_init_train(1, &trctl[1], s2);
-        ctrl_set_mode(0, train_manual);
-        ctrl_set_mode(1, train_notrunning);
+				trctl[0].routeidx = 0;
+				trctl[0].route = route_0_T0;
+				// ctrl_set_mode(0, train_auto);
+
+
+				trctl[1].routeidx = 0;
+				trctl[1].route = route_0_T1;
+			}
+
+			if ((1)) {
+
+
+				trctl[0].routeidx = 0;
+				trctl[0].route = route_1_T0;
+
+				trctl[1].routeidx = 0;
+				trctl[1].route = route_1_T1;
+			}
+
+
+		} else {
+			ctrl2_init_train(0, &trctl[0], s0);
+			//ctrl2_init_train(1, &trctl[1], s2);
+			ctrl_set_mode(0, train_manual);
+			ctrl_set_mode(1, train_notrunning);
+		}
 	}
 }
 

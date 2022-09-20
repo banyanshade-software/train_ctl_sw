@@ -276,7 +276,7 @@ typedef union {
 } xblkaddr_t;
 
 
-#ifndef TRAIN_SIMU
+#ifndef __clang__
 static_assert(sizeof(xblkaddr_t) == 1);
 #else
 typedef char xcompile_assert[(sizeof(xblkaddr_t) == 1) ? 0 : -1];

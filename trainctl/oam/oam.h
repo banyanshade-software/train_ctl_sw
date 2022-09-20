@@ -44,4 +44,7 @@ uint32_t oam_getDeviceUniqueId(void);
 void oam_decode_val40(uint64_t  val40, unsigned int *fnum, unsigned int *brd, unsigned int *inst, unsigned int *field, int32_t *v);
 void oam_encode_val40(uint64_t *val40, unsigned int  fnum, unsigned int  brd, unsigned int  inst, unsigned int  field, int32_t  v);
 
+
+extern volatile int Oam_Ready;
+
 #endif /* OAM_OAM_H_ */

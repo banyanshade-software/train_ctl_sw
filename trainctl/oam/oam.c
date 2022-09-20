@@ -106,6 +106,8 @@ static tick_handler_t tick_handler_selector(runmode_t m)
 
 static int respok = 0; // for testcan
 
+volatile int Oam_Ready = 0;
+
 static void OAM_Init(void)
 {
     //initdone=1;
@@ -168,7 +170,7 @@ static void OAM_Init(void)
         }
         mqf_write_from_nowhere(&m); // from_nowher, otherwise it wont be sent to self
     }
-
+    Oam_Ready = 1;
 }
 
 

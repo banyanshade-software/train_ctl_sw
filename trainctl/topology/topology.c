@@ -45,12 +45,15 @@
 #include "topologyP.h"
 #include "occupency.h"
 
+
 #ifdef TOPOLOGY_SVG
 #define _PTS(pi, ...)  ,pi,{__VA_ARGS__}
 #define _VP {-1, -1}
 #define L0 (2)
 #else
 #define _PTS(...)
+#include "../oam/oam.h"
+
 #endif
 
 #define FUTURE_CANTON 0xFF
@@ -126,6 +129,9 @@ static  int _numTopology = 0;
 
 static void _readTopology(void)
 {
+	if (!Oam_Ready) {
+		return;
+	}
 	_numTopology = conf_topology_num_entries();
 	_Topology = conf_topology_get(0);
 }

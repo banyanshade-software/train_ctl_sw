@@ -12,6 +12,7 @@
 #include "topologyP.h"
 #include "topology.h"
 
+#define MAX_POINTS 4
 @interface AppDelegate ()
 
 @property (weak) IBOutlet NSWindow *window;

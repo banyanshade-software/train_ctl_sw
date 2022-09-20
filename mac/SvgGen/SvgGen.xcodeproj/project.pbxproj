@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1B6C5BA728DA01F600DD9388 /* conf_topology.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B6C5BA428DA01B300DD9388 /* conf_topology.c */; };
 		1BD7CD4227368D490035CF0A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BD7CD4127368D490035CF0A /* AppDelegate.m */; };
 		1BD7CD4427368D7A0035CF0A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1BD7CD4327368D7A0035CF0A /* Assets.xcassets */; };
 		1BD7CD4727368D7A0035CF0A /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1BD7CD4527368D7A0035CF0A /* MainMenu.xib */; };
@@ -16,6 +17,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		1B6C5B9828D9CEF100DD9388 /* trainctl_config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = trainctl_config.h; sourceTree = "<group>"; };
+		1B6C5BA028D9D08000DD9388 /* conf_topology.propag.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = conf_topology.propag.h; path = ../../trainctl/config/conf_topology.propag.h; sourceTree = "<group>"; };
+		1B6C5BA128D9D08000DD9388 /* conf_topology.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = conf_topology.h; path = ../../trainctl/config/conf_topology.h; sourceTree = "<group>"; };
+		1B6C5BA428DA01B300DD9388 /* conf_topology.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = conf_topology.c; path = ../../trainctl/config/conf_topology.c; sourceTree = "<group>"; };
 		1BBD4A892824F4C0005320EB /* boards_def.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = boards_def.h; sourceTree = "<group>"; };
 		1BD7CD3D27368D480035CF0A /* SvgGen.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SvgGen.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1BD7CD4027368D480035CF0A /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -46,6 +51,10 @@
 		1BD7CD3427368D480035CF0A = {
 			isa = PBXGroup;
 			children = (
+				1B6C5BA428DA01B300DD9388 /* conf_topology.c */,
+				1B6C5BA128D9D08000DD9388 /* conf_topology.h */,
+				1B6C5BA028D9D08000DD9388 /* conf_topology.propag.h */,
+				1B6C5B9828D9CEF100DD9388 /* trainctl_config.h */,
 				1BBD4A892824F4C0005320EB /* boards_def.h */,
 				1BD7CD52273690A10035CF0A /* topology.c */,
 				1BD7CD53273690A10035CF0A /* topology.h */,
@@ -157,6 +166,7 @@
 			files = (
 				1BD7CD4A27368D7A0035CF0A /* main.m in Sources */,
 				1BD7CD54273690A10035CF0A /* topology.c in Sources */,
+				1B6C5BA728DA01F600DD9388 /* conf_topology.c in Sources */,
 				1BD7CD4227368D490035CF0A /* AppDelegate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

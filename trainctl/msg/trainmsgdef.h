@@ -76,6 +76,7 @@ typedef enum {
 	CMD_PARAM_PROPAG,				// oam(0) -> oam(slave)
     
     // 111 xxxxx = 0xE0 debug and misc low prio
+	CMD_NOTIF_PRES,					// ctrl -> ui							    ina based presence on sblk (bitfield)
     CMD_NOOP = 0xE0,				// ?->can									msg intended for CAN testing, do nothing
     CMD_TIM_SYNC_ACK,               //                                          slave->master ack synchro
     CMD_LED_RUN,					// auto,ui->led		v1u=lednum v2u=prg		run led program

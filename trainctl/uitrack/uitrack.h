@@ -15,5 +15,6 @@ void impl_uitrack_change_blk(int blk, int v, int trn, int sblk);
 void impl_uitrack_change_tn(int tn, int v);
 void impl_uitrack_change_tn(int tn, int v);
 void impl_uitrack_change_tn_reserv(int tn, int train);
+void impl_uitrack_change_pres(uint32_t bitfield);
 
 #endif /* uitrack_h */

@@ -24,6 +24,7 @@ static void uitrack_reset(void);
 static void uitrack_change_blk(int blk, int v, int trn, int sblk);
 static void uitrack_change_tn(int tn, int v);
 static void uitrack_change_tn_reserv(int tn, int train);
+static void uitrack_change_pres(uint32_t bitfield);
 
 void uitrack_run_tick(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_ uint32_t dt)
 {
@@ -52,6 +53,9 @@ void uitrack_run_tick(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UN
         case CMD_TURNOUT_B:
         	uitrack_change_tn(m.subc, 1);
         	break;
+        case CMD_NOTIF_PRES:
+                uitrack_change_pres(m.v32u);
+                break;
         }
     }
 }
@@ -76,6 +80,15 @@ static void uitrack_change_tn_reserv(int tn, int train)
     impl_uitrack_change_tn_reserv(tn, train);
 }
 
+static void uitrack_change_pres(uint32_t bitfield)
+{
+    impl_uitrack_change_pres(bitfield);
+}
+
+void  __attribute__((weak))  impl_uitrack_change_pres(_UNUSED_ uint32_t bitfield)
+{
+    
+}
 
 void  __attribute__((weak))  impl_uitrack_change_blk(_UNUSED_ int blk, _UNUSED_ int v, _UNUSED_ int trn, _UNUSED_ int sblk)
 {

@@ -167,6 +167,7 @@ static void evt_timer(int tidx, train_ctrl_t *tvar, int tnum);
 // sub block presence handling
 
 static void sub_presence_changed(uint8_t from_addr, uint8_t segnum, uint16_t v, int16_t ival);
+static void notify_presence_changed(uint8_t from_addr, uint8_t segnum, uint16_t v, int16_t ival);
 
 // ----------------------------------------------------------------------------
 //  block occupency
@@ -425,8 +426,31 @@ static void ctrl_tick(uint32_t tick, _UNUSED_ uint32_t dt)
 
 
 
+static void notify_presence_changed(_UNUSED_ uint8_t from_addr,  uint8_t lsegnum,  uint16_t p, _UNUSED_ int16_t ival)
+{
+	// TODO : from_addr should be used for board number
+	static uint32_t pres = 0;
+	int n = topology_num_sblkd();
+	for (int i=0; i<n; i++) {
+		lsblk_num_t ln;
+		ln.n = i;
+		int li = get_lsblk_ina3221(ln);
+		if (li != lsegnum) continue;
+		if (i>31) break;
+		if (p) pres |= (1<<i);
+		else   pres &= ~(1<<i);
+	}
+	msg_64_t m = {0};
+	m.cmd = CMD_NOTIF_PRES;
+	m.v32u = pres;
+	m.to = MA3_UI_CTC;
+	m.from = MA1_CONTROL();
+	mqf_write_from_ctrl(&m);
+}
+
 static void sub_presence_changed(_UNUSED_ uint8_t from_addr,  uint8_t lsegnum,  uint16_t p, _UNUSED_ int16_t ival)
 {
+	// TODO : from_addr should be used for board number
 	for (int tidx=0; tidx < NUM_TRAINS; tidx++) {
 		train_ctrl_t *tvar = &trctl[tidx];
         if (tvar->_mode == train_notrunning) continue;
@@ -598,6 +622,7 @@ static void normal_process_msg(msg_64_t *m)
             if ((1)) {
                 debug_info('I', m->subc, "INA", m->v1u, m->v2, 0);
             }
+            notify_presence_changed(m->from, m->subc, m->v1u, m->v2u);
             if (ignore_ina_presence || conf_globparam_get(0)->ignoreIna3221) break;
             sub_presence_changed(m->from, m->subc, m->v1u, m->v2);
             break;

@@ -25,6 +25,8 @@ void FatalError( const char *short4lettersmsg, _UNUSED_ const char *longmsg, _UN
 	if (!_fatal) {
 		_fatal = short4lettersmsg;
 		local_ui_fatal();
+		// TODO disable interrupts
+		// TODO reset turnout, otherwise they could burn
 		for (;;) {
 			// stop
 		}

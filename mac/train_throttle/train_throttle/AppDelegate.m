@@ -2747,6 +2747,13 @@ void impl_uitrack_change_blk(int blk, int v, int trn, int sblk)
 {
     [theDelegate.ctcManager uitrac_change_blk:blk val:v train:trn sblk:sblk];
 }
+
+
+void impl_uitrack_change_pres(uint32_t bitfield)
+{
+    [theDelegate.ctcManager uitrac_change_pres:bitfield];
+}
+
 void impl_uitrack_change_tn(int tn, int v)
 {
     [theDelegate.ctcManager uitrac_change_tn:tn val:v];

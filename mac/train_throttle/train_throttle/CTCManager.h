@@ -28,6 +28,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void) uitrac_change_blk:(int) blk val:(int)v train:(int)trn sblk:(int)sblk;
 
+- (void) uitrac_change_pres:(uint32_t) bitfield;
 
 // for trackplan2
 - (void) uitrac_change_sblk:(int) sblk val:(int)v train:(int)trn;

@@ -173,7 +173,23 @@ static int _dim(int col, int dim)
     }
 }
 
-
+- (void) uitrac_change_pres:(uint32_t) bitfield
+{
+    static uint32_t lasvalue = 0;
+    for (int i = 0; i<32; i++) {
+        int l = bitfield & (1<<i);
+        int p = lasvalue & (1<<i);
+        if (l==p) continue;
+        // <polyline id="SBLK05" class="track CANTON3" stroke="#000000" stroke-width="5px" fill="none" points="600,320 680,320 720,280 720,120"></polyline>
+        NSString *js = [NSString stringWithFormat:@"document.getElementById('SBLK%2.2d').style['stroke-width'] = '%s';", i, l ? "10px" : "5px"];
+        [_ctoWebView evaluateJavaScript:js completionHandler:^(id v, NSError *err) {
+            if (err) {
+                NSLog(@"js error : %@\n", err);
+            }
+        }];
+    }
+    lasvalue = bitfield;
+}
 
 - (void) uitrac_change_sblk:(int) sblk val:(int)v train:(int)trn
 {

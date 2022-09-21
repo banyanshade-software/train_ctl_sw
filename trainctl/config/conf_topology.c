@@ -61,7 +61,7 @@ unsigned int conf_topology_num_entries(void)
 static conf_topology_t conf_topology[64] = {
   {     // 0
      .canton_addr = CNUM(0, 0),
-     .ina_segnum = 2,
+     .ina_segnum = 0,
      .steep = 0,
      .length_cm = 98,
      .left1 = -1,
@@ -75,7 +75,7 @@ static conf_topology_t conf_topology[64] = {
   },
   {     // 1
      .canton_addr = CNUM(0, 1),
-     .ina_segnum = 1,
+     .ina_segnum = 3,
      .steep = 0,
      .length_cm = 23,
      .left1 = 0,
@@ -89,7 +89,7 @@ static conf_topology_t conf_topology[64] = {
   },
   {     // 2
      .canton_addr = CNUM(0, 2),
-     .ina_segnum = 0,
+     .ina_segnum = 6,
      .steep = 0,
      .length_cm = 70,
      .left1 = -1,
@@ -103,7 +103,7 @@ static conf_topology_t conf_topology[64] = {
   },
   {     // 3
      .canton_addr = CNUM(0, 2),
-     .ina_segnum = 0,
+     .ina_segnum = 6,
      .steep = 0,
      .length_cm = 20,
      .left1 = 2,
@@ -117,7 +117,7 @@ static conf_topology_t conf_topology[64] = {
   },
   {     // 4
      .canton_addr = CNUM(0, 1),
-     .ina_segnum = 1,
+     .ina_segnum = 3,
      .steep = 0,
      .length_cm = 22,
      .left1 = 1,
@@ -131,7 +131,7 @@ static conf_topology_t conf_topology[64] = {
   },
   {     // 5
      .canton_addr = CNUM(0, 3),
-     .ina_segnum = 0xFF,
+     .ina_segnum = 9,
      .steep = 0,
      .length_cm = 54,
      .left1 = 6,
@@ -145,7 +145,7 @@ static conf_topology_t conf_topology[64] = {
   },
   {     // 6
      .canton_addr = CNUM(0, 3),
-     .ina_segnum = 0xFF,
+     .ina_segnum = 9,
      .steep = -1,
      .length_cm = 80,
      .left1 = -1,
@@ -159,7 +159,7 @@ static conf_topology_t conf_topology[64] = {
   },
   {     // 7
      .canton_addr = CNUM(0, 3),
-     .ina_segnum = 0xFF,
+     .ina_segnum = 9,
      .steep = 0,
      .length_cm = 58,
      .left1 = -1,
@@ -173,7 +173,7 @@ static conf_topology_t conf_topology[64] = {
   },
   {     // 8
      .canton_addr = CNUM(0, 3),
-     .ina_segnum = 0xFF,
+     .ina_segnum = 9,
      .steep = 0,
      .length_cm = 36,
      .left1 = 7,
@@ -972,7 +972,7 @@ unsigned int conf_topology_num_entries(void)
 static conf_topology_t conf_topology[64] = {
   {     // 0
      .canton_addr = CNUM(0, 0),
-     .ina_segnum = 2,
+     .ina_segnum = 0,
      .steep = 0,
      .length_cm = 98,
      .left1 = -1,
@@ -986,7 +986,7 @@ static conf_topology_t conf_topology[64] = {
   },
   {     // 1
      .canton_addr = CNUM(0, 1),
-     .ina_segnum = 1,
+     .ina_segnum = 3,
      .steep = 0,
      .length_cm = 23,
      .left1 = 0,
@@ -1000,7 +1000,7 @@ static conf_topology_t conf_topology[64] = {
   },
   {     // 2
      .canton_addr = CNUM(0, 2),
-     .ina_segnum = 0,
+     .ina_segnum = 6,
      .steep = 0,
      .length_cm = 70,
      .left1 = -1,
@@ -1014,7 +1014,7 @@ static conf_topology_t conf_topology[64] = {
   },
   {     // 3
      .canton_addr = CNUM(0, 2),
-     .ina_segnum = 0,
+     .ina_segnum = 6,
      .steep = 0,
      .length_cm = 20,
      .left1 = 2,
@@ -1028,7 +1028,7 @@ static conf_topology_t conf_topology[64] = {
   },
   {     // 4
      .canton_addr = CNUM(0, 1),
-     .ina_segnum = 1,
+     .ina_segnum = 3,
      .steep = 0,
      .length_cm = 22,
      .left1 = 1,
@@ -1042,7 +1042,7 @@ static conf_topology_t conf_topology[64] = {
   },
   {     // 5
      .canton_addr = CNUM(0, 3),
-     .ina_segnum = 0xFF,
+     .ina_segnum = 9,
      .steep = 0,
      .length_cm = 54,
      .left1 = 6,
@@ -1056,7 +1056,7 @@ static conf_topology_t conf_topology[64] = {
   },
   {     // 6
      .canton_addr = CNUM(0, 3),
-     .ina_segnum = 0xFF,
+     .ina_segnum = 9,
      .steep = -1,
      .length_cm = 80,
      .left1 = -1,
@@ -1070,7 +1070,7 @@ static conf_topology_t conf_topology[64] = {
   },
   {     // 7
      .canton_addr = CNUM(0, 3),
-     .ina_segnum = 0xFF,
+     .ina_segnum = 9,
      .steep = 0,
      .length_cm = 58,
      .left1 = -1,
@@ -1084,7 +1084,7 @@ static conf_topology_t conf_topology[64] = {
   },
   {     // 8
      .canton_addr = CNUM(0, 3),
-     .ina_segnum = 0xFF,
+     .ina_segnum = 9,
      .steep = 0,
      .length_cm = 36,
      .left1 = 7,
@@ -1928,7 +1928,7 @@ unsigned int conf_topology_num_entries(void)
 static conf_topology_t conf_topology[64] = {
   {     // 0
      .canton_addr = CNUM(0, 0),
-     .ina_segnum = 2,
+     .ina_segnum = 0,
      .steep = 0,
      .length_cm = 98,
      .left1 = -1,
@@ -1942,7 +1942,7 @@ static conf_topology_t conf_topology[64] = {
   },
   {     // 1
      .canton_addr = CNUM(0, 1),
-     .ina_segnum = 1,
+     .ina_segnum = 3,
      .steep = 0,
      .length_cm = 23,
      .left1 = 0,
@@ -1956,7 +1956,7 @@ static conf_topology_t conf_topology[64] = {
   },
   {     // 2
      .canton_addr = CNUM(0, 2),
-     .ina_segnum = 0,
+     .ina_segnum = 6,
      .steep = 0,
      .length_cm = 70,
      .left1 = -1,
@@ -1970,7 +1970,7 @@ static conf_topology_t conf_topology[64] = {
   },
   {     // 3
      .canton_addr = CNUM(0, 2),
-     .ina_segnum = 0,
+     .ina_segnum = 6,
      .steep = 0,
      .length_cm = 20,
      .left1 = 2,
@@ -1984,7 +1984,7 @@ static conf_topology_t conf_topology[64] = {
   },
   {     // 4
      .canton_addr = CNUM(0, 1),
-     .ina_segnum = 1,
+     .ina_segnum = 3,
      .steep = 0,
      .length_cm = 22,
      .left1 = 1,
@@ -1998,7 +1998,7 @@ static conf_topology_t conf_topology[64] = {
   },
   {     // 5
      .canton_addr = CNUM(0, 3),
-     .ina_segnum = 0xFF,
+     .ina_segnum = 9,
      .steep = 0,
      .length_cm = 54,
      .left1 = 6,
@@ -2012,7 +2012,7 @@ static conf_topology_t conf_topology[64] = {
   },
   {     // 6
      .canton_addr = CNUM(0, 3),
-     .ina_segnum = 0xFF,
+     .ina_segnum = 9,
      .steep = -1,
      .length_cm = 80,
      .left1 = -1,
@@ -2026,7 +2026,7 @@ static conf_topology_t conf_topology[64] = {
   },
   {     // 7
      .canton_addr = CNUM(0, 3),
-     .ina_segnum = 0xFF,
+     .ina_segnum = 9,
      .steep = 0,
      .length_cm = 58,
      .left1 = -1,
@@ -2040,7 +2040,7 @@ static conf_topology_t conf_topology[64] = {
   },
   {     // 8
      .canton_addr = CNUM(0, 3),
-     .ina_segnum = 0xFF,
+     .ina_segnum = 9,
      .steep = 0,
      .length_cm = 36,
      .left1 = 7,

@@ -60,8 +60,8 @@ unsigned int conf_topology_num_entries(void)
 
 static conf_topology_t conf_topology[64] = {
   {     // 0
-     .canton_addr = CNUM(0, 0),
-     .ina_segnum = 0,
+     .canton_addr = CNUM(0, 5),
+     .ina_segnum = 11,
      .steep = 0,
      .length_cm = 98,
      .left1 = -1,
@@ -74,8 +74,8 @@ static conf_topology_t conf_topology[64] = {
      .points = {{L0+1,2}, {L0+4,2}, {L0+5,3}, {L0+5,9}},
   },
   {     // 1
-     .canton_addr = CNUM(0, 1),
-     .ina_segnum = 3,
+     .canton_addr = CNUM(0, 2),
+     .ina_segnum = 6,
      .steep = 0,
      .length_cm = 23,
      .left1 = 0,
@@ -88,8 +88,8 @@ static conf_topology_t conf_topology[64] = {
      .points = {{L0+5,10}, {L0+5,11}, _VP, _VP},
   },
   {     // 2
-     .canton_addr = CNUM(0, 2),
-     .ina_segnum = 6,
+     .canton_addr = CNUM(0, 0),
+     .ina_segnum = 0,
      .steep = 0,
      .length_cm = 70,
      .left1 = -1,
@@ -102,8 +102,8 @@ static conf_topology_t conf_topology[64] = {
      .points = {{L0+1,3}, {L0+3,3}, {L0+4,4}, {L0+4,5}},
   },
   {     // 3
-     .canton_addr = CNUM(0, 2),
-     .ina_segnum = 6,
+     .canton_addr = CNUM(0, 0),
+     .ina_segnum = 0,
      .steep = 0,
      .length_cm = 20,
      .left1 = 2,
@@ -116,8 +116,8 @@ static conf_topology_t conf_topology[64] = {
      .points = {{L0+4,6}, {L0+4, 9}, _VP, _VP},
   },
   {     // 4
-     .canton_addr = CNUM(0, 1),
-     .ina_segnum = 3,
+     .canton_addr = CNUM(0, 2),
+     .ina_segnum = 6,
      .steep = 0,
      .length_cm = 22,
      .left1 = 1,
@@ -130,8 +130,8 @@ static conf_topology_t conf_topology[64] = {
      .points = {{L0+5, 12}, {L0+5, 14}, _VP, _VP},
   },
   {     // 5
-     .canton_addr = CNUM(0, 3),
-     .ina_segnum = 9,
+     .canton_addr = CNUM(0, 2),
+     .ina_segnum = 7,
      .steep = 0,
      .length_cm = 54,
      .left1 = 6,
@@ -144,8 +144,8 @@ static conf_topology_t conf_topology[64] = {
      .points = {{L0+6,15}, {L0+6,17}, {L0+5,18}, {L0+1,18}},
   },
   {     // 6
-     .canton_addr = CNUM(0, 3),
-     .ina_segnum = 9,
+     .canton_addr = CNUM(0, 1),
+     .ina_segnum = 3,
      .steep = -1,
      .length_cm = 80,
      .left1 = -1,
@@ -158,8 +158,8 @@ static conf_topology_t conf_topology[64] = {
      .points = {{L0+7,4}, {L0+7,8}, {L0+6,10}, {L0+6,14}},
   },
   {     // 7
-     .canton_addr = CNUM(0, 3),
-     .ina_segnum = 9,
+     .canton_addr = CNUM(0, 1),
+     .ina_segnum = 4,
      .steep = 0,
      .length_cm = 58,
      .left1 = -1,
@@ -172,8 +172,8 @@ static conf_topology_t conf_topology[64] = {
      .points = {{L0+1,1}, {L0+5,1}, {L0+6,2}, {L0+6,3}},
   },
   {     // 8
-     .canton_addr = CNUM(0, 3),
-     .ina_segnum = 9,
+     .canton_addr = CNUM(0, 4),
+     .ina_segnum = 10,
      .steep = 0,
      .length_cm = 36,
      .left1 = 7,
@@ -183,21 +183,21 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+6,4}, {L0+6,6}, _VP, _VP},
+     .points = {{L0+6,4}, {L0+6,7}, _VP, _VP},
   },
   {     // 9
-     .canton_addr = FUTURE_CANTON,
-     .ina_segnum = 0xFF,
+     .canton_addr = CNUM(0, 4),
+     .ina_segnum = 10,
      .steep = 0,
-     .length_cm = 60,
+     .length_cm = 30,
      .left1 = 8,
      .left2 = -1,
      .ltn = 0xFF,
      .right1 = 10,
      .right2 = -1,
      .rtn = 0xFF,
-     .p0 = 3,
-     .points = {{L0+6,6}, {L0+6,8}, {L0+7,10} ,{L0+7, 14} },
+     .p0 = 2,
+     .points = {{L0+6,7}, {L0+6,8}, {L0+7,10} ,{L0+7, 14} },
   },
   {     // 10
      .canton_addr = FUTURE_CANTON,
@@ -214,10 +214,10 @@ static conf_topology_t conf_topology[64] = {
      .points = {{L0+7,14}, {L0+7,18}, {L0+6,19}, {L0+1, 19} },
   },
   {     // 11
-     .canton_addr = FUTURE_CANTON,
-     .ina_segnum = 0xFF,
+     .canton_addr = CNUM(0, 0),
+     .ina_segnum = 1,
      .steep = 0,
-     .length_cm = 20,
+     .length_cm = 15,
      .left1 = -1,
      .left2 = 2,
      .ltn = 4,
@@ -228,10 +228,10 @@ static conf_topology_t conf_topology[64] = {
      .points = {{L0+3,6}, {L0+3,7}, _VP, _VP },
   },
   {     // 12
-     .canton_addr = FUTURE_CANTON,
-     .ina_segnum = 0xFF,
+     .canton_addr = CNUM(0, 3),
+     .ina_segnum = 9,
      .steep = 0,
-     .length_cm = 20,
+     .length_cm = 10,
      .left1 = -1,
      .left2 = 1,
      .ltn = 5,
@@ -242,10 +242,10 @@ static conf_topology_t conf_topology[64] = {
      .points = {{L0+4,12}, {L0+3, 13}, _VP, _VP },
   },
   {     // 13
-     .canton_addr = FUTURE_CANTON,
-     .ina_segnum = 0xFF,
+     .canton_addr = CNUM(0, 3),
+     .ina_segnum = 9,
      .steep = 0,
-     .length_cm = 20,
+     .length_cm = 10,
      .left1 = 12,
      .left2 = 15,
      .ltn = 6,
@@ -256,8 +256,8 @@ static conf_topology_t conf_topology[64] = {
      .points = {{L0+2,14}, {L0+1, 15}, _VP, _VP },
   },
   {     // 14
-     .canton_addr = FUTURE_CANTON,
-     .ina_segnum = 0xFF,
+     .canton_addr = CNUM(0, 3),
+     .ina_segnum = 9,
      .steep = 0,
      .length_cm = 20,
      .left1 = 13,
@@ -267,7 +267,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+0,16}, {L0-1, 17}, _VP, _VP },
+     .points = {{L0+0,16}, {L0+0, 18}, _VP, _VP },
   },
   {     // 15
      .canton_addr = FUTURE_CANTON,
@@ -393,7 +393,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 24
      .canton_addr = FUTURE_CANTON,
@@ -407,7 +407,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 25
      .canton_addr = FUTURE_CANTON,
@@ -421,7 +421,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 26
      .canton_addr = FUTURE_CANTON,
@@ -435,7 +435,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 27
      .canton_addr = FUTURE_CANTON,
@@ -449,7 +449,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 28
      .canton_addr = FUTURE_CANTON,
@@ -463,7 +463,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 29
      .canton_addr = FUTURE_CANTON,
@@ -477,7 +477,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 30
      .canton_addr = FUTURE_CANTON,
@@ -491,7 +491,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 31
      .canton_addr = FUTURE_CANTON,
@@ -505,7 +505,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 32
      .canton_addr = FUTURE_CANTON,
@@ -519,7 +519,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 33
      .canton_addr = FUTURE_CANTON,
@@ -533,7 +533,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 34
      .canton_addr = FUTURE_CANTON,
@@ -547,7 +547,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 35
      .canton_addr = FUTURE_CANTON,
@@ -561,7 +561,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 36
      .canton_addr = FUTURE_CANTON,
@@ -575,7 +575,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 37
      .canton_addr = FUTURE_CANTON,
@@ -589,7 +589,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 38
      .canton_addr = FUTURE_CANTON,
@@ -603,7 +603,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 39
      .canton_addr = FUTURE_CANTON,
@@ -617,7 +617,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 40
      .canton_addr = FUTURE_CANTON,
@@ -631,7 +631,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 41
      .canton_addr = FUTURE_CANTON,
@@ -645,7 +645,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 42
      .canton_addr = FUTURE_CANTON,
@@ -659,7 +659,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 43
      .canton_addr = FUTURE_CANTON,
@@ -673,7 +673,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 44
      .canton_addr = FUTURE_CANTON,
@@ -687,7 +687,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 45
      .canton_addr = FUTURE_CANTON,
@@ -701,7 +701,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 46
      .canton_addr = FUTURE_CANTON,
@@ -715,7 +715,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 47
      .canton_addr = FUTURE_CANTON,
@@ -729,7 +729,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 48
      .canton_addr = FUTURE_CANTON,
@@ -743,7 +743,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 49
      .canton_addr = FUTURE_CANTON,
@@ -757,7 +757,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 50
      .canton_addr = FUTURE_CANTON,
@@ -771,7 +771,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 51
      .canton_addr = FUTURE_CANTON,
@@ -785,7 +785,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 52
      .canton_addr = FUTURE_CANTON,
@@ -799,7 +799,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 53
      .canton_addr = FUTURE_CANTON,
@@ -813,7 +813,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 54
      .canton_addr = FUTURE_CANTON,
@@ -827,7 +827,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 55
      .canton_addr = FUTURE_CANTON,
@@ -841,7 +841,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 56
      .canton_addr = FUTURE_CANTON,
@@ -855,7 +855,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 57
      .canton_addr = FUTURE_CANTON,
@@ -869,7 +869,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 58
      .canton_addr = FUTURE_CANTON,
@@ -883,7 +883,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 59
      .canton_addr = FUTURE_CANTON,
@@ -897,7 +897,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 60
      .canton_addr = FUTURE_CANTON,
@@ -911,7 +911,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 61
      .canton_addr = FUTURE_CANTON,
@@ -925,7 +925,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 62
      .canton_addr = FUTURE_CANTON,
@@ -939,7 +939,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 63
      .canton_addr = FUTURE_CANTON,
@@ -953,7 +953,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   }
 };
 
@@ -971,8 +971,8 @@ unsigned int conf_topology_num_entries(void)
 
 static conf_topology_t conf_topology[64] = {
   {     // 0
-     .canton_addr = CNUM(0, 0),
-     .ina_segnum = 0,
+     .canton_addr = CNUM(0, 5),
+     .ina_segnum = 11,
      .steep = 0,
      .length_cm = 98,
      .left1 = -1,
@@ -985,8 +985,8 @@ static conf_topology_t conf_topology[64] = {
      .points = {{L0+1,2}, {L0+4,2}, {L0+5,3}, {L0+5,9}},
   },
   {     // 1
-     .canton_addr = CNUM(0, 1),
-     .ina_segnum = 3,
+     .canton_addr = CNUM(0, 2),
+     .ina_segnum = 6,
      .steep = 0,
      .length_cm = 23,
      .left1 = 0,
@@ -999,8 +999,8 @@ static conf_topology_t conf_topology[64] = {
      .points = {{L0+5,10}, {L0+5,11}, _VP, _VP},
   },
   {     // 2
-     .canton_addr = CNUM(0, 2),
-     .ina_segnum = 6,
+     .canton_addr = CNUM(0, 0),
+     .ina_segnum = 0,
      .steep = 0,
      .length_cm = 70,
      .left1 = -1,
@@ -1013,8 +1013,8 @@ static conf_topology_t conf_topology[64] = {
      .points = {{L0+1,3}, {L0+3,3}, {L0+4,4}, {L0+4,5}},
   },
   {     // 3
-     .canton_addr = CNUM(0, 2),
-     .ina_segnum = 6,
+     .canton_addr = CNUM(0, 0),
+     .ina_segnum = 0,
      .steep = 0,
      .length_cm = 20,
      .left1 = 2,
@@ -1027,8 +1027,8 @@ static conf_topology_t conf_topology[64] = {
      .points = {{L0+4,6}, {L0+4, 9}, _VP, _VP},
   },
   {     // 4
-     .canton_addr = CNUM(0, 1),
-     .ina_segnum = 3,
+     .canton_addr = CNUM(0, 2),
+     .ina_segnum = 6,
      .steep = 0,
      .length_cm = 22,
      .left1 = 1,
@@ -1041,8 +1041,8 @@ static conf_topology_t conf_topology[64] = {
      .points = {{L0+5, 12}, {L0+5, 14}, _VP, _VP},
   },
   {     // 5
-     .canton_addr = CNUM(0, 3),
-     .ina_segnum = 9,
+     .canton_addr = CNUM(0, 2),
+     .ina_segnum = 7,
      .steep = 0,
      .length_cm = 54,
      .left1 = 6,
@@ -1055,8 +1055,8 @@ static conf_topology_t conf_topology[64] = {
      .points = {{L0+6,15}, {L0+6,17}, {L0+5,18}, {L0+1,18}},
   },
   {     // 6
-     .canton_addr = CNUM(0, 3),
-     .ina_segnum = 9,
+     .canton_addr = CNUM(0, 1),
+     .ina_segnum = 3,
      .steep = -1,
      .length_cm = 80,
      .left1 = -1,
@@ -1069,8 +1069,8 @@ static conf_topology_t conf_topology[64] = {
      .points = {{L0+7,4}, {L0+7,8}, {L0+6,10}, {L0+6,14}},
   },
   {     // 7
-     .canton_addr = CNUM(0, 3),
-     .ina_segnum = 9,
+     .canton_addr = CNUM(0, 1),
+     .ina_segnum = 4,
      .steep = 0,
      .length_cm = 58,
      .left1 = -1,
@@ -1083,8 +1083,8 @@ static conf_topology_t conf_topology[64] = {
      .points = {{L0+1,1}, {L0+5,1}, {L0+6,2}, {L0+6,3}},
   },
   {     // 8
-     .canton_addr = CNUM(0, 3),
-     .ina_segnum = 9,
+     .canton_addr = CNUM(0, 4),
+     .ina_segnum = 10,
      .steep = 0,
      .length_cm = 36,
      .left1 = 7,
@@ -1094,21 +1094,21 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+6,4}, {L0+6,6}, _VP, _VP},
+     .points = {{L0+6,4}, {L0+6,7}, _VP, _VP},
   },
   {     // 9
-     .canton_addr = FUTURE_CANTON,
-     .ina_segnum = 0xFF,
+     .canton_addr = CNUM(0, 4),
+     .ina_segnum = 10,
      .steep = 0,
-     .length_cm = 60,
+     .length_cm = 30,
      .left1 = 8,
      .left2 = -1,
      .ltn = 0xFF,
      .right1 = 10,
      .right2 = -1,
      .rtn = 0xFF,
-     .p0 = 3,
-     .points = {{L0+6,6}, {L0+6,8}, {L0+7,10} ,{L0+7, 14} },
+     .p0 = 2,
+     .points = {{L0+6,7}, {L0+6,8}, {L0+7,10} ,{L0+7, 14} },
   },
   {     // 10
      .canton_addr = FUTURE_CANTON,
@@ -1125,10 +1125,10 @@ static conf_topology_t conf_topology[64] = {
      .points = {{L0+7,14}, {L0+7,18}, {L0+6,19}, {L0+1, 19} },
   },
   {     // 11
-     .canton_addr = FUTURE_CANTON,
-     .ina_segnum = 0xFF,
+     .canton_addr = CNUM(0, 0),
+     .ina_segnum = 1,
      .steep = 0,
-     .length_cm = 20,
+     .length_cm = 15,
      .left1 = -1,
      .left2 = 2,
      .ltn = 4,
@@ -1139,10 +1139,10 @@ static conf_topology_t conf_topology[64] = {
      .points = {{L0+3,6}, {L0+3,7}, _VP, _VP },
   },
   {     // 12
-     .canton_addr = FUTURE_CANTON,
-     .ina_segnum = 0xFF,
+     .canton_addr = CNUM(0, 3),
+     .ina_segnum = 9,
      .steep = 0,
-     .length_cm = 20,
+     .length_cm = 10,
      .left1 = -1,
      .left2 = 1,
      .ltn = 5,
@@ -1153,10 +1153,10 @@ static conf_topology_t conf_topology[64] = {
      .points = {{L0+4,12}, {L0+3, 13}, _VP, _VP },
   },
   {     // 13
-     .canton_addr = FUTURE_CANTON,
-     .ina_segnum = 0xFF,
+     .canton_addr = CNUM(0, 3),
+     .ina_segnum = 9,
      .steep = 0,
-     .length_cm = 20,
+     .length_cm = 10,
      .left1 = 12,
      .left2 = 15,
      .ltn = 6,
@@ -1167,8 +1167,8 @@ static conf_topology_t conf_topology[64] = {
      .points = {{L0+2,14}, {L0+1, 15}, _VP, _VP },
   },
   {     // 14
-     .canton_addr = FUTURE_CANTON,
-     .ina_segnum = 0xFF,
+     .canton_addr = CNUM(0, 3),
+     .ina_segnum = 9,
      .steep = 0,
      .length_cm = 20,
      .left1 = 13,
@@ -1178,7 +1178,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+0,16}, {L0-1, 17}, _VP, _VP },
+     .points = {{L0+0,16}, {L0+0, 18}, _VP, _VP },
   },
   {     // 15
      .canton_addr = FUTURE_CANTON,
@@ -1304,7 +1304,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 24
      .canton_addr = FUTURE_CANTON,
@@ -1318,7 +1318,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 25
      .canton_addr = FUTURE_CANTON,
@@ -1332,7 +1332,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 26
      .canton_addr = FUTURE_CANTON,
@@ -1346,7 +1346,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 27
      .canton_addr = FUTURE_CANTON,
@@ -1360,7 +1360,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 28
      .canton_addr = FUTURE_CANTON,
@@ -1374,7 +1374,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 29
      .canton_addr = FUTURE_CANTON,
@@ -1388,7 +1388,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 30
      .canton_addr = FUTURE_CANTON,
@@ -1402,7 +1402,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 31
      .canton_addr = FUTURE_CANTON,
@@ -1416,7 +1416,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 32
      .canton_addr = FUTURE_CANTON,
@@ -1430,7 +1430,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 33
      .canton_addr = FUTURE_CANTON,
@@ -1444,7 +1444,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 34
      .canton_addr = FUTURE_CANTON,
@@ -1458,7 +1458,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 35
      .canton_addr = FUTURE_CANTON,
@@ -1472,7 +1472,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 36
      .canton_addr = FUTURE_CANTON,
@@ -1486,7 +1486,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 37
      .canton_addr = FUTURE_CANTON,
@@ -1500,7 +1500,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 38
      .canton_addr = FUTURE_CANTON,
@@ -1514,7 +1514,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 39
      .canton_addr = FUTURE_CANTON,
@@ -1528,7 +1528,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 40
      .canton_addr = FUTURE_CANTON,
@@ -1542,7 +1542,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 41
      .canton_addr = FUTURE_CANTON,
@@ -1556,7 +1556,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 42
      .canton_addr = FUTURE_CANTON,
@@ -1570,7 +1570,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 43
      .canton_addr = FUTURE_CANTON,
@@ -1584,7 +1584,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 44
      .canton_addr = FUTURE_CANTON,
@@ -1598,7 +1598,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 45
      .canton_addr = FUTURE_CANTON,
@@ -1612,7 +1612,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 46
      .canton_addr = FUTURE_CANTON,
@@ -1626,7 +1626,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 47
      .canton_addr = FUTURE_CANTON,
@@ -1640,7 +1640,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 48
      .canton_addr = FUTURE_CANTON,
@@ -1654,7 +1654,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 49
      .canton_addr = FUTURE_CANTON,
@@ -1668,7 +1668,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 50
      .canton_addr = FUTURE_CANTON,
@@ -1682,7 +1682,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 51
      .canton_addr = FUTURE_CANTON,
@@ -1696,7 +1696,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 52
      .canton_addr = FUTURE_CANTON,
@@ -1710,7 +1710,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 53
      .canton_addr = FUTURE_CANTON,
@@ -1724,7 +1724,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 54
      .canton_addr = FUTURE_CANTON,
@@ -1738,7 +1738,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 55
      .canton_addr = FUTURE_CANTON,
@@ -1752,7 +1752,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 56
      .canton_addr = FUTURE_CANTON,
@@ -1766,7 +1766,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 57
      .canton_addr = FUTURE_CANTON,
@@ -1780,7 +1780,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 58
      .canton_addr = FUTURE_CANTON,
@@ -1794,7 +1794,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 59
      .canton_addr = FUTURE_CANTON,
@@ -1808,7 +1808,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 60
      .canton_addr = FUTURE_CANTON,
@@ -1822,7 +1822,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 61
      .canton_addr = FUTURE_CANTON,
@@ -1836,7 +1836,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 62
      .canton_addr = FUTURE_CANTON,
@@ -1850,7 +1850,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 63
      .canton_addr = FUTURE_CANTON,
@@ -1864,7 +1864,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   }
 };
 
@@ -1927,8 +1927,8 @@ unsigned int conf_topology_num_entries(void)
 
 static conf_topology_t conf_topology[64] = {
   {     // 0
-     .canton_addr = CNUM(0, 0),
-     .ina_segnum = 0,
+     .canton_addr = CNUM(0, 5),
+     .ina_segnum = 11,
      .steep = 0,
      .length_cm = 98,
      .left1 = -1,
@@ -1941,8 +1941,8 @@ static conf_topology_t conf_topology[64] = {
      .points = {{L0+1,2}, {L0+4,2}, {L0+5,3}, {L0+5,9}},
   },
   {     // 1
-     .canton_addr = CNUM(0, 1),
-     .ina_segnum = 3,
+     .canton_addr = CNUM(0, 2),
+     .ina_segnum = 6,
      .steep = 0,
      .length_cm = 23,
      .left1 = 0,
@@ -1955,8 +1955,8 @@ static conf_topology_t conf_topology[64] = {
      .points = {{L0+5,10}, {L0+5,11}, _VP, _VP},
   },
   {     // 2
-     .canton_addr = CNUM(0, 2),
-     .ina_segnum = 6,
+     .canton_addr = CNUM(0, 0),
+     .ina_segnum = 0,
      .steep = 0,
      .length_cm = 70,
      .left1 = -1,
@@ -1969,8 +1969,8 @@ static conf_topology_t conf_topology[64] = {
      .points = {{L0+1,3}, {L0+3,3}, {L0+4,4}, {L0+4,5}},
   },
   {     // 3
-     .canton_addr = CNUM(0, 2),
-     .ina_segnum = 6,
+     .canton_addr = CNUM(0, 0),
+     .ina_segnum = 0,
      .steep = 0,
      .length_cm = 20,
      .left1 = 2,
@@ -1983,8 +1983,8 @@ static conf_topology_t conf_topology[64] = {
      .points = {{L0+4,6}, {L0+4, 9}, _VP, _VP},
   },
   {     // 4
-     .canton_addr = CNUM(0, 1),
-     .ina_segnum = 3,
+     .canton_addr = CNUM(0, 2),
+     .ina_segnum = 6,
      .steep = 0,
      .length_cm = 22,
      .left1 = 1,
@@ -1997,8 +1997,8 @@ static conf_topology_t conf_topology[64] = {
      .points = {{L0+5, 12}, {L0+5, 14}, _VP, _VP},
   },
   {     // 5
-     .canton_addr = CNUM(0, 3),
-     .ina_segnum = 9,
+     .canton_addr = CNUM(0, 2),
+     .ina_segnum = 7,
      .steep = 0,
      .length_cm = 54,
      .left1 = 6,
@@ -2011,8 +2011,8 @@ static conf_topology_t conf_topology[64] = {
      .points = {{L0+6,15}, {L0+6,17}, {L0+5,18}, {L0+1,18}},
   },
   {     // 6
-     .canton_addr = CNUM(0, 3),
-     .ina_segnum = 9,
+     .canton_addr = CNUM(0, 1),
+     .ina_segnum = 3,
      .steep = -1,
      .length_cm = 80,
      .left1 = -1,
@@ -2025,8 +2025,8 @@ static conf_topology_t conf_topology[64] = {
      .points = {{L0+7,4}, {L0+7,8}, {L0+6,10}, {L0+6,14}},
   },
   {     // 7
-     .canton_addr = CNUM(0, 3),
-     .ina_segnum = 9,
+     .canton_addr = CNUM(0, 1),
+     .ina_segnum = 4,
      .steep = 0,
      .length_cm = 58,
      .left1 = -1,
@@ -2039,8 +2039,8 @@ static conf_topology_t conf_topology[64] = {
      .points = {{L0+1,1}, {L0+5,1}, {L0+6,2}, {L0+6,3}},
   },
   {     // 8
-     .canton_addr = CNUM(0, 3),
-     .ina_segnum = 9,
+     .canton_addr = CNUM(0, 4),
+     .ina_segnum = 10,
      .steep = 0,
      .length_cm = 36,
      .left1 = 7,
@@ -2050,21 +2050,21 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+6,4}, {L0+6,6}, _VP, _VP},
+     .points = {{L0+6,4}, {L0+6,7}, _VP, _VP},
   },
   {     // 9
-     .canton_addr = FUTURE_CANTON,
-     .ina_segnum = 0xFF,
+     .canton_addr = CNUM(0, 4),
+     .ina_segnum = 10,
      .steep = 0,
-     .length_cm = 60,
+     .length_cm = 30,
      .left1 = 8,
      .left2 = -1,
      .ltn = 0xFF,
      .right1 = 10,
      .right2 = -1,
      .rtn = 0xFF,
-     .p0 = 3,
-     .points = {{L0+6,6}, {L0+6,8}, {L0+7,10} ,{L0+7, 14} },
+     .p0 = 2,
+     .points = {{L0+6,7}, {L0+6,8}, {L0+7,10} ,{L0+7, 14} },
   },
   {     // 10
      .canton_addr = FUTURE_CANTON,
@@ -2081,10 +2081,10 @@ static conf_topology_t conf_topology[64] = {
      .points = {{L0+7,14}, {L0+7,18}, {L0+6,19}, {L0+1, 19} },
   },
   {     // 11
-     .canton_addr = FUTURE_CANTON,
-     .ina_segnum = 0xFF,
+     .canton_addr = CNUM(0, 0),
+     .ina_segnum = 1,
      .steep = 0,
-     .length_cm = 20,
+     .length_cm = 15,
      .left1 = -1,
      .left2 = 2,
      .ltn = 4,
@@ -2095,10 +2095,10 @@ static conf_topology_t conf_topology[64] = {
      .points = {{L0+3,6}, {L0+3,7}, _VP, _VP },
   },
   {     // 12
-     .canton_addr = FUTURE_CANTON,
-     .ina_segnum = 0xFF,
+     .canton_addr = CNUM(0, 3),
+     .ina_segnum = 9,
      .steep = 0,
-     .length_cm = 20,
+     .length_cm = 10,
      .left1 = -1,
      .left2 = 1,
      .ltn = 5,
@@ -2109,10 +2109,10 @@ static conf_topology_t conf_topology[64] = {
      .points = {{L0+4,12}, {L0+3, 13}, _VP, _VP },
   },
   {     // 13
-     .canton_addr = FUTURE_CANTON,
-     .ina_segnum = 0xFF,
+     .canton_addr = CNUM(0, 3),
+     .ina_segnum = 9,
      .steep = 0,
-     .length_cm = 20,
+     .length_cm = 10,
      .left1 = 12,
      .left2 = 15,
      .ltn = 6,
@@ -2123,8 +2123,8 @@ static conf_topology_t conf_topology[64] = {
      .points = {{L0+2,14}, {L0+1, 15}, _VP, _VP },
   },
   {     // 14
-     .canton_addr = FUTURE_CANTON,
-     .ina_segnum = 0xFF,
+     .canton_addr = CNUM(0, 3),
+     .ina_segnum = 9,
      .steep = 0,
      .length_cm = 20,
      .left1 = 13,
@@ -2134,7 +2134,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+0,16}, {L0-1, 17}, _VP, _VP },
+     .points = {{L0+0,16}, {L0+0, 18}, _VP, _VP },
   },
   {     // 15
      .canton_addr = FUTURE_CANTON,
@@ -2260,7 +2260,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 24
      .canton_addr = FUTURE_CANTON,
@@ -2274,7 +2274,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 25
      .canton_addr = FUTURE_CANTON,
@@ -2288,7 +2288,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 26
      .canton_addr = FUTURE_CANTON,
@@ -2302,7 +2302,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 27
      .canton_addr = FUTURE_CANTON,
@@ -2316,7 +2316,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 28
      .canton_addr = FUTURE_CANTON,
@@ -2330,7 +2330,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 29
      .canton_addr = FUTURE_CANTON,
@@ -2344,7 +2344,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 30
      .canton_addr = FUTURE_CANTON,
@@ -2358,7 +2358,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 31
      .canton_addr = FUTURE_CANTON,
@@ -2372,7 +2372,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 32
      .canton_addr = FUTURE_CANTON,
@@ -2386,7 +2386,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 33
      .canton_addr = FUTURE_CANTON,
@@ -2400,7 +2400,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 34
      .canton_addr = FUTURE_CANTON,
@@ -2414,7 +2414,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 35
      .canton_addr = FUTURE_CANTON,
@@ -2428,7 +2428,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 36
      .canton_addr = FUTURE_CANTON,
@@ -2442,7 +2442,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 37
      .canton_addr = FUTURE_CANTON,
@@ -2456,7 +2456,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 38
      .canton_addr = FUTURE_CANTON,
@@ -2470,7 +2470,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 39
      .canton_addr = FUTURE_CANTON,
@@ -2484,7 +2484,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 40
      .canton_addr = FUTURE_CANTON,
@@ -2498,7 +2498,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 41
      .canton_addr = FUTURE_CANTON,
@@ -2512,7 +2512,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 42
      .canton_addr = FUTURE_CANTON,
@@ -2526,7 +2526,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 43
      .canton_addr = FUTURE_CANTON,
@@ -2540,7 +2540,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 44
      .canton_addr = FUTURE_CANTON,
@@ -2554,7 +2554,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 45
      .canton_addr = FUTURE_CANTON,
@@ -2568,7 +2568,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 46
      .canton_addr = FUTURE_CANTON,
@@ -2582,7 +2582,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 47
      .canton_addr = FUTURE_CANTON,
@@ -2596,7 +2596,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 48
      .canton_addr = FUTURE_CANTON,
@@ -2610,7 +2610,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 49
      .canton_addr = FUTURE_CANTON,
@@ -2624,7 +2624,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 50
      .canton_addr = FUTURE_CANTON,
@@ -2638,7 +2638,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 51
      .canton_addr = FUTURE_CANTON,
@@ -2652,7 +2652,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 52
      .canton_addr = FUTURE_CANTON,
@@ -2666,7 +2666,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 53
      .canton_addr = FUTURE_CANTON,
@@ -2680,7 +2680,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 54
      .canton_addr = FUTURE_CANTON,
@@ -2694,7 +2694,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 55
      .canton_addr = FUTURE_CANTON,
@@ -2708,7 +2708,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 56
      .canton_addr = FUTURE_CANTON,
@@ -2722,7 +2722,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 57
      .canton_addr = FUTURE_CANTON,
@@ -2736,7 +2736,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 58
      .canton_addr = FUTURE_CANTON,
@@ -2750,7 +2750,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 59
      .canton_addr = FUTURE_CANTON,
@@ -2764,7 +2764,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 60
      .canton_addr = FUTURE_CANTON,
@@ -2778,7 +2778,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 61
      .canton_addr = FUTURE_CANTON,
@@ -2792,7 +2792,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 62
      .canton_addr = FUTURE_CANTON,
@@ -2806,7 +2806,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   },
   {     // 63
      .canton_addr = FUTURE_CANTON,
@@ -2820,7 +2820,7 @@ static conf_topology_t conf_topology[64] = {
      .right2 = -1,
      .rtn = 0xFF,
      .p0 = 0,
-     .points = {{L0+2,0}, {L0+0, 0}, _VP, _VP},
+     .points = {_VP, _VP, _VP, _VP},
   }
 };
 

@@ -129,9 +129,13 @@ static  int _numTopology = 0;
 
 static void _readTopology(void)
 {
+#ifndef TOPOLOGY_SVG
+#ifndef TRAIN_SIMU
 	if (!Oam_Ready) {
 		return;
 	}
+#endif
+#endif
 	_numTopology = conf_topology_num_entries();
 	_Topology = conf_topology_get(0);
 }

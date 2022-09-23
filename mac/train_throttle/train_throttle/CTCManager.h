@@ -19,6 +19,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, weak) IBOutlet WKWebView *ctoWebView;
 @property (nonatomic, weak) IBOutlet AppDelegate *appDelegate;
 
+@property (nonatomic) int highlightIna;
+@property (nonatomic) int highlightCanton;
 
 - (void) loadHtml;
 
@@ -33,6 +35,7 @@ NS_ASSUME_NONNULL_BEGIN
 // for trackplan2
 - (void) uitrac_change_sblk:(int) sblk val:(int)v train:(int)trn;
 - (void) hideTrainInfos;
+
 
 @end
 

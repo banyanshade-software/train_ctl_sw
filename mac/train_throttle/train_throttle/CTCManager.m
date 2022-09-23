@@ -13,10 +13,21 @@
 
 @implementation CTCManager {
     WKUserContentController *wkuserctrl;
+    int _highlightIna;
+    int _highlightCanton;
 }
 
 
 
+- (instancetype)init
+{
+    self = [super init];
+    if (self) {
+        _highlightIna = -1;
+        _highlightCanton = -1;
+    }
+    return self;
+}
 - (void) loadHtml
 {
     NSURL *u = [[NSBundle mainBundle] URLForResource:@"uitrack" withExtension:@"html"];
@@ -249,6 +260,56 @@ static int _dim(int col, int dim)
     
 badmsg:
     NSLog(@"ho");
+}
+
+// @property (nonatomic) int highlightIna;
+- (int) highlightIna
+{
+    return _highlightIna;
+}
+- (void) setHighlightIna:(int)hv
+{
+    if (_highlightIna == hv) return;
+    _highlightIna = hv;
+   
+    int n = topology_num_sblkd();
+    for (int i = 0; i<n; i++) {
+        // <polyline id="SBLK05" class="track CANTON3" stroke="#000000" stroke-width="5px" fill="none" points="600,320 680,320 720,280 720,120"></polyline>
+        lsblk_num_t ls = {i};
+        int ina = get_lsblk_ina3221(ls); //uint8_t  get_lsblk_ina3221(lsblk_num_t num);
+        int h = (ina == hv) ? 1 : 0;
+        //NSLog(@"lsblk %d ina %d -> %d", i, ina, h);
+         // <polyline id="SBLK05" class="track CANTON3" stroke="#000000" stroke-width="5px" fill="none" points="600,320 680,320 720,280 720,120"></polyline>
+        NSString *js = [NSString stringWithFormat:@"document.getElementById('SBLK%2.2d').style['stroke-width'] = '%s';", i, h ? "10px" : "5px"];
+        [_ctoWebView evaluateJavaScript:js completionHandler:^(id v, NSError *err) {
+            if (err) {
+                NSLog(@"js error : %@\n", err);
+            }
+        }];
+    }
+}
+
+- (int) highlightCanton
+{
+    return _highlightCanton;
+}
+- (void) setHighlightCanton:(int)c
+{
+    if (c==_highlightCanton) return;
+    
+    NSString *js = [NSString stringWithFormat:@"Array.from(document.getElementsByClassName('track'), el => el.style['stroke-width'] = '5px');"];
+    [_ctoWebView evaluateJavaScript:js completionHandler:^(id v, NSError *err) {
+        if (err) {
+            NSLog(@"js error : %@\n", err);
+        }
+    }];
+    js = [NSString stringWithFormat:@"Array.from(document.getElementsByClassName('CANTON%d'), el => el.style['stroke-width'] = '10px');", c];
+    [_ctoWebView evaluateJavaScript:js completionHandler:^(id v, NSError *err) {
+        if (err) {
+            NSLog(@"js error : %@\n", err);
+        }
+    }];
+    _highlightCanton = c;
 }
 
 @end

@@ -85,7 +85,7 @@
         position[tn] += speed[tn]*ellapsed/1000;
         //int get_lsblk_len(lsblk_num_t num);
         int blen = get_lsblk_len(s1[tn], NULL);
-        NSLog(@"xxxtrain %d pos: %f len %d", tn, position[tn], get_lsblk_len(s1[tn], NULL));
+        //NSLog(@"xxxtrain %d pos: %f len %d", tn, position[tn], get_lsblk_len(s1[tn], NULL));
         xblkaddr_t cn = canton_for_lsblk(s1[tn]);
         NSAssert(cn.v != 0xFF, @"bad cn");
         NSAssert(cn.v<NUM_CANTONS, @"bad cn");
@@ -124,7 +124,7 @@
         const conf_canton_t *cnf = conf_canton_get(cn.v); // canton num / canton addr /local etc TODO
 
         double spower = dir[cn.v]*volt[cn.v]*pwm[cn.v]/1000.0;
-        NSLog(@"train %d power %f", tn, spower);
+        //NSLog(@"train %d power %f", tn, spower);
         speed[tn] = spower * 50.0;
         double be = spower * 2.10 / 10.0;
         int revbemf = cnf->reverse_bemf;

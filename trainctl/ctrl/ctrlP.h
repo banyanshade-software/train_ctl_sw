@@ -96,6 +96,7 @@ void ctrl2_upcmd_settrigU1(int tidx, train_ctrl_t *tvars, uint8_t t);
 void ctrl2_set_mode(int tidx, train_ctrl_t *tvar, train_mode_t mode);
 
 void ctrl2_evt_entered_c2(int tidx, train_ctrl_t *tvar, uint8_t from_bemf);
+void ctrl2_evt_entered_s2(int tidx, train_ctrl_t *tvar);
 void ctrl2_evt_leaved_c1(int tidx, train_ctrl_t *tvars);
 void ctrl2_evt_entered_c1(int tidx, train_ctrl_t *tvars, _UNUSED_ uint8_t from_bemf);
 void ctrl2_evt_leaved_c2(int tidx, train_ctrl_t *tvar);
@@ -119,8 +120,10 @@ void ctrl2_evt_stop_detected(int tidx, train_ctrl_t *tvar, int32_t pose);
 
 void ctrl_set_pose_trig(int numtrain, int32_t pose, int n);
 
-#define ignore_bemf_presence 0
-#define ignore_ina_presence  1
+#define ignore_bemf_presence 1
+#define ignore_ina_presence  0
+
+int ignore_ina_pres(void);
 
 
 void ctrl_reset_timer(int tidx, train_ctrl_t *tvar, int numtimer);

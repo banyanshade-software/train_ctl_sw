@@ -448,90 +448,77 @@ static void notify_presence_changed(_UNUSED_ uint8_t from_addr,  uint8_t lsegnum
 	mqf_write_from_ctrl(&m);
 }
 
+static void bh(void)
+{
+
+}
+
 static void sub_presence_changed(_UNUSED_ uint8_t from_addr,  uint8_t lsegnum,  uint16_t p, _UNUSED_ int16_t ival)
 {
+	if (p && (4==lsegnum)) {
+		bh();
+	}
 	// TODO : from_addr should be used for board number
 	for (int tidx=0; tidx < NUM_TRAINS; tidx++) {
 		train_ctrl_t *tvar = &trctl[tidx];
         if (tvar->_mode == train_notrunning) continue;
         uint8_t is_s1 = 0;
         uint8_t is_s2 = 0;
+        uint8_t is_c1 = 0;
+        uint8_t is_c2 = 0;
+
         if ((tvar->c1_sblk.n != -1) && (lsegnum == get_lsblk_ina3221(tvar->c1_sblk))) {
             is_s1 = 1;
         }
-        lsblk_num_t c2s = {-1};
-        if (tvar->can2_xaddr.v != 0xFF) {
-            c2s = first_lsblk_with_canton(tvar->can2_xaddr, tvar->c1_sblk);
-            if (c2s.n == -1) FatalError("Layout", "No c2s", Error_NoC2s);
-            if (lsegnum == get_lsblk_ina3221(c2s)) {
-                is_s2 = 1;
-            }
+    	xblkaddr_t cl = get_canton_for_ina(lsegnum);
+        if (tvar->can1_xaddr.v != 0xFF) {
+        	if (cl.v == tvar->can1_xaddr.v) is_c1 = 1;
         }
-        if (is_s2 && !is_s1) {
+        if (tvar->can2_xaddr.v != 0xFF) {
+        	if (cl.v == tvar->can2_xaddr.v) is_c2 = 1;
+        }
+        lsblk_num_t n2 = next_lsblk(tvar->c1_sblk, tvar->_dir<0, NULL);
+        if ((n2.n>=0) && (lsegnum == get_lsblk_ina3221(n2))) {
+        	is_s2 = 1;
+        }
+
+
+        if (p) {
+        	if (is_s1 || is_c1) ctrl2_evt_entered_c1(tidx, tvar, 0);
+        	else if (is_c2) ctrl2_evt_entered_c2(tidx, tvar, 0);
+        	if (is_s2  && !is_c2) ctrl2_evt_entered_s2(tidx, tvar);
+        } else {
+        	if (is_c2) {
+        		ctrl2_evt_leaved_c2(tidx, tvar);
+        	} else if (is_c1 && !is_s2) {
+        		if (n2.n<0) ctrl2_evt_leaved_c1(tidx, tvar);
+        	} else if (is_c1) {
+        		// is_c1 and is_s2
+        		ctrl2_evt_leaved_c1(tidx, tvar);
+        	}
+        }
+        /*
+        if (is_c2 && !is_s1) {
             if (p) {
-                itm_debug3(DBG_CTRL, "ina ps2", tidx, lsegnum, c2s.n);
+                itm_debug3(DBG_CTRL|DBG_PRES, "ina ps2", tidx, lsegnum, c2s.n);
                 ctrl2_evt_entered_c2(tidx, tvar, 0);
             } else {
                 ctrl2_evt_leaved_c2(tidx, tvar);
-                itm_debug3(DBG_CTRL, "ina ls2", tidx, lsegnum, c2s.n);
+                itm_debug3(DBG_CTRL|DBG_PRES, "ina ls2", tidx, lsegnum, c2s.n);
             }
             break; // no need to test other trains
         } else if (is_s1) {
             if (p) {
-                itm_debug3(DBG_CTRL, "ina ps1", tidx, lsegnum, c2s.n);
+                itm_debug3(DBG_CTRL|DBG_PRES, "ina ps1", tidx, lsegnum, c2s.n);
                 ctrl2_evt_entered_c1(tidx, tvar, 0);
             } else {
                 ctrl2_evt_leaved_c1(tidx, tvar);
-                itm_debug3(DBG_CTRL, "ina ls1", tidx, lsegnum, c2s.n);
+                itm_debug3(DBG_CTRL|DBG_PRES, "ina ls1", tidx, lsegnum, c2s.n);
             }
             break; // no need to test other trains
         }
+        */
 	}
-    //abort();
-#if 0
-    xxxx
-    
-	int segnum = _sub_addr_to_sub_num(from_addr, lsegnum);
-	itm_debug3(DBG_PRES|DBG_CTRL, "PRC",  p, lsegnum, ival);
-	if ((segnum<0) || (segnum>11)) return;
-
-	uint8_t canton = blk_addr_for_sub_addr(from_addr, segnum);
-	if (0xFF == canton) {
-		itm_debug2(DBG_ERR|DBG_CTRL, "blk??", from_addr, segnum);
-		return;
-	}
-	itm_debug3(DBG_PRES|DBG_CTRL, "PRBLK", p, segnum, canton);
-
-	int f = 0;
-
-	for (int tn = 0; tn < NUM_TRAINS; tn++) {
-		train_ctrl_t *tvar = &trctl[tn];
-		const conf_train_t *tconf = conf_train_get(tn);
-		// check enabled
-		if (!tconf->enabled) continue;
-		itm_debug3(DBG_PRES|DBG_CTRL, "prblk?", tn, tvar->canton1_addr, tvar->canton2_addr);
-		if (tvar->canton1_addr == canton) {
-			if (p) {
-				itm_debug2(DBG_PRES, "?enter c1", tn, segnum);
-				evt_entered_c1(tn, tvar, 0);
-			} else {
-				evt_leaved_c1(tn, tvar);
-			}
-			f = 1;
-		} else if (tvar->canton2_addr == canton) {
-			if (p) {
-				evt_entered_c2(tn, tvar, 0);
-			} else {
-				evt_leaved_c2(tn, tvar);
-			}
-			f = 1;
-		}
-	}
-	if (!f) {
-		// presence on unexpected canton
-		itm_debug2(DBG_ERR|DBG_PRES, "?unexp", segnum, canton);
-	}
-#endif
 }
 
 // ----------------------------------------------------------------------------
@@ -623,7 +610,7 @@ static void normal_process_msg(msg_64_t *m)
                 debug_info('I', m->subc, "INA", m->v1u, m->v2, 0);
             }
             notify_presence_changed(m->from, m->subc, m->v1u, m->v2u);
-            if (ignore_ina_presence || conf_globparam_get(0)->ignoreIna3221) break;
+            if (ignore_ina_pres()) break;
             sub_presence_changed(m->from, m->subc, m->v1u, m->v2);
             break;
     
@@ -779,7 +766,7 @@ void ctrl_run_tick(_UNUSED_ uint32_t notif_flags, uint32_t tick, _UNUSED_ uint32
             	if ((1)) {
         			debug_info('I', m.subc, "INA", m.v1u, m.v2, 0);
             	}
-            	if (ignore_ina_presence) break;
+            	if (ignore_ina_pres()) break;
                 sub_presence_changed(tick, m.from, m.subc, m.v1u, m.v2);
                 break;
         
@@ -890,13 +877,18 @@ __weak int can_send_stat(void)
 
 // ---------------------------------------------------------------
 
-
+int ignore_ina_pres(void)
+{
+	if (ignore_ina_presence) return 1;
+	if (conf_globparam_get(0)->ignoreIna3221) return 1;
+	return 0;
+}
 
 // ---------------------------------------------------------------
 
 static void evt_tleave(int tidx, train_ctrl_t *tvars)
 {
-    if (ignore_ina_presence || conf_globparam_get(0)->ignoreIna3221 || (get_lsblk_ina3221(tvars->c1_sblk) == 0xFF)) {
+    if (ignore_ina_pres() || (get_lsblk_ina3221(tvars->c1_sblk) == 0xFF)) {
         itm_debug2(DBG_ERR|DBG_CTRL, "TLeave", tidx, tvars->_state);
         ctrl2_evt_leaved_c1(tidx, tvars);
     } else if (tvars->c1c2){
@@ -920,6 +912,9 @@ static void evt_timer(int tidx, train_ctrl_t *tvar, int tnum)
 	itm_debug2(DBG_CTRL, "timer evt", tidx, tnum);
 	switch (tnum) {
 	case TLEAVE_C1:
+		if (!ignore_ina_pres()) {
+			itm_debug1(DBG_CTRL|DBG_ERR, "TLEAVE", tidx);
+		}
 		evt_tleave(tidx, tvar);
 		break;
 	case TAUTO:

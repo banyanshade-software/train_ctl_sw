@@ -34,21 +34,10 @@ static lsblk_num_t snone = {-1};
 #define SPD_LIMIT_EOT    70   //20
 #define SPD_LIMIT_NOLIMIT 100
 
-// for test/debug
-//static uint8_t ignore_bemf_presence = 0;
-//static uint8_t ignore_ina_presence = 1;
 
 uint8_t ctrl_flag_notify_speed = 1;
 
-static void fatal(void)
-{
-    itm_debug1(DBG_ERR, "fatal", 0);
-#ifdef TRAIN_SIMU
-    abort();
-#else
-    for (;;) osDelay(1000);
-#endif
-}
+
 
 // ------------------------------------------------------
 
@@ -71,7 +60,7 @@ static int32_t get_lsblk_len_steep(lsblk_num_t lsbk, const conf_train_t *tconf, 
 	int cm = get_lsblk_len(lsbk, &steep);
 	itm_debug3(DBG_CTRL|DBG_POSEC, "steep?", steep, tvar->_dir, lsbk.n);
 	if (steep*tvar->_dir > 0) {
-        if (!tconf->slipping) fatal();
+        if (!tconf->slipping) FatalError("NSLP", "no slipping", Error_Slipping);
 		int cmold = cm;
 		cm = cm * tconf->slipping / 100;
 		itm_debug3(DBG_CTRL|DBG_POSEC, "steep!", tvar->c1_sblk.n, cmold, cm);
@@ -80,7 +69,7 @@ static int32_t get_lsblk_len_steep(lsblk_num_t lsbk, const conf_train_t *tconf, 
 }
 
 
-static int32_t ctrl_pose_percent_c1(const conf_train_t *tconf, train_ctrl_t *tvar, int percent)
+static int32_t ctrl_pose_percent_s1(const conf_train_t *tconf, train_ctrl_t *tvar, int percent)
 {
     int cm = get_lsblk_len_steep(tvar->c1_sblk, tconf, tvar);
     int mm;
@@ -102,19 +91,19 @@ static int32_t ctrl_pose_percent_c1(const conf_train_t *tconf, train_ctrl_t *tva
 }
 
 
-static int32_t ctrl_pose_middle_c1(const conf_train_t *tconf, train_ctrl_t *tvar)
+static int32_t ctrl_pose_middle_s1(const conf_train_t *tconf, train_ctrl_t *tvar)
 {
-    return ctrl_pose_percent_c1(tconf, tvar, 50);
+    return ctrl_pose_percent_s1(tconf, tvar, 50);
 }
 
-static int32_t ctrl_pose_limit_c1(const conf_train_t *tconf, train_ctrl_t *tvar)
+static int32_t ctrl_pose_limit_s1(const conf_train_t *tconf, train_ctrl_t *tvar)
 {
-    return ctrl_pose_percent_c1(tconf, tvar, 90);
+    return ctrl_pose_percent_s1(tconf, tvar, 90);
 }
 
 
 
-static int32_t ctrl_pose_end_c1(const conf_train_t *tconf, train_ctrl_t *tvar)
+static int32_t ctrl_pose_end_s1(const conf_train_t *tconf, train_ctrl_t *tvar)
 {
     int cm = get_lsblk_len_steep(tvar->c1_sblk, tconf, tvar);
     int mm;
@@ -149,13 +138,13 @@ void ctrl2_upcmd_settrigU1(int tidx, train_ctrl_t *tvars, uint8_t t)
         default:
             //FALLTHRU
         case 1:
-            p = ctrl_pose_middle_c1(conf_train_get(tidx), tvars);
+            p = ctrl_pose_middle_s1(conf_train_get(tidx), tvars);
             break;
         case 2:
-            p = ctrl_pose_end_c1(conf_train_get(tidx), tvars);
+            p = ctrl_pose_end_s1(conf_train_get(tidx), tvars);
             break;
         case 3:
-            p = ctrl_pose_percent_c1(conf_train_get(tidx), tvars, 10);
+            p = ctrl_pose_percent_s1(conf_train_get(tidx), tvars, 10);
             break;
     }
     ctrl_set_pose_trig(tidx, p, 1);
@@ -164,14 +153,14 @@ void ctrl2_upcmd_settrigU1(int tidx, train_ctrl_t *tvars, uint8_t t)
 void ctrl_reset_timer(int tidx, train_ctrl_t *tvar, int numtimer)
 {
     itm_debug2(DBG_CTRL, "reset_timer", tidx, numtimer);
-    if (numtimer<0 || numtimer>=NUM_TIMERS) fatal();
+    if (numtimer<0 || numtimer>=NUM_TIMERS) FatalError("BTIM", "bad timer num", Error_CtrlTimerNum);
     tvar->timertick[numtimer] = 0;
 }
 
 void ctrl_set_timer(int tidx, train_ctrl_t *tvar, int numtimer, uint32_t tval)
 {
     itm_debug3(DBG_CTRL, "set_timer", tidx, numtimer, tval);
-    if (numtimer<0 || numtimer>=NUM_TIMERS) fatal();
+    if (numtimer<0 || numtimer>=NUM_TIMERS) FatalError("BTIM", "bad timer num", Error_CtrlTimerNum);
     tvar->timertick[numtimer] = HAL_GetTick() + tval;
 }
 
@@ -364,7 +353,7 @@ void ctrl2_set_tspeed(_UNUSED_ int tidx, train_ctrl_t *tvar, uint16_t tspeed)
     if (tvar->_target_speed != tspeed) {
         tvar->tick_flags |= _TFLAG_TSPD_CHANGED;
         if (tspeed >= 0x7FFF) {
-            fatal();
+        	FatalError("SPD", "bad tpeed", Error_CtrlTSpeed);
         }
         tvar->_target_speed = tspeed;
     }
@@ -527,15 +516,15 @@ void ctrl2_update_topo(int tidx, train_ctrl_t *tvar, const conf_train_t *tconf, 
                 if (tvar->pose2_set) {
                     //ctrl2_set_state(tidx, tvar, alternate ? train_blk_wait : train_end_of_track);
                 } else {
-                    if (!tvar->_dir) fatal();
+                    if (!tvar->_dir) FatalError("NDIR", "no dir", Error_CtrlNoDir);
                     tvar->pose2_set = 1;
                     tvar->pose2_is_blk_wait = alternate ? 1 : 0;
                     set_speed_limit(tvar, SPD_LIMIT_EOT);
                     int32_t posetval;
                     if ((0)) {
-                        posetval = ctrl_pose_middle_c1(tconf, tvar);
+                        posetval = ctrl_pose_middle_s1(tconf, tvar);
                     } else {
-                        posetval = ctrl_pose_limit_c1(tconf, tvar);
+                        posetval = ctrl_pose_limit_s1(tconf, tvar);
                     }
                     *ppose1 = posetval;
                 }
@@ -570,8 +559,8 @@ void ctrl2_update_topo(int tidx, train_ctrl_t *tvar, const conf_train_t *tconf, 
 void ctrl2_update_c2(int tidx, train_ctrl_t *tvar, const conf_train_t *tconf, int32_t *ppose0)
 {
 	itm_debug3(DBG_CTRL, "updc2", tidx, tvar->c1_sblk.n, tvar->can1_xaddr.v);
-    if (tvar->can1_xaddr.v == 0xFF) fatal();
-    if (canton_for_lsblk(tvar->c1_sblk).v != tvar->can1_xaddr.v) fatal();
+    if (tvar->can1_xaddr.v == 0xFF) FatalError("U2C1", "Upd2 no C1", Error_CtrlNoC1);
+    if (canton_for_lsblk(tvar->c1_sblk).v != tvar->can1_xaddr.v) FatalError("W.C1", "Wrong C1", Error_WrongC1);
     
     set_block_addr_occupency(tvar->can1_xaddr, occupied(tvar->_dir), tidx, tvar->c1_sblk);
     
@@ -585,10 +574,13 @@ void ctrl2_update_c2(int tidx, train_ctrl_t *tvar, const conf_train_t *tconf, in
         xblkaddr_t c2n = canton_for_lsblk(ns);
         itm_debug3(DBG_CTRL, "c1c2addr", tidx, tvar->can2_xaddr.v, c2r.v);
         if (c2n.v == tvar->can1_xaddr.v) {
-            //set trig
-            int32_t posetval = ctrl_pose_end_c1(tconf, tvar);
-            //ctrl_set_pose_trig(tidx, posetval, 0);
-            *ppose0 = posetval;
+            // ns is same canton as c1_sblk. if ina can't distinguish them, set trig
+        	uint8_t ls2 = get_lsblk_ina3221(ns);
+        	uint8_t ls1 = get_lsblk_ina3221(tvar->c1_sblk);
+        	if (ignore_ina_pres() || (ls1 == ls2) || (ls1=0xFF)) {
+        		int32_t posetval = ctrl_pose_end_s1(tconf, tvar);
+        		*ppose0 = posetval;
+        	}
         }
         if (c2r.v != tvar->can1_xaddr.v) {
             tvar->can2_xaddr = c2r;
@@ -675,7 +667,7 @@ void ctrl2_evt_entered_c2(int tidx, train_ctrl_t *tvar, uint8_t from_bemf)
     }
     tvar->c1c2 = 1;
     
-    if (from_bemf && ignore_ina_presence) {
+    if (from_bemf && ignore_ina_pres()) {
         ctrl_set_timer(tidx, tvar, TLEAVE_C1, TLEAVE_C1_VALUE);
     } else {
         ctrl_set_timer(tidx, tvar, TLEAVE_C1, TGUARD_C1_VALUE);
@@ -709,7 +701,7 @@ void ctrl2_evt_leaved_c1(int tidx, train_ctrl_t *tvars)
     tvars->can1_xaddr = tvars->can2_xaddr;
     tvars->c1_sblk = first_lsblk_with_canton(tvars->can2_xaddr, tvars->c1_sblk);
     if (tvars->c1_sblk.n == -1) {
-        fatal();
+        FatalError("C1no", "No C1 in leaved C1", Error_CtrlNoC1l);
     }
 
     int len = get_lsblk_len_steep(tvars->c1_sblk, conf_train_get(tidx), tvars);
@@ -733,6 +725,14 @@ void ctrl2_evt_leaved_c2(int tidx, train_ctrl_t *tvar)
 {
     itm_debug2(DBG_CTRL, "leave C2", tidx, tvar->_state);
 }
+
+void ctrl2_evt_entered_s2(int tidx, train_ctrl_t *tvars)
+{
+	itm_debug2(DBG_CTRL, "enter S2", tidx, tvars->_state);
+	tvars->c1_sblk = next_lsblk(tvars->c1_sblk, tvars->_dir<0, NULL);
+	tvars->tick_flags |= _TFLAG_C1LSB_CHANGED;
+}
+
 
 int ctrl2_evt_pose_triggered(int tidx, train_ctrl_t *tvar, xblkaddr_t ca_addr, uint8_t trigbits, int16_t cposd10)
 {
@@ -872,7 +872,7 @@ int ctrl2_tick_process(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf,
     }
     if (pose_s0eoseg && pose_s0middle) {
         itm_debug3(DBG_ERR|DBG_CTRL, "BAD POSE", tidx, pose_s0eoseg, pose_s0middle);
-        fatal();
+        FatalError("BPSE", "bad pose", Error_CtrlBadPose);
     }
     if (pose_s0eoseg) {
         ctrl_set_pose_trig(tidx, pose_s0eoseg, 0);

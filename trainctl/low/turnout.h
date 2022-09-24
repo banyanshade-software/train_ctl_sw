@@ -37,4 +37,6 @@
 extern tasklet_t turnout_tasklet;
 
 
+void TurnoutEmergencyStop(void);
+
 #endif /* TURNOUT_H_ */

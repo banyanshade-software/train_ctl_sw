@@ -11,6 +11,7 @@
 #include <stdint.h>
 #include "misc.h"
 #include "oam_error.h"
+#include "../low/turnout.h"
 
 const char *_fatal = NULL;
 
@@ -24,9 +25,9 @@ void FatalError( const char *short4lettersmsg, _UNUSED_ const char *longmsg, _UN
 {
 	if (!_fatal) {
 		_fatal = short4lettersmsg;
+		TurnoutEmergencyStop();
 		local_ui_fatal();
-		// TODO disable interrupts
-		// TODO reset turnout, otherwise they could burn
+		__disable_irq();
 		for (;;) {
 			// stop
 		}

@@ -88,6 +88,13 @@ static void turnout_enter_runmode(_UNUSED_ runmode_t m)
 	turnout_init();
 }
 
+static volatile int emerg_stop = 0;
+
+void TurnoutEmergencyStop(void)
+{
+	emerg_stop = 1;
+	turnout_init();
+}
 
 // ------------------------------------------------------
 
@@ -275,6 +282,7 @@ int turnout_state(int tidx)
 static void process_turnout_timers(_UNUSED_ uint32_t tick, _UNUSED_ uint32_t dt)
 {
 	for (int i=0; i<NUM_TURNOUTS; i++) {
+		if (emerg_stop) return;
 		USE_TURNOUT(i)		// aconf , avars
 #ifndef TRAIN_SIMU
         if (!aconf->cmd_portA) continue;

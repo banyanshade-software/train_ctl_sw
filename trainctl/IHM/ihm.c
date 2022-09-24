@@ -477,8 +477,8 @@ void local_ui_fatal(void)
 {
 	disp_setlayout(0, LAYOUT_FATAL);
 	disp_layout(0);
-	Error_Handler();
-	for (;;);
+	//Error_Handler();
+	//for (;;);
 }
 
 // ----------------------------------------------------------------

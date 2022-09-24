@@ -949,7 +949,7 @@ static void handle_master_msg(msg_64_t *m)
 static void handle_master_tick(_UNUSED_ uint32_t tick, _UNUSED_ uint32_t dt)
 {
 	static uint32_t lbsc = 0;
-	if (tick>lbsc+1000) {
+	if (tick>lbsc+100) {
 		lbsc = tick;
 		static int cnt = 0;
 		if (cnt++>10) {

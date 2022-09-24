@@ -170,6 +170,10 @@ int topology_num_sblkd(void)
     return numTopology();
 }
 
+static void bh(void)
+{
+}
+
 void next_lsblk_nums(lsblk_num_t blknum, uint8_t left, lsblk_num_t *pb1, lsblk_num_t *pb2, xtrnaddr_t *tn)
 {
     pb1->n = -1;
@@ -179,6 +183,7 @@ void next_lsblk_nums(lsblk_num_t blknum, uint8_t left, lsblk_num_t *pb1, lsblk_n
         abort();
         return;
     }
+
     if (left) {
         pb1->n = Topology(blknum)->left1;
         pb2->n = Topology(blknum)->left2;
@@ -194,7 +199,11 @@ void next_lsblk_nums(lsblk_num_t blknum, uint8_t left, lsblk_num_t *pb1, lsblk_n
     if ((pb2->n>=0) && (Topology(*pb2)->canton_addr == 0xFF)) {
         pb2->n = -1; // inactive/future lsblk
     }
-    if (tn->v>=4) tn->v = -1; // XXX
+    //if (tn->v>=6) tn->v = -1; // XXX
+    if (tn->v == 4) {
+        bh();
+        //tn->v = -1; //XXX
+    }
     // if (*tn  == 0xFF) tn  = -1;
 }
 
@@ -214,6 +223,7 @@ lsblk_num_t next_lsblk(lsblk_num_t blknum, uint8_t left, uint8_t *palternate)
     lsblk_num_t a, b;
     xtrnaddr_t tn;
     next_lsblk_nums(blknum, left, &a, &b, &tn);
+    //printf("blk %d, left=%d next tn=%d a=%d b=%d\n", blknum.n, left, tn.v, a.n, b.n);
     if (tn.v != 0xFF) {
         if (palternate) *palternate = 1;
         a = topology_get_turnout(tn) ? b : a;
@@ -275,6 +285,22 @@ uint16_t get_ina_bitfield_for_canton(int cnum)
     }
     return r;
 }
+
+xblkaddr_t get_canton_for_ina(int ina)
+{
+	xblkaddr_t r;
+	r.v = 0xFF;
+	for (int i=0; i<numTopology(); i++) {
+		lsblk_num_t n;
+		n.n = i;
+		const topo_lsblk_t *t = Topology(n);
+		if (t->ina_segnum != ina) continue;
+		r.v = t->canton_addr;
+		break;
+	}
+	return r;
+}
+
 
 static inline lsblk_num_t _lsblk(int n)
 {

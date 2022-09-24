@@ -97,6 +97,8 @@ uint8_t  get_lsblk_ina3221(lsblk_num_t num);
 // for presence detection, retrive all ina3221 belonging to a canton
 uint16_t get_ina_bitfield_for_canton(int cnum); // XXX TODO not ok for multiboard
 
+xblkaddr_t get_canton_for_ina(int ina);
+
 // get lsblk associated with a given ina3221
 // several lsblk may share the same ina3221 (using POSE only between these lsblk)
 

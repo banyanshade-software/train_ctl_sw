@@ -458,6 +458,7 @@ static void sub_presence_changed(_UNUSED_ uint8_t from_addr,  uint8_t lsegnum,  
 	if (p && (4==lsegnum)) {
 		bh();
 	}
+	itm_debug3(DBG_PRES|DBG_CTRL, "PrsChg-", lsegnum, p, ival);
 	// TODO : from_addr should be used for board number
 	for (int tidx=0; tidx < NUM_TRAINS; tidx++) {
 		train_ctrl_t *tvar = &trctl[tidx];
@@ -481,19 +482,19 @@ static void sub_presence_changed(_UNUSED_ uint8_t from_addr,  uint8_t lsegnum,  
         if ((n2.n>=0) && (lsegnum == get_lsblk_ina3221(n2))) {
         	is_s2 = 1;
         }
-
+        if (is_s1 || is_c1 || is_s2 || is_c2) {
+        	itm_debug3(DBG_PRES|DBG_CTRL, "PrsChg ", tidx, p, is_s1);
+        	itm_debug3(DBG_PRES|DBG_CTRL, "PrsChg.", is_s2, is_c1, is_c2);
+        }
 
         if (p) {
-        	if (is_s1 || is_c1) ctrl2_evt_entered_c1(tidx, tvar, 0);
-        	else if (is_c2) ctrl2_evt_entered_c2(tidx, tvar, 0);
-        	if (is_s2  && !is_c2) ctrl2_evt_entered_s2(tidx, tvar);
+        	if (is_s1 && is_c1)        ctrl2_evt_entered_c1(tidx, tvar, 0);
+        	else if (is_c2 && !is_c1)  ctrl2_evt_entered_c2(tidx, tvar, 0);
+        	else if (is_s2  && !is_s1) ctrl2_evt_entered_s2(tidx, tvar);
         } else {
         	if (is_c2) {
         		ctrl2_evt_leaved_c2(tidx, tvar);
-        	} else if (is_c1 && !is_s2) {
-        		if (n2.n<0) ctrl2_evt_leaved_c1(tidx, tvar);
-        	} else if (is_c1) {
-        		// is_c1 and is_s2
+        	} else if (is_c1 && is_s1) {
         		ctrl2_evt_leaved_c1(tidx, tvar);
         	}
         }

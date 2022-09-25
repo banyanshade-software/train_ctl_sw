@@ -223,7 +223,7 @@ static void spdctl_handle_msg(msg_64_t *m)
 				if (!tvars->c2bemf) tvars->bemf_mv = m->v1;
 				break;
 			} else if (cfrom.v == tvars->C2x.v) {
-				itm_debug3(DBG_PID|DBG_CTRL, "c2 bemf", tidx, m->v1, m->from);
+				itm_debug3(DBG_PID, "c2 bemf", tidx, m->v1, m->from);
 				if (tvars->c2bemf) {
 					tvars->bemf_mv = m->v1;
 					if (!tidx) oscillo_t0bemf = m->v1;

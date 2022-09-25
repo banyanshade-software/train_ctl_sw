@@ -572,7 +572,10 @@ void ctrl2_update_c2(int tidx, train_ctrl_t *tvar, const conf_train_t *tconf, in
         xblkaddr_t c2r;
         ns = next_lsblk_free(tidx, tvar, tvar->_dir<0, &alternate, &c2r);
         xblkaddr_t c2n = canton_for_lsblk(ns);
-        itm_debug3(DBG_CTRL, "c1c2addr", tidx, tvar->can2_xaddr.v, c2r.v);
+        itm_debug3(DBG_CTRL, "c2addr", tidx, tvar->can2_xaddr.v, c2r.v);
+        //if ((tidx==1) && (c2addr.v = 0xFF) && (tvar->can1_xaddr.v == 0)) {
+        // 	bh();
+        //}
         if (c2n.v == tvar->can1_xaddr.v) {
             // ns is same canton as c1_sblk. if ina can't distinguish them, set trig
         	uint8_t ls2 = get_lsblk_ina3221(ns);
@@ -658,6 +661,8 @@ void ctrl2_sendlow_c1c2(int tidx, train_ctrl_t *tvar)
 void ctrl2_evt_entered_c2(int tidx, train_ctrl_t *tvar, uint8_t from_bemf)
 {
     if (from_bemf && ignore_bemf_presence) return;
+    itm_debug3(DBG_CTRL, "evt_ent_c2", tidx, tvar->can1_xaddr.v,  tvar->can2_xaddr.v);
+
     if (tvar->_state != train_running_c1) {
         itm_debug3(DBG_CTRL|DBG_ERR, "ent C2/badst", tidx, tvar->_state, from_bemf);
         return;
@@ -698,6 +703,7 @@ void ctrl2_evt_leaved_c1(int tidx, train_ctrl_t *tvars)
     if (1 == tvars->can2_xaddr.v) { // XXX Hardcoded for now
     	tvars->measure_pose_percm = 1;
     }
+    itm_debug2(DBG_CTRL, "** C1", tidx, tvars->can1_xaddr.v);
     tvars->can1_xaddr = tvars->can2_xaddr;
     tvars->c1_sblk = first_lsblk_with_canton(tvars->can2_xaddr, tvars->c1_sblk);
     if (tvars->c1_sblk.n == -1) {
@@ -710,6 +716,7 @@ void ctrl2_evt_leaved_c1(int tidx, train_ctrl_t *tvars)
     } else {
     	tvars->beginposmm = 0;
     }
+    itm_debug2(DBG_CTRL, "beginpos", tidx, tvars->beginposmm);
 
     tvars->can2_xaddr.v = 0xFF; // will be updated by update_c2
     tvars->tick_flags |=  _TFLAG_C1_CHANGED|_TFLAG_C1_CHANGED | _TFLAG_C1LSB_CHANGED;
@@ -726,13 +733,37 @@ void ctrl2_evt_leaved_c2(int tidx, train_ctrl_t *tvar)
     itm_debug2(DBG_CTRL, "leave C2", tidx, tvar->_state);
 }
 
+static int ctrl2_set_next_c1_lsblk(int tidx, train_ctrl_t *tvar, lsblk_num_t ns);
+
 void ctrl2_evt_entered_s2(int tidx, train_ctrl_t *tvars)
 {
 	itm_debug2(DBG_CTRL, "enter S2", tidx, tvars->_state);
-	tvars->c1_sblk = next_lsblk(tvars->c1_sblk, tvars->_dir<0, NULL);
-	tvars->tick_flags |= _TFLAG_C1LSB_CHANGED;
+	lsblk_num_t ns = next_lsblk(tvars->c1_sblk, tvars->_dir<0, NULL);
+
+	ctrl2_set_next_c1_lsblk(tidx, tvars, ns);
 }
 
+static int ctrl2_set_next_c1_lsblk(int tidx, train_ctrl_t *tvar, lsblk_num_t ns)
+{
+	int retcode = 0;
+    int len1 = get_lsblk_len_steep(tvar->c1_sblk, conf_train_get(tidx), tvar);
+    int len2 = get_lsblk_len_steep(ns, conf_train_get(tidx), tvar);
+    int exppose;
+    tvar->c1_sblk = ns;
+    if (tvar->_dir<0) {
+        exppose = tvar->beginposmm;
+        tvar->beginposmm = tvar->beginposmm - len2*10;
+    } else {
+        tvar->beginposmm = tvar->beginposmm + len1*10;
+        exppose = tvar->beginposmm;
+    }
+    if (abs(tvar->curposmm - exppose)>30) {
+        itm_debug3(DBG_ERR, "large p", tidx, exppose, tvar->curposmm);
+        retcode = 2;
+    }
+    tvar->tick_flags |= _TFLAG_C1LSB_CHANGED;
+    return retcode;
+}
 
 int ctrl2_evt_pose_triggered(int tidx, train_ctrl_t *tvar, xblkaddr_t ca_addr, uint8_t trigbits, int16_t cposd10)
 {
@@ -764,7 +795,8 @@ int ctrl2_evt_pose_triggered(int tidx, train_ctrl_t *tvar, xblkaddr_t ca_addr, u
                 goto t2;
             }
             
-            
+            retcode = ctrl2_set_next_c1_lsblk(tidx, tvar, ns);
+            /*
             int len1 = get_lsblk_len_steep(tvar->c1_sblk, conf_train_get(tidx), tvar);
             int len2 = get_lsblk_len_steep(ns, conf_train_get(tidx), tvar);
             int exppose;
@@ -781,6 +813,7 @@ int ctrl2_evt_pose_triggered(int tidx, train_ctrl_t *tvar, xblkaddr_t ca_addr, u
                 retcode = 2;
             }
             tvar->tick_flags |= _TFLAG_C1LSB_CHANGED;
+            */
             //tvar->beginposmm = (tvar->_dir >= 0) ? tvar->curposmm : tvar->curposmm + get_lsblk_len(ns)*10;
         }
 
@@ -829,7 +862,10 @@ int ctrl2_tick_process(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf,
         pflags |= (flags & perm_flags);
         tvars->tick_flags = 0;
 
-        if (pflags & _TFLAG_C1_CHANGED) tvars->curposmm = 0;
+        if (pflags & _TFLAG_C1_CHANGED) {
+        	tvars->curposmm = 0;
+        	itm_debug1(DBG_CTRL, "curposmm0", tidx);
+        }
 
         if (flags & (_TFLAG_DSPD_CHANGED|_TFLAG_MODE_CHANGED)) {
             ctrl2_check_alreadystopped(tidx, tvars);
@@ -875,9 +911,11 @@ int ctrl2_tick_process(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf,
         FatalError("BPSE", "bad pose", Error_CtrlBadPose);
     }
     if (pose_s0eoseg) {
+    	itm_debug3(DBG_CTRL, "TrEos", tidx, tvars->curposmm, pose_s0eoseg);
         ctrl_set_pose_trig(tidx, pose_s0eoseg, 0);
         tvars->trig_eoseg = 1;
     } else if (pose_s0middle) {
+    	itm_debug3(DBG_CTRL, "TrMid", tidx, tvars->curposmm, pose_s0middle);
         ctrl_set_pose_trig(tidx, pose_s0middle, 0);
         tvars->trig_eoseg = 0;
     }

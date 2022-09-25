@@ -1259,6 +1259,9 @@ int conf_globparam_fieldnum(const char *str);
         case 'M':
             [self processMsgRecordFrame:frm];
             break;
+        default:
+            NSLog(@"unknown frame type %c", frmtype);
+            break;
     }
 }
 
@@ -1625,7 +1628,7 @@ static int frm_unescape(uint8_t *buf, int len)
     trains_value = [[NSMutableDictionary alloc]initWithCapacity:25];
 
     NSUInteger nval = len / 4;
-    uint32_t *ptr = frm.param32;
+    uint32_t *ptr = (uint32_t *)[dta bytes];
     //uint32_t tick = *ptr++;
     nval--;
     stat_iterator_t step;

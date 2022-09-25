@@ -1213,11 +1213,11 @@
                             </tabViewItem>
                             <tabViewItem label="Record" identifier="" id="WuV-ET-awb">
                                 <view key="view" id="VlL-nK-cbV">
-                                    <rect key="frame" x="10" y="33" width="889" height="490"/>
+                                    <rect key="frame" x="10" y="33" width="889" height="466"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="cNi-lE-t0Y">
-                                            <rect key="frame" x="14" y="442" width="71" height="32"/>
+                                            <rect key="frame" x="14" y="418" width="71" height="32"/>
                                             <buttonCell key="cell" type="push" title="Start" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="f2O-x0-I2A">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                 <font key="font" metaFont="system"/>
@@ -1232,7 +1232,7 @@
                                             </connections>
                                         </button>
                                         <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="r1U-ZC-0xu">
-                                            <rect key="frame" x="14" y="405" width="71" height="32"/>
+                                            <rect key="frame" x="14" y="381" width="71" height="32"/>
                                             <buttonCell key="cell" type="push" title="Mark" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="x7r-aJ-be7">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                 <font key="font" metaFont="system"/>
@@ -1243,7 +1243,7 @@
                                             </connections>
                                         </button>
                                         <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="y2E-v8-UxY">
-                                            <rect key="frame" x="14" y="364" width="71" height="32"/>
+                                            <rect key="frame" x="14" y="340" width="71" height="32"/>
                                             <buttonCell key="cell" type="push" title="Stop" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="1p0-8U-FHZ">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                 <font key="font" metaFont="system"/>
@@ -1254,7 +1254,7 @@
                                             </connections>
                                         </button>
                                         <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="VzA-P6-uii">
-                                            <rect key="frame" x="124" y="449" width="154" height="21"/>
+                                            <rect key="frame" x="124" y="425" width="154" height="21"/>
                                             <constraints>
                                                 <constraint firstAttribute="width" constant="154" id="ZLn-Eh-alv"/>
                                             </constraints>
@@ -1268,7 +1268,7 @@
                                             </connections>
                                         </textField>
                                         <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="udP-Dr-tjq">
-                                            <rect key="frame" x="14" y="323" width="71" height="32"/>
+                                            <rect key="frame" x="14" y="299" width="71" height="32"/>
                                             <buttonCell key="cell" type="push" title="Plot" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Vnu-7U-LpI">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                 <font key="font" metaFont="system"/>
@@ -1283,7 +1283,7 @@
                                             </connections>
                                         </button>
                                         <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="dNW-25-dVW">
-                                            <rect key="frame" x="122" y="327" width="93" height="25"/>
+                                            <rect key="frame" x="122" y="303" width="93" height="25"/>
                                             <popUpButtonCell key="cell" type="push" title="power0" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="DgP-sL-kcM" id="XP9-nh-ts4">
                                                 <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                                 <font key="font" metaFont="menu"/>

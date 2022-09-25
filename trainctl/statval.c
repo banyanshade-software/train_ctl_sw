@@ -206,6 +206,7 @@ int frame_gather_stat(stat_iterator_t *step, uint8_t *buf)
 	int32_t v = stat_val_get(step, &done);
 	if (done) return 0;
 
+
 	int l = txrx_frm_escape2(buf, (void *) &v, 4, 8);
 	if (l<0) {
 		return -1;

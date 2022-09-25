@@ -232,9 +232,8 @@ __weak int oscillo_running(void)
 
 static int can_send_stat(void)
 {
-	return 0; // XXX
-	if (sending_stats) return 0;
-	if (sending_oscillo) return 0;
+	//return 0; // XXX
+	if (sending_longframe) return 0;
 	if (oscillo_running()) return 0;
 	return 1;
 }

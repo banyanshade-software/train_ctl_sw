@@ -25,7 +25,7 @@
 
 // timers values in tick (ms)
 #define TLEAVE_C1_VALUE 20
-#define TGUARD_C1_VALUE 1
+#define TGUARD_C1_VALUE 50
 
 typedef struct {
     train_mode_t   _mode;

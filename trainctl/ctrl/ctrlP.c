@@ -733,23 +733,24 @@ void ctrl2_evt_leaved_c2(int tidx, train_ctrl_t *tvar)
     itm_debug2(DBG_CTRL, "leave C2", tidx, tvar->_state);
 }
 
-static int ctrl2_set_next_c1_lsblk(int tidx, train_ctrl_t *tvar, lsblk_num_t ns);
+
+static int ctrl2_set_next_c1_lsblk(int tidx, train_ctrl_t *tvar, lsblk_num_t ns, int fromtrig);
 
 void ctrl2_evt_entered_s2(int tidx, train_ctrl_t *tvars)
 {
 	itm_debug2(DBG_CTRL, "enter S2", tidx, tvars->_state);
 	lsblk_num_t ns = next_lsblk(tvars->c1_sblk, tvars->_dir<0, NULL);
 
-	ctrl2_set_next_c1_lsblk(tidx, tvars, ns);
+	ctrl2_set_next_c1_lsblk(tidx, tvars, ns, 0);
 }
 
-static int ctrl2_set_next_c1_lsblk(int tidx, train_ctrl_t *tvar, lsblk_num_t ns)
+static int ctrl2_set_next_c1_lsblk(int tidx, train_ctrl_t *tvar, lsblk_num_t ns, int fromtrig)
 {
 	int retcode = 0;
     int len1 = get_lsblk_len_steep(tvar->c1_sblk, conf_train_get(tidx), tvar);
     int len2 = get_lsblk_len_steep(ns, conf_train_get(tidx), tvar);
     int exppose;
-    tvar->c1_sblk = ns;
+    // XXXX
     if (tvar->_dir<0) {
         exppose = tvar->beginposmm;
         tvar->beginposmm = tvar->beginposmm - len2*10;
@@ -761,6 +762,11 @@ static int ctrl2_set_next_c1_lsblk(int tidx, train_ctrl_t *tvar, lsblk_num_t ns)
         itm_debug3(DBG_ERR, "large p", tidx, exppose, tvar->curposmm);
         retcode = 2;
     }
+    if (5==ns.n) { // debug
+    	itm_debug3(DBG_CTRL, "enter5 ", tidx, fromtrig, tvar->c1_sblk.n);
+    	itm_debug3(DBG_CTRL, "enter5.", exppose, tvar->beginposmm, tvar->curposmm);
+    }
+    tvar->c1_sblk = ns;
     tvar->tick_flags |= _TFLAG_C1LSB_CHANGED;
     return retcode;
 }
@@ -795,7 +801,7 @@ int ctrl2_evt_pose_triggered(int tidx, train_ctrl_t *tvar, xblkaddr_t ca_addr, u
                 goto t2;
             }
             
-            retcode = ctrl2_set_next_c1_lsblk(tidx, tvar, ns);
+            retcode = ctrl2_set_next_c1_lsblk(tidx, tvar, ns, 0);
             /*
             int len1 = get_lsblk_len_steep(tvar->c1_sblk, conf_train_get(tidx), tvar);
             int len2 = get_lsblk_len_steep(ns, conf_train_get(tidx), tvar);

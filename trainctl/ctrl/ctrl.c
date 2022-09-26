@@ -492,10 +492,12 @@ static void sub_presence_changed(_UNUSED_ uint8_t from_addr,  uint8_t lsegnum,  
         	else if (is_c2 && !is_c1)  ctrl2_evt_entered_c2(tidx, tvar, 0);
         	else if (is_s2  && !is_s1) ctrl2_evt_entered_s2(tidx, tvar);
         } else {
-        	if (is_c2) {
-        		ctrl2_evt_leaved_c2(tidx, tvar);
-        	} else if (is_c1 && is_s1) {
-        		ctrl2_evt_leaved_c1(tidx, tvar);
+        	if ((0)) { // XXX
+        		if (is_c2) {
+        			ctrl2_evt_leaved_c2(tidx, tvar);
+        		} else if (is_c1 && is_s1) {
+        			ctrl2_evt_leaved_c1(tidx, tvar);
+        		}
         	}
         }
         /*

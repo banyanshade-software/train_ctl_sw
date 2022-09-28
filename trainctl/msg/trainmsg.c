@@ -70,6 +70,10 @@ LFMQUEUE_DEF_C(from_canbus, msg_64_t, 16, 0)
 LFMQUEUE_DEF_C(from_oscillo, msg_64_t, 2, 1)
 #endif
 
+#ifdef BOARD_HAS_TRKPLN
+LFMQUEUE_DEF_C(to_planner, msg_64_t, 	6, 0)
+LFMQUEUE_DEF_C(from_planner, msg_64_t, 	6,  1)
+#endif
 
 LFMQUEUE_DEF_C(to_oam, msg_64_t, 8, 0)
 LFMQUEUE_DEF_C(from_oam, msg_64_t, 12, 0)
@@ -122,6 +126,9 @@ static const qdef_t qdefs[] = {
 #endif
 #ifdef BOARD_HAS_OSCILLO
     {&from_oscillo, NULL,           0, 0},
+#endif
+#ifdef BOARD_HAS_TRKPLN
+	{&from_planner, &to_planner,	0, 0},
 #endif
     
     {&from_oam, &to_oam,            0, 0},
@@ -203,6 +210,13 @@ static int  _local_disptach(msg_64_t *m, mqf_t *dont_send_to, uint8_t allow_loop
     		cont = 1; dest = &to_ui_track;
 #else
         	return 0;
+#endif
+    	}
+    	if (MA3_PLANNER == m->to) {
+#ifdef BOARD_HAS_TRKPLN
+    		dest = &to_planner;
+#else
+    		return 0;
 #endif
     	}
     	if (MA3_SLV_OAM == m->to) {

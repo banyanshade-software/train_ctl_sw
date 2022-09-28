@@ -35,6 +35,10 @@
 #include "conf_canton.h"
 #include "canton_bemf.h"
 #include "msgrecord.h"
+#include "planner.h"
+
+#import "AppDelegateP.h"
+
 
 uint16_t dummy[3];
 
@@ -2015,7 +2019,7 @@ volatile int oscillo_canton_of_interest = 0;
 
 #pragma mark - simu
 
-static AppDelegate *theDelegate = nil;
+AppDelegate *theDelegate = nil;
 
 - (void) startSimu
 {
@@ -2099,6 +2103,7 @@ uint32_t SimuTick = 0;
     tasklet_run(&canton_tasklet, mt);
     tasklet_run(&turnout_tasklet, mt);
     tasklet_run(&ctrl_tasklet,  mt);
+    tasklet_run(&planner_tasklet,  mt);
     /*
     //OAM_Tasklet(notif, mt, mdt);
     spdctl_run_tick(notif,  mt, mdt);

@@ -12,6 +12,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface PlanCellController : NSViewController
 
+@property (nonatomic) NSInteger trainNum;
+@property (nonatomic,readonly) NSString *trainName;
+@property (nonatomic) NSInteger targetLSBLK;
+@property (nonatomic) BOOL hasRule;
+@property (nonatomic) NSUInteger delay;
+- (void) resetEntry;
+
 @end
 
 NS_ASSUME_NONNULL_END

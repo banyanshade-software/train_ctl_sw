@@ -37,4 +37,6 @@ typedef enum {
 } train_state_t;
 
 
+int ctrl_get_train_curlsblk(int numtrain);
+
 #endif /* CTRL_CTRL_H_ */

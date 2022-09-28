@@ -576,13 +576,25 @@ static void normal_process_msg(msg_64_t *m)
         //if (test_mode) continue;
         int tidx = MA1_TRAIN(m->to);
         train_ctrl_t *tvar = &trctl[tidx];
-
+        extern uint8_t Auto1ByteCode[]; // XXX temp hack
         switch (m->cmd) {
         case CMD_SET_TRAIN_MODE:
             ctrl_set_mode(m->v1u, m->v2u);
             break;
         case CMD_START_AUTO:
             switch (m->v1u) {
+                case 1:
+                    tvar->route =  Auto1ByteCode;
+                    tvar->routeidx = 0;
+                    tvar->got_u1 = 0;
+                    tvar->trigu1 = 0;
+                    ctrl_set_mode(tidx, train_auto);
+                    break;
+                default:
+                    itm_debug2(DBG_CTRL|DBG_ERR, "bad cauto", tidx, m->v1u);
+                    break;
+            }
+                /*
             case 0:
                 trctl[0].route = route_0_T0;
                 trctl[1].route = route_0_T1;
@@ -607,6 +619,7 @@ static void normal_process_msg(msg_64_t *m)
             trctl[1].got_texp = 0;
             ctrl_set_mode(0, train_auto);
             ctrl_set_mode(1, train_auto);
+                 */
             break;
         case CMD_PRESENCE_SUB_CHANGE:
             if ((1)) {
@@ -655,6 +668,16 @@ static void normal_process_msg(msg_64_t *m)
     }
 }
 
+
+// called by different thread ! WARNING
+int ctrl_get_train_curlsblk(int numtrain)
+{
+    train_ctrl_t *tvars = &trctl[numtrain];
+    // we assume uint8 load/store is atomic
+    // XXX is it ????
+    int n = tvars->c1_sblk.n;
+    return n;
+}
 
 #if 0
 void ctrl_run_tick(_UNUSED_ uint32_t notif_flags, uint32_t tick, _UNUSED_ uint32_t dt)
@@ -1089,6 +1112,8 @@ static void check_behaviour(_UNUSED_ uint32_t tick)
 	}
 
 }
+
+
 #endif
 
 

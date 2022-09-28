@@ -10,7 +10,11 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class PlanCellController;
+
 @interface PlanCellView : NSTableCellView
+
+@property (nonatomic, strong) IBOutlet PlanCellController *controller;
 
 @end
 

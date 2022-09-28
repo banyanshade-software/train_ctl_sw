@@ -98,6 +98,11 @@ typedef enum {
     CMD_OAM_BNUM,
 	CMD_OAM_SLV_OK,
     CMD_OAM_CUSTOM,                 // any -> OAM(), not defined (for test)
+
+	CMD_PLANNER_RESET,				// UI->planner								stop all trains, reset planner
+	CMD_PLANNER_ADD,				// UI->planner
+	CMD_PLANNER_CANCEL,				// UI->planner
+	CMD_PLANNER_COMMIT				// UI->planner
 } cmd_msg_t;
 
 #endif /* trainmsgdef_h */

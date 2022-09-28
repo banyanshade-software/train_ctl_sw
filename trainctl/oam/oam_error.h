@@ -52,6 +52,8 @@ enum fatal_error_code {
 
 	Error_CAN_Rx_Overrun0,
 	Error_CAN_Rx_Overrun1,
+
+	Error_PlannerTooManyBlocks,
 };
 
 

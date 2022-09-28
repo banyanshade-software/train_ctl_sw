@@ -17,6 +17,8 @@
 #include "../msg/trainmsg.h"
 
 #include "../oam/oam.h"
+#include "../trkpln/planner.h"
+
 //#include "../../w25qxx/w25qxx.h"
 
 //extern osThreadId_t taskOamHandle;
@@ -35,6 +37,10 @@ void StartOamTask(_UNUSED_ void *argument)
 		//itm_debug1(DBG_LOWCTRL, "--oam", dt);
 		//OAM_Tasklet(notif, tick, tick-lt);
 		tasklet_run(&OAM_tasklet, tick);
+#ifdef BOARD_HAS_TRKPLN
+		// TODO planner should probably have its own task
+		tasklet_run(&planner_tasklet, tick);
+#endif
 
 	}
 }

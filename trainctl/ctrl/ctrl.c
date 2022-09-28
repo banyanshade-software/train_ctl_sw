@@ -215,7 +215,7 @@ static const uint8_t route_0_T1[] = {_AR_WEVENT(0),
 };
 // ----------------------------------------------------------------------------
 // ----------------------------------------------------------------------------
-
+#if 0 // obsolete
 static const uint8_t route_1_T0[] = {
 	_AR_EXT, _ARX_CLR_EVENT, 0,
     _AR_LED, 0, LED_PRG_FLASH, _AR_TIMER(2), _AR_WTIMER, SOFF,
@@ -296,6 +296,7 @@ static const uint8_t route_2_T0[] = {
     _AR_TIMER(5), _AR_WTIMER,
     _AR_LOOP
 };
+#endif // obsolete routes
 
 // ----------------------------------------------------------------------------
 // ----------------------------------------------------------------------------
@@ -357,7 +358,7 @@ static void _ctrl_init(int normalmode)
 				trctl[1].route = route_0_T1;
 			}
 
-			if ((1)) {
+			/*if ((1)) {
 
 
 				trctl[0].routeidx = 0;
@@ -365,7 +366,7 @@ static void _ctrl_init(int normalmode)
 
 				trctl[1].routeidx = 0;
 				trctl[1].route = route_1_T1;
-			}
+			}*/
 
 
 		} else {

@@ -274,14 +274,16 @@ static void spdctl_handle_msg(msg_64_t *m)
 			set_c1_c2(tidx, tvars, to_xblk(m->vbytes[0]), m->vbytes[1], to_xblk(m->vbytes[2]), m->vbytes[3]);
 			break;
 		case CMD_POSE_SET_TRIG0:
-			itm_debug2(DBG_POSEC, "POSE set0", tidx, m->v32);
+			itm_debug3(DBG_POSEC, "POSE set0", tidx, m->v32, tvars->position_estimate);
 			tvars->pose_trig0 = m->v32*10;
+            if (m->subc) tvars->position_estimate = 0;
 			// check if already trigg
 			pose_check_trig(tidx, tvars, 0);
 			break;
 		case CMD_POSE_SET_TRIG_U1:
-			itm_debug2(DBG_POSEC, "POSE setU1", tidx, m->v32);
+			itm_debug3(DBG_POSEC, "POSE setU1", tidx, m->v32, tvars->position_estimate);
 			tvars->pose_trigU1 = m->v32*10;
+            if (m->subc) tvars->position_estimate = 0;
 			// check if already trigg
 			pose_check_trig(tidx, tvars, 0);
 		default:
@@ -642,7 +644,7 @@ static void set_c1_c2(int tidx, train_vars_t *tvars, xblkaddr_t c1, int8_t dir1,
 		mqf_write_from_spdctl(&m);
 	}
     if (c1.v != tvars->C1x.v) {
-        tvars->position_estimate = 0; // reset POSE
+        tvars->position_estimate = 0; // reset POSE when C1 changes
     }
 	tvars->C1x = c1;
 	tvars->C1_dir = dir1;
@@ -783,7 +785,7 @@ static void pose_check_trig(int numtrain, train_vars_t *tvars, int32_t lastincr)
     }
     if (!r) return;
 
-    msg_64_t m;
+    msg_64_t m = {0};
     m.from = MA1_SPDCTL(numtrain);
     m.to = MA1_CTRL(numtrain);
     m.cmd = CMD_POSE_TRIGGERED;

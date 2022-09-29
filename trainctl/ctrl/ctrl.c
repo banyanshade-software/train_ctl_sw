@@ -323,6 +323,7 @@ static void _ctrl_init(int normalmode)
 	}
 
 	memset(trctl, 0, sizeof(train_ctrl_t)*NUM_TRAINS);
+	occupency_clear();
 
 	if (normalmode) {
 		ctrl_set_mode(0, train_manual);
@@ -331,10 +332,11 @@ static void _ctrl_init(int normalmode)
 		xtrnaddr_t t1 = { .v = 1};
 		set_turnout(t0, 0, -1);
 		set_turnout(t1, 0, -1);
-		_UNUSED_ lsblk_num_t s0 = {0};
-		lsblk_num_t s2 = {2};
-		_UNUSED_ lsblk_num_t s5 = {5};
-		lsblk_num_t _UNUSED_ s3 = {3};
+		const _UNUSED_ lsblk_num_t s0 = {0};
+		const _UNUSED_ lsblk_num_t s2 = {2};
+		const _UNUSED_ lsblk_num_t s5 = {5};
+		const _UNUSED_ lsblk_num_t s3 = {3};
+		const _UNUSED_ lsblk_num_t s8 = {8};
 		if ((1)) {
 #ifdef TRAIN_SIMU
 			ctrl2_init_train(0, &trctl[0], s2);
@@ -342,7 +344,7 @@ static void _ctrl_init(int normalmode)
 #else
 			ctrl2_init_train(0, &trctl[0], s0);
 			//ctrl2_init_train(0, &trctl[0], s5 /*s0*/);
-			ctrl2_init_train(1, &trctl[1], s2);
+			ctrl2_init_train(1, &trctl[1], s8);
 			ctrl_set_mode(0, train_manual);
 			ctrl_set_mode(1, train_manual);
 #endif
@@ -545,7 +547,7 @@ static void posecm_measured(int tidx, int32_t pose, lsblk_num_t blk1, lsblk_num_
 	const int alpha = 80; //0.80
 	ppcm = abs(ppcm);
 	wconf->pose_per_cm = (tconf->pose_per_cm * alpha + (100-alpha) * ppcm)/100;
-	itm_debug2(DBG_CTRL, "PPCM updated", tidx, wconf->pose_per_cm);
+	itm_debug2(DBG_CTRL|DBG_POSEC, "PPCM updated", tidx, wconf->pose_per_cm);
 
 }
 
@@ -653,7 +655,7 @@ static void normal_process_msg(msg_64_t *m)
             break;
 
         case CMD_POSE_TRIGGERED:
-            itm_debug3(DBG_POSE, "Trig", m->v1u, m->v2u, m->subc);
+            itm_debug3(DBG_POSEC, "Trig", m->v1u, m->v2u, m->subc);
             xblkaddr_t tb = {.v = m->v1u};
             ctrl2_evt_pose_triggered(tidx, tvar, tb, m->subc, m->v2);
             break;

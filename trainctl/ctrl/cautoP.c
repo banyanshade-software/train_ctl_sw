@@ -61,6 +61,7 @@ lsblk_num_t cauto_peek_next_lsblk(int tidx, train_ctrl_t *tvars, uint8_t left, i
     
     if (nstep) cur.n = tvars->route[tvars->routeidx+nstep-1];
     if (cur.n & 0xC0) {
+    	itm_debug3(DBG_ERR|DBG_AUTO, "peek/C", tidx, cur.n, nstep);
     	route_error(tidx, tvars);
     	return sret;
     }

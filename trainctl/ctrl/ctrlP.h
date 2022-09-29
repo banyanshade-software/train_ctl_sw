@@ -62,6 +62,7 @@ typedef struct {
     uint8_t trigu1:4;
     uint8_t got_texp:1;
     uint8_t got_u1:1;
+    uint8_t pose_reset:1;
 } train_ctrl_t;
 
 /*
@@ -118,7 +119,7 @@ void ctrl2_sendlow_c1c2(int tidx, train_ctrl_t *tvar);
 int  ctrl2_evt_pose_triggered(int tidx, train_ctrl_t *tvar, xblkaddr_t ca_addr, uint8_t trigbits, int16_t cposd10);
 void ctrl2_evt_stop_detected(int tidx, train_ctrl_t *tvar, int32_t pose);
 
-void ctrl_set_pose_trig(int numtrain, int32_t pose, int n);
+void ctrl_set_pose_trig(int numtrain, train_ctrl_t *tvar, int32_t pose, int n);
 
 #define ignore_bemf_presence 1
 #define ignore_ina_presence  0

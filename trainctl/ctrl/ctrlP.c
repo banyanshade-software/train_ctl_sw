@@ -118,6 +118,25 @@ static int32_t ctrl_pose_end_s1(const conf_train_t *tconf, train_ctrl_t *tvar)
     return p;
 }
 
+
+static int32_t ctrl_pose_len_s1(const conf_train_t *tconf, train_ctrl_t *tvar)
+{
+	int cm = get_lsblk_len_steep(tvar->c1_sblk, tconf, tvar);
+	int mm;
+	if (tvar->_dir<0) {
+		int lmm = (tconf->trainlen_right + 5) * 10;
+		if (lmm > cm*10) lmm = cm*10;
+		mm = tvar->beginposmm + (cm*10-lmm);
+	} else {
+		int lmm = (tconf->trainlen_left + 5) * 10;
+		if (lmm > cm*10) lmm = cm*10;
+		mm = tvar->beginposmm + cm*10 - lmm;
+	}
+	int32_t p = pose_convert_from_mm(tconf, mm);
+	if (!p) p=1;
+	return p;
+}
+
 void ctrl_set_pose_trig(int numtrain, train_ctrl_t *tvars, int32_t pose, int n)
 {
     itm_debug3(DBG_CTRL|DBG_POSEC, "set posetr", numtrain, n, pose);
@@ -149,7 +168,8 @@ void ctrl2_upcmd_settrigU1(int tidx, train_ctrl_t *tvars, uint8_t t)
             p = ctrl_pose_end_s1(conf_train_get(tidx), tvars);
             break;
         case 3:
-            p = ctrl_pose_percent_s1(conf_train_get(tidx), tvars, 10);
+        	p = ctrl_pose_len_s1(conf_train_get(tidx), tvars);
+            //p = ctrl_pose_percent_s1(conf_train_get(tidx), tvars, 10);
             break;
     }
     ctrl_set_pose_trig(tidx, tvars, p, 1);

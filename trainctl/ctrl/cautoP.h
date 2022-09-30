@@ -65,8 +65,9 @@ void cauto_end_tick(int tidx, train_ctrl_t *tvars);
 
 #define _AR_TRGEVENT(_e) (0xD0 | ((_e) & 0x07))
 #define _AR_TIMER(_t)    (0xD8 | ((_t) & 0x07))
-#define _AR_TRG_HALF     (0xF9)
 #define _AR_TRG_END      (0xF8)
+#define _AR_TRG_HALF     (0xF9)
+#define _AR_TRG_TLEN     (0xFA)
 
 #define _AR_LED          (0xFB)
 

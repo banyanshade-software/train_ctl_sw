@@ -184,6 +184,12 @@ static void check_for_ctrl(int tidx, train_ctrl_t *tvars)
             tvars->routeidx++;
             continue;
         }
+        if (r == _AR_TRG_TLEN) {
+        	itm_debug1(DBG_AUTO, "ca.trglen", tidx);
+        	tvars->trigu1 = 3;
+        	tvars->routeidx++;
+        	continue;
+        }
         if (r == _AR_END) { // END
     		itm_debug1(DBG_AUTO, "ca.end", tidx);
             route_end(tidx, tvars);

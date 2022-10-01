@@ -161,7 +161,7 @@ static int _add_trig(canton_bemf_t *cvars, int32_t posval, uint8_t posetag, int8
         return pi;
      }
      itm_debug1(DBG_ERR|DBG_POSEC, "NO TRIG", posetag);
-     Error_Handler();
+     FatalError("NOTR", "no trig", Error_CtrlBadPose);
      return -1;
 }
 

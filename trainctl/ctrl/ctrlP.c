@@ -178,11 +178,11 @@ void ctrl_set_pose_trig(int numtrain, _UNUSED_ train_ctrl_t *tvars, int8_t dir, 
     itm_debug3(DBG_CTRL, "set posetr", numtrain, tag, pose);
     if (!tag) {
         itm_debug2(DBG_ERR|DBG_POSEC, "no tag", numtrain, tag);
-        Error_Handler();
+        FatalError("NOTG", "no tag", Error_CtrlBadPose);
     }
     if (!dir) {
         itm_debug2(DBG_ERR|DBG_POSEC, "no dir", numtrain, tag);
-        Error_Handler();
+        FatalError("NODI", "no dir", Error_CtrlBadPose);
     }
     if (abs(pose)>32000*10) {
         itm_debug3(DBG_ERR|DBG_POSEC, "toobig", numtrain, tag, pose);

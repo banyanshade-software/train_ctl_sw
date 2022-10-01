@@ -45,6 +45,12 @@ const conf_topology_t *conf_topology_get(int num);
 
 
 
+#ifdef TRN_BOARD_UNIT_TEST
+#define NUM_TOPOLOGYS 16 // 16 
+#endif // TRN_BOARD_UNIT_TEST
+
+
+
 #ifdef TRN_BOARD_UI
 #define NUM_TOPOLOGYS 0 // 0 
 #endif // TRN_BOARD_UI

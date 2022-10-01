@@ -23,6 +23,21 @@
     // this goes only in config_train.c
 
 
+#ifdef TRN_BOARD_UNIT_TEST
+
+unsigned int conf_train_num_entries(void)
+{
+    return 0; // 0 
+}
+
+static conf_train_t conf_train[0] = {
+};
+
+#endif // TRN_BOARD_UNIT_TEST
+
+
+
+
 #ifdef TRN_BOARD_UI
 
 unsigned int conf_train_num_entries(void)
@@ -69,8 +84,8 @@ static conf_train_t conf_train[8] = {
      .postIIR = 0,
      .slipping = 120,
      .pose_per_cm = 450,
-     .trainlen_left = 6,
-     .trainlen_right = 18,
+     .trainlen_left_cm = 6,
+     .trainlen_right_cm = 18,
   },
   {     // 1
      .pidctl = {
@@ -95,8 +110,8 @@ static conf_train_t conf_train[8] = {
      .postIIR = 0,
      .slipping = 120,
      .pose_per_cm = 500,
-     .trainlen_left = 15,
-     .trainlen_right = 2,
+     .trainlen_left_cm = 15,
+     .trainlen_right_cm = 2,
   },
   {     // 2
      .pidctl = {
@@ -121,8 +136,8 @@ static conf_train_t conf_train[8] = {
      .postIIR = 0,
      .slipping = 120,
      .pose_per_cm = 500,
-     .trainlen_left = 10,
-     .trainlen_right = 10,
+     .trainlen_left_cm = 10,
+     .trainlen_right_cm = 10,
   },
   {     // 3
      .pidctl = {
@@ -147,8 +162,8 @@ static conf_train_t conf_train[8] = {
      .postIIR = 0,
      .slipping = 120,
      .pose_per_cm = 500,
-     .trainlen_left = 10,
-     .trainlen_right = 10,
+     .trainlen_left_cm = 10,
+     .trainlen_right_cm = 10,
   },
   {     // 4
      .pidctl = {
@@ -173,8 +188,8 @@ static conf_train_t conf_train[8] = {
      .postIIR = 0,
      .slipping = 120,
      .pose_per_cm = 500,
-     .trainlen_left = 10,
-     .trainlen_right = 10,
+     .trainlen_left_cm = 10,
+     .trainlen_right_cm = 10,
   },
   {     // 5
      .pidctl = {
@@ -199,8 +214,8 @@ static conf_train_t conf_train[8] = {
      .postIIR = 0,
      .slipping = 120,
      .pose_per_cm = 500,
-     .trainlen_left = 10,
-     .trainlen_right = 10,
+     .trainlen_left_cm = 10,
+     .trainlen_right_cm = 10,
   },
   {     // 6
      .pidctl = {
@@ -225,8 +240,8 @@ static conf_train_t conf_train[8] = {
      .postIIR = 0,
      .slipping = 120,
      .pose_per_cm = 500,
-     .trainlen_left = 10,
-     .trainlen_right = 10,
+     .trainlen_left_cm = 10,
+     .trainlen_right_cm = 10,
   },
   {     // 7
      .pidctl = {
@@ -251,8 +266,8 @@ static conf_train_t conf_train[8] = {
      .postIIR = 0,
      .slipping = 120,
      .pose_per_cm = 500,
-     .trainlen_left = 10,
-     .trainlen_right = 10,
+     .trainlen_left_cm = 10,
+     .trainlen_right_cm = 10,
   }
 };
 
@@ -292,8 +307,8 @@ static conf_train_t conf_train[8] = {
      .postIIR = 0,
      .slipping = 120,
      .pose_per_cm = 450,
-     .trainlen_left = 6,
-     .trainlen_right = 18,
+     .trainlen_left_cm = 6,
+     .trainlen_right_cm = 18,
   },
   {     // 1
      .pidctl = {
@@ -318,8 +333,8 @@ static conf_train_t conf_train[8] = {
      .postIIR = 0,
      .slipping = 120,
      .pose_per_cm = 500,
-     .trainlen_left = 15,
-     .trainlen_right = 2,
+     .trainlen_left_cm = 15,
+     .trainlen_right_cm = 2,
   },
   {     // 2
      .pidctl = {
@@ -344,8 +359,8 @@ static conf_train_t conf_train[8] = {
      .postIIR = 0,
      .slipping = 120,
      .pose_per_cm = 500,
-     .trainlen_left = 10,
-     .trainlen_right = 10,
+     .trainlen_left_cm = 10,
+     .trainlen_right_cm = 10,
   },
   {     // 3
      .pidctl = {
@@ -370,8 +385,8 @@ static conf_train_t conf_train[8] = {
      .postIIR = 0,
      .slipping = 120,
      .pose_per_cm = 500,
-     .trainlen_left = 10,
-     .trainlen_right = 10,
+     .trainlen_left_cm = 10,
+     .trainlen_right_cm = 10,
   },
   {     // 4
      .pidctl = {
@@ -396,8 +411,8 @@ static conf_train_t conf_train[8] = {
      .postIIR = 0,
      .slipping = 120,
      .pose_per_cm = 500,
-     .trainlen_left = 10,
-     .trainlen_right = 10,
+     .trainlen_left_cm = 10,
+     .trainlen_right_cm = 10,
   },
   {     // 5
      .pidctl = {
@@ -422,8 +437,8 @@ static conf_train_t conf_train[8] = {
      .postIIR = 0,
      .slipping = 120,
      .pose_per_cm = 500,
-     .trainlen_left = 10,
-     .trainlen_right = 10,
+     .trainlen_left_cm = 10,
+     .trainlen_right_cm = 10,
   },
   {     // 6
      .pidctl = {
@@ -448,8 +463,8 @@ static conf_train_t conf_train[8] = {
      .postIIR = 0,
      .slipping = 120,
      .pose_per_cm = 500,
-     .trainlen_left = 10,
-     .trainlen_right = 10,
+     .trainlen_left_cm = 10,
+     .trainlen_right_cm = 10,
   },
   {     // 7
      .pidctl = {
@@ -474,8 +489,8 @@ static conf_train_t conf_train[8] = {
      .postIIR = 0,
      .slipping = 120,
      .pose_per_cm = 500,
-     .trainlen_left = 10,
-     .trainlen_right = 10,
+     .trainlen_left_cm = 10,
+     .trainlen_right_cm = 10,
   }
 };
 
@@ -560,8 +575,8 @@ static conf_train_t conf_train[4] = {
      .postIIR = 0,
      .slipping = 120,
      .pose_per_cm = 450,
-     .trainlen_left = 6,
-     .trainlen_right = 18,
+     .trainlen_left_cm = 6,
+     .trainlen_right_cm = 18,
   },
   {     // 1
      .pidctl = {
@@ -586,8 +601,8 @@ static conf_train_t conf_train[4] = {
      .postIIR = 0,
      .slipping = 120,
      .pose_per_cm = 500,
-     .trainlen_left = 15,
-     .trainlen_right = 2,
+     .trainlen_left_cm = 15,
+     .trainlen_right_cm = 2,
   },
   {     // 2
      .pidctl = {
@@ -612,8 +627,8 @@ static conf_train_t conf_train[4] = {
      .postIIR = 0,
      .slipping = 120,
      .pose_per_cm = 500,
-     .trainlen_left = 10,
-     .trainlen_right = 10,
+     .trainlen_left_cm = 10,
+     .trainlen_right_cm = 10,
   },
   {     // 3
      .pidctl = {
@@ -638,8 +653,8 @@ static conf_train_t conf_train[4] = {
      .postIIR = 0,
      .slipping = 120,
      .pose_per_cm = 500,
-     .trainlen_left = 10,
-     .trainlen_right = 10,
+     .trainlen_left_cm = 10,
+     .trainlen_right_cm = 10,
   }
 };
 
@@ -700,10 +715,10 @@ int32_t conf_train_local_get(unsigned int fieldnum, unsigned int instnum)
         return c->slipping;
     case conf_numfield_train_pose_per_cm:
         return c->pose_per_cm;
-    case conf_numfield_train_trainlen_left:
-        return c->trainlen_left;
-    case conf_numfield_train_trainlen_right:
-        return c->trainlen_right;
+    case conf_numfield_train_trainlen_left_cm:
+        return c->trainlen_left_cm;
+    case conf_numfield_train_trainlen_right_cm:
+        return c->trainlen_right_cm;
     }
     return 0;
 }
@@ -759,11 +774,11 @@ void conf_train_local_set(unsigned int fieldnum, unsigned int instnum, int32_t v
     case conf_numfield_train_pose_per_cm:
         c->pose_per_cm = v;
         break;
-    case conf_numfield_train_trainlen_left:
-        c->trainlen_left = v;
+    case conf_numfield_train_trainlen_left_cm:
+        c->trainlen_left_cm = v;
         break;
-    case conf_numfield_train_trainlen_right:
-        c->trainlen_right = v;
+    case conf_numfield_train_trainlen_right_cm:
+        c->trainlen_right_cm = v;
         break;
     }
 

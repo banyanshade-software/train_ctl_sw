@@ -92,8 +92,8 @@ const param_t train_params[] = {
 		{"reversed",  NULL, offsetof(train_config_t,reversed),        NULL,NULL, sizeof(uint8_t), 0, 80, 40},
 		{"slipping",  NULL, offsetof(train_config_t,slipping),        NULL,NULL, sizeof(uint8_t), 0, 80, 40},
 		{"pose_per_cm",  NULL, offsetof(train_config_t,pose_per_cm),        NULL,NULL, sizeof(uint16_t), 0, 80, 40},
-		{"trainlen_left",  NULL, offsetof(train_config_t,trainlen_left),        NULL,NULL, sizeof(uint8_t), 0, 80, 40},
-		{"trainlen_right",  NULL, offsetof(train_config_t,trainlen_right),        NULL,NULL, sizeof(uint8_t), 0, 80, 40},
+		{"trainlen_left",  NULL, offsetof(train_config_t,trainlen_left_cm),        NULL,NULL, sizeof(uint8_t), 0, 80, 40},
+		{"trainlen_right",  NULL, offsetof(train_config_t,trainlen_right_cm),        NULL,NULL, sizeof(uint8_t), 0, 80, 40},
 
 		{ NULL,     NULL,0,    NULL,NULL, 0, 0, 0,   0}
 };

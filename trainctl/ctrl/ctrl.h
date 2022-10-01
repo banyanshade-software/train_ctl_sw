@@ -18,7 +18,7 @@ extern tasklet_t ctrl_tasklet;
 
 
 typedef enum {
-    train_notrunning=0,    // train is not running, mode not yet defined
+    train_notrunning=0,    // train is not running/existing,
     train_manual,        // manual drive with anti collision
     train_fullmanual,    // full manual mode
     train_auto,            //    auto mode

@@ -25,24 +25,37 @@ typedef struct {
 */
 
 config topology {
-    user uint8_t canton_addr                    = (default) table(topo,canton);
-    user uint8_t ina_segnum                      = (default) table(topo,ina);
+    user uint8_t canton_addr                    = (default) table(topo,canton) 
+                                                =  (unit_test) table(ut, canton);
+    user uint8_t ina_segnum                     = (default) table(topo,ina)    
+                                                =  (unit_test) table(ut, ina);
     
-    user int8_t steep                           = (default) table(topo,stp);
-    user uint8_t length_cm                      = (default) table(topo,len);
+    user int8_t steep                           = (default) table(topo,stp)    
+                                                =  (unit_test) table(ut, stp);
+    user uint8_t length_cm                      = (default) table(topo,len)    
+                                                =  (unit_test) table(ut, len);
     
-    user int8_t left1                           = (default) table(topo,l1);
-    user int8_t left2                           = (default) table(topo,l2);
-    user uint8_t ltn                            = (default) table(topo,ltn); 
-    user int8_t right1                          = (default) table(topo,r1);
-    user int8_t right2                          = (default) table(topo,r2);
-    user uint8_t rtn                            = (default) table(topo,rtn);
+    user int8_t left1                           = (default) table(topo,l1)     
+                                                =  (unit_test) table(ut, l1);
+    user int8_t left2                           = (default) table(topo,l2)     
+                                                =  (unit_test) table(ut, l2);
+    user uint8_t ltn                            = (default) table(topo,ltn)    
+                                                =  (unit_test) table(ut, ltn); 
+    user int8_t right1                          = (default) table(topo,r1)     
+                                                =  (unit_test) table(ut, r1);
+    user int8_t right2                          = (default) table(topo,r2)     
+                                                =  (unit_test) table(ut, r2);
+    user uint8_t rtn                            = (default) table(topo,rtn)    
+                                                =  (unit_test) table(ut, rtn);
 
-    user int p0 = (default) table(topo,p0);
-    disk coord_t points[4] = (default) table(topo, pts);
+    user int p0                                 = (default) table(topo,p0)
+                                                =  (unit_test) table(ut, p0) ;
+    disk coord_t points[4]                      = (unit_test) table(ut, pts) 
+                                                =  (default) table(topo, pts);
 } num = (mainV0) 64
       = (mainV04) 64
       = (simu) 64
+      = (unit_test) 16
       = (default) 0;
 
 
@@ -83,6 +96,20 @@ table topo
 
 /*-1*/  (FUTURE_CANTON,     0xFF,   0,      0,   -1,    -1,  0xFF,      -1,  -1,  0xFF,      0,  {_VP, _VP, _VP, _VP})
 ;
+
+table ut
+        (canton,        ina,  stp,  len,    l1,    l2,   ltn,       r1,   r2,  rtn,      p0,  pts)
+/* 0 */ ( CNUM(0, 0),   0xFF,   0,   98,    -1,   -1,    0xFF,       1,   -1,    0,      2,  {{1,3}, {4,3},{5,4},{5,8}})
+/* 1 */ ( CNUM(0, 1),   0xFF,   0,   45,     0,    2,    0,         -1,    3,    1,      0,  {{5,9}, {5,12}, _VP, _VP})
+/* 2 */ ( CNUM(0, 2),   0xFF,   0,   90,    -1 ,  -1, 0xFF,         -1,    1,    0,      2,  {{1,4}, {3,4}, {4,5}, {4,8}})
+/* 3 */ ( CNUM(0, 3),   0xFF,   0,   54,     4,    1,    1,         -1,   -1, 0xFF,      0,  {{6,13}, {6,15}, {5,16}, {1,16}})
+/* 4 */ ( CNUM(0, 3),   0xFF,  -1,   80,    -1,    5,    2,          3,   -1,    1,      0,  {{7,4}, {7,8}, {6,10}, {6,12}})
+/* 5 */ ( CNUM(0, 3),   0xFF,   0,   58,    -1,   -1, 0xFF,          6,    4,    2,      0,  {{1,2}, {5,2}, {6,3}, _VP})
+/* 6 */ ( CNUM(0, 3),   0xFF,   0,   36,     5,   -1,    2,          7,   -1, 0xFF,      0,  {{6,4}, {6,6}, _VP, _VP})
+/* 7*/  ( FUTURE_CANTON, 0xFF,   0,  60,     6,   -1, 0xFF,          8,   -1, 0xFF,      3,  {{6,6}, {6,8}, {7,10} ,{7, 14}} )
+/* 8*/  ( FUTURE_CANTON, 0xFF,   0,  60,     7,   -1, 0xFF,         -1,   -1, 0xFF,      1,  {{7,14}, {7,16}, {6,17}, {1, 17}})
+;
+
 
 attrib topology h_code {
 

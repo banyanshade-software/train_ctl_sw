@@ -172,7 +172,7 @@ static void planner_plan_pending(void)
         if (-1 == shortest_index) break; // done, all nodes visited
         
         lsblk_num_t s = {shortest_index};
-        int l = distance[shortest_index] + get_lsblk_len(s, NULL);
+        int l = distance[shortest_index] + get_lsblk_len_cm(s, NULL);
         for (int i=0; i<32; i++) {
             if (!get_matrix(shortest_index, i)) continue;
             if (distance[i] > l) {

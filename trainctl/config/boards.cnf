@@ -19,6 +19,8 @@ typedef enum {
     board_dispatcher = 32,
     board_ui = 48,
 
+    // special case
+    board_unit_test = 240,
     // will be removed
     board_mainV0  = 250,
 } board_type_t;

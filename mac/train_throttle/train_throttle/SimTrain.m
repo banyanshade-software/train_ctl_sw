@@ -84,7 +84,7 @@
         // update pos
         position[tn] += speed[tn]*ellapsed/1000;
         //int get_lsblk_len(lsblk_num_t num);
-        int blen = get_lsblk_len(s1[tn], NULL);
+        int blen = get_lsblk_len_cm(s1[tn], NULL);
         //NSLog(@"xxxtrain %d pos: %f len %d", tn, position[tn], get_lsblk_len(s1[tn], NULL));
         xblkaddr_t cn = canton_for_lsblk(s1[tn]);
         NSAssert(cn.v != 0xFF, @"bad cn");

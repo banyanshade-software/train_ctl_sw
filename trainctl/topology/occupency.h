@@ -21,6 +21,8 @@
 #define BLK_OCC_RIGHT    0x03
 #define BLK_OCC_C2        0x04
 
+#define BLK_OCC_CARS    0x05        // #longtrain
+
 #define BLK_OCC_DELAY1    0x10
 #define BLK_OCC_DELAYM    0x16
 

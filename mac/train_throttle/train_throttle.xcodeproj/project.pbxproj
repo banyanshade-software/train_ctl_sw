@@ -67,6 +67,7 @@
 		1B46F811280C283D00BAD6E8 /* oam_flash.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B46F80F280C283C00BAD6E8 /* oam_flash.c */; };
 		1B46F814280C288E00BAD6E8 /* simu_flash.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B46F813280C288E00BAD6E8 /* simu_flash.c */; };
 		1B4BCB022549ADC90062961D /* statval.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B4BCB002549ADC70062961D /* statval.c */; };
+		1B53774627E7E0C1009CA93C /* TestLongTrain.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B53774527E7E0C1009CA93C /* TestLongTrain.m */; };
 		1B60329726CA4C0200D5B6CA /* trkplan.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B60329626CA4BF400D5B6CA /* trkplan.c */; };
 		1B61090D256AAE1A00F1AC45 /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B61090C256AAE1900F1AC45 /* CoreBluetooth.framework */; };
 		1B67360F2531E4450063EA9A /* SimTrain.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B67360E2531E4450063EA9A /* SimTrain.m */; };
@@ -218,6 +219,7 @@
 		1B4B70A12729194F00FBDB52 /* TopologyTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TopologyTest.m; sourceTree = "<group>"; };
 		1B4BCB002549ADC70062961D /* statval.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = statval.c; sourceTree = "<group>"; };
 		1B4BCB012549ADC80062961D /* statval.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = statval.h; sourceTree = "<group>"; };
+		1B53774527E7E0C1009CA93C /* TestLongTrain.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TestLongTrain.m; sourceTree = "<group>"; };
 		1B60329526CA4BF400D5B6CA /* trkplan.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = trkplan.h; sourceTree = "<group>"; };
 		1B60329626CA4BF400D5B6CA /* trkplan.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = trkplan.c; sourceTree = "<group>"; };
 		1B61090C256AAE1900F1AC45 /* CoreBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreBluetooth.framework; path = System/Library/Frameworks/CoreBluetooth.framework; sourceTree = SDKROOT; };
@@ -545,6 +547,7 @@
 				1B77BEC8274A471200BC5230 /* detectP.h */,
 				1B77BEC9274A471200BC5230 /* detectP.c */,
 				1BEB93CD272B325700508C17 /* ctrlP.h */,
+				1B53774527E7E0C1009CA93C /* TestLongTrain.m */,
 				1BEB93CE272B325700508C17 /* ctrlP.c */,
 				1B812B3B273FA77B00924749 /* cautoP.h */,
 				1B812B3C273FA77B00924749 /* cautoP.c */,
@@ -839,6 +842,7 @@
 				1B1C75FD27245D1400F95111 /* misc.c in Sources */,
 				1B1C760127248DA800F95111 /* lf_mqueue.c in Sources */,
 				1B0ECEB427BAFC37003692B1 /* adc_mean.c in Sources */,
+				1B53774627E7E0C1009CA93C /* TestLongTrain.m in Sources */,
 				1B255145273262B30015B4FA /* TestOccupency.m in Sources */,
 				1BEB93D2272B342500508C17 /* TestCtrlP.m in Sources */,
 				1B1C75FE27245D4E00F95111 /* itm_debug.c in Sources */,
@@ -971,7 +975,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "-";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = "";
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -996,7 +1000,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "-";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = "";
 				GCC_C_LANGUAGE_STANDARD = gnu11;

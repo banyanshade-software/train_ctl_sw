@@ -532,8 +532,8 @@ static void sub_presence_changed(_UNUSED_ uint8_t from_addr,  uint8_t lsegnum,  
 
 static void posecm_measured(int tidx, int32_t pose, lsblk_num_t blk1, lsblk_num_t blk2)
 {
-	int cm = get_lsblk_len(blk1, NULL);
-	if (blk2.n >= 0) cm += get_lsblk_len(blk2, NULL);
+	int cm = get_lsblk_len_cm(blk1, NULL);
+	if (blk2.n >= 0) cm += get_lsblk_len_cm(blk2, NULL);
 	int32_t ppcm = pose / cm;
 	itm_debug2(DBG_POSEC, "ppcm", tidx, ppcm);
 	debug_info('P', tidx, "PPCM", ppcm, 0,0);
@@ -821,6 +821,7 @@ void ctrl_run_tick(_UNUSED_ uint32_t notif_flags, uint32_t tick, _UNUSED_ uint32
                 break;
 
             case CMD_POSE_TRIGGERED:
+                // v1u = canton addr, v2 = pose, subc=tag
                 itm_debug3(DBG_POSE, "Trig", m.v1u, m.v2u, m.subc);
                 xblkaddr_t tb = {.v = m.v1u};
                 ctrl2_evt_pose_triggered(tidx, tvar, tb, m.subc, m.v2);
@@ -1011,6 +1012,22 @@ static int set_turnout(xtrnaddr_t tn, int v, int train)
 int ctrl2_set_turnout(xtrnaddr_t tn, int v, int train)
 {
     return set_turnout(tn, v, train);
+}
+
+ // #longtrain
+int ctrl2_lock_turnout(xtrnaddr_t tn, int train)
+{
+    int rc = occupency_turnout_reserve(tn, train);
+    if (rc) {
+        itm_debug3(DBG_CTRL, "tn busy", train, tn.v, rc);
+        return rc;
+    }
+    return rc;
+}
+
+void ctrl2_unlock_turnout(xtrnaddr_t tn, int train) // #longtrain
+{
+    occupency_turnout_release(tn, train);
 }
 
 

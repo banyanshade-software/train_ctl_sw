@@ -923,11 +923,11 @@
                         <tabViewItems>
                             <tabViewItem label="Glob" identifier="" id="BvJ-iO-IQZ">
                                 <view key="view" id="pFs-ov-Nau">
-                                    <rect key="frame" x="10" y="33" width="896" height="466"/>
+                                    <rect key="frame" x="10" y="33" width="896" height="528"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="qAe-tV-no8">
-                                            <rect key="frame" x="131" y="416" width="133" height="32"/>
+                                            <rect key="frame" x="131" y="478" width="133" height="32"/>
                                             <buttonCell key="cell" type="push" title="Calibrate BEMF" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="VfY-ZO-Rox">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                 <font key="font" metaFont="system"/>
@@ -1337,7 +1337,7 @@
                                             <rect key="frame" x="16" y="16" width="864" height="434"/>
                                             <clipView key="contentView" id="OXu-El-CJ6">
                                                 <rect key="frame" x="1" y="0.0" width="862" height="433"/>
-                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                <autoresizingMask key="autoresizingMask"/>
                                                 <subviews>
                                                     <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" headerView="71L-Yv-M5N" id="gBS-dQ-Fjb">
                                                         <rect key="frame" x="0.0" y="0.0" width="862" height="408"/>
@@ -1480,7 +1480,7 @@
                                             <rect key="frame" x="16" y="16" width="864" height="434"/>
                                             <clipView key="contentView" id="6EN-7l-fYy">
                                                 <rect key="frame" x="1" y="0.0" width="862" height="433"/>
-                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                <autoresizingMask key="autoresizingMask"/>
                                                 <subviews>
                                                     <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" headerView="ERn-BW-LhA" id="nU3-yp-xkd">
                                                         <rect key="frame" x="0.0" y="0.0" width="862" height="408"/>
@@ -2189,7 +2189,7 @@
                                                 <rect key="frame" x="3" y="3" width="686" height="52"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
-                                                    <textField identifier="par_T0_trainlen_left" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="50X-v2-81h">
+                                                    <textField identifier="par_T0_trainlen_left_cm" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="50X-v2-81h">
                                                         <rect key="frame" x="20" y="8" width="60" height="21"/>
                                                         <constraints>
                                                             <constraint firstAttribute="width" constant="60" id="xGF-pH-XyQ"/>
@@ -2203,7 +2203,7 @@
                                                             <action selector="changeParam:" target="Voe-Tx-rLC" id="25l-7e-bpr"/>
                                                         </connections>
                                                     </textField>
-                                                    <textField identifier="par_T0_trainlen_right" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="EDO-SH-HMm">
+                                                    <textField identifier="par_T0_trainlen_right_cm" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="EDO-SH-HMm">
                                                         <rect key="frame" x="88" y="8" width="60" height="21"/>
                                                         <constraints>
                                                             <constraint firstAttribute="width" constant="60" id="RPL-f8-nor"/>
@@ -2488,7 +2488,7 @@
                                                 <rect key="frame" x="3" y="3" width="686" height="52"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
-                                                    <textField identifier="par_T1_trainlen_left" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="YNZ-xa-aAB">
+                                                    <textField identifier="par_T1_trainlen_left_cm" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="YNZ-xa-aAB">
                                                         <rect key="frame" x="20" y="8" width="60" height="21"/>
                                                         <constraints>
                                                             <constraint firstAttribute="width" constant="60" id="wiK-Gb-kvC"/>
@@ -2502,7 +2502,7 @@
                                                             <action selector="changeParam:" target="Voe-Tx-rLC" id="CgU-wc-htT"/>
                                                         </connections>
                                                     </textField>
-                                                    <textField identifier="par_T1_trainlen_right" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="bOv-8Q-15I">
+                                                    <textField identifier="par_T1_trainlen_right_cm" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="bOv-8Q-15I">
                                                         <rect key="frame" x="88" y="8" width="60" height="21"/>
                                                         <constraints>
                                                             <constraint firstAttribute="width" constant="60" id="FEc-Xt-9bv"/>
@@ -2786,7 +2786,7 @@
                                                 <rect key="frame" x="3" y="3" width="686" height="52"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
-                                                    <textField identifier="par_T2_trainlen_left" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="1cu-wp-6NR">
+                                                    <textField identifier="par_T2_trainlen_left_cm" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="1cu-wp-6NR">
                                                         <rect key="frame" x="20" y="8" width="60" height="21"/>
                                                         <constraints>
                                                             <constraint firstAttribute="width" constant="60" id="xzH-PT-jnD"/>
@@ -2800,7 +2800,7 @@
                                                             <action selector="changeParam:" target="Voe-Tx-rLC" id="98F-4i-PkD"/>
                                                         </connections>
                                                     </textField>
-                                                    <textField identifier="par_T2_trainlen_right" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Nso-wd-8at">
+                                                    <textField identifier="par_T2_trainlen_right_cm" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Nso-wd-8at">
                                                         <rect key="frame" x="88" y="8" width="60" height="21"/>
                                                         <constraints>
                                                             <constraint firstAttribute="width" constant="60" id="Nik-pR-IC7"/>
@@ -3084,7 +3084,7 @@
                                                 <rect key="frame" x="3" y="3" width="686" height="52"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
-                                                    <textField identifier="par_T3_trainlen_left" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="kp4-rL-i3X">
+                                                    <textField identifier="par_T3_trainlen_left_cm" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="kp4-rL-i3X">
                                                         <rect key="frame" x="20" y="8" width="60" height="21"/>
                                                         <constraints>
                                                             <constraint firstAttribute="width" constant="60" id="wIT-Jx-vQ8"/>
@@ -3098,7 +3098,7 @@
                                                             <action selector="changeParam:" target="Voe-Tx-rLC" id="TBa-RB-Yos"/>
                                                         </connections>
                                                     </textField>
-                                                    <textField identifier="par_T3_trainlen_right" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="7jF-Xe-M6X">
+                                                    <textField identifier="par_T3_trainlen_right_cm" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="7jF-Xe-M6X">
                                                         <rect key="frame" x="88" y="8" width="60" height="21"/>
                                                         <constraints>
                                                             <constraint firstAttribute="width" constant="60" id="u3i-yW-eab"/>
@@ -3865,8 +3865,8 @@
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="196" y="213" width="598" height="476"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1080"/>
-            <view key="contentView" id="8It-jo-dDi">
-                <rect key="frame" x="0.0" y="0.0" width="550" height="476"/>
+            <view key="contentView" misplaced="YES" id="8It-jo-dDi">
+                <rect key="frame" x="0.0" y="0.0" width="598" height="476"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <box title="Canton C0" translatesAutoresizingMaskIntoConstraints="NO" id="MB1-x8-PVX">

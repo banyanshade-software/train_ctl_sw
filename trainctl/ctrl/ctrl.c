@@ -656,8 +656,8 @@ static void normal_process_msg(msg_64_t *m)
 
         case CMD_POSE_TRIGGERED:
             itm_debug3(DBG_POSEC, "Trig", m->v1u, m->v2u, m->subc);
-            xblkaddr_t tb = {.v = m->v1u};
-            ctrl2_evt_pose_triggered(tidx, tvar, tb, m->subc, m->v2);
+            xblkaddr_t tb = FROM_CANTON(*m);
+            ctrl2_evt_pose_triggered(tidx, tvar, tb, m->vcu8, m->va16);
             break;
         case CMD_STOP_DETECTED:
             ctrl2_evt_stop_detected(tidx, tvar, m->v32);

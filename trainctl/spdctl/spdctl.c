@@ -230,6 +230,7 @@ static void spdctl_handle_msg(msg_64_t *m)
 				itm_debug3(DBG_PID, "c2 bemf", tidx, m->v1, m->from);
 				if (tvars->c2bemf) {
 					tvars->bemf_mv = m->v1;
+                    tvars->lastpose = m->v2;
 					if (!tidx) oscillo_t0bemf = m->v1;
 					else if (1==tidx) oscillo_t1bemf = m->v1;
 				}
@@ -360,10 +361,8 @@ void spdctl_run_tick(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, uint
             xblkaddr_t cfrom = FROM_CANTON(m);
             switch (m.cmd) {
                 case CMD_BEMF_NOTIF:
-<<<<<<< HEAD
-                    if (cfrom.v == tvars->C1x.v) {
-=======
-                    if (m.subc) { xxxxxxxx
+                    /*if (m.subc) { xxxxxxxx removed, pose triggered sent directly by
+                                              bemf to ctrl
                         //  pose triggered
                         msg_64_t t = {0};
                         t.from = MA1_SPDCTL(tidx);
@@ -373,9 +372,8 @@ void spdctl_run_tick(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, uint
                         t.v1 = m.from;
                         t.v2 = m.v2; // pose value
                         mqf_write_from_spdctl(&t);
-                    }
+                    } */
                     if (cfrom == tvars->C1x) {
->>>>>>> origin/M6longtain
                     	if (!tidx) oscillo_t0bemf = m.v1;
                     	else if (1==tidx) oscillo_t1bemf = m.v1;
 

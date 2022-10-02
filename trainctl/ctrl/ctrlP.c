@@ -193,10 +193,10 @@ void ctrl_set_pose_trig(int numtrain, _UNUSED_ train_ctrl_t *tvars, int8_t dir, 
     TO_CANTON(m, canaddr);
     m.cmd = CMD_POSE_SET_TRIG; 
     const conf_train_t *tconf = conf_train_get(numtrain);
-    if (tconf->reversed)  m.v1 = -pose/10;
-    else m.v1 = pose/10;
-    m.subc = tag;
-    m.v2 = dir;
+    if (tconf->reversed)  m.va16 = -pose/100;
+    else m.va16 = pose/100;
+    m.vcu8 = tag;
+    m.vb8 = dir;
     itm_debug3(DBG_CTRL|DBG_POSEC, "S_TRIG", numtrain, tag, dir);
     mqf_write_from_ctrl(&m);
 }
@@ -847,10 +847,10 @@ static int ctrl2_set_next_c1_lsblk(int tidx, train_ctrl_t *tvar, lsblk_num_t ns,
     return retcode;
 }
 
-int ctrl2_evt_pose_triggered(int tidx, train_ctrl_t *tvar, xblkaddr_t ca_addr, uint8_t tag, int16_t cposd10)
+int ctrl2_evt_pose_triggered(int tidx, train_ctrl_t *tvar, xblkaddr_t ca_addr, uint8_t tag, int16_t cposd100)
 {
     int retcode = 0;
-	itm_debug3(DBG_CTRL|DBG_POSEC, "POSEtrg", tidx, ca_addr.v, cposd10);
+	itm_debug3(DBG_CTRL|DBG_POSEC, "POSEtrg", tidx, ca_addr.v, cposd100);
 
     if (tvar->_state != train_running_c1) {
         itm_debug2(DBG_ERR|DBG_CTRL, "bad st/3",tidx, tvar->_state);
@@ -862,7 +862,7 @@ int ctrl2_evt_pose_triggered(int tidx, train_ctrl_t *tvar, xblkaddr_t ca_addr, u
         return -1;
     }
     const conf_train_t *tconf = conf_train_get(tidx);
-    tvar->_curposmm = pose_convert_to_mm(tconf, cposd10*10);
+    tvar->_curposmm = pose_convert_to_mm(tconf, cposd100*100);
     tvar->pose_reset = 0;
     itm_debug3(DBG_POSE|DBG_CTRL, "curposmm", tidx, tvar->_curposmm, tag);
     switch (tag) {

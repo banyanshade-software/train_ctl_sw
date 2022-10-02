@@ -157,6 +157,11 @@ typedef union {
                                 int16_t v1;
                                 int16_t v2;
                             };
+                            struct { // CMD_POSE_SET_TRIG
+                                int16_t va16;
+                                int8_t vb8;
+                                uint8_t vcu8;
+                            };
                             uint8_t vbytes[4];
                             struct {
                                 uint8_t vb0;

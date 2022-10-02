@@ -40,6 +40,7 @@ typedef struct {
     int32_t posval;
     int8_t dir;
     uint8_t postag;
+    uint8_t sender;
     //uint8_t postag2;
 } bemf_trig_t;
 
@@ -52,7 +53,7 @@ typedef struct{
 static canton_bemf_t cbvars[NUM_CANTONS] = {0};
 
 static void process_adc(volatile adc_result_t *buf, uint32_t deltaticks);
-static void add_trig(canton_bemf_t *, int32_t posval, uint8_t posetag,  int8_t dir);
+static void add_trig(canton_bemf_t *, uint8_t from, int32_t posval, uint8_t posetag,  int8_t dir);
 
 
 #define USE_CANTON(_idx) \
@@ -90,11 +91,12 @@ void bemf_msg(msg_64_t *m)
 		break;
             
     case CMD_POSE_SET_TRIG:
-            if ((m->from & 0x7) != (cbvars[idx].bemf_to &  0x7)) {
+            if ((m->from & 0x7) != (cbvars[idx].bemf_to &  0x7)) { // XXXX
+                // sanity check, bemf_to is spdctl(numtrain) and sender should be ctrl(numtrain)
                 itm_debug2(DBG_ERR, "st/bad", m->from, cbvars[idx].bemf_to);
                 break;
             }
-            add_trig(&cbvars[idx], m->v1*100, m->subc, m->v2);
+            add_trig(&cbvars[idx], m->from, m->va16*100, m->vcu8, m->vb8);
             break;
 	default:
 		itm_debug1(DBG_ERR, "bad bemf c", m->to);
@@ -136,7 +138,7 @@ void bemf_tick(uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_ uint32_t d
 
 
 
-static int _add_trig(canton_bemf_t *cvars, int32_t posval, uint8_t posetag, int8_t dir)
+static int _add_trig(canton_bemf_t *cvars, uint8_t from, int32_t posval, uint8_t posetag, int8_t dir)
 {
     itm_debug3(DBG_POSEC, "set trg", posetag, dir, posval);
     if (!posval) {
@@ -148,6 +150,7 @@ static int _add_trig(canton_bemf_t *cvars, int32_t posval, uint8_t posetag, int8
             if (cvars->trigs[pi].postag == posetag) {
                 itm_debug2(DBG_ERR|DBG_POSEC, "dup trig", posval, posetag);
                 cvars->trigs[pi].dir = dir;
+                cvars->trigs[pi].sender = from;
                 return -1; // ignore it
             }
             // same poseval but different tag ; not  an error here,
@@ -158,6 +161,7 @@ static int _add_trig(canton_bemf_t *cvars, int32_t posval, uint8_t posetag, int8
         cvars->trigs[pi].posval = posval;
         cvars->trigs[pi].dir = dir;
         cvars->trigs[pi].postag = posetag;
+        cvars->trigs[pi].sender = from;
         return pi;
      }
      itm_debug1(DBG_ERR|DBG_POSEC, "NO TRIG", posetag);
@@ -165,9 +169,9 @@ static int _add_trig(canton_bemf_t *cvars, int32_t posval, uint8_t posetag, int8
      return -1;
 }
 
-static void add_trig(canton_bemf_t *cvars, int32_t posval, uint8_t posetag, int8_t dir)
+static void add_trig(canton_bemf_t *cvars, uint8_t from, int32_t posval, uint8_t posetag, int8_t dir)
 {
-    int pi = _add_trig(cvars, posval, posetag, dir);
+    int pi = _add_trig(cvars, from, posval, posetag, dir);
     if (pi) {
         // check trig ?
         // nothing to do it will be checked at first bemf notif
@@ -340,6 +344,7 @@ static void process_adc(volatile adc_result_t *buf, _UNUSED_ uint32_t deltaticks
         // check trigs
         int s = SIGNOF0(pi);
         uint8_t ptag = 0;
+        bemf_trig_t *ptrig = NULL;
         if (s) {
             for (int ti=NUM_TRIGS-1; ti>=0; ti--) {
                 // check in reverse order, so that oldest trig
@@ -351,6 +356,7 @@ static void process_adc(volatile adc_result_t *buf, _UNUSED_ uint32_t deltaticks
                         ptag = cvars->trigs[ti].postag;
                         itm_debug3(DBG_POSEC|DBG_POSE, "TRIG>", cvars->pose, cvars->trigs[ti].posval, ptag);
                         cvars->trigs[ti].posval = 0;
+                        ptrig = &cvars->trigs[ti];
                         break;
                     }
                 } else {
@@ -359,17 +365,20 @@ static void process_adc(volatile adc_result_t *buf, _UNUSED_ uint32_t deltaticks
                         ptag = cvars->trigs[ti].postag;
                         itm_debug3(DBG_POSEC|DBG_POSE, "TRIG<", cvars->pose, cvars->trigs[ti].posval, ptag);
                         cvars->trigs[ti].posval = 0;
+                        ptrig = &cvars->trigs[ti];
                         break;
                     }
                 }
                 
             }
         }
-        
+        if (ptag) {
+            itm_debug1(DBG_POSEC, "trig", ptag);
+        }
 		msg_64_t m = {0};
 		m.from = MA0_CANTON(oam_localBoardNum());
 		m.subc = i;
-        m.subc = ptag; // xxxx
+        //m.subc = ptag; // xxxx
 		m.to = cvars->bemf_to;
         
 		m.cmd = CMD_BEMF_NOTIF;
@@ -377,6 +386,15 @@ static void process_adc(volatile adc_result_t *buf, _UNUSED_ uint32_t deltaticks
         //m.v2 = von;
         m.v2 = cvars->pose/100;
 		mqf_write(&from_canton, &m);
-	}
+        
+        if (ptrig) {
+            m.to = ptrig->sender;
+            m.cmd = CMD_POSE_TRIGGERED;
+            m.va16 = cvars->pose/100;
+            m.vcu8 = ptag;
+            m.vb8 = ptrig->dir;
+            mqf_write(&from_canton, &m);
+        }
+    }
 }
 

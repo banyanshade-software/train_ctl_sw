@@ -149,7 +149,7 @@ enum pose_trig_tag {
     tag_brake,
 };
 
-#define ignore_bemf_presence 0
+#define ignore_bemf_presence 1
 #define ignore_ina_presence  0
 
 int ignore_ina_pres(void);

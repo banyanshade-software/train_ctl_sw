@@ -149,6 +149,7 @@ static int ncmp(const char *a, const char *b)
     return -1;
 }
 
+/*
 - (void)testLedTest {
     // This is an example of a functional test case.
     // Use XCTAssert and related functions to verify your tests produce the correct results.
@@ -161,6 +162,7 @@ static int ncmp(const char *a, const char *b)
     
     XCTAssert(!strcmp(outled0, tstref), "bad output");
 }
+ */
 /*
 - (void)testPerformanceExample {
     // This is an example of a performance test case.

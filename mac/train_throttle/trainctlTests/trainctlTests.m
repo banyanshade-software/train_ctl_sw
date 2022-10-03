@@ -35,4 +35,13 @@
     }];
 }
 */
+
+void FatalError( const char *short4lettersmsg,  const char *longmsg,  int errcode)
+{
+    abort();
+}
+int ignore_ina_pres(void)
+{
+    return 0;
+}
 @end

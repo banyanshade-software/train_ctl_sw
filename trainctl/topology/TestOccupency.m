@@ -19,6 +19,10 @@ static const lsblk_num_t szero = {0};
 static const lsblk_num_t sone = {1};
 static const lsblk_num_t s42 = {42};
 
+static const xblkaddr_t ca2 = { .v = 2 };
+static const xblkaddr_t ca3 = { .v = 3 };
+static const xblkaddr_t ca4 = { .v = 4 };
+
 @implementation TestOccupency
 
 - (void)setUp {
@@ -37,29 +41,29 @@ static const lsblk_num_t s42 = {42};
 
 - (void) test1
 {
-    set_block_addr_occupency(3, BLK_OCC_STOP, 4, s42);
-    XCTAssert(BLK_OCC_STOP == get_block_addr_occupency(3));
-    XCTAssert(BLK_OCC_FREE == get_block_addr_occupency(2));
-    XCTAssert(BLK_OCC_FREE == get_block_addr_occupency(4));
+    set_block_addr_occupency(ca3, BLK_OCC_STOP, 4, s42);
+    XCTAssert(BLK_OCC_STOP == get_block_addr_occupency(ca3));
+    XCTAssert(BLK_OCC_FREE == get_block_addr_occupency(ca2));
+    XCTAssert(BLK_OCC_FREE == get_block_addr_occupency(ca4));
     
-    set_block_addr_occupency(3, BLK_OCC_FREE, 4, snone);
-    XCTAssert(get_block_addr_occupency(3)>=BLK_OCC_DELAY1);
+    set_block_addr_occupency(ca3, BLK_OCC_FREE, 4, snone);
+    XCTAssert(get_block_addr_occupency(ca3)>=BLK_OCC_DELAY1);
     
     for (int i=0; i<20; i++) {
-        check_block_delayed(i*100);
+        check_block_delayed(i*100, 100);
     }
-    XCTAssert(BLK_OCC_FREE == get_block_addr_occupency(3));
-    XCTAssert(BLK_OCC_FREE == get_block_addr_occupency(2));
-    XCTAssert(BLK_OCC_FREE == get_block_addr_occupency(4));
+    XCTAssert(BLK_OCC_FREE == get_block_addr_occupency(ca3));
+    XCTAssert(BLK_OCC_FREE == get_block_addr_occupency(ca2));
+    XCTAssert(BLK_OCC_FREE == get_block_addr_occupency(ca4));
 
 }
 
 - (void) test2
 {
-    set_block_addr_occupency(3, BLK_OCC_STOP, 4, s42);
-    XCTAssert(occupency_block_is_free(2, 5));
-    XCTAssert(occupency_block_is_free(4, 5));
-    XCTAssert(!occupency_block_is_free(3, 5));
-    XCTAssert(occupency_block_is_free(3, 4));
+    set_block_addr_occupency(ca3, BLK_OCC_STOP, 4, s42);
+    XCTAssert(occupency_block_is_free(ca2, 5));
+    XCTAssert(occupency_block_is_free(ca4, 5));
+    XCTAssert(!occupency_block_is_free(ca3, 5));
+    XCTAssert(occupency_block_is_free(ca3, 4));
 }
 @end

@@ -21,7 +21,7 @@
 
 @implementation TestLongTrain {
     train_ctrl_t tvars;
-    train_config_t *tconf;
+    conf_train_t *tconf;
 }
 
 
@@ -30,21 +30,24 @@ static lsblk_num_t szero = {0};
 static lsblk_num_t sone = {1};
 static lsblk_num_t stwo = {2};
 
+static const xtrnaddr_t to0 = { .v = 0};
+static const xtrnaddr_t to1 = { .v = 1};
+
 
 - (void)setUp {
     // Put setup code here. This method is called before the invocation of each test method in the class.
     
-    extern uint8_t topology_num;
-    topology_num = 0;
+    //extern uint8_t topology_num;
+    //topology_num = 0;
 
-    tconf = (train_config_t *) get_train_cnf(0);
+    tconf = (conf_train_t *) conf_train_get(0);
     notify_occupency_change = 0;
     ctrl_flag_notify_speed = 0;
     occupency_clear();
     mqf_clear(&from_ctrl);
     memset(&tvars, 0, sizeof(tvars));
-    topology_set_turnout(0, 0, -1);
-    topology_set_turnout(1, 1, -1);
+    topology_set_turnout(to0, 0, -1);
+    topology_set_turnout(to1, 1, -1);
 
 
     tvars._mode = train_manual;
@@ -109,8 +112,8 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     tconf->trainlen_left_cm = 0;
     tconf->trainlen_right_cm = 46;
     occupency_clear();
-    topology_set_turnout(0, 0, -1);
-    topology_set_turnout(1, 1, -1);
+    topology_set_turnout(to0, 0, -1);
+    topology_set_turnout(to1, 1, -1);
     ctrl2_init_train(0, &tvars, stwo);
     tvars._curposmm = 300;
     ctrl2_get_next_sblks(0, &tvars, tconf);
@@ -127,7 +130,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     // train is on b2 + 6cm of b3,
     
     // train can goes right because turnout 0 is in good position
-    topology_set_turnout(0, 1, -1);
+    topology_set_turnout(to0, 1, -1);
     rettrigs_t rettrigs;
     rc = ctrl2_check_front_sblks(0, &tvars, tconf, 0, rettrigs);
     XCTAssert(rc==0);
@@ -136,7 +139,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     
     // or..
     // train cannot goes right (or only 4cm before margin) because turnout 0 is in bad position
-    topology_set_turnout(0, 0, -1);
+    topology_set_turnout(to0, 0, -1);
     rc = ctrl2_check_front_sblks(0, &tvars, tconf, 0, rettrigs);
     XCTAssert(rc>0);
     const rettrigs_t expt2 = { {44, tag_chkocc}, {0, 0}, {32,tag_stop_blk_wait}};
@@ -164,8 +167,8 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     tconf->trainlen_left_cm = 0;
     tconf->trainlen_right_cm = 46;
     occupency_clear();
-    topology_set_turnout(0, 0, -1);
-    topology_set_turnout(1, 1, -1);
+    topology_set_turnout(to0, 0, -1);
+    topology_set_turnout(to1, 1, -1);
     ctrl2_init_train(0, &tvars, stwo);
     tvars._curposmm = 300;
     ctrl2_get_next_sblks(0, &tvars, tconf);
@@ -174,7 +177,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     int rc = check_lsblk_array(tvars.rightcars.r, exp2, 1);
     XCTAssert(!rc);
     XCTAssert(tvars.rightcars.rlen_cm == 14);
-    topology_set_turnout(0, 1, -1);
+    topology_set_turnout(to0, 1, -1);
     
     rettrigs_t rettrigs;
     rc = ctrl2_check_front_sblks(0, &tvars, tconf, 0, rettrigs);
@@ -194,7 +197,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     XCTAssert(!memcmp(rettrigs, expt2, sizeof(rettrigs_t)));
 
     // if s1 is locked
-    topology_set_turnout(1, 0, -1);
+    topology_set_turnout(to1, 0, -1);
     rc = ctrl2_check_front_sblks(0, &tvars, tconf, 0, rettrigs);
     XCTAssert(rc==0);
     const rettrigs_t expt3 = { {67, tag_chkocc}, {44+18, tag_brake}, {0,0}};

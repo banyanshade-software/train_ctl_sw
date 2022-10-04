@@ -123,6 +123,26 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     XCTAssert(remain == 98-90+45+54-72);
 }
 
+- (void) test3
+{
+    tconf->trainlen_left_cm = 35;
+    tconf->trainlen_right_cm = 19;
+    tvars._curposmm = 400; // 40cm out of 45 for s1
+    int16_t remain = -1;
+    lsblk_num_t r[4] = {0};
+    
+    int n = ctrl2_get_next_sblks_(0, &tvars, tconf, 1, r, 4, &remain);
+    XCTAssert(n==0);
+    XCTAssert(remain == 40-35);
+    
+    tvars._curposmm = 50; // 5cm out of 45 for s1
+    n = ctrl2_get_next_sblks_(0, &tvars, tconf, 1, r, 4, &remain);
+    XCTAssert(n==1);
+    static const int exp1[] = { 0 };
+    int rc = check_lsblk_array(r, exp1, n);
+    XCTAssert(!rc);
+    XCTAssert(remain==98+5-35);
+}
 
 
 - (void) test_chk_front_right

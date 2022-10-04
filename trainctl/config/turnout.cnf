@@ -32,6 +32,7 @@ config turnout {
 } num = (mainV0) 3
       = (mainV04) 6
       = (simu) 4
+      = (unit_test) 4
       = (dispatcher) 0          # TODO
       = (switcher) 8
       = (default) 0;

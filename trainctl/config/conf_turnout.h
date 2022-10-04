@@ -45,7 +45,7 @@ const conf_turnout_t *conf_turnout_get(int num);
 
 
 #ifdef TRN_BOARD_UNIT_TEST
-#define NUM_TURNOUTS 0 // 0 
+#define NUM_TURNOUTS 4 // 4 
 #endif // TRN_BOARD_UNIT_TEST
 
 

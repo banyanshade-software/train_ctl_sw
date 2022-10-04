@@ -48,6 +48,30 @@
 
 #endif
 
+
+#ifdef TRN_BOARD_UNIT_TEST
+
+#define BOARD_NUMBER 0
+#define BOARD_HAS_CANTON
+#define BOARD_HAS_TURNOUTS
+#define BOARD_HAS_INA3221   // must be set for stats
+#define BOARD_HAS_CTRL
+#define BOARD_HAS_TOPOLOGY
+#define BOARD_HAS_USB
+//#define BOARD_HAS_CAN
+#define BOARD_HAS_IHM
+//#define BOARD_HAS_UI_GEN
+#define BOARD_HAS_UI_CTC
+#define BOARD_HAS_LED
+#define BOARD_HAS_TRKPLN
+//#define BOARD_HAS_OSCILLO
+//#define BOARD_HAS_USB_HOST
+#define BOARD_HAS_FLASH
+#define BOARD_CAN_BE_MASTER
+
+
+#endif
+
 // -----------------------------------------
 // -----------------------------------------
 // -----------------------------------------

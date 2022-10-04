@@ -1057,7 +1057,7 @@ int ctrl2_get_next_sblks_(_UNUSED_ int tidx, train_ctrl_t *tvars,  const conf_tr
     int cm = left ? tconf->trainlen_left_cm : tconf->trainlen_right_cm;
     lsblk_num_t cblk = tvars->c1_sblk;
     // curposmm
-    int l0 = getcurpossmm(tvars,tconf,left) / 10;
+    int l0 = getcurpossmm(tvars, tconf, left) / 10;
     for (;;) {
         int l = get_lsblk_len_cm(cblk, NULL);
         if (l0) {

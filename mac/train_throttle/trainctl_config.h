@@ -9,7 +9,11 @@
 #ifndef INC_TRAINCTL_CONFIG_H_
 #define INC_TRAINCTL_CONFIG_H_
 
+#ifndef UNIT_TEST
 #define TRN_BOARD_SIMU
+#else
+#define TRN_BOARD_UNIT_TEST
+#endif
 
 #include <stdio.h>
 #include "boards_def.h"

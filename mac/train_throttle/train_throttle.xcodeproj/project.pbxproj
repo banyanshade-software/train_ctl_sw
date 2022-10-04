@@ -1120,6 +1120,7 @@
 					"$(inherited)",
 					TRAIN_SIMU,
 					HOST_SIDE,
+					UNIT_TEST,
 				);
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;

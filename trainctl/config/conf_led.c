@@ -25,10 +25,25 @@
 
 unsigned int conf_led_num_entries(void)
 {
-    return 0; // 0 
+    return 3; // 3 
 }
 
-static conf_led_t conf_led[0] = {
+static conf_led_t conf_led[3] = {
+  {     // 0
+     .port_led = NULL,
+     .pin_led = 0,
+     .defprog = 0,
+  },
+  {     // 1
+     .port_led = NULL,
+     .pin_led = 0,
+     .defprog = 0,
+  },
+  {     // 2
+     .port_led = NULL,
+     .pin_led = 0,
+     .defprog = 0,
+  }
 };
 
 #endif // TRN_BOARD_UNIT_TEST

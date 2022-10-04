@@ -22,6 +22,7 @@ config led {
 } num = (mainV0) 3
       = (mainV04) 5
       = (simu) 3
+      = (unit_test) 3
       = (switcher) 6
       = (dispatcher) 0          # TODO
       = (default) 0;

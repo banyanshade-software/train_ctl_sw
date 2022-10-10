@@ -150,16 +150,16 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     tconf->trainlen_left_cm = 0;
     tconf->trainlen_right_cm = 46;
     occupency_clear();
-    topology_set_turnout(to0, 0, -1);
+    topology_set_turnout(to0, 1, -1);
     topology_set_turnout(to1, 1, -1);
-    ctrl2_init_train(0, &tvars, stwo);
-    tvars._curposmm = 300;
+    ctrl2_init_train(0, &tvars, stwo); // s2 90cm
+    tvars._curposmm = 800;             //   ---- reste 10cm sur s2 et 46-10=36 sur s1 (45cm)
     ctrl2_get_next_sblks(0, &tvars, tconf);
     XCTAssert(tvars.rightcars.nr == 1);
-    static const int exp2[] = { 3 };
+    static const int exp2[] = { 1 };
     int rc = check_lsblk_array(tvars.rightcars.r, exp2, 1);
     XCTAssert(!rc);
-    XCTAssert(tvars.rightcars.rlen_cm == 14);
+    XCTAssert(tvars.rightcars.rlen_cm == 90-80+45-46);
     
     // train is on sblk2, cars on 3 and 1
     // (2)----(3)- - <tn0> - - (1) - - -<tn1>- -(5)-
@@ -172,12 +172,17 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     rettrigs_t rettrigs;
     rc = ctrl2_check_front_sblks(0, &tvars, tconf, 0, rettrigs);
     XCTAssert(rc==0);
-    const rettrigs_t expt1 = { {44, tag_chkocc}, {0, 0}, {0,0}};
+    const rettrigs_t expt1 = { {89, tag_chkocc}, {0, 0}, {0,0}};
     XCTAssert(!memcmp(rettrigs, expt1, sizeof(rettrigs_t)));
     
     // or..
-    // train cannot goes right (or only 4cm before margin) because turnout 0 is in bad position
-    topology_set_turnout(to0, 0, -1);
+    // train cannot goes right (or only 4cm before margin) because turnout 1 is in bad position
+    // 51cm len -> 10cm on S2, + 41 on s1 (45cm tot)
+    tconf->trainlen_right_cm = 42;
+    ctrl2_init_train(0, &tvars, stwo); // s2 90cm
+    tvars._curposmm = 700;             //   ---- reste 20cm sur s2 et 26cm sur s1 (45cm)
+
+    topology_set_turnout(to1, 0, -1);
     rc = ctrl2_check_front_sblks(0, &tvars, tconf, 0, rettrigs);
     XCTAssert(rc>0);
     const rettrigs_t expt2 = { {44, tag_chkocc}, {0, 0}, {32,tag_stop_blk_wait}};

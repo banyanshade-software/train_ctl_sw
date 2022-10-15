@@ -71,8 +71,8 @@ LFMQUEUE_DEF_C(from_oscillo, msg_64_t, 2, 1)
 #endif
 
 #ifdef BOARD_HAS_TRKPLN
-LFMQUEUE_DEF_C(to_planner, msg_64_t, 	6, 0)
-LFMQUEUE_DEF_C(from_planner, msg_64_t, 	6,  1)
+LFMQUEUE_DEF_C(to_planner, msg_64_t, 	8, 0)
+LFMQUEUE_DEF_C(from_planner, msg_64_t, 	8,  1)
 #endif
 
 LFMQUEUE_DEF_C(to_oam, msg_64_t, 8, 0)

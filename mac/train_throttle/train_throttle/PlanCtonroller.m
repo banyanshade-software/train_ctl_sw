@@ -105,7 +105,7 @@
         if (!c.hasRule) continue;
         NSLog(@"train %d after %d go %d\n", (int) c.trainNum, (int) c.delay, (int) c.targetLSBLK);
         m.cmd = CMD_PLANNER_ADD;
-        m.subc = i;
+        m.subc = c.trainNum;
         m.v1u = c.targetLSBLK;
         m.v2u = c.delay;
         [theDelegate sendMsg64:m];

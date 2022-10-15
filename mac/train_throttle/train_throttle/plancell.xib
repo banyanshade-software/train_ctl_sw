@@ -20,13 +20,12 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="u5D-U9-Lhm">
-                                <rect key="frame" x="18" y="50" width="38" height="18"/>
-                                <buttonCell key="cell" type="check" title="T0" bezelStyle="regularSquare" imagePosition="left" inset="2" id="FR3-SP-jEW">
+                                <rect key="frame" x="18" y="50" width="50" height="18"/>
+                                <buttonCell key="cell" type="check" title="train" bezelStyle="regularSquare" imagePosition="left" inset="2" id="FR3-SP-jEW">
                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
                                 <connections>
-                                    <binding destination="bjd-KT-eAM" name="title" keyPath="trainName" id="Zil-gg-uD7"/>
                                     <binding destination="bjd-KT-eAM" name="value" keyPath="hasRule" id="ywH-Jj-k1h"/>
                                 </connections>
                             </button>
@@ -39,7 +38,7 @@
                                 </textFieldCell>
                             </textField>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="vil-qF-K05">
-                                <rect key="frame" x="60" y="51" width="52" height="16"/>
+                                <rect key="frame" x="136" y="51" width="52" height="16"/>
                                 <textFieldCell key="cell" lineBreakMode="clipping" title="to  lsblk" id="xmF-Ah-odR">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -47,7 +46,7 @@
                                 </textFieldCell>
                             </textField>
                             <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="eec-hc-bh3">
-                                <rect key="frame" x="118" y="48" width="48" height="21"/>
+                                <rect key="frame" x="202" y="48" width="48" height="21"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="48" id="5eO-CR-WLT"/>
                                 </constraints>
@@ -82,15 +81,35 @@
                                     <binding destination="bjd-KT-eAM" name="value" keyPath="delay" id="9uq-BJ-ncW"/>
                                 </connections>
                             </textField>
+                            <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="CxK-pp-vzS">
+                                <rect key="frame" x="74" y="48" width="48" height="21"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="48" id="GhW-PY-55n"/>
+                                </constraints>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" title="0" drawsBackground="YES" id="gwF-uI-7Jp">
+                                    <numberFormatter key="formatter" formatterBehavior="custom10_4" usesGroupingSeparator="NO" formatWidth="-1" groupingSize="0" minimumIntegerDigits="1" maximumIntegerDigits="3" id="LiV-mH-e0H">
+                                        <real key="minimum" value="0.0"/>
+                                        <real key="maximum" value="32"/>
+                                    </numberFormatter>
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                                <connections>
+                                    <binding destination="bjd-KT-eAM" name="value" keyPath="trainNum" id="uSs-03-Wsu"/>
+                                </connections>
+                            </textField>
                         </subviews>
                         <constraints>
                             <constraint firstItem="vil-qF-K05" firstAttribute="firstBaseline" secondItem="u5D-U9-Lhm" secondAttribute="firstBaseline" id="1ts-Pr-MUY"/>
-                            <constraint firstItem="eec-hc-bh3" firstAttribute="leading" secondItem="vil-qF-K05" secondAttribute="trailing" constant="8" symbolic="YES" id="7PJ-Lc-1n2"/>
+                            <constraint firstItem="CxK-pp-vzS" firstAttribute="leading" secondItem="u5D-U9-Lhm" secondAttribute="trailing" constant="8" symbolic="YES" id="59k-nP-OnH"/>
+                            <constraint firstItem="eec-hc-bh3" firstAttribute="firstBaseline" secondItem="CxK-pp-vzS" secondAttribute="firstBaseline" id="Ayi-o2-Q4T"/>
+                            <constraint firstItem="eec-hc-bh3" firstAttribute="leading" secondItem="vil-qF-K05" secondAttribute="trailing" constant="16" id="Bt5-aY-zgP"/>
                             <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="eec-hc-bh3" secondAttribute="trailing" constant="8" id="Owm-lB-4EJ"/>
                             <constraint firstItem="bGE-rf-eiO" firstAttribute="leading" secondItem="u5D-U9-Lhm" secondAttribute="leading" id="RYu-mp-fpZ"/>
-                            <constraint firstItem="vil-qF-K05" firstAttribute="leading" secondItem="u5D-U9-Lhm" secondAttribute="trailing" constant="8" symbolic="YES" id="T1N-bc-tC2"/>
                             <constraint firstItem="Idv-nl-z7z" firstAttribute="leading" secondItem="bGE-rf-eiO" secondAttribute="trailing" constant="8" symbolic="YES" id="TNd-E6-1RQ"/>
                             <constraint firstItem="Idv-nl-z7z" firstAttribute="firstBaseline" secondItem="bGE-rf-eiO" secondAttribute="firstBaseline" id="erH-KV-Ywn"/>
+                            <constraint firstItem="vil-qF-K05" firstAttribute="leading" secondItem="CxK-pp-vzS" secondAttribute="trailing" constant="16" id="gcL-cb-VyX"/>
                             <constraint firstItem="u5D-U9-Lhm" firstAttribute="leading" secondItem="Bpi-aW-68L" secondAttribute="leading" constant="20" symbolic="YES" id="gh6-gb-Hj6"/>
                             <constraint firstAttribute="bottom" secondItem="Idv-nl-z7z" secondAttribute="bottom" constant="20" symbolic="YES" id="ihP-Z1-gYG"/>
                             <constraint firstItem="bGE-rf-eiO" firstAttribute="top" secondItem="u5D-U9-Lhm" secondAttribute="bottom" constant="16" id="kHL-AP-A4A"/>
@@ -111,7 +130,7 @@
             <connections>
                 <outlet property="controller" destination="bjd-KT-eAM" id="OSb-CZ-l5Z"/>
             </connections>
-            <point key="canvasLocation" x="534" y="-440"/>
+            <point key="canvasLocation" x="533.5" y="-440"/>
         </tableCellView>
         <viewController id="bjd-KT-eAM" customClass="PlanCellController">
             <connections>

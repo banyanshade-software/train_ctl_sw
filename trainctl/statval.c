@@ -50,7 +50,7 @@ static meta_stat_t meta[NUM_META+1] = {
     {statval_spdctrl, 0, 0, MIN(3,NUM_TRAINS)},
 #endif
 #ifdef BOARD_HAS_CANTON
-    {statval_canton, 0, 0, MIN(4,NUM_CANTONS)},
+    {statval_canton, 0, 0, MIN(6,NUM_CANTONS)},
 #endif
 #ifdef BOARD_HAS_INA3221
     {statval_ina3221, 0, 0, 1},

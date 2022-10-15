@@ -609,6 +609,7 @@ static void normal_process_msg(msg_64_t *m)
                     tvar->routeidx = 0;
                     tvar->got_u1 = 0;
                     tvar->trigu1 = 0;
+                    ctrl_set_mode(tidx, train_manual); // make sure it is restarted if already auto
                     ctrl_set_mode(tidx, train_auto);
                     break;
                 default:

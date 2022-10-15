@@ -19,6 +19,7 @@
 #include "../ctrl/ctrl.h"
 #include "../ctrl/ctrlP.h"
 #include "../ctrl/cautoP.h"
+#include "../leds/led.h"
 
 #ifndef BOARD_HAS_TRKPLN
 #error BOARD_HAS_TRKPLN not defined, remove this file from build
@@ -225,6 +226,7 @@ static void planner_start_pending(int n, uint8_t Auto1ByteCode[])
     b = curpos;
     int prevb = -1;
     int dir = 0;
+    _UNUSED_ int led = 0;
     for (;;) {
         //printf(" b%d ", b);
         if (b==curpos) {
@@ -237,7 +239,7 @@ static void planner_start_pending(int n, uint8_t Auto1ByteCode[])
             if ((p->right2 == b) || (p->right1 == b)) ndir = 1;
             if (ndir != dir) {
                 if (dir) {
-                    Auto1ByteCode[bytecodeIndex++] = _AR_TRG_TLEN; //_AR_TRG_END;
+                    Auto1ByteCode[bytecodeIndex++] = _AR_TRG_END; //_AR_TRG_END;
                     Auto1ByteCode[bytecodeIndex++] = _AR_WTRG_U1;
                     Auto1ByteCode[bytecodeIndex++] = _AR_SPD(0);
                     Auto1ByteCode[bytecodeIndex++] = _AR_WSTOP;
@@ -249,13 +251,25 @@ static void planner_start_pending(int n, uint8_t Auto1ByteCode[])
             dir = ndir;
             Auto1ByteCode[bytecodeIndex++] = b;
         }
+        /*
+        if ((b==1) && (!led)) {
+        	led = 1;
+        	Auto1ByteCode[bytecodeIndex++] = _AR_LED;
+        	Auto1ByteCode[bytecodeIndex++] = 0;
+        	Auto1ByteCode[bytecodeIndex++] = LED_PRG_25p;
+
+        	Auto1ByteCode[bytecodeIndex++] = _AR_LED;
+        	Auto1ByteCode[bytecodeIndex++] = 1;
+        	Auto1ByteCode[bytecodeIndex++] = LED_PRG_NEONON;
+        }
+        */
         if (b==target) {
             if (dir) {
-                Auto1ByteCode[bytecodeIndex++] = b;
-                Auto1ByteCode[bytecodeIndex++] = _AR_TRG_TLEN;
+                //Auto1ByteCode[bytecodeIndex++] = b;
+                Auto1ByteCode[bytecodeIndex++] = (b==4) ? _AR_TRG_TLEN : _AR_TRG_END;//XXX ugly hook;
                 Auto1ByteCode[bytecodeIndex++] = _AR_WTRG_U1;
                 Auto1ByteCode[bytecodeIndex++] = _AR_SPD(0);
-                Auto1ByteCode[bytecodeIndex++] = _AR_WSTOP;
+                //Auto1ByteCode[bytecodeIndex++] = _AR_WSTOP;
             }
             Auto1ByteCode[bytecodeIndex++] = _AR_END;
             break;

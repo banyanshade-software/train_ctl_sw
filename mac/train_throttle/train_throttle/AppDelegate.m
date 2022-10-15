@@ -168,7 +168,7 @@ typedef void (^respblk_t)(void);
         self->nparam++;
     }];
     self.numtrains = 1; //XXX obsolete
-    self.numcantons = 1+1; // XXX obsolete
+    self.numcantons = 6; // XXX obsolete
     
     [_ctcManager loadHtml];
     
@@ -1127,6 +1127,7 @@ int conf_globparam_fieldnum(const char *str);
     self.transmit = 0;
     [self performSelector:@selector(openUsb) withObject:nil afterDelay:1.0];
 }
+
 - (void)readUsbTty:(NSNotification*)not
 {
     NSData *d;

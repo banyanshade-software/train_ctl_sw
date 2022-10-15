@@ -114,6 +114,7 @@
     if (!nrule) return;
     m.cmd = CMD_PLANNER_COMMIT;
     m.v1u = delay;
+    m.v2 = 0;
     [theDelegate sendMsg64:m];
 }
 @end

@@ -39,4 +39,7 @@ typedef enum {
 
 int ctrl_get_train_curlsblk(int numtrain);
 
+uint8_t *ctrl_get_autocode(int numtrain);
+
+
 #endif /* CTRL_CTRL_H_ */

@@ -239,7 +239,7 @@ static void planner_start_pending(int n, uint8_t Auto1ByteCode[])
             if ((p->right2 == b) || (p->right1 == b)) ndir = 1;
             if (ndir != dir) {
                 if (dir) {
-                    Auto1ByteCode[bytecodeIndex++] = _AR_TRG_END; //_AR_TRG_END;
+                    Auto1ByteCode[bytecodeIndex++] = _AR_TRG_LIM; //_AR_TRG_END;
                     Auto1ByteCode[bytecodeIndex++] = _AR_WTRG_U1;
                     Auto1ByteCode[bytecodeIndex++] = _AR_SPD(0);
                     Auto1ByteCode[bytecodeIndex++] = _AR_WSTOP;
@@ -266,7 +266,7 @@ static void planner_start_pending(int n, uint8_t Auto1ByteCode[])
         if (b==target) {
             if (dir) {
                 //Auto1ByteCode[bytecodeIndex++] = b;
-                Auto1ByteCode[bytecodeIndex++] = (b==4) ? _AR_TRG_TLEN : _AR_TRG_END;//XXX ugly hook;
+                Auto1ByteCode[bytecodeIndex++] = _AR_TRG_LIM;
                 Auto1ByteCode[bytecodeIndex++] = _AR_WTRG_U1;
                 Auto1ByteCode[bytecodeIndex++] = _AR_SPD(0);
                 //Auto1ByteCode[bytecodeIndex++] = _AR_WSTOP;

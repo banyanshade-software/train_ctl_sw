@@ -171,6 +171,9 @@ void ctrl2_upcmd_settrigU1(int tidx, train_ctrl_t *tvars, uint8_t t)
         	p = ctrl_pose_len_s1(conf_train_get(tidx), tvars);
             //p = ctrl_pose_percent_s1(conf_train_get(tidx), tvars, 10);
             break;
+        case 4:
+        	p = ctrl_pose_limit_s1(conf_train_get(tidx), tvars);
+        	break;
     }
     ctrl_set_pose_trig(tidx, tvars, p, 1);
 }

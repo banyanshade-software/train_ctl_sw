@@ -88,7 +88,7 @@ void set_block_addr_occupency(xblkaddr_t blkaddr, uint8_t v, uint8_t trnum, lsbl
     canton_occ_t *co = &canton_occ[blkaddr.v];
     if (co->occ != v) {
         if (USE_BLOCK_DELAY_FREE && (v==BLK_OCC_FREE)) {
-            if (co->occ >= BLK_OCC_DELAY1) FatalError("OccD1", "bad occupency", Error_OccDelay);
+            if (co->occ > BLK_OCC_DELAYM) FatalError("OccD1", "bad occupency", Error_OccDelay);
             co->occ = BLK_OCC_DELAYM;
             itm_debug1(DBG_CTRL, "delay free", blkaddr.v);
         } else {

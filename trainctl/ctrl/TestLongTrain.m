@@ -292,4 +292,159 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     const rettrigs_t expt7 = { {0, 0}, {0, 0}, {0, 0}};
     XCTAssert(!memcmp(rettrigs, expt7, sizeof(rettrigs_t)));
 }
+
+
+- (void) testStartNoOccTurnout
+{
+    tconf->trainlen_left_cm = 0;
+    tconf->trainlen_right_cm = 48;
+    occupency_clear();
+    topology_set_turnout(to0, 1, -1);
+    // same than previous, but to1 disallowed going forward
+    topology_set_turnout(to1, 1, -1);
+    ctrl2_init_train(0, &tvars, stwo); // s2 90cm
+    tvars._curposmm = 620;
+    ctrl2_get_next_sblks(0, &tvars, tconf);
+    XCTAssert(tvars.rightcars.nr == 1);
+    static const int exp2[] = { 1 };
+    int rc = check_lsblk_array(tvars.rightcars.r, exp2, 1);
+    XCTAssert(!rc);
+    XCTAssert(tvars.rightcars.rlen_cm == 25);
+    
+        
+    rettrigs_t rettrigs = {0};
+    rc = ctrl2_check_front_sblks(0, &tvars, tconf, 0, rettrigs);
+    XCTAssert(rc==0);
+    const rettrigs_t expt1 = { {87, tag_chkocc}, {0, 0}, {0, 0}};
+    XCTAssert(!memcmp(rettrigs, expt1, sizeof(rettrigs_t)));
+}
+- (void) testStartOccTurnout
+{
+    tconf->trainlen_left_cm = 0;
+    tconf->trainlen_right_cm = 48;
+    occupency_clear();
+    topology_set_turnout(to0, 1, -1);
+    // same than previous, but to1 disallowed going forward
+    topology_set_turnout(to1, 0, -1);
+    ctrl2_init_train(0, &tvars, stwo); // s2 90cm
+    tvars._curposmm = 620;
+    ctrl2_get_next_sblks(0, &tvars, tconf);
+    XCTAssert(tvars.rightcars.nr == 1);
+    static const int exp2[] = { 1 };
+    int rc = check_lsblk_array(tvars.rightcars.r, exp2, 1);
+    XCTAssert(!rc);
+    XCTAssert(tvars.rightcars.rlen_cm == 25);
+    
+        
+    rettrigs_t rettrigs = {0};
+    rc = ctrl2_check_front_sblks(0, &tvars, tconf, 0, rettrigs);
+    XCTAssert(rc==13);
+    const rettrigs_t expt1 = { {87, tag_chkocc}, {0, 0}, {75, tag_stop_blk_wait}};
+    XCTAssert(!memcmp(rettrigs, expt1, sizeof(rettrigs_t)));
+}
+
+
+
+- (void) testStartNoOccTurnout2
+{
+    tconf->trainlen_left_cm = 0;
+    tconf->trainlen_right_cm = 48;
+    occupency_clear();
+    topology_set_turnout(to0, 1, -1);
+    // same than previous, but to1 disallowed going forward
+    topology_set_turnout(to1, 1, -1);
+    ctrl2_init_train(0, &tvars, stwo); // s2 90cm
+    tvars._curposmm = 750;
+    ctrl2_get_next_sblks(0, &tvars, tconf);
+    XCTAssert(tvars.rightcars.nr == 1);
+    static const int exp2[] = { 1 };
+    int rc = check_lsblk_array(tvars.rightcars.r, exp2, 1);
+    XCTAssert(!rc);
+    XCTAssert(tvars.rightcars.rlen_cm == 12);
+    
+        
+    rettrigs_t rettrigs = {0};
+    rc = ctrl2_check_front_sblks(0, &tvars, tconf, 0, rettrigs);
+    XCTAssert(rc==0);
+    const rettrigs_t expt1 = { {87, tag_chkocc}, {0, 0}, {0, 0}};
+    XCTAssert(!memcmp(rettrigs, expt1, sizeof(rettrigs_t)));
+}
+- (void) testStartOccTurnout2
+{
+    tconf->trainlen_left_cm = 0;
+    tconf->trainlen_right_cm = 48;
+    occupency_clear();
+    topology_set_turnout(to0, 1, -1);
+    // same than previous, but to1 disallowed going forward
+    topology_set_turnout(to1, 0, -1);
+    ctrl2_init_train(0, &tvars, stwo); // s2 90cm
+    tvars._curposmm = 750;
+    ctrl2_get_next_sblks(0, &tvars, tconf);
+    XCTAssert(tvars.rightcars.nr == 1);
+    static const int exp2[] = { 1 };
+    int rc = check_lsblk_array(tvars.rightcars.r, exp2, 1);
+    XCTAssert(!rc);
+    XCTAssert(tvars.rightcars.rlen_cm == 12);
+    
+        
+    rettrigs_t rettrigs = {0};
+    rc = ctrl2_check_front_sblks(0, &tvars, tconf, 0, rettrigs);
+    XCTAssert(rc==-1);
+    const rettrigs_t expt1 = { {87, tag_chkocc}, {0, 0}, {0, 0}};
+    XCTAssert(!memcmp(rettrigs, expt1, sizeof(rettrigs_t)));
+}
+
+- (void) testProgressRight2
+{
+    tconf->trainlen_left_cm = 0;
+    tconf->trainlen_right_cm = 48;
+    occupency_clear();
+    topology_set_turnout(to0, 1, -1);
+    // same than previous, but to1 disallowed going forward
+    topology_set_turnout(to1, 0, -1);
+    ctrl2_init_train(0, &tvars, stwo); // s2 90cm
+    tvars._curposmm = 600;             //   ---- reste 30cm sur s2 et 48-30=18 sur s1 (45cm)
+    ctrl2_get_next_sblks(0, &tvars, tconf);
+    XCTAssert(tvars.rightcars.nr == 1);
+    static const int exp2[] = { 1 };
+    int rc = check_lsblk_array(tvars.rightcars.r, exp2, 1);
+    XCTAssert(!rc);
+    XCTAssert(tvars.rightcars.rlen_cm == 27);
+    
+        
+    rettrigs_t rettrigs = {0};
+    rc = ctrl2_check_front_sblks(0, &tvars, tconf, 0, rettrigs);
+    XCTAssert(rc==15);  // 27 cm rlen -> 12 margin + 16 brake
+    const rettrigs_t expt1 = { {87, tag_chkocc}, {0, 0}, {75, tag_stop_blk_wait}};
+    XCTAssert(!memcmp(rettrigs, expt1, sizeof(rettrigs_t)));
+    
+    // ------------------------
+    // trains progress 2cm
+    tvars._curposmm = 620; // (rettrigs[2].poscm-13)*10; // 602
+    rc = ctrl2_update_front_sblks(0, &tvars, tconf, 0);
+    XCTAssert(!rc);
+    rc = ctrl2_check_front_sblks(0, &tvars, tconf, 0, rettrigs);
+    XCTAssert(rc==13);
+    // no change in trig
+    XCTAssert(!memcmp(rettrigs, expt1, sizeof(rettrigs_t)));
+
+    // go until end of brake (+15cm)
+    tvars._curposmm = 600+150; // (rettrigs[2].poscm-13)*10; // 602
+    rc = ctrl2_update_front_sblks(0, &tvars, tconf, 0);
+    XCTAssert(!rc);
+    rc = ctrl2_check_front_sblks(0, &tvars, tconf, 0, rettrigs);
+    XCTAssert(rc==-1);
+    const rettrigs_t expt2 = { {87, tag_chkocc}, {0, 0}, {0, 0}};
+    XCTAssert(!memcmp(rettrigs, expt2, sizeof(rettrigs_t)));
+
+    // change to1 to normal
+    topology_set_turnout(to1, 1, -1);
+    rc = ctrl2_update_front_sblks(0, &tvars, tconf, 0);
+    XCTAssert(!rc);
+    rc = ctrl2_check_front_sblks(0, &tvars, tconf, 0, rettrigs);
+    XCTAssert(rc==0);
+    const rettrigs_t expt3 = { {87, tag_chkocc}, {0, 0}, {0, 0}};
+    XCTAssert(!memcmp(rettrigs, expt3, sizeof(rettrigs_t)));
+    
+}
 @end

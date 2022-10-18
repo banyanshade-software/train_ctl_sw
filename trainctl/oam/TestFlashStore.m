@@ -17,6 +17,10 @@
 
 @end
 
+void FatalError( const char *short4lettersmsg, _UNUSED_ const char *longmsg, _UNUSED_ enum fatal_error_code errcode)
+{
+    abort();
+}
 @implementation TestFlashStore
 
 uint32_t SimuTick = 0;

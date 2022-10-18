@@ -657,10 +657,10 @@ static void normal_process_msg(msg_64_t *m)
         case CMD_POSE_TRIGGERED:
             itm_debug3(DBG_POSEC, "Trig", m->v1u, m->v2u, m->subc);
             xblkaddr_t tb = FROM_CANTON(*m);
-            ctrl2_evt_pose_triggered(tidx, tvar, tb, m->vcu8, m->va16);
+            ctrl2_evt_pose_triggered(tidx, tvar, NULL, tb, m->vcu8, m->va16);
             break;
         case CMD_STOP_DETECTED:
-            ctrl2_evt_stop_detected(tidx, tvar, m->v32);
+            ctrl2_evt_stop_detected(tidx, tvar, NULL, m->v32);
             break;
         default:
             break;
@@ -824,10 +824,10 @@ void ctrl_run_tick(_UNUSED_ uint32_t notif_flags, uint32_t tick, _UNUSED_ uint32
                 // v1u = canton addr, v2 = pose, subc=tag
                 itm_debug3(DBG_POSE, "Trig", m.v1u, m.v2u, m.subc);
                 xblkaddr_t tb = {.v = m.v1u};
-                ctrl2_evt_pose_triggered(tidx, tvar, tb, m.subc, m.v2);
+                ctrl2_evt_pose_triggered(tidx, tvar, NULL, tb, m.subc, m.v2);
                 break;
             case CMD_STOP_DETECTED:
-                ctrl2_evt_stop_detected(tidx, tvar, m.v32);
+                ctrl2_evt_stop_detected(tidx, tvar, NULL, m.v32);
                 break;
             default:
                 break;

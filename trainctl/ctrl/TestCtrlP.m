@@ -16,10 +16,10 @@
 
 static lsblk_num_t snone = {-1};
 static lsblk_num_t szero = {0};
-static lsblk_num_t sone = {1};
-static lsblk_num_t sthree = {3};
+static lsblk_num_t sone =  {1};
+static lsblk_num_t sthree ={3};
 static lsblk_num_t sfoor = {4};
-static lsblk_num_t sfive = {5};
+//static lsblk_num_t sfive = {5};
 
 
 static const xtrnaddr_t to0 = { .v = 0};
@@ -114,9 +114,6 @@ void ctrl2_send_led(uint8_t led_num, uint8_t prog_num)
 
 - (void)setUp
 {
-    //extern uint8_t topology_num;
-    //topology_num = 1;
-
     tconf = get_train_cnf(0);
     notify_occupency_change = 0;
     ctrl_flag_notify_speed = 0;
@@ -160,10 +157,7 @@ void ctrl2_send_led(uint8_t led_num, uint8_t prog_num)
     XCTAssert(mqf_len(&from_ctrl)==2);
 
     NSString *s = dump_msgbuf(0);
-/*<<<<<<< HEAD
-    EXPMSG({.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_POSE_SET_TRIG_U1, .v32=142},
-           {.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_POSE_SET_TRIG0, .v32=-40});
-=======*/
+
     EXPMSG({.to=MA0_CANTON(0), .subc=1,  .from=MA1_CTRL(0), .cmd=CMD_POSE_SET_TRIG, .vcu8=tag_auto_u1, .va16=14, .vb8=1},
            {.to=MA0_CANTON(0), .subc=1,  .from=MA1_CTRL(0), .cmd=CMD_POSE_SET_TRIG, .vcu8=tag_end_lsblk, .va16=-4, .vb8=1});
 
@@ -284,7 +278,7 @@ void ctrl2_send_led(uint8_t led_num, uint8_t prog_num)
 
     //XCTAssert(tvars.trig_eoseg==0);
     xblkaddr_t ca0 = {.v=0};
-    ctrl2_evt_pose_triggered(0, &tvars, ca0, tag_stop_eot, 30);
+    ctrl2_evt_pose_triggered(0, &tvars, tconf, ca0, tag_stop_eot, 30);
     //XCTAssert(!tvars.pose2_set);
     rc = ctrl2_tick_process(0, &tvars, tconf, 0);
     XCTAssert(rc==3);
@@ -303,7 +297,7 @@ void ctrl2_send_led(uint8_t led_num, uint8_t prog_num)
     [self testTrainStartLeft];
     
     // do stop
-    ctrl2_evt_stop_detected(0, &tvars, 23);
+    ctrl2_evt_stop_detected(0, &tvars, tconf, 23);
     int rc = ctrl2_tick_process(0, &tvars, tconf, 0);
     XCTAssert(rc==2);
     XCTAssert(tvars._dir == 0);
@@ -337,7 +331,7 @@ void ctrl2_send_led(uint8_t led_num, uint8_t prog_num)
     [self testTrainStartLeft];
     
     // do stop
-    ctrl2_evt_stop_detected(0, &tvars, 23);
+    ctrl2_evt_stop_detected(0, &tvars,tconf, 23);
     int rc = ctrl2_tick_process(0, &tvars, tconf, 0);
     XCTAssert(rc==2);
     XCTAssert(tvars._dir == 0);
@@ -403,13 +397,8 @@ void ctrl2_send_led(uint8_t led_num, uint8_t prog_num)
     int l1 = get_lsblk_len_cm(sone, NULL);
     NSString *s = dump_msgbuf(0);
     //{D0, C8, 11, 257, 511},{D0, 81, 26, 1, 0},{D0, C8, 51, 420, 0},{D0, C8, 10, 70, 0}
-/*<<<<<<< HEAD
-    EXPMSG({.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_C1_C2,        .vb0=1, .vb1=1, .vb2=0xFF, .vb3=1}
-           ,{.to=MA3_UI_GEN, .from=MA1_CTRL(0), .cmd=CMD_TRSTATE_NOTIF,    .v1=1, .v2=0}
-           ,{.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_POSE_SET_TRIG0,   .v32=660}
-           ,{.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_TARGET_SPEED, .v1=70, .v2=0});
-    XCTAssert(tvars.trig_eoseg==0);
-=======*/
+
+    
     EXPMSG({.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_C1_C2,        .vb0=1, .vb1=1, .vb2=0xFF, .vb3=1}
            ,{.to=MA3_UI_GEN,     .from=MA1_CTRL(0), .cmd=CMD_TRSTATE_NOTIF,    .v1=1, .v2=0}
            ,{.to=MA0_CANTON(0), .subc=1, .from=MA1_CTRL(0), .cmd=CMD_POSE_SET_TRIG,   .vcu8=tag_stop_blk_wait, .va16=66, .vb8=1}
@@ -430,7 +419,7 @@ void ctrl2_send_led(uint8_t led_num, uint8_t prog_num)
     [self testTrainStartRight];
     
     //XCTAssert(tvars.trig_eoseg==0);
-    ctrl2_evt_pose_triggered(0, &tvars, ca1, tag_stop_blk_wait, 30);
+    ctrl2_evt_pose_triggered(0, &tvars, tconf, ca1, tag_stop_blk_wait, 30);
     //XCTAssert(tvars.pose2_set == 0);
     int rc = ctrl2_tick_process(0, &tvars, tconf, 0);
     //XCTAssert(rc==3);
@@ -465,7 +454,7 @@ void ctrl2_send_led(uint8_t led_num, uint8_t prog_num)
     [self testTrainStartRight];
     
     //XCTAssert(tvars.trig_eoseg==0);
-    ctrl2_evt_pose_triggered(0, &tvars, ca1, tag_stop_blk_wait, 30);
+    ctrl2_evt_pose_triggered(0, &tvars, tconf, ca1, tag_stop_blk_wait, 30);
     XCTAssert(tvars.pose2_set == 0);
     int rc = ctrl2_tick_process(0, &tvars, tconf, 0);
     XCTAssert(rc==3);
@@ -479,7 +468,7 @@ void ctrl2_send_led(uint8_t led_num, uint8_t prog_num)
     XCTAssert(0==check_occupency(1, -1));
     //XCTAssert(tvars.spd_limit == 0);
     
-    ctrl2_evt_stop_detected(0, &tvars, 333);
+    ctrl2_evt_stop_detected(0, &tvars,tconf, 333);
     rc = ctrl2_tick_process(0, &tvars, tconf, 0);
     XCTAssert(rc==2);
     NSString *st = dump_msgbuf(1);
@@ -525,7 +514,7 @@ void ctrl2_send_led(uint8_t led_num, uint8_t prog_num)
     
     // late trigger may (and will) occur and should be ignored
     //XCTAssert(tvars.trig_eoseg==0);
-    ctrl2_evt_pose_triggered(0, &tvars, ca1, tag_stop_eot, 30);
+    ctrl2_evt_pose_triggered(0, &tvars, tconf, ca1, tag_stop_eot, 30);
     rc = ctrl2_tick_process(0, &tvars, tconf, 1);
     //XCTAssert(rc==0);
     XCTAssert(tvars._dir == 1);
@@ -570,7 +559,7 @@ void ctrl2_send_led(uint8_t led_num, uint8_t prog_num)
     XCTAssert(tvars.can2_xaddr.v == 0x01);
     XCTAssert(0==check_occupency(0,1));
     
-    ctrl2_evt_stop_detected(0, &tvars, 333);
+    ctrl2_evt_stop_detected(0, &tvars, tconf, 333);
     rc = ctrl2_tick_process(0, &tvars, tconf, 0);
     s = dump_msgbuf(0);
     XCTAssert(tvars.can1_xaddr.v == 0x00);
@@ -611,13 +600,14 @@ void ctrl2_send_led(uint8_t led_num, uint8_t prog_num)
     train_ctrl_t savtvar = tvars;
     int l3 = 10*get_lsblk_len_cm(sthree, NULL);
     int l4 = 10*get_lsblk_len_cm(sfoor, NULL);
-    //int l5 = 10*get_lsblk_len(sfive, NULL);
+    int l1 = 10*get_lsblk_len_cm(sone, NULL);
     XCTAssert(l3==540);
     XCTAssert(l4==800);
-    
-    //tvars.curposmm = 160;
+    XCTAssert(l1==450);
+
+    // on s1
     tvars.beginposmm = 0;
-    
+    tvars._curposmm = l1;
     ctrl2_upcmd_set_desired_speed(0, &tvars, -30);
     rc = ctrl2_tick_process(0, &tvars, &myconf, 0);
     XCTAssert(rc==3);
@@ -627,12 +617,11 @@ void ctrl2_send_led(uint8_t led_num, uint8_t prog_num)
           ,{.to=MA3_UI_GEN,      .from=MA1_CTRL(0), .cmd=CMD_TRSTATE_NOTIF,    .v1=1, .v2=0}
           ,{.to=MA0_CANTON(0), .subc=3, .from=MA1_CTRL(0), .cmd=CMD_POSE_SET_TRIG,   .vcu8=tag_end_lsblk, .va16=0, .vb8=-1}
           ,{.to=MA1_SPDCTL(0),  .from=MA1_CTRL(0), .cmd=CMD_SET_TARGET_SPEED, .v1=30, .v2=0});
-    //CTAssert(tvars.trig_eoseg==1);
-
     
     
     tvars = savtvar;
     tvars.beginposmm = -1000;
+    tvars._curposmm = -100;
     
     ctrl2_upcmd_set_desired_speed(0, &tvars, -30);
     rc = ctrl2_tick_process(0, &tvars, &myconf, 0);
@@ -645,11 +634,14 @@ void ctrl2_send_led(uint8_t led_num, uint8_t prog_num)
           ,{.to=MA3_UI_GEN,      .from=MA1_CTRL(0), .cmd=CMD_TRSTATE_NOTIF,    .v1=1, .v2=0}
           ,{.to=MA0_CANTON(0),.subc=3, .from=MA1_CTRL(0), .cmd=CMD_POSE_SET_TRIG,   .va16=-200, .vb8=-1, .vcu8=tag_end_lsblk}
           ,{.to=MA1_SPDCTL(0),         .from=MA1_CTRL(0), .cmd=CMD_SET_TARGET_SPEED, .v1=30, .v2=0});
-    //XCTAssert(tvars.trig_eoseg==1);
-
-    //XCTAssert(tvars.trig_eoseg==1);
-    rc  = ctrl2_evt_pose_triggered(0, &tvars, ca3, tag_end_lsblk, -204);
+    
+    
+    // on s3, 54cm
+    // begin= -1000, curpos -100, trig at -800, pose/cm = 20 -> 160)
+    rc  = ctrl2_evt_pose_triggered(0, &tvars, &myconf, ca3, tag_end_lsblk, -204);
     //XCTAssert(!rc);
+    // s4 <---- s3
+    XCTAssert(tvars.c1_sblk.n == 4);
     XCTAssert(tvars._curposmm==-1020);
     XCTAssert(tvars.beginposmm==-1000-800);
     
@@ -663,7 +655,7 @@ void ctrl2_send_led(uint8_t led_num, uint8_t prog_num)
     XCTAssert(tvars._curposmm==-1020);
     XCTAssert(tvars.beginposmm==-1800);
     
-    ctrl2_evt_stop_detected(0, &tvars, -3000);
+    ctrl2_evt_stop_detected(0, &tvars, tconf, -3000);
     XCTAssert(tvars._curposmm==-1500);
     XCTAssert(tvars.beginposmm==-1800);
 
@@ -691,7 +683,7 @@ void ctrl2_send_led(uint8_t led_num, uint8_t prog_num)
     XCTAssert(tvars.beginposmm==-1800);
     
     //XCTAssert(tvars.trig_eoseg==1);
-    rc  = ctrl2_evt_pose_triggered(0, &tvars, ca3, tag_end_lsblk, -199);
+    rc  = ctrl2_evt_pose_triggered(0, &tvars, &myconf, ca3, tag_end_lsblk, -199);
     XCTAssert(!rc);
     XCTAssert(tvars._curposmm==-995);
     XCTAssert(tvars.beginposmm==-1000);
@@ -746,7 +738,7 @@ void ctrl2_send_led(uint8_t led_num, uint8_t prog_num)
     XCTAssert(rsblk==3);
     
     //XCTAssert(tvars.trig_eoseg==1);
-    ctrl2_evt_pose_triggered(0, &tvars, ca3, tag_end_lsblk, -30);
+    ctrl2_evt_pose_triggered(0, &tvars, tconf, ca3, tag_end_lsblk, -30);
 
     rc = ctrl2_tick_process(0, &tvars, tconf, 0);
     XCTAssert(rc==2);
@@ -763,7 +755,7 @@ void ctrl2_send_led(uint8_t led_num, uint8_t prog_num)
     XCTAssert(rsblk==4);
     
     //XCTAssert(tvars.trig_eoseg==1);
-    ctrl2_evt_pose_triggered(0, &tvars, ca3, tag_end_lsblk, -70);
+    ctrl2_evt_pose_triggered(0, &tvars,tconf, ca3, tag_end_lsblk, -70);
     rc = ctrl2_tick_process(0, &tvars, tconf, 0);
     XCTAssert(rc==3);
     s = dump_msgbuf(0);
@@ -781,7 +773,7 @@ void ctrl2_send_led(uint8_t led_num, uint8_t prog_num)
     XCTAssert(tvars.pose2_set==1);
     
     //XCTAssert(tvars.trig_eoseg==0);
-    ctrl2_evt_pose_triggered(0, &tvars, ca3, tag_stop_eot, 30);
+    ctrl2_evt_pose_triggered(0, &tvars,tconf, ca3, tag_stop_eot, 30);
     //XCTAssert(tvars.pose2_set == 0);
     rc = ctrl2_tick_process(0, &tvars, tconf, 0);
     //XCTAssert(rc==3);
@@ -796,7 +788,7 @@ void ctrl2_send_led(uint8_t led_num, uint8_t prog_num)
     XCTAssert(tvars._target_speed == 0);
     XCTAssert(tvars._state == train_end_of_track);
     
-    ctrl2_evt_stop_detected(0, &tvars, 333);
+    ctrl2_evt_stop_detected(0, &tvars, tconf, 333);
     rc = ctrl2_tick_process(0, &tvars, tconf, 0);
     XCTAssert(rc==2);
     XCTAssert(tvars._dir == 0);

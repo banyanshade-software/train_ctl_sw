@@ -855,7 +855,7 @@ static int ctrl2_set_next_c1_lsblk(int tidx, train_ctrl_t *tvar, lsblk_num_t ns,
     return retcode;
 }
 
-int ctrl2_evt_pose_triggered(int tidx, train_ctrl_t *tvar, xblkaddr_t ca_addr, uint8_t tag, int16_t cposd10)
+int ctrl2_evt_pose_triggered(int tidx, train_ctrl_t *tvar, const conf_train_t *tconf, xblkaddr_t ca_addr, uint8_t tag, int16_t cposd10)
 {
     int retcode = 0;
 	itm_debug3(DBG_CTRL|DBG_POSEC, "POSEtrg", tidx, ca_addr.v, cposd10);
@@ -869,7 +869,7 @@ int ctrl2_evt_pose_triggered(int tidx, train_ctrl_t *tvar, xblkaddr_t ca_addr, u
         itm_debug3(DBG_ERR|DBG_POSEC|DBG_CTRL, "ptrg bad", tidx, ca_addr.v, tvar->can1_xaddr.v);
         return -1;
     }
-    const conf_train_t *tconf = conf_train_get(tidx);
+    if (!tconf) tconf = conf_train_get(tidx);
     tvar->_curposmm = pose_convert_to_mm(tconf, cposd10*10);
     tvar->pose_reset = 0;
     itm_debug3(DBG_POSE|DBG_CTRL, "curposmm", tidx, tvar->_curposmm, tag);
@@ -887,8 +887,8 @@ int ctrl2_evt_pose_triggered(int tidx, train_ctrl_t *tvar, xblkaddr_t ca_addr, u
                 break;
             }
         
-            int len1 = get_lsblk_len_cm_steep(tvar->c1_sblk, conf_train_get(tidx), tvar);
-            int len2 = get_lsblk_len_cm_steep(ns, conf_train_get(tidx), tvar);
+            int len1 = get_lsblk_len_cm_steep(tvar->c1_sblk,tconf, tvar);
+            int len2 = get_lsblk_len_cm_steep(ns, tconf, tvar);
             int exppose;
             tvar->c1_sblk = ns;
             if (tvar->_dir<0) {
@@ -934,11 +934,11 @@ int ctrl2_evt_pose_triggered(int tidx, train_ctrl_t *tvar, xblkaddr_t ca_addr, u
     return retcode;
 }
 
-void ctrl2_evt_stop_detected(_UNUSED_ int tidx, train_ctrl_t *tvar, _UNUSED_ int32_t pose)
+void ctrl2_evt_stop_detected(_UNUSED_ int tidx, train_ctrl_t *tvar, const conf_train_t *tconf,  _UNUSED_ int32_t pose)
 {
     // TODO
     tvar->tick_flags |= _TFLAG_STOP_DETECTED;
-    const conf_train_t *tconf = conf_train_get(tidx);
+    if (!tconf) tconf = conf_train_get(tidx);
     tvar->_curposmm = pose_convert_to_mm(tconf, pose);
     tvar->pose_reset = 0;
     itm_debug1(DBG_POSEC|DBG_CTRL, "curposmm/s", tvar->_curposmm);

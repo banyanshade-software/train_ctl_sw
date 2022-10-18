@@ -133,8 +133,8 @@ void ctrl2_update_c2(int tidx, train_ctrl_t *tvar, const conf_train_t *tconf, in
 void ctrl2_notify_state(int tidx, train_ctrl_t *tvar);
 void ctrl2_sendlow_tspd(int tidx, train_ctrl_t *tvar);
 void ctrl2_sendlow_c1c2(int tidx, train_ctrl_t *tvar);
-int  ctrl2_evt_pose_triggered(int tidx, train_ctrl_t *tvar, xblkaddr_t ca_addr, uint8_t trigbits, int16_t cposd10);
-void ctrl2_evt_stop_detected(int tidx, train_ctrl_t *tvar, int32_t pose);
+int  ctrl2_evt_pose_triggered(int tidx, train_ctrl_t *tvar, const conf_train_t *tconf_or_null, xblkaddr_t ca_addr, uint8_t trigbits, int16_t cposd10);
+void ctrl2_evt_stop_detected(int tidx, train_ctrl_t *tvar, const conf_train_t *tconf_or_null, int32_t pose);
 
 void ctrl_set_pose_trig(int numtrain, train_ctrl_t *tvar, int8_t dir, xblkaddr_t canaddr, int32_t pose, uint8_t tag);
 void ctrl2_reset_longtrain(_UNUSED_ int tidx, train_ctrl_t *tvars);

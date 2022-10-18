@@ -316,6 +316,13 @@ static void set_speed_limit(train_ctrl_t *tvar, uint16_t lim)
     tvar->tick_flags |= _TFLAG_LIMIT_CHANGED;
 }
 
+void ctrl2_reset_longtrain(_UNUSED_ int tidx, train_ctrl_t *tvars)
+{
+    tvars->rightcars.nr = 0;
+    tvars->leftcars.nr = 0;
+    memset(tvars->rightcars.r, 0xFF, sizeof(tvars->rightcars.r));
+    memset(tvars->leftcars.r, 0xFF, sizeof(tvars->leftcars.r));
+}
 
 void ctrl2_init_train(_UNUSED_ int tidx, train_ctrl_t *tvars,
                       lsblk_num_t sblk)
@@ -340,6 +347,7 @@ void ctrl2_init_train(_UNUSED_ int tidx, train_ctrl_t *tvars,
     tvars->_curposmm = POSE_UNKNOWN;
     tvars->route = NULL;
     tvars->routeidx = 0;
+    ctrl2_reset_longtrain(tidx, tvars);
 }
 
 void ctrl2_upcmd_set_desired_speed(_UNUSED_ int tidx, train_ctrl_t *tvars, int16_t desired_speed)
@@ -1091,7 +1099,7 @@ int ctrl2_get_next_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *tco
     return 0; // XXX error handling here
 }
 
-static const int brake_len_cm = 15;
+static const int brake_len_cm = 16;
 static const int margin_len_cm = 12;
 
 
@@ -1132,7 +1140,7 @@ static int check_for_dist(_UNUSED_ int tidx, train_ctrl_t *tvars,  struct forwds
     if (fs.n == -1) {
         return cklen;
     }
-    return 0;
+    return 9999;
 }
 
 int ctrl2_check_front_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *tconf, int left,  rettrigs_t ret)
@@ -1152,7 +1160,7 @@ int ctrl2_check_front_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *
     }
     uint8_t a;
     int l1 = check_for_dist(tidx, tvars, fsblk, left,  brake_len_cm+margin_len_cm, &a);
-    if (l1<0) {
+    if (l1<=0) {
         retc = brake_len_cm+l1;
         if (retc<=0) retc = 1;
     } else if ((l1>0) && (l1+curcm<maxcm)) {
@@ -1161,7 +1169,7 @@ int ctrl2_check_front_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *
     }
     int l2 = check_for_dist(tidx, tvars, fsblk, left, margin_len_cm, &a);
     //printf("l2/8=%d\n", l2);
-    if (l2<0) {
+    if (l2<=0) {
         retc = -1;
     } else if ((l2>0) && (l2+curcm<maxcm)) {
         ret[2].poscm = l2+curcm;

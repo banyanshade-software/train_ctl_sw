@@ -137,6 +137,7 @@ int  ctrl2_evt_pose_triggered(int tidx, train_ctrl_t *tvar, xblkaddr_t ca_addr, 
 void ctrl2_evt_stop_detected(int tidx, train_ctrl_t *tvar, int32_t pose);
 
 void ctrl_set_pose_trig(int numtrain, train_ctrl_t *tvar, int8_t dir, xblkaddr_t canaddr, int32_t pose, uint8_t tag);
+void ctrl2_reset_longtrain(_UNUSED_ int tidx, train_ctrl_t *tvars);
 
 enum pose_trig_tag {
     tag_invalid = 0,
@@ -145,8 +146,8 @@ enum pose_trig_tag {
     tag_stop_eot,
     tag_auto_u1,
     
-    tag_chkocc,
-    tag_brake,
+    tag_chkocc,     // rightcars will go into new segment, rightcars and leftcars need to be updated
+    tag_brake,      // should start braking
 };
 
 #define ignore_bemf_presence 1

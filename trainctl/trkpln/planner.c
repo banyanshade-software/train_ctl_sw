@@ -58,6 +58,7 @@ typedef struct {
     uint8_t train;
     uint8_t delay;
     uint8_t target;
+    uint8_t spd;
     uint32_t startTick;
 } pending_t;
 
@@ -87,8 +88,9 @@ static void handle_planner_msg(msg_64_t *m)
 	case CMD_PLANNER_ADD:
 		if (PendingIdx >= NUM_PENDING) break;
 		PlanPending[PendingIdx].train = m->subc;
-		PlanPending[PendingIdx].delay = m->v2u;
-		PlanPending[PendingIdx].target = m->v1u;
+		PlanPending[PendingIdx].delay = m->va16;
+		PlanPending[PendingIdx].target = m->vb8;
+		PlanPending[PendingIdx].spd = m->vcu8;
 		PendingIdx++;
 		break;
 	case CMD_PLANNER_COMMIT:
@@ -171,6 +173,7 @@ static void planner_start_pending(int n, uint8_t Auto1ByteCode[])
 	if (0xFF == train) return;
 	PlanPending[n].train = 0xFF;
 
+	int spd = PlanPending[n].spd;
     int target = PlanPending[n].target;
     int curpos = ctrl_get_train_curlsblk(train);
     if (curpos == -1) return;
@@ -246,7 +249,7 @@ static void planner_start_pending(int n, uint8_t Auto1ByteCode[])
                     Auto1ByteCode[bytecodeIndex++] = _AR_TIMER(1);
                     Auto1ByteCode[bytecodeIndex++] = _AR_WTIMER;
                 }
-                Auto1ByteCode[bytecodeIndex++] = _AR_SPD(ndir*64);
+                Auto1ByteCode[bytecodeIndex++] = _AR_SPD(ndir*spd);
             }
             dir = ndir;
             Auto1ByteCode[bytecodeIndex++] = b;

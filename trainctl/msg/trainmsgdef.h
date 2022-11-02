@@ -49,6 +49,9 @@ typedef enum {
 	CMD_INA_REPORT,					// [detect2] ina3221->ctrl					report measured current
     CMD_UI_DETECT,					// [detect2] ctrl->ui						detection info
     
+	CMD_SERVO_SET,					// any -> servo  subc=servn v1u=pos v2u=spd_or_0
+	CMD_SERVO_ACK,					// servo->sender subc=servn v1u=pos
+
     // 101 xxxxx = 0xA0
     // 110 xxxxx = 0xC0 GUI
     CMD_MDRIVE_SPEED_DIR = 0xC0,	// ui->ctrl			v1u=spd v2=dir			set dir and speed (desired speed)

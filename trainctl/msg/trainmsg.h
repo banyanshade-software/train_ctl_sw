@@ -32,7 +32,7 @@ typedef uint8_t  msg_addr_t;
         0 0 1 1  b b b b    ina
         0 1 0 0  b b b b    led
         0 1 0 1  b b b b    OAM
-        0 1 1 0  b b b b    reserved
+        0 1 1 0  b b b b    servos
         0 1 1 1  b b b b    reserved
 
    MA1: train number (on master)
@@ -90,6 +90,9 @@ typedef uint8_t  msg_addr_t;
 #define MA0_OAM(_board)			(0x50 | ((_board) & 0x0F))
 #define MA0_IS_OAM(_addr)  		(((_addr) & 0xF0) == MA0_OAM(0))
 
+
+#define MA0_SERVO(_board)		(0x60 | ((_board) & 0x0F))
+#define MA0_IS_SERVO(_addr)	    (((_addr) & 0xF0) == MA0_RELAY(0))
 
 
 
@@ -156,6 +159,11 @@ typedef union {
                             struct {
                                 int16_t v1;
                                 int16_t v2;
+                            };
+                            struct { // CMD_POSE_SET_TRIG
+                            	int16_t va16;
+                            	int8_t vb8;
+                            	uint8_t vcu8;
                             };
                             uint8_t vbytes[4];
                             struct {
@@ -255,6 +263,11 @@ LFMQUEUE_DEF_H(from_planner, msg_64_t)
 
 #ifdef BOARD_HAS_OSCILLO
 LFMQUEUE_DEF_H(from_oscillo, msg_64_t)
+#endif
+
+#ifdef BOARD_HAS_SERVOS
+LFMQUEUE_DEF_H(to_servo, msg_64_t)
+LFMQUEUE_DEF_H(from_servo, msg_64_t)
 #endif
 
 LFMQUEUE_DEF_H(to_oam, msg_64_t)

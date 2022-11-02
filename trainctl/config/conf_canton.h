@@ -52,6 +52,12 @@ const conf_canton_t *conf_canton_get(int num);
 
 
 
+#ifdef TRN_BOARD_UNIT_TEST
+#define NUM_CANTONS 0 // 0 
+#endif // TRN_BOARD_UNIT_TEST
+
+
+
 #ifdef TRN_BOARD_UI
 #define NUM_CANTONS 0 // 0 
 #endif // TRN_BOARD_UI

@@ -2,8 +2,8 @@
 // DO NOT EDIT
 
 
-#ifndef _conf_led_H_
-#define _conf_led_H_
+#ifndef _conf_servo_H_
+#define _conf_servo_H_
 
 #include <stdint.h>
 
@@ -30,66 +30,71 @@ typedef void *GPIO_TypeDef;
 
 
 
-typedef struct conf_led {
-    GPIO_TypeDef *port_led;
-    uint16_t pin_led;
-    uint8_t defprog;
-} conf_led_t;
+typedef struct conf_servo {
+    GPIO_TypeDef *port_power;
+    uint16_t pin_power;
+    int8_t pwm_timer_num;
+    int8_t pwm_timer_ch;
+    uint16_t min;
+    uint16_t max;
+    uint16_t spd;
+    uint16_t pos0;
+} conf_servo_t;
 
 
-unsigned int conf_led_num_entries(void);
-const conf_led_t *conf_led_get(int num);
+unsigned int conf_servo_num_entries(void);
+const conf_servo_t *conf_servo_get(int num);
 
 
 
 #ifdef TRN_BOARD_UNIT_TEST
-#define NUM_LEDS 0 // 0 
+#define NUM_SERVOS 0 // 0 
 #endif // TRN_BOARD_UNIT_TEST
 
 
 
 #ifdef TRN_BOARD_UI
-#define NUM_LEDS 0 // 0 
+#define NUM_SERVOS 0 // 0 
 #endif // TRN_BOARD_UI
 
 
 
 #ifdef TRN_BOARD_MAINV04
-#define NUM_LEDS 5 // 5 
+#define NUM_SERVOS 0 // 0 
 #endif // TRN_BOARD_MAINV04
 
 
 
 #ifdef TRN_BOARD_MAINV0
-#define NUM_LEDS 3 // 3 
+#define NUM_SERVOS 0 // 0 
 #endif // TRN_BOARD_MAINV0
 
 
 
 #ifdef TRN_BOARD_DISPATCHER
-#define NUM_LEDS 0 // 0 
+#define NUM_SERVOS 0 // 0 
 #endif // TRN_BOARD_DISPATCHER
 
 
 
 #ifdef TRN_BOARD_SWITCHER
-#define NUM_LEDS 6 // 6 
+#define NUM_SERVOS 1 // 1 
 #endif // TRN_BOARD_SWITCHER
 
 
 
 #ifdef TRN_BOARD_MAIN_ZERO
-#define NUM_LEDS 0 // 0 
+#define NUM_SERVOS 0 // 0 
 #endif // TRN_BOARD_MAIN_ZERO
 
 
 
 #ifdef TRN_BOARD_SIMU
-#define NUM_LEDS 3 // 3 
+#define NUM_SERVOS 0 // 0 
 #endif // TRN_BOARD_SIMU
 
 
-#define MAX_LEDS 6
+#define MAX_SERVOS 1
 
 
 

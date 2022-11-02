@@ -21,6 +21,21 @@
 
 
 
+#ifdef TRN_BOARD_UNIT_TEST
+
+unsigned int conf_led_num_entries(void)
+{
+    return 0; // 0 
+}
+
+static conf_led_t conf_led[0] = {
+};
+
+#endif // TRN_BOARD_UNIT_TEST
+
+
+
+
 #ifdef TRN_BOARD_UI
 
 unsigned int conf_led_num_entries(void)

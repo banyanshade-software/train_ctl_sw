@@ -100,19 +100,29 @@ static conf_servo_t conf_servo[0] = {
 
 unsigned int conf_servo_num_entries(void)
 {
-    return 1; // 1 
+    return 2; // 2 
 }
 
-static conf_servo_t conf_servo[1] = {
+static conf_servo_t conf_servo[2] = {
   {     // 0
      .port_power = GPIOD,
-     .pin_power = GPIO_PIN_8,
-     .pwm_timer_num = 1,
-     .pwm_timer_ch = 1,
-     .min = 230,
-     .max = 723,
-     .spd = 723,
-     .pos0 = 230,
+     .pin_power = -1,
+     .pwm_timer_num = 4,
+     .pwm_timer_ch = TIM_CHANNEL_1,
+     .min = 2300,
+     .max = 7230,
+     .spd = 7230,
+     .pos0 = 5000,
+  },
+  {     // 1
+     .port_power = GPIOD,
+     .pin_power = -1,
+     .pwm_timer_num = 4,
+     .pwm_timer_ch = TIM_CHANNEL_2,
+     .min = 2300,
+     .max = 7230,
+     .spd = 7230,
+     .pos0 = 5000,
   }
 };
 

@@ -79,23 +79,76 @@ static servo_var_t servo_vars[NUM_SERVOS] = {0};
 
 
 // ----------------------------------------------------------
+static TIM_HandleTypeDef *ServoTimerHandles[5] = {0};
+
+
+extern TIM_HandleTypeDef htim1;
+extern TIM_HandleTypeDef htim2;
+extern TIM_HandleTypeDef htim3;
+extern TIM_HandleTypeDef htim4;
+
 
 static void _servo_setpos(const conf_servo_t *conf, uint16_t pos)
 {
 	// XXX set pwm timer
+	TIM_HandleTypeDef *tim = NULL;
+	if (conf->pwm_timer_num > 4) return;
+	tim = ServoTimerHandles[conf->pwm_timer_num];
+	if (!tim) return;
+
+	uint32_t t = ((pos+2000) * 64) / 100;
+	switch (conf->pwm_timer_ch) {
+	case TIM_CHANNEL_1:
+		tim->Instance->CCR1 = t;
+		break;
+	case TIM_CHANNEL_2:
+		tim->Instance->CCR2 = t;
+		break;
+	case TIM_CHANNEL_3:
+		tim->Instance->CCR3 = t;
+		break;
+	case TIM_CHANNEL_4:
+		tim->Instance->CCR4 = t;
+		break;
+	}
 }
 static void _servo_power(const conf_servo_t *conf, uint8_t pow)
 {
-	// TODO
+	if (conf->pin_power<0) return;
+	HAL_GPIO_WritePin(conf->port_power, conf->pin_power,
+			pow ? GPIO_PIN_SET : GPIO_PIN_RESET);
+}
+
+
+static uint8_t timstarted = 0;
+
+static void _timer_init(unsigned int timnum, int ch)
+{
+	TIM_HandleTypeDef *tim = NULL;
+	if (timnum > 4) return;
+	tim = ServoTimerHandles[timnum];
+
+	if (!tim) return;
+	if ((timstarted & (1<<timnum)) == 0) {
+		HAL_TIM_Base_Start(tim);
+		timstarted |= (1<<timnum);
+	}
+	HAL_TIM_PWM_Start(tim, ch);
 }
 // ----------------------------------------------------------
 
 static void servo_init(void)
 {
+	ServoTimerHandles[1]=&htim1;
+	ServoTimerHandles[2]=&htim2;
+	ServoTimerHandles[3]=&htim3;
+	ServoTimerHandles[4]=&htim4;
+
 	memset(&servo_vars, 0, sizeof(servo_vars));
 	for (int i=0; i<NUM_SERVOS; i++) {
 		USE_SERVO(i);
 		if (conf->pwm_timer_num<0) continue;
+		_timer_init(conf->pwm_timer_num, conf->pwm_timer_ch);
 		_servo_power(conf, 1);
 		var->powered = 1;
 		var->target = conf->pos0;
@@ -104,6 +157,7 @@ static void servo_init(void)
 		var->moving = 0xFF;
 	}
 }
+
 static void servo_enter_runmode(runmode_t m)
 {
 
@@ -153,6 +207,9 @@ static void process_servo_cmd(msg_64_t *m)
 		itm_debug3(DBG_SERVO, "set", m->subc, m->v1u, m->v2u);
 		if (m->subc > NUM_SERVOS) break;
 		USE_SERVO(m->subc);
+		uint16_t v = m->v1u;
+		if (v > conf->max) v = conf->max;
+		else if (v < conf->min) v = conf->min;
 		var->target = m->v1u;
 		var->moving = 0xFF;
 		var->speed = m->v2u ? m->v2u : conf->spd;

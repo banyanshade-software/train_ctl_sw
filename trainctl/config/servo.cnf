@@ -1,10 +1,10 @@
 
 config servo {
 	const GPIO_TypeDef *port_power
-		= (switcher:*) table(servosw, port)
+		= (switcher:*) table(servosw, power_port)
 		= (default) NULL;
 	const uint16_t pin_power
-		= (switcher:*) table(servosw, pin)
+		= (switcher:*) table(servosw, power_pin)
 		= (default) 0;
     const int8_t pwm_timer_num
         = (switcher:*) table(servosw, tim)
@@ -24,12 +24,13 @@ config servo {
     user uint16_t pos0
         = (switcher:*) table(servosw, pos0)
         = (default) 0;
-} num = (switcher) 1
+} num = (switcher) 2
       = (default) 0;
 
 table servosw
-	( port,     pin,             tim,    ch,     min,    max,    spd,    pos0)
-    ( GPIOD,    GPIO_PIN_8,      1,      1,     230,    723,     80,     230)
+	( power_port, power_pin,    tim,            ch,     min,    max,    spd,    pos0)
+    ( GPIOD,             -1,      4, TIM_CHANNEL_1,    2300,   7230,     80,     5000)
+    ( GPIOD,             -1,      4, TIM_CHANNEL_2,    2300,   7230,     80,     5000)
 ;
 
 

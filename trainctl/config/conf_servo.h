@@ -78,7 +78,7 @@ const conf_servo_t *conf_servo_get(int num);
 
 
 #ifdef TRN_BOARD_SWITCHER
-#define NUM_SERVOS 1 // 1 
+#define NUM_SERVOS 2 // 2 
 #endif // TRN_BOARD_SWITCHER
 
 
@@ -94,7 +94,7 @@ const conf_servo_t *conf_servo_get(int num);
 #endif // TRN_BOARD_SIMU
 
 
-#define MAX_SERVOS 1
+#define MAX_SERVOS 2
 
 
 

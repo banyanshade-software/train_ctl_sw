@@ -55,7 +55,7 @@
 
 
 #if (NUM_TURNOUTS == 0)
-#error turnouts code included but NUM_TURNOUTS iz zero
+#error turnouts code included but NUM_TURNOUTS is zero
 #endif
 
 

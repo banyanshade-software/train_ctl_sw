@@ -254,7 +254,9 @@
 //#define BOARD_HAS_TRKPLN
 // #define BOARD_CAN_BE_MASTER
 
-#define SSD1306_I2C_PORTS        { &hi2c1}
+
+#define SSD1306_I2C_PORTS_DECL extern I2C_HandleTypeDef hi2c1
+#define SSD1306_I2C_PORTS { &hi2c1 }
 
 /*
  * number of local block per board

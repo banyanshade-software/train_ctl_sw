@@ -25,7 +25,9 @@ void FatalError( const char *short4lettersmsg, _UNUSED_ const char *longmsg, _UN
 {
 	if (!_fatal) {
 		_fatal = short4lettersmsg;
+#ifdef BOARD_HAS_TURNOUTS
 		TurnoutEmergencyStop();
+#endif
 		local_ui_fatal();
 		__disable_irq();
 		for (;;) {

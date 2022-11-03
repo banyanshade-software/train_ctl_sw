@@ -106,8 +106,9 @@
         NSLog(@"train %d after %d go %d\n", (int) c.trainNum, (int) c.delay, (int) c.targetLSBLK);
         m.cmd = CMD_PLANNER_ADD;
         m.subc = c.trainNum;
-        m.v1u = c.targetLSBLK;
-        m.v2u = c.delay;
+        m.vb8 = c.targetLSBLK;
+        m.va16 = c.delay;
+        m.vcu8 = c.spd;
         [theDelegate sendMsg64:m];
         nrule++;
     }

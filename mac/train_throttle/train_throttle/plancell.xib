@@ -81,6 +81,24 @@
                                     <binding destination="bjd-KT-eAM" name="value" keyPath="delay" id="9uq-BJ-ncW"/>
                                 </connections>
                             </textField>
+                            <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="wNq-Ru-0i6">
+                                <rect key="frame" x="169" y="17" width="48" height="21"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="48" id="FaM-Nx-AlJ"/>
+                                </constraints>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" drawsBackground="YES" id="G4x-6S-hyQ">
+                                    <numberFormatter key="formatter" formatterBehavior="custom10_4" positiveFormat="#,##0.00" negativeFormat="-#,##0.00" allowsFloats="NO" usesGroupingSeparator="NO" formatWidth="-1" minimumIntegerDigits="1" maximumIntegerDigits="3" decimalSeparator="," groupingSeparator=" " id="PKf-k9-rvR">
+                                        <real key="minimum" value="0.0"/>
+                                        <real key="maximum" value="999"/>
+                                    </numberFormatter>
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                                <connections>
+                                    <binding destination="bjd-KT-eAM" name="value" keyPath="spd" id="ERP-Dj-1EY"/>
+                                </connections>
+                            </textField>
                             <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="CxK-pp-vzS">
                                 <rect key="frame" x="74" y="48" width="48" height="21"/>
                                 <constraints>
@@ -99,6 +117,14 @@
                                     <binding destination="bjd-KT-eAM" name="value" keyPath="trainNum" id="uSs-03-Wsu"/>
                                 </connections>
                             </textField>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="MFQ-7P-CjU">
+                                <rect key="frame" x="136" y="20" width="27" height="16"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" title="spd" id="wmU-2J-4oM">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
                         </subviews>
                         <constraints>
                             <constraint firstItem="vil-qF-K05" firstAttribute="firstBaseline" secondItem="u5D-U9-Lhm" secondAttribute="firstBaseline" id="1ts-Pr-MUY"/>
@@ -106,8 +132,11 @@
                             <constraint firstItem="eec-hc-bh3" firstAttribute="firstBaseline" secondItem="CxK-pp-vzS" secondAttribute="firstBaseline" id="Ayi-o2-Q4T"/>
                             <constraint firstItem="eec-hc-bh3" firstAttribute="leading" secondItem="vil-qF-K05" secondAttribute="trailing" constant="16" id="Bt5-aY-zgP"/>
                             <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="eec-hc-bh3" secondAttribute="trailing" constant="8" id="Owm-lB-4EJ"/>
+                            <constraint firstItem="wNq-Ru-0i6" firstAttribute="leading" secondItem="MFQ-7P-CjU" secondAttribute="trailing" constant="8" symbolic="YES" id="P16-7h-GCP"/>
                             <constraint firstItem="bGE-rf-eiO" firstAttribute="leading" secondItem="u5D-U9-Lhm" secondAttribute="leading" id="RYu-mp-fpZ"/>
                             <constraint firstItem="Idv-nl-z7z" firstAttribute="leading" secondItem="bGE-rf-eiO" secondAttribute="trailing" constant="8" symbolic="YES" id="TNd-E6-1RQ"/>
+                            <constraint firstItem="wNq-Ru-0i6" firstAttribute="firstBaseline" secondItem="Idv-nl-z7z" secondAttribute="firstBaseline" id="ZVZ-8U-z24"/>
+                            <constraint firstItem="MFQ-7P-CjU" firstAttribute="leading" secondItem="Idv-nl-z7z" secondAttribute="trailing" constant="20" id="cpA-lH-dcX"/>
                             <constraint firstItem="Idv-nl-z7z" firstAttribute="firstBaseline" secondItem="bGE-rf-eiO" secondAttribute="firstBaseline" id="erH-KV-Ywn"/>
                             <constraint firstItem="vil-qF-K05" firstAttribute="leading" secondItem="CxK-pp-vzS" secondAttribute="trailing" constant="16" id="gcL-cb-VyX"/>
                             <constraint firstItem="u5D-U9-Lhm" firstAttribute="leading" secondItem="Bpi-aW-68L" secondAttribute="leading" constant="20" symbolic="YES" id="gh6-gb-Hj6"/>
@@ -115,6 +144,7 @@
                             <constraint firstItem="bGE-rf-eiO" firstAttribute="top" secondItem="u5D-U9-Lhm" secondAttribute="bottom" constant="16" id="kHL-AP-A4A"/>
                             <constraint firstItem="u5D-U9-Lhm" firstAttribute="top" secondItem="Bpi-aW-68L" secondAttribute="top" constant="20" symbolic="YES" id="oJN-Ot-3KO"/>
                             <constraint firstItem="eec-hc-bh3" firstAttribute="firstBaseline" secondItem="vil-qF-K05" secondAttribute="firstBaseline" id="pHx-lY-0No"/>
+                            <constraint firstItem="MFQ-7P-CjU" firstAttribute="firstBaseline" secondItem="Idv-nl-z7z" secondAttribute="firstBaseline" id="rDj-vF-JUB"/>
                             <constraint firstItem="eec-hc-bh3" firstAttribute="firstBaseline" secondItem="u5D-U9-Lhm" secondAttribute="firstBaseline" id="shV-O3-vVO"/>
                             <constraint firstAttribute="bottom" secondItem="bGE-rf-eiO" secondAttribute="bottom" constant="20" symbolic="YES" id="voq-Op-FNE"/>
                         </constraints>

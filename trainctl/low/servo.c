@@ -139,6 +139,7 @@ static void _timer_init(unsigned int timnum, int ch)
 
 static void servo_init(void)
 {
+	//itm_debug1(DBG_SERVO, "hop", 0);
 	ServoTimerHandles[1]=&htim1;
 	ServoTimerHandles[2]=&htim2;
 	ServoTimerHandles[3]=&htim3;
@@ -156,6 +157,16 @@ static void servo_init(void)
 		_servo_setpos(conf, var->target);
 		var->moving = 0xFF;
 	}
+	if ((1)) {
+		msg_64_t m = {0};
+		m.cmd = CMD_SERVO_SET;
+		m.from = MA3_UI_CTC;
+		m.to = MA0_SERVO(oam_localBoardNum());
+		m.subc = 0;
+		m.v1u = 9001; //9000;
+		m.v2u = 4;
+		mqf_write_from_nowhere(&m);
+	}
 }
 
 static void servo_enter_runmode(runmode_t m)
@@ -164,14 +175,19 @@ static void servo_enter_runmode(runmode_t m)
 }
 static void process_servo_tick(uint32_t tick, uint32_t dt)
 {
+	//itm_debug1(DBG_SERVO, "servt", dt);
 	for (int i=0; i<NUM_SERVOS; i++) {
 		USE_SERVO(i);
 		if (var->moving) {
+			//if (i) {
+			//	itm_debug2(DBG_SERVO, "tick", i, var->moving);
+			//}
 			var->moving--;
 			if (!var->moving) {
 				// position reach and timer
 				_servo_power(conf, 0);
 				var->powered = 0;
+				itm_debug2(DBG_SERVO, "stp", i, var->sender);
 				if (var->sender) {
 					msg_64_t m = {0};
 					m.from = MA0_SERVO(oam_localBoardNum());
@@ -192,6 +208,7 @@ static void process_servo_tick(uint32_t tick, uint32_t dt)
 					if (p < var->target) p = var->target;
 				}
 				var->curpos = (uint16_t) p;
+				itm_debug3(DBG_SERVO, "mv", i,var->curpos, var->target);
 				_servo_setpos(conf, var->curpos);
 				var->moving = 0xFF;
 			}
@@ -210,7 +227,7 @@ static void process_servo_cmd(msg_64_t *m)
 		uint16_t v = m->v1u;
 		if (v > conf->max) v = conf->max;
 		else if (v < conf->min) v = conf->min;
-		var->target = m->v1u;
+		var->target =v;
 		var->moving = 0xFF;
 		var->speed = m->v2u ? m->v2u : conf->spd;
 		_servo_power(conf, 1);

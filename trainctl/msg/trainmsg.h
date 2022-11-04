@@ -92,7 +92,7 @@ typedef uint8_t  msg_addr_t;
 
 
 #define MA0_SERVO(_board)		(0x60 | ((_board) & 0x0F))
-#define MA0_IS_SERVO(_addr)	    (((_addr) & 0xF0) == MA0_RELAY(0))
+#define MA0_IS_SERVO(_addr)	    (((_addr) & 0xF0) == MA0_SERVO(0))
 
 
 

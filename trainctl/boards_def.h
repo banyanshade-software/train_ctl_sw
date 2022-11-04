@@ -30,7 +30,7 @@
 #define BOARD_NUMBER 0
 #define BOARD_HAS_CANTON
 #define BOARD_HAS_TURNOUTS
-////#define BOARD_HAS_SERVOS
+#define BOARD_HAS_SERVOS
 #define BOARD_HAS_INA3221   // must be set for stats
 #define BOARD_HAS_CTRL
 #define BOARD_HAS_TOPOLOGY

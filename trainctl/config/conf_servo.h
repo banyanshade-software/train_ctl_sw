@@ -90,7 +90,7 @@ const conf_servo_t *conf_servo_get(int num);
 
 
 #ifdef TRN_BOARD_SIMU
-#define NUM_SERVOS 0 // 0 
+#define NUM_SERVOS 2 // 2 
 #endif // TRN_BOARD_SIMU
 
 

@@ -8,23 +8,30 @@ config servo {
 		= (default) 0;
     const int8_t pwm_timer_num
         = (switcher:*) table(servosw, tim)
+        = (simu) table(servosw, tim)
         = (default) -1;
     const int8_t pwm_timer_ch
         = (switcher:*) table(servosw, ch)
+        = (simu) table(servosw, ch)
         = (default) 0;
     user uint16_t min
         = (switcher:*) table(servosw, min)
+        = (simu:*) table(servosw, min)
         = (default) 0;
     user uint16_t max
         = (switcher:*) table(servosw, max)
+        = (simu:*) table(servosw, max)
         = (default) 0;
     user uint16_t spd
-        = (switcher:*) table(servosw, max)
+        = (switcher:*) table(servosw, spd)
+        = (simu) table(servosw, spd)
         = (default) 0;
     user uint16_t pos0
         = (switcher:*) table(servosw, pos0)
+        = (simu) table(servosw, pos0)
         = (default) 0;
 } num = (switcher) 2
+      = (simu) 2
       = (default) 0;
 
 table servosw

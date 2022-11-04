@@ -111,7 +111,7 @@ static conf_servo_t conf_servo[2] = {
      .pwm_timer_ch = TIM_CHANNEL_1,
      .min = 2300,
      .max = 7230,
-     .spd = 7230,
+     .spd = 80,
      .pos0 = 5000,
   },
   {     // 1
@@ -121,7 +121,7 @@ static conf_servo_t conf_servo[2] = {
      .pwm_timer_ch = TIM_CHANNEL_2,
      .min = 2300,
      .max = 7230,
-     .spd = 7230,
+     .spd = 80,
      .pos0 = 5000,
   }
 };
@@ -150,10 +150,30 @@ static conf_servo_t conf_servo[0] = {
 
 unsigned int conf_servo_num_entries(void)
 {
-    return 0; // 0 
+    return 2; // 2 
 }
 
-static conf_servo_t conf_servo[0] = {
+static conf_servo_t conf_servo[2] = {
+  {     // 0
+     .port_power = NULL,
+     .pin_power = 0,
+     .pwm_timer_num = 4,
+     .pwm_timer_ch = TIM_CHANNEL_1,
+     .min = 2300,
+     .max = 7230,
+     .spd = 80,
+     .pos0 = 5000,
+  },
+  {     // 1
+     .port_power = NULL,
+     .pin_power = 0,
+     .pwm_timer_num = 4,
+     .pwm_timer_ch = TIM_CHANNEL_2,
+     .min = 2300,
+     .max = 7230,
+     .spd = 80,
+     .pos0 = 5000,
+  }
 };
 
 #endif // TRN_BOARD_SIMU

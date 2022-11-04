@@ -115,6 +115,7 @@
 		1BED2A9D25173D1F0080FC97 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1BED2A9B25173D1F0080FC97 /* MainMenu.xib */; };
 		1BED2AA025173D1F0080FC97 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BED2A9F25173D1F0080FC97 /* main.m */; };
 		1BED2AA8251804310080FC97 /* stop.png in Resources */ = {isa = PBXBuildFile; fileRef = 1BED2AA7251804310080FC97 /* stop.png */; };
+		1BF42FD62914F525004EC55B /* servo.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BF42FD52914F524004EC55B /* servo.c */; };
 		1BFCA4C028E2D2E20056DE30 /* PlanCtonroller.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BFCA4BF28E2D2E20056DE30 /* PlanCtonroller.m */; };
 		1BFCA4C828E2DABF0056DE30 /* plancell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1BFCA4C728E2DABF0056DE30 /* plancell.xib */; };
 		1BFCA4CD28E2DB2B0056DE30 /* plancommit.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1BFCA4CC28E2DB2B0056DE30 /* plancommit.xib */; };
@@ -231,11 +232,9 @@
 		1B7A29F5262D58F6004E0481 /* trainmsg.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = trainmsg.c; sourceTree = "<group>"; };
 		1B7A29F6262D58F6004E0481 /* trainmsg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = trainmsg.h; sourceTree = "<group>"; };
 		1B7A29F9262D5947004E0481 /* canton_bemf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = canton_bemf.c; sourceTree = "<group>"; };
-		1B7A29FA262D5947004E0481 /* turnout_config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = turnout_config.h; sourceTree = "<group>"; };
 		1B7A29FB262D5947004E0481 /* turnout.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = turnout.c; sourceTree = "<group>"; };
 		1B7A29FC262D5947004E0481 /* canton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = canton.h; sourceTree = "<group>"; };
 		1B7A29FD262D5947004E0481 /* canton_bemf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = canton_bemf.h; sourceTree = "<group>"; };
-		1B7A29FE262D5947004E0481 /* canton_config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = canton_config.h; sourceTree = "<group>"; };
 		1B7A29FF262D5947004E0481 /* canton.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = canton.c; sourceTree = "<group>"; };
 		1B7A2A00262D5947004E0481 /* turnout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = turnout.h; sourceTree = "<group>"; };
 		1B7A2A05262D5954004E0481 /* inertia.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = inertia.c; sourceTree = "<group>"; };
@@ -314,6 +313,8 @@
 		1BED2A9F25173D1F0080FC97 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		1BED2AA125173D1F0080FC97 /* train_throttle.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = train_throttle.entitlements; sourceTree = "<group>"; };
 		1BED2AA7251804310080FC97 /* stop.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = stop.png; sourceTree = "<group>"; };
+		1BF42FD42914F524004EC55B /* servo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = servo.h; sourceTree = "<group>"; };
+		1BF42FD52914F524004EC55B /* servo.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = servo.c; sourceTree = "<group>"; };
 		1BFCA4BE28E2D2E20056DE30 /* PlanCtonroller.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PlanCtonroller.h; sourceTree = "<group>"; };
 		1BFCA4BF28E2D2E20056DE30 /* PlanCtonroller.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PlanCtonroller.m; sourceTree = "<group>"; };
 		1BFCA4C728E2DABF0056DE30 /* plancell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = plancell.xib; sourceTree = "<group>"; };
@@ -489,13 +490,13 @@
 		1B7A29F8262D5947004E0481 /* low */ = {
 			isa = PBXGroup;
 			children = (
+				1BF42FD52914F524004EC55B /* servo.c */,
+				1BF42FD42914F524004EC55B /* servo.h */,
 				1B7A29F9262D5947004E0481 /* canton_bemf.c */,
 				1B7A29FD262D5947004E0481 /* canton_bemf.h */,
-				1B7A29FA262D5947004E0481 /* turnout_config.h */,
 				1B7A2A00262D5947004E0481 /* turnout.h */,
 				1B7A29FB262D5947004E0481 /* turnout.c */,
 				1B7A29FC262D5947004E0481 /* canton.h */,
-				1B7A29FE262D5947004E0481 /* canton_config.h */,
 				1B7A29FF262D5947004E0481 /* canton.c */,
 				1BAB9A88285594EA005EF72B /* README.md */,
 			);
@@ -933,6 +934,7 @@
 				1B455A20280F671000F09E33 /* conf_canton.fields.c in Sources */,
 				1B238C8A285E54F6000DA9B8 /* tasklet.c in Sources */,
 				1B3657BB275BED540042491A /* CTCManager.m in Sources */,
+				1BF42FD62914F525004EC55B /* servo.c in Sources */,
 				1B46F814280C288E00BAD6E8 /* simu_flash.c in Sources */,
 				1B77BECA274A471200BC5230 /* detectP.c in Sources */,
 				1B693C4427D9CFEA0063D8B6 /* detect_loco.c in Sources */,

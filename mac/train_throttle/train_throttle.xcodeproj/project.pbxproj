@@ -67,6 +67,8 @@
 		1B46F811280C283D00BAD6E8 /* oam_flash.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B46F80F280C283C00BAD6E8 /* oam_flash.c */; };
 		1B46F814280C288E00BAD6E8 /* simu_flash.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B46F813280C288E00BAD6E8 /* simu_flash.c */; };
 		1B4BCB022549ADC90062961D /* statval.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B4BCB002549ADC70062961D /* statval.c */; };
+		1B4F7DC92916AEB4002140C9 /* conf_servo.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B4F7DC82916AEB4002140C9 /* conf_servo.c */; };
+		1B4F7DCE2916AEC4002140C9 /* conf_servo.fields.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B4F7DCD2916AEC4002140C9 /* conf_servo.fields.c */; };
 		1B60329726CA4C0200D5B6CA /* trkplan.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B60329626CA4BF400D5B6CA /* trkplan.c */; };
 		1B61090D256AAE1A00F1AC45 /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B61090C256AAE1900F1AC45 /* CoreBluetooth.framework */; };
 		1B67360F2531E4450063EA9A /* SimTrain.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B67360E2531E4450063EA9A /* SimTrain.m */; };
@@ -219,6 +221,10 @@
 		1B4B70A12729194F00FBDB52 /* TopologyTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TopologyTest.m; sourceTree = "<group>"; };
 		1B4BCB002549ADC70062961D /* statval.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = statval.c; sourceTree = "<group>"; };
 		1B4BCB012549ADC80062961D /* statval.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = statval.h; sourceTree = "<group>"; };
+		1B4F7DC62916AEB3002140C9 /* conf_servo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = conf_servo.h; sourceTree = "<group>"; };
+		1B4F7DC72916AEB4002140C9 /* conf_servo.propag.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = conf_servo.propag.h; sourceTree = "<group>"; };
+		1B4F7DC82916AEB4002140C9 /* conf_servo.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = conf_servo.c; sourceTree = "<group>"; };
+		1B4F7DCD2916AEC4002140C9 /* conf_servo.fields.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = conf_servo.fields.c; sourceTree = "<group>"; };
 		1B60329526CA4BF400D5B6CA /* trkplan.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = trkplan.h; sourceTree = "<group>"; };
 		1B60329626CA4BF400D5B6CA /* trkplan.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = trkplan.c; sourceTree = "<group>"; };
 		1B61090C256AAE1900F1AC45 /* CoreBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreBluetooth.framework; path = System/Library/Frameworks/CoreBluetooth.framework; sourceTree = SDKROOT; };
@@ -371,6 +377,7 @@
 		1B455A18280F671000F09E33 /* _str */ = {
 			isa = PBXGroup;
 			children = (
+				1B4F7DCD2916AEC4002140C9 /* conf_servo.fields.c */,
 				1B138EF028134BAE00DC181B /* conf_utest.fields.c */,
 				1B138EF128134BAE00DC181B /* conf_utestloc.fields.c */,
 				1B455A19280F671000F09E33 /* conf_canton.fields.c */,
@@ -387,6 +394,9 @@
 		1B46F7D828074DCF00BAD6E8 /* config */ = {
 			isa = PBXGroup;
 			children = (
+				1B4F7DC82916AEB4002140C9 /* conf_servo.c */,
+				1B4F7DC62916AEB3002140C9 /* conf_servo.h */,
+				1B4F7DC72916AEB4002140C9 /* conf_servo.propag.h */,
 				1B138EF428134BB900DC181B /* conf_utestloc.c */,
 				1B138EF528134BBA00DC181B /* conf_utestloc.h */,
 				1B138EF628134BBA00DC181B /* conf_utestloc.propag.h */,
@@ -938,6 +948,8 @@
 				1B46F814280C288E00BAD6E8 /* simu_flash.c in Sources */,
 				1B77BECA274A471200BC5230 /* detectP.c in Sources */,
 				1B693C4427D9CFEA0063D8B6 /* detect_loco.c in Sources */,
+				1B4F7DCE2916AEC4002140C9 /* conf_servo.fields.c in Sources */,
+				1B4F7DC92916AEB4002140C9 /* conf_servo.c in Sources */,
 				1B7A2A01262D5948004E0481 /* canton_bemf.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

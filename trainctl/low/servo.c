@@ -79,6 +79,7 @@ static servo_var_t servo_vars[NUM_SERVOS] = {0};
 
 
 // ----------------------------------------------------------
+#ifndef TRAIN_SIMU
 static TIM_HandleTypeDef *ServoTimerHandles[5] = {0};
 
 
@@ -86,11 +87,13 @@ extern TIM_HandleTypeDef htim1;
 extern TIM_HandleTypeDef htim2;
 extern TIM_HandleTypeDef htim3;
 extern TIM_HandleTypeDef htim4;
+#endif // TRAIN_SIMU
 
 
 static void _servo_setpos(const conf_servo_t *conf, uint16_t pos)
 {
-	// XXX set pwm timer
+#ifndef TRAIN_SIMU
+	//  set pwm timer
 	TIM_HandleTypeDef *tim = NULL;
 	if (conf->pwm_timer_num > 4) return;
 	tim = ServoTimerHandles[conf->pwm_timer_num];
@@ -111,19 +114,24 @@ static void _servo_setpos(const conf_servo_t *conf, uint16_t pos)
 		tim->Instance->CCR4 = t;
 		break;
 	}
+#endif
 }
 static void _servo_power(const conf_servo_t *conf, uint8_t pow)
 {
 	if (conf->pin_power<0) return;
+#ifndef TRAIN_SIMU
 	HAL_GPIO_WritePin(conf->port_power, conf->pin_power,
 			pow ? GPIO_PIN_SET : GPIO_PIN_RESET);
+#endif
 }
 
-
+#ifndef TRAIN_SIMU
 static uint8_t timstarted = 0;
+#endif
 
 static void _timer_init(unsigned int timnum, int ch)
 {
+#ifndef TRAIN_SIMU
 	TIM_HandleTypeDef *tim = NULL;
 	if (timnum > 4) return;
 	tim = ServoTimerHandles[timnum];
@@ -134,17 +142,19 @@ static void _timer_init(unsigned int timnum, int ch)
 		timstarted |= (1<<timnum);
 	}
 	HAL_TIM_PWM_Start(tim, ch);
+#endif
 }
 // ----------------------------------------------------------
 
 static void servo_init(void)
 {
-	//itm_debug1(DBG_SERVO, "hop", 0);
-	ServoTimerHandles[1]=&htim1;
+#ifndef TRAIN_SIMU
+    ServoTimerHandles[1]=&htim1;
 	ServoTimerHandles[2]=&htim2;
 	ServoTimerHandles[3]=&htim3;
 	ServoTimerHandles[4]=&htim4;
-
+#endif
+    
 	memset(&servo_vars, 0, sizeof(servo_vars));
 	for (int i=0; i<NUM_SERVOS; i++) {
 		USE_SERVO(i);

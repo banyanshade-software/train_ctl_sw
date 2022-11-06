@@ -19,6 +19,7 @@
 
 #include "../topology/topology.h"
 
+#error obsolete at least for train_throttle
 
 #ifndef TRACKPLAN_TESTPGM
 //#include "../railconfig.h"

@@ -170,25 +170,25 @@ void _itm_debug3(int err, const char *msg, int32_t v1, int32_t v2, int32_t v3, i
 	write_num(buf, tck, 7);
 	buf[7] = err ? '@' : ':';
 	mywrite(buf, 8);
-	int l = MIN(12, strlen(msg));
+	int l = MIN(12, (int)strlen(msg));
 	mywrite(msg, l);
 	if (!n--) goto done;
 
 	buf[0] = '/';
 	itoa(v1, buf+1, 10);
-    l = MIN(12, strlen(buf));
+    l = MIN(12, (int)strlen(buf));
     mywrite(buf, l);
 	if (!n--) goto done;
 
 	buf[0] = '/';
 	itoa(v2, buf+1, 10);
-    l = MIN(12, strlen(buf));
+    l = MIN(12, (int)strlen(buf));
     mywrite(buf, l);
 	if (!n--) goto done;
 
 	buf[0] = '/';
 	itoa(v3, buf+1, 10);
-    l = MIN(12, strlen(buf));
+    l = MIN(12, (int)strlen(buf));
     mywrite(buf, l);
 	if (!n--) goto done;
 

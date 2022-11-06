@@ -797,7 +797,7 @@ static int ctrl2_set_next_c1_lsblk(int tidx, train_ctrl_t *tvar, lsblk_num_t ns,
         itm_debug3(DBG_ERR, "large p", tidx, exppose, tvar->curposmm);
         retcode = 2;
     }
-    if (1 || (5==ns.n)) { // debug
+    if ((1) || (5==ns.n)) { // debug
     	itm_debug3(DBG_CTRL|DBG_POSEC, "enterS2 ", tidx, fromtrig, tvar->c1_sblk.n);
     	itm_debug3(DBG_CTRL|DBG_POSEC, "enterS2.", exppose, tvar->beginposmm, tvar->curposmm);
     }

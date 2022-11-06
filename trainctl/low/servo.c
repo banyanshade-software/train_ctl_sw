@@ -203,6 +203,7 @@ static void process_servo_tick(uint32_t tick, uint32_t dt)
 				if (var->sender) {
 					msg_64_t m = {0};
 					m.from = MA0_SERVO(oam_localBoardNum());
+                    m.to = var->sender;
 					m.subc = i;
 					m.cmd = CMD_SERVO_ACK;
 					m.v1u = var->curpos;

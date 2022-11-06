@@ -160,7 +160,7 @@ int oam_localBoardNum(void)
         tasklet_run(&servo_tasklet, SimuTick);
     }
     NSString *s = dump_msgbuf(0);
-    EXPMSG({.to=MA3_UI_CTC,   .from=MA0_SERVO(1), .cmd=CMD_SERVO_ACK, .v1u=4000});
+    EXPMSG({.to=MA3_UI_CTC,   .from=MA0_SERVO(1), .subc=0, .cmd=CMD_SERVO_ACK, .v1u=4000});
 
 
 }

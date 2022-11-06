@@ -48,6 +48,16 @@
                ReferencedContainer = "container:train_throttle.xcodeproj">
             </BuildableReference>
          </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "1BF56FB92917CCC000073409"
+               BuildableName = "train_lowTests.xctest"
+               BlueprintName = "train_lowTests"
+               ReferencedContainer = "container:train_throttle.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction

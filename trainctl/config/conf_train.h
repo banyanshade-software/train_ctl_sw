@@ -53,12 +53,6 @@ const conf_train_t *conf_train_get(int num);
 
 
 
-#ifdef TRN_BOARD_UNIT_TEST
-#define NUM_TRAINS 0 // 0 
-#endif // TRN_BOARD_UNIT_TEST
-
-
-
 #ifdef TRN_BOARD_UI
 #define NUM_TRAINS 0 // 0 
 #endif // TRN_BOARD_UI

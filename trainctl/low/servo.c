@@ -167,6 +167,7 @@ static void servo_init(void)
 		_servo_setpos(conf, var->target);
 		var->moving = 0xFF;
 	}
+#ifndef TRAIN_SIMU
 	if ((1)) {
 		msg_64_t m = {0};
 		m.cmd = CMD_SERVO_SET;
@@ -177,6 +178,7 @@ static void servo_init(void)
 		m.v2u = 4;
 		mqf_write_from_nowhere(&m);
 	}
+#endif
 }
 
 static void servo_enter_runmode(runmode_t m)

@@ -460,7 +460,7 @@ int  oam_flashstore_rd_next(unsigned int *confnum, unsigned int *fieldnum, unsig
 		oam_flash_end();
 		return 0;
 	}
-	oam_flash_end();
+	// unreached oam_flash_end();
 }
 
 

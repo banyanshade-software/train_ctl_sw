@@ -91,7 +91,7 @@ void detect2_init(void)
 // ---------------------------------------------
 
 
-static inline int32_t divp(int32_t a, int32_t b)
+static inline _UNUSED_ int32_t divp(int32_t a, int32_t b)
 {
 	if (!b) return 0;
 	return a/b;
@@ -154,7 +154,7 @@ void analyse_bemf_final(void)
 			itm_debug2(DBG_DETECT, "LOCO", cnum, bemf_anal[cnum].d);
 			itm_write("/* C:", 5);
 			itoa(cnum, buf, 10);
-			itm_write(buf, strlen(buf));
+			itm_write(buf, (int)strlen(buf));
 			itm_write("*/ {", 4);
 			for (int fi = 0; fi < DETECT_NUM_FREQS*2; fi++) {
 				if (fi)  itm_write(", ", 2);

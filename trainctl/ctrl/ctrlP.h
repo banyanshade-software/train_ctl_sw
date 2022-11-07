@@ -140,14 +140,21 @@ void ctrl_set_pose_trig(int numtrain, train_ctrl_t *tvar, int8_t dir, xblkaddr_t
 void ctrl2_reset_longtrain(_UNUSED_ int tidx, train_ctrl_t *tvars);
 
 enum pose_trig_tag {
-    tag_invalid = 0,
+    tag_invalid = 0,    // reserved. 0 means "no trigger"
+    
+    // tag_end_lsblk used when a canton is divided in sblk without specific current detection
     tag_end_lsblk = 1,
-    tag_stop_blk_wait,
-    tag_stop_eot,
-    tag_auto_u1,
+    
+    tag_stop_blk_wait,  // stopped for occupency (eg before turnout)
+    tag_stop_eot,       // stop for end of track
     
     tag_chkocc,     // rightcars will go into new segment, rightcars and leftcars need to be updated
     tag_brake,      // should start braking
+    
+    tag_free_left,
+    tag_free_right, // TODO do we really need both ?
+    
+    tag_auto_u1,
 };
 
 #define ignore_bemf_presence 1

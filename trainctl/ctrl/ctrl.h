@@ -29,6 +29,7 @@ typedef enum {
     train_off=0,
     train_running_c1,    // running (auto or manual)
 #ifdef OLD_CTRL
+#error obsolete
     train_running_c1c2, // transition c1/c2 on progress
 #endif
     train_station,        // waiting at station

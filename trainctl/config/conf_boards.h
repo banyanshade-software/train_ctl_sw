@@ -41,6 +41,12 @@ const conf_boards_t *conf_boards_get(int num);
 
 
 
+#ifdef TRN_BOARD_UNIT_TEST
+#define NUM_BOARDSS 0 // 0 
+#endif // TRN_BOARD_UNIT_TEST
+
+
+
 #ifdef TRN_BOARD_UI
 #define NUM_BOARDSS 0 // 0 
 #endif // TRN_BOARD_UI

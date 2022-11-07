@@ -320,6 +320,7 @@ static void store_rewind(blk_desc_t *d);
 static int  store_read(blk_desc_t *d, uint8_t *buf);
 static void store_disable_lastfield(blk_desc_t *d);
 static void store_append_field(blk_desc_t *d, uint8_t *buf);
+
 void oam_flashstore_set_value(int confnum, int fieldnum, int confbrd, int instnum, int32_t v)
 {
 	oam_flash_begin();
@@ -459,7 +460,7 @@ int  oam_flashstore_rd_next(unsigned int *confnum, unsigned int *fieldnum, unsig
 		oam_flash_end();
 		return 0;
 	}
-	oam_flash_end();
+	// unreached oam_flash_end();
 }
 
 

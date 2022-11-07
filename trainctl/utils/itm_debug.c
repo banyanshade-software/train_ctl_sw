@@ -32,7 +32,7 @@
 
 
 /* debug flags */
-uint32_t debug_flags = DBG_ERR | DBG_POSEC | DBG_CTRL; // | DBG_POSEC | DBG_CTRL;//DBG_INA3221; //| DBG_TURNOUT; //DBG_OAM | DBG_MSG |DBG_INA3221; // | DBG_CAN; //DBG_CTRL| DBG_SPDCTL |DBG_ADC;//|DBG_DETECT | DBG_CAN; //|DBG_TIM; //|DBG_INA3221| DBG_CTRL; //DBG_DETECT | DBG_AUTO | DBG_CTRL | DBG_POSEC;// | DBG_ADC ; //| DBG_INERTIA | DBG_SPDCTL | DBG_CTRL;// |DBG_CTRL | DBG_INA3221 ;//| DBG_ADC | DBG_INA3221 | DBG_LOWCTRL;
+uint32_t debug_flags = DBG_ERR | DBG_AUTO | DBG_POSEC | DBG_CTRL | DBG_SERVO | DBG_CAN; // | DBG_MSG; // | DBG_POSEC | DBG_CTRL;//DBG_INA3221; //| DBG_TURNOUT; //DBG_OAM | DBG_MSG |DBG_INA3221; // | DBG_CAN; //DBG_CTRL| DBG_SPDCTL |DBG_ADC;//|DBG_DETECT | DBG_CAN; //|DBG_TIM; //|DBG_INA3221| DBG_CTRL; //DBG_DETECT | DBG_AUTO | DBG_CTRL | DBG_POSEC;// | DBG_ADC ; //| DBG_INERTIA | DBG_SPDCTL | DBG_CTRL;// |DBG_CTRL | DBG_INA3221 ;//| DBG_ADC | DBG_INA3221 | DBG_LOWCTRL;
 		 // DBG_ERR | DBG_TURNOUT |DBG_CTRL; // DBG_PRES | DBG_CTRL | DBG_CTRLHI | DBG_POSEC ;//| DBG_ADC ;//| DBG_POSE; // DBG_POSEC;// |DBG_SPDCTL|DBG_PID| DBG_PRES|DBG_CTRL; //| DBG_PRES | DBG_INA3221;// | DBG_INA3221 | DBG_PRES | DBG_UI; //| DBG_ADC; //| DBG_CTRL | DBG_SPDCTL|DBG_PID;//| DBG_UI;// |DBG_MSG;
  // | DBG_PRES | DBG_SPDCTL
 
@@ -170,25 +170,25 @@ void _itm_debug3(int err, const char *msg, int32_t v1, int32_t v2, int32_t v3, i
 	write_num(buf, tck, 7);
 	buf[7] = err ? '@' : ':';
 	mywrite(buf, 8);
-	int l = MIN(12, strlen(msg));
+	int l = MIN(12, (int)strlen(msg));
 	mywrite(msg, l);
 	if (!n--) goto done;
 
 	buf[0] = '/';
 	itoa(v1, buf+1, 10);
-    l = MIN(12, strlen(buf));
+    l = MIN(12, (int)strlen(buf));
     mywrite(buf, l);
 	if (!n--) goto done;
 
 	buf[0] = '/';
 	itoa(v2, buf+1, 10);
-    l = MIN(12, strlen(buf));
+    l = MIN(12, (int)strlen(buf));
     mywrite(buf, l);
 	if (!n--) goto done;
 
 	buf[0] = '/';
 	itoa(v3, buf+1, 10);
-    l = MIN(12, strlen(buf));
+    l = MIN(12, (int)strlen(buf));
     mywrite(buf, l);
 	if (!n--) goto done;
 

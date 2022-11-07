@@ -201,6 +201,7 @@ static void ctrl_set_mode(int trnum, train_mode_t mode)
 // ----------------------------------------------------------------------------
 // ----------------------------------------------------------------------------
 
+/*
 static const uint8_t route_0_T0[] = {
     SON,
     _AR_TIMER(8), _AR_WTIMER, SOFF,
@@ -213,6 +214,8 @@ static const uint8_t route_0_T1[] = {_AR_WEVENT(0),
     _AR_LOOP
     
 };
+*/
+
 // ----------------------------------------------------------------------------
 // ----------------------------------------------------------------------------
 #if 0 // obsolete
@@ -336,6 +339,7 @@ static void _ctrl_init(int normalmode)
 		const _UNUSED_ lsblk_num_t s2 = {2};
 		const _UNUSED_ lsblk_num_t s5 = {5};
 		const _UNUSED_ lsblk_num_t s3 = {3};
+		const _UNUSED_ lsblk_num_t s7 = {7};
 		const _UNUSED_ lsblk_num_t s8 = {8};
 		if ((1)) {
 #ifdef TRAIN_SIMU
@@ -343,12 +347,14 @@ static void _ctrl_init(int normalmode)
 			ctrl_set_mode(0, train_manual);
 #else
 			ctrl2_init_train(0, &trctl[0], s0);
-			//ctrl2_init_train(0, &trctl[0], s5 /*s0*/);
 			ctrl2_init_train(1, &trctl[1], s8);
+			ctrl2_init_train(2, &trctl[2], s7);
 			ctrl_set_mode(0, train_manual);
 			ctrl_set_mode(1, train_manual);
+			ctrl_set_mode(2, train_manual);
 #endif
 
+			/*
 			if ((0)) {
 
 				trctl[0].routeidx = 0;
@@ -359,6 +365,7 @@ static void _ctrl_init(int normalmode)
 				trctl[1].routeidx = 0;
 				trctl[1].route = route_0_T1;
 			}
+			*/
 
 			/*if ((1)) {
 
@@ -553,6 +560,17 @@ static void posecm_measured(int tidx, int32_t pose, lsblk_num_t blk1, lsblk_num_
 
 // ----------------------------------------------------------------------------
 
+static uint8_t auto_code[8][64];
+
+uint8_t *ctrl_get_autocode(int numtrain)
+{
+	train_ctrl_t *tvar = ctrl_get_tvar(numtrain);
+	if (!tvar->route) {
+		tvar->route = auto_code[numtrain];
+	}
+	return tvar->route;
+}
+
 static void normal_process_msg(msg_64_t *m)
 {
     // -----------------------------------------
@@ -579,7 +597,7 @@ static void normal_process_msg(msg_64_t *m)
         //if (test_mode) continue;
         int tidx = MA1_TRAIN(m->to);
         train_ctrl_t *tvar = &trctl[tidx];
-        extern uint8_t Auto1ByteCode[]; // XXX temp hack
+        //extern uint8_t Auto1ByteCode[]; // XXX temp hack
         switch (m->cmd) {
         case CMD_SET_TRAIN_MODE:
             ctrl_set_mode(m->v1u, m->v2u);
@@ -587,10 +605,11 @@ static void normal_process_msg(msg_64_t *m)
         case CMD_START_AUTO:
             switch (m->v1u) {
                 case 1:
-                    tvar->route =  Auto1ByteCode;
+                    // tvar->route =  Auto1ByteCode;
                     tvar->routeidx = 0;
                     tvar->got_u1 = 0;
                     tvar->trigu1 = 0;
+                    ctrl_set_mode(tidx, train_manual); // make sure it is restarted if already auto
                     ctrl_set_mode(tidx, train_auto);
                     break;
                 default:

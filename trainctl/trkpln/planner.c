@@ -19,6 +19,7 @@
 #include "../ctrl/ctrl.h"
 #include "../ctrl/ctrlP.h"
 #include "../ctrl/cautoP.h"
+#include "../leds/led.h"
 
 #ifndef BOARD_HAS_TRKPLN
 #error BOARD_HAS_TRKPLN not defined, remove this file from build
@@ -29,7 +30,7 @@
 static void planner_reset_all(void);
 static void handle_planner_msg(msg_64_t *m);
 static void planner_tick(_UNUSED_ uint32_t tick, _UNUSED_ uint32_t dt);
-static void planner_plan_pending(void);
+static void planner_plan_pending(int delay);
 
 static void planner_enter_runmode(_UNUSED_ runmode_t m)
 {
@@ -57,6 +58,8 @@ typedef struct {
     uint8_t train;
     uint8_t delay;
     uint8_t target;
+    uint8_t spd;
+    uint32_t startTick;
 } pending_t;
 
 #define NUM_PENDING 4
@@ -65,14 +68,15 @@ static int PendingIdx = 0;
 
 static void reset_pending(void)
 {
-    memset(PlanPending, 0, sizeof((PlanPending)));
-    for (int i=0; i<NUM_PENDING; i++) {
-        PlanPending[i].train = 0xFF;
-    }
+
     PendingIdx = 0;
 }
 static void planner_reset_all(void)
 {
+	memset(PlanPending, 0, sizeof((PlanPending)));
+	for (int i=0; i<NUM_PENDING; i++) {
+		PlanPending[i].train = 0xFF;
+	}
     reset_pending();
 }
 static void handle_planner_msg(msg_64_t *m)
@@ -82,15 +86,16 @@ static void handle_planner_msg(msg_64_t *m)
         reset_pending();
 		break;
 	case CMD_PLANNER_ADD:
-            if (PendingIdx >= NUM_PENDING) break;
-            PlanPending[PendingIdx].train = m->subc;
-            PlanPending[PendingIdx].delay = m->v2u;
-            PlanPending[PendingIdx].target = m->v1u;
-            PendingIdx++;
+		if (PendingIdx >= NUM_PENDING) break;
+		PlanPending[PendingIdx].train = m->subc;
+		PlanPending[PendingIdx].delay = m->va16;
+		PlanPending[PendingIdx].target = m->vb8;
+		PlanPending[PendingIdx].spd = m->vcu8;
+		PendingIdx++;
 		break;
 	case CMD_PLANNER_COMMIT:
-            planner_plan_pending();
-            reset_pending();
+		planner_plan_pending(m->v1u);
+        reset_pending();
 		break;
 	case CMD_PLANNER_RESET:
 		planner_reset_all();
@@ -100,10 +105,17 @@ static void handle_planner_msg(msg_64_t *m)
 	}
 }
 
+static void planner_start_pending(int n, uint8_t Auto1ByteCode[]);
 
 static void planner_tick(_UNUSED_ uint32_t tick, _UNUSED_ uint32_t dt)
 {
-
+	  for (int n = 0; n<NUM_PENDING; n++) {
+	    	if (0xFF == PlanPending[n].train) continue;
+	    	if (PlanPending[n].startTick && (tick >= PlanPending[n].startTick)) {
+	    		planner_start_pending(n, ctrl_get_autocode(PlanPending[n].train));
+	    		PlanPending[n].startTick = 0;
+	    }
+	}
 }
 
 static uint32_t adjmatrix[32] = {0};
@@ -143,15 +155,26 @@ static void build_matrix(void)
 static uint16_t distance[32];
 static uint32_t visited; // bitfield
 
-uint8_t Auto1ByteCode[64];
-static int bytecodeIndex = 0;
 
-static void planner_plan_pending(void)
+static void planner_plan_pending(int delay)
 {
     if (!adjdone) build_matrix();
+    for (int n = 0; n<NUM_PENDING; n++) {
+    	if (0xFF == PlanPending[n].train) continue;
+    	if (PlanPending[n].startTick) continue; // already commited
+    	PlanPending[n].startTick = (PlanPending[n].delay + delay)*1000 + planner_tasklet.last_tick;
+    }
+}
+
+static void planner_start_pending(int n, uint8_t Auto1ByteCode[])
+{
     //XXX currently handle only 1st request
-    int train = PlanPending[0].train;
-    int target = PlanPending[0].target;
+    int train = PlanPending[n].train;
+	if (0xFF == train) return;
+	PlanPending[n].train = 0xFF;
+
+	int spd = PlanPending[n].spd;
+    int target = PlanPending[n].target;
     int curpos = ctrl_get_train_curlsblk(train);
     if (curpos == -1) return;
     //XXX delay ignored
@@ -202,10 +225,11 @@ static void planner_plan_pending(void)
     printf("hop");
 #endif
     // convert to cauto byte code
-    bytecodeIndex = 0;
+    int bytecodeIndex = 0;
     b = curpos;
     int prevb = -1;
     int dir = 0;
+    _UNUSED_ int led = 0;
     for (;;) {
         //printf(" b%d ", b);
         if (b==curpos) {
@@ -218,25 +242,37 @@ static void planner_plan_pending(void)
             if ((p->right2 == b) || (p->right1 == b)) ndir = 1;
             if (ndir != dir) {
                 if (dir) {
-                    Auto1ByteCode[bytecodeIndex++] = _AR_TRG_TLEN; //_AR_TRG_END;
+                    Auto1ByteCode[bytecodeIndex++] = _AR_TRG_LIM; //_AR_TRG_END;
                     Auto1ByteCode[bytecodeIndex++] = _AR_WTRG_U1;
                     Auto1ByteCode[bytecodeIndex++] = _AR_SPD(0);
                     Auto1ByteCode[bytecodeIndex++] = _AR_WSTOP;
                     Auto1ByteCode[bytecodeIndex++] = _AR_TIMER(1);
                     Auto1ByteCode[bytecodeIndex++] = _AR_WTIMER;
                 }
-                Auto1ByteCode[bytecodeIndex++] = _AR_SPD(ndir*64);
+                Auto1ByteCode[bytecodeIndex++] = _AR_SPD(ndir*spd);
             }
             dir = ndir;
             Auto1ByteCode[bytecodeIndex++] = b;
         }
+        /*
+        if ((b==1) && (!led)) {
+        	led = 1;
+        	Auto1ByteCode[bytecodeIndex++] = _AR_LED;
+        	Auto1ByteCode[bytecodeIndex++] = 0;
+        	Auto1ByteCode[bytecodeIndex++] = LED_PRG_25p;
+
+        	Auto1ByteCode[bytecodeIndex++] = _AR_LED;
+        	Auto1ByteCode[bytecodeIndex++] = 1;
+        	Auto1ByteCode[bytecodeIndex++] = LED_PRG_NEONON;
+        }
+        */
         if (b==target) {
             if (dir) {
-                Auto1ByteCode[bytecodeIndex++] = b;
-                Auto1ByteCode[bytecodeIndex++] = _AR_TRG_TLEN;
+                //Auto1ByteCode[bytecodeIndex++] = b;
+                Auto1ByteCode[bytecodeIndex++] = _AR_TRG_LIM;
                 Auto1ByteCode[bytecodeIndex++] = _AR_WTRG_U1;
                 Auto1ByteCode[bytecodeIndex++] = _AR_SPD(0);
-                Auto1ByteCode[bytecodeIndex++] = _AR_WSTOP;
+                //Auto1ByteCode[bytecodeIndex++] = _AR_WSTOP;
             }
             Auto1ByteCode[bytecodeIndex++] = _AR_END;
             break;
@@ -255,7 +291,7 @@ static void planner_plan_pending(void)
         b = si;
     }
     //printf("hop");
-    msg_64_t m ={0};
+    msg_64_t m = {0};
     m.cmd = CMD_START_AUTO;
     m.v1u = 1;
     m.to = MA1_CTRL(train);

@@ -167,6 +167,9 @@ void ctrl2_upcmd_settrigU1(int tidx, train_ctrl_t *tvars, uint8_t t)
         	p = ctrl_pose_len_s1(conf_train_get(tidx), tvars);
             //p = ctrl_pose_percent_s1(conf_train_get(tidx), tvars, 10);
             break;
+        case 4:
+        	p = ctrl_pose_limit_s1(conf_train_get(tidx), tvars);
+        	break;
     }
 
     ctrl_set_pose_trig(tidx, tvars, _traindir(tidx, tvars, NULL), tvars->can1_xaddr,  p, tag_auto_u1);
@@ -846,7 +849,7 @@ static int ctrl2_set_next_c1_lsblk(int tidx, train_ctrl_t *tvar, lsblk_num_t ns,
         itm_debug3(DBG_ERR, "large p", tidx, exppose, tvar->_curposmm);
         retcode = 2;
     }
-    if (1 || (5==ns.n)) { // debug
+    if ((1) || (5==ns.n)) { // debug
     	itm_debug3(DBG_CTRL|DBG_POSEC, "enterS2 ", tidx, fromtrig, tvar->c1_sblk.n);
     	itm_debug3(DBG_CTRL|DBG_POSEC, "enterS2.", exppose, tvar->beginposmm, tvar->_curposmm);
     }

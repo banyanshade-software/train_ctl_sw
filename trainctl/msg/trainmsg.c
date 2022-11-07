@@ -71,8 +71,13 @@ LFMQUEUE_DEF_C(from_oscillo, msg_64_t, 2, 1)
 #endif
 
 #ifdef BOARD_HAS_TRKPLN
-LFMQUEUE_DEF_C(to_planner, msg_64_t, 	6, 0)
-LFMQUEUE_DEF_C(from_planner, msg_64_t, 	6,  1)
+LFMQUEUE_DEF_C(to_planner, msg_64_t, 	8, 0)
+LFMQUEUE_DEF_C(from_planner, msg_64_t, 	8,  1)
+#endif
+
+#ifdef BOARD_HAS_SERVOS
+LFMQUEUE_DEF_C(to_servo, msg_64_t,		3, 0)
+LFMQUEUE_DEF_C(from_servo, msg_64_t,	3, 0)
 #endif
 
 LFMQUEUE_DEF_C(to_oam, msg_64_t, 8, 0)
@@ -162,8 +167,13 @@ static int  _local_disptach(msg_64_t *m, mqf_t *dont_send_to, uint8_t allow_loop
             dest = &to_turnout;
 #endif
 #ifdef BOARD_HAS_RELAY
+#error relay is not currently implemented
         } else if (MA0_IS_RELAY(m->to)) {
             dest = &to_relay;
+#endif
+#ifdef BOARD_HAS_SERVOS
+        } else if (MA0_IS_SERVO(m->to)) {
+            dest = &to_servo;
 #endif
 #ifdef BOARD_HAS_INA3221
         } else if (MA0_IS_INA(m->to)) {

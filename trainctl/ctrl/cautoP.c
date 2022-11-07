@@ -169,12 +169,12 @@ static void check_for_ctrl(int tidx, train_ctrl_t *tvars)
             ctrl2_send_led(led_num, prog_num);
             continue;
         }
-        if (r == _AR_TRG_HALF) {
+        if (r == _AR_TRG_LIM) {
         	// cannot call ctrl2_upcmd_settrigU1() now
         	// trig would b sent to spdctl before C1C2 - which reset POSE
         	// thus we set stpmiddle and handle it in cauto_end_tick()
-    		itm_debug1(DBG_AUTO, "ca.trghlf", tidx);
-        	tvars->trigu1 = 1;
+    		itm_debug1(DBG_AUTO, "ca.trglim", tidx);
+        	tvars->trigu1 = 4;
             tvars->routeidx++;
             continue;
         }

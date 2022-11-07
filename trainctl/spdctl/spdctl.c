@@ -500,6 +500,7 @@ void send_train_stopped(int numtrain, train_vars_t *tvars)
     mqf_write_from_spdctl(&m);
 }
 
+#define punch_start 1
 
 static void train_periodic_control(int numtrain, _UNUSED_ uint32_t dt)
 {
@@ -547,10 +548,14 @@ static void train_periodic_control(int numtrain, _UNUSED_ uint32_t dt)
     }
     if (tconf->enable_pid) {
     	if (tvars->target_speed) {
+    		if ((punch_start) && (tvars->pidvars.stopped)) {
+    			itm_debug2(DBG_PID, "punch", numtrain, v);
+    			v=100;
+    		}
     		tvars->pidvars.stopped = 0;
     	}
         if (!tvars->pidvars.stopped && (tvars->target_speed == 0) && (abs(tvars->bemf_mv)<100)) {
-    		itm_debug1(DBG_PID, "stop", 0);
+    		itm_debug1(DBG_PID, "stop", numtrain);
 			pidctl_reset(&tconf->pidctl, &tvars->pidvars);
 			debug_info('T', numtrain, "STOP_PID", 0,0, 0);
 			tvars->pidvars.stopped = 1;
@@ -757,7 +762,7 @@ static void _set_speed(int tidx, const conf_train_t *cnf, train_vars_t *vars)
     msg_64_t m = {0};
     m.from = MA1_SPDCTL(tidx);
     TO_CANTON(m, vars->C1x);
-    if ((1)) {
+    if ((1)) { //  TODO remove sanity check
         extern void Error_Handler(void);
         if (7==m.subc) Error_Handler(); // XXX
     }
@@ -765,10 +770,11 @@ static void _set_speed(int tidx, const conf_train_t *cnf, train_vars_t *vars)
     m.cmd = CMD_SETVPWM;
     m.v1u = pvi1;
     m.v2 = dir1*pwm_duty;
-    if ((1)) {
+    if ((1)) {//  TODO remove sanity check
         extern void Error_Handler(void);
         if (7==m.subc) Error_Handler(); // XXX
-    }	itm_debug3(DBG_SPDCTL, "setvpwm", m.v1u, m.v2, m.to);
+    }
+    itm_debug3(DBG_SPDCTL, "setvpwm", m.v1u, m.v2, m.to);
     mqf_write_from_spdctl(&m);
 
     if (c2) {

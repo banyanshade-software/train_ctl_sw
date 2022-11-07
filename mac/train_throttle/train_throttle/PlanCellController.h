@@ -17,6 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) NSInteger targetLSBLK;
 @property (nonatomic) BOOL hasRule;
 @property (nonatomic) NSUInteger delay;
+@property (nonatomic) NSUInteger spd;
 - (void) resetEntry;
 
 @end

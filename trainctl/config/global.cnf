@@ -35,6 +35,8 @@ attrib turnout store = normal
 attrib turnout stnum = 3
 attrib led store = normal
 attrib led stnum = 4
+attrib servo store = normal
+attrib servo stnum = 5
 
 attrib globparam store = local
 attrib globparam stnum = 10

@@ -1,5 +1,5 @@
 
-CNFS=boards.cnf  canton.cnf  global.cnf  topology.cnf    train.cnf   turnout.cnf led.cnf globparam.cnf unittest.cnf
+CNFS=boards.cnf  canton.cnf  global.cnf  topology.cnf    train.cnf   turnout.cnf led.cnf globparam.cnf unittest.cnf servo.cnf
 
 all:.configdone
 

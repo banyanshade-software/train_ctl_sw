@@ -4,6 +4,8 @@
 
 #include "propag.h"
 
+#include "conf_servo.h"
+#include "conf_servo.propag.h"
 #include "conf_utestloc.h"
 #include "conf_utestloc.propag.h"
 #include "conf_utest.h"
@@ -27,6 +29,9 @@
 void conf_propagate(unsigned int confnum, unsigned int fieldnum, unsigned int instnum, int32_t v)
 {
     switch (confnum) {
+    case conf_pnum_servo:
+        conf_servo_propagate(instnum, fieldnum, v);
+        break;
     case conf_pnum_utest:
         conf_utest_propagate(instnum, fieldnum, v);
         break;
@@ -49,6 +54,9 @@ void conf_propagate(unsigned int confnum, unsigned int fieldnum, unsigned int in
 int32_t conf_default_value(unsigned int confnum, unsigned int fieldnum, unsigned int board, unsigned int instnum)
 {
     switch (confnum) {
+    case conf_pnum_servo:
+        return conf_servo_default_value(instnum, fieldnum, board);
+        break;
     case conf_pnum_utest:
         return conf_utest_default_value(instnum, fieldnum, board);
         break;

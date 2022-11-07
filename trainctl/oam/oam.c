@@ -841,6 +841,11 @@ static void customOam(msg_64_t *m)
 	default:
 		itm_debug2(DBG_OAM, "custom", m->subc, m->from);
 		break;
+	case 99:
+#ifdef BOARD_HAS_FLASH
+		oam_flash_erase();
+#endif
+		break;
 	}
 }
 

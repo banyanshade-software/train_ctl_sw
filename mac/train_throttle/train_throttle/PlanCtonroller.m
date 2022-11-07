@@ -105,15 +105,17 @@
         if (!c.hasRule) continue;
         NSLog(@"train %d after %d go %d\n", (int) c.trainNum, (int) c.delay, (int) c.targetLSBLK);
         m.cmd = CMD_PLANNER_ADD;
-        m.subc = i;
-        m.v1u = c.targetLSBLK;
-        m.v2u = c.delay;
+        m.subc = c.trainNum;
+        m.vb8 = c.targetLSBLK;
+        m.va16 = c.delay;
+        m.vcu8 = c.spd;
         [theDelegate sendMsg64:m];
         nrule++;
     }
     if (!nrule) return;
     m.cmd = CMD_PLANNER_COMMIT;
     m.v1u = delay;
+    m.v2 = 0;
     [theDelegate sendMsg64:m];
 }
 @end

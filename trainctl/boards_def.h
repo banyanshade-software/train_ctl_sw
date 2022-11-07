@@ -30,6 +30,7 @@
 #define BOARD_NUMBER 0
 #define BOARD_HAS_CANTON
 #define BOARD_HAS_TURNOUTS
+#define BOARD_HAS_SERVOS
 #define BOARD_HAS_INA3221   // must be set for stats
 #define BOARD_HAS_CTRL
 #define BOARD_HAS_TOPOLOGY
@@ -115,6 +116,7 @@
 
 #define BOARD_HAS_CANTON
 #define BOARD_HAS_TURNOUTS
+////#define BOARD_HAS_SERVOS
 #define BOARD_HAS_INA3221
 #define BOARD_HAS_CTRL
 #define BOARD_HAS_TOPOLOGY
@@ -170,6 +172,7 @@
 
 #define BOARD_HAS_CANTON
 #define BOARD_HAS_TURNOUTS
+//#define BOARD_HAS_SERVOS
 #define BOARD_HAS_INA3221
 //#define BOARD_HAS_CTRL
 //#define BOARD_HAS_TOPOLOGY
@@ -213,6 +216,7 @@
 
 //#define BOARD_HAS_CANTON
 #define BOARD_HAS_TURNOUTS
+#define BOARD_HAS_SERVOS
 //#define BOARD_HAS_INA3221
 //#define BOARD_HAS_CTRL
 //#define BOARD_HAS_TOPOLOGY
@@ -258,6 +262,7 @@
 
 //#define BOARD_HAS_CANTON
 //#define BOARD_HAS_TURNOUTS
+//#define BOARD_HAS_SERVOS
 //#define BOARD_HAS_INA3221
 //#define BOARD_HAS_CTRL
 //#define BOARD_HAS_TOPOLOGY
@@ -273,7 +278,9 @@
 //#define BOARD_HAS_TRKPLN
 // #define BOARD_CAN_BE_MASTER
 
-#define SSD1306_I2C_PORTS        { &hi2c1}
+
+#define SSD1306_I2C_PORTS_DECL extern I2C_HandleTypeDef hi2c1
+#define SSD1306_I2C_PORTS { &hi2c1 }
 
 /*
  * number of local block per board

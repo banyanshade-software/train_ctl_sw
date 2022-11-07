@@ -54,7 +54,9 @@
 #ifdef BOARD_HAS_USB
 #include "usbtask.h"
 #endif
-
+#ifdef BOARD_HAS_SERVOS
+#include "../low/servo.h"
+#endif
 
 #include "../oam/oam.h"
 /*
@@ -344,6 +346,9 @@ static tasklet_t *ctrlTasklets[] = {
 #ifdef BOARD_HAS_CAN
 
 #endif
+#ifdef BOARD_HAS_SERVOS
+		&servo_tasklet,
+#endif
 		NULL
 };
 
@@ -585,6 +590,7 @@ void  HAL_ADC_ErrorCallback(_UNUSED_ ADC_HandleTypeDef *hadc)
 void vApplicationStackOverflowHook(_UNUSED_ TaskHandle_t xTask, _UNUSED_ signed char *pcTaskName)
 {
 	itm_debug1(DBG_ERR, "STK OVF", 1);
+	FatalError("STKo", "stack overflow", Error_Stack);
 	for (;;) {
 
 	}

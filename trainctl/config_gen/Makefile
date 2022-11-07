@@ -1,5 +1,7 @@
 
 
+PACKCC=../../tools/packcc/build/clang/debug/bin/packcc
+
 all: config
 
 CFLAGS += -g -Wall -Werror
@@ -12,7 +14,7 @@ config: $(OBJS)
 
 config.c: config.peg
 	#packcc -d -l config.peg
-	packcc  -l config.peg
+	$(PACKCC)  -l config.peg
 	
 
 clean:

@@ -30,7 +30,7 @@ const conf_utestloc_t *conf_utestloc_get(int num);
 
 
 #ifdef TRN_BOARD_UNIT_TEST
-#define NUM_UTESTLOCS 0 // 0 
+#define NUM_UTESTLOCS 3 // 3 
 #endif // TRN_BOARD_UNIT_TEST
 
 
@@ -48,7 +48,7 @@ const conf_utestloc_t *conf_utestloc_get(int num);
 
 
 #ifdef TRN_BOARD_MAINV0
-#define NUM_UTESTLOCS 4 // 4 
+#define NUM_UTESTLOCS 0 // 0 
 #endif // TRN_BOARD_MAINV0
 
 
@@ -72,11 +72,11 @@ const conf_utestloc_t *conf_utestloc_get(int num);
 
 
 #ifdef TRN_BOARD_SIMU
-#define NUM_UTESTLOCS 2 // 2 
+#define NUM_UTESTLOCS 0 // 0 
 #endif // TRN_BOARD_SIMU
 
 
-#define MAX_UTESTLOCS 4
+#define MAX_UTESTLOCS 3
 
 
 

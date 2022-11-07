@@ -25,10 +25,25 @@
 
 unsigned int conf_utestloc_num_entries(void)
 {
-    return 0; // 0 
+    return 3; // 3 
 }
 
-static conf_utestloc_t conf_utestloc[0] = {
+static conf_utestloc_t conf_utestloc[3] = {
+  {     // 0
+     .fixed = 42,
+     .alpha = 1000,
+     .beta = 2000,
+  },
+  {     // 1
+     .fixed = 42,
+     .alpha = 1001,
+     .beta = 2000,
+  },
+  {     // 2
+     .fixed = 42,
+     .alpha = 1002,
+     .beta = 2000,
+  }
 };
 
 #endif // TRN_BOARD_UNIT_TEST
@@ -70,30 +85,10 @@ static conf_utestloc_t conf_utestloc[0] = {
 
 unsigned int conf_utestloc_num_entries(void)
 {
-    return 4; // 4 
+    return 0; // 0 
 }
 
-static conf_utestloc_t conf_utestloc[4] = {
-  {     // 0
-     .fixed = 42,
-     .alpha = 1000,
-     .beta = 2000,
-  },
-  {     // 1
-     .fixed = 42,
-     .alpha = 1001,
-     .beta = 2001,
-  },
-  {     // 2
-     .fixed = 42,
-     .alpha = 1002,
-     .beta = 2002,
-  },
-  {     // 3
-     .fixed = 42,
-     .alpha = 1000,
-     .beta = 2000,
-  }
+static conf_utestloc_t conf_utestloc[0] = {
 };
 
 #endif // TRN_BOARD_MAINV0
@@ -150,20 +145,10 @@ static conf_utestloc_t conf_utestloc[0] = {
 
 unsigned int conf_utestloc_num_entries(void)
 {
-    return 2; // 2 
+    return 0; // 0 
 }
 
-static conf_utestloc_t conf_utestloc[2] = {
-  {     // 0
-     .fixed = 42,
-     .alpha = 1000,
-     .beta = 2000,
-  },
-  {     // 1
-     .fixed = 42,
-     .alpha = 1000,
-     .beta = 2000,
-  }
+static conf_utestloc_t conf_utestloc[0] = {
 };
 
 #endif // TRN_BOARD_SIMU

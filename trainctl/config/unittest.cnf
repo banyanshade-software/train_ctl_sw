@@ -13,6 +13,7 @@ config utest {
 } num = (mainV0) 1
       = (simu) 1
       = (dispatcher) 1          # TODO
+      = (unit_test) 1
       = (default) 1;
 
 
@@ -31,15 +32,14 @@ attrib utest c_code {
 config utestloc {
     const uint32_t fixed = (default) 42;
     user uint32_t alpha
-        = (mainV0:1) 1001
-        = (mainV0:2) 1002
+        = (unit_test:1) 1001
+        = (unit_test:2) 1002
         = (default) 1000;
     user uint32_t beta
         = (mainV0:1) 2001
         = (mainV0:2) 2002
         = (default) 2000;
-} num = (mainV0) 4
-      = (simu) 2
+} num = (unit_test) 3
       = (default) 0;
 
 

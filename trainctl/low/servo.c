@@ -165,13 +165,14 @@ static void servo_init(void)
 		var->target = conf->pos0;
 		var->curpos = conf->pos0;
 		_servo_setpos(conf, var->target);
-		var->moving = 0xFF;
+		var->moving = 4;
+		var->sender = 0xFF; // no ack
 	}
 #ifndef TRAIN_SIMU
 	if ((1)) {
 		msg_64_t m = {0};
 		m.cmd = CMD_SERVO_SET;
-		m.from = MA3_UI_CTC;
+		m.from = MA3_BROADCAST;
 		m.to = MA0_SERVO(oam_localBoardNum());
 		m.subc = 0;
 		m.v1u = 9001; //9000;
@@ -200,7 +201,7 @@ static void process_servo_tick(uint32_t tick, uint32_t dt)
 				_servo_power(conf, 0);
 				var->powered = 0;
 				itm_debug2(DBG_SERVO, "stp", i, var->sender);
-				if (var->sender) {
+				if (var->sender != 0xFF) {
 					msg_64_t m = {0};
 					m.from = MA0_SERVO(oam_localBoardNum());
                     m.to = var->sender;
@@ -209,6 +210,18 @@ static void process_servo_tick(uint32_t tick, uint32_t dt)
 					m.v1u = var->curpos;
 					mqf_write_from_servo(&m);
 				}
+				if ((1)) {
+						static cnt=0;
+						msg_64_t m = {0};
+						m.cmd = CMD_SERVO_SET;
+						m.from = MA3_BROADCAST;
+						m.to = MA0_SERVO(oam_localBoardNum());
+						m.subc = 0;
+						m.v1u = (cnt%2) ? 0 : 10000;
+						m.v2u = 50;
+						mqf_write_from_nowhere(&m);
+						cnt++;
+					}
 				continue;
 			}
 			int32_t p;
@@ -223,7 +236,7 @@ static void process_servo_tick(uint32_t tick, uint32_t dt)
 				var->curpos = (uint16_t) p;
 				itm_debug3(DBG_SERVO, "mv", i,var->curpos, var->target);
 				_servo_setpos(conf, var->curpos);
-				var->moving = 0xFF;
+				var->moving = 4;
 			}
 		}
 	}
@@ -245,7 +258,11 @@ static void process_servo_cmd(msg_64_t *m)
 		var->speed = m->v2u ? m->v2u : conf->spd;
 		_servo_power(conf, 1);
 		var->powered = 1;
-		var->sender = m->from;
+		if ((m->from == MA3_BROADCAST) || (m->from != MA2_LOCAL_BCAST)) {
+			var->sender = 0xFF;
+		} else {
+			var->sender = m->from;
+		}
 	}
 }
 

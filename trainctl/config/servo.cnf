@@ -36,7 +36,7 @@ config servo {
 
 table servosw
 	( power_port, power_pin,    tim,            ch,     min,    max,    spd,    pos0)
-    ( GPIOD,             -1,      4, TIM_CHANNEL_1,    2300,   7230,     80,     5000)
+    ( GPIOD,             -1,      4, TIM_CHANNEL_1,    1000,   3700,     80,     5000)
     ( GPIOD,             -1,      4, TIM_CHANNEL_2,    2300,   7230,     80,     5000)
 ;
 

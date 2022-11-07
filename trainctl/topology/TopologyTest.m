@@ -25,14 +25,15 @@
 
 - (void)testAnyFF
 {
-    lsblk_num_t b = any_lsblk_with_canton(0xFF);
+    xblkaddr_t caff = { .v = 0xFF };
+    lsblk_num_t b = any_lsblk_with_canton(caff);
     XCTAssert(b.n==-1);
     lsblk_num_t bn = next_lsblk(b, 0, NULL);
     XCTAssert(bn.n==-1);
     lsblk_num_t b1 = next_lsblk(b, 1, NULL);
     XCTAssert(b1.n==-1);
     bn.n = 0;
-    lsblk_num_t be = first_lsblk_with_canton(0xFF, bn);
+    lsblk_num_t be = first_lsblk_with_canton(caff, bn);
     XCTAssert(be.n==-1);
 }
 

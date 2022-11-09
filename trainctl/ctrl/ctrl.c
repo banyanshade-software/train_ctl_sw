@@ -1003,27 +1003,52 @@ static void evt_timer(int tidx, train_ctrl_t *tvar, int tnum)
 static int set_turnout(xtrnaddr_t tn, int v, int train)
 {
 	itm_debug2(DBG_CTRL|DBG_TURNOUT, "TURN", tn.v, v);
-	if (tn.v == 0xFF) fatal();
-	if (tn.v>=MAX_TOTAL_TURNOUTS) fatal();
+    xtrnaddr_t topoaddr = tn;
+	if (topoaddr.v == 0xFF) fatal();
+    int isdoor = 0;
+    if (topoaddr.v >= 100) {
+        isdoor = 1;
+        topoaddr.v = MAX_TOTAL_TURNOUTS - (topoaddr.v-100) - 1;
+    }
+	if (topoaddr.v >= MAX_TOTAL_TURNOUTS) fatal();
 
-	int rc = topology_set_turnout(tn, v, train);
+	int rc = topology_set_turnout(topoaddr, v, train);
     if (rc) {
-    	itm_debug3(DBG_CTRL|DBG_TURNOUT, "tn busy", train, tn.v, rc);
+    	itm_debug3(DBG_CTRL|DBG_TURNOUT, "tn busy", train, topoaddr.v, rc);
     	return rc;
     }
-
-	// send to turnout
+    
     msg_64_t m = {0};
-	m.from = MA1_CONTROL();
-	m.to = MA0_TURNOUT(tn.board); // TODO board num
-	m.subc = tn.turnout;
-	m.cmd = v ? CMD_TURNOUT_B : CMD_TURNOUT_A;
-	mqf_write_from_ctrl(&m);
-
-    // forward to UI/CTO
-    m.to = MA3_UI_CTC;
-    m.v2 = tn.v;
-    mqf_write_from_ctrl(&m);
+    if (isdoor) {
+        // send to turnout
+        m.from = MA1_CONTROL();
+        m.to = MA0_SERVO(tn.board);
+        m.subc = tn.turnout-100;
+        m.cmd = CMD_SERVODOOR_SET;
+        m.v1u = v ? 1 : 0;
+        mqf_write_from_ctrl(&m);
+        
+        if ((1)) {
+            // forward to UI/CTO
+            m.to = MA3_UI_CTC;
+            m.subc = tn.v;
+            m.cmd = v ? CMD_TURNOUT_A : CMD_TURNOUT_B;
+            m.v2 = tn.v;
+            mqf_write_from_ctrl(&m);
+        }
+    } else {
+        m.from = MA1_CONTROL();
+        m.to = MA0_TURNOUT(tn.board);
+        m.subc = tn.turnout;
+        m.cmd = v ? CMD_TURNOUT_B : CMD_TURNOUT_A;
+        mqf_write_from_ctrl(&m);
+        
+        // forward to UI/CTO
+        m.to = MA3_UI_CTC;
+        m.v2 = tn.v;
+        mqf_write_from_ctrl(&m);
+    }
+   
     return 0;
 }
 

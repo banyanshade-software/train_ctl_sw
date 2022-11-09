@@ -16,10 +16,11 @@ int32_t conf_servo_default_value(unsigned int numinst, unsigned int numfield, un
 
 #define conf_pnum_servo 5
 
-#define conf_numfield_servo_min 		0
-#define conf_numfield_servo_max 		1
-#define conf_numfield_servo_spd 		2
-#define conf_numfield_servo_pos0 		3
+#define conf_numfield_servo_direction 		0
+#define conf_numfield_servo_min 		1
+#define conf_numfield_servo_max 		2
+#define conf_numfield_servo_spd 		3
+#define conf_numfield_servo_pos0 		4
 
 
 

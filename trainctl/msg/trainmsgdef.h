@@ -51,9 +51,13 @@ typedef enum {
     
 	CMD_SERVO_SET,					// any -> servo  subc=servn v1u=pos v2u=spd_or_0
 	CMD_SERVO_ACK,					// servo->sender subc=servn v1u=pos
-
+    CMD_SERVODOOR_SET,              // any -> servo  subc=servn v1u=1 open, 0 close
+    CMD_SERVODOOR_ACK,              // servo->sender subc=servn v1u=1 open, 0 close
+    
     // 101 xxxxx = 0xA0
+    
     // 110 xxxxx = 0xC0 GUI
+    
     CMD_MDRIVE_SPEED_DIR = 0xC0,	// ui->ctrl			v1u=spd v2=dir			set dir and speed (desired speed)
     //CMD_TRDIR_NOTIF,				// ctrl->ui	obsolete ?
     CMD_TRTSPD_NOTIF,				// ctrl->ui			v1u=spd v2=dir			notify spd and dir

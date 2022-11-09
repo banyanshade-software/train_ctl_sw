@@ -361,7 +361,7 @@ xblkaddr_t next_block_addr(xblkaddr_t blkaddr, uint8_t left)
 }
 // --------------------------------------------------------------------------------------
 
-static volatile uint32_t turnoutvals = 0; // bit field
+static volatile uint64_t turnoutvals = 0; // bit field
 
 uint8_t topology_or_occupency_changed = 0;
 
@@ -369,7 +369,7 @@ int topology_set_turnout(xtrnaddr_t turnout, int v, int numtrain)
 {
 	if (turnout.v >= MAX_TOTAL_TURNOUTS) return -1;
 	if (turnout.v == 0xFF) return -1;
-	if (turnout.v>31) return -1; // XXX
+	//if (turnout.v>31) return -1;
 
 	if (numtrain>=0) {
 		int rc = occupency_turnout_reserve(turnout, numtrain);
@@ -378,9 +378,9 @@ int topology_set_turnout(xtrnaddr_t turnout, int v, int numtrain)
 		}
 	}
 	if (v) {
-		__sync_fetch_and_or(&turnoutvals, (1U<<turnout.v));
+		__sync_fetch_and_or(&turnoutvals, (1ULL<<turnout.v));
 	} else {
-		__sync_fetch_and_and(&turnoutvals, ~(1U<<turnout.v));
+		__sync_fetch_and_and(&turnoutvals, ~(1ULL<<turnout.v));
 	}
     topology_or_occupency_changed = 1;
 	itm_debug2(DBG_TURNOUT, "tt", turnout.v, topology_get_turnout(turnout));
@@ -391,12 +391,15 @@ int topology_set_turnout(xtrnaddr_t turnout, int v, int numtrain)
 
 int topology_get_turnout(xtrnaddr_t turnout)
 {
+    if (turnout.v >= 100) {
+        turnout.v = MAX_TOTAL_TURNOUTS - (turnout.v-100) - 1;
+    }
 	if (turnout.v >= MAX_TOTAL_TURNOUTS) return 0;
 	if (turnout.v == 0xFF) return 0;
-	if (turnout.v > 31) return 0;
+	//if (turnout.v > 31) return 0;
 
-	uint32_t b = turnoutvals;
-	return (b & (1<<turnout.v)) ? 1 : 0;
+	uint64_t b = turnoutvals;
+	return (b & (1ULL<<turnout.v)) ? 1 : 0;
 }
 
 void topology_get_cantons_for_turnout(xtrnaddr_t turnout, xblkaddr_t *head, xblkaddr_t *straight, xblkaddr_t *turn)

@@ -68,6 +68,7 @@ typedef struct {
 	uint8_t  sender;
 	uint8_t  moving;
 	uint8_t  powered:1;
+    uint8_t  isdoor:1;
 } servo_var_t;
 
 static servo_var_t servo_vars[NUM_SERVOS] = {0};
@@ -206,8 +207,14 @@ static void process_servo_tick(uint32_t tick, uint32_t dt)
 					m.from = MA0_SERVO(oam_localBoardNum());
                     m.to = var->sender;
 					m.subc = i;
-					m.cmd = CMD_SERVO_ACK;
-					m.v1u = var->curpos;
+                    if (var->isdoor) {
+                        m.cmd = CMD_SERVO_ACK;
+                        m.v1u = var->curpos;
+                    } else {
+                        m.cmd = CMD_SERVODOOR_ACK;
+                        uint16_t exp = (conf->direction) ? conf->max : conf->min;
+                        m.v1u = (var->curpos == exp) ? 1 : 0;
+                    }
 					mqf_write_from_servo(&m);
 				}
 				if ((1)) {
@@ -242,27 +249,49 @@ static void process_servo_tick(uint32_t tick, uint32_t dt)
 	}
 }
 
-
+static void servo_set(servo_var_t *var, const conf_servo_t *conf, uint16_t v, uint16_t spd, uint8_t sender)
+{
+    if (v > conf->max) v = conf->max;
+    else if (v < conf->min) v = conf->min;
+    var->target =v;
+    var->moving = 0xFF;
+    var->speed = spd ? spd : conf->spd;
+    _servo_power(conf, 1);
+    var->powered = 1;
+    if ((sender == MA3_BROADCAST) || (sender != MA2_LOCAL_BCAST)) {
+        var->sender = 0xFF;
+    } else {
+        var->sender = sender;
+    }
+}
 static void process_servo_cmd(msg_64_t *m)
 {
 	switch(m->cmd) {
 	case CMD_SERVO_SET:
 		itm_debug3(DBG_SERVO, "set", m->subc, m->v1u, m->v2u);
 		if (m->subc > NUM_SERVOS) break;
-		USE_SERVO(m->subc);
-		uint16_t v = m->v1u;
-		if (v > conf->max) v = conf->max;
-		else if (v < conf->min) v = conf->min;
-		var->target =v;
-		var->moving = 0xFF;
-		var->speed = m->v2u ? m->v2u : conf->spd;
-		_servo_power(conf, 1);
-		var->powered = 1;
-		if ((m->from == MA3_BROADCAST) || (m->from != MA2_LOCAL_BCAST)) {
-			var->sender = 0xFF;
-		} else {
-			var->sender = m->from;
+		{
+			USE_SERVO(m->subc);
+			servo_set(var, conf, m->v1u, m->v2u, m->from);
+            var->isdoor = 0;
 		}
+		break;
+	case CMD_SERVODOOR_SET:
+		itm_debug2(DBG_SERVO, "setdoor", m->subc, m->v1u);
+		if (m->subc > NUM_SERVOS) break;
+		{
+			USE_SERVO(m->subc);
+			uint16_t p;
+			if (conf->direction) {
+				p = m->v1u ? conf->max : conf->min;
+			} else {
+				p = m->v1u ? conf->min : conf->max;
+			}
+			servo_set(var, conf, p, 0, m->from);
+            var->isdoor = 1;
+		}
+		break;
+
 	}
 }
 

@@ -70,7 +70,12 @@ int oam_localBoardNum(void)
 
 int oam_boardForUuid(uint32_t uid)
 {
-	(void) uid; // unused for now
+	// hardcoded for now
+	switch (uid) {
+	default: break;
+	case 0x35043f07:
+		return 1;
+	}
 	return -1; // TODO
 }
 

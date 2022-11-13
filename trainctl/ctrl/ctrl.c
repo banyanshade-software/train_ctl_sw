@@ -589,7 +589,10 @@ static void normal_process_msg(msg_64_t *m)
             break;
         case CMD_TURNOUT_HI_TOG:
             turnout.v = m->v1u;
-            set_turnout(turnout, topology_get_turnout(turnout) ? 0 : 1, -1);
+            enum topo_turnout_state s = topology_get_turnout(turnout);
+            if (s != topo_tn_moving) {
+                set_turnout(turnout, s ? 0 : 1, -1);
+            }
             break;
     }
     // -----------------------------------------
@@ -1003,24 +1006,18 @@ static void evt_timer(int tidx, train_ctrl_t *tvar, int tnum)
 static int set_turnout(xtrnaddr_t tn, int v, int train)
 {
 	itm_debug2(DBG_CTRL|DBG_TURNOUT, "TURN", tn.v, v);
-    xtrnaddr_t topoaddr = tn;
-	if (topoaddr.v == 0xFF) fatal();
-    int isdoor = 0;
-    if (topoaddr.v >= 100) {
-        isdoor = 1;
-        topoaddr.v = MAX_TOTAL_TURNOUTS - (topoaddr.v-100) - 1;
-    }
-	if (topoaddr.v >= MAX_TOTAL_TURNOUTS) fatal();
+    if (tn.v == 0xFF) fatal();
 
-	int rc = topology_set_turnout(topoaddr, v, train);
+
+	int rc = topology_set_turnout(tn, v, train);
     if (rc) {
-    	itm_debug3(DBG_CTRL|DBG_TURNOUT, "tn busy", train, topoaddr.v, rc);
+    	itm_debug3(DBG_CTRL|DBG_TURNOUT, "tn busy", train, tn.v, rc);
     	return rc;
     }
     
     msg_64_t m = {0};
-    if (isdoor) {
-        // send to turnout
+    if (tn.isdoor) {
+        // send to servo
         m.from = MA1_CONTROL();
         m.to = MA0_SERVO(tn.board);
         m.subc = tn.turnout-100;
@@ -1032,8 +1029,8 @@ static int set_turnout(xtrnaddr_t tn, int v, int train)
             // forward to UI/CTO
             m.to = MA3_UI_CTC;
             m.subc = tn.v;
-            m.cmd = v ? CMD_TURNOUT_A : CMD_TURNOUT_B;
-            m.v2 = tn.v;
+            m.cmd = CMD_TN_CHG_NOTIF;
+            m.v1 = topo_tn_moving;
             mqf_write_from_ctrl(&m);
         }
     } else {
@@ -1045,7 +1042,9 @@ static int set_turnout(xtrnaddr_t tn, int v, int train)
         
         // forward to UI/CTO
         m.to = MA3_UI_CTC;
-        m.v2 = tn.v;
+        m.subc = tn.v;
+        m.cmd = CMD_TN_CHG_NOTIF;
+        m.v1 = v ? 1 : 0;
         mqf_write_from_ctrl(&m);
     }
    

@@ -68,7 +68,7 @@ typedef enum {
     CMD_TN_RESER_NOTIF,				// ctrl->ui			v1=turnout v2=trnum		turnout lock/unlock notif
     CMD_SET_TRAIN_MODE,				// ui,?->ctrl		v1u=tr v2u=mode			chg train mode, mostly to off
     CMD_START_AUTO,					// ui->ctrl			mv1u=autonum			start auto global scenario
-    //CMD_UI_MSG,
+    CMD_TN_CHG_NOTIF,               // ctrl->ui         subc=turnout v1=pos     notif UI turnout change (used to be done by SETA/SETB)
     
     // local master-only store
     CMD_PARAM_LUSER_COMMIT,            // ui(?) -> oam(0)

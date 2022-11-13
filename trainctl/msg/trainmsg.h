@@ -321,8 +321,9 @@ static inline xblkaddr_t _from_canton(msg_64_t *m)
 
 typedef union {
 	struct {
-		uint8_t turnout:4;
-		uint8_t board:4;
+        uint8_t turnout:4;
+		uint8_t board:3;
+        uint8_t isdoor:1; // TODO we assume this is the MSB, non portable code here
 	};
 	uint8_t v;
 } xtrnaddr_t;

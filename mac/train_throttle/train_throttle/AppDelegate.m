@@ -36,6 +36,7 @@
 #include "canton_bemf.h"
 #include "msgrecord.h"
 #include "planner.h"
+#include "servo.h"
 
 #import "AppDelegateP.h"
 
@@ -2103,6 +2104,7 @@ uint32_t SimuTick = 0;
     tasklet_run(&spdctl_tasklet, mt);
     tasklet_run(&canton_tasklet, mt);
     tasklet_run(&turnout_tasklet, mt);
+    tasklet_run(&servo_tasklet, mt);
     tasklet_run(&ctrl_tasklet,  mt);
     tasklet_run(&planner_tasklet,  mt);
     /*
@@ -2763,7 +2765,7 @@ void impl_uitrack_change_pres(uint32_t bitfield)
     [theDelegate.ctcManager uitrac_change_pres:bitfield];
 }
 
-void impl_uitrack_change_tn(int tn, int v)
+void impl_uitrack_change_tn(int tn, enum topo_turnout_state v)
 {
     [theDelegate.ctcManager uitrac_change_tn:tn val:v];
 }

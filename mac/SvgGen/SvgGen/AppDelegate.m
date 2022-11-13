@@ -256,10 +256,10 @@ static int rec_left_is_straight_ep(trec_t *rec, int n)
 
 - (void)generateTurnoutsInG:(NSMutableString *)resG T:(NSMutableString *)resT
 {
-    for (int tn=0; tn<16; tn++) {
+    for (int tn=0; tn<128; tn++) {
         [self generateOneTurnoutInG:(NSMutableString *)resG T:(NSMutableString *)resT num:tn isDoor:NO];
     }
-    for (int tn=100; tn<116; tn++) {
+    for (int tn=128; tn<255; tn++) {
         [self generateOneTurnoutInG:(NSMutableString *)resG T:(NSMutableString *)resT num:tn isDoor:YES];
     }
 }

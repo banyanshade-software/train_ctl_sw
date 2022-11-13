@@ -80,8 +80,8 @@
 					<fileInfo id="com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.debug.1484597756.2112797354" name="presence_detection.h" rcbsApplicability="disable" resourcePath="trainctl/low/presence_detection.h" toolsToInvoke=""/>
 					<fileInfo id="com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.debug.1484597756.1334734154" name="oam_flash.h" rcbsApplicability="disable" resourcePath="trainctl/oam/oam_flash.h" toolsToInvoke=""/>
 					<sourceEntries>
-						<entry excluding="stm32/spi1_swo_trace.c|oam/oam_flash.c|oam/oam_flash.h|stm32/w25qxx|ctrl|low/presence_detection.h|low/presence_detection.c|low/canton.h|low/canton.c|low/canton_bemf.h|low/canton_bemf.c|oscillo|obsolete|spdctl|stm32/usbtask.h|stm32/usbtask.c|stm32/ina3221|uitrack|topology|trkpln|config_gen" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="trainctl"/>
-						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="stm32dev"/>
+						<entry excluding="disp_tft" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="stm32dev"/>
+						<entry excluding="IHM|stm32/taskdisp.c|stm32/spi1_swo_trace.c|oam/oam_flash.c|oam/oam_flash.h|stm32/w25qxx|ctrl|low/presence_detection.h|low/presence_detection.c|low/canton.h|low/canton.c|low/canton_bemf.h|low/canton_bemf.c|oscillo|obsolete|spdctl|stm32/usbtask.h|stm32/usbtask.c|stm32/ina3221|uitrack|topology|trkpln|config_gen" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="trainctl"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Core"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Middlewares"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Drivers"/>

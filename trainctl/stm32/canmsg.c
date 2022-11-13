@@ -187,8 +187,8 @@ static int _can_send_msg(msg_64_t *msg, int f)
 		FatalError("CANtx", "CAN tx ", Error_CanTx);
 		return 1;
 	}
-	if (f) itm_debug3(DBG_CAN, "Tx/I", msg->v1, msg->v2, TxMailbox);
-	else   itm_debug3(DBG_CAN, "Tx/p", msg->v1, msg->v2, TxMailbox);
+	if (f) itm_debug3(DBG_CAN, "Tx/I", msg->to, msg->cmd, TxMailbox);
+	else   itm_debug3(DBG_CAN, "Tx/p", msg->to, msg->cmd, TxMailbox);
 	return 0;
 }
 
@@ -523,7 +523,7 @@ void HAL_CAN_ErrorCallback(CAN_HandleTypeDef *hcan)
 		FatalError("CNrO", "CAN Rx Overrun", Error_CAN_Rx_Overrun0);
 	}
 	if (hcan->ErrorCode & HAL_CAN_ERROR_RX_FOV1) {
-		FatalError("CNrO", "CAN Rx Overrun", Error_CAN_Rx_Overrun1);
+		FatalError("CNr1", "CAN Rx Overrun", Error_CAN_Rx_Overrun1);
 	}
 	HAL_CAN_ResetError(hcan);
 }

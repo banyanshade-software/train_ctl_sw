@@ -43,13 +43,14 @@ static void OAM_change_mode(runmode_t m);
 
 static msg_handler_t msg_handler_selector(runmode_t);
 static tick_handler_t tick_handler_selector(runmode_t);
+static void pretick_handler(uint32_t t, uint32_t dt);
 
 static const tasklet_def_t oam_tdef = {
 		.init 				= OAM_Init,
 		.poll_divisor		= NULL,
 		.emergency_stop 	= NULL,
 		.enter_runmode		= OAM_change_mode,
-		.pre_tick_handler	= NULL,
+		.pre_tick_handler	= pretick_handler,
 		.default_msg_handler = NULL,
 		.default_tick_handler = NULL,
 		.msg_handler_for	= msg_handler_selector,
@@ -60,6 +61,47 @@ static const tasklet_def_t oam_tdef = {
 };
 tasklet_t OAM_tasklet = { .def = &oam_tdef, .init_done = 0, .queue=&to_oam};
 
+// ------------------------------------------------------
+
+#ifdef STM32F1
+
+static uint8_t nflash = 0;
+static uint8_t ntick = 0;
+
+static void flash_led_tick(void)
+{
+	if (!nflash) return;
+	if (!ntick) {
+		HAL_GPIO_TogglePin(BOARD_LED_GPIO_Port, BOARD_LED_Pin);
+		ntick = 5;
+		nflash--;
+	} else {
+		ntick--;
+	}
+}
+
+static void oam_flash_led(void)
+{
+	nflash = 5;
+	ntick = 0;
+}
+
+
+#else
+static void flash_led_tick(void)
+{
+}
+
+static  void oam_flash_led(void)
+{
+
+}
+#endif
+
+static void pretick_handler(_UNUSED_ uint32_t t, _UNUSED_ uint32_t dt)
+{
+	flash_led_tick();
+}
 // ------------------------------------------------------
 
 static void handle_testcan_msg(msg_64_t *m);
@@ -93,7 +135,14 @@ static tick_handler_t tick_handler_selector(runmode_t m)
         case runmode_testcan:   return handle_testcan_tick;
         case runmode_master:    return handle_master_tick;
         case runmode_slave:     return handle_slave_tick;
-        default: break;
+
+        default:
+        	if (oam_isMaster()) {
+        		return handle_master_tick;
+        	} else {
+        		return handle_slave_tick;
+        	}
+        	break;
     }
     return NULL;
 }
@@ -107,6 +156,8 @@ static tick_handler_t tick_handler_selector(runmode_t m)
 static int respok = 0; // for testcan
 
 volatile int Oam_Ready = 0;
+
+static uint32_t bootcount=0;
 
 static void OAM_Init(void)
 {
@@ -154,10 +205,22 @@ static void OAM_Init(void)
     // initial mode
     static int first = 1;
     if ((first)) {
+        first = 0;
+    	/*
+    	 * update bootcount
+    	 */
+    	if ((1)) {
+#ifdef TRAIN_SIMU
+            bootcount=1;
+#else
+    		extern RTC_HandleTypeDef hrtc;
+    		bootcount = HAL_RTCEx_BKUPRead(&hrtc, RTC_BKP_DR0);
+    		HAL_RTCEx_BKUPWrite(&hrtc, RTC_BKP_DR0, bootcount+1);
+#endif
+    	}
         //uint32_t myid = oam_getDeviceUniqueId();
         //int myboard = boardIdToBoardNum(myid);
     
-        first = 0;
         msg_64_t m;
         m.from = MA3_BROADCAST;
         m.to = MA2_LOCAL_BCAST;
@@ -591,6 +654,8 @@ static void _send_slv_ok(void)
 	mqf_write_from_oam(&m);
 }
 
+static uint16_t slave_master_id16 = 0;
+static uint32_t slave_bootcount = 0;
 
 static int _handle_msg_slave(msg_64_t *m)
 {
@@ -619,13 +684,15 @@ static int _handle_msg_slave(msg_64_t *m)
             break;
             
         case CMD_OAM_BNUM:
+        	oam_flash_led();
             if (oam_getDeviceUniqueId() != m->v32u) {
                 itm_debug2(DBG_ERR|DBG_OAM, "bad uniq", m->v32u, oam_getDeviceUniqueId());
                 return 1;
             }
             switch (slvState) {
-            case oam_slv_bcast:   break;
-            case oam_slv_unknown: break;
+            case oam_slv_ok: break;
+            case oam_slv_bcast:   //FALLTHRU
+            case oam_slv_unknown: //FALLTHRU
             default:
                 itm_debug3(DBG_OAM, "BNUM/slvst", slvState, m->subc, oam_localBoardNum());
                 if (m->subc != oam_localBoardNum()) {
@@ -646,6 +713,44 @@ static int _handle_msg_slave(msg_64_t *m)
             return 1;
             break;
 
+        case CMD_OAM_MASTER:
+        	/*
+        	 * m.v1u = oam_getDeviceUniqueId() & 0xFFFF;
+			 * m.v2u = bootcount;
+	    	 */
+        	if (!slave_master_id16) {
+        		// 1st msg
+        		slave_master_id16 = m->v1u;
+        		slave_bootcount = m->v2u;
+        	} else {
+        		int reboot = 0;
+        		static int mcnt = 5;
+        		if (slave_master_id16 == m->v1u) {
+        			if (slave_bootcount != m->v2u) {
+        				itm_debug3(DBG_ERR|DBG_OAM, "M/Reboot", slave_master_id16, slave_bootcount, m->v2u);
+        				reboot = 1;
+        			} else {
+        				itm_debug2(DBG_ERR|DBG_OAM, "M/MChg", slave_master_id16, m->v1u);
+        				if (!mcnt) {
+        					reboot = 1;
+        				}  else {
+        					mcnt--;
+        				}
+        			}
+        		} else {
+        			// multiple master, allow 5 bad master until resolution
+        			mcnt = 5;
+        		}
+        		if (reboot) {
+        			// reboot slave when master changed or when master did reboot
+    				itm_debug1(DBG_ERR|DBG_OAM, "RESET", 0);
+#ifndef TRAIN_SIMU
+        			HAL_NVIC_SystemReset();
+#endif
+        		}
+        	}
+        	return 1;
+        	break;
         default:
             return 0;
             break;
@@ -694,6 +799,7 @@ static int _handle_msg_master(msg_64_t *m)
         itm_debug2(DBG_OAM, "SLV/k", bnum, m->v32u);
         msg_64_t r = {0};
         r.cmd = CMD_OAM_BNUM;
+        r.subc = unum;
         r.from = MA0_OAM(0);
         r.to = MA3_SLV_OAM;
         r.v32u = m->v32u;
@@ -703,7 +809,8 @@ static int _handle_msg_master(msg_64_t *m)
     case CMD_OAM_SLV_OK:
         unum = MA0_BOARD(m->from);
         if (unum > 15) FatalError("hrBN", "15 rbnum", Error_NumBnum2);
-        slv_state[unum] = slave_config;
+        slv_state[unum] = slave_config0;
+        itm_debug1(DBG_OAM, "SLV/ok", unum);
         return 1;
         break;
     }
@@ -864,6 +971,7 @@ static void handle_slave_tick(uint32_t tick, _UNUSED_ uint32_t dt)
 	}
     if (tbc) {
         if (tick > lastBcast+tbc) {
+        	//oam_flash_led();
             lastBcast = tick;
             msg_64_t m = {0};
             m.cmd = CMD_OAM_SLAVE;
@@ -964,7 +1072,8 @@ static void handle_master_tick(_UNUSED_ uint32_t tick, _UNUSED_ uint32_t dt)
 		msg_64_t m = {0};
 		itm_debug2(DBG_OAM, "send MST", tick, CMD_OAM_MASTER);
 		m.cmd = CMD_OAM_MASTER;
-		m.v32u = oam_getDeviceUniqueId();
+		m.v1u = oam_getDeviceUniqueId() & 0xFFFF;
+		m.v2u = bootcount;
 		m.from = MA0_OAM(0);
 		m.to = MA3_SLV_OAM;
     	mqf_write_from_oam(&m);
@@ -999,10 +1108,12 @@ static void handle_master_tick(_UNUSED_ uint32_t tick, _UNUSED_ uint32_t dt)
 				break;
 			}
 			if (rc<0) {
+				itm_debug1(DBG_OAM, "SLVpok", b);
 				slv_state[b] = slave_ok;
 				OAM_NeedsReschedule = 0;
 				continue;
 			}
+			itm_debug3(DBG_OAM, "SLVprpg", b, confnum, fieldnum);
 			msg_64_t m = {0};
 			m.to = MA0_OAM(b);
 			m.from = MA0_OAM(0);

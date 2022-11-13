@@ -188,7 +188,7 @@
 #define STM32_F103
 #define STM32F1
 
-#define BOARD_NUMBER 1 //xxx
+#define BOARD_NUMBER 1 //XXX to be removed
 
 //#define BOARD_HAS_CANTON
 #define BOARD_HAS_TURNOUTS
@@ -200,7 +200,7 @@
 //#define BOARD_HAS_USB_HOST
 //#define BOARD_HAS_FLASH
 #define BOARD_HAS_CAN
-#define BOARD_HAS_IHM
+//#define BOARD_HAS_IHM
 //#define BOARD_HAS_ROTARY_ENCODER
 //#define BOARD_HAS_UI_GEN
 //#define BOARD_HAS_UI_CTC
@@ -208,8 +208,8 @@
 //#define BOARD_HAS_TRKPLN
 // #define BOARD_CAN_BE_MASTER
 
-#define SSD1306_I2C_PORTS_DECL extern I2C_HandleTypeDef hi2c1
-#define SSD1306_I2C_PORTS        { &hi2c1 }
+//#define SSD1306_I2C_PORTS_DECL extern I2C_HandleTypeDef hi2c1
+//#define SSD1306_I2C_PORTS        { &hi2c1 }
 
 /*
  * number of local block per board

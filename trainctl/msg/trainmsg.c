@@ -149,6 +149,9 @@ static const qdef_t qdefs[] = {
 
 static int  _local_disptach(msg_64_t *m, mqf_t *dont_send_to, uint8_t allow_loop)
 {
+    if (m->to == 0x66) {
+        itm_debug1(DBG_MSG, "route66", m->cmd);
+    }
     mqf_t *dest = NULL;
     if (allow_loop) {
     	dont_send_to = NULL;
@@ -325,7 +328,7 @@ static void dispatch_m64(msg_64_t *m, int f)
     }
 #endif
     if (!ok) {
-        itm_debug1(DBG_ERR|DBG_MSG, "cant route", m->to);
+        itm_debug2(DBG_ERR|DBG_MSG, "cant route", m->to, m->cmd);
     }
 }
 

@@ -44,7 +44,8 @@
 #include "topology.h"
 #include "topologyP.h"
 #include "occupency.h"
-
+#include "../utils/bitarray.h"
+#include "../utils/dynamic_perfect_hash.h"
 
 #ifdef TOPOLOGY_SVG
 #define _PTS(pi, ...)  ,pi,{__VA_ARGS__}
@@ -226,7 +227,7 @@ lsblk_num_t next_lsblk(lsblk_num_t blknum, uint8_t left, uint8_t *palternate)
     //printf("blk %d, left=%d next tn=%d a=%d b=%d\n", blknum.n, left, tn.v, a.n, b.n);
     if (tn.v != 0xFF) {
         if (palternate) *palternate = 1;
-        a = topology_get_turnout(tn) ? b : a;
+        a = (topology_get_turnout(tn) == topo_tn_turn) ? b : a;
     }
     // sanity XXX KO with virtual canton */
     if ((a.n>120) || (b.n>120)) {
@@ -361,45 +362,61 @@ xblkaddr_t next_block_addr(xblkaddr_t blkaddr, uint8_t left)
 }
 // --------------------------------------------------------------------------------------
 
-static volatile uint64_t turnoutvals = 0; // bit field
+static volatile uint32_t turnoutvals = 0; // bit field
 
 uint8_t topology_or_occupency_changed = 0;
 
-int topology_set_turnout(xtrnaddr_t turnout, int v, int numtrain)
+int topology_set_turnout(xtrnaddr_t tno, enum topo_turnout_state v, int numtrain)
 {
-	if (turnout.v >= MAX_TOTAL_TURNOUTS) return -1;
+    xtrnaddr_t turnout = tno;
 	if (turnout.v == 0xFF) return -1;
-	//if (turnout.v>31) return -1;
+	if (turnout.v > 31) return -1; //XXX turnoutvals is uint32_t, fix this
+    int d = turnout.isdoor;
+    turnout.isdoor = 0;
+    if (turnout.v >= MAX_TOTAL_TURNOUTS) return -1;
 
 	if (numtrain>=0) {
-		int rc = occupency_turnout_reserve(turnout, numtrain);
+		int rc = occupency_turnout_reserve(tno, numtrain);
 		if (rc) {
 			return -1;
 		}
 	}
-	if (v) {
-		__sync_fetch_and_or(&turnoutvals, (1ULL<<turnout.v));
-	} else {
-		__sync_fetch_and_and(&turnoutvals, ~(1ULL<<turnout.v));
-	}
-    topology_or_occupency_changed = 1;
-	itm_debug2(DBG_TURNOUT, "tt", turnout.v, topology_get_turnout(turnout));
+    if (!d) {
+        if (v) {
+            __sync_fetch_and_or(&turnoutvals, (1ULL<<turnout.v));
+        } else {
+            __sync_fetch_and_and(&turnoutvals, ~(1ULL<<turnout.v));
+        }
+        topology_or_occupency_changed = 1;
+    } else {
+        abort();
+    }
+	itm_debug2(DBG_TURNOUT, "tt", turnout.v, topology_get_turnout(tno));
 	return 0;
 }
 
 
 
-int topology_get_turnout(xtrnaddr_t turnout)
+enum topo_turnout_state topology_get_turnout(xtrnaddr_t turnout)
 {
-    if (turnout.v >= 100) {
-        turnout.v = MAX_TOTAL_TURNOUTS - (turnout.v-100) - 1;
-    }
+    if (turnout.v == 0xFF) return 0;
+	if (turnout.v > 31) return topo_tn_undetermined; //XXX turnoutvals is uint32_t, fix this
+
+    int d = turnout.isdoor;
+    turnout.isdoor = 0;
+    
 	if (turnout.v >= MAX_TOTAL_TURNOUTS) return 0;
 	if (turnout.v == 0xFF) return 0;
-	//if (turnout.v > 31) return 0;
 
-	uint64_t b = turnoutvals;
-	return (b & (1ULL<<turnout.v)) ? 1 : 0;
+    if (!d) {
+        uint64_t b = turnoutvals;
+        return (b & (1ULL<<turnout.v)) ? topo_tn_turn : topo_tn_straight;
+    } else {
+        // TODO
+        void alloc_turnouts(void);
+        alloc_turnouts(); //XX
+        abort();
+    }
 }
 
 void topology_get_cantons_for_turnout(xtrnaddr_t turnout, xblkaddr_t *head, xblkaddr_t *straight, xblkaddr_t *turn)
@@ -429,4 +446,57 @@ void topology_get_cantons_for_turnout(xtrnaddr_t turnout, xblkaddr_t *head, xblk
 	}
 }
 
+
+int allturnouts(int(*f)(uint8_t tn, void *arg), void *val)
+{
+    DECL_BIT_ARRAY(tna, 256);
+    BIT_ARRAY_CLEAR(tna);
+    int n = numTopology();
+    for (int i=0; i<n; i++) {
+        int rc;
+        lsblk_num_t b = {i};
+        const topo_lsblk_t *t = Topology(b);
+        if (t->ltn != 0xFF) {
+            if (!BIT_ARRAY_VALUE(tna, t->ltn)) {
+                BIT_ARRAY_SET(tna, t->ltn);
+                rc = f(t->ltn,val);
+                if (rc) return rc;
+            }
+        }
+        if (t->rtn != 0xFF) {
+            if (!BIT_ARRAY_VALUE(tna, t->rtn)) {
+                BIT_ARRAY_SET(tna, t->rtn);
+                rc = f(t->rtn,val);
+                if (rc) return rc;
+            }
+        }
+    }
+    return 0;
+}
+
+static dph64_def_t dph;
+
+static int tst(uint8_t tn, void *p)
+{
+    uint32_t *bitarray = (uint32_t *)p;
+    uint8_t h = dph64_hash(&dph, tn, 64);
+    //printf("turnout: %d, h=%d, used=%d\n", tn, h,  BIT_ARRAY_VALUE(bitarray, h));
+    if (BIT_ARRAY_VALUE(bitarray, h)) return -1;
+    BIT_ARRAY_SET(bitarray, h);
+    return 0;
+}
+void alloc_turnouts(void)
+{
+    dph64_start(&dph);
+    for (;;) {
+        DECL_BIT_ARRAY(used, 64);
+        BIT_ARRAY_CLEAR(used);
+        int rc = allturnouts(tst, used);
+        if (!rc) break;
+        if (dph64_next(&dph)) {
+            //printf("hash not found\n");
+            FatalError("HASH", "hash not found", Error_Hash);
+        }
+    }
+}
 

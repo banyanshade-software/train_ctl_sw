@@ -178,18 +178,25 @@ static  void _notify_chg_owner(xtrnaddr_t turnout, uint8_t numtrain)
 
 int occupency_turnout_reserve(xtrnaddr_t turnout, int8_t numtrain)
 {
+    int d = turnout.isdoor;
+    turnout.isdoor = 0;
 	if (turnout.v >= MAX_TOTAL_TURNOUTS) return -1;
-	//if (turnout<0) return -1;
-	if (turnout.v>31) return -1;
+	
+    
 	itm_debug3(DBG_CTRL, "res.to", turnout.v, numtrain, lockedby[turnout.v]);
-	if (numtrain>=0) {
-		uint8_t expected = numtrain;
-		int ok = __atomic_compare_exchange_n(&lockedby[turnout.v], &expected, numtrain, 0 /*weak*/, __ATOMIC_ACQUIRE/*success memorder*/, __ATOMIC_ACQUIRE/*fail memorder*/ );
-		if (!ok) {
-			expected = 0xFF;
-			ok = __atomic_compare_exchange_n(&lockedby[turnout.v], &expected, numtrain, 0 /*weak*/, __ATOMIC_ACQUIRE/*success memorder*/, __ATOMIC_ACQUIRE/*fail memorder*/ );
+    if (numtrain>=0) {
+        uint8_t expected = numtrain;
+        int ok = 0;
+        if (d) {
+            abort();
+        } else {
+            ok = __atomic_compare_exchange_n(&lockedby[turnout.v], &expected, numtrain, 0 /*weak*/, __ATOMIC_ACQUIRE/*success memorder*/, __ATOMIC_ACQUIRE/*fail memorder*/ );
+        }
+        if (!ok) {
+            expected = 0xFF;
+            ok = __atomic_compare_exchange_n(&lockedby[turnout.v], &expected, numtrain, 0 /*weak*/, __ATOMIC_ACQUIRE/*success memorder*/, __ATOMIC_ACQUIRE/*fail memorder*/ );
             _notify_chg_owner(turnout, numtrain);
-		}
+        }
 		if (!ok) {
             itm_debug3(DBG_ERR, "res.to.f", turnout.v, numtrain, lockedby[turnout.v]);
 			return -1;

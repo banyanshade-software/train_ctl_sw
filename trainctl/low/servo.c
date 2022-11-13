@@ -170,7 +170,7 @@ static void servo_init(void)
 		var->sender = 0xFF; // no ack
 	}
 #ifndef TRAIN_SIMU
-	if ((1)) {
+	if ((0)) {
 		msg_64_t m = {0};
 		m.cmd = CMD_SERVO_SET;
 		m.from = MA3_BROADCAST;
@@ -217,8 +217,8 @@ static void process_servo_tick(uint32_t tick, uint32_t dt)
                     }
 					mqf_write_from_servo(&m);
 				}
-				if ((1)) {
-						static cnt=0;
+				if ((0)) {
+						static int cnt=0;
 						msg_64_t m = {0};
 						m.cmd = CMD_SERVO_SET;
 						m.from = MA3_BROADCAST;

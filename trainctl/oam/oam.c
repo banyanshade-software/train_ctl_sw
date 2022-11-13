@@ -1062,13 +1062,17 @@ static void handle_master_msg(msg_64_t *m)
 static void handle_master_tick(_UNUSED_ uint32_t tick, _UNUSED_ uint32_t dt)
 {
 	static uint32_t lbsc = 0;
-	if (tick>lbsc+100) {
+	static int initial = 1;
+	uint32_t tempo = initial ? 100 : 2000;
+	if (tick>lbsc+tempo) {
 		lbsc = tick;
 		static int cnt = 0;
-		if (cnt++>10) {
+		if (initial && (cnt>100)) {
+			initial=0;
 			_bcast_normal();
 			return;
 		}
+		cnt++;
 		msg_64_t m = {0};
 		itm_debug2(DBG_OAM, "send MST", tick, CMD_OAM_MASTER);
 		m.cmd = CMD_OAM_MASTER;

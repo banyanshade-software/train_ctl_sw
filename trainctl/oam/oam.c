@@ -213,9 +213,11 @@ static void OAM_Init(void)
 #ifdef TRAIN_SIMU
             bootcount=1;
 #else
+#ifdef BOARD_CAN_BE_MASTER
     		extern RTC_HandleTypeDef hrtc;
     		bootcount = HAL_RTCEx_BKUPRead(&hrtc, RTC_BKP_DR0);
     		HAL_RTCEx_BKUPWrite(&hrtc, RTC_BKP_DR0, bootcount+1);
+#endif
 #endif
     	}
         //uint32_t myid = oam_getDeviceUniqueId();

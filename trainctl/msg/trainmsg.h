@@ -183,7 +183,7 @@ typedef union {
 	uint64_t raw;
 } msg_64_t;
 
-#if defined(TRAIN_SIMU) || defined (TOPOLOGY_SVG)
+#ifdef __clang__
 // mac llvm clang does not support compile_assert(), doing it old way
 typedef char compile_assert[(sizeof(msg_64_t) == 8) ? 1 : -1];
 #else

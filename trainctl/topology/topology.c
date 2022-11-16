@@ -363,3 +363,29 @@ xblkaddr_t next_block_addr(xblkaddr_t blkaddr, uint8_t left)
 // --------------------------------------------------------------------------------------
 
 
+void topology_get_cantons_for_turnout(xtrnaddr_t turnout, xblkaddr_t *head, xblkaddr_t *straight, xblkaddr_t *turn)
+{
+	head->v = 0xFF;
+	straight->v = 0xFF;
+	turn->v = 0xFF;
+
+	int n=0;
+	for (int i=0; i<topology_num_sblkd(); i++) {
+		const topo_lsblk_t *t = topology_get_sblkd(i);
+		uint8_t fc = t->canton_addr;
+		if (t->ltn == turnout.v) {
+			n++;
+			if (t->left2 == -1) straight->v = fc;
+			else if (t->left1 == -1) turn->v = fc;
+			else head->v = fc;
+		}
+		if (t->rtn == turnout.v) {
+			n++;
+			if (t->right2 == -1) straight->v = fc;
+			else if (t->right1 == -1) turn->v = fc;
+			else head->v = fc;
+		}
+		if (n==3) return;
+	}
+}
+

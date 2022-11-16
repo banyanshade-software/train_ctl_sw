@@ -204,10 +204,18 @@ static void process_servo_tick(uint32_t tick, uint32_t dt)
 				itm_debug2(DBG_SERVO, "stp", i, var->sender);
 				if (var->sender != 0xFF) {
 					msg_64_t m = {0};
+#ifdef TRAIN_SIMU
+                    /*
+                     this is ugly but simu is normally only board 0, but in order to handle
+                     current topology with servo on board 1, we need to do this for now
+                     */
+                    m.from = MA0_SERVO(1);
+#else
 					m.from = MA0_SERVO(oam_localBoardNum());
+#endif
                     m.to = var->sender;
 					m.subc = i;
-                    if (var->isdoor) {
+                    if (!var->isdoor) {
                         m.cmd = CMD_SERVO_ACK;
                         m.v1u = var->curpos;
                     } else {
@@ -253,12 +261,12 @@ static void servo_set(servo_var_t *var, const conf_servo_t *conf, uint16_t v, ui
 {
     if (v > conf->max) v = conf->max;
     else if (v < conf->min) v = conf->min;
-    var->target =v;
+    var->target = v;
     var->moving = 0xFF;
     var->speed = spd ? spd : conf->spd;
     _servo_power(conf, 1);
     var->powered = 1;
-    if ((sender == MA3_BROADCAST) || (sender != MA2_LOCAL_BCAST)) {
+    if ((sender == MA3_BROADCAST) || (sender == MA2_LOCAL_BCAST)) {
         var->sender = 0xFF;
     } else {
         var->sender = sender;

@@ -173,6 +173,13 @@ typedef void (^respblk_t)(void);
     
     [_ctcManager loadHtml];
     
+     
+    _trainParamWin.hidesOnDeactivate = YES;
+    //_trainParamWin.mainWindow
+    //_trainParamWin.excludedFromWindowsMenu = YES;
+    NSApplication *app = [aNotification object];
+    id m = [NSApp windowsMenu];
+    
     // for debug
     //[self getParams]; //XXX XXX
     //[self startBLE];
@@ -181,8 +188,7 @@ typedef void (^respblk_t)(void);
     
 }
                   
-                  
-
+    
 
 - (void)applicationWillTerminate:(NSNotification *)aNotification {
     // Insert code here to tear down your application

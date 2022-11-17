@@ -132,5 +132,8 @@
 
 - (void) toggleTurnout:(int)tn;
 
+
+@property (nonatomic, weak) IBOutlet NSWindow *trainParamWin;
+
 @end
 

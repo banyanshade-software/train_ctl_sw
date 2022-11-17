@@ -25,6 +25,7 @@
                 <outlet property="sliderTarget1" destination="hKn-Uc-u5t" id="m08-k7-XV7"/>
                 <outlet property="sliderTarget2" destination="bUt-k0-TMM" id="UgW-fg-usp"/>
                 <outlet property="sliderTarget3" destination="0Q4-va-RcS" id="xhF-0c-A7b"/>
+                <outlet property="trainParamWin" destination="NoX-XC-Bb7" id="p7w-sh-2A7"/>
                 <outlet property="trainTableView" destination="nU3-yp-xkd" id="wKe-T8-m9b"/>
                 <outlet property="window" destination="QvC-M9-y7g" id="gIp-Ho-8D9"/>
             </connections>
@@ -688,24 +689,6 @@
                                 </connections>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="KYV-hZ-wIX"/>
-                            <menuItem title="LEDs" id="8W3-HJ-eDU">
-                                <modifierMask key="keyEquivalentModifierMask"/>
-                                <connections>
-                                    <action selector="orderOut:" target="k6R-kd-Uyf" id="cJY-dA-5u8"/>
-                                </connections>
-                            </menuItem>
-                            <menuItem title="Parameters" id="H6B-5U-Kol">
-                                <modifierMask key="keyEquivalentModifierMask"/>
-                                <connections>
-                                    <action selector="orderFront:" target="NoX-XC-Bb7" id="D5M-nd-YAf"/>
-                                </connections>
-                            </menuItem>
-                            <menuItem title="Tests Modes" id="pan-Ar-s4A">
-                                <modifierMask key="keyEquivalentModifierMask"/>
-                                <connections>
-                                    <action selector="orderFront:" target="Poo-Wv-bvH" id="D79-bF-Jg4"/>
-                                </connections>
-                            </menuItem>
                             <menuItem isSeparatorItem="YES" id="eu3-7i-yIM"/>
                             <menuItem title="Bring All to Front" id="LE2-aR-0XJ">
                                 <modifierMask key="keyEquivalentModifierMask"/>
@@ -714,6 +697,9 @@
                                 </connections>
                             </menuItem>
                         </items>
+                        <connections>
+                            <outlet property="delegate" destination="Voe-Tx-rLC" id="oVj-ld-SML"/>
+                        </connections>
                     </menu>
                 </menuItem>
                 <menuItem title="Help" id="wpr-3q-Mcd">
@@ -731,7 +717,7 @@
             </items>
             <point key="canvasLocation" x="140" y="154"/>
         </menu>
-        <window title="train_throttle" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" hidesOnDeactivate="YES" releasedWhenClosed="NO" animationBehavior="default" id="QvC-M9-y7g">
+        <window title="train_throttle" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" animationBehavior="default" id="QvC-M9-y7g">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="119" y="326" width="1467" height="685"/>
@@ -2165,7 +2151,7 @@
             <point key="canvasLocation" x="1080.5" y="-1276.5"/>
         </window>
         <userDefaultsController representsSharedInstance="YES" id="L3A-ct-2Ge"/>
-        <window title="Train Parameters" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" hidesOnDeactivate="YES" releasedWhenClosed="NO" frameAutosaveName="" animationBehavior="default" tabbingIdentifier="param1" id="NoX-XC-Bb7">
+        <window title="Train Parameters" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" hidesOnDeactivate="YES" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" tabbingIdentifier="param1" id="NoX-XC-Bb7" customClass="ToolWindow">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="109" y="138" width="1176" height="600"/>
@@ -4007,7 +3993,7 @@
             </view>
             <point key="canvasLocation" x="423" y="2164"/>
         </window>
-        <window title="Test Mode" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" hidesOnDeactivate="YES" releasedWhenClosed="NO" frameAutosaveName="" animationBehavior="default" id="Poo-Wv-bvH">
+        <window title="Test Mode" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" hidesOnDeactivate="YES" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" id="Poo-Wv-bvH" customClass="ToolWindow">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="109" y="138" width="480" height="270"/>
@@ -4157,23 +4143,23 @@
             </view>
             <point key="canvasLocation" x="-21" y="-1247"/>
         </window>
-        <window title="LEDs" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" hidesOnDeactivate="YES" releasedWhenClosed="NO" frameAutosaveName="" animationBehavior="default" id="k6R-kd-Uyf">
+        <window title="LEDs" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" hidesOnDeactivate="YES" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" id="k6R-kd-Uyf" customClass="ToolWindow">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-            <rect key="contentRect" x="196" y="213" width="480" height="270"/>
+            <rect key="contentRect" x="196" y="213" width="140" height="542"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1080"/>
-            <view key="contentView" id="1YN-oL-2Sm">
-                <rect key="frame" x="0.0" y="0.0" width="480" height="270"/>
+            <view key="contentView" misplaced="YES" id="1YN-oL-2Sm">
+                <rect key="frame" x="0.0" y="0.0" width="140" height="542"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <box borderType="line" title="LED" translatesAutoresizingMaskIntoConstraints="NO" id="C3N-WJ-29f">
-                        <rect key="frame" x="13" y="145" width="111" height="109"/>
+                    <box misplaced="YES" borderType="line" title="LED" translatesAutoresizingMaskIntoConstraints="NO" id="C3N-WJ-29f">
+                        <rect key="frame" x="13" y="54" width="114" height="476"/>
                         <view key="contentView" id="9au-X2-ook">
-                            <rect key="frame" x="3" y="3" width="105" height="91"/>
+                            <rect key="frame" x="3" y="3" width="108" height="458"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
                                 <popUpButton verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="zmV-ts-69t">
-                                    <rect key="frame" x="6" y="59" width="99" height="25"/>
+                                    <rect key="frame" x="6" y="426" width="99" height="25"/>
                                     <popUpButtonCell key="cell" type="push" title="Off" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="rZI-tR-AtI" id="ggg-3B-Wu3">
                                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                         <font key="font" metaFont="menu"/>
@@ -4210,9 +4196,12 @@
                                         <binding destination="Voe-Tx-rLC" name="selectedIndex" keyPath="ledProg" id="3A0-V0-NgN"/>
                                     </connections>
                                 </popUpButton>
-                                <button verticalHuggingPriority="750" tag="1" translatesAutoresizingMaskIntoConstraints="NO" id="cM6-FG-veN">
-                                    <rect key="frame" x="52" y="26" width="53" height="32"/>
-                                    <buttonCell key="cell" type="push" title="L1" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="0i8-pN-4hu">
+                                <button verticalHuggingPriority="750" misplaced="YES" tag="1" translatesAutoresizingMaskIntoConstraints="NO" id="cM6-FG-veN">
+                                    <rect key="frame" x="52" y="391" width="56" height="32"/>
+                                    <constraints>
+                                        <constraint firstAttribute="width" constant="44" id="ewx-eD-4bg"/>
+                                    </constraints>
+                                    <buttonCell key="cell" type="push" title="L0.1" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="0i8-pN-4hu">
                                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                         <font key="font" metaFont="system"/>
                                     </buttonCell>
@@ -4220,19 +4209,12 @@
                                         <action selector="sendLed:" target="Voe-Tx-rLC" id="Psu-Gt-bv7"/>
                                     </connections>
                                 </button>
-                                <button verticalHuggingPriority="750" tag="3" translatesAutoresizingMaskIntoConstraints="NO" id="ICQ-cs-HHR">
-                                    <rect key="frame" x="52" y="-1" width="56" height="32"/>
-                                    <buttonCell key="cell" type="push" title="L3" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="7DI-uT-lFt">
-                                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                        <font key="font" metaFont="system"/>
-                                    </buttonCell>
-                                    <connections>
-                                        <action selector="sendLed:" target="Voe-Tx-rLC" id="sqB-BY-Uxs"/>
-                                    </connections>
-                                </button>
-                                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="go4-ET-1Uh">
-                                    <rect key="frame" x="2" y="26" width="56" height="32"/>
-                                    <buttonCell key="cell" type="push" title="L0" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="U3D-0d-dsO">
+                                <button verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="go4-ET-1Uh">
+                                    <rect key="frame" x="2" y="391" width="56" height="32"/>
+                                    <constraints>
+                                        <constraint firstAttribute="width" constant="44" id="980-Jr-gru"/>
+                                    </constraints>
+                                    <buttonCell key="cell" type="push" title="L0.0" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="U3D-0d-dsO">
                                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                         <font key="font" metaFont="system"/>
                                     </buttonCell>
@@ -4240,14 +4222,30 @@
                                         <action selector="sendLed:" target="Voe-Tx-rLC" id="0eS-8Z-PyV"/>
                                     </connections>
                                 </button>
-                                <button verticalHuggingPriority="750" tag="2" translatesAutoresizingMaskIntoConstraints="NO" id="UAB-qA-u6A">
-                                    <rect key="frame" x="2" y="-1" width="56" height="32"/>
-                                    <buttonCell key="cell" type="push" title="L2" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Lyg-kc-ZsH">
+                                <button verticalHuggingPriority="750" misplaced="YES" tag="2" translatesAutoresizingMaskIntoConstraints="NO" id="UAB-qA-u6A">
+                                    <rect key="frame" x="2" y="358" width="56" height="32"/>
+                                    <constraints>
+                                        <constraint firstAttribute="width" constant="44" id="i2o-ZO-FQO"/>
+                                    </constraints>
+                                    <buttonCell key="cell" type="push" title="L0.2" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Lyg-kc-ZsH">
                                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                         <font key="font" metaFont="system"/>
                                     </buttonCell>
                                     <connections>
                                         <action selector="sendLed:" target="Voe-Tx-rLC" id="An4-08-auI"/>
+                                    </connections>
+                                </button>
+                                <button verticalHuggingPriority="750" misplaced="YES" tag="3" translatesAutoresizingMaskIntoConstraints="NO" id="ICQ-cs-HHR">
+                                    <rect key="frame" x="52" y="358" width="56" height="32"/>
+                                    <constraints>
+                                        <constraint firstAttribute="width" constant="44" id="AF1-78-wrZ"/>
+                                    </constraints>
+                                    <buttonCell key="cell" type="push" title="L0.3" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="7DI-uT-lFt">
+                                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                        <font key="font" metaFont="system"/>
+                                    </buttonCell>
+                                    <connections>
+                                        <action selector="sendLed:" target="Voe-Tx-rLC" id="sqB-BY-Uxs"/>
                                     </connections>
                                 </button>
                             </subviews>
@@ -4272,11 +4270,13 @@
                 <constraints>
                     <constraint firstItem="C3N-WJ-29f" firstAttribute="leading" secondItem="1YN-oL-2Sm" secondAttribute="leading" constant="16" id="W7V-j0-fQ6"/>
                     <constraint firstItem="C3N-WJ-29f" firstAttribute="top" secondItem="1YN-oL-2Sm" secondAttribute="top" constant="16" id="YP7-xZ-xnO"/>
+                    <constraint firstAttribute="trailing" secondItem="C3N-WJ-29f" secondAttribute="trailing" constant="16" id="g7r-Fl-S1v"/>
+                    <constraint firstAttribute="bottom" secondItem="C3N-WJ-29f" secondAttribute="bottom" constant="16" id="yXT-qM-B1V"/>
                 </constraints>
             </view>
-            <point key="canvasLocation" x="278" y="-769"/>
+            <point key="canvasLocation" x="278" y="-567"/>
         </window>
-        <window title="Canton parameters" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" frameAutosaveName="" animationBehavior="default" id="dIi-nn-uT5">
+        <window title="Canton parameters" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" hidesOnDeactivate="YES" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" id="dIi-nn-uT5" customClass="ToolWindow">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="196" y="213" width="598" height="476"/>

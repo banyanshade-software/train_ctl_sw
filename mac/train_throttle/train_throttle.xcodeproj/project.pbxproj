@@ -72,6 +72,7 @@
 		1B61090D256AAE1A00F1AC45 /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B61090C256AAE1900F1AC45 /* CoreBluetooth.framework */; };
 		1B67360F2531E4450063EA9A /* SimTrain.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B67360E2531E4450063EA9A /* SimTrain.m */; };
 		1B693C4427D9CFEA0063D8B6 /* detect_loco.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B693C4227D9CFEA0063D8B6 /* detect_loco.c */; };
+		1B76688B2925855C00E2CE96 /* ToolWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B76688A2925855C00E2CE96 /* ToolWindow.m */; };
 		1B77BECA274A471200BC5230 /* detectP.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B77BEC9274A471200BC5230 /* detectP.c */; };
 		1B7A29F7262D5904004E0481 /* trainmsg.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B7A29F5262D58F6004E0481 /* trainmsg.c */; };
 		1B7A2A01262D5948004E0481 /* canton_bemf.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B7A29F9262D5947004E0481 /* canton_bemf.c */; };
@@ -238,6 +239,8 @@
 		1B67360E2531E4450063EA9A /* SimTrain.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SimTrain.m; sourceTree = "<group>"; };
 		1B693C4227D9CFEA0063D8B6 /* detect_loco.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = detect_loco.c; sourceTree = "<group>"; };
 		1B693C4327D9CFEA0063D8B6 /* detect_loco.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = detect_loco.h; sourceTree = "<group>"; };
+		1B7668892925855C00E2CE96 /* ToolWindow.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ToolWindow.h; sourceTree = "<group>"; };
+		1B76688A2925855C00E2CE96 /* ToolWindow.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ToolWindow.m; sourceTree = "<group>"; };
 		1B77BEC8274A471200BC5230 /* detectP.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = detectP.h; sourceTree = "<group>"; };
 		1B77BEC9274A471200BC5230 /* detectP.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = detectP.c; sourceTree = "<group>"; };
 		1B7A29F4262D58F6004E0481 /* notif.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = notif.h; sourceTree = "<group>"; };
@@ -707,6 +710,8 @@
 				1B3657BA275BED540042491A /* CTCManager.m */,
 				1BED2A9625173CF40080FC97 /* AppDelegate.h */,
 				1BED2A9725173CF40080FC97 /* AppDelegate.m */,
+				1B7668892925855C00E2CE96 /* ToolWindow.h */,
+				1B76688A2925855C00E2CE96 /* ToolWindow.m */,
 				1BFCA4DD28E32FC70056DE30 /* AppDelegateP.h */,
 				1BFCA4BE28E2D2E20056DE30 /* PlanCtonroller.h */,
 				1BFCA4BF28E2D2E20056DE30 /* PlanCtonroller.m */,
@@ -993,6 +998,7 @@
 				1B7D0A932815A175008EEDD4 /* oam_error.c in Sources */,
 				1B46EE552692684F00FAC813 /* topology.c in Sources */,
 				1B7A2A02262D5948004E0481 /* turnout.c in Sources */,
+				1B76688B2925855C00E2CE96 /* ToolWindow.m in Sources */,
 				1B46F80E280C22C400BAD6E8 /* conf_led.c in Sources */,
 				1B7A2A03262D5948004E0481 /* canton.c in Sources */,
 				1B46F803280752D600BAD6E8 /* conf_turnout.c in Sources */,

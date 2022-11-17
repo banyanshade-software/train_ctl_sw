@@ -640,7 +640,7 @@ static uint32_t lastBcast = 0;
 enum oam_slv_state {
     oam_slv_bcast,
 	oam_slv_unknown, // board is not known by master, continue bcast but with lower freq
-	oam_slv_ok
+	oam_slv_ok       // board has received number
 };
 static enum oam_slv_state slvState = oam_slv_bcast;
 
@@ -692,24 +692,26 @@ static int _handle_msg_slave(msg_64_t *m)
                 return 1;
             }
             switch (slvState) {
-            case oam_slv_ok: break;
+            case oam_slv_ok:
+            	if (m->subc != oam_localBoardNum()) {
+            		itm_debug3(DBG_OAM|DBG_ERR, "BNUM/slvst2", slvState, m->subc, oam_localBoardNum());
+            		// what to do here ?
+            		return 1;
+            	}
+            	break;
             case oam_slv_bcast:   //FALLTHRU
             case oam_slv_unknown: //FALLTHRU
             default:
                 itm_debug3(DBG_OAM, "BNUM/slvst", slvState, m->subc, oam_localBoardNum());
-                if (m->subc != oam_localBoardNum()) {
-                    itm_debug3(DBG_OAM|DBG_ERR, "BNUM/slvst2", slvState, m->subc, oam_localBoardNum());
-                    // what to do here ?
-                    return 1;
-                }
-                _send_slv_ok();
-                return 1;
             }
+
             if (m->subc != 0xFF) {
                 oam_localBoardNum_set(m->subc);
                 slvState = oam_slv_ok;
+                itm_debug2(DBG_OAM, "BNUM/ok",  m->subc, oam_localBoardNum());
                 _send_slv_ok();
             } else {
+                itm_debug2(DBG_OAM, "BNUM/unk",  m->subc, oam_localBoardNum());
                 slvState = oam_slv_unknown;
             }
             return 1;
@@ -731,17 +733,15 @@ static int _handle_msg_slave(msg_64_t *m)
         			if (slave_bootcount != m->v2u) {
         				itm_debug3(DBG_ERR|DBG_OAM, "M/Reboot", slave_master_id16, slave_bootcount, m->v2u);
         				reboot = 1;
-        			} else {
-        				itm_debug2(DBG_ERR|DBG_OAM, "M/MChg", slave_master_id16, m->v1u);
-        				if (!mcnt) {
-        					reboot = 1;
-        				}  else {
-        					mcnt--;
-        				}
         			}
         		} else {
         			// multiple master, allow 5 bad master until resolution
-        			mcnt = 5;
+    				itm_debug2(DBG_ERR|DBG_OAM, "M/MChg", slave_master_id16, m->v1u);
+    				if (!mcnt) {
+    					reboot = 1;
+    				}  else {
+    					mcnt--;
+    				}
         		}
         		if (reboot) {
         			// reboot slave when master changed or when master did reboot

@@ -30,6 +30,8 @@
 #include "conf_turnout.propag.h"
 #include "conf_globparam.h"
 #include "conf_globparam.propag.h"
+#include "conf_boards.h"
+#include "conf_boards.propag.h"
 #include "framing.h"
 #include "oam.h"
 #include "conf_canton.h"
@@ -615,6 +617,10 @@ typedef void (^respblk_t)(void);
             confnum = conf_pnum_canton;
             fieldnum = conf_canton_fieldnum(cpn);
             break;
+        case 'B': // 'B'
+            confnum = conf_lnum_boards;
+            fieldnum = conf_boards_fieldnum(cpn);
+            break;
         default:
             NSLog(@"bad param def");
             break;
@@ -680,6 +686,7 @@ int conf_canton_fieldnum(const char *str);
 int conf_turnout_fieldnum(const char *str);
 int conf_train_fieldnum(const char *str);
 int conf_globparam_fieldnum(const char *str);
+int conf_boards_fieldnum(const char *str);
 
 - (void) getParams:(int)np1
 {
@@ -746,11 +753,16 @@ int conf_globparam_fieldnum(const char *str);
                 confnum = conf_pnum_canton;
                 fieldnum = conf_canton_fieldnum(cpn);
                 break;
+            case 'B': // 'B'
+                confnum = conf_lnum_boards;
+                fieldnum = conf_boards_fieldnum(cpn);
+                break;
             default:
                 NSLog(@"bad param def");
                 break;
         }
         if ((confnum<0)||(fieldnum<0)) {
+            numparam--;
             return;
         }
         
@@ -849,6 +861,10 @@ int conf_globparam_fieldnum(const char *str);
             case conf_lnum_globparam: //XXX loc
                 t = 'G';
                 fld = conf_globparam_fieldname(field);
+                break;
+            case conf_lnum_boards: //XXX loc
+                t = 'B';
+                fld = conf_boards_fieldname(field);
                 break;
             default:
                 NSLog(@"bad conf num in paramUserVal");

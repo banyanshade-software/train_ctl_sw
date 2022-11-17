@@ -4152,14 +4152,14 @@
                 <rect key="frame" x="0.0" y="0.0" width="140" height="542"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <box misplaced="YES" borderType="line" title="LED" translatesAutoresizingMaskIntoConstraints="NO" id="C3N-WJ-29f">
-                        <rect key="frame" x="13" y="54" width="114" height="476"/>
+                    <box borderType="line" title="LED" translatesAutoresizingMaskIntoConstraints="NO" id="C3N-WJ-29f">
+                        <rect key="frame" x="13" y="12" width="114" height="233"/>
                         <view key="contentView" id="9au-X2-ook">
-                            <rect key="frame" x="3" y="3" width="108" height="458"/>
+                            <rect key="frame" x="3" y="3" width="108" height="215"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
                                 <popUpButton verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="zmV-ts-69t">
-                                    <rect key="frame" x="6" y="426" width="99" height="25"/>
+                                    <rect key="frame" x="6" y="183" width="99" height="25"/>
                                     <popUpButtonCell key="cell" type="push" title="Off" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="rZI-tR-AtI" id="ggg-3B-Wu3">
                                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                         <font key="font" metaFont="menu"/>
@@ -4196,8 +4196,8 @@
                                         <binding destination="Voe-Tx-rLC" name="selectedIndex" keyPath="ledProg" id="3A0-V0-NgN"/>
                                     </connections>
                                 </popUpButton>
-                                <button verticalHuggingPriority="750" misplaced="YES" tag="1" translatesAutoresizingMaskIntoConstraints="NO" id="cM6-FG-veN">
-                                    <rect key="frame" x="52" y="391" width="56" height="32"/>
+                                <button verticalHuggingPriority="750" tag="1" translatesAutoresizingMaskIntoConstraints="NO" id="cM6-FG-veN">
+                                    <rect key="frame" x="52" y="150" width="56" height="32"/>
                                     <constraints>
                                         <constraint firstAttribute="width" constant="44" id="ewx-eD-4bg"/>
                                     </constraints>
@@ -4209,8 +4209,8 @@
                                         <action selector="sendLed:" target="Voe-Tx-rLC" id="Psu-Gt-bv7"/>
                                     </connections>
                                 </button>
-                                <button verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="go4-ET-1Uh">
-                                    <rect key="frame" x="2" y="391" width="56" height="32"/>
+                                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="go4-ET-1Uh">
+                                    <rect key="frame" x="2" y="150" width="56" height="32"/>
                                     <constraints>
                                         <constraint firstAttribute="width" constant="44" id="980-Jr-gru"/>
                                     </constraints>
@@ -4222,8 +4222,8 @@
                                         <action selector="sendLed:" target="Voe-Tx-rLC" id="0eS-8Z-PyV"/>
                                     </connections>
                                 </button>
-                                <button verticalHuggingPriority="750" misplaced="YES" tag="2" translatesAutoresizingMaskIntoConstraints="NO" id="UAB-qA-u6A">
-                                    <rect key="frame" x="2" y="358" width="56" height="32"/>
+                                <button verticalHuggingPriority="750" tag="2" translatesAutoresizingMaskIntoConstraints="NO" id="UAB-qA-u6A">
+                                    <rect key="frame" x="2" y="123" width="56" height="32"/>
                                     <constraints>
                                         <constraint firstAttribute="width" constant="44" id="i2o-ZO-FQO"/>
                                     </constraints>
@@ -4235,8 +4235,112 @@
                                         <action selector="sendLed:" target="Voe-Tx-rLC" id="An4-08-auI"/>
                                     </connections>
                                 </button>
+                                <button verticalHuggingPriority="750" tag="4" translatesAutoresizingMaskIntoConstraints="NO" id="0sG-aM-DWe">
+                                    <rect key="frame" x="2" y="96" width="56" height="32"/>
+                                    <constraints>
+                                        <constraint firstAttribute="width" constant="44" id="oAs-zm-jY7"/>
+                                    </constraints>
+                                    <buttonCell key="cell" type="push" title="L0.4" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="mdh-El-1Gp">
+                                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                        <font key="font" metaFont="system"/>
+                                    </buttonCell>
+                                    <connections>
+                                        <action selector="sendLed:" target="Voe-Tx-rLC" id="6wR-Ea-7qP"/>
+                                    </connections>
+                                </button>
+                                <button verticalHuggingPriority="750" tag="5" translatesAutoresizingMaskIntoConstraints="NO" id="fWC-ae-NMv">
+                                    <rect key="frame" x="52" y="96" width="56" height="32"/>
+                                    <constraints>
+                                        <constraint firstAttribute="width" constant="44" id="hJ2-u8-sGn"/>
+                                    </constraints>
+                                    <buttonCell key="cell" type="push" title="L0.5" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="NdX-dp-qNd">
+                                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                        <font key="font" metaFont="system"/>
+                                    </buttonCell>
+                                    <connections>
+                                        <action selector="sendLed:" target="Voe-Tx-rLC" id="Qa1-mg-WJq"/>
+                                    </connections>
+                                </button>
+                                <button verticalHuggingPriority="750" tag="17" translatesAutoresizingMaskIntoConstraints="NO" id="9zO-es-MeC">
+                                    <rect key="frame" x="52" y="63" width="56" height="32"/>
+                                    <constraints>
+                                        <constraint firstAttribute="width" constant="44" id="CLk-oN-L93"/>
+                                    </constraints>
+                                    <buttonCell key="cell" type="push" title="L1.1" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="XFd-6J-b7W">
+                                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                        <font key="font" metaFont="system"/>
+                                    </buttonCell>
+                                    <connections>
+                                        <action selector="sendLed:" target="Voe-Tx-rLC" id="g9L-K4-ucX"/>
+                                    </connections>
+                                </button>
+                                <button verticalHuggingPriority="750" tag="16" translatesAutoresizingMaskIntoConstraints="NO" id="jgu-AL-8aW">
+                                    <rect key="frame" x="2" y="63" width="56" height="32"/>
+                                    <constraints>
+                                        <constraint firstAttribute="width" constant="44" id="SOR-2L-1L2"/>
+                                    </constraints>
+                                    <buttonCell key="cell" type="push" title="L1.0" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Slo-GF-kpV">
+                                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                        <font key="font" metaFont="system"/>
+                                    </buttonCell>
+                                    <connections>
+                                        <action selector="sendLed:" target="Voe-Tx-rLC" id="drV-4a-0UH"/>
+                                    </connections>
+                                </button>
+                                <button verticalHuggingPriority="750" tag="18" translatesAutoresizingMaskIntoConstraints="NO" id="Gq4-D8-V7u">
+                                    <rect key="frame" x="2" y="36" width="56" height="32"/>
+                                    <constraints>
+                                        <constraint firstAttribute="width" constant="44" id="LDR-pY-Klx"/>
+                                    </constraints>
+                                    <buttonCell key="cell" type="push" title="L1.2" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="n07-4m-tnH">
+                                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                        <font key="font" metaFont="system"/>
+                                    </buttonCell>
+                                    <connections>
+                                        <action selector="sendLed:" target="Voe-Tx-rLC" id="9Cc-SC-flo"/>
+                                    </connections>
+                                </button>
+                                <button verticalHuggingPriority="750" tag="19" translatesAutoresizingMaskIntoConstraints="NO" id="f1p-KB-sr4">
+                                    <rect key="frame" x="52" y="36" width="56" height="32"/>
+                                    <constraints>
+                                        <constraint firstAttribute="width" constant="44" id="bWD-NZ-pRG"/>
+                                    </constraints>
+                                    <buttonCell key="cell" type="push" title="L1.3" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="q8m-7W-WRG">
+                                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                        <font key="font" metaFont="system"/>
+                                    </buttonCell>
+                                    <connections>
+                                        <action selector="sendLed:" target="Voe-Tx-rLC" id="saO-9d-3fP"/>
+                                    </connections>
+                                </button>
+                                <button verticalHuggingPriority="750" tag="20" translatesAutoresizingMaskIntoConstraints="NO" id="UJK-tx-TK0">
+                                    <rect key="frame" x="2" y="9" width="56" height="32"/>
+                                    <constraints>
+                                        <constraint firstAttribute="width" constant="44" id="5GX-e1-b76"/>
+                                    </constraints>
+                                    <buttonCell key="cell" type="push" title="L1.4" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="TYW-ti-Upy">
+                                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                        <font key="font" metaFont="system"/>
+                                    </buttonCell>
+                                    <connections>
+                                        <action selector="sendLed:" target="Voe-Tx-rLC" id="auX-9y-7OC"/>
+                                    </connections>
+                                </button>
+                                <button verticalHuggingPriority="750" tag="21" translatesAutoresizingMaskIntoConstraints="NO" id="I9B-Zh-XCO">
+                                    <rect key="frame" x="52" y="9" width="56" height="32"/>
+                                    <constraints>
+                                        <constraint firstAttribute="width" constant="44" id="eqh-sq-i0G"/>
+                                    </constraints>
+                                    <buttonCell key="cell" type="push" title="L1.5" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="SX8-f7-Vms">
+                                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                        <font key="font" metaFont="system"/>
+                                    </buttonCell>
+                                    <connections>
+                                        <action selector="sendLed:" target="Voe-Tx-rLC" id="okC-Xt-2cQ"/>
+                                    </connections>
+                                </button>
                                 <button verticalHuggingPriority="750" misplaced="YES" tag="3" translatesAutoresizingMaskIntoConstraints="NO" id="ICQ-cs-HHR">
-                                    <rect key="frame" x="52" y="358" width="56" height="32"/>
+                                    <rect key="frame" x="51" y="63" width="56" height="156"/>
                                     <constraints>
                                         <constraint firstAttribute="width" constant="44" id="AF1-78-wrZ"/>
                                     </constraints>
@@ -4250,21 +4354,40 @@
                                 </button>
                             </subviews>
                             <constraints>
+                                <constraint firstItem="Gq4-D8-V7u" firstAttribute="top" secondItem="jgu-AL-8aW" secondAttribute="bottom" constant="6" id="0Qg-vm-nzC"/>
                                 <constraint firstItem="zmV-ts-69t" firstAttribute="leading" secondItem="9au-X2-ook" secondAttribute="leading" constant="8" id="0SK-Ll-ROr"/>
+                                <constraint firstItem="jgu-AL-8aW" firstAttribute="top" secondItem="0sG-aM-DWe" secondAttribute="bottom" constant="12" id="0e8-Kx-68F"/>
+                                <constraint firstItem="Gq4-D8-V7u" firstAttribute="leading" secondItem="jgu-AL-8aW" secondAttribute="leading" id="1O4-dU-MS8"/>
                                 <constraint firstItem="go4-ET-1Uh" firstAttribute="leading" secondItem="zmV-ts-69t" secondAttribute="leading" id="63L-Yg-Qm1"/>
                                 <constraint firstItem="cM6-FG-veN" firstAttribute="leading" secondItem="go4-ET-1Uh" secondAttribute="trailing" constant="6" id="8gK-oW-rFG"/>
                                 <constraint firstItem="UAB-qA-u6A" firstAttribute="leading" secondItem="go4-ET-1Uh" secondAttribute="leading" id="D2i-X7-FeL"/>
                                 <constraint firstAttribute="trailing" secondItem="cM6-FG-veN" secondAttribute="trailing" constant="6" id="DOy-dq-NcK"/>
                                 <constraint firstItem="ICQ-cs-HHR" firstAttribute="leading" secondItem="UAB-qA-u6A" secondAttribute="trailing" constant="6" id="EH3-Cc-1jl"/>
                                 <constraint firstItem="zmV-ts-69t" firstAttribute="top" secondItem="9au-X2-ook" secondAttribute="top" constant="8" id="Gyw-iE-M4G"/>
+                                <constraint firstItem="0sG-aM-DWe" firstAttribute="top" secondItem="UAB-qA-u6A" secondAttribute="bottom" constant="6" id="H33-pf-INX"/>
+                                <constraint firstItem="jgu-AL-8aW" firstAttribute="leading" secondItem="0sG-aM-DWe" secondAttribute="leading" id="HHu-g8-uF5"/>
+                                <constraint firstItem="0sG-aM-DWe" firstAttribute="leading" secondItem="UAB-qA-u6A" secondAttribute="leading" id="JCg-Gd-2b9"/>
+                                <constraint firstItem="UJK-tx-TK0" firstAttribute="leading" secondItem="Gq4-D8-V7u" secondAttribute="leading" id="JZK-4P-Guu"/>
                                 <constraint firstItem="ICQ-cs-HHR" firstAttribute="firstBaseline" secondItem="UAB-qA-u6A" secondAttribute="firstBaseline" id="Kov-vX-5Ah"/>
+                                <constraint firstItem="I9B-Zh-XCO" firstAttribute="leading" secondItem="UJK-tx-TK0" secondAttribute="trailing" constant="6" id="Ln2-2h-K8f"/>
                                 <constraint firstItem="UAB-qA-u6A" firstAttribute="top" secondItem="go4-ET-1Uh" secondAttribute="bottom" constant="6" id="Lwq-5B-e7i"/>
-                                <constraint firstAttribute="bottom" secondItem="ICQ-cs-HHR" secondAttribute="bottom" constant="6" id="QsU-d2-fGA"/>
+                                <constraint firstItem="f1p-KB-sr4" firstAttribute="firstBaseline" secondItem="Gq4-D8-V7u" secondAttribute="firstBaseline" id="Mmu-59-Mcr"/>
+                                <constraint firstItem="I9B-Zh-XCO" firstAttribute="firstBaseline" secondItem="UJK-tx-TK0" secondAttribute="firstBaseline" id="Ptj-2C-45W"/>
                                 <constraint firstItem="go4-ET-1Uh" firstAttribute="top" secondItem="zmV-ts-69t" secondAttribute="bottom" constant="8" id="Vcp-6Z-3c5"/>
                                 <constraint firstAttribute="trailing" secondItem="zmV-ts-69t" secondAttribute="trailing" constant="8" id="Xbb-bz-qFU"/>
+                                <constraint firstItem="f1p-KB-sr4" firstAttribute="leading" secondItem="Gq4-D8-V7u" secondAttribute="trailing" constant="6" id="bsz-Ve-BMf"/>
                                 <constraint firstItem="cM6-FG-veN" firstAttribute="firstBaseline" secondItem="go4-ET-1Uh" secondAttribute="firstBaseline" id="cSm-Kj-ahZ"/>
+                                <constraint firstAttribute="bottom" secondItem="UJK-tx-TK0" secondAttribute="bottom" constant="16" id="eUN-WD-WHq"/>
+                                <constraint firstItem="UJK-tx-TK0" firstAttribute="top" secondItem="Gq4-D8-V7u" secondAttribute="bottom" constant="6" id="ikP-dQ-ReY"/>
+                                <constraint firstItem="9zO-es-MeC" firstAttribute="firstBaseline" secondItem="jgu-AL-8aW" secondAttribute="firstBaseline" id="m7C-6t-0Np"/>
+                                <constraint firstItem="fWC-ae-NMv" firstAttribute="firstBaseline" secondItem="0sG-aM-DWe" secondAttribute="firstBaseline" id="mTu-mS-3qW"/>
+                                <constraint firstItem="fWC-ae-NMv" firstAttribute="leading" secondItem="0sG-aM-DWe" secondAttribute="trailing" constant="6" id="unj-jw-6Oi"/>
+                                <constraint firstItem="9zO-es-MeC" firstAttribute="leading" secondItem="jgu-AL-8aW" secondAttribute="trailing" constant="6" id="wPd-A6-JFa"/>
                             </constraints>
                         </view>
+                        <constraints>
+                            <constraint firstAttribute="height" priority="250" constant="472" id="cXx-f6-AaS"/>
+                        </constraints>
                     </box>
                 </subviews>
                 <constraints>

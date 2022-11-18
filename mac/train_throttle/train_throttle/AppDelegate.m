@@ -26,6 +26,8 @@
 #include "conf_train.propag.h"
 #include "conf_canton.h"
 #include "conf_canton.propag.h"
+#include "conf_servo.h"
+#include "conf_servo.propag.h"
 #include "conf_turnout.h"
 #include "conf_turnout.propag.h"
 #include "conf_globparam.h"
@@ -538,7 +540,7 @@ typedef void (^respblk_t)(void);
 
 - (void) forAllParamsDo:(void(^)(NSControl *))action
 {
-    [self performForChildOf:@[self.paramView1, self.paramView2] having:^(NSView *v) {
+    [self performForChildOf:@[self.paramView1, self.paramView2, self.paramView3, self.paramView4] having:^(NSView *v) {
         NSString *s = v.identifier;
         if (![s isKindOfClass:[NSString class]]) return NO;
         if (![s hasPrefix:@"par_"]) return NO;
@@ -592,7 +594,8 @@ typedef void (^respblk_t)(void);
     int fieldnum = -1;
     int boardnum = 0;
     
-    
+    //TODO handle board num
+
     int loc = 0;
     switch (cpsel[0]) {
         case 'T':
@@ -620,6 +623,11 @@ typedef void (^respblk_t)(void);
         case 'B': // 'B'
             confnum = conf_lnum_boards;
             fieldnum = conf_boards_fieldnum(cpn);
+            break;
+        case 'S':
+            confnum = conf_pnum_servo;
+            fieldnum = conf_servo_fieldnum(cpn);
+            boardnum = 1; // XXX
             break;
         default:
             NSLog(@"bad param def");
@@ -687,6 +695,10 @@ int conf_turnout_fieldnum(const char *str);
 int conf_train_fieldnum(const char *str);
 int conf_globparam_fieldnum(const char *str);
 int conf_boards_fieldnum(const char *str);
+int conf_servo_fieldnum(const char *str);
+
+
+
 
 - (void) getParams:(int)np1
 {
@@ -728,7 +740,7 @@ int conf_boards_fieldnum(const char *str);
         int fieldnum = -1;
         int boardnum = 0;
         
-        
+        //TODO handle board num
         int loc = 0;
         switch (cpsel[0]) {
             case 'T':
@@ -754,8 +766,14 @@ int conf_boards_fieldnum(const char *str);
                 fieldnum = conf_canton_fieldnum(cpn);
                 break;
             case 'B': // 'B'
+                loc = 1;
                 confnum = conf_lnum_boards;
                 fieldnum = conf_boards_fieldnum(cpn);
+                break;
+            case 'S':
+                confnum = conf_pnum_servo;
+                fieldnum = conf_servo_fieldnum(cpn);
+                boardnum = 1; //XXX
                 break;
             default:
                 NSLog(@"bad param def");
@@ -847,6 +865,7 @@ int conf_boards_fieldnum(const char *str);
     const char *conf_boards_fieldname(int f);
     const char *conf_canton_fieldname(int f);
     const char *conf_turnout_fieldname(int f);
+    const char *conf_servo_fieldname(int f);
 
     char t;
     int n = inst > 9 ? '-' : inst;
@@ -866,6 +885,7 @@ int conf_boards_fieldnum(const char *str);
                 t = 'B';
                 fld = conf_boards_fieldname(field);
                 break;
+            
             default:
                 NSLog(@"bad conf num in paramUserVal");
                 return;
@@ -880,6 +900,10 @@ int conf_boards_fieldnum(const char *str);
             case conf_pnum_turnout: //XXX loc
                 t = 't';
                 fld = conf_turnout_fieldname(field);
+                break;
+            case conf_pnum_servo:
+                t = 'S';
+                fld = conf_servo_fieldname(field);
                 break;
             default:
                 NSLog(@"bad conf num in paramUserVal");

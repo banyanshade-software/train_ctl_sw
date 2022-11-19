@@ -66,6 +66,9 @@ osStaticThreadDef_t defaultTaskControlBlock;
 osThreadId ctrlTaskHandle;
 uint32_t ctrlTaskBuffer[ 256 ];
 osStaticThreadDef_t ctrlTaskControlBlock;
+osThreadId ledTaskHandle;
+uint32_t ledTaskBuffer[ 128 ];
+osStaticThreadDef_t ledTaskControlBlock;
 /* USER CODE BEGIN PV */
 
 /* USER CODE END PV */
@@ -79,6 +82,7 @@ static void MX_TIM3_Init(void);
 static void MX_TIM4_Init(void);
 void StartOamTask(void const * argument);
 extern void StartCtrlTask(void const * argument);
+void start_led_task(void const * argument);
 
 /* USER CODE BEGIN PFP */
 
@@ -149,6 +153,10 @@ int main(void)
   /* definition and creation of ctrlTask */
   osThreadStaticDef(ctrlTask, StartCtrlTask, osPriorityRealtime, 0, 256, ctrlTaskBuffer, &ctrlTaskControlBlock);
   ctrlTaskHandle = osThreadCreate(osThread(ctrlTask), NULL);
+
+  /* definition and creation of ledTask */
+  osThreadStaticDef(ledTask, start_led_task, osPriorityRealtime, 0, 128, ledTaskBuffer, &ledTaskControlBlock);
+  ledTaskHandle = osThreadCreate(osThread(ledTask), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -490,6 +498,24 @@ __weak void StartOamTask(void const * argument)
     osDelay(1);
   }
   /* USER CODE END 5 */
+}
+
+/* USER CODE BEGIN Header_start_led_task */
+/**
+* @brief Function implementing the ledTask thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_start_led_task */
+__weak void start_led_task(void const * argument)
+{
+  /* USER CODE BEGIN start_led_task */
+  /* Infinite loop */
+  for(;;)
+  {
+    osDelay(1);
+  }
+  /* USER CODE END start_led_task */
 }
 
 /**

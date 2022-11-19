@@ -520,7 +520,8 @@ void HAL_CAN_ErrorCallback(CAN_HandleTypeDef *hcan)
 	}
 	bh();
 	if (hcan->ErrorCode & HAL_CAN_ERROR_RX_FOV0) {
-		FatalError("CNrO", "CAN Rx Overrun", Error_CAN_Rx_Overrun0);
+		itm_debug1(DBG_ERR|DBG_CAN, "CAN Rx0 Overrun", hcan->ErrorCode);
+		if ((0)) FatalError("CNrO", "CAN Rx Overrun", Error_CAN_Rx_Overrun0);
 	}
 	if (hcan->ErrorCode & HAL_CAN_ERROR_RX_FOV1) {
 		FatalError("CNr1", "CAN Rx Overrun", Error_CAN_Rx_Overrun1);

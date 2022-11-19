@@ -60,10 +60,16 @@ static const tasklet_def_t servo_tdef = {
 tasklet_t servo_tasklet = { .def = &servo_tdef, .init_done = 0, .queue=&to_servo};
 
 
+#if SERVO_RUNS_ON_LED_TASK
+#define POS_DIVISOR 10		// 1 if task run at 100hz, 10 if task run at 1000 etc..
+#else
+#define POS_DIVISOR 1
+#endif
+
 
 typedef struct {
+	uint32_t curpos32;
 	uint16_t target;
-	uint16_t curpos;
 	uint16_t speed;
 	uint8_t  sender;
 	uint8_t  moving;
@@ -164,7 +170,7 @@ static void servo_init(void)
 		_servo_power(conf, 1);
 		var->powered = 1;
 		var->target = conf->pos0;
-		var->curpos = conf->pos0;
+		var->curpos32 = POS_DIVISOR * conf->pos0;
 		_servo_setpos(conf, var->target);
 		var->moving = 4;
 		var->sender = 0xFF; // no ack
@@ -190,7 +196,7 @@ static void servo_enter_runmode(runmode_t m)
 static void process_servo_tick(uint32_t tick, uint32_t dt)
 {
 	//itm_debug1(DBG_SERVO, "servt", dt);
-	for (int i=0; i<NUM_SERVOS; i++) {
+	for (int i=0; i < NUM_SERVOS; i++) {
 		USE_SERVO(i);
 		if (var->moving) {
 			//if (i) {
@@ -217,11 +223,11 @@ static void process_servo_tick(uint32_t tick, uint32_t dt)
 					m.subc = i;
                     if (!var->isdoor) {
                         m.cmd = CMD_SERVO_ACK;
-                        m.v1u = var->curpos;
+                        m.v1u = var->curpos32/POS_DIVISOR;
                     } else {
                         m.cmd = CMD_SERVODOOR_ACK;
-                        uint16_t exp = (conf->direction) ? conf->max : conf->min;
-                        m.v1u = (var->curpos == exp) ? 1 : 0;
+                        uint32_t exp = POS_DIVISOR * ((conf->direction) ? conf->max : conf->min);
+                        m.v1u = (var->curpos32 == exp) ? 1 : 0;
                     }
 					mqf_write_from_servo(&m);
 				}
@@ -240,17 +246,17 @@ static void process_servo_tick(uint32_t tick, uint32_t dt)
 				continue;
 			}
 			int32_t p;
-			if (var->target != var->curpos) {
-				if (var->target - var->curpos > 0) {
-					p = var->curpos + var->speed;
-					if (p > var->target) p = var->target;
+			if (var->target*POS_DIVISOR != var->curpos32) {
+				if (var->target*POS_DIVISOR > var->curpos32) {
+					p = (var->curpos32 + var->speed);
+					if (p > var->target*POS_DIVISOR) p = var->target*POS_DIVISOR;
 				} else {
-					p = var->curpos - var->speed;
-					if (p < var->target) p = var->target;
+					p = (var->curpos32 - var->speed);
+					if (p < var->target*POS_DIVISOR) p = var->target*POS_DIVISOR;
 				}
-				var->curpos = (uint16_t) p;
-				itm_debug3(DBG_SERVO, "mv", i,var->curpos, var->target);
-				_servo_setpos(conf, var->curpos);
+				var->curpos32 = p;
+				if ((1)) itm_debug3(DBG_SERVO, "mv", i,var->curpos32, var->target);
+				_servo_setpos(conf, var->curpos32/POS_DIVISOR);
 				var->moving = 4;
 			}
 		}

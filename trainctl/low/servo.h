@@ -18,5 +18,6 @@
 
 extern tasklet_t servo_tasklet;
 
+#define SERVO_RUNS_ON_LED_TASK 0
 
 #endif /* LOW_SERVO_H_ */

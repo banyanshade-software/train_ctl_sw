@@ -1,0 +1,38 @@
+{
+  "configurations" : [
+    {
+      "id" : "60C5D3D0-66A1-4BDD-A798-7E6F387406EC",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:train_throttle.xcodeproj",
+        "identifier" : "1BD15795281122AC00CFFA00",
+        "name" : "flashStoreTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:train_throttle.xcodeproj",
+        "identifier" : "1BF56FB92917CCC000073409",
+        "name" : "train_lowTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:train_throttle.xcodeproj",
+        "identifier" : "1BC9030B2720AD250087CEA7",
+        "name" : "trainctlTests"
+      }
+    }
+  ],
+  "version" : 1
+}

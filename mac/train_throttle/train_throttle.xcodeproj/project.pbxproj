@@ -329,6 +329,7 @@
 		1BED2A9F25173D1F0080FC97 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		1BED2AA125173D1F0080FC97 /* train_throttle.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = train_throttle.entitlements; sourceTree = "<group>"; };
 		1BED2AA7251804310080FC97 /* stop.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = stop.png; sourceTree = "<group>"; };
+		1BF1D238293202C2006B5684 /* TestPlan.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = TestPlan.xctestplan; sourceTree = "<group>"; };
 		1BF42FD42914F524004EC55B /* servo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = servo.h; sourceTree = "<group>"; };
 		1BF42FD52914F524004EC55B /* servo.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = servo.c; sourceTree = "<group>"; };
 		1BF56FBA2917CCC000073409 /* train_lowTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = train_lowTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -669,6 +670,7 @@
 		1BED2A8A25173CF40080FC97 = {
 			isa = PBXGroup;
 			children = (
+				1BF1D238293202C2006B5684 /* TestPlan.xctestplan */,
 				1B7D0A902814A0E8008EEDD4 /* trainctl_config.h */,
 				1B46F812280C288E00BAD6E8 /* simu_flash.h */,
 				1B46F813280C288E00BAD6E8 /* simu_flash.c */,

@@ -19,7 +19,6 @@
 		1B138EEC2811E23100DC181B /* conf_canton.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B46F7F9280752D500BAD6E8 /* conf_canton.c */; };
 		1B138EED2811E23B00DC181B /* conf_topology.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B46F7FA280752D500BAD6E8 /* conf_topology.c */; };
 		1B138EEE2811E23E00DC181B /* conf_train.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B46F7FD280752D600BAD6E8 /* conf_train.c */; };
-		1B138EEF2811E24300DC181B /* conf_turnout.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B46F7F7280752D500BAD6E8 /* conf_turnout.c */; };
 		1B138EF228134BAE00DC181B /* conf_utest.fields.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B138EF028134BAE00DC181B /* conf_utest.fields.c */; };
 		1B138EF328134BAE00DC181B /* conf_utestloc.fields.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B138EF128134BAE00DC181B /* conf_utestloc.fields.c */; };
 		1B138EF728134BBA00DC181B /* conf_utestloc.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B138EF428134BB900DC181B /* conf_utestloc.c */; };
@@ -123,6 +122,8 @@
 		1BED2A9D25173D1F0080FC97 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1BED2A9B25173D1F0080FC97 /* MainMenu.xib */; };
 		1BED2AA025173D1F0080FC97 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BED2A9F25173D1F0080FC97 /* main.m */; };
 		1BED2AA8251804310080FC97 /* stop.png in Resources */ = {isa = PBXBuildFile; fileRef = 1BED2AA7251804310080FC97 /* stop.png */; };
+		1BF1D26929320904006B5684 /* turnouts.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BFB8A6F2922F13F00B19C67 /* turnouts.c */; };
+		1BF1D28029320968006B5684 /* conf_turnout.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B46F7F7280752D500BAD6E8 /* conf_turnout.c */; };
 		1BF42FD62914F525004EC55B /* servo.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BF42FD52914F524004EC55B /* servo.c */; };
 		1BF56FBD2917CCC000073409 /* train_lowTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BF56FBC2917CCC000073409 /* train_lowTests.m */; };
 		1BF56FC72917CCEF00073409 /* TestServo.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BF56FC62917CCEF00073409 /* TestServo.m */; };
@@ -937,6 +938,7 @@
 				1BE8B29527418D82000A0FAD /* cautoP.c in Sources */,
 				1B1C75FC27245C3F00F95111 /* inertia.c in Sources */,
 				1BA0FCB12724B0380002DF4C /* TestPid.m in Sources */,
+				1BF1D26929320904006B5684 /* turnouts.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -947,7 +949,6 @@
 				1B138EEC2811E23100DC181B /* conf_canton.c in Sources */,
 				1BD157B62811230100CFFA00 /* simu_flash.c in Sources */,
 				1B138EE72811C0DF00DC181B /* itm_debug.c in Sources */,
-				1B138EEF2811E24300DC181B /* conf_turnout.c in Sources */,
 				1B6092682919944000FCE51C /* conf_servo.c in Sources */,
 				1B6092632919942D00FCE51C /* conf_gpropag.c in Sources */,
 				1BD157B5281122FB00CFFA00 /* oam_flash.c in Sources */,
@@ -956,6 +957,7 @@
 				1B138EEB2811E22C00DC181B /* conf_boards.c in Sources */,
 				1B138EF728134BBA00DC181B /* conf_utestloc.c in Sources */,
 				1B138EE12811243B00DC181B /* TestFlashStore.m in Sources */,
+				1BF1D28029320968006B5684 /* conf_turnout.c in Sources */,
 				1B138EF228134BAE00DC181B /* conf_utest.fields.c in Sources */,
 				1B138EF328134BAE00DC181B /* conf_utestloc.fields.c in Sources */,
 				1B138EE92811E22400DC181B /* conf_globparam.c in Sources */,

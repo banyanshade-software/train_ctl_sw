@@ -20,6 +20,9 @@
       }
     },
     {
+      "skippedTests" : [
+        "TestHash"
+      ],
       "target" : {
         "containerPath" : "container:train_throttle.xcodeproj",
         "identifier" : "1BF56FB92917CCC000073409",

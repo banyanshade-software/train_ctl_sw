@@ -23,6 +23,8 @@
 int conf_servo_fieldnum(const char *str)
 {
     if (0) {
+    } else if (!strcmp(str, "direction")) {
+         return conf_numfield_servo_direction;
     } else if (!strcmp(str, "min")) {
          return conf_numfield_servo_min;
     } else if (!strcmp(str, "max")) {
@@ -38,6 +40,8 @@ int conf_servo_fieldnum(const char *str)
 const char *conf_servo_fieldname(int f)
 {
     if (0) {
+    } else if (f == conf_numfield_servo_direction) {
+         return "direction";
     } else if (f == conf_numfield_servo_min) {
          return "min";
     } else if (f == conf_numfield_servo_max) {

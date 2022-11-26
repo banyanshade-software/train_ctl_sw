@@ -101,11 +101,29 @@ static int _dim(int col, int dim)
 }
 
 
-- (void) uitrac_change_tn:(int)tn val:(int)v
+- (void) uitrac_change_tn:(int)tn val:(enum topo_turnout_state)v
 {
-    NSString *t1 = [NSString stringWithFormat:@"to%d%c", tn, v ? 't' : 's'];
-    NSString *t2 = [NSString stringWithFormat:@"to%d%c", tn, v ? 's' : 't'];
-    NSString *js = [NSString stringWithFormat:@"document.getElementById('%@').style['stroke-width'] = 1; document.getElementById('%@').style['stroke-width'] = 8;", t2, t1];
+    int t = 0;
+    int s = 0;
+    switch (v) {
+        case topo_tn_straight:
+            s = 1; t = 0;
+            break;
+        case topo_tn_turn:
+            s = 0; t = 1;
+            break;
+        case topo_tn_moving:
+            s = 1; t = 1;
+            break;
+        case topo_tn_undetermined: // FALLTHRU
+        default:
+            s = 0; t = 0;
+            break;
+    }
+    NSString *ts = [NSString stringWithFormat:@"to%ds", tn];
+    NSString *tt = [NSString stringWithFormat:@"to%dt", tn];
+    NSString *js = [NSString stringWithFormat:@"document.getElementById('%@').style['stroke-width'] = %d; document.getElementById('%@').style['stroke-width'] = %d;",
+                    ts, s ? 8 : 1, tt, t ? 8: 1];
     [_ctoWebView evaluateJavaScript:js completionHandler:^(id v, NSError *err) {
         if (err) {
             NSLog(@"js error : %@\n", err);

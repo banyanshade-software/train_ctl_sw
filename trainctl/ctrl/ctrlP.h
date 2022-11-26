@@ -183,7 +183,7 @@ extern uint8_t ctrl_flag_notify_speed ;
 
 
 // provided by ctrl.c
-extern int ctrl2_set_turnout(xtrnaddr_t tn, int v, int train_num); // ctrl.c
+extern int ctrl2_set_turnout(xtrnaddr_t tn, enum topo_turnout_state v, int train_num); // ctrl.c
 // #longtrain :  lock a turnout without changing value
 extern int ctrl2_lock_turnout(xtrnaddr_t tn, int train);
 extern void ctrl2_unlock_turnout(xtrnaddr_t tn, int train);

@@ -44,7 +44,8 @@
 #include "topology.h"
 #include "topologyP.h"
 #include "occupency.h"
-
+#include "../utils/bitarray.h"
+#include "../utils/dynamic_perfect_hash.h"
 
 #ifdef TOPOLOGY_SVG
 #define _PTS(pi, ...)  ,pi,{__VA_ARGS__}
@@ -185,7 +186,7 @@ lsblk_num_t next_lsblk(lsblk_num_t blknum, uint8_t left, uint8_t *palternate)
     //printf("blk %d, left=%d next tn=%d a=%d b=%d\n", blknum.n, left, tn.v, a.n, b.n);
     if (tn.v != 0xFF) {
         if (palternate) *palternate = 1;
-        a = topology_get_turnout(tn) ? b : a;
+        a = (topology_get_turnout(tn) == topo_tn_turn) ? b : a;
     }
     // sanity XXX KO with virtual canton */
     if ((a.n>120) || (b.n>120)) {
@@ -320,43 +321,6 @@ xblkaddr_t next_block_addr(xblkaddr_t blkaddr, uint8_t left)
 }
 // --------------------------------------------------------------------------------------
 
-static volatile uint32_t turnoutvals = 0; // bit field
-
-uint8_t topology_or_occupency_changed = 0;
-
-int topology_set_turnout(xtrnaddr_t turnout, int v, int numtrain)
-{
-	if (turnout.v >= MAX_TOTAL_TURNOUTS) return -1;
-	if (turnout.v == 0xFF) return -1;
-	if (turnout.v>31) return -1; // XXX
-
-	if (numtrain>=0) {
-		int rc = occupency_turnout_reserve(turnout, numtrain);
-		if (rc) {
-			return -1;
-		}
-	}
-	if (v) {
-		__sync_fetch_and_or(&turnoutvals, (1U<<turnout.v));
-	} else {
-		__sync_fetch_and_and(&turnoutvals, ~(1U<<turnout.v));
-	}
-    topology_or_occupency_changed = 1;
-	itm_debug2(DBG_TURNOUT, "tt", turnout.v, topology_get_turnout(turnout));
-	return 0;
-}
-
-
-
-int topology_get_turnout(xtrnaddr_t turnout)
-{
-	if (turnout.v >= MAX_TOTAL_TURNOUTS) return 0;
-	if (turnout.v == 0xFF) return 0;
-	if (turnout.v > 31) return 0;
-
-	uint32_t b = turnoutvals;
-	return (b & (1<<turnout.v)) ? 1 : 0;
-}
 
 void topology_get_cantons_for_turnout(xtrnaddr_t turnout, xblkaddr_t *head, xblkaddr_t *straight, xblkaddr_t *turn)
 {
@@ -365,9 +329,8 @@ void topology_get_cantons_for_turnout(xtrnaddr_t turnout, xblkaddr_t *head, xblk
 	turn->v = 0xFF;
 
 	int n=0;
-	for (int i=0; i<numTopology(); i++) {
-		lsblk_num_t b = {i};
-		const topo_lsblk_t *t = Topology(b);
+	for (int i=0; i<topology_num_sblkd(); i++) {
+		const topo_lsblk_t *t = topology_get_sblkd(i);
 		uint8_t fc = t->canton_addr;
 		if (t->ltn == turnout.v) {
 			n++;
@@ -384,5 +347,4 @@ void topology_get_cantons_for_turnout(xtrnaddr_t turnout, xblkaddr_t *head, xblk
 		if (n==3) return;
 	}
 }
-
 

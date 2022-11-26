@@ -83,8 +83,15 @@ int get_lsblk_len_cm(lsblk_num_t num, int8_t *psteep);
 // the turnout. ctrl.c does this
 // 0=straight (TURNOUT_A), 1=turn (TURNOUT_B)
 
-int topology_set_turnout(xtrnaddr_t tn, int v, int numtrain);
-int topology_get_turnout(xtrnaddr_t tn);
+enum topo_turnout_state {
+    topo_tn_straight = 0,
+    topo_tn_turn = 1,
+    topo_tn_undetermined = -1,
+    topo_tn_moving = -2
+};
+
+int topology_set_turnout(xtrnaddr_t tn,  enum topo_turnout_state v, int numtrain);
+enum topo_turnout_state  topology_get_turnout(xtrnaddr_t tn);
 
 
 void topology_get_cantons_for_turnout(xtrnaddr_t turnout, xblkaddr_t *head, xblkaddr_t *straight, xblkaddr_t *turn);

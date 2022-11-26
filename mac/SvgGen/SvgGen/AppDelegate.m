@@ -256,37 +256,68 @@ static int rec_left_is_straight_ep(trec_t *rec, int n)
 
 - (void)generateTurnoutsInG:(NSMutableString *)resG T:(NSMutableString *)resT
 {
+    for (int tn=0; tn<128; tn++) {
+        [self generateOneTurnoutInG:(NSMutableString *)resG T:(NSMutableString *)resT num:tn isDoor:NO];
+    }
+    for (int tn=128; tn<255; tn++) {
+        [self generateOneTurnoutInG:(NSMutableString *)resG T:(NSMutableString *)resT num:tn isDoor:YES];
+    }
+}
+- (void)generateOneTurnoutInG:(NSMutableString *)resG T:(NSMutableString *)resT num:(int)tn isDoor:(BOOL)door
+{
     int ns = topology_num_sblkd();
-    for (int tn=0; tn<16; tn++) {
-        // get turnout coord
-        trec_t rec;
-        memset(&rec, 0, sizeof(rec));
-        int minx=999; int maxx=-1; int miny=999; int maxy=-1;
-        for (int b=0; b<ns; b++) {
-            const topo_lsblk_t *s = topology_get_sblkd(b);
-            if (s->ltn == tn) {
-                store_rec_tn(&rec, s->points[0], 1, (s->left2==-1), (s->canton_addr==0xFF));
-                minx = MIN(minx, s->points[0].c);
-                maxx = MAX(maxx, s->points[0].c);
-                miny = MIN(miny, s->points[0].l);
-                maxy = MAX(maxy, s->points[0].l);
-            }
-            if (s->rtn == tn) {
-                int li = last_pt_idx(s);
-                store_rec_tn(&rec, s->points[li], 0, (s->right2==-1), (s->canton_addr==0xFF));
-                minx = MIN(minx, s->points[li].c);
-                maxx = MAX(maxx, s->points[li].c);
-                miny = MIN(miny, s->points[li].l);
-                maxy = MAX(maxy, s->points[li].l);
-            }
+    // get turnout coord
+    trec_t rec;
+    memset(&rec, 0, sizeof(rec));
+    int minx=999; int maxx=-1; int miny=999; int maxy=-1;
+    for (int b=0; b<ns; b++) {
+        const topo_lsblk_t *s = topology_get_sblkd(b);
+        if (s->ltn == tn) {
+            store_rec_tn(&rec, s->points[0], 1, (s->left2==-1), (s->canton_addr==0xFF));
+            minx = MIN(minx, s->points[0].c);
+            maxx = MAX(maxx, s->points[0].c);
+            miny = MIN(miny, s->points[0].l);
+            maxy = MAX(maxy, s->points[0].l);
         }
-        if (minx==999) continue;
-        int isl = rec_is_left(&rec);
-        // turnout
+        if (s->rtn == tn) {
+            int li = last_pt_idx(s);
+            store_rec_tn(&rec, s->points[li], 0, (s->right2==-1), (s->canton_addr==0xFF));
+            minx = MIN(minx, s->points[li].c);
+            maxx = MAX(maxx, s->points[li].c);
+            miny = MIN(miny, s->points[li].l);
+            maxy = MAX(maxy, s->points[li].l);
+        }
+    }
+    if (minx==999) return;
+    // turnout
+    
+    int x1,y1,x2,y2;
+    int fut1, fut2;
+    int gfut = 0;
+    if (door) {
+        x1 = rec_get_right(&rec,0, &fut1).c*SCL_X;
+        y1 = rec_get_right(&rec,0, NULL).l*SCL_Y;
+        x2 = rec_get_left(&rec,0, &fut2).c*SCL_X;
+        y2 = rec_get_left(&rec,0, NULL).l*SCL_Y;
+        int futa = fut1 | fut2;
+        NSString *dash = futa ? @"stroke-dasharray=\"2 1\"" : @"";
+        NSString *idpref = futa ? @"fut_" : @"";
+        [resG appendFormat:@"<polyline polyline id=\"%@to%d%c\" class=\"turnout\" stroke=\"#000000\" stroke-width=\"1px\" fill=\"none\" points=\"%d,%d %d,%d\" %@></polyline>\n", idpref, tn,
+         's',
+         x1, y1, x2, y2, dash];
         
-        int x1,y1,x2,y2;
-        int fut1, fut2;
-        int gfut = 0;
+        int m = (x1+x2)/2;
+        int h2 = (x2-x1)/3;
+        [resG appendFormat:@"<polyline polyline id=\"%@to%d%c\" class=\"turnout\" stroke=\"#000000\" stroke-width=\"1px\" fill=\"none\" points=\"%d,%d %d,%d\" %@></polyline>\n", idpref, tn,
+         't',
+         m, y1-h2, m, y1+h2, dash];
+
+        
+        gfut = futa;
+        
+    } else {
+        int isl = rec_is_left(&rec);
+        
         if (isl) {
             x1 = rec_get_right(&rec,0, &fut1).c*SCL_X;
             y1 = rec_get_right(&rec,0, NULL).l*SCL_Y;
@@ -296,9 +327,9 @@ static int rec_left_is_straight_ep(trec_t *rec, int n)
             NSString *dash = futa ? @"stroke-dasharray=\"2 1\"" : @"";
             NSString *idpref = futa ? @"fut_" : @"";
             [resG appendFormat:@"<polyline polyline id=\"%@to%d%c\" class=\"turnout\" stroke=\"#000000\" stroke-width=\"1px\" fill=\"none\" points=\"%d,%d %d,%d\" %@></polyline>\n", idpref, tn,
-                        rec_left_is_straight_ep(&rec, 0) ? 's' : 't',
-                        x1, y1, x2, y2, dash];
-                        
+             rec_left_is_straight_ep(&rec, 0) ? 's' : 't',
+             x1, y1, x2, y2, dash];
+            
             x1 = rec_get_right(&rec,0, &fut1).c*SCL_X;
             y1 = rec_get_right(&rec,0, NULL).l*SCL_Y;
             x2 = rec_get_left(&rec,1, &fut2).c*SCL_X;
@@ -307,8 +338,8 @@ static int rec_left_is_straight_ep(trec_t *rec, int n)
             dash = futb ? @"stroke-dasharray=\"2 1\"" : @"";
             idpref = futb ? @"fut_" : @"";
             [resG appendFormat:@"<polyline polyline id=\"%@to%d%c\" class=\"turnout\" stroke=\"#000000\" stroke-width=\"1px\" fill=\"none\" points=\"%d,%d %d,%d\" %@></polyline>\n", idpref, tn,
-                       rec_left_is_straight_ep(&rec, 1) ? 's' : 't',
-                        x1, y1, x2, y2, dash];
+             rec_left_is_straight_ep(&rec, 1) ? 's' : 't',
+             x1, y1, x2, y2, dash];
             gfut = futa | futb;
         } else {
             x1 = rec_get_left(&rec,0, &fut1).c*SCL_X;
@@ -320,8 +351,8 @@ static int rec_left_is_straight_ep(trec_t *rec, int n)
             NSString *idpref = futa ? @"fut_" : @"";
             [resG appendFormat:@"<polyline polyline id=\"%@to%d%c\" class=\"turnout\" stroke=\"#000000\" stroke-width=\"1px\" fill=\"none\" points=\"%d,%d %d,%d\" %@></polyline>\n", idpref, tn,
              rec_right_is_straight_ep(&rec, 0) ? 's' : 't',
-                x1, y1, x2, y2, dash];
-
+             x1, y1, x2, y2, dash];
+            
             x1 = rec_get_left(&rec,0, &fut1).c*SCL_X;
             y1 = rec_get_left(&rec,0, NULL).l*SCL_Y;
             x2 = rec_get_right(&rec,1, &fut2).c*SCL_X;
@@ -331,21 +362,24 @@ static int rec_left_is_straight_ep(trec_t *rec, int n)
             idpref = futb ? @"fut_" : @"";
             [resG appendFormat:@"<polyline polyline id=\"%@to%d%c\" class=\"turnout\" stroke=\"#000000\" stroke-width=\"1px\" fill=\"none\" points=\"%d,%d %d,%d\" %@></polyline>\n", idpref, tn,
              rec_right_is_straight_ep(&rec, 1) ? 's' : 't',
-            x1, y1, x2, y2, dash];
+             x1, y1, x2, y2, dash];
             gfut = futa | futb;
         }
         
-        NSString *dash = gfut ? @"stroke-dasharray=\"1 2\"" : @"";
-        NSString *idpref = gfut ? @"fut_" : @"";
-        
-        [resT appendFormat:@"<circle class=\"%@tncircle\" id=\"c%d\" cx=\"%d\" cy=\"%d\" r=\"%d\" stroke=\"#306030\" stroke-width=\"1px\" fill=\"#00000000\" %@/>\n", idpref, tn,
-         SCL_X*(maxx+minx)/2, SCL_Y* (maxy+miny)/2, (SCL_X+SCL_Y)/3, dash];
-        [resT appendFormat:@"<text x=\"%dpx\" y=\"%dpx\" class=\"turnout\" Font-family=\"Helvetica\" fill=\"#80A080\" font-size=\"12px\">S%d</text>\n",
-         SCL_X*(maxx+minx)/2-8, SCL_Y*(maxy+miny)/2+SCL_Y/2+16,
-         tn];
-        
-        NSLog(@"hop");
     }
+
+    
+    NSString *dash = gfut ? @"stroke-dasharray=\"1 2\"" : @"";
+    NSString *idpref = gfut ? @"fut_" : @"";
+    
+    [resT appendFormat:@"<circle class=\"%@tncircle\" id=\"c%d\" cx=\"%d\" cy=\"%d\" r=\"%d\" stroke=\"#306030\" stroke-width=\"1px\" fill=\"#00000000\" %@/>\n", idpref, tn,
+     SCL_X*(maxx+minx)/2, SCL_Y* (maxy+miny)/2, (SCL_X+SCL_Y)/3, dash];
+    [resT appendFormat:@"<text x=\"%dpx\" y=\"%dpx\" class=\"turnout\" Font-family=\"Helvetica\" fill=\"#80A080\" font-size=\"12px\">S%d</text>\n",
+     SCL_X*(maxx+minx)/2-8, SCL_Y*(maxy+miny)/2+SCL_Y/2+16,
+     tn];
+    
+    NSLog(@"hop");
+    
 }
 
 - (NSURL *)savePath

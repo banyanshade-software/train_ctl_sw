@@ -347,7 +347,10 @@ static tasklet_t *ctrlTasklets[] = {
 
 #endif
 #ifdef BOARD_HAS_SERVOS
+#if SERVO_RUNS_ON_LED_TASK
+#else
 		&servo_tasklet,
+#endif
 #endif
 		NULL
 };

@@ -183,7 +183,7 @@ typedef union {
 	uint64_t raw;
 } msg_64_t;
 
-#if defined(TRAIN_SIMU) || defined (TOPOLOGY_SVG)
+#ifdef __clang__
 // mac llvm clang does not support compile_assert(), doing it old way
 typedef char compile_assert[(sizeof(msg_64_t) == 8) ? 1 : -1];
 #else
@@ -321,11 +321,15 @@ static inline xblkaddr_t _from_canton(msg_64_t *m)
 
 typedef union {
 	struct {
-		uint8_t turnout:4;
-		uint8_t board:4;
+        uint8_t turnout:4; // or 3 for turnour and 4 for board ?
+		uint8_t board:3;
+        uint8_t isdoor:1; // TODO we assume this is the MSB, non portable code here
 	};
 	uint8_t v;
 } xtrnaddr_t;
 
+#ifndef __clang__
+static_assert(sizeof(xtrnaddr_t)==1);
+#endif
 
 #endif /* MSG_TRAINMSG_H_ */

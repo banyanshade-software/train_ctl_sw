@@ -53,9 +53,13 @@ typedef enum {
     
 	CMD_SERVO_SET,					// any -> servo  subc=servn v1u=pos v2u=spd_or_0
 	CMD_SERVO_ACK,					// servo->sender subc=servn v1u=pos
-
+    CMD_SERVODOOR_SET,              // any -> servo  subc=servn v1u=1 open, 0 close
+    CMD_SERVODOOR_ACK,              // servo->sender subc=servn v1u=1 open, 0 close
+    
     // 101 xxxxx = 0xA0
+    
     // 110 xxxxx = 0xC0 GUI
+    
     CMD_MDRIVE_SPEED_DIR = 0xC0,	// ui->ctrl			v1u=spd v2=dir			set dir and speed (desired speed)
     //CMD_TRDIR_NOTIF,				// ctrl->ui	obsolete ?
     CMD_TRTSPD_NOTIF,				// ctrl->ui			v1u=spd v2=dir			notify spd and dir
@@ -66,7 +70,7 @@ typedef enum {
     CMD_TN_RESER_NOTIF,				// ctrl->ui			v1=turnout v2=trnum		turnout lock/unlock notif
     CMD_SET_TRAIN_MODE,				// ui,?->ctrl		v1u=tr v2u=mode			chg train mode, mostly to off
     CMD_START_AUTO,					// ui->ctrl			mv1u=autonum			start auto global scenario
-    //CMD_UI_MSG,
+    CMD_TN_CHG_NOTIF,               // ctrl->ui         subc=turnout v1=pos     notif UI turnout change (used to be done by SETA/SETB)
     
     // local master-only store
     CMD_PARAM_LUSER_COMMIT,            // ui(?) -> oam(0)

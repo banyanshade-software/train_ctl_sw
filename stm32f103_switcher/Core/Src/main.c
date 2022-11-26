@@ -56,21 +56,19 @@
 /* Private variables ---------------------------------------------------------*/
 CAN_HandleTypeDef hcan;
 
-I2C_HandleTypeDef hi2c1;
-
 TIM_HandleTypeDef htim2;
 TIM_HandleTypeDef htim3;
 TIM_HandleTypeDef htim4;
 
-osThreadId uiTaskHandle;
+osThreadId oamTaskHandle;
 uint32_t defaultTaskBuffer[ 256 ];
 osStaticThreadDef_t defaultTaskControlBlock;
-osThreadId oamTaskHandle;
-uint32_t oamTaskBuffer[ 256 ];
-osStaticThreadDef_t oamTaskControlBlock;
 osThreadId ctrlTaskHandle;
 uint32_t ctrlTaskBuffer[ 256 ];
 osStaticThreadDef_t ctrlTaskControlBlock;
+osThreadId ledTaskHandle;
+uint32_t ledTaskBuffer[ 128 ];
+osStaticThreadDef_t ledTaskControlBlock;
 /* USER CODE BEGIN PV */
 
 /* USER CODE END PV */
@@ -78,14 +76,13 @@ osStaticThreadDef_t ctrlTaskControlBlock;
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
-static void MX_I2C1_Init(void);
 static void MX_CAN_Init(void);
+static void MX_TIM4_Init(void);
 static void MX_TIM2_Init(void);
 static void MX_TIM3_Init(void);
-static void MX_TIM4_Init(void);
-void StartUiTask(void const * argument);
-extern void StartOamTask(void const * argument);
+void StartOamTask(void const * argument);
 extern void StartCtrlTask(void const * argument);
+void start_led_task(void const * argument);
 
 /* USER CODE BEGIN PFP */
 
@@ -109,7 +106,7 @@ int main(void)
   /* MCU Configuration--------------------------------------------------------*/
 
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
-   HAL_Init();
+  HAL_Init();
 
   /* USER CODE BEGIN Init */
 //VTOR
@@ -124,11 +121,10 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_I2C1_Init();
   MX_CAN_Init();
+  MX_TIM4_Init();
   MX_TIM2_Init();
   MX_TIM3_Init();
-  MX_TIM4_Init();
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
@@ -150,17 +146,17 @@ int main(void)
   /* USER CODE END RTOS_QUEUES */
 
   /* Create the thread(s) */
-  /* definition and creation of uiTask */
-  osThreadStaticDef(uiTask, StartUiTask, osPriorityBelowNormal, 0, 256, defaultTaskBuffer, &defaultTaskControlBlock);
-  uiTaskHandle = osThreadCreate(osThread(uiTask), NULL);
-
   /* definition and creation of oamTask */
-  osThreadStaticDef(oamTask, StartOamTask, osPriorityLow, 0, 256, oamTaskBuffer, &oamTaskControlBlock);
+  osThreadStaticDef(oamTask, StartOamTask, osPriorityLow, 0, 256, defaultTaskBuffer, &defaultTaskControlBlock);
   oamTaskHandle = osThreadCreate(osThread(oamTask), NULL);
 
   /* definition and creation of ctrlTask */
   osThreadStaticDef(ctrlTask, StartCtrlTask, osPriorityRealtime, 0, 256, ctrlTaskBuffer, &ctrlTaskControlBlock);
   ctrlTaskHandle = osThreadCreate(osThread(ctrlTask), NULL);
+
+  /* definition and creation of ledTask */
+  osThreadStaticDef(ledTask, start_led_task, osPriorityRealtime, 0, 128, ledTaskBuffer, &ledTaskControlBlock);
+  ledTaskHandle = osThreadCreate(osThread(ledTask), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -272,40 +268,6 @@ static void MX_CAN_Init(void)
 }
 
 /**
-  * @brief I2C1 Initialization Function
-  * @param None
-  * @retval None
-  */
-static void MX_I2C1_Init(void)
-{
-
-  /* USER CODE BEGIN I2C1_Init 0 */
-
-  /* USER CODE END I2C1_Init 0 */
-
-  /* USER CODE BEGIN I2C1_Init 1 */
-
-  /* USER CODE END I2C1_Init 1 */
-  hi2c1.Instance = I2C1;
-  hi2c1.Init.ClockSpeed = 400000;
-  hi2c1.Init.DutyCycle = I2C_DUTYCYCLE_2;
-  hi2c1.Init.OwnAddress1 = 0;
-  hi2c1.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
-  hi2c1.Init.DualAddressMode = I2C_DUALADDRESS_DISABLE;
-  hi2c1.Init.OwnAddress2 = 0;
-  hi2c1.Init.GeneralCallMode = I2C_GENERALCALL_DISABLE;
-  hi2c1.Init.NoStretchMode = I2C_NOSTRETCH_DISABLE;
-  if (HAL_I2C_Init(&hi2c1) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /* USER CODE BEGIN I2C1_Init 2 */
-
-  /* USER CODE END I2C1_Init 2 */
-
-}
-
-/**
   * @brief TIM2 Initialization Function
   * @param None
   * @retval None
@@ -347,14 +309,9 @@ static void MX_TIM2_Init(void)
   {
     Error_Handler();
   }
-  if (HAL_TIM_PWM_ConfigChannel(&htim2, &sConfigOC, TIM_CHANNEL_2) != HAL_OK)
-  {
-    Error_Handler();
-  }
   /* USER CODE BEGIN TIM2_Init 2 */
 
   /* USER CODE END TIM2_Init 2 */
-  HAL_TIM_MspPostInit(&htim2);
 
 }
 
@@ -396,14 +353,13 @@ static void MX_TIM3_Init(void)
   sConfigOC.Pulse = 0;
   sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
   sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
-  if (HAL_TIM_PWM_ConfigChannel(&htim3, &sConfigOC, TIM_CHANNEL_2) != HAL_OK)
+  if (HAL_TIM_PWM_ConfigChannel(&htim3, &sConfigOC, TIM_CHANNEL_1) != HAL_OK)
   {
     Error_Handler();
   }
   /* USER CODE BEGIN TIM3_Init 2 */
 
   /* USER CODE END TIM3_Init 2 */
-  HAL_TIM_MspPostInit(&htim3);
 
 }
 
@@ -442,7 +398,7 @@ static void MX_TIM4_Init(void)
     Error_Handler();
   }
   sConfigOC.OCMode = TIM_OCMODE_PWM1;
-  sConfigOC.Pulse = 6400;
+  sConfigOC.Pulse = 5000;
   sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
   sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
   if (HAL_TIM_PWM_ConfigChannel(&htim4, &sConfigOC, TIM_CHANNEL_1) != HAL_OK)
@@ -481,7 +437,7 @@ static void MX_GPIO_Init(void)
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOA, GPIO_PIN_2|GPIO_PIN_3|GPIO_PIN_4|GPIO_PIN_5
                           |GPIO_PIN_6|GPIO_PIN_8|GPIO_PIN_9|GPIO_PIN_10
-                          |GPIO_PIN_15, GPIO_PIN_RESET);
+                          |GPIO_PIN_11|GPIO_PIN_12|GPIO_PIN_15, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0|GPIO_PIN_1|GPIO_PIN_10|GPIO_PIN_11
@@ -496,10 +452,10 @@ static void MX_GPIO_Init(void)
 
   /*Configure GPIO pins : PA2 PA3 PA4 PA5
                            PA6 PA8 PA9 PA10
-                           PA15 */
+                           PA11 PA12 PA15 */
   GPIO_InitStruct.Pin = GPIO_PIN_2|GPIO_PIN_3|GPIO_PIN_4|GPIO_PIN_5
                           |GPIO_PIN_6|GPIO_PIN_8|GPIO_PIN_9|GPIO_PIN_10
-                          |GPIO_PIN_15;
+                          |GPIO_PIN_11|GPIO_PIN_12|GPIO_PIN_15;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
@@ -520,14 +476,14 @@ static void MX_GPIO_Init(void)
 
 /* USER CODE END 4 */
 
-/* USER CODE BEGIN Header_StartUiTask */
+/* USER CODE BEGIN Header_StartOamTask */
 /**
-  * @brief  Function implementing the uiTask thread.
+  * @brief  Function implementing the oamTask thread.
   * @param  argument: Not used
   * @retval None
   */
-/* USER CODE END Header_StartUiTask */
-__weak void StartUiTask(void const * argument)
+/* USER CODE END Header_StartOamTask */
+__weak void StartOamTask(void const * argument)
 {
   /* USER CODE BEGIN 5 */
   /* Infinite loop */
@@ -536,6 +492,24 @@ __weak void StartUiTask(void const * argument)
     osDelay(1);
   }
   /* USER CODE END 5 */
+}
+
+/* USER CODE BEGIN Header_start_led_task */
+/**
+* @brief Function implementing the ledTask thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_start_led_task */
+__weak void start_led_task(void const * argument)
+{
+  /* USER CODE BEGIN start_led_task */
+  /* Infinite loop */
+  for(;;)
+  {
+    osDelay(1);
+  }
+  /* USER CODE END start_led_task */
 }
 
 /**

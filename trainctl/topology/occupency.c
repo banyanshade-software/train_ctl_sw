@@ -18,6 +18,7 @@
 #endif
 
 #include "topology.h"
+#include "topologyP.h"
 #include "occupency.h"
 
 
@@ -33,9 +34,7 @@ typedef struct {
 } canton_occ_t;
 
 static  canton_occ_t canton_occ[0x40] = {0};
-static volatile uint8_t  lockedby[MAX_TOTAL_TURNOUTS]; // XXX TODO this should be total number of turnouts
 
-static void occupency_turnout_release_for_train_canton(int train, xblkaddr_t canton);
 
 
 //uint8_t occupency_changed = 0; replaced by topology_or_occupency_changed
@@ -45,7 +44,7 @@ void occupency_clear(void)
 {
     lastcheck = 0;
     memset(canton_occ, 0, sizeof(canton_occ));
-    memset((void *)lockedby, 0xFF, sizeof(lockedby));
+    occupency_clear_turnouts();
 }
 
 static void _block_freed(xblkaddr_t cnum, canton_occ_t *co)
@@ -164,61 +163,4 @@ void check_block_delayed(_UNUSED_ uint32_t tick, _UNUSED_ uint32_t dt)
 
 
 
-static  void _notify_chg_owner(xtrnaddr_t turnout, uint8_t numtrain)
-{
-    msg_64_t m = {0};
-    m.cmd = CMD_TN_RESER_NOTIF;
-    m.v1 = turnout.v;
-    m.v2 = numtrain;
-    m.to = MA3_UI_CTC;
-    m.from = MA1_CONTROL();
-    mqf_write_from_ctrl(&m);
-}
-
-
-int occupency_turnout_reserve(xtrnaddr_t turnout, int8_t numtrain)
-{
-	if (turnout.v >= MAX_TOTAL_TURNOUTS) return -1;
-	//if (turnout<0) return -1;
-	if (turnout.v>31) return -1;
-	itm_debug3(DBG_CTRL, "res.to", turnout.v, numtrain, lockedby[turnout.v]);
-	if (numtrain>=0) {
-		uint8_t expected = numtrain;
-		int ok = __atomic_compare_exchange_n(&lockedby[turnout.v], &expected, numtrain, 0 /*weak*/, __ATOMIC_ACQUIRE/*success memorder*/, __ATOMIC_ACQUIRE/*fail memorder*/ );
-		if (!ok) {
-			expected = 0xFF;
-			ok = __atomic_compare_exchange_n(&lockedby[turnout.v], &expected, numtrain, 0 /*weak*/, __ATOMIC_ACQUIRE/*success memorder*/, __ATOMIC_ACQUIRE/*fail memorder*/ );
-            _notify_chg_owner(turnout, numtrain);
-		}
-		if (!ok) {
-            itm_debug3(DBG_ERR, "res.to.f", turnout.v, numtrain, lockedby[turnout.v]);
-			return -1;
-		}
-	}
-	return 0;
-}
-
-
-void occupency_turnout_release(xtrnaddr_t turnout, _UNUSED_ int8_t train)
-{
-    int l = lockedby[turnout.v];
-	lockedby[turnout.v] = 0xFF;
-    if (l != 0xFF) {
-        _notify_chg_owner(turnout, -1);
-    }
-}
-
-static void occupency_turnout_release_for_train_canton(int train, xblkaddr_t canton)
-{
-	if (train<0) FatalError("OccTrn", "bad train num", Error_OccTrn);
-	for (int tn = 0; tn<MAX_TOTAL_TURNOUTS; tn++) {
-		if (lockedby[tn] != train) continue;
-		xblkaddr_t ca1, ca2, ca3;
-		xtrnaddr_t xtn = {.v = tn};
-		topology_get_cantons_for_turnout(xtn, &ca1, &ca2, &ca3);
-		if ((ca1.v == canton.v) || (ca2.v == canton.v) || (ca3.v == canton.v)) {
-			occupency_turnout_release(xtn, train);
-		}
-	}
-}
 

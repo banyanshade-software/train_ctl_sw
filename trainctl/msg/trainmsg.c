@@ -119,6 +119,9 @@ static const qdef_t qdefs[] = {
 #ifdef BOARD_HAS_LED
     {&from_led, &to_led,            0, 0},
 #endif
+#ifdef BOARD_HAS_SERVOS
+    {&from_servo, &to_servo,            0, 0},
+#endif
 #ifdef BOARD_HAS_CTRL
     {&from_spdctl, &to_spdctl,      0, 0},
     {&from_ctrl, &to_ctrl,          0, 0},
@@ -149,6 +152,9 @@ static const qdef_t qdefs[] = {
 
 static int  _local_disptach(msg_64_t *m, mqf_t *dont_send_to, uint8_t allow_loop)
 {
+    if (m->to == 0x66) {
+        itm_debug1(DBG_MSG, "route66", m->cmd);
+    }
     mqf_t *dest = NULL;
     if (allow_loop) {
     	dont_send_to = NULL;
@@ -156,6 +162,14 @@ static int  _local_disptach(msg_64_t *m, mqf_t *dont_send_to, uint8_t allow_loop
     int cont = 0;
     if (MA0_ADDR_IS_BOARD_ADDR(m->to)) {
         int dbrd = MA0_BOARD(m->to);
+#ifdef TRAIN_SIMU
+        if ((1)) {
+            // debug hack : include servo
+            if (dbrd==1) {
+                dbrd=0;
+            }
+        }
+#endif
         if (dbrd != oam_localBoardNum()) return 0;
         if ((0)) {
 #ifdef BOARD_HAS_CANTON
@@ -264,7 +278,11 @@ static void dispatch_m64(msg_64_t *m, int f)
     if (m->cmd == CMD_PARAM_LUSER_VAL) {
         itm_debug1(DBG_MSG, "brk here",0);
     }
-    */
+    if (m->cmd == CMD_SERVODOOR_ACK) {
+        itm_debug1(DBG_MSG, "hop", 0);
+    }
+     */
+
     if (m->to == MA3_BROADCAST) {
         for (int i=0;; i++) {
             const qdef_t *qd = &qdefs[i];
@@ -325,7 +343,7 @@ static void dispatch_m64(msg_64_t *m, int f)
     }
 #endif
     if (!ok) {
-        itm_debug1(DBG_ERR|DBG_MSG, "cant route", m->to);
+        itm_debug2(DBG_ERR|DBG_MSG, "cant route", m->to, m->cmd);
     }
 }
 
@@ -336,7 +354,7 @@ static void dump_qusage(int i, int d, mqf_t *q)
 	q->maxuse = 0;
 }
 
-#ifndef TRAIN_SIMU
+#ifndef __clang__
 static_assert(sizeof(msg_64_t) == 8);
 #else
 typedef char compile_assert[(sizeof(msg_64_t) == 8) ? 1 : -1];

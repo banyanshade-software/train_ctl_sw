@@ -153,7 +153,7 @@ typedef struct {
 
 
 
-#ifndef TRAIN_SIMU
+#ifndef __clang__
 static_assert(sizeof(lfiledesc_t) == 4);
 #else
 typedef char compile_assert[(sizeof(lfiledesc_t) == 4) ? 1 : -1];

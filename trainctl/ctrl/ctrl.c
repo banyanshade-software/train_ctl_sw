@@ -175,7 +175,8 @@ static void notify_presence_changed(uint8_t from_addr, uint8_t segnum, uint16_t 
 
 // ----------------------------------------------------------------------------
 // turnouts
-static int set_turnout(xtrnaddr_t tn, int v, int train);
+static int set_turnout(xtrnaddr_t tn, enum topo_turnout_state v, int train);
+static void set_door_ack(xtrnaddr_t tn, enum topo_turnout_state v);
 
 // ----------------------------------------------------------------------------
 // behaviour
@@ -333,8 +334,8 @@ static void _ctrl_init(int normalmode)
 		//ctrl_set_mode(1, train_auto);
 		xtrnaddr_t t0 = { .v = 0};
 		xtrnaddr_t t1 = { .v = 1};
-		set_turnout(t0, 0, -1);
-		set_turnout(t1, 0, -1);
+		set_turnout(t0, topo_tn_straight, -1);
+		set_turnout(t1, topo_tn_straight, -1);
 		const _UNUSED_ lsblk_num_t s0 = {0};
 		const _UNUSED_ lsblk_num_t s2 = {2};
 		const _UNUSED_ lsblk_num_t s5 = {5};
@@ -581,15 +582,28 @@ static void normal_process_msg(msg_64_t *m)
         case CMD_TURNOUT_HI_A:
         	// TODO : board
             turnout.v = m->v1u;
-            set_turnout(turnout, 0, -1);
+            set_turnout(turnout, topo_tn_straight, -1);
             break;
         case CMD_TURNOUT_HI_B:
             turnout.v = m->v1u;
-            set_turnout(turnout, 1, -1);
+            set_turnout(turnout, topo_tn_turn, -1);
             break;
         case CMD_TURNOUT_HI_TOG:
             turnout.v = m->v1u;
-            set_turnout(turnout, topology_get_turnout(turnout) ? 0 : 1, -1);
+            enum topo_turnout_state s = topology_get_turnout(turnout);
+            if (s != topo_tn_moving) {
+                set_turnout(turnout, s ? topo_tn_straight : topo_tn_turn, -1);
+            }
+            break;
+        case CMD_SERVO_ACK:
+            itm_debug2(DBG_CTRL, "servAck", m->subc, m->v1u);
+            break;
+        case CMD_SERVODOOR_ACK:
+            itm_debug2(DBG_CTRL|DBG_SERVO, "servDAck", m->subc, m->v1u);
+            turnout.turnout = m->subc;
+            turnout.board = MA0_BOARD(m->from);
+            turnout.isdoor = 1;
+            set_door_ack(turnout, (enum topo_turnout_state)m->v1u);
             break;
     }
     // -----------------------------------------
@@ -1001,34 +1015,91 @@ static void evt_timer(int tidx, train_ctrl_t *tvar, int tnum)
 // - sends info to UI (cto)
 
 
-static int set_turnout(xtrnaddr_t tn, int v, int train)
+static int set_turnout(xtrnaddr_t tn, enum topo_turnout_state v, int train)
 {
 	itm_debug2(DBG_CTRL|DBG_TURNOUT, "TURN", tn.v, v);
-	if (tn.v == 0xFF) fatal();
-	if (tn.v>=MAX_TOTAL_TURNOUTS) fatal();
+    if (tn.v == 0xFF) fatal();
 
-	int rc = topology_set_turnout(tn, v, train);
+
+    enum topo_turnout_state val = v;
+    if (tn.isdoor) {
+        val = topo_tn_moving;
+    }
+	int rc = topology_set_turnout(tn, val, train);
     if (rc) {
     	itm_debug3(DBG_CTRL|DBG_TURNOUT, "tn busy", train, tn.v, rc);
     	return rc;
     }
-
-	// send to turnout
+    
     msg_64_t m = {0};
-	m.from = MA1_CONTROL();
-	m.to = MA0_TURNOUT(tn.board); // TODO board num
-	m.subc = tn.turnout;
-	m.cmd = v ? CMD_TURNOUT_B : CMD_TURNOUT_A;
-	mqf_write_from_ctrl(&m);
-
-    // forward to UI/CTO
-    m.to = MA3_UI_CTC;
-    m.v2 = tn.v;
-    mqf_write_from_ctrl(&m);
+    if (tn.isdoor) {
+        // send to servo
+        m.from = MA1_CONTROL();
+        m.to = MA0_SERVO(tn.board);
+        m.subc = tn.turnout;
+        m.cmd = CMD_SERVODOOR_SET;
+        m.v1u = v ? 1 : 0;
+        mqf_write_from_ctrl(&m);
+        
+        if ((1)) {
+            // forward to UI/CTO
+            m.to = MA3_UI_CTC;
+            m.subc = tn.v;
+            m.cmd = CMD_TN_CHG_NOTIF;
+            m.v1 = topo_tn_moving;
+            mqf_write_from_ctrl(&m);
+        }
+    } else {
+        m.from = MA1_CONTROL();
+        m.to = MA0_TURNOUT(tn.board);
+        m.subc = tn.turnout;
+        m.cmd = v ? CMD_TURNOUT_B : CMD_TURNOUT_A;
+        mqf_write_from_ctrl(&m);
+        
+        // forward to UI/CTO
+        m.to = MA3_UI_CTC;
+        m.subc = tn.v;
+        m.cmd = CMD_TN_CHG_NOTIF;
+        m.v1 = v ? 1 : 0;
+        mqf_write_from_ctrl(&m);
+    }
+   
     return 0;
 }
 
-int ctrl2_set_turnout(xtrnaddr_t tn, int v, int train)
+
+static void set_door_ack(xtrnaddr_t tn, enum topo_turnout_state v)
+{
+    itm_debug2(DBG_CTRL|DBG_TURNOUT, "DACK", tn.v, v);
+    if (tn.v == 0xFF) fatal();
+
+    if (!tn.isdoor) {
+        itm_debug1(DBG_ERR|DBG_CTRL, "dack no d", tn.v);
+        return;
+    }
+    
+    int rc = topology_set_turnout(tn, v, -1);
+    if (rc) {
+        itm_debug2(DBG_CTRL|DBG_TURNOUT, "tn bsy-d", tn.v, rc);
+        return;
+    }
+    
+    
+    msg_64_t m = {0};
+    
+    m.from = MA1_CONTROL();
+    
+    
+    // forward to UI/CTO
+    m.to = MA3_UI_CTC;
+    m.subc = tn.v;
+    m.cmd = CMD_TN_CHG_NOTIF;
+    m.v1 = v;
+    mqf_write_from_ctrl(&m);
+    
+}
+
+int ctrl2_set_turnout(xtrnaddr_t tn, enum topo_turnout_state v, int train)
 {
     return set_turnout(tn, v, train);
 }

@@ -9,6 +9,7 @@
 
 #import <Cocoa/Cocoa.h>
 #import <WebKit/WebKit.h>
+#include "topology.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -24,7 +25,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void) loadHtml;
 
-- (void) uitrac_change_tn:(int)tn val:(int)v;
+- (void) uitrac_change_tn:(int)tn val:(enum topo_turnout_state)v;
 
 - (void) uitrac_change_tn_reser:(int)tn train:(int)train;
 

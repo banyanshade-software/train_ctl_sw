@@ -149,8 +149,9 @@ static conf_servo_t conf_servo[2] = {
      .pin_power = -1,
      .pwm_timer_num = 4,
      .pwm_timer_ch = TIM_CHANNEL_1,
-     .min = 2300,
-     .max = 7230,
+     .direction = 0,
+     .min = 1000,
+     .max = 3700,
      .spd = 80,
      .pos0 = 5000,
   },
@@ -159,6 +160,7 @@ static conf_servo_t conf_servo[2] = {
      .pin_power = -1,
      .pwm_timer_num = 4,
      .pwm_timer_ch = TIM_CHANNEL_2,
+     .direction = 0,
      .min = 2300,
      .max = 7230,
      .spd = 80,
@@ -199,8 +201,9 @@ static conf_servo_t conf_servo[2] = {
      .pin_power = 0,
      .pwm_timer_num = 4,
      .pwm_timer_ch = TIM_CHANNEL_1,
-     .min = 2300,
-     .max = 7230,
+     .direction = 0,
+     .min = 1000,
+     .max = 3700,
      .spd = 80,
      .pos0 = 5000,
   },
@@ -209,6 +212,7 @@ static conf_servo_t conf_servo[2] = {
      .pin_power = 0,
      .pwm_timer_num = 4,
      .pwm_timer_ch = TIM_CHANNEL_2,
+     .direction = 0,
      .min = 2300,
      .max = 7230,
      .spd = 80,
@@ -237,6 +241,9 @@ int conf_servo_propagate(unsigned int numinst, unsigned int numfield, int32_t va
     conf_servo_t *conf = &conf_servo[numinst];
     switch (numfield) {
     default: return -1;
+    case conf_numfield_servo_direction:
+        conf->direction = value;
+        break;
     case conf_numfield_servo_min:
         conf->min = value;
         break;
@@ -261,6 +268,8 @@ int32_t conf_servo_default_value(unsigned int numinst, unsigned int numfield, un
     //if (numinst>=conf_servo_num_entries()) return 0;
     switch (numfield) {
     default: return 0;
+    case conf_numfield_servo_direction:
+        return 0;
     case conf_numfield_servo_min:
         return 0;
     case conf_numfield_servo_max:

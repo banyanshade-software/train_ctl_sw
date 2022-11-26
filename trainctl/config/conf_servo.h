@@ -35,6 +35,7 @@ typedef struct conf_servo {
     uint16_t pin_power;
     int8_t pwm_timer_num;
     int8_t pwm_timer_ch;
+    int8_t direction;
     uint16_t min;
     uint16_t max;
     uint16_t spd;

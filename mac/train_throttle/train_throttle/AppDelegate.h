@@ -44,6 +44,8 @@
 
 @property (nonatomic, weak) IBOutlet NSView *paramView1;
 @property (nonatomic, weak) IBOutlet NSView *paramView2;
+@property (nonatomic, weak) IBOutlet NSView *paramView3;
+@property (nonatomic, weak) IBOutlet NSView *paramView4;
 @property (nonatomic, weak) IBOutlet NSTableView *cantonTableView;
 @property (nonatomic, weak) IBOutlet NSTableView *trainTableView;
 
@@ -131,6 +133,9 @@
 - (IBAction) setTrainMode:(id)sender;
 
 - (void) toggleTurnout:(int)tn;
+
+
+@property (nonatomic, weak) IBOutlet NSWindow *trainParamWin;
 
 @end
 

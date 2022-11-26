@@ -3,9 +3,13 @@
 Topology modules is responsible for
 
 - providing to other modules a view of the track topology - wich segment is connected to wich segment
-(topology.c)
+(topology.c) and stores turnouts positions (turnouts.c)
 
 - storing occupency of each segment, and reservation of turnouts
-(occupency.c)
+(occupency.c and turnouts.c)
 
-It does not run as a tasklet, it simply provides functions API. It is *not* itended to be thread safe, since it is actually only used by (*at least currenlty*) by ctrl module (main ctrl RTOS task)
+It does not run as a tasklet, it simply provides functions API. 
+
+### thread safeness
+
+currently used only by ctrl and by planner, but planner only use immutable informations (topology.c)

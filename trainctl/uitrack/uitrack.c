@@ -47,15 +47,20 @@ void uitrack_run_tick(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UN
         case CMD_TN_RESER_NOTIF:
             uitrack_change_tn_reserv(m.v1, m.v2);
             break;
+        case CMD_TN_CHG_NOTIF:
+            uitrack_change_tn(m.subc, m.v1);
+            break;
+        /*
         case CMD_TURNOUT_A:
         	uitrack_change_tn(m.subc, 0);
         	break;
         case CMD_TURNOUT_B:
         	uitrack_change_tn(m.subc, 1);
         	break;
+         */
         case CMD_NOTIF_PRES:
-                uitrack_change_pres(m.v32u);
-                break;
+            uitrack_change_pres(m.v32u);
+            break;
         }
     }
 }
@@ -95,7 +100,7 @@ void  __attribute__((weak))  impl_uitrack_change_blk(_UNUSED_ int blk, _UNUSED_ 
     
 }
 
-void  __attribute__((weak))  impl_uitrack_change_tn(_UNUSED_ int tn, _UNUSED_ int v)
+void  __attribute__((weak))  impl_uitrack_change_tn(_UNUSED_ int tn, _UNUSED_ enum topo_turnout_state v)
 {
     
 }

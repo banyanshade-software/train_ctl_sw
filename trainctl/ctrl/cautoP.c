@@ -43,12 +43,12 @@ int cauto_update_turnouts(_UNUSED_ int tidx, lsblk_num_t cur, uint8_t left, uint
     if (ta.n == next) {
         int v = topology_get_turnout(tn);
         if (!v) return 0;
-        return ctrl2_set_turnout(tn, 0, tidx);
+        return ctrl2_set_turnout(tn, topo_tn_straight, tidx);
     }
     if (tb.n == next) {
         int v = topology_get_turnout(tn);
         if (v) return 0;
-        return ctrl2_set_turnout(tn, 1, tidx);
+        return ctrl2_set_turnout(tn, topo_tn_moving, tidx);
     }
     return -1;
 }

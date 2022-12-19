@@ -56,6 +56,10 @@ enum fatal_error_code {
 
 	Error_PlannerTooManyBlocks,
     Error_Hash,
+    
+    Error_FSM_Nothandled,
+    Error_FSM_DSpd,
+    Error_FSM_SignDir,
 };
 
 

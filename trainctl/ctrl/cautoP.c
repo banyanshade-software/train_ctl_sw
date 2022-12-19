@@ -22,13 +22,13 @@
 #endif
 
 
-static void route_error(int tidx, train_ctrl_t *tvars)
+static void route_error(int tidx, train_oldctrl_t *tvars)
 {
     itm_debug1(DBG_ERR|DBG_AUTO, "CA.ERR", tidx);
     ctrl2_set_mode(tidx, tvars, train_manual);
 }
 
-static void route_end(int tidx, train_ctrl_t *tvars)
+static void route_end(int tidx, train_oldctrl_t *tvars)
 {
     itm_debug1(DBG_ERR|DBG_AUTO, "CA.END", tidx);
     //tvars->routeidx = 0;
@@ -53,7 +53,7 @@ int cauto_update_turnouts(_UNUSED_ int tidx, lsblk_num_t cur, uint8_t left, uint
     return -1;
 }
 
-lsblk_num_t cauto_peek_next_lsblk(int tidx, train_ctrl_t *tvars, uint8_t left, int nstep)
+lsblk_num_t cauto_peek_next_lsblk(int tidx, train_oldctrl_t *tvars, uint8_t left, int nstep)
 {
     lsblk_num_t sret = {-1};
     lsblk_num_t cur = tvars->c1_sblk;
@@ -87,7 +87,7 @@ static uint8_t events[8] = {0};
 
 //extern train_ctrl_t *tvars;
 
-static void ar_ext(_UNUSED_ int tidx, _UNUSED_ train_ctrl_t *tvars, uint8_t c1, _UNUSED_ uint8_t c2)
+static void ar_ext(_UNUSED_ int tidx, _UNUSED_ train_oldctrl_t *tvars, uint8_t c1, _UNUSED_ uint8_t c2)
 {
 	switch (c1) {
 	case _ARX_CLR_EVENT:
@@ -98,7 +98,7 @@ static void ar_ext(_UNUSED_ int tidx, _UNUSED_ train_ctrl_t *tvars, uint8_t c1, 
 	}
 }
 
-static void check_for_ctrl(int tidx, train_ctrl_t *tvars)
+static void check_for_ctrl(int tidx, train_oldctrl_t *tvars)
 {
     if (tvars->_mode != train_auto) return;
     if (!tvars->route) return;
@@ -217,7 +217,7 @@ static void check_for_ctrl(int tidx, train_ctrl_t *tvars)
 }
 
 
-void cauto_had_stop(int tidx, train_ctrl_t *tvars)
+void cauto_had_stop(int tidx, train_oldctrl_t *tvars)
 {
     if (tvars->_mode != train_auto) return;
     uint8_t r = tvars->route[tvars->routeidx];
@@ -233,7 +233,7 @@ void cauto_had_stop(int tidx, train_ctrl_t *tvars)
     check_for_ctrl(tidx, tvars);
 }
 
-void cauto_had_trigU1(int tidx, train_ctrl_t *tvars)
+void cauto_had_trigU1(int tidx, train_oldctrl_t *tvars)
 {
 	itm_debug1(DBG_AUTO, "ca.trigU1", tidx);
     //_ctrl2_upcmd_set_desired_speed(tidx, tvars, 0);
@@ -241,7 +241,7 @@ void cauto_had_trigU1(int tidx, train_ctrl_t *tvars)
     topology_or_occupency_changed = 1;
 }
 
-void cauto_had_timer(_UNUSED_ int tidx, train_ctrl_t *tvars)
+void cauto_had_timer(_UNUSED_ int tidx, train_oldctrl_t *tvars)
 {
 	itm_debug1(DBG_AUTO, "ca.had_tim", tidx);
 	tvars->got_texp = 1;
@@ -249,13 +249,13 @@ void cauto_had_timer(_UNUSED_ int tidx, train_ctrl_t *tvars)
 }
 
 
-void cauto_check_start(int tidx, train_ctrl_t *tvars)
+void cauto_check_start(int tidx, train_oldctrl_t *tvars)
 {
 	itm_debug1(DBG_AUTO, "ca.chst", tidx);
     check_for_ctrl(tidx, tvars);
 }
 
-void cauto_c1_updated(int tidx, train_ctrl_t *tvars)
+void cauto_c1_updated(int tidx, train_oldctrl_t *tvars)
 {
 	itm_debug1(DBG_AUTO, "ca.c1", tidx);
     if (tvars->_mode != train_auto) return;
@@ -286,7 +286,7 @@ void cauto_c1_updated(int tidx, train_ctrl_t *tvars)
 
 }
 
-void cauto_end_tick(int tidx, train_ctrl_t *tvars)
+void cauto_end_tick(int tidx, train_oldctrl_t *tvars)
 {
 	itm_debug2(DBG_AUTO, "ca.tick", tidx, tvars->trigu1);
 	if (tvars->trigu1) {

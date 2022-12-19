@@ -13,14 +13,14 @@
 #include "topology.h"
 #include "occupency.h"
 #include "ctrlP.h"
-
+#include "trig_tags.h"
 
 @interface TestLongTrain : XCTestCase
 
 @end
 
 @implementation TestLongTrain {
-    train_ctrl_t tvars;
+    train_oldctrl_t tvars;
     conf_train_t *tconf;
 }
 

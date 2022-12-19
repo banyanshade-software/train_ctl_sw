@@ -28,14 +28,10 @@ typedef enum {
 typedef enum {
     train_off=0,
     train_running_c1,    // running (auto or manual)
-#ifdef OLD_CTRL
-#error obsolete
-    train_running_c1c2, // transition c1/c2 on progress
-#endif
     train_station,        // waiting at station
     train_blk_wait,        // stopped (block control)
     train_end_of_track,    // idem but can only be changed by a direction change
-} train_state_t;
+} train_oldstate_t;
 
 
 int ctrl_get_train_curlsblk(int numtrain);

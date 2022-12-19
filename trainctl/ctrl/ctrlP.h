@@ -12,6 +12,7 @@
 //#include "../railconfig.h"
 #include "../config/conf_train.h"
 
+//#include "ctrlLP.h"
 
 // ---------------------------
 //--------------------------------
@@ -38,12 +39,12 @@ struct forwdsblk {
 
 typedef struct {
     train_mode_t   _mode;
-    train_state_t  _state;
+    train_oldstate_t  _ostate;
 
     uint16_t tick_flags;
 
     uint16_t _target_speed;
-    int8_t   _dir;
+    int8_t   _dir;      // -1 or 1, 0 if stopped
     
     uint8_t  c1c2:1;
     uint8_t  pose2_set:1;   // at eot (or blk wait) spd limit was set, next time it will stop
@@ -78,7 +79,7 @@ typedef struct {
     uint8_t got_texp:1;
     uint8_t got_u1:1;
     uint8_t pose_reset:1;
-} train_ctrl_t;
+} train_oldctrl_t;
 
 #define POSE_UNKNOWN 9999999
 /*
@@ -101,44 +102,45 @@ typedef struct {
 #define _TFLAG_C2_CHANGED       (1<<13) //xx
 #define _TFLAG_MODE_CHANGED     (1<<14)
 
-train_ctrl_t *ctrl_get_tvar(int trnum);
+train_oldctrl_t *ctrl_get_tvar(int trnum);
 
-int ctrl2_tick_process(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int8_t occupency_changed);
-void ctrl2_init_train(int tidx, train_ctrl_t *tvars,
+int ctrl2_tick_process(int tidx, train_oldctrl_t *tvars, const conf_train_t *tconf, int8_t occupency_changed);
+void ctrl2_init_train(int tidx, train_oldctrl_t *tvars,
                       lsblk_num_t sblk);
 
-void ctrl2_upcmd_set_desired_speed(int tidx, train_ctrl_t *tvars, int16_t desired_speed);
-void _ctrl2_upcmd_set_desired_speed(int tidx, train_ctrl_t *tvars, int16_t desired_speed);
-void ctrl2_upcmd_settrigU1(int tidx, train_ctrl_t *tvars, uint8_t t);
+void ctrl2_upcmd_set_desired_speed(int tidx, train_oldctrl_t *tvars, int16_t desired_speed);
+void _ctrl2_upcmd_set_desired_speed(int tidx, train_oldctrl_t *tvars, int16_t desired_speed);
+void ctrl2_upcmd_settrigU1(int tidx, train_oldctrl_t *tvars, uint8_t t);
 
-void ctrl2_set_mode(int tidx, train_ctrl_t *tvar, train_mode_t mode);
+void ctrl2_set_mode(int tidx, train_oldctrl_t *tvar, train_mode_t mode);
 
-void ctrl2_evt_entered_c2(int tidx, train_ctrl_t *tvar, uint8_t from_bemf);
-void ctrl2_evt_entered_s2(int tidx, train_ctrl_t *tvar);
-void ctrl2_evt_leaved_c1(int tidx, train_ctrl_t *tvars);
-void ctrl2_evt_entered_c1(int tidx, train_ctrl_t *tvars, _UNUSED_ uint8_t from_bemf);
-void ctrl2_evt_leaved_c2(int tidx, train_ctrl_t *tvar);
+void ctrl2_evt_entered_c2(int tidx, train_oldctrl_t *tvar, uint8_t from_bemf);
+void ctrl2_evt_entered_s2(int tidx, train_oldctrl_t *tvar);
+void ctrl2_evt_leaved_c1(int tidx, train_oldctrl_t *tvars);
+void ctrl2_evt_entered_c1(int tidx, train_oldctrl_t *tvars, _UNUSED_ uint8_t from_bemf);
+void ctrl2_evt_leaved_c2(int tidx, train_oldctrl_t *tvar);
 
 
-void ctrl2_set_state(int tidx, train_ctrl_t *tvar, train_state_t ns);
-void ctrl2_stop_detected(int tidx, train_ctrl_t *tvars);
-void ctrl2_set_dir(int tidx, train_ctrl_t *tvar, int8_t dir);
-void ctrl2_set_tspeed(int tidx, train_ctrl_t *tvar, uint16_t tspeed);
-void ctrl2_check_alreadystopped(int tidx, train_ctrl_t *tvar);
-void ctrl2_check_checkstart(int tidx, train_ctrl_t *tvar);
-void ctrl2_check_stop(int tidx, train_ctrl_t *tvar);
-void ctrl2_apply_speed_limit(int tidx, train_ctrl_t *tvar);
-void ctrl2_update_topo(int tidx, train_ctrl_t *tvar, const conf_train_t *tconf, int32_t *ppose1, uint8_t *pposetag);
-void ctrl2_update_c2(int tidx, train_ctrl_t *tvar, const conf_train_t *tconf, int32_t *ppose0, uint8_t *pposetag);
-void ctrl2_notify_state(int tidx, train_ctrl_t *tvar);
-void ctrl2_sendlow_tspd(int tidx, train_ctrl_t *tvar);
-void ctrl2_sendlow_c1c2(int tidx, train_ctrl_t *tvar);
-int  ctrl2_evt_pose_triggered(int tidx, train_ctrl_t *tvar, const conf_train_t *tconf_or_null, xblkaddr_t ca_addr, uint8_t trigbits, int16_t cposd10);
-void ctrl2_evt_stop_detected(int tidx, train_ctrl_t *tvar, const conf_train_t *tconf_or_null, int32_t pose);
+void ctrl2_set_state(int tidx, train_oldctrl_t *tvar, train_oldstate_t ns);
+void ctrl2_stop_detected(int tidx, train_oldctrl_t *tvars);
+void ctrl2_set_dir(int tidx, train_oldctrl_t *tvar, int8_t dir);
+void ctrl2_set_tspeed(int tidx, train_oldctrl_t *tvar, uint16_t tspeed);
+void ctrl2_check_alreadystopped(int tidx, train_oldctrl_t *tvar);
+void ctrl2_check_checkstart(int tidx, train_oldctrl_t *tvar);
+void ctrl2_check_stop(int tidx, train_oldctrl_t *tvar);
+void ctrl2_apply_speed_limit(int tidx, train_oldctrl_t *tvar);
+void ctrl2_update_topo(int tidx, train_oldctrl_t *tvar, const conf_train_t *tconf, int32_t *ppose1, uint8_t *pposetag);
+void ctrl2_update_c2(int tidx, train_oldctrl_t *tvar, const conf_train_t *tconf, int32_t *ppose0, uint8_t *pposetag);
+void ctrl2_notify_state(int tidx, train_oldctrl_t *tvar);
+void ctrl2_sendlow_tspd(int tidx, train_oldctrl_t *tvar);
+void ctrl2_sendlow_c1c2(int tidx, train_oldctrl_t *tvar);
+int  ctrl2_evt_pose_triggered(int tidx, train_oldctrl_t *tvar, const conf_train_t *tconf_or_null, xblkaddr_t ca_addr, uint8_t trigbits, int16_t cposd10);
+void ctrl2_evt_stop_detected(int tidx, train_oldctrl_t *tvar, const conf_train_t *tconf_or_null, int32_t pose);
 
-void ctrl_set_pose_trig(int numtrain, train_ctrl_t *tvar, int8_t dir, xblkaddr_t canaddr, int32_t pose, uint8_t tag);
-void ctrl2_reset_longtrain(_UNUSED_ int tidx, train_ctrl_t *tvars);
+void ctrl_set_pose_trig(int numtrain, train_oldctrl_t *tvar, int8_t dir, xblkaddr_t canaddr, int32_t pose, uint8_t tag);
+void ctrl2_reset_longtrain(_UNUSED_ int tidx, train_oldctrl_t *tvars);
 
+/*
 enum pose_trig_tag {
     tag_invalid = 0,    // reserved. 0 means "no trigger"
     
@@ -156,6 +158,7 @@ enum pose_trig_tag {
     
     tag_auto_u1,
 };
+*/
 
 #define ignore_bemf_presence 1
 #define ignore_ina_presence  0
@@ -163,8 +166,8 @@ enum pose_trig_tag {
 int ignore_ina_pres(void);
 
 
-void ctrl_reset_timer(int tidx, train_ctrl_t *tvar, int numtimer);
-void ctrl_set_timer(int tidx, train_ctrl_t *tvar, int numtimer, uint32_t tval);
+void ctrl_reset_timer(int tidx, train_oldctrl_t *tvar, int numtimer);
+void ctrl_set_timer(int tidx, train_oldctrl_t *tvar, int numtimer, uint32_t tval);
 
 
 /*
@@ -190,8 +193,8 @@ extern void ctrl2_unlock_turnout(xtrnaddr_t tn, int train);
 extern void ctrl2_send_led(uint8_t led_num, uint8_t prog_num);
 
 
-int ctrl2_get_next_sblks_(int tidx, train_ctrl_t *tvars,  const conf_train_t *tconf, int left, lsblk_num_t *resp, int nsblk, int16_t *premainlen);
-int ctrl2_get_next_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *tconf);
+int ctrl2_get_next_sblks_(int tidx, train_oldctrl_t *tvars,  const conf_train_t *tconf, int left, lsblk_num_t *resp, int nsblk, int16_t *premainlen);
+int ctrl2_get_next_sblks(int tidx, train_oldctrl_t *tvars,  const conf_train_t *tconf);
 
 
 
@@ -215,7 +218,7 @@ typedef struct sttrig rettrigs_t[3];
 /// @return int             -1 if train should stop immediatly (or should not start),
 ///                 >0 value if train should brake
 ///                 0 otherwise
-int ctrl2_check_front_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *tconf, int left, rettrigs_t ret);
+int ctrl2_check_front_sblks(int tidx, train_oldctrl_t *tvars,  const conf_train_t *tconf, int left, rettrigs_t ret);
 
 
 /// called when tag_chkocc occurs, it will update tvars->leftcars  and tvars->rightcars
@@ -223,13 +226,13 @@ int ctrl2_check_front_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *
 /// @param tvars train tvars structure
 /// @param tconf triain tconf config pointer
 /// @param left 1 if train is going left, 0 if it is going right
-int ctrl2_update_front_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *tconf, int left);
+int ctrl2_update_front_sblks(int tidx, train_oldctrl_t *tvars,  const conf_train_t *tconf, int left);
 
 /// called when c1sblk changed, it will update tvars->leftcars  and tvars->rightcars
 /// @param tidx train number
 /// @param tvars train tvars structure
 /// @param tconf triain tconf config pointer
 /// @param left 1 if train is going left, 0 if it is going right
-int ctrl2_update_front_sblks_c1changed(int tidx, train_ctrl_t *tvars,  const conf_train_t *tconf, int left);
+int ctrl2_update_front_sblks_c1changed(int tidx, train_oldctrl_t *tvars,  const conf_train_t *tconf, int left);
 
 #endif /* ctrlP_h */

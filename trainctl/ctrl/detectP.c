@@ -180,7 +180,7 @@ void analyse_bemf_final(void)
             int trnum = altrnum;
             altrnum++;
             //...
-            train_ctrl_t *tvar = ctrl_get_tvar(trnum);
+            train_oldctrl_t *tvar = ctrl_get_tvar(trnum);
             ctrl2_init_train(trnum, tvar, sblk);
             ctrl2_set_mode(trnum, tvar, train_manual);
             

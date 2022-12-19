@@ -22,6 +22,7 @@
 
 #include "../topology/occupency.h"
 
+#include "ctrlLP.h"
 #include "ctrlP.h"
 #include "cautoP.h"
 #include "detectP.h"
@@ -38,7 +39,7 @@
 
 
 
-static train_ctrl_t trctl[NUM_TRAINS] = {0};
+static train_oldctrl_t trctl[NUM_TRAINS] = {0};
 
 
 #if NUM_TRAINS == 0
@@ -51,19 +52,19 @@ static train_ctrl_t trctl[NUM_TRAINS] = {0};
 // -----------------------------------------------------------
 
 const stat_val_t statval_ctrl[] = {
-		{ trctl, offsetof(train_ctrl_t, _dir),             sizeof(uint8_t)         _P("T#_ctrl_dir")},
-		{ trctl, offsetof(train_ctrl_t, _target_speed),    sizeof(uint16_t)        _P("T#_ctrl_target_speed")},
-        { trctl, offsetof(train_ctrl_t, c1_sblk.n),        sizeof(uint8_t)         _P("T#_ctrl_canton1_lsb")},
-        { trctl, offsetof(train_ctrl_t, desired_speed),    sizeof(uint16_t)        _P("T#_ctrl_desired_speed")},
+		{ trctl, offsetof(train_oldctrl_t, _dir),             sizeof(uint8_t)         _P("T#_ctrl_dir")},
+		{ trctl, offsetof(train_oldctrl_t, _target_speed),    sizeof(uint16_t)        _P("T#_ctrl_target_speed")},
+        { trctl, offsetof(train_oldctrl_t, c1_sblk.n),        sizeof(uint8_t)         _P("T#_ctrl_canton1_lsb")},
+        { trctl, offsetof(train_oldctrl_t, desired_speed),    sizeof(uint16_t)        _P("T#_ctrl_desired_speed")},
 #ifndef REDUCE_STAT
         { trctl, offsetof(train_ctrl_t, _state),           sizeof(train_state_t)   _P("T#_ctrl_state")},
         { trctl, offsetof(train_ctrl_t, can1_addr),        sizeof(uint8_t)         _P("T#_ctrl_canton1_addr")},
         { trctl, offsetof(train_ctrl_t, can2_addr),        sizeof(uint8_t)         _P("T#_ctrl_canton2_addr")},
         { trctl, offsetof(train_ctrl_t, spd_limit),        sizeof(uint16_t)        _P("T#_ctrl_spd_limit")},
         { trctl, offsetof(train_ctrl_t, curposmm),         sizeof(int32_t)         _P("T#_curposmm")},
-        { trctl, offsetof(train_ctrl_t, beginposmm),         sizeof(int32_t)         _P("T#_beginposmm")},
+        { trctl, offsetof(train_ctrl_t, beginposmm),       sizeof(int32_t)         _P("T#_beginposmm")},
 #endif
-        { NULL,  sizeof(train_ctrl_t), 0 _P(NULL)}
+        { NULL,  sizeof(train_oldctrl_t), 0 _P(NULL)}
 };
 
 
@@ -110,6 +111,7 @@ msg_handler_t msg_handler_selector(runmode_t m)
             break;
     }
 }
+
 // ------------------------------------------------------
 
 static void ctrl_set_mode(int trnum, train_mode_t mode);
@@ -148,9 +150,8 @@ static void fatal(void)
 
 // ----------------------------------------------------------------------------
 // train FSM
-static void evt_timer(int tidx, train_ctrl_t *tvar, int tnum);
 
-
+static void evt_timer(int tidx, train_oldctrl_t *tvar, int tnum);
 
 // ----------------------------------------------------------------------------
 // sub block presence handling
@@ -201,7 +202,7 @@ static void _ctrl_init(int normalmode)
 		if (b.turnout != 7) FatalError("chk4", "check xblkaddr_t", Error_Check);
 	}
 
-	memset(trctl, 0, sizeof(train_ctrl_t)*NUM_TRAINS);
+	memset(trctl, 0, sizeof(train_oldctrl_t)*NUM_TRAINS);
 	occupency_clear();
 
 	if (normalmode) {
@@ -242,7 +243,7 @@ static void _ctrl_init(int normalmode)
 	}
 }
 
-train_ctrl_t *ctrl_get_tvar(int trnum)
+train_oldctrl_t *ctrl_get_tvar(int trnum)
 {
     return &trctl[trnum];
 }
@@ -254,7 +255,7 @@ static void check_timers(uint32_t tick)
 {
 	//uint32_t t = HAL_GetTick();
 	for (int tidx = 0; tidx<NUM_TRAINS; tidx++) {
-		train_ctrl_t *tvar = &trctl[tidx];
+		train_oldctrl_t *tvar = &trctl[tidx];
 		for (int j=0; j<NUM_TIMERS; j++) {
 			uint32_t tv = tvar->timertick[j];
 			if (!tv) continue;
@@ -280,7 +281,7 @@ static void ctrl_tick(uint32_t tick, _UNUSED_ uint32_t dt)
         itm_debug1(DBG_CTRL, "ct/occ", 0);
     }
     for (int tidx = 0; tidx<NUM_TRAINS; tidx++) {
-        train_ctrl_t *tvars = &trctl[tidx];
+        train_oldctrl_t *tvars = &trctl[tidx];
         const conf_train_t *tconf = conf_train_get(tidx);
         if (!tconf->enabled) continue;
         if (tvars->_mode == train_notrunning) continue;
@@ -326,7 +327,7 @@ static void sub_presence_changed(_UNUSED_ uint8_t from_addr,  uint8_t lsegnum,  
 	itm_debug3(DBG_PRES|DBG_CTRL, "PrsChg-", lsegnum, p, ival);
 	// TODO : from_addr should be used for board number
 	for (int tidx=0; tidx < NUM_TRAINS; tidx++) {
-		train_ctrl_t *tvar = &trctl[tidx];
+		train_oldctrl_t *tvar = &trctl[tidx];
         if (tvar->_mode == train_notrunning) continue;
         uint8_t is_s1 = 0;
         uint8_t is_s2 = 0;
@@ -399,7 +400,7 @@ static uint8_t auto_code[8][64];
 
 uint8_t *ctrl_get_autocode(int numtrain)
 {
-	train_ctrl_t *tvar = ctrl_get_tvar(numtrain);
+	train_oldctrl_t *tvar = ctrl_get_tvar(numtrain);
 	if (!tvar->route) {
 		tvar->route = auto_code[numtrain];
 	}
@@ -444,7 +445,7 @@ static void normal_process_msg(msg_64_t *m)
     if (MA1_IS_CTRL(m->to)) {
         //if (test_mode) continue;
         int tidx = MA1_TRAIN(m->to);
-        train_ctrl_t *tvar = &trctl[tidx];
+        train_oldctrl_t *tvar = &trctl[tidx];
         //extern uint8_t Auto1ByteCode[]; // XXX temp hack
         switch (m->cmd) {
         case CMD_SET_TRAIN_MODE:
@@ -476,7 +477,7 @@ static void normal_process_msg(msg_64_t *m)
     
         case CMD_BEMF_DETECT_ON_C2: {
             itm_debug2(DBG_CTRL,"BEMF/C2", tidx,  m->v1u);
-            train_ctrl_t *tvar = &trctl[tidx];
+            train_oldctrl_t *tvar = &trctl[tidx];
             if (m->v1u != tvar->can2_xaddr.v) {
                 // typ. because we already switch to c2 (msg SET_C1_C2 and CMD_BEMF_DETECT_ON_C2 cross over
                 itm_debug3(DBG_CTRL, "not c2", tidx, m->v1u, tvar->can2_xaddr.v);
@@ -491,8 +492,14 @@ static void normal_process_msg(msg_64_t *m)
             ctrl2_evt_entered_c2(tidx, tvar, 1);
             break;
         }
-        case CMD_MDRIVE_SPEED_DIR:
-            ctrl2_upcmd_set_desired_speed(tidx, tvar, m->v2*m->v1u);
+            case CMD_MDRIVE_SPEED_DIR: {
+                int16_t spd = m->v2*m->v1u;
+                if (spd) {
+                    ctrl3_upcmd_set_desired_speed(tidx, tvar, spd);
+                } else {
+                    ctrl3_upcmd_set_desired_speed_zero(tidx, tvar);
+                }
+            }
             break;
 
         case CMD_POSE_TRIGGERED:
@@ -516,227 +523,14 @@ static void normal_process_msg(msg_64_t *m)
 // called by different thread ! WARNING
 int ctrl_get_train_curlsblk(int numtrain)
 {
-    train_ctrl_t *tvars = &trctl[numtrain];
+    train_oldctrl_t *tvars = &trctl[numtrain];
     // we assume uint8 load/store is atomic
     // XXX is it ????
     int n = tvars->c1_sblk.n;
     return n;
 }
 
-#if 0
-void ctrl_run_tick(_UNUSED_ uint32_t notif_flags, uint32_t tick, _UNUSED_ uint32_t dt)
-{
-	
-    static int first=1;
 
-    if (first) {
-        first = 0;
-        ctrl_init();
-    }
-    
-    if (run_mode==runmode_normal) check_block_delayed(tick);
-
-	/* process messages */
-	for (;;) {
-		msg_64_t m;
-		int rc = mqf_read_to_ctrl(&m);
-		if (rc) break;
-        switch (m.cmd) {
-            case CMD_RESET:
-                //test_mode = 0;
-                // FALLTHRU
-            case CMD_EMERGENCY_STOP:
-                ctrl_reset(); // untested
-                continue;
-                break;
-            case CMD_SETRUN_MODE:
-            	if (run_mode != m.v1u) {
-            		run_mode = m.v1u;
-            		testerAddr = m.from;
-            		first = 1;
-                    if (run_mode==runmode_detect2) detect2_init();
-            	}
-                continue;
-                break;
-            default:
-            	break;
-        }
-        switch (run_mode) {
-        case runmode_detect2:
-        	detect2_process_msg(&m);
-        	continue;
-
-        default: //FALLTHRU
-        case runmode_off:
-        	continue; // no processing
-
-        case runmode_normal:
-        	break; // keep on processing
-        }
-
-
-       
-        // mode_normal processing
-        // -----------------------------------------
-        xtrnaddr_t turnout;
-        switch (m.cmd) {
-            default:
-                break;
-            case CMD_TURNOUT_HI_A:
-            	turnout.v = m.v1u;
-                set_turnout(turnout, 0, -1);
-                break;
-            case CMD_TURNOUT_HI_B:
-            	turnout.v = m.v1u;
-                set_turnout(turnout, 1, -1);
-                break;
-            case CMD_TURNOUT_HI_TOG:
-            	turnout.v = m.v1u;
-                set_turnout(turnout, topology_get_turnout(turnout) ? 0 : 1, -1);
-                break;
-        }
-        // -----------------------------------------
-		if (MA1_IS_CTRL(m.to)) {
-			//if (test_mode) continue;
-			int tidx = MA1_TRAIN(m.to);
-			train_ctrl_t *tvar = &trctl[tidx];
-
-			switch (m.cmd) {
-            case CMD_SET_TRAIN_MODE:
-                ctrl_set_mode(m.v1u, m.v2u);
-                break;
-			case CMD_START_AUTO:
-				switch (m.v1u) {
-				case 0:
-					trctl[0].route = route_0_T0;
-					trctl[1].route = route_0_T1;
-					break;
-				default:
-				case 1:
-					trctl[0].route = route_1_T0;
-					trctl[1].route = route_1_T1;
-					break;
-				case 2:
-					trctl[0].route = route_2_T0;
-					trctl[1].route = route_2_T1;
-					break;
-				}
-                trctl[0].routeidx = 0;
-                trctl[0].got_u1 = 0;
-                trctl[0].trigu1 = 0;
-                trctl[0].got_texp = 0;
-                trctl[1].routeidx = 0;
-                trctl[1].got_u1 = 0;
-                trctl[1].trigu1 = 0;
-                trctl[1].got_texp = 0;
-                ctrl_set_mode(0, train_auto);
-                ctrl_set_mode(1, train_auto);
-                break;
-            case CMD_PRESENCE_SUB_CHANGE:
-            	if ((1)) {
-        			debug_info('I', m.subc, "INA", m.v1u, m.v2, 0);
-            	}
-            	if (ignore_ina_pres()) break;
-                sub_presence_changed(tick, m.from, m.subc, m.v1u, m.v2);
-                break;
-        
-            case CMD_BEMF_DETECT_ON_C2: {
-                itm_debug2(DBG_CTRL,"BEMF/C2", tidx,  m.v1u);
-                train_ctrl_t *tvar = &trctl[tidx];
-                if (m.v1u != tvar->can2_xaddr.v) {
-                    // typ. because we already switch to c2 (msg SET_C1_C2 and CMD_BEMF_DETECT_ON_C2 cross over
-                    itm_debug3(DBG_CTRL, "not c2", tidx, m.v1u, tvar->can2_xaddr.v);
-                    break;
-                }
-                if (tvar->measure_pose_percm) {
-                	tvar->measure_pose_percm = 0;
-                	lsblk_num_t s1 = {1};
-                	lsblk_num_t s4 = {4};
-                	posecm_measured(tidx, m.v2*10, s1, s4);
-                }
-                ctrl2_evt_entered_c2(tidx, tvar, 1);
-                break;
-            }
-            case CMD_MDRIVE_SPEED_DIR:
-                ctrl2_upcmd_set_desired_speed(tidx, tvar, m.v2*m.v1u);
-                break;
-
-            case CMD_POSE_TRIGGERED:
-                // v1u = canton addr, v2 = pose, subc=tag
-                itm_debug3(DBG_POSE, "Trig", m.v1u, m.v2u, m.subc);
-                xblkaddr_t tb = {.v = m.v1u};
-                ctrl2_evt_pose_triggered(tidx, tvar, NULL, tb, m.subc, m.v2);
-                break;
-            case CMD_STOP_DETECTED:
-                ctrl2_evt_stop_detected(tidx, tvar, NULL, m.v32);
-                break;
-            default:
-                break;
-
-            }
-		} else {
-			itm_debug1(DBG_MSG|DBG_CTRL, "bad msg", m.to);
-		}
-	}
-    switch (run_mode) {
-        case runmode_normal:
-        	break;
-        case runmode_detect2:
-            detect2_process_tick(tick);
-            return;
-            break;
-        default:
-            return;
-    }
-    
-#ifndef TRAIN_SIMU
-    if ((0)) {
-        static int nsk=0;
-        nsk++;
-        if ((trctl[0]._mode != train_auto) && (nsk==100)) {
-            ctrl_set_mode(0, train_auto);
-        }
-        if ((trctl[1]._mode != train_auto) && (nsk==100)) {
-            ctrl_set_mode(1, train_auto);
-        }
-    }
-#endif
-
-	check_timers(tick);
-    
-    uint8_t occ = topology_or_occupency_changed;
-    topology_or_occupency_changed = 0;
-    
-    if (occ) {
-        itm_debug1(DBG_CTRL, "ct/occ", 0);
-    }
-    for (int tidx = 0; tidx<NUM_TRAINS; tidx++) {
-        train_ctrl_t *tvars = &trctl[tidx];
-        const conf_train_t *tconf = conf_train_get(tidx);
-        if (!tconf->enabled) continue;
-        if (tvars->_mode == train_notrunning) continue;
-        ctrl2_tick_process(tidx, tvars, tconf, occ);
-    }
-    //occupency_changed = 0;
-    
-	//check_blk_tick(tick);
-	check_behaviour(tick);
-	//hi_tick(notif_flags, tick, dt);
-
-
-	// TODO : move this away
-	extern int can_send_stat();
-	int st = can_send_stat();
-	if (st) {
-		msg_64_t m = {0};
-		m.from = MA1_CONTROL();
-		m.to = MA2_USB_LOCAL;
-		m.cmd = CMD_USB_STATS;
-        mqf_write_from_ctrl(&m);
-	}
-}
-
-#endif
 
 __weak int can_send_stat(void)
 {
@@ -757,18 +551,18 @@ int ignore_ina_pres(void)
 
 // ---------------------------------------------------------------
 
-static void evt_tleave(int tidx, train_ctrl_t *tvars)
+static void evt_tleave(int tidx, train_oldctrl_t *tvars)
 {
     if (ignore_ina_pres() || (get_lsblk_ina3221(tvars->c1_sblk) == 0xFF)) {
-        itm_debug2(DBG_ERR|DBG_CTRL, "TLeave", tidx, tvars->_state);
+        itm_debug2(DBG_ERR|DBG_CTRL, "TLeave", tidx, tvars->_ostate);
         ctrl2_evt_leaved_c1(tidx, tvars);
     } else if (tvars->c1c2){
         // this is TGUARD
-        itm_debug2(DBG_ERR|DBG_CTRL, "TGuard", tidx, tvars->_state);
+        itm_debug2(DBG_ERR|DBG_CTRL, "TGuard", tidx, tvars->_ostate);
         // for now we do the same, but more to do for long trains
         ctrl2_evt_leaved_c1(tidx, tvars);
     } else {
-        itm_debug2(DBG_ERR|DBG_CTRL, "TGurd/bdst", tidx, tvars->_state);
+        itm_debug2(DBG_ERR|DBG_CTRL, "TGurd/bdst", tidx, tvars->_ostate);
     }
 }
 
@@ -778,7 +572,7 @@ static void evt_tleave(int tidx, train_ctrl_t *tvars)
 
 
 
-static void evt_timer(int tidx, train_ctrl_t *tvar, int tnum)
+static void evt_timer(int tidx, train_oldctrl_t *tvar, int tnum)
 {
 	itm_debug2(DBG_CTRL, "timer evt", tidx, tnum);
 	switch (tnum) {
@@ -798,6 +592,8 @@ static void evt_timer(int tidx, train_ctrl_t *tvar, int tnum)
 	}
 }
 
+    
+    
 // ---------------------------------------------------------------
 //
 // this is the MAIN turnout cmd : (thru CMD_TURNOUT_HI_A/B)

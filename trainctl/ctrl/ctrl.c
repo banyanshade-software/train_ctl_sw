@@ -135,12 +135,6 @@ static void ctrl_enter_runmode(runmode_t m)
 }
 // ------------------------------------------------------
 
-// global run mode, each tasklet implement this
-//static runmode_t run_mode = 0;
-//static uint8_t testerAddr;
-
-//static void ctrl_reset(void);
-
 
 static void fatal(void)
 {
@@ -157,11 +151,6 @@ static void fatal(void)
 static void evt_timer(int tidx, train_ctrl_t *tvar, int tnum);
 
 
-// ----------------------------------------------------------------------------
-// generic timer attached to train_ctrl_t struct
-
-//static void ctrl_reset_timer(int tidx, train_ctrl_t *tvar, int numtimer);
-//static void ctrl_set_timer(int tidx, train_ctrl_t *tvar, int numtimer, uint32_t tval);
 
 // ----------------------------------------------------------------------------
 // sub block presence handling
@@ -169,25 +158,15 @@ static void evt_timer(int tidx, train_ctrl_t *tvar, int tnum);
 static void sub_presence_changed(uint8_t from_addr, uint8_t segnum, uint16_t v, int16_t ival);
 static void notify_presence_changed(uint8_t from_addr, uint8_t segnum, uint16_t v, int16_t ival);
 
-// ----------------------------------------------------------------------------
-//  block occupency
-
 
 // ----------------------------------------------------------------------------
 // turnouts
 static int set_turnout(xtrnaddr_t tn, enum topo_turnout_state v, int train);
 static void set_door_ack(xtrnaddr_t tn, enum topo_turnout_state v);
 
-// ----------------------------------------------------------------------------
-// behaviour
-
-
 
 
 // ----------------------------------------------------------------------------
-
-
-
 
 static void ctrl_set_mode(int trnum, train_mode_t mode)
 {
@@ -196,111 +175,7 @@ static void ctrl_set_mode(int trnum, train_mode_t mode)
 
 // ----------------------------------------------------------------------------
 
-#define SON  _AR_LED, 0, LED_PRG_NEONON
-#define SOFF  _AR_LED, 0, LED_PRG_DIMOFF
-// ----------------------------------------------------------------------------
-// ----------------------------------------------------------------------------
-// ----------------------------------------------------------------------------
 
-/*
-static const uint8_t route_0_T0[] = {
-    SON,
-    _AR_TIMER(8), _AR_WTIMER, SOFF,
-    _AR_TIMER(8), _AR_WTIMER,
-    _AR_LOOP
-};
-
-static const uint8_t route_0_T1[] = {_AR_WEVENT(0),
-    _AR_TIMER(8), _AR_WTIMER,
-    _AR_LOOP
-    
-};
-*/
-
-// ----------------------------------------------------------------------------
-// ----------------------------------------------------------------------------
-#if 0 // obsolete
-static const uint8_t route_1_T0[] = {
-	_AR_EXT, _ARX_CLR_EVENT, 0,
-    _AR_LED, 0, LED_PRG_FLASH, _AR_TIMER(2), _AR_WTIMER, SOFF,
-    // T0 starts on 0 now
-    // 1->0->2
-    /*_AR_SPD(-30), 0, _AR_WSTOP,*/
-	_AR_TRGEVENT(0),
-    _AR_WEVENT(1),
-    _AR_SPD(15), 1, 4,  _AR_WSTOP,
-    _AR_TIMER(3), _AR_WTIMER,
-    _AR_SPD(-35), 1, 3, 2, _AR_WSTOP,  _AR_SPD(0),
-    // wait and 2-1-3 sleep 3-4-5
-    _AR_WEVENT(2), _AR_DBG,
-    _AR_SPD(50), 3, 1, 4, 5, SON,_AR_WSTOP,  _AR_TRGEVENT(3),
-    _AR_TIMER(2), _AR_WTIMER,
-    _AR_SPD(-20), 6, SOFF, 7, _AR_WSTOP,
-    _AR_TIMER(4), _AR_WTIMER,
-    // 4, 3 sleep 1
-    _AR_SPD(20), 6, 5, SON, _AR_WSTOP,
-    _AR_TIMER(2), _AR_WTIMER,
-    _AR_WEVENT(4), SOFF,
-    _AR_SPD(-30), 4, 1, 0, /* _AR_TRG_HALF, _AR_WTRG_U1, _AR_SPD(0),*/ _AR_WSTOP,
-    _AR_TIMER(3),_AR_WTIMER,
-    _AR_LED, 0, LED_PRG_25p,
-    _AR_TIMER(7), _AR_WTIMER,
-    _AR_LED, 0, LED_PRG_OFF, _AR_TIMER(6), _AR_WTIMER,
-    _AR_LOOP
-};
-
-static const uint8_t route_1_T1[] = {
-    _AR_WEVENT(0),
-    // 2-1-3
-    _AR_SPD(60), 3, 1, 4, SON, 5, _AR_TRGEVENT(1), _AR_WSTOP,
-    // 4-5
-    _AR_SPD(-40) , 6, SOFF,  7, _AR_WSTOP,
-    _AR_TIMER(0), _AR_WTIMER,
-    // 5-6
-    _AR_SPD(40), 8, _AR_WSTOP,
-    _AR_TIMER(0), _AR_WTIMER,
-    _AR_SPD(-40), 7, _AR_WSTOP,
-    _AR_SPD(40), 6, 5, SON, _AR_WSTOP,
-    _AR_SPD(-50), SOFF, 4, 1,  0, _AR_WSTOP, _AR_TRGEVENT(2),
-    // 0-1-2
-    _AR_WEVENT(3),
-    _AR_SPD(40), 1, 4, _AR_WSTOP,
-    _AR_SPD(-40), 1, 3, 2, _AR_WSTOP,
-    _AR_TIMER(1), _AR_WTIMER,
-    _AR_SPD(40), 3, 1, 4, _AR_WSTOP,
-    _AR_SPD(-40), 1, 0, _AR_WSTOP,
-    _AR_TIMER(4), _AR_WTIMER,
-    _AR_SPD(40), 1, 4, _AR_WSTOP,
-    _AR_SPD(-40), 1, 3,  2, _AR_WSTOP,
-    _AR_TRGEVENT(4), _AR_SPD(0),
-    _AR_LOOP
-};
-// ----------------------------------------------------------------------------
-// ----------------------------------------------------------------------------
-
-static const uint8_t route_2_T1[] = {
-		_AR_WEVENT(1),
-		_AR_SPD(50), 3, 1, 4, _AR_SPD(0), _AR_SPD(-50), 1, 3, 2, _AR_WSTOP,
-		_AR_TIMER(2), _AR_WTIMER,
-		_AR_SPD(50), 3, 1, 4, _AR_SPD(0), _AR_SPD(-50), 1, 3, 2, _AR_WSTOP,
-		_AR_TIMER(2), _AR_WTIMER,
-		_AR_SPD(50), 3, 1, 4, _AR_SPD(0), _AR_SPD(-50), 1, 3, 2, _AR_WSTOP,
-		_AR_TIMER(2), _AR_WTIMER,
-
-    _AR_LOOP
-};
-static const uint8_t route_2_T0[] = {
-    _AR_LED, 0, LED_PRG_FLASH, _AR_TIMER(2), _AR_WTIMER, SOFF,
-    _AR_TRGEVENT(1),
-	_AR_SPD(50), 1, 4, _AR_SPD(0), _AR_SPD(-50), 1, 0, _AR_WSTOP,
-	_AR_TIMER(2), _AR_WTIMER,
-	_AR_SPD(50), 1, 4, _AR_SPD(0), _AR_SPD(-50), 1, 0, _AR_WSTOP,
-	_AR_TIMER(2), _AR_WTIMER,
-	_AR_SPD(50), 1, 4, _AR_SPD(0), _AR_SPD(-50), 1, 0, _AR_WSTOP,
-    _AR_TIMER(5), _AR_WTIMER,
-    _AR_LOOP
-};
-#endif // obsolete routes
 
 // ----------------------------------------------------------------------------
 // ----------------------------------------------------------------------------
@@ -355,28 +230,7 @@ static void _ctrl_init(int normalmode)
 			ctrl_set_mode(2, train_manual);
 #endif
 
-			/*
-			if ((0)) {
-
-				trctl[0].routeidx = 0;
-				trctl[0].route = route_0_T0;
-				// ctrl_set_mode(0, train_auto);
-
-
-				trctl[1].routeidx = 0;
-				trctl[1].route = route_0_T1;
-			}
-			*/
-
-			/*if ((1)) {
-
-
-				trctl[0].routeidx = 0;
-				trctl[0].route = route_1_T0;
-
-				trctl[1].routeidx = 0;
-				trctl[1].route = route_1_T1;
-			}*/
+			
 
 
 		} else {
@@ -511,27 +365,7 @@ static void sub_presence_changed(_UNUSED_ uint8_t from_addr,  uint8_t lsegnum,  
         		}
         	}
         }
-        /*
-        if (is_c2 && !is_s1) {
-            if (p) {
-                itm_debug3(DBG_CTRL|DBG_PRES, "ina ps2", tidx, lsegnum, c2s.n);
-                ctrl2_evt_entered_c2(tidx, tvar, 0);
-            } else {
-                ctrl2_evt_leaved_c2(tidx, tvar);
-                itm_debug3(DBG_CTRL|DBG_PRES, "ina ls2", tidx, lsegnum, c2s.n);
-            }
-            break; // no need to test other trains
-        } else if (is_s1) {
-            if (p) {
-                itm_debug3(DBG_CTRL|DBG_PRES, "ina ps1", tidx, lsegnum, c2s.n);
-                ctrl2_evt_entered_c1(tidx, tvar, 0);
-            } else {
-                ctrl2_evt_leaved_c1(tidx, tvar);
-                itm_debug3(DBG_CTRL|DBG_PRES, "ina ls1", tidx, lsegnum, c2s.n);
-            }
-            break; // no need to test other trains
-        }
-        */
+        
 	}
 }
 
@@ -630,32 +464,6 @@ static void normal_process_msg(msg_64_t *m)
                     itm_debug2(DBG_CTRL|DBG_ERR, "bad cauto", tidx, m->v1u);
                     break;
             }
-                /*
-            case 0:
-                trctl[0].route = route_0_T0;
-                trctl[1].route = route_0_T1;
-                break;
-            default:
-            case 1:
-                trctl[0].route = route_1_T0;
-                trctl[1].route = route_1_T1;
-                break;
-            case 2:
-                trctl[0].route = route_2_T0;
-                trctl[1].route = route_2_T1;
-                break;
-            }
-            trctl[0].routeidx = 0;
-            trctl[0].got_u1 = 0;
-            trctl[0].trigu1 = 0;
-            trctl[0].got_texp = 0;
-            trctl[1].routeidx = 0;
-            trctl[1].got_u1 = 0;
-            trctl[1].trigu1 = 0;
-            trctl[1].got_texp = 0;
-            ctrl_set_mode(0, train_auto);
-            ctrl_set_mode(1, train_auto);
-                 */
             break;
         case CMD_PRESENCE_SUB_CHANGE:
             if ((1)) {
@@ -990,23 +798,6 @@ static void evt_timer(int tidx, train_ctrl_t *tvar, int tnum)
 	}
 }
 
-
-// ---------------------------------------------------------------
-
-
-
-
-
-// ---------------------------------------------------------------
-
-// ---------------------------------------------------------------
-
-
-
-// ---------------------------------------------------------------
-
-
-
 // ---------------------------------------------------------------
 //
 // this is the MAIN turnout cmd : (thru CMD_TURNOUT_HI_A/B)
@@ -1134,97 +925,7 @@ void ctrl2_send_led(uint8_t led_num, uint8_t prog_num)
 }
 
 // ---------------------------------------------------------------
-#ifdef OLD_CTRL
-static void check_behaviour(_UNUSED_ uint32_t tick)
-{
-	for (int tidx = 0; tidx<NUM_TRAINS; tidx++) {
-		const conf_train_t *tconf = conf_train_get(tidx);
-		if (!tconf->enabled) continue;
 
-		if (!SCEN_TWOTRAIN) return; // XXX
-
-		train_ctrl_t *tvars = &trctl[tidx];
-
-		uint16_t flags = tvars->behaviour_flags;
-
-		//itm_debug3(DBG_CTRL, "(hi f)", tidx, flags, tvars->canton1_addr);
-
-		if (tvars->_mode != train_auto) {
-			if ((tidx == 0) && (flags & BEHAVE_EOT2) && (tvars->_dir<0)) {
-				ctrl_set_mode(tidx, train_auto);
-				ctrl_set_timer(tidx, tvars, TBEHAVE, 500);
-			}
-			continue;
-		}
-		if (!flags) continue;
-
-		tvars->behaviour_flags = 0;
-        
-		// ---- behave
-		itm_debug3(DBG_CTRL, "hi f=", tidx, flags, tvars->c1_sblk.n);
-		if (tidx == 1) {
-			if ((flags & BEHAVE_RESTARTBLK) && (tvars->c1_sblk.n == 2)) {
-                set_turnout(0, 1);
-				continue;
-			}
-			if ((flags & BEHAVE_EOT2) && (tvars->_dir > 0)) {
-				ctrl_set_timer(tidx, tvars, TBEHAVE, 1*60*1000);
-				ctrl_evt_cmd_set_setdirspeed(tidx, tvars, 0, 0, 1);
-                //set_turnout(0, 1);
-				return;
-			}
-			if ((flags & BEHAVE_EOT2) && (tvars->_dir < 0)) {
-				ctrl_set_timer(tidx, tvars, TBEHAVE, 300);
-				ctrl_evt_cmd_set_setdirspeed(tidx, tvars, 0, 0, 1);
-				set_turnout(0, 0);
-				continue;
-			}
-			if (flags & BEHAVE_EOT2) {
-				itm_debug3(DBG_CTRL, "unex EOT2", tidx, tvars->_dir, tvars->c1_sblk.n);
-				ctrl_set_timer(tidx, tvars, TBEHAVE, 300);
-				continue;
-			}
-			if (flags & BEHAVE_TBEHAVE) {
-				if (tvars->c1_sblk.n == 1) {
-					ctrl_evt_cmd_set_setdirspeed(tidx, tvars, -1, 40, 1);
-				} else if (tvars->c1_sblk.n == 2) {
-					ctrl_evt_cmd_set_setdirspeed(tidx, tvars, 1, 40, 1);
-				} else {
-					itm_debug3(DBG_CTRL, "unex TB", tidx, tvars->_dir, tvars->can1_addr);
-				}
-				continue;
-			}
-		}
-		if (tidx == 0) {
-			if (flags & BEHAVE_TBEHAVE) {
-				itm_debug2(DBG_CTRL, "TBehave", tidx, tvars->c1_sblk.n);
-				if (tvars->c1_sblk.n == 0) {
-					ctrl_evt_cmd_set_setdirspeed(tidx, tvars, 1, 95, 1);
-				} else if (tvars->can1_addr == MA_CANTON(0,1)) {
-					ctrl_evt_cmd_set_setdirspeed(tidx, tvars, -1, 95, 1);
-				} else {
-					// should not happen
-					ctrl_set_mode(tidx, train_manual);
-				}
-				continue;
-			}
-			if (flags & BEHAVE_EOT2)  {
-				ctrl_evt_cmd_set_setdirspeed(tidx, tvars, 0, 0, 1);
-                if (tvars->c1_sblk.n == 0) {
-                    ctrl_set_timer(tidx, tvars, TBEHAVE, 1000*5);
-                    set_turnout(0, 1);
-                } else if (tvars->c1_sblk.n == 1) {
-                    ctrl_set_timer(tidx, tvars, TBEHAVE, 1000*60*1);
-                }
-				continue;
-			}
-		}
-	}
-
-}
-
-
-#endif
 
 
 

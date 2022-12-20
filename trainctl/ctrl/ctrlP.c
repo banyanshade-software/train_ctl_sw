@@ -1052,7 +1052,8 @@ int ctrl2_tick_process(int tidx, train_oldctrl_t *tvars, const conf_train_t *tco
 
 
 // #longtrain
-
+// moved to longtrain.c
+#if 0
 static int32_t getcurpossmm(train_oldctrl_t *tvars, const conf_train_t *tconf, int left)
 {
     if (POSE_UNKNOWN == tvars->_curposmm) {
@@ -1214,3 +1215,4 @@ int ctrl2_update_front_sblks_c1changed(int tidx, train_oldctrl_t *tvars,  const 
     // but for now let's be safe
     return ctrl2_get_next_sblks(tidx, tvars, tconf);
 }
+#endif

@@ -50,6 +50,14 @@ static void _apply_speed(int tidx, train_ctrl_t *tvars);
 
 void ctrl3_init_train(int tidx, train_ctrl_t *tvars, lsblk_num_t sblk)
 {
+    itm_debug1(DBG_CTRL, "INIT", tidx);
+    memset(tvars, 0, sizeof(*tvars));
+    tvars->_desired_speed = 0;
+    tvars->_mode = train_manual;
+    tvars->_sdir = 0;
+    tvars->_spd_limit = 100;
+    tvars->_state = train_state_station;
+    tvars->_target_speed = 0;
     //TODO
 }
 

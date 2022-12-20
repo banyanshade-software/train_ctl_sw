@@ -39,7 +39,8 @@
 
 
 
-static train_oldctrl_t trctl[NUM_TRAINS] = {0};
+static train_oldctrl_t otrctl[NUM_TRAINS] = {0};
+static train_ctrl_t trctl[NUM_TRAINS] = {0};
 
 
 #if NUM_TRAINS == 0
@@ -52,10 +53,10 @@ static train_oldctrl_t trctl[NUM_TRAINS] = {0};
 // -----------------------------------------------------------
 
 const stat_val_t statval_ctrl[] = {
-		{ trctl, offsetof(train_oldctrl_t, _dir),             sizeof(uint8_t)         _P("T#_ctrl_dir")},
-		{ trctl, offsetof(train_oldctrl_t, _target_speed),    sizeof(uint16_t)        _P("T#_ctrl_target_speed")},
-        { trctl, offsetof(train_oldctrl_t, c1_sblk.n),        sizeof(uint8_t)         _P("T#_ctrl_canton1_lsb")},
-        { trctl, offsetof(train_oldctrl_t, desired_speed),    sizeof(uint16_t)        _P("T#_ctrl_desired_speed")},
+		{ otrctl, offsetof(train_oldctrl_t, _dir),             sizeof(uint8_t)         _P("T#_ctrl_dir")},
+		{ otrctl, offsetof(train_oldctrl_t, _target_speed),    sizeof(uint16_t)        _P("T#_ctrl_target_speed")},
+        { otrctl, offsetof(train_oldctrl_t, c1_sblk.n),        sizeof(uint8_t)         _P("T#_ctrl_canton1_lsb")},
+        { otrctl, offsetof(train_oldctrl_t, desired_speed),    sizeof(uint16_t)        _P("T#_ctrl_desired_speed")},
 #ifndef REDUCE_STAT
         { trctl, offsetof(train_ctrl_t, _state),           sizeof(train_state_t)   _P("T#_ctrl_state")},
         { trctl, offsetof(train_ctrl_t, can1_addr),        sizeof(uint8_t)         _P("T#_ctrl_canton1_addr")},
@@ -171,7 +172,8 @@ static void set_door_ack(xtrnaddr_t tn, enum topo_turnout_state v);
 
 static void ctrl_set_mode(int trnum, train_mode_t mode)
 {
-    ctrl2_set_mode(trnum, &trctl[trnum], mode);
+    ctrl2_set_mode(trnum, &otrctl[trnum], mode);
+    trctl[trnum]._mode = mode;
 }
 
 // ----------------------------------------------------------------------------
@@ -202,7 +204,7 @@ static void _ctrl_init(int normalmode)
 		if (b.turnout != 7) FatalError("chk4", "check xblkaddr_t", Error_Check);
 	}
 
-	memset(trctl, 0, sizeof(train_oldctrl_t)*NUM_TRAINS);
+	memset(otrctl, 0, sizeof(train_oldctrl_t)*NUM_TRAINS);
 	occupency_clear();
 
 	if (normalmode) {
@@ -220,12 +222,17 @@ static void _ctrl_init(int normalmode)
 		const _UNUSED_ lsblk_num_t s8 = {8};
 		if ((1)) {
 #ifdef TRAIN_SIMU
-			ctrl2_init_train(0, &trctl[0], s2);
+            ctrl3_init_train(0, &trctl[0], s2);
+			ctrl2_init_train(0, &otrctl[0], s2);
 			ctrl_set_mode(0, train_manual);
 #else
-			ctrl2_init_train(0, &trctl[0], s0);
-			ctrl2_init_train(1, &trctl[1], s8);
-			ctrl2_init_train(2, &trctl[2], s7);
+			ctrl2_init_train(0, &otrctl[0], s0);
+			ctrl2_init_train(1, &otrctl[1], s8);
+			ctrl2_init_train(2, &otrctl[2], s7);
+            ctrl3_init_train(0, &trctl[0], s0);
+            ctrl3_init_train(1, &trctl[1], s8);
+            ctrl3_init_train(2, &trctl[2], s7);
+
 			ctrl_set_mode(0, train_manual);
 			ctrl_set_mode(1, train_manual);
 			ctrl_set_mode(2, train_manual);
@@ -235,7 +242,10 @@ static void _ctrl_init(int normalmode)
 
 
 		} else {
-			ctrl2_init_train(0, &trctl[0], s0);
+            ctrl2_init_train(0, &otrctl[0], s0);
+            ctrl2_init_train(0, &otrctl[0], s0);
+            ctrl3_init_train(0, &trctl[0], s0);
+            ctrl3_init_train(0, &trctl[0], s0);
 			//ctrl2_init_train(1, &trctl[1], s2);
 			ctrl_set_mode(0, train_manual);
 			ctrl_set_mode(1, train_notrunning);
@@ -245,7 +255,7 @@ static void _ctrl_init(int normalmode)
 
 train_oldctrl_t *ctrl_get_tvar(int trnum)
 {
-    return &trctl[trnum];
+    return &otrctl[trnum];
 }
 // ----------------------------------------------------------------------------
 // timers
@@ -255,7 +265,7 @@ static void check_timers(uint32_t tick)
 {
 	//uint32_t t = HAL_GetTick();
 	for (int tidx = 0; tidx<NUM_TRAINS; tidx++) {
-		train_oldctrl_t *tvar = &trctl[tidx];
+		train_oldctrl_t *tvar = &otrctl[tidx];
 		for (int j=0; j<NUM_TIMERS; j++) {
 			uint32_t tv = tvar->timertick[j];
 			if (!tv) continue;
@@ -281,7 +291,7 @@ static void ctrl_tick(uint32_t tick, _UNUSED_ uint32_t dt)
         itm_debug1(DBG_CTRL, "ct/occ", 0);
     }
     for (int tidx = 0; tidx<NUM_TRAINS; tidx++) {
-        train_oldctrl_t *tvars = &trctl[tidx];
+        train_oldctrl_t *tvars = &otrctl[tidx];
         const conf_train_t *tconf = conf_train_get(tidx);
         if (!tconf->enabled) continue;
         if (tvars->_mode == train_notrunning) continue;
@@ -327,7 +337,7 @@ static void sub_presence_changed(_UNUSED_ uint8_t from_addr,  uint8_t lsegnum,  
 	itm_debug3(DBG_PRES|DBG_CTRL, "PrsChg-", lsegnum, p, ival);
 	// TODO : from_addr should be used for board number
 	for (int tidx=0; tidx < NUM_TRAINS; tidx++) {
-		train_oldctrl_t *tvar = &trctl[tidx];
+		train_oldctrl_t *tvar = &otrctl[tidx];
         if (tvar->_mode == train_notrunning) continue;
         uint8_t is_s1 = 0;
         uint8_t is_s2 = 0;
@@ -445,9 +455,22 @@ static void normal_process_msg(msg_64_t *m)
     if (MA1_IS_CTRL(m->to)) {
         //if (test_mode) continue;
         int tidx = MA1_TRAIN(m->to);
-        train_oldctrl_t *tvar = &trctl[tidx];
+        train_oldctrl_t *otvar = &otrctl[tidx];
+        train_ctrl_t *tvars = &trctl[tidx];
         //extern uint8_t Auto1ByteCode[]; // XXX temp hack
         switch (m->cmd) {
+            case CMD_MDRIVE_SPEED_DIR: {
+                int16_t spd = m->v2*m->v1u;
+                if (spd) {
+                    ctrl3_upcmd_set_desired_speed(tidx, tvars, spd);
+                } else {
+                    ctrl3_upcmd_set_desired_speed_zero(tidx, tvars);
+                }
+            }
+            break;
+
+                
+                
         case CMD_SET_TRAIN_MODE:
             ctrl_set_mode(m->v1u, m->v2u);
             break;
@@ -455,9 +478,9 @@ static void normal_process_msg(msg_64_t *m)
             switch (m->v1u) {
                 case 1:
                     // tvar->route =  Auto1ByteCode;
-                    tvar->routeidx = 0;
-                    tvar->got_u1 = 0;
-                    tvar->trigu1 = 0;
+                    otvar->routeidx = 0;
+                    otvar->got_u1 = 0;
+                    otvar->trigu1 = 0;
                     ctrl_set_mode(tidx, train_manual); // make sure it is restarted if already auto
                     ctrl_set_mode(tidx, train_auto);
                     break;
@@ -477,7 +500,7 @@ static void normal_process_msg(msg_64_t *m)
     
         case CMD_BEMF_DETECT_ON_C2: {
             itm_debug2(DBG_CTRL,"BEMF/C2", tidx,  m->v1u);
-            train_oldctrl_t *tvar = &trctl[tidx];
+            train_oldctrl_t *tvar = &otrctl[tidx];
             if (m->v1u != tvar->can2_xaddr.v) {
                 // typ. because we already switch to c2 (msg SET_C1_C2 and CMD_BEMF_DETECT_ON_C2 cross over
                 itm_debug3(DBG_CTRL, "not c2", tidx, m->v1u, tvar->can2_xaddr.v);
@@ -492,23 +515,14 @@ static void normal_process_msg(msg_64_t *m)
             ctrl2_evt_entered_c2(tidx, tvar, 1);
             break;
         }
-            case CMD_MDRIVE_SPEED_DIR: {
-                int16_t spd = m->v2*m->v1u;
-                if (spd) {
-                    ctrl3_upcmd_set_desired_speed(tidx, tvar, spd);
-                } else {
-                    ctrl3_upcmd_set_desired_speed_zero(tidx, tvar);
-                }
-            }
-            break;
-
+           
         case CMD_POSE_TRIGGERED:
             itm_debug3(DBG_POSEC, "Trig", m->v1u, m->v2u, m->subc);
             xblkaddr_t tb = FROM_CANTON(*m);
-            ctrl2_evt_pose_triggered(tidx, tvar, NULL, tb, m->vcu8, m->va16);
+            ctrl2_evt_pose_triggered(tidx, otvar, NULL, tb, m->vcu8, m->va16);
             break;
         case CMD_STOP_DETECTED:
-            ctrl2_evt_stop_detected(tidx, tvar, NULL, m->v32);
+            ctrl2_evt_stop_detected(tidx, otvar, NULL, m->v32);
             break;
         default:
             break;
@@ -523,7 +537,7 @@ static void normal_process_msg(msg_64_t *m)
 // called by different thread ! WARNING
 int ctrl_get_train_curlsblk(int numtrain)
 {
-    train_oldctrl_t *tvars = &trctl[numtrain];
+    train_oldctrl_t *tvars = &otrctl[numtrain];
     // we assume uint8 load/store is atomic
     // XXX is it ????
     int n = tvars->c1_sblk.n;

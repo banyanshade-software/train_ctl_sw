@@ -41,6 +41,14 @@ typedef struct {
 // ----------------------------------------------------------------
 
 
+/// ctrl3_init_train
+/// initialize train on a given sblk
+/// @param tidx train index
+/// @param tvars train ctrl vars
+/// @param sblk initial train position
+void ctrl3_init_train(int tidx, train_ctrl_t *tvars, lsblk_num_t sblk);
+
+
 /// ctrl3_upcmd_set_desired_speed
 /// called when user / auto set a non null target speed
 /// @param tidx train index

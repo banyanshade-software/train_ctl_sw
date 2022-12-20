@@ -46,6 +46,14 @@ static void _set_state(int tidx, train_ctrl_t *tvars, train_state_t newstate);
 static void _apply_speed(int tidx, train_ctrl_t *tvars);
 // -----------------------------------------------------------------
 
+
+
+void ctrl3_init_train(int tidx, train_ctrl_t *tvars, lsblk_num_t sblk)
+{
+    //TODO
+}
+
+
 void ctrl3_upcmd_set_desired_speed(int tidx, train_ctrl_t *tvars, int16_t desired_speed)
 {
     if (!desired_speed) FatalError("DSpd", "FSM desspd",  Error_FSM_DSpd);
@@ -255,5 +263,28 @@ static void _set_state(int tidx, train_ctrl_t *tvars, train_state_t newstate)
 {
     if (tvars->_state == newstate) return;
     tvars->_state = newstate;
-    // TODO sanity check
+    //  sanity check
+    switch (newstate) {
+        case train_state_blkwait:
+        case train_state_blkwait0:
+        case train_state_end_of_track0:
+        case train_state_end_of_track:
+            if (!tvars->_sdir) {
+                FatalError("FSMb", "FSM san check", Error_FSM_Sanity1);
+            }
+            if (!tvars->_desired_speed) {
+                FatalError("FSMb", "FSM san check", Error_FSM_Sanity2);
+            }
+        case train_state_station:
+            if (tvars->_sdir) {
+                FatalError("FSMb", "FSM san check", Error_FSM_Sanity3);
+            }
+            if (tvars->_desired_speed) {
+                FatalError("FSMb", "FSM san check", Error_FSM_Sanity4);
+            }
+            break;
+
+        default:
+            break;
+    }
 }

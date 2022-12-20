@@ -22,7 +22,7 @@
 
 #include "../topology/occupency.h"
 
-#include "ctrlLP.h"
+#include "ctrlLT.h"
 #include "ctrlP.h"
 #include "cautoP.h"
 #include "detectP.h"

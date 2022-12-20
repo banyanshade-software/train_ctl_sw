@@ -19,7 +19,7 @@
 
 #include "ctrl.h"
 //#include "ctrlP.h"
-#include "ctrlLP.h"
+#include "ctrlLT.h"
 
 #include "longtrain.h"
 

@@ -34,7 +34,7 @@
 		1B1C760127248DA800F95111 /* lf_mqueue.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B7A2A12262D599E004E0481 /* lf_mqueue.c */; };
 		1B238C8A285E54F6000DA9B8 /* tasklet.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B238C88285E54F6000DA9B8 /* tasklet.c */; };
 		1B255145273262B30015B4FA /* TestOccupency.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B255144273262B30015B4FA /* TestOccupency.m */; };
-		1B26884E2950FC3A00E31486 /* ctrlLP.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B26884D2950FC3A00E31486 /* ctrlLP.c */; };
+		1B26884E2950FC3A00E31486 /* ctrlLT.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B26884D2950FC3A00E31486 /* ctrlLT.c */; };
 		1B2688612951201600E31486 /* pidctl.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B7A2A0A262D5954004E0481 /* pidctl.c */; };
 		1B2688632951201600E31486 /* occupency.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BEB93C92729F10D00508C17 /* occupency.c */; };
 		1B2688652951201600E31486 /* conf_topology.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B46F7FA280752D500BAD6E8 /* conf_topology.c */; };
@@ -49,7 +49,7 @@
 		1B2688762951201600E31486 /* inertia.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B7A2A05262D5954004E0481 /* inertia.c */; };
 		1B2688782951201600E31486 /* turnouts.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BFB8A6F2922F13F00B19C67 /* turnouts.c */; };
 		1B26887A2951201600E31486 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1BC903192720B4E60087CEA7 /* XCTest.framework */; };
-		1B2688902951203A00E31486 /* ctrlLP.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B26884D2950FC3A00E31486 /* ctrlLP.c */; };
+		1B2688902951203A00E31486 /* ctrlLT.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B26884D2950FC3A00E31486 /* ctrlLT.c */; };
 		1B2688A72952439800E31486 /* longtrain.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B2688A62952439800E31486 /* longtrain.c */; };
 		1B2688A82952439800E31486 /* longtrain.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B2688A62952439800E31486 /* longtrain.c */; };
 		1B2688AE2952439D00E31486 /* longtrain.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B2688A62952439800E31486 /* longtrain.c */; };
@@ -205,8 +205,8 @@
 		1B238C88285E54F6000DA9B8 /* tasklet.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = tasklet.c; sourceTree = "<group>"; };
 		1B238C89285E54F6000DA9B8 /* tasklet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tasklet.h; sourceTree = "<group>"; };
 		1B255144273262B30015B4FA /* TestOccupency.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TestOccupency.m; sourceTree = "<group>"; };
-		1B26884D2950FC3A00E31486 /* ctrlLP.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ctrlLP.c; sourceTree = "<group>"; };
-		1B2688532950FCC500E31486 /* ctrlLP.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ctrlLP.h; sourceTree = "<group>"; };
+		1B26884D2950FC3A00E31486 /* ctrlLT.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ctrlLT.c; sourceTree = "<group>"; };
+		1B2688532950FCC500E31486 /* ctrlLT.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ctrlLT.h; sourceTree = "<group>"; };
 		1B2688582951146C00E31486 /* trig_tags.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = trig_tags.h; sourceTree = "<group>"; };
 		1B26887F2951201600E31486 /* trainLPctlTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = trainLPctlTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		1B2688802951201600E31486 /* trainctlTests copy2-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "trainctlTests copy2-Info.plist"; path = "/Users/danielbraun/devel/train/_sw/mac/train_throttle/trainctlTests copy2-Info.plist"; sourceTree = "<absolute>"; };
@@ -632,8 +632,8 @@
 				1B77BEC9274A471200BC5230 /* detectP.c */,
 				1BEB93CD272B325700508C17 /* ctrlP.h */,
 				1BEB93CE272B325700508C17 /* ctrlP.c */,
-				1B2688532950FCC500E31486 /* ctrlLP.h */,
-				1B26884D2950FC3A00E31486 /* ctrlLP.c */,
+				1B2688532950FCC500E31486 /* ctrlLT.h */,
+				1B26884D2950FC3A00E31486 /* ctrlLT.c */,
 				1B2688A52952439800E31486 /* longtrain.h */,
 				1B2688A62952439800E31486 /* longtrain.c */,
 				1B2688582951146C00E31486 /* trig_tags.h */,
@@ -990,7 +990,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				1B2688612951201600E31486 /* pidctl.c in Sources */,
-				1B2688902951203A00E31486 /* ctrlLP.c in Sources */,
+				1B2688902951203A00E31486 /* ctrlLT.c in Sources */,
 				1B2688632951201600E31486 /* occupency.c in Sources */,
 				1B2688652951201600E31486 /* conf_topology.c in Sources */,
 				1B2688662951201600E31486 /* TopologyTest.m in Sources */,
@@ -1101,7 +1101,7 @@
 				1B46F811280C283D00BAD6E8 /* oam_flash.c in Sources */,
 				1BA4B4A22551DE820043D763 /* NSCalendar+Gmt.m in Sources */,
 				1B46F807280752D600BAD6E8 /* conf_boards.c in Sources */,
-				1B26884E2950FC3A00E31486 /* ctrlLP.c in Sources */,
+				1B26884E2950FC3A00E31486 /* ctrlLT.c in Sources */,
 				1B7D0A8E2814A0B6008EEDD4 /* framing.c in Sources */,
 				1BFCA4D928E2E5B80056DE30 /* PlanCellView.m in Sources */,
 				1B2688A72952439800E31486 /* longtrain.c in Sources */,

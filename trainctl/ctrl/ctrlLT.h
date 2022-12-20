@@ -1,13 +1,13 @@
 //
-//  ctrlLP.h
+//  ctrlLT.h
 //  train_throttle
 //
 //  Created by Daniel Braun on 19/12/2022.
 //  Copyright © 2022 Daniel BRAUN. All rights reserved.
 //
 
-#ifndef ctrlLP_h
-#define ctrlLP_h
+#ifndef ctrlLT_h
+#define ctrlLT_h
 
 #include "../config/conf_train.h"
 //#include "ctrlP.h"
@@ -101,4 +101,4 @@ void ctrl3_stop_detected(int tidx, train_ctrl_t *tvars);
 /// @param trigtag  trigger tag
 void ctrl3_pose_triggered(int tidx, train_ctrl_t *tvars, pose_trig_tag_t trigtag);
 
-#endif /* ctrlLP_h */
+#endif /* ctrlLT_h */

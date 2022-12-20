@@ -1,5 +1,5 @@
 //
-//  ctrlLP.c
+//  ctrlLT.c
 //  train_throttle
 //
 //  Created by Daniel Braun on 19/12/2022.
@@ -21,7 +21,7 @@
 #include "../config/conf_train.h"
 
 #include "ctrl.h"
-#include "ctrlLP.h"
+#include "ctrlLT.h"
 #include "longtrain.h"
 //#include "ctrlP.h"
 //#include "cautoP.h"

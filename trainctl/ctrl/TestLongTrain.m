@@ -12,7 +12,7 @@
 #include "misc.h"
 #include "topology.h"
 #include "occupency.h"
-#include "ctrlLP.h"
+#include "ctrlLT.h"
 #include "longtrain.h"
 #include "trig_tags.h"
 

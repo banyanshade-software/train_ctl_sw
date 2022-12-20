@@ -12,7 +12,8 @@
 #include "misc.h"
 #include "topology.h"
 #include "occupency.h"
-#include "ctrlP.h"
+#include "ctrlLP.h"
+#include "longtrain.h"
 #include "trig_tags.h"
 
 @interface TestLongTrain : XCTestCase
@@ -20,7 +21,7 @@
 @end
 
 @implementation TestLongTrain {
-    train_oldctrl_t tvars;
+    train_ctrl_t tvars;
     conf_train_t *tconf;
 }
 
@@ -51,7 +52,7 @@ static const xtrnaddr_t to1 = { .v = 1};
 
 
     tvars._mode = train_manual;
-    ctrl2_init_train(0, &tvars, sone);
+    ctrl3_init_train(0, &tvars, sone);
     NSLog(@"init done");
 }
 
@@ -63,7 +64,10 @@ static const xtrnaddr_t to1 = { .v = 1};
 static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
 {
     for (int i=0; i<n ; i++) {
-        if (res[i].n != exp[i]) return -1;
+        if (res[i].n != exp[i]) {
+            printf("i=%d res %d exp %d\n", i, res[i].n, exp[i]);
+            return -1;
+        }
     }
     return 0;
 }
@@ -101,7 +105,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
 {
     tconf->trainlen_left_cm = 0;
     tconf->trainlen_right_cm = 19;
-    ctrl2_init_train(0, &tvars, szero);
+    ctrl3_init_train(0, &tvars, szero);
     tvars._curposmm = 900;
     int16_t remain = -1;
     lsblk_num_t r[4] = {0};
@@ -152,7 +156,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     occupency_clear();
     topology_set_turnout(to0, 1, -1);
     topology_set_turnout(to1, 1, -1);
-    ctrl2_init_train(0, &tvars, stwo); // s2 90cm
+    ctrl3_init_train(0, &tvars, stwo); // s2 90cm
     tvars._curposmm = 600;             //   ---- reste 30cm sur s2 et 48-30=18 sur s1 (45cm)
     ctrl2_get_next_sblks(0, &tvars, tconf);
     XCTAssert(tvars.rightcars.nr == 1);
@@ -218,7 +222,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     occupency_clear();
     topology_set_turnout(to0, 1, -1);
     topology_set_turnout(to1, 1, -1);
-    ctrl2_init_train(0, &tvars, stwo); // s2 90cm
+    ctrl3_init_train(0, &tvars, stwo); // s2 90cm
     tvars._curposmm = 600;             //   ---- reste 30cm sur s2 et 48-30=18 sur s1 (45cm)
     ctrl2_get_next_sblks(0, &tvars, tconf);
     XCTAssert(tvars.rightcars.nr == 1);
@@ -302,7 +306,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     topology_set_turnout(to0, 1, -1);
     // same than previous, but to1 disallowed going forward
     topology_set_turnout(to1, 1, -1);
-    ctrl2_init_train(0, &tvars, stwo); // s2 90cm
+    ctrl3_init_train(0, &tvars, stwo); // s2 90cm
     tvars._curposmm = 620;
     ctrl2_get_next_sblks(0, &tvars, tconf);
     XCTAssert(tvars.rightcars.nr == 1);
@@ -326,7 +330,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     topology_set_turnout(to0, 1, -1);
     // same than previous, but to1 disallowed going forward
     topology_set_turnout(to1, 0, -1);
-    ctrl2_init_train(0, &tvars, stwo); // s2 90cm
+    ctrl3_init_train(0, &tvars, stwo); // s2 90cm
     tvars._curposmm = 620;
     ctrl2_get_next_sblks(0, &tvars, tconf);
     XCTAssert(tvars.rightcars.nr == 1);
@@ -353,7 +357,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     topology_set_turnout(to0, 1, -1);
     // same than previous, but to1 disallowed going forward
     topology_set_turnout(to1, 1, -1);
-    ctrl2_init_train(0, &tvars, stwo); // s2 90cm
+    ctrl3_init_train(0, &tvars, stwo); // s2 90cm
     tvars._curposmm = 750;
     ctrl2_get_next_sblks(0, &tvars, tconf);
     XCTAssert(tvars.rightcars.nr == 1);
@@ -377,7 +381,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     topology_set_turnout(to0, 1, -1);
     // same than previous, but to1 disallowed going forward
     topology_set_turnout(to1, 0, -1);
-    ctrl2_init_train(0, &tvars, stwo); // s2 90cm
+    ctrl3_init_train(0, &tvars, stwo); // s2 90cm
     tvars._curposmm = 750;
     ctrl2_get_next_sblks(0, &tvars, tconf);
     XCTAssert(tvars.rightcars.nr == 1);
@@ -402,7 +406,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     topology_set_turnout(to0, 1, -1);
     // same than previous, but to1 disallowed going forward
     topology_set_turnout(to1, 0, -1);
-    ctrl2_init_train(0, &tvars, stwo); // s2 90cm
+    ctrl3_init_train(0, &tvars, stwo); // s2 90cm
     tvars._curposmm = 600;             //   ---- reste 30cm sur s2 et 48-30=18 sur s1 (45cm)
     ctrl2_get_next_sblks(0, &tvars, tconf);
     XCTAssert(tvars.rightcars.nr == 1);
@@ -447,4 +451,57 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     XCTAssert(!memcmp(rettrigs, expt3, sizeof(rettrigs_t)));
     
 }
+
+
+
+void FatalError(const char *shortsmsg, const char *longmsg, enum fatal_error_code errcode)
+{
+    abort();
+}
+int ignore_ina_pres(void)
+{
+    return 0;
+}
+
+// ----------------------------------------------------------
+
+uint32_t SimuTick = 0;
+
+
+static msg_64_t qbuf[16];
+
+mqf_t from_ctrl =  {
+    .head=0,
+    .tail=0,
+    .msgsiz=sizeof(msg_64_t),
+    .num=16,
+    .maxuse=0,
+    .msgbuf=(uint8_t *) qbuf,
+    .silentdrop=0
+    
+};
+
+static NSString *dump_msgbuf(int clear);
+static int compareMsg64(const msg_64_t *exp, int n, int clear);
+
+#define EXPMSG(...) do {                                     \
+    const msg_64_t exp[] =  { __VA_ARGS__ } ;                \
+    int n = sizeof(exp)/sizeof(msg_64_t);                    \
+    int rcc = compareMsg64(exp, n, 1);                        \
+    XCTAssert(!rcc);                                          \
+} while (0)
+
+
+static int errorhandler = 0;
+void Error_Handler(void)
+{
+    errorhandler++;
+}
+void dump_msg(mqf_t *mq, int n)
+{
+    errorhandler++;
+}
+
+int tsktick_freqhz = 100;
+
 @end

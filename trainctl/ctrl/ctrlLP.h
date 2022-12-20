@@ -26,6 +26,16 @@ typedef enum {
 } train_state_t;
 
 
+#define MAX_LSBLK_CARS 4
+struct forwdsblk {
+    lsblk_num_t r[MAX_LSBLK_CARS];
+    int16_t     rlen_cm;            // caution value should be updated if curposmm changed
+    int8_t      nr;
+};
+
+extern uint8_t ctrl_flag_notify_speed ;
+
+
 typedef struct {
     train_mode_t    _mode;
     train_state_t   _state;
@@ -33,9 +43,19 @@ typedef struct {
     uint16_t        _target_speed;
     int8_t          _sdir;      // -1 or 1, 0 if stopped
     uint8_t         _spd_limit;
+    //
+    lsblk_num_t c1_sblk;
+    //
+    // #longtrain
+    struct forwdsblk leftcars;
+    struct forwdsblk rightcars;
+    //
+    int32_t _curposmm;
+    int32_t beginposmm; // left side is 0, mm of right side
 } train_ctrl_t;
 
 
+#define POSE_UNKNOWN 9999999
 
 
 // ----------------------------------------------------------------

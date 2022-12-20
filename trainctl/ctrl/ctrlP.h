@@ -28,13 +28,14 @@
 #define TLEAVE_C1_VALUE 20
 #define TGUARD_C1_VALUE 50
 
-
+#ifndef MAX_LSBLK_CARS
 #define MAX_LSBLK_CARS 4
 struct forwdsblk {
     lsblk_num_t r[MAX_LSBLK_CARS];
     int16_t     rlen_cm;            // caution value should be updated if curposmm changed
     int8_t      nr;
 };
+#endif
 
 
 typedef struct {

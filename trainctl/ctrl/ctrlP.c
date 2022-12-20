@@ -36,7 +36,7 @@ static lsblk_num_t snone = {-1};
 #define SPD_LIMIT_NOLIMIT 100
 
 
-uint8_t ctrl_flag_notify_speed = 1;
+//uint8_t ctrl_flag_notify_speed = 1;
 
 
 

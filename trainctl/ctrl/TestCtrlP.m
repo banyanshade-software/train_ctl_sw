@@ -105,6 +105,7 @@ void ctrl2_send_led(uint8_t led_num, uint8_t prog_num)
 {
 }
 
+uint8_t ctrl_flag_notify_speed = 0;
 
 
 @implementation TestCtrlP {

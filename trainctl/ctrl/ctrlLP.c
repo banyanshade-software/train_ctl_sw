@@ -22,8 +22,9 @@
 
 #include "ctrl.h"
 #include "ctrlLP.h"
-#include "ctrlP.h"
-#include "cautoP.h"
+#include "longtrain.h"
+//#include "ctrlP.h"
+//#include "cautoP.h"
 
 
 #ifndef BOARD_HAS_CTRL
@@ -31,6 +32,10 @@
 #endif
 
 static lsblk_num_t snone = {-1};
+
+// -----------------------------------------------------------------
+
+uint8_t ctrl_flag_notify_speed = 1;
 
 // -----------------------------------------------------------------
 
@@ -58,6 +63,10 @@ void ctrl3_init_train(int tidx, train_ctrl_t *tvars, lsblk_num_t sblk)
     tvars->_spd_limit = 100;
     tvars->_state = train_state_station;
     tvars->_target_speed = 0;
+    
+    tvars->beginposmm = 0;
+    tvars->_curposmm = POSE_UNKNOWN;
+    tvars->c1_sblk = sblk;
     //TODO
 }
 

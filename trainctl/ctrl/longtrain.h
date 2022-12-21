@@ -21,14 +21,14 @@ typedef struct sttrig rettrigs_t[3];
 // -------------------------------------------------
 
 
-int ctrl2_get_next_sblks_(int tidx, train_ctrl_t *tvars,  const conf_train_t *tconf, int left, lsblk_num_t *resp, int nsblk, int16_t *premainlen);
+int ctrl3_get_next_sblks_(int tidx, train_ctrl_t *tvars,  const conf_train_t *tconf, int left, lsblk_num_t *resp, int nsblk, int16_t *premainlen);
 
-int ctrl2_get_next_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *tconf);
+int ctrl3_get_next_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *tconf);
 
-int ctrl2_check_front_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *tconf, int left,  rettrigs_t ret);
+int ctrl3_check_front_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *tconf, int left,  rettrigs_t ret);
 
-int ctrl2_update_front_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *tconf, int left);
+int ctrl3_update_front_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *tconf, int left);
 
-int ctrl2_update_front_sblks_c1changed(int tidx, train_ctrl_t *tvars,  const conf_train_t *tconf, int left);
+int ctrl3_update_front_sblks_c1changed(int tidx, train_ctrl_t *tvars,  const conf_train_t *tconf, int left);
 
 #endif /* longtrain_h */

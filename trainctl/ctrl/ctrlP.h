@@ -194,8 +194,8 @@ extern void ctrl2_unlock_turnout(xtrnaddr_t tn, int train);
 extern void ctrl2_send_led(uint8_t led_num, uint8_t prog_num);
 
 
-int ctrl2_get_next_sblks_(int tidx, train_oldctrl_t *tvars,  const conf_train_t *tconf, int left, lsblk_num_t *resp, int nsblk, int16_t *premainlen);
-int ctrl2_get_next_sblks(int tidx, train_oldctrl_t *tvars,  const conf_train_t *tconf);
+int ctrl3_get_next_sblks_(int tidx, train_oldctrl_t *tvars,  const conf_train_t *tconf, int left, lsblk_num_t *resp, int nsblk, int16_t *premainlen);
+int ctrl3_get_next_sblks(int tidx, train_oldctrl_t *tvars,  const conf_train_t *tconf);
 
 
 
@@ -219,7 +219,7 @@ typedef struct sttrig rettrigs_t[3];
 /// @return int             -1 if train should stop immediatly (or should not start),
 ///                 >0 value if train should brake
 ///                 0 otherwise
-int ctrl2_check_front_sblks(int tidx, train_oldctrl_t *tvars,  const conf_train_t *tconf, int left, rettrigs_t ret);
+int ctrl3_check_front_sblks(int tidx, train_oldctrl_t *tvars,  const conf_train_t *tconf, int left, rettrigs_t ret);
 
 
 /// called when tag_chkocc occurs, it will update tvars->leftcars  and tvars->rightcars
@@ -227,13 +227,13 @@ int ctrl2_check_front_sblks(int tidx, train_oldctrl_t *tvars,  const conf_train_
 /// @param tvars train tvars structure
 /// @param tconf triain tconf config pointer
 /// @param left 1 if train is going left, 0 if it is going right
-int ctrl2_update_front_sblks(int tidx, train_oldctrl_t *tvars,  const conf_train_t *tconf, int left);
+int ctrl3_update_front_sblks(int tidx, train_oldctrl_t *tvars,  const conf_train_t *tconf, int left);
 
 /// called when c1sblk changed, it will update tvars->leftcars  and tvars->rightcars
 /// @param tidx train number
 /// @param tvars train tvars structure
 /// @param tconf triain tconf config pointer
 /// @param left 1 if train is going left, 0 if it is going right
-int ctrl2_update_front_sblks_c1changed(int tidx, train_oldctrl_t *tvars,  const conf_train_t *tconf, int left);
+int ctrl3_update_front_sblks_c1changed(int tidx, train_oldctrl_t *tvars,  const conf_train_t *tconf, int left);
 
 #endif /* ctrlP_h */

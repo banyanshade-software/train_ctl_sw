@@ -52,7 +52,7 @@ static int32_t getcurpossmm(train_ctrl_t *tvars, const conf_train_t *tconf, int 
     return tvars->_curposmm;
 }
 
-int ctrl2_get_next_sblks_(_UNUSED_ int tidx, train_ctrl_t *tvars,  const conf_train_t *tconf, int left, lsblk_num_t *resp, int nsblk, int16_t *premainlen)
+int ctrl3_get_next_sblks_(_UNUSED_ int tidx, train_ctrl_t *tvars,  const conf_train_t *tconf, int left, lsblk_num_t *resp, int nsblk, int16_t *premainlen)
 {
     if (premainlen) *premainlen = 0;
     int lidx = 0;
@@ -84,12 +84,12 @@ int ctrl2_get_next_sblks_(_UNUSED_ int tidx, train_ctrl_t *tvars,  const conf_tr
     }
 }
 
-int ctrl2_get_next_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *tconf)
+int ctrl3_get_next_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *tconf)
 {
     memset(tvars->rightcars.r, 0xFF, sizeof(tvars->rightcars.r));
     memset(tvars->leftcars.r, 0xFF, sizeof(tvars->leftcars.r));
-    tvars->rightcars.nr = ctrl2_get_next_sblks_(tidx, tvars, tconf, 0, tvars->rightcars.r, MAX_LSBLK_CARS, &tvars->rightcars.rlen_cm);
-    tvars->leftcars.nr = ctrl2_get_next_sblks_(tidx, tvars, tconf, 1, tvars->leftcars.r, MAX_LSBLK_CARS, &tvars->leftcars.rlen_cm);
+    tvars->rightcars.nr = ctrl3_get_next_sblks_(tidx, tvars, tconf, 0, tvars->rightcars.r, MAX_LSBLK_CARS, &tvars->rightcars.rlen_cm);
+    tvars->leftcars.nr = ctrl3_get_next_sblks_(tidx, tvars, tconf, 1, tvars->leftcars.r, MAX_LSBLK_CARS, &tvars->leftcars.rlen_cm);
     return 0; // XXX error handling here
 }
 
@@ -137,7 +137,7 @@ static int check_for_dist(_UNUSED_ int tidx, train_ctrl_t *tvars,  struct forwds
     return 9999;
 }
 
-int ctrl2_check_front_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *tconf, int left,  rettrigs_t ret)
+int ctrl3_check_front_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *tconf, int left,  rettrigs_t ret)
 {
     struct forwdsblk *fsblk = left ? &tvars->leftcars : &tvars->rightcars;
     int retc = 0;
@@ -174,7 +174,7 @@ int ctrl2_check_front_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *
 }
 
 
-int ctrl2_update_front_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *tconf, int left)
+int ctrl3_update_front_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *tconf, int left)
 {
     struct forwdsblk *fsblk = left ? &tvars->leftcars : &tvars->rightcars;
     
@@ -187,10 +187,10 @@ int ctrl2_update_front_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t 
     }
     // this could be improved, as only last sblk (and rlen) are to be updated.
     // but for now let's be safe
-    return ctrl2_get_next_sblks(tidx, tvars, tconf);
+    return ctrl3_get_next_sblks(tidx, tvars, tconf);
 }
 
-int ctrl2_update_front_sblks_c1changed(int tidx, train_ctrl_t *tvars,  const conf_train_t *tconf, int left)
+int ctrl3_update_front_sblks_c1changed(int tidx, train_ctrl_t *tvars,  const conf_train_t *tconf, int left)
 {
     struct forwdsblk *fsblk = left ? &tvars->leftcars : &tvars->rightcars;
     
@@ -202,5 +202,5 @@ int ctrl2_update_front_sblks_c1changed(int tidx, train_ctrl_t *tvars,  const con
     }
     // this could be improved,
     // but for now let's be safe
-    return ctrl2_get_next_sblks(tidx, tvars, tconf);
+    return ctrl3_get_next_sblks(tidx, tvars, tconf);
 }

@@ -51,6 +51,8 @@ typedef struct {
     struct forwdsblk rightcars;
     //
     int32_t _curposmm;
+    int32_t stopposmm;
+    uint8_t brake:1;
     int32_t beginposmm; // left side is 0, mm of right side
 } train_ctrl_t;
 

@@ -74,12 +74,13 @@ void ctrl3_upcmd_set_desired_speed(int tidx, train_ctrl_t *tvars, int16_t desire
 {
     int is_eot = 0;
     int is_occ = 0;
+    int rc = 0;
     if (!desired_speed) FatalError("DSpd", "FSM desspd",  Error_FSM_DSpd);
     int sdir = SIGNOF0(desired_speed);
     switch (tvars->_state) {
         case train_station:
 station:
-            _train_check_dir(tidx, tvars, sdir, &is_eot, &is_occ);
+            rc = _train_check_dir(tidx, tvars, sdir, &is_eot, &is_occ);
             if (is_eot) {
                 return;
             }
@@ -254,6 +255,13 @@ static int _train_check_dir(int tidx, train_ctrl_t *tvars, int sdir, int *iseot,
         if (rett.isoet) *iseot = 1;
     }
     itm_debug3(DBG_CTRL, "rc2", tidx, rc2, tvars->_state);
+    if (rc2>0) {
+        // set brake
+        tvars->stopposmm = tvars->_curposmm + rc2*10*sdir;
+        tvars->brake = 1;
+    } else {
+        tvars->brake = 0;
+    }
     return rc2; //xxxxx
 
 }
@@ -280,11 +288,24 @@ static void _set_speed(int tidx, train_ctrl_t *tvars, int signed_speed, int appl
     if (!applyspd) return;
     _apply_speed(tidx, tvars);
 }
+
+static uint8_t brake_maxspd(int distmm);
+
 static void _apply_speed(int tidx, train_ctrl_t *tvars)
 {
     int spd = abs(tvars->_desired_signed_speed);
+    // apply spd limit
     if (spd > tvars->_spd_limit) spd = SIGNOF0(spd)*tvars->_spd_limit;
+
+    // apply brake
+    if (tvars->brake) {
+        int dist = abs(tvars->_curposmm - tvars->stopposmm);
+        int maxspd = brake_maxspd(dist);
+        if (spd>maxspd) spd = maxspd;
+    }
+    
     tvars->_target_unisgned_speed = spd;
+
     // TODO : send to spdctl
     
 }
@@ -316,4 +337,14 @@ static void _set_state(int tidx, train_ctrl_t *tvars, train_state_t newstate)
         default:
             break;
     }
+}
+
+
+
+
+
+static uint8_t brake_maxspd(int distmm)
+{
+    // TODO better brake
+    return (distmm>100) ? 100:distmm;
 }

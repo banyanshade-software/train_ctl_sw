@@ -79,6 +79,18 @@ static const xtrnaddr_t to1 = { .v = 1};
     XCTAssert(tvars._desired_signed_speed == 0);
 }
 
+- (void)testStartRightBrake {
+    tconf->trainlen_left_cm = 0;
+    tconf->trainlen_right_cm = 80;
+    tvars._curposmm = 30;
+    [self startRight];
+    XCTAssert(tvars._state == train_state_running);
+    XCTAssert(tvars._sdir == 1);
+    XCTAssert(tvars._target_unisgned_speed == 40);
+    XCTAssert(tvars._desired_signed_speed == 90);
+    XCTAssert(tvars._spd_limit == 99);
+}
+
 - (void) startRight
 {
     XCTAssert(tvars._state == train_state_station);

@@ -60,6 +60,7 @@ enum fatal_error_code {
     Error_FSM_Nothandled,
     Error_FSM_DSpd,
     Error_FSM_SignDir,
+    Error_FSM_NoDir,
     Error_FSM_Sanity1,
     Error_FSM_Sanity2,
     Error_FSM_Sanity3,

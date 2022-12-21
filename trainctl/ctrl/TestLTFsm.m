@@ -56,11 +56,31 @@ static const xtrnaddr_t to1 = { .v = 1};
     XCTAssert(errorhandler==0);
 }
 
-- (void)testStartRight {
+- (void)testStartRightNormal {
     tconf->trainlen_left_cm = 0;
-    tconf->trainlen_right_cm = 19;
+    tconf->trainlen_right_cm = 12;
     tvars._curposmm = 30;
-    
+    [self startRight];
+    XCTAssert(tvars._state == train_state_running);
+    XCTAssert(tvars._sdir == 1);
+    XCTAssert(tvars._target_unisgned_speed == 90);
+    XCTAssert(tvars._desired_signed_speed == 90);
+    XCTAssert(tvars._spd_limit == 99);
+}
+
+- (void)testStartRightEot {
+    tconf->trainlen_left_cm = 0;
+    tconf->trainlen_right_cm = 90;
+    tvars._curposmm = 30;
+    [self startRight];
+    XCTAssert(tvars._state == train_state_station);
+    XCTAssert(tvars._sdir == 0);
+    XCTAssert(tvars._target_unisgned_speed == 0);
+    XCTAssert(tvars._desired_signed_speed == 0);
+}
+
+- (void) startRight
+{
     XCTAssert(tvars._state == train_state_station);
     
     ctrl3_stop_detected(0, &tvars);
@@ -71,11 +91,7 @@ static const xtrnaddr_t to1 = { .v = 1};
 
     // start right
     ctrl3_upcmd_set_desired_speed(0, &tvars, 90);
-    XCTAssert(tvars._state == train_state_running);
-    XCTAssert(tvars._sdir == 1);
-    XCTAssert(tvars._target_unisgned_speed == 90);
-    XCTAssert(tvars._desired_signed_speed == 90);
-    XCTAssert(tvars._spd_limit == 99);
+    
 }
 
 
@@ -104,7 +120,7 @@ static const xtrnaddr_t to1 = { .v = 1};
 
 - (void) testStop
 {
-    [self testStartRight];
+    [self testStartRightNormal];
     ctrl3_upcmd_set_desired_speed_zero(0, &tvars);
     XCTAssert(tvars._state == train_state_running);
     XCTAssert(tvars._sdir == 1);
@@ -119,7 +135,7 @@ static const xtrnaddr_t to1 = { .v = 1};
 
 - (void) testChangeDir
 {
-    [self testStartRight];
+    [self testStartRightNormal];
     ctrl3_upcmd_set_desired_speed(0, &tvars, -90);
     XCTAssert(tvars._state == train_state_running);
     XCTAssert(tvars._sdir == 1);

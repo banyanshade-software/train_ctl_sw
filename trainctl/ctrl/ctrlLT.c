@@ -39,8 +39,7 @@ uint8_t ctrl_flag_notify_speed = 1;
 
 // -----------------------------------------------------------------
 
-static int _train_eot(int tidx, train_ctrl_t *tvars, int sdir);
-static int _train_blkwait(int tidx, train_ctrl_t *tvars, int sdir);
+static int _train_check_dir(int tidx, train_ctrl_t *tvars, int sdir, int *iseot, int *isocc);
 
 // -----------------------------------------------------------------
 
@@ -73,15 +72,18 @@ void ctrl3_init_train(int tidx, train_ctrl_t *tvars, lsblk_num_t sblk)
 
 void ctrl3_upcmd_set_desired_speed(int tidx, train_ctrl_t *tvars, int16_t desired_speed)
 {
+    int is_eot = 0;
+    int is_occ = 0;
     if (!desired_speed) FatalError("DSpd", "FSM desspd",  Error_FSM_DSpd);
     int sdir = SIGNOF0(desired_speed);
     switch (tvars->_state) {
         case train_station:
 station:
-            if (_train_eot(tidx, tvars, sdir)) {
+            _train_check_dir(tidx, tvars, sdir, &is_eot, &is_occ);
+            if (is_eot) {
                 return;
             }
-            if (_train_blkwait(tidx, tvars, sdir)) {
+            if (is_occ) {
                 _set_dir(tidx, tvars, sdir);
                 _set_state(tidx, tvars, train_state_blkwait);
                 return;
@@ -237,16 +239,25 @@ void ctrl3_pose_triggered(int tidx, train_ctrl_t *tvars, pose_trig_tag_t trigtag
 
 // -----------------------------------------------------------------
 
-static int _train_eot(int tidx, train_ctrl_t *tvars, int sdir)
+static int _train_check_dir(int tidx, train_ctrl_t *tvars, int sdir, int *iseot, int *isocc)
 {
-    // TODO
-    return 0;
+    if (!sdir) {
+        FatalError("FSMd", "FSM no dir", Error_FSM_NoDir);
+        return 0;
+    }
+    rettrigs_t rett = {0};
+    const conf_train_t *conf = conf_train_get(tidx);
+    int rc1 = ctrl3_get_next_sblks(tidx, tvars, conf);
+    int rc2 = ctrl3_check_front_sblks(tidx, tvars, conf_train_get(tidx), (sdir<0) ? 1 : 0, &rett);
+    if (rc2<0) {
+        if (rett.isocc) *isocc = 1;
+        if (rett.isoet) *iseot = 1;
+    }
+    itm_debug3(DBG_CTRL, "rc2", tidx, rc2, tvars->_state);
+    return rc2; //xxxxx
+
 }
-static int _train_blkwait(int tidx, train_ctrl_t *tvars, int sdir)
-{
-    // TODO
-    return 0;
-}
+
 
 // -----------------------------------------------------------------
 

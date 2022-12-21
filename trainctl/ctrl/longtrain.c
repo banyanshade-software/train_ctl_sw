@@ -137,8 +137,10 @@ static int check_for_dist(_UNUSED_ int tidx, train_ctrl_t *tvars,  struct forwds
     return 9999;
 }
 
-int ctrl3_check_front_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *tconf, int left,  rettrigs_t ret)
+int ctrl3_check_front_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *tconf, int left,  rettrigs_t *ret)
 {
+    ret->isoet = 0;
+    ret->isocc = 0;
     struct forwdsblk *fsblk = left ? &tvars->leftcars : &tvars->rightcars;
     int retc = 0;
     int curcm = tvars->_curposmm/10;
@@ -149,8 +151,8 @@ int ctrl3_check_front_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *
     // trigger for end of seg
     int lmm = trig_for_frontdistcm(tidx, tvars, tconf, left, fsblk->rlen_cm);
     if (lmm>=0) {
-        ret[0].poscm = lmm/10;
-        ret[0].tag = tag_chkocc;
+        ret->trigs[0].poscm = lmm/10;
+        ret->trigs[0].tag = tag_chkocc;
     }
     uint8_t a;
     int l1 = check_for_dist(tidx, tvars, fsblk, left,  brake_len_cm+margin_len_cm, &a);
@@ -158,16 +160,21 @@ int ctrl3_check_front_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *
         retc = brake_len_cm+l1;
         if (retc<=0) retc = 1;
     } else if ((l1>0) && (l1+curcm<maxcm)) {
-        ret[1].poscm = l1+curcm;
-        ret[1].tag = tag_brake;
+        ret->trigs[1].poscm = l1+curcm;
+        ret->trigs[1].tag = tag_brake;
     }
     int l2 = check_for_dist(tidx, tvars, fsblk, left, margin_len_cm, &a);
     //printf("l2/8=%d\n", l2);
     if (l2<=0) {
         retc = -1;
+        if (a) {
+            ret->isocc = 1;
+        } else {
+            ret->isoet = 1;
+        }
     } else if ((l2>0) && (l2+curcm<maxcm)) {
-        ret[2].poscm = l2+curcm;
-        ret[2].tag = a ? tag_stop_blk_wait : tag_stop_eot;
+        ret->trigs[2].poscm = l2+curcm;
+        ret->trigs[2].tag = a ? tag_stop_blk_wait : tag_stop_eot;
     }
    
     return retc;

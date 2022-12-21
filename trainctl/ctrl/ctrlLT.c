@@ -57,12 +57,12 @@ void ctrl3_init_train(int tidx, train_ctrl_t *tvars, lsblk_num_t sblk)
 {
     itm_debug1(DBG_CTRL, "INIT", tidx);
     memset(tvars, 0, sizeof(*tvars));
-    tvars->_desired_speed = 0;
+    tvars->_desired_signed_speed = 0;
     tvars->_mode = train_manual;
     tvars->_sdir = 0;
     tvars->_spd_limit = 100;
     tvars->_state = train_state_station;
-    tvars->_target_speed = 0;
+    tvars->_target_unisgned_speed = 0;
     
     tvars->beginposmm = 0;
     tvars->_curposmm = POSE_UNKNOWN;
@@ -90,6 +90,7 @@ station:
             _set_dir(tidx, tvars, sdir);
             _update_spd_limit(tidx, tvars, sdir);
             _set_speed(tidx, tvars, desired_speed, 1);
+            _set_state(tidx, tvars, train_state_running);
             return;
             break;
             
@@ -162,7 +163,7 @@ void ctrl3_stop_detected(int tidx, train_ctrl_t *tvars)
             break;
         
         case train_state_running:
-            if (tvars->_target_speed == 0) {
+            if (tvars->_target_unisgned_speed == 0) {
                 _set_dir(tidx, tvars, 0);
                 _set_state(tidx, tvars, train_state_station);
             }
@@ -170,7 +171,7 @@ void ctrl3_stop_detected(int tidx, train_ctrl_t *tvars)
             break;
             
         case train_state_blkwait0:
-            if (tvars->_desired_speed) {
+            if (tvars->_desired_signed_speed) {
                 _set_state(tidx, tvars, train_state_blkwait);
             } else {
                 _set_dir(tidx, tvars, 0);
@@ -180,7 +181,7 @@ void ctrl3_stop_detected(int tidx, train_ctrl_t *tvars)
             break;
             
         case train_state_end_of_track0:
-            if (tvars->_desired_speed) {
+            if (tvars->_desired_signed_speed) {
                 _set_state(tidx, tvars, train_state_end_of_track);
             } else {
                 _set_dir(tidx, tvars, 0);
@@ -257,22 +258,22 @@ static void _set_dir(int tidx, train_ctrl_t *tvars, int sdir)
 static void _update_spd_limit(int tidx, train_ctrl_t *tvars, int sdir)
 {
     // TODO
-    tvars->_spd_limit = 70;
+    tvars->_spd_limit = 99;
 }
 static void _set_speed(int tidx, train_ctrl_t *tvars, int signed_speed, int applyspd)
 {
-    if (tvars->_sdir != SIGNOF0(signed_speed)) {
+    if (signed_speed && (tvars->_sdir != SIGNOF0(signed_speed))) {
         FatalError("DIRs", "bad spd sign", Error_FSM_SignDir);
     }
-    tvars->_desired_speed = signed_speed;
+    tvars->_desired_signed_speed = signed_speed;
     if (!applyspd) return;
     _apply_speed(tidx, tvars);
 }
 static void _apply_speed(int tidx, train_ctrl_t *tvars)
 {
-    int spd = tvars->_desired_speed;
-    if (abs(tvars->_desired_speed) > tvars->_spd_limit) spd = SIGNOF0(spd)*tvars->_spd_limit;
-    tvars->_target_speed = spd;
+    int spd = abs(tvars->_desired_signed_speed);
+    if (spd > tvars->_spd_limit) spd = SIGNOF0(spd)*tvars->_spd_limit;
+    tvars->_target_unisgned_speed = spd;
     // TODO : send to spdctl
     
 }
@@ -289,14 +290,14 @@ static void _set_state(int tidx, train_ctrl_t *tvars, train_state_t newstate)
             if (!tvars->_sdir) {
                 FatalError("FSMb", "FSM san check", Error_FSM_Sanity1);
             }
-            if (!tvars->_desired_speed) {
+            if (!tvars->_desired_signed_speed) {
                 FatalError("FSMb", "FSM san check", Error_FSM_Sanity2);
             }
         case train_state_station:
             if (tvars->_sdir) {
                 FatalError("FSMb", "FSM san check", Error_FSM_Sanity3);
             }
-            if (tvars->_desired_speed) {
+            if (tvars->_desired_signed_speed) {
                 FatalError("FSMb", "FSM san check", Error_FSM_Sanity4);
             }
             break;

@@ -115,6 +115,7 @@
 		1BA12A45291E4FC9003D6E58 /* TestHash.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BA12A3B291E4BE2003D6E58 /* TestHash.m */; };
 		1BA4B49F2551DAF70043D763 /* StringExtension.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BA4B49E2551DAF70043D763 /* StringExtension.m */; };
 		1BA4B4A22551DE820043D763 /* NSCalendar+Gmt.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BA4B4A12551DE810043D763 /* NSCalendar+Gmt.m */; };
+		1BAC041329527121005DC958 /* TestLTFsm.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BAC041129527121005DC958 /* TestLTFsm.m */; };
 		1BC90306272092EC0087CEA7 /* led.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BC90305272092EC0087CEA7 /* led.c */; };
 		1BC9030F2720AD250087CEA7 /* trainctlTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC9030E2720AD250087CEA7 /* trainctlTests.m */; };
 		1BC903172720AD730087CEA7 /* LedTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC903162720AD730087CEA7 /* LedTest.m */; };
@@ -334,6 +335,7 @@
 		1BAB9A8928559566005EF72B /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		1BAB9A8D2855D2F8005EF72B /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		1BAB9A8E2855F158005EF72B /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		1BAC041129527121005DC958 /* TestLTFsm.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TestLTFsm.m; sourceTree = "<group>"; };
 		1BC90304272092EC0087CEA7 /* led.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = led.h; sourceTree = "<group>"; };
 		1BC90305272092EC0087CEA7 /* led.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = led.c; sourceTree = "<group>"; };
 		1BC9030C2720AD250087CEA7 /* trainctlTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = trainctlTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -641,6 +643,7 @@
 				1B812B3C273FA77B00924749 /* cautoP.c */,
 				1BEB93D1272B342500508C17 /* TestCtrlP.m */,
 				1B53774527E7E0C1009CA93C /* TestLongTrain.m */,
+				1BAC041129527121005DC958 /* TestLTFsm.m */,
 				1BAB9A8528558FA8005EF72B /* README.md */,
 			);
 			path = ctrl;
@@ -1002,6 +1005,7 @@
 				1B26886E2951201600E31486 /* lf_mqueue.c in Sources */,
 				1B2688B9295254EB00E31486 /* TestLongTrain.m in Sources */,
 				1B26886F2951201600E31486 /* adc_mean.c in Sources */,
+				1BAC041329527121005DC958 /* TestLTFsm.m in Sources */,
 				1B2688732951201600E31486 /* itm_debug.c in Sources */,
 				1B2688762951201600E31486 /* inertia.c in Sources */,
 				1B2688782951201600E31486 /* turnouts.c in Sources */,

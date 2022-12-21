@@ -36,7 +36,6 @@ static const xtrnaddr_t to1 = { .v = 1};
 
 
 - (void)setUp {
-    // Put setup code here. This method is called before the invocation of each test method in the class.
     
     //extern uint8_t topology_num;
     //topology_num = 0;
@@ -57,7 +56,8 @@ static const xtrnaddr_t to1 = { .v = 1};
 }
 
 - (void)tearDown {
-    // Put teardown code here. This method is called after the invocation of each test method in the class.
+    extern int  errorhandler;
+    XCTAssert(errorhandler==0);
 }
 
 
@@ -456,6 +456,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
 
 void FatalError(const char *shortsmsg, const char *longmsg, enum fatal_error_code errcode)
 {
+    errorhandler++;
     abort();
 }
 int ignore_ina_pres(void)
@@ -463,6 +464,14 @@ int ignore_ina_pres(void)
     return 0;
 }
 
+// ----------------------------------------------------------
+// ----------------------------------------------------------
+// ----------------------------------------------------------
+
+
+
+
+// ----------------------------------------------------------
 // ----------------------------------------------------------
 
 uint32_t SimuTick = 0;
@@ -492,7 +501,7 @@ static int compareMsg64(const msg_64_t *exp, int n, int clear);
 } while (0)
 
 
-static int errorhandler = 0;
+int errorhandler = 0;
 void Error_Handler(void)
 {
     errorhandler++;

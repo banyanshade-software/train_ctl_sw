@@ -39,8 +39,8 @@ extern uint8_t ctrl_flag_notify_speed ;
 typedef struct {
     train_mode_t    _mode;
     train_state_t   _state;
-    int16_t         _desired_speed;
-    uint16_t        _target_speed;
+    int16_t         _desired_signed_speed;
+    uint16_t        _target_unisgned_speed;
     int8_t          _sdir;      // -1 or 1, 0 if stopped
     uint8_t         _spd_limit;
     //

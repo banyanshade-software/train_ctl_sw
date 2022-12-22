@@ -103,4 +103,12 @@ void ctrl3_stop_detected(int tidx, train_ctrl_t *tvars);
 /// @param trigtag  trigger tag
 void ctrl3_pose_triggered(int tidx, train_ctrl_t *tvars, pose_trig_tag_t trigtag);
 
+
+/// ctrl3_occupency_updated
+/// called when turnouts or occupency had been updated
+/// by spdctl
+/// @param tidx trian index
+/// @param tvars train ctrl vars
+void ctrl3_occupency_updated(int tidx, train_ctrl_t *tvars);
+
 #endif /* ctrlLT_h */

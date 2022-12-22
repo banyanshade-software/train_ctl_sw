@@ -86,9 +86,11 @@ station:
             }
             if (is_occ) {
                 _set_dir(tidx, tvars, sdir);
+                _set_speed(tidx, tvars, desired_speed, 0);
                 _set_state(tidx, tvars, train_state_blkwait);
                 return;
             }
+            if (rc<0) FatalError("FSMd", "setdir", Error_FSM_Sanity3);
             // otherwise, start train
             _set_dir(tidx, tvars, sdir);
             _update_spd_limit(tidx, tvars, sdir);
@@ -238,6 +240,56 @@ void ctrl3_pose_triggered(int tidx, train_ctrl_t *tvars, pose_trig_tag_t trigtag
     FatalError("FSM_", "end fsm", Error_FSM_Nothandled);
 }
 
+
+
+void ctrl3_occupency_updated(int tidx, train_ctrl_t *tvars)
+{
+    int is_eot = 0;
+    int is_occ = 0;
+    int rc = 0;
+    switch (tvars->_state) {
+        case train_state_off:
+        case train_state_station:
+        case train_state_end_of_track0:
+        case train_state_end_of_track:
+            //ignore
+            return;
+            break;
+        
+        case train_state_running:
+            // TODO
+            break;
+            
+            
+        case train_state_blkwait:
+        case train_state_blkwait0:
+            rc = _train_check_dir(tidx, tvars, tvars->_sdir, &is_eot, &is_occ);
+            if (is_occ) {
+                // still in blkwait, ignore
+                return;
+            }
+            if (is_eot) {
+                FatalError("FSMe", "blk to eot", Error_FSM_Sanity3);
+                if (tvars->_state == train_state_blkwait0) {
+                    _set_state(tidx, tvars, train_state_end_of_track0);
+                } else {
+                    _set_state(tidx, tvars, train_state_end_of_track);
+                }
+                return;
+            }
+            if (rc<0) FatalError("FSMd", "setdir", Error_FSM_Sanity3);
+            // train exit blkwait condition and can start
+            _update_spd_limit(tidx, tvars, tvars->_sdir);
+            _set_speed(tidx, tvars, tvars->_desired_signed_speed, 1);
+            _set_state(tidx, tvars, train_state_running);
+            return;
+            break;
+            
+        default:
+            break;
+    }
+    FatalError("FSMo", "end fsm", Error_FSM_Nothandled);
+}
 // -----------------------------------------------------------------
 
 static int _train_check_dir(int tidx, train_ctrl_t *tvars, int sdir, int *iseot, int *isocc)
@@ -265,6 +317,7 @@ static int _train_check_dir(int tidx, train_ctrl_t *tvars, int sdir, int *iseot,
     return rc2; //xxxxx
 
 }
+
 
 
 // -----------------------------------------------------------------
@@ -325,6 +378,7 @@ static void _set_state(int tidx, train_ctrl_t *tvars, train_state_t newstate)
             if (!tvars->_desired_signed_speed) {
                 FatalError("FSMb", "FSM san check", Error_FSM_Sanity2);
             }
+            break;
         case train_state_station:
             if (tvars->_sdir) {
                 FatalError("FSMb", "FSM san check", Error_FSM_Sanity3);

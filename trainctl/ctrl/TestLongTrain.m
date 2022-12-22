@@ -457,7 +457,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
 void FatalError(const char *shortsmsg, const char *longmsg, enum fatal_error_code errcode)
 {
     errorhandler++;
-    abort();
+    //abort();
 }
 int ignore_ina_pres(void)
 {
@@ -476,7 +476,7 @@ int ignore_ina_pres(void)
 
 uint32_t SimuTick = 0;
 
-
+/*
 static msg_64_t qbuf[16];
 
 mqf_t from_ctrl =  {
@@ -499,6 +499,7 @@ static int compareMsg64(const msg_64_t *exp, int n, int clear);
     int rcc = compareMsg64(exp, n, 1);                        \
     XCTAssert(!rcc);                                          \
 } while (0)
+ */
 
 
 int errorhandler = 0;

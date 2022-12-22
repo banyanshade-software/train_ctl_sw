@@ -257,9 +257,23 @@ void ctrl3_occupency_updated(int tidx, train_ctrl_t *tvars)
             break;
         
         case train_state_running:
-            // TODO
+            rc = _train_check_dir(tidx, tvars, tvars->_sdir, &is_eot, &is_occ);
+            if (is_occ) {
+                int spd = tvars->_desired_signed_speed;
+                _set_speed(tidx, tvars, 0, 1);
+                _set_speed(tidx, tvars, spd, 0);
+                _set_state(tidx, tvars, train_state_blkwait);
+                return;
+            }
+            if (is_eot) {
+                FatalError("FSMe", "run to eot", Error_FSM_Sanity3);
+                _set_speed(tidx, tvars, 0, 1);
+                _set_state(tidx, tvars, train_state_end_of_track);
+                return;
+            }
+            // otherwise ignore
+            return;
             break;
-            
             
         case train_state_blkwait:
         case train_state_blkwait0:
@@ -332,6 +346,7 @@ static void _update_spd_limit(int tidx, train_ctrl_t *tvars, int sdir)
     // TODO
     tvars->_spd_limit = 99;
 }
+
 static void _set_speed(int tidx, train_ctrl_t *tvars, int signed_speed, int applyspd)
 {
     if (signed_speed && (tvars->_sdir != SIGNOF0(signed_speed))) {
@@ -357,11 +372,35 @@ static void _apply_speed(int tidx, train_ctrl_t *tvars)
         if (spd>maxspd) spd = maxspd;
     }
     
+    if (tvars->_target_unisgned_speed == spd) {
+        // dont send if same value
+        return;
+    }
     tvars->_target_unisgned_speed = spd;
 
     // TODO : send to spdctl
     
+    msg_64_t m = {0};
+    m.from = MA1_CTRL(tidx);
+    m.to =   MA1_SPDCTL(tidx);
+    m.cmd = CMD_SET_TARGET_SPEED;
+    // direction already given by SET_C1_C2
+    //m.v1 = trctl[trnum]._dir*trctl[trnum]._target_speed;
+    m.v1u = tvars->_target_unisgned_speed;
+    m.v2 = 0;
+    mqf_write_from_ctrl(&m);
+    
+    if (ctrl_flag_notify_speed) {
+        msg_64_t m = {0};
+        m.from = MA1_CTRL(tidx);
+        m.to = MA3_UI_GEN; //(UISUB_TFT);
+        m.cmd = CMD_TRTSPD_NOTIF;
+        m.v1u = tvars->_target_unisgned_speed;
+        m.v2 = tvars->_sdir;
+        mqf_write_from_ctrl(&m);
+    }
 }
+
 static void _set_state(int tidx, train_ctrl_t *tvars, train_state_t newstate)
 {
     if (tvars->_state == newstate) return;

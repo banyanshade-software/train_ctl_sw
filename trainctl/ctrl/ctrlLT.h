@@ -45,6 +45,10 @@ typedef struct {
     uint8_t         _spd_limit;
     //
     lsblk_num_t c1_sblk;
+    xblkaddr_t  can1_xaddr;
+    xblkaddr_t  can2_xaddr;
+    uint8_t c1c2dir_changed:1;
+
     //
     // #longtrain
     struct forwdsblk leftcars;

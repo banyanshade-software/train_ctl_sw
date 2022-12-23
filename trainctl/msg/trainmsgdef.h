@@ -65,7 +65,7 @@ typedef enum {
     CMD_TRTSPD_NOTIF,				// ctrl->ui			v1u=spd v2=dir			notify spd and dir
     //CMD_TRSTATUS_NOTIF,				// ctrl->ui
     CMD_TRMODE_NOTIF,				// ctrl->ui			v1u=mode				mode notif
-    CMD_TRSTATE_NOTIF,				// ctrl->ui			v1u=mode				state chg notif
+    CMD_TRSTATE_NOTIF,				// ctrl->ui			v1u=state v2u=oldstate				state chg notif
     CMD_BLK_CHG_NOTIF,				// ctrl->ui			b:blk,occ,trnum,sblk	occupency change notif
     CMD_TN_RESER_NOTIF,				// ctrl->ui			v1=turnout v2=trnum		turnout lock/unlock notif
     CMD_SET_TRAIN_MODE,				// ui,?->ctrl		v1u=tr v2u=mode			chg train mode, mostly to off

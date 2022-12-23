@@ -335,11 +335,13 @@ static int _train_check_dir(int tidx, train_ctrl_t *tvars, int sdir, int *iseot,
 
 
 // -----------------------------------------------------------------
+static void _sendlow_c1c2_dir(int tidx, train_ctrl_t *tvars);
 
 static void _set_dir(int tidx, train_ctrl_t *tvars, int sdir)
 {
     if (tvars->_sdir == sdir) return;
     tvars->_sdir = sdir;
+    tvars->c1c2dir_changed = 1;
 }
 static void _update_spd_limit(int tidx, train_ctrl_t *tvars, int sdir)
 {
@@ -378,8 +380,10 @@ static void _apply_speed(int tidx, train_ctrl_t *tvars)
     }
     tvars->_target_unisgned_speed = spd;
 
-    // TODO : send to spdctl
-    
+    //  send to spdctl
+    if (tvars->c1c2dir_changed) {
+        _sendlow_c1c2_dir(tidx, tvars);
+    }
     msg_64_t m = {0};
     m.from = MA1_CTRL(tidx);
     m.to =   MA1_SPDCTL(tidx);
@@ -401,9 +405,34 @@ static void _apply_speed(int tidx, train_ctrl_t *tvars)
     }
 }
 
+
+static void _sendlow_c1c2_dir(int tidx, train_ctrl_t *tvars)
+{
+    if (!tvars->c1c2dir_changed) {
+        FatalError("FSMc", "c1c2dirchanged 0", Error_FSM_Sanity3);
+        return;
+    }
+    tvars->c1c2dir_changed = 0;
+    msg_64_t m = {0};
+    m.from = MA1_CTRL(tidx);
+    m.to =  MA1_SPDCTL(tidx);
+    m.cmd = CMD_SET_C1_C2;
+    int dir = tvars->_sdir;
+    
+    const conf_train_t *tconf = conf_train_get(tidx);
+    if (tconf->reversed) dir = -dir;
+    
+    m.vbytes[0] = tvars->can1_xaddr.v;
+    m.vbytes[1] = dir;
+    m.vbytes[2] = tvars->can2_xaddr.v;
+    m.vbytes[3] = dir; // TODO dir might be reversed
+    mqf_write_from_ctrl(&m);
+}
+
 static void _set_state(int tidx, train_ctrl_t *tvars, train_state_t newstate)
 {
     if (tvars->_state == newstate) return;
+    train_state_t oldstate = tvars->_state;
     tvars->_state = newstate;
     //  sanity check
     switch (newstate) {
@@ -430,6 +459,15 @@ static void _set_state(int tidx, train_ctrl_t *tvars, train_state_t newstate)
         default:
             break;
     }
+    
+    // notify UI
+    msg_64_t m = {0};
+    m.from = MA1_CTRL(tidx);
+    m.to = MA3_UI_GEN;//(UISUB_TFT);
+    m.cmd = CMD_TRSTATE_NOTIF;
+    m.v1u = newstate;
+    m.v2u = oldstate;
+    mqf_write_from_ctrl(&m);
 }
 
 

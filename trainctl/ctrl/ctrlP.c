@@ -247,8 +247,10 @@ void ctrl2_set_mode(int tidx, train_oldctrl_t *tvar, train_mode_t mode)
          tvar->_ostate = train_off;
          tvar->c1c2 = 0;
     	ctrl2_sendlow_c1c2(tidx, tvar);
-        if (tvar->can2_xaddr.v != 0xFF) set_block_addr_occupency(tvar->can2_xaddr, BLK_OCC_FREE, tidx, snone);
-        if (tvar->can1_xaddr.v != 0xFF) set_block_addr_occupency(tvar->can1_xaddr, BLK_OCC_FREE, tidx, tvar->c1_sblk);
+        if (tvar->can2_xaddr.v != 0xFF) { set_block_addr_occupency(tvar->can2_xaddr, BLK_OCC_FREE, tidx, snone);
+        }
+        if (tvar->can1_xaddr.v != 0xFF) { set_block_addr_occupency(tvar->can1_xaddr, BLK_OCC_FREE, tidx, tvar->c1_sblk);
+        }
     }
 }
 

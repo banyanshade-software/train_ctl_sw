@@ -67,6 +67,9 @@ void ctrl3_init_train(int tidx, train_ctrl_t *tvars, lsblk_num_t sblk)
     tvars->_curposmm = POSE_UNKNOWN;
     tvars->c1_sblk = sblk;
     //TODO
+    tvars->c1c2dir_changed = 1;
+    tvars->can2_xaddr.v = 0xFF;
+    tvars->can1_xaddr = canton_for_lsblk(sblk);
 }
 
 
@@ -91,7 +94,7 @@ station:
                 _set_state(tidx, tvars, train_state_blkwait);
                 return;
             }
-            if (rc<0) FatalError("FSMd", "setdir", Error_FSM_Sanity3);
+            if (rc<0) FatalError("FSMd", "setdir", Error_FSM_ChkNeg1);
             // otherwise, start train
             _set_dir(tidx, tvars, sdir);
             // xxx apply trigs
@@ -269,7 +272,7 @@ void ctrl3_occupency_updated(int tidx, train_ctrl_t *tvars)
                 return;
             }
             if (rett.isoet) {
-                FatalError("FSMe", "run to eot", Error_FSM_Sanity3);
+                FatalError("FSMe", "run to eot", Error_FSM_RunToEot);
                 _set_speed(tidx, tvars, 0, 1);
                 _set_state(tidx, tvars, train_state_end_of_track);
                 return;
@@ -286,7 +289,7 @@ void ctrl3_occupency_updated(int tidx, train_ctrl_t *tvars)
                 return;
             }
             if (rett.isoet) {
-                FatalError("FSMe", "blk to eot", Error_FSM_Sanity3);
+                FatalError("FSMe", "blk to eot", Error_FSM_BlkToEot);
                 if (tvars->_state == train_state_blkwait0) {
                     _set_state(tidx, tvars, train_state_end_of_track0);
                 } else {
@@ -294,7 +297,7 @@ void ctrl3_occupency_updated(int tidx, train_ctrl_t *tvars)
                 }
                 return;
             }
-            if (rc<0) FatalError("FSMd", "setdir", Error_FSM_Sanity3);
+            if (rc<0) FatalError("FSMd", "setdir", Error_FSM_ChkNeg2);
             // train exit blkwait condition and can start
             _update_spd_limit(tidx, tvars, tvars->_sdir);
             _set_speed(tidx, tvars, tvars->_desired_signed_speed, 1);
@@ -416,7 +419,7 @@ static void _apply_speed(int tidx, train_ctrl_t *tvars)
 static void _sendlow_c1c2_dir(int tidx, train_ctrl_t *tvars)
 {
     if (!tvars->c1c2dir_changed) {
-        FatalError("FSMc", "c1c2dirchanged 0", Error_FSM_Sanity3);
+        FatalError("FSMc", "c1c2dirchanged 0", Error_FSM_C1C2Zero);
         return;
     }
     tvars->c1c2dir_changed = 0;

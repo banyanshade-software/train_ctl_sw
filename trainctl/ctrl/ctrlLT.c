@@ -39,7 +39,7 @@ uint8_t ctrl_flag_notify_speed = 1;
 
 // -----------------------------------------------------------------
 
-static int _train_check_dir(int tidx, train_ctrl_t *tvars, int sdir, int *iseot, int *isocc);
+static int _train_check_dir(int tidx, train_ctrl_t *tvars, int sdir, rettrigs_t *rett);
 
 // -----------------------------------------------------------------
 
@@ -77,14 +77,15 @@ void ctrl3_upcmd_set_desired_speed(int tidx, train_ctrl_t *tvars, int16_t desire
     int rc = 0;
     if (!desired_speed) FatalError("DSpd", "FSM desspd",  Error_FSM_DSpd);
     int sdir = SIGNOF0(desired_speed);
+    rettrigs_t rett = {0};
     switch (tvars->_state) {
         case train_station:
 station:
-            rc = _train_check_dir(tidx, tvars, sdir, &is_eot, &is_occ);
-            if (is_eot) {
+            rc = _train_check_dir(tidx, tvars, sdir, &rett);
+            if (rett.isoet) {
                 return;
             }
-            if (is_occ) {
+            if (rett.isocc) {
                 _set_dir(tidx, tvars, sdir);
                 _set_speed(tidx, tvars, desired_speed, 0);
                 _set_state(tidx, tvars, train_state_blkwait);
@@ -93,6 +94,7 @@ station:
             if (rc<0) FatalError("FSMd", "setdir", Error_FSM_Sanity3);
             // otherwise, start train
             _set_dir(tidx, tvars, sdir);
+            // xxx apply trigs
             _update_spd_limit(tidx, tvars, sdir);
             _set_speed(tidx, tvars, desired_speed, 1);
             _set_state(tidx, tvars, train_state_running);
@@ -247,6 +249,7 @@ void ctrl3_occupency_updated(int tidx, train_ctrl_t *tvars)
     int is_eot = 0;
     int is_occ = 0;
     int rc = 0;
+    rettrigs_t rett = {0};
     switch (tvars->_state) {
         case train_state_off:
         case train_state_station:
@@ -257,15 +260,15 @@ void ctrl3_occupency_updated(int tidx, train_ctrl_t *tvars)
             break;
         
         case train_state_running:
-            rc = _train_check_dir(tidx, tvars, tvars->_sdir, &is_eot, &is_occ);
-            if (is_occ) {
+            rc = _train_check_dir(tidx, tvars, tvars->_sdir, &rett);
+            if (rett.isocc) {
                 int spd = tvars->_desired_signed_speed;
                 _set_speed(tidx, tvars, 0, 1);
                 _set_speed(tidx, tvars, spd, 0);
                 _set_state(tidx, tvars, train_state_blkwait);
                 return;
             }
-            if (is_eot) {
+            if (rett.isoet) {
                 FatalError("FSMe", "run to eot", Error_FSM_Sanity3);
                 _set_speed(tidx, tvars, 0, 1);
                 _set_state(tidx, tvars, train_state_end_of_track);
@@ -277,12 +280,12 @@ void ctrl3_occupency_updated(int tidx, train_ctrl_t *tvars)
             
         case train_state_blkwait:
         case train_state_blkwait0:
-            rc = _train_check_dir(tidx, tvars, tvars->_sdir, &is_eot, &is_occ);
-            if (is_occ) {
+            rc = _train_check_dir(tidx, tvars, tvars->_sdir, &rett);
+            if (rett.isocc) {
                 // still in blkwait, ignore
                 return;
             }
-            if (is_eot) {
+            if (rett.isoet) {
                 FatalError("FSMe", "blk to eot", Error_FSM_Sanity3);
                 if (tvars->_state == train_state_blkwait0) {
                     _set_state(tidx, tvars, train_state_end_of_track0);
@@ -306,19 +309,23 @@ void ctrl3_occupency_updated(int tidx, train_ctrl_t *tvars)
 }
 // -----------------------------------------------------------------
 
-static int _train_check_dir(int tidx, train_ctrl_t *tvars, int sdir, int *iseot, int *isocc)
+static int _train_check_dir(int tidx, train_ctrl_t *tvars, int sdir, rettrigs_t *rett)
 {
     if (!sdir) {
         FatalError("FSMd", "FSM no dir", Error_FSM_NoDir);
         return 0;
     }
-    rettrigs_t rett = {0};
     const conf_train_t *conf = conf_train_get(tidx);
     int rc1 = ctrl3_get_next_sblks(tidx, tvars, conf);
-    int rc2 = ctrl3_check_front_sblks(tidx, tvars, conf_train_get(tidx), (sdir<0) ? 1 : 0, &rett);
-    if (rc2<0) {
-        if (rett.isocc) *isocc = 1;
+    int rc2 = ctrl3_check_front_sblks(tidx, tvars, conf_train_get(tidx), (sdir<0) ? 1 : 0, rett);
+    /*if (rc2<0) {
+        if (rett->isocc) *isocc = 1;
         if (rett.isoet) *iseot = 1;
+    }*/
+    if (rc2 < 0) {
+        if (!rett->isocc && !rett->isoet) {
+            FatalError("FSMb", "rcneg unk", Error_FSM_ShouldEotOcc);
+        }
     }
     itm_debug3(DBG_CTRL, "rc2", tidx, rc2, tvars->_state);
     if (rc2>0) {

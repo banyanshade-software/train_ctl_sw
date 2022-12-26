@@ -130,6 +130,9 @@ extern int errorhandler;
     XCTAssert(tvars._sdir == 0);
     XCTAssert(tvars._target_unisgned_speed == 0);
     XCTAssert(tvars._desired_signed_speed == 0);
+    NSString *s = dump_msgbuf(0);
+    NSLog(@"...%@", s);
+
 }
 
 - (void)testStartRightBrake1 {
@@ -142,6 +145,8 @@ extern int errorhandler;
     XCTAssert(tvars._target_unisgned_speed == 40);
     XCTAssert(tvars._desired_signed_speed == 90);
     XCTAssert(tvars._spd_limit == 99);
+    NSString *s = dump_msgbuf(0);
+    NSLog(@"...%@", s);
 }
 
 - (void)testStartRightBrake2 {
@@ -154,6 +159,8 @@ extern int errorhandler;
     XCTAssert(tvars._target_unisgned_speed == 60);
     XCTAssert(tvars._desired_signed_speed == 90);
     XCTAssert(tvars._spd_limit == 99);
+    NSString *s = dump_msgbuf(0);
+    NSLog(@"...%@", s);
 }
 
 - (void)testStartRightOcc {
@@ -166,6 +173,8 @@ extern int errorhandler;
     XCTAssert(tvars._sdir == 1);
     XCTAssert(tvars._target_unisgned_speed == 0);
     XCTAssert(tvars._desired_signed_speed == 90);
+    NSString *s = dump_msgbuf(0);
+    NSLog(@"...%@", s);
 }
 
 
@@ -189,12 +198,16 @@ extern int errorhandler;
     XCTAssert(tvars._target_unisgned_speed == 90);
     XCTAssert(tvars._desired_signed_speed == -90);
     XCTAssert(tvars._spd_limit == 99);
+    NSString *s = dump_msgbuf(0);
+    NSLog(@"...%@", s);
 }
 
 
 - (void) testStop
 {
     [self testStartRightNormal];
+    NSString *s = dump_msgbuf(0);
+    NSLog(@"...%@", s);
     ctrl3_upcmd_set_desired_speed_zero(0, &tvars);
     XCTAssert(tvars._state == train_state_running);
     XCTAssert(tvars._sdir == 1);
@@ -205,6 +218,8 @@ extern int errorhandler;
     XCTAssert(tvars._sdir == 0);
     XCTAssert(tvars._target_unisgned_speed == 0);
     XCTAssert(tvars._desired_signed_speed == 0);
+    s = dump_msgbuf(0);
+    NSLog(@"...%@", s);
 }
 
 - (void) testChangeDir
@@ -215,11 +230,17 @@ extern int errorhandler;
     XCTAssert(tvars._sdir == 1);
     XCTAssert(tvars._target_unisgned_speed == 0);
     XCTAssert(tvars._desired_signed_speed == 0);
+    NSString *s = dump_msgbuf(0);
+    NSLog(@"...%@", s); // {80, 90, 24, 0, 0}
+    
     ctrl3_stop_detected(0, &tvars);
     XCTAssert(tvars._state == train_state_station);
     XCTAssert(tvars._sdir == 0);
     XCTAssert(tvars._target_unisgned_speed == 0);
     XCTAssert(tvars._desired_signed_speed == 0);
+    s = dump_msgbuf(0);
+    NSLog(@"...%@", s);
+    // {80, 90, 24, 0, 0},{80, F0, C3, 2, 1}
 }
 
 
@@ -234,7 +255,8 @@ extern int errorhandler;
     XCTAssert(tvars._sdir == 1);
     XCTAssert(tvars._target_unisgned_speed == 0);
     XCTAssert(tvars._desired_signed_speed == 90);
-    
+    NSString *s = dump_msgbuf(0);
+    NSLog(@"...%@", s);
     // train is blk wait on turn out 1, change turnout 1
     // and it should start
     topology_set_turnout(to1, topo_tn_turn, -1);
@@ -244,7 +266,8 @@ extern int errorhandler;
     XCTAssert(tvars._sdir == 1);
     XCTAssert(tvars._desired_signed_speed == 90);
     XCTAssert(tvars._target_unisgned_speed == 90);
-    
+    s = dump_msgbuf(0);
+    NSLog(@"...%@", s);
 }
 
 - (void)testStartRightOccThenOk2

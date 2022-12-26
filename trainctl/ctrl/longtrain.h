@@ -12,6 +12,7 @@
 #include <stdio.h>
 
 /// return value for ctrl2_check_front_sblks
+#define NUMTRIGS 3
 struct sttrig {
     int16_t poscm;
     int8_t tag;
@@ -19,7 +20,7 @@ struct sttrig {
 typedef struct {
     uint8_t isoet:1;
     uint8_t isocc:1;
-    struct sttrig trigs[3];
+    struct sttrig trigs[NUMTRIGS];
 } rettrigs_t;
 
 // -------------------------------------------------

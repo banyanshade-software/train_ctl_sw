@@ -40,6 +40,7 @@ uint8_t ctrl_flag_notify_speed = 1;
 // -----------------------------------------------------------------
 
 static int _train_check_dir(int tidx, train_ctrl_t *tvars, int sdir, rettrigs_t *rett);
+static void _apply_trigs(int tidx, train_ctrl_t *tvars, const rettrigs_t *rett);
 
 // -----------------------------------------------------------------
 
@@ -97,9 +98,9 @@ station:
             if (rc<0) FatalError("FSMd", "setdir", Error_FSM_ChkNeg1);
             // otherwise, start train
             _set_dir(tidx, tvars, sdir);
-            // xxx apply trigs
             _update_spd_limit(tidx, tvars, sdir);
             _set_speed(tidx, tvars, desired_speed, 1);
+            _apply_trigs(tidx, tvars, &rett);
             _set_state(tidx, tvars, train_state_running);
             return;
             break;
@@ -277,7 +278,8 @@ void ctrl3_occupency_updated(int tidx, train_ctrl_t *tvars)
                 _set_state(tidx, tvars, train_state_end_of_track);
                 return;
             }
-            // otherwise ignore
+            // otherwise ignore, update trigs (not needed)
+            //_apply_trigs(tidx, tvars, &rett);
             return;
             break;
             
@@ -301,6 +303,7 @@ void ctrl3_occupency_updated(int tidx, train_ctrl_t *tvars)
             // train exit blkwait condition and can start
             _update_spd_limit(tidx, tvars, tvars->_sdir);
             _set_speed(tidx, tvars, tvars->_desired_signed_speed, 1);
+            _apply_trigs(tidx, tvars, &rett);
             _set_state(tidx, tvars, train_state_running);
             return;
             break;
@@ -343,6 +346,51 @@ static int _train_check_dir(int tidx, train_ctrl_t *tvars, int sdir, rettrigs_t 
 }
 
 
+static void _set_one_trig(int numtrain, const conf_train_t *tconf, int8_t dir,  xblkaddr_t canaddr, int32_t pose, uint8_t tag)
+{
+    itm_debug3(DBG_CTRL, "set posetr", numtrain, tag, pose);
+    if (!tag) {
+        itm_debug2(DBG_ERR|DBG_POSEC, "no tag", numtrain, tag);
+        FatalError("NOTG", "no tag", Error_CtrlBadPose);
+    }
+    if (!dir) {
+        itm_debug2(DBG_ERR|DBG_POSEC, "no dir", numtrain, tag);
+        FatalError("NODI", "no dir", Error_CtrlBadPose);
+    }
+    if (abs(pose)>32000*10) {
+        itm_debug3(DBG_ERR|DBG_POSEC, "toobig", numtrain, tag, pose);
+    }
+    msg_64_t m = {0};
+    m.from = MA1_CTRL(numtrain);
+    //m.to =  MA_TRAIN_SC(numtrain);
+    TO_CANTON(m, canaddr);
+    m.cmd = CMD_POSE_SET_TRIG;
+    //const conf_train_t *tconf = conf_train_get(numtrain);
+    if (tconf->reversed)  m.va16 = -pose/10;
+    else m.va16 = pose/10;
+    m.vcu8 = tag;
+    m.vb8 = dir;
+    itm_debug3(DBG_CTRL|DBG_POSEC, "S_TRIG", numtrain, tag, dir);
+    mqf_write_from_ctrl(&m);
+}
+
+
+static uint32_t pose_convert_from_mm(const conf_train_t *tconf, int32_t mm)
+{
+    int32_t pv = mm * tconf->pose_per_cm / 10;
+    return pv;
+}
+
+static void _apply_trigs(int tidx, train_ctrl_t *tvars, const rettrigs_t *rett)
+{
+    const conf_train_t *conf = conf_train_get(tidx);
+    for (int i=0; i<NUMTRIGS;i++) {
+        if (!rett->trigs[i].tag) continue;
+        _set_one_trig(tidx, conf,  tvars->_sdir, tvars->can1_xaddr ,
+                      pose_convert_from_mm(conf, rett->trigs[i].poscm*10),
+                      rett->trigs[i].tag);
+    }
+}
 
 // -----------------------------------------------------------------
 static void _sendlow_c1c2_dir(int tidx, train_ctrl_t *tvars);

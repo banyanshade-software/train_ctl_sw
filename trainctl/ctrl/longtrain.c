@@ -145,7 +145,7 @@ int ctrl3_check_front_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *
     int retc = 0;
     int curcm = tvars->_curposmm/10;
     int maxcm = get_lsblk_len_cm(tvars->c1_sblk, NULL);
-     memset(ret, 0, sizeof(rettrigs_t));
+    memset(ret, 0, sizeof(rettrigs_t));
     // distance that will trigger a c1sblk change
     //int dc1mm =  10*get_lsblk_len_cm(tvars->c1_sblk, NULL) - (tvars->_curposmm - tvars->beginposmm) ;
     // trigger for end of seg

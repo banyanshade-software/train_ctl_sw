@@ -76,8 +76,8 @@ void ctrl3_init_train(int tidx, train_ctrl_t *tvars, lsblk_num_t sblk)
 
 void ctrl3_upcmd_set_desired_speed(int tidx, train_ctrl_t *tvars, int16_t desired_speed)
 {
-    int is_eot = 0;
-    int is_occ = 0;
+    //int is_eot = 0;
+    //int is_occ = 0;
     int rc = 0;
     if (!desired_speed) FatalError("DSpd", "FSM desspd",  Error_FSM_DSpd);
     int sdir = SIGNOF0(desired_speed);

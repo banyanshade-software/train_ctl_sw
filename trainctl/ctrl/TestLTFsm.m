@@ -195,55 +195,6 @@ extern int errorhandler;
 }
 
 
-- (void)testStartLeft {
-    tconf->trainlen_left_cm = 5;
-    tconf->trainlen_right_cm = 19;
-    tvars._curposmm = 30;
-    
-    XCTAssert(tvars._state == train_state_station);
-    
-    ctrl3_stop_detected(0, &tvars);
-    XCTAssert(tvars._state == train_state_station);
-
-    ctrl3_upcmd_set_desired_speed_zero(0, &tvars);
-    XCTAssert(tvars._state == train_state_station);
-
-    // start right
-    ctrl3_upcmd_set_desired_speed(0, &tvars, -90);
-    XCTAssert(tvars._state == train_state_running);
-    XCTAssert(tvars._sdir == -1);
-    XCTAssert(tvars._target_unisgned_speed == 90);
-    XCTAssert(tvars._desired_signed_speed == -90);
-    XCTAssert(tvars._spd_limit == 99);
-    NSString *s = dump_msgbuf(0);
-    NSLog(@"...%@", s);
-    EXPMSG({.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_C1_C2,        .vb0=1, .vb1=-1, .vb2=0xFF, .vb3=-1},
-           {.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_TARGET_SPEED, .v1=90, .v2=0},
-           /*{.to=MA0_CANTON(0), .subc=1, .from=MA1_CTRL(0), .cmd=CMD_POSE_SET_TRIG, .va16=945, .vcu8=tag_chkocc, .vb8=1},
-           {.to=MA0_CANTON(0), .subc=1, .from=MA1_CTRL(0), .cmd=CMD_POSE_SET_TRIG, .va16=405, .vcu8=tag_stop_eot, .vb8=1},*/
-           {.to=MA3_UI_GEN,      .from=MA1_CTRL(0), .cmd=CMD_TRSTATE_NOTIF,    .v1=1, .v2=2});
-}
-
-
-- (void) testStop
-{
-    [self testStartRightNormal];
-    NSString *s = dump_msgbuf(0);
-    NSLog(@"...%@", s);
-    ctrl3_upcmd_set_desired_speed_zero(0, &tvars);
-    XCTAssert(tvars._state == train_state_running);
-    XCTAssert(tvars._sdir == 1);
-    XCTAssert(tvars._target_unisgned_speed == 0);
-    XCTAssert(tvars._desired_signed_speed == 0);
-    ctrl3_stop_detected(0, &tvars);
-    XCTAssert(tvars._state == train_state_station);
-    XCTAssert(tvars._sdir == 0);
-    XCTAssert(tvars._target_unisgned_speed == 0);
-    XCTAssert(tvars._desired_signed_speed == 0);
-    s = dump_msgbuf(0);
-    NSLog(@"...%@", s);
-}
-
 - (void) testChangeDir
 {
     [self testStartRightNormal];
@@ -326,6 +277,55 @@ extern int errorhandler;
 }
 
 
+
+- (void)testStartLeft {
+    tconf->trainlen_left_cm = 5;
+    tconf->trainlen_right_cm = 19;
+    tvars._curposmm = 30;
+    
+    XCTAssert(tvars._state == train_state_station);
+    
+    ctrl3_stop_detected(0, &tvars);
+    XCTAssert(tvars._state == train_state_station);
+
+    ctrl3_upcmd_set_desired_speed_zero(0, &tvars);
+    XCTAssert(tvars._state == train_state_station);
+
+    // start right
+    ctrl3_upcmd_set_desired_speed(0, &tvars, -90);
+    XCTAssert(tvars._state == train_state_running);
+    XCTAssert(tvars._sdir == -1);
+    XCTAssert(tvars._target_unisgned_speed == 90);
+    XCTAssert(tvars._desired_signed_speed == -90);
+    XCTAssert(tvars._spd_limit == 99);
+    NSString *s = dump_msgbuf(0);
+    NSLog(@"...%@", s);
+    EXPMSG({.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_C1_C2,        .vb0=1, .vb1=-1, .vb2=0xFF, .vb3=-1},
+           {.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_TARGET_SPEED, .v1=90, .v2=0},
+           /*{.to=MA0_CANTON(0), .subc=1, .from=MA1_CTRL(0), .cmd=CMD_POSE_SET_TRIG, .va16=945, .vcu8=tag_chkocc, .vb8=1},
+           {.to=MA0_CANTON(0), .subc=1, .from=MA1_CTRL(0), .cmd=CMD_POSE_SET_TRIG, .va16=405, .vcu8=tag_stop_eot, .vb8=1},*/
+           {.to=MA3_UI_GEN,      .from=MA1_CTRL(0), .cmd=CMD_TRSTATE_NOTIF,    .v1=1, .v2=2});
+}
+
+
+- (void) testStop
+{
+    [self testStartRightNormal];
+    NSString *s = dump_msgbuf(0);
+    NSLog(@"...%@", s);
+    ctrl3_upcmd_set_desired_speed_zero(0, &tvars);
+    XCTAssert(tvars._state == train_state_running);
+    XCTAssert(tvars._sdir == 1);
+    XCTAssert(tvars._target_unisgned_speed == 0);
+    XCTAssert(tvars._desired_signed_speed == 0);
+    ctrl3_stop_detected(0, &tvars);
+    XCTAssert(tvars._state == train_state_station);
+    XCTAssert(tvars._sdir == 0);
+    XCTAssert(tvars._target_unisgned_speed == 0);
+    XCTAssert(tvars._desired_signed_speed == 0);
+    s = dump_msgbuf(0);
+    NSLog(@"...%@", s);
+}
 
 
 - (void)testStartLeftNormal {

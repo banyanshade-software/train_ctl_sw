@@ -106,8 +106,9 @@ static int trig_for_frontdistcm(_UNUSED_ int tidx, train_ctrl_t *tvars,  _UNUSED
             return lmm+tvars->beginposmm;
         }
     } else {
+        // ex: curpos = 900, begin = 0, seg len = 90, dist 70
         int lmm = (tvars->_curposmm - tvars->beginposmm) - 10*distcm;
-        if (lmm>0) {
+        if (lmm>=0 && lmm<=10*get_lsblk_len_cm(tvars->c1_sblk, NULL)) {
             return lmm+tvars->beginposmm;
         }
     }
@@ -159,9 +160,17 @@ int ctrl3_check_front_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *
     if (l1<=0) {
         retc = brake_len_cm+l1;
         if (retc<=0) retc = 1;
-    } else if ((l1>0) && (l1+curcm<maxcm)) {
-        ret->trigs[1].poscm = l1+curcm;
-        ret->trigs[1].tag = tag_brake;
+    } else if (!left) {
+        if ((l1>0) && (l1+curcm<maxcm)) {
+            ret->trigs[1].poscm = l1+curcm;
+            ret->trigs[1].tag = tag_brake;
+        }
+    } else {
+        // left
+        if ((l1>0) && (l1<maxcm)) {
+            ret->trigs[1].poscm = curcm-l1;
+            ret->trigs[1].tag = tag_brake;
+        }
     }
     int l2 = check_for_dist(tidx, tvars, fsblk, left, margin_len_cm, &a);
     //printf("l2/8=%d\n", l2);
@@ -172,11 +181,19 @@ int ctrl3_check_front_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *
         } else {
             ret->isoet = 1;
         }
-    } else if ((l2>0) && (l2+curcm<maxcm)) {
-        ret->trigs[2].poscm = l2+curcm;
-        ret->trigs[2].tag = a ? tag_stop_blk_wait : tag_stop_eot;
+    } else if (!left) {
+        if ((l2>0) && (l2+curcm<maxcm)) {
+            ret->trigs[2].poscm = l2+curcm;
+            ret->trigs[2].tag = a ? tag_stop_blk_wait : tag_stop_eot;
+        }
+    } else {
+        // left
+        if (l2 <= maxcm) {
+            ret->trigs[2].poscm = curcm-l2;
+            ret->trigs[2].tag = a ? tag_stop_blk_wait : tag_stop_eot;
+        }
     }
-   
+
     return retc;
 }
 

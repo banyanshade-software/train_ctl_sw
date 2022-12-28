@@ -205,7 +205,8 @@ extern int errorhandler;
     XCTAssert(tvars._desired_signed_speed == 0);
     NSString *s = dump_msgbuf(0);
     NSLog(@"...%@", s); // {80, 90, 24, 0, 0}
-    
+    EXPMSG({.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_TARGET_SPEED, .v1=0, .v2=0});
+
     ctrl3_stop_detected(0, &tvars);
     XCTAssert(tvars._state == train_state_station);
     XCTAssert(tvars._sdir == 0);
@@ -213,7 +214,9 @@ extern int errorhandler;
     XCTAssert(tvars._desired_signed_speed == 0);
     s = dump_msgbuf(0);
     NSLog(@"...%@", s);
-    // {80, 90, 24, 0, 0},{80, F0, C3, 2, 1}
+    // {80, F0, C3, 2, 1}
+    EXPMSG({.to=MA3_UI_GEN,      .from=MA1_CTRL(0), .cmd=CMD_TRSTATE_NOTIF,    .v1=train_state_station, .v2=train_state_running});
+
 }
 
 
@@ -229,7 +232,9 @@ extern int errorhandler;
     XCTAssert(tvars._target_unisgned_speed == 0);
     XCTAssert(tvars._desired_signed_speed == 90);
     NSString *s = dump_msgbuf(0);
-    NSLog(@"...%@", s);
+    NSLog(@"...%@", s); // {80, F0, C3, 3, 2}
+    EXPMSG({.to=MA3_UI_GEN,      .from=MA1_CTRL(0), .cmd=CMD_TRSTATE_NOTIF,    .v1=train_state_blkwait, .v2=train_state_station});
+
     // train is blk wait on turn out 1, change turnout 1
     // and it should start
     topology_set_turnout(to1, topo_tn_turn, -1);
@@ -241,6 +246,12 @@ extern int errorhandler;
     XCTAssert(tvars._target_unisgned_speed == 90);
     s = dump_msgbuf(0);
     NSLog(@"...%@", s);
+    // {80, 90, 20, 257, 511},{80, 90, 24, 90, 0},{80, 00, 44, 225, 1025},{80, 00, 44, 1395, 1281},{80, F0, C3, 1, 3}
+    EXPMSG({.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_C1_C2,        .vb0=1, .vb1=1, .vb2=0xFF, .vb3=1},
+           {.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_TARGET_SPEED, .v1=90, .v2=0},
+           {.to=MA0_CANTON(0), .subc=1, .from=MA1_CTRL(0), .cmd=CMD_POSE_SET_TRIG, .va16=225, .vcu8=tag_chkocc, .vb8=1},
+           {.to=MA0_CANTON(0), .subc=1, .from=MA1_CTRL(0), .cmd=CMD_POSE_SET_TRIG, .va16=1395, .vcu8=tag_brake, .vb8=1},
+           {.to=MA3_UI_GEN,      .from=MA1_CTRL(0), .cmd=CMD_TRSTATE_NOTIF,    .v1=train_state_running, .v2=train_state_blkwait});
 }
 
 - (void)testStartRightOccThenOk2
@@ -256,9 +267,41 @@ extern int errorhandler;
     XCTAssert(tvars._desired_signed_speed == 90);
     XCTAssert(tvars._target_unisgned_speed == 90);
     
+    NSString *s = dump_msgbuf(0);
+    NSLog(@"...%@", s);
+    EXPMSG_NONE();
 }
 
 
+
+
+
+
+
+- (void) testStop
+{
+    [self testStartRightNormal];
+    NSString *s = dump_msgbuf(0);
+    NSLog(@"...%@", s);
+    ctrl3_upcmd_set_desired_speed_zero(0, &tvars);
+    XCTAssert(tvars._state == train_state_running);
+    XCTAssert(tvars._sdir == 1);
+    XCTAssert(tvars._target_unisgned_speed == 0);
+    XCTAssert(tvars._desired_signed_speed == 0);
+    EXPMSG({.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_TARGET_SPEED, .v1=0, .v2=0});
+
+    ctrl3_stop_detected(0, &tvars);
+    XCTAssert(tvars._state == train_state_station);
+    XCTAssert(tvars._sdir == 0);
+    XCTAssert(tvars._target_unisgned_speed == 0);
+    XCTAssert(tvars._desired_signed_speed == 0);
+    s = dump_msgbuf(0);
+    NSLog(@"...%@", s); // {80, 90, 24, 0, 0},{80, F0, C3, 2, 1}
+    EXPMSG({.to=MA3_UI_GEN,      .from=MA1_CTRL(0), .cmd=CMD_TRSTATE_NOTIF,    .v1=train_state_station, .v2=train_state_running});
+
+}
+
+// ---------------------------------------------------------
 
 
 - (void) startLeft
@@ -275,30 +318,6 @@ extern int errorhandler;
     ctrl3_upcmd_set_desired_speed(0, &tvars, -90);
     
 }
-
-
-
-- (void) testStop
-{
-    [self testStartRightNormal];
-    NSString *s = dump_msgbuf(0);
-    NSLog(@"...%@", s);
-    ctrl3_upcmd_set_desired_speed_zero(0, &tvars);
-    XCTAssert(tvars._state == train_state_running);
-    XCTAssert(tvars._sdir == 1);
-    XCTAssert(tvars._target_unisgned_speed == 0);
-    XCTAssert(tvars._desired_signed_speed == 0);
-    ctrl3_stop_detected(0, &tvars);
-    XCTAssert(tvars._state == train_state_station);
-    XCTAssert(tvars._sdir == 0);
-    XCTAssert(tvars._target_unisgned_speed == 0);
-    XCTAssert(tvars._desired_signed_speed == 0);
-    s = dump_msgbuf(0);
-    NSLog(@"...%@", s);
-}
-
-// ---------------------------------------------------------
-
 
 - (void)testStartLeft1 {
     tconf->trainlen_left_cm = 12;

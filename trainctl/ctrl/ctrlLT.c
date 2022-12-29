@@ -87,6 +87,8 @@ void ctrl3_upcmd_set_desired_speed(int tidx, train_ctrl_t *tvars, int16_t desire
     int sdir = SIGNOF0(desired_speed);
     rettrigs_t rett = {0};
     switch (tvars->_state) {
+        case train_state_off:
+            return;
         case train_station:
 station:
             rc = _train_check_dir(tidx, tvars, sdir, &rett);
@@ -140,6 +142,8 @@ station:
 void ctrl3_upcmd_set_desired_speed_zero(int tidx, train_ctrl_t *tvars)
 {
     switch (tvars->_state) {
+        case train_state_off:
+            return;
         case train_state_station:
             return;
             break;
@@ -170,6 +174,8 @@ void ctrl3_upcmd_set_desired_speed_zero(int tidx, train_ctrl_t *tvars)
 void ctrl3_stop_detected(int tidx, train_ctrl_t *tvars)
 {
     switch (tvars->_state) {
+        case train_state_off:
+            return;
         case train_state_station:
         case train_state_blkwait:
         case train_state_end_of_track:
@@ -227,6 +233,8 @@ void ctrl3_pose_triggered(int tidx, train_ctrl_t *tvars, pose_trig_tag_t trigtag
 
     
     switch (tvars->_state) {
+        case train_state_off:
+            return;
         case train_state_blkwait0:
         case train_state_blkwait:
         case train_state_end_of_track0:
@@ -272,6 +280,7 @@ void ctrl3_occupency_updated(int tidx, train_ctrl_t *tvars)
     rettrigs_t rett = {0};
     switch (tvars->_state) {
         case train_state_off:
+            return;
         case train_state_station:
         case train_state_end_of_track0:
         case train_state_end_of_track:

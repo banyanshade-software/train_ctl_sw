@@ -208,8 +208,9 @@ void ctrl3_stop_detected(int tidx, train_ctrl_t *tvars)
 }
 
 
-void ctrl3_pose_triggered(int tidx, train_ctrl_t *tvars, pose_trig_tag_t trigtag)
+void ctrl3_pose_triggered(int tidx, train_ctrl_t *tvars, pose_trig_tag_t trigtag, xblkaddr_t ca_addr, int16_t cposd10)
 {
+    
     switch (tvars->_state) {
         case train_state_blkwait0:
         case train_state_blkwait:

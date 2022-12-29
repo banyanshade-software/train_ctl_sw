@@ -105,7 +105,9 @@ void ctrl3_stop_detected(int tidx, train_ctrl_t *tvars);
 /// @param tidx train index
 /// @param tvars train ctrl vars
 /// @param trigtag  trigger tag
-void ctrl3_pose_triggered(int tidx, train_ctrl_t *tvars, pose_trig_tag_t trigtag);
+/// @param ca_addr canton triggering action (trigger will be ignored if not current canton)
+/// @param cposd10 current position,  in pose unit divided by 10
+void ctrl3_pose_triggered(int tidx, train_ctrl_t *tvars, pose_trig_tag_t trigtag, xblkaddr_t ca_addr, int16_t cposd10);
 
 
 /// ctrl3_occupency_updated

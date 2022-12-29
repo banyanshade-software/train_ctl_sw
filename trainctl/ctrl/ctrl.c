@@ -500,29 +500,31 @@ static void normal_process_msg(msg_64_t *m)
     
         case CMD_BEMF_DETECT_ON_C2: {
             itm_debug2(DBG_CTRL,"BEMF/C2", tidx,  m->v1u);
-            train_oldctrl_t *tvar = &otrctl[tidx];
-            if (m->v1u != tvar->can2_xaddr.v) {
+            if (m->v1u != otvar->can2_xaddr.v) {
                 // typ. because we already switch to c2 (msg SET_C1_C2 and CMD_BEMF_DETECT_ON_C2 cross over
-                itm_debug3(DBG_CTRL, "not c2", tidx, m->v1u, tvar->can2_xaddr.v);
+                itm_debug3(DBG_CTRL, "not c2", tidx, m->v1u, otvar->can2_xaddr.v);
                 break;
             }
-            if (tvar->measure_pose_percm) {
-                tvar->measure_pose_percm = 0;
+            if (otvar->measure_pose_percm) {
+                otvar->measure_pose_percm = 0;
                 lsblk_num_t s1 = {1};
                 lsblk_num_t s4 = {4};
                 posecm_measured(tidx, m->v2*10, s1, s4);
             }
-            ctrl2_evt_entered_c2(tidx, tvar, 1);
+            ctrl2_evt_entered_c2(tidx, otvar, 1);
             break;
         }
            
         case CMD_POSE_TRIGGERED:
             itm_debug3(DBG_POSEC, "Trig", m->v1u, m->v2u, m->subc);
             xblkaddr_t tb = FROM_CANTON(*m);
-            ctrl2_evt_pose_triggered(tidx, otvar, NULL, tb, m->vcu8, m->va16);
+            // int ctrl2_evt_pose_triggered(int tidx, train_oldctrl_t *tvar, const conf_train_t *tconf, xblkaddr_t ca_addr, uint8_t tag, int16_t cposd10)
+            //ctrl2_evt_pose_triggered(tidx, otvar, NULL, tb, m->vcu8, m->va16);
+            ctrl3_pose_triggered(tidx, tvars, m->vcu8, tb, m->va16);
             break;
         case CMD_STOP_DETECTED:
-            ctrl2_evt_stop_detected(tidx, otvar, NULL, m->v32);
+            //ctrl2_evt_stop_detected(tidx, otvar, NULL, m->v32);
+            ctrl3_stop_detected(tidx, tvars);
             break;
         default:
             break;

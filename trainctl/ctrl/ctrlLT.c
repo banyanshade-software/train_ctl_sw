@@ -52,6 +52,10 @@ static void _apply_speed(int tidx, train_ctrl_t *tvars);
 // -----------------------------------------------------------------
 
 
+static uint32_t pose_convert_from_mm(const conf_train_t *tconf, int32_t mm);
+static uint32_t pose_convert_to_mm( const conf_train_t *tconf, int32_t poseval);
+
+// -----------------------------------------------------------------
 
 void ctrl3_init_train(int tidx, train_ctrl_t *tvars, lsblk_num_t sblk)
 {
@@ -210,6 +214,17 @@ void ctrl3_stop_detected(int tidx, train_ctrl_t *tvars)
 
 void ctrl3_pose_triggered(int tidx, train_ctrl_t *tvars, pose_trig_tag_t trigtag, xblkaddr_t ca_addr, int16_t cposd10)
 {
+    itm_debug3(DBG_CTRL|DBG_POSEC, "POSEtrg", tidx, ca_addr.v, cposd10);
+
+    if (ca_addr.v != tvars->can1_xaddr.v) {
+        itm_debug3(DBG_ERR|DBG_POSEC|DBG_CTRL, "ptrg bad", tidx, ca_addr.v, tvars->can1_xaddr.v);
+        return;
+    }
+    
+    const conf_train_t *tconf = conf_train_get(tidx);
+    tvars->_curposmm = pose_convert_to_mm(tconf, cposd10*10);
+    itm_debug3(DBG_POSE|DBG_CTRL, "curposmm", tidx, tvars->_curposmm, trigtag);
+
     
     switch (tvars->_state) {
         case train_state_blkwait0:
@@ -376,11 +391,6 @@ static void _set_one_trig(int numtrain, const conf_train_t *tconf, int8_t dir,  
 }
 
 
-static uint32_t pose_convert_from_mm(const conf_train_t *tconf, int32_t mm)
-{
-    int32_t pv = mm * tconf->pose_per_cm / 10;
-    return pv;
-}
 
 static void _apply_trigs(int tidx, train_ctrl_t *tvars, const rettrigs_t *rett)
 {
@@ -537,4 +547,21 @@ static uint8_t brake_maxspd(int distmm)
 {
     // TODO better brake
     return (distmm>100) ? 100:distmm;
+}
+
+static uint32_t pose_convert_from_mm(const conf_train_t *tconf, int32_t mm);
+static uint32_t pose_convert_to_mm( const conf_train_t *tconf, int32_t poseval);
+
+
+
+static uint32_t pose_convert_to_mm( const conf_train_t *tconf, int32_t poseval)
+{
+    int32_t mm = poseval*10/tconf->pose_per_cm;
+    return mm;
+}
+
+static uint32_t pose_convert_from_mm(const conf_train_t *tconf, int32_t mm)
+{
+    int32_t pv = mm * tconf->pose_per_cm / 10;
+    return pv;
 }

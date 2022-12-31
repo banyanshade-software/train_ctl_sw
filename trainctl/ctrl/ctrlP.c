@@ -521,7 +521,7 @@ void ctrl2_check_stop(int tidx, train_oldctrl_t *tvar)
             }
             ctrl2_set_tspeed(tidx, tvar, 0);
             tvar->can2_xaddr.v = 0xFF;
-            set_block_addr_occupency(tvar->can1_xaddr, occupied(tvar->_dir), tidx, tvar->c1_sblk);
+            //set_block_addr_occupency(tvar->can1_xaddr, occupied(tvar->_dir), tidx, tvar->c1_sblk);
             break;
             
             

@@ -56,8 +56,10 @@ typedef struct {
     //
     int32_t _curposmm;
     int32_t stopposmm;
-    uint8_t brake:1;
     int32_t beginposmm; // left side is 0, mm of right side
+
+    uint8_t brake:1;
+    uint8_t off_requested:1;
 } train_ctrl_t;
 
 
@@ -72,7 +74,8 @@ typedef struct {
 /// @param tidx train index
 /// @param tvars train ctrl vars
 /// @param sblk initial train position
-void ctrl3_init_train(int tidx, train_ctrl_t *tvars, lsblk_num_t sblk);
+/// @param on if true turn train on an put it in station state
+void ctrl3_init_train(int tidx, train_ctrl_t *tvars, lsblk_num_t sblk, int on);
 
 
 /// ctrl3_upcmd_set_desired_speed
@@ -116,5 +119,14 @@ void ctrl3_pose_triggered(int tidx, train_ctrl_t *tvars, pose_trig_tag_t trigtag
 /// @param tidx trian index
 /// @param tvars train ctrl vars
 void ctrl3_occupency_updated(int tidx, train_ctrl_t *tvars);
+
+
+/// turn_train_on turn train on, and put it in station state
+/// only possible if train is off
+/// @param tidx train index
+/// @param tvars train ctrl vars
+void turn_train_on(int tidx, train_ctrl_t *tvars);
+
+void turn_train_off(int tidx, train_ctrl_t *tvars);
 
 #endif /* ctrlLT_h */

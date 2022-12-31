@@ -1384,7 +1384,6 @@
 					"$(inherited)",
 					TRAIN_SIMU,
 					HOST_SIDE,
-					UNIT_TEST,
 				);
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
@@ -1467,6 +1466,12 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = "";
 				ENABLE_HARDENED_RUNTIME = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+					TRAIN_SIMU,
+					HOST_SIDE,
+				);
 				INFOPLIST_FILE = train_throttle/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

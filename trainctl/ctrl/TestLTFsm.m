@@ -80,7 +80,7 @@ extern int errorhandler;
 
 
     tvars._mode = train_manual;
-    ctrl3_init_train(0, &tvars, sone);
+    ctrl3_init_train(0, &tvars, sone, 1);
     NSLog(@"init done");
 }
 

@@ -57,7 +57,14 @@ static uint32_t pose_convert_to_mm( const conf_train_t *tconf, int32_t poseval);
 
 // -----------------------------------------------------------------
 
-void ctrl3_init_train(int tidx, train_ctrl_t *tvars, lsblk_num_t sblk)
+
+static int  _lock_train_occupency(int tidx, train_ctrl_t *tvars);
+static void _release_all_blocks(int tidx, train_ctrl_t *tvars);
+
+// -----------------------------------------------------------------
+
+
+void ctrl3_init_train(int tidx, train_ctrl_t *tvars, lsblk_num_t sblk, int on)
 {
     itm_debug1(DBG_CTRL, "INIT", tidx);
     memset(tvars, 0, sizeof(*tvars));
@@ -65,7 +72,7 @@ void ctrl3_init_train(int tidx, train_ctrl_t *tvars, lsblk_num_t sblk)
     tvars->_mode = train_manual;
     tvars->_sdir = 0;
     tvars->_spd_limit = 100;
-    tvars->_state = train_state_station;
+    tvars->_state = train_state_off;
     tvars->_target_unisgned_speed = 0;
     
     tvars->beginposmm = 0;
@@ -75,6 +82,45 @@ void ctrl3_init_train(int tidx, train_ctrl_t *tvars, lsblk_num_t sblk)
     tvars->c1c2dir_changed = 1;
     tvars->can2_xaddr.v = 0xFF;
     tvars->can1_xaddr = canton_for_lsblk(sblk);
+    
+    if (on) turn_train_on(tidx, tvars);
+
+}
+
+void turn_train_off(int tidx, train_ctrl_t *tvars)
+{
+    switch (tvars->_state) {
+        case train_state_off:
+            return;
+        case train_state_blkwait:
+        case train_state_end_of_track:
+            _set_dir(tidx, tvars, 0);
+            // FALLTHRU
+        case train_state_station:
+            _release_all_blocks(tidx, tvars);
+            _set_state(tidx, tvars, train_state_off);
+            break;
+        default:
+            _set_speed(tidx, tvars, 0, 1);
+            tvars->off_requested = 1;
+            break;
+    }
+}
+void turn_train_on(int tidx, train_ctrl_t *tvars)
+{
+    tvars->off_requested = 0;
+    if (tvars->_state != train_state_off) {
+        itm_debug2(DBG_ERR|DBG_CTRL, "not off", tidx, tvars->_state);
+        return;
+    }
+    const conf_train_t *conf = conf_train_get(tidx);
+    ctrl3_get_next_sblks(tidx, tvars, conf);
+    int rc = _lock_train_occupency(tidx, tvars);
+    if (!rc) {
+        _set_state(tidx, tvars, train_state_station);
+        return;
+    }
+    itm_debug1(DBG_ERR|DBG_CTRL, "cant reserve", tidx);
 }
 
 
@@ -574,3 +620,34 @@ static uint32_t pose_convert_from_mm(const conf_train_t *tconf, int32_t mm)
     int32_t pv = mm * tconf->pose_per_cm / 10;
     return pv;
 }
+
+// ---------------------------------------------
+
+static int _car_occupied(int tidx, train_ctrl_t *tvars,  struct forwdsblk *fwdcars)
+{
+    for (int i=0; i<fwdcars->nr; i++) {
+        lsblk_num_t lsb = fwdcars->r[i];
+        if (lsb.n == -1) continue;
+        xblkaddr_t blk = canton_for_lsblk(lsb);
+        int rc = occupency_set_occupied_car(blk, tidx, lsb);
+        if (rc) return rc;
+    }
+    return 0;
+}
+static int _lock_train_occupency(int tidx, train_ctrl_t *tvars)
+{
+    int rc;
+    rc = occupency_set_occupied(tvars->can1_xaddr, tidx, tvars->c1_sblk);
+    if (rc) return rc;
+    rc = _car_occupied(tidx, tvars, &tvars->rightcars);
+    if (rc) return rc;
+    rc = _car_occupied(tidx, tvars, &tvars->leftcars);
+    if (rc) return rc;
+
+    return 0;
+}
+static void _release_all_blocks(int tidx, train_ctrl_t *tvars)
+{
+    FatalError("NI", "not implemented", Error_FSM_NotImplemented);
+}
+

@@ -222,16 +222,16 @@ static void _ctrl_init(int normalmode)
 		const _UNUSED_ lsblk_num_t s8 = {8};
 		if ((1)) {
 #ifdef TRAIN_SIMU
-            ctrl3_init_train(0, &trctl[0], s2);
+            ctrl3_init_train(0, &trctl[0], s2, 1);
 			ctrl2_init_train(0, &otrctl[0], s2);
 			ctrl_set_mode(0, train_manual);
 #else
-			ctrl2_init_train(0, &otrctl[0], s0);
-			ctrl2_init_train(1, &otrctl[1], s8);
-			ctrl2_init_train(2, &otrctl[2], s7);
-            ctrl3_init_train(0, &trctl[0], s0);
-            ctrl3_init_train(1, &trctl[1], s8);
-            ctrl3_init_train(2, &trctl[2], s7);
+			ctrl2_init_train(0, &otrctl[0], s0, 1);
+			ctrl2_init_train(1, &otrctl[1], s8, 1);
+			ctrl2_init_train(2, &otrctl[2], s7, 1);
+            ctrl3_init_train(0, &trctl[0], s0, 1);
+            ctrl3_init_train(1, &trctl[1], s8, 1);
+            ctrl3_init_train(2, &trctl[2], s7, 1);
 
 			ctrl_set_mode(0, train_manual);
 			ctrl_set_mode(1, train_manual);
@@ -243,9 +243,9 @@ static void _ctrl_init(int normalmode)
 
 		} else {
             ctrl2_init_train(0, &otrctl[0], s0);
-            ctrl2_init_train(0, &otrctl[0], s0);
-            ctrl3_init_train(0, &trctl[0], s0);
-            ctrl3_init_train(0, &trctl[0], s0);
+            //ctrl2_init_train(0, &otrctl[0], s0);
+            ctrl3_init_train(0, &trctl[0], s0, 1);
+            //ctrl3_init_train(0, &trctl[0], s0, 1);
 			//ctrl2_init_train(1, &trctl[1], s2);
 			ctrl_set_mode(0, train_manual);
 			ctrl_set_mode(1, train_notrunning);
@@ -295,7 +295,7 @@ static void ctrl_tick(uint32_t tick, _UNUSED_ uint32_t dt)
         const conf_train_t *tconf = conf_train_get(tidx);
         if (!tconf->enabled) continue;
         if (tvars->_mode == train_notrunning) continue;
-        ctrl2_tick_process(tidx, tvars, tconf, occ);
+        if ((0)) ctrl2_tick_process(tidx, tvars, tconf, occ); // xxxxxx 
     }
 }
 // ----------------------------------------------------------------------------

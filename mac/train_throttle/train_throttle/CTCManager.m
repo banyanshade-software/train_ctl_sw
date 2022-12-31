@@ -163,6 +163,7 @@ static int _dim(int col, int dim)
             case BLK_OCC_C2:    d=2; strn = [strn stringByAppendingString:@"..)"]; break;
             case BLK_OCC_LEFT:  d=0; strn = [strn stringByAppendingString:@" <)"]; break;
             case BLK_OCC_RIGHT: d=0; strn = [strn stringByAppendingString:@" >)"]; break;
+            case BLK_OCC_CARS:  d=0; strn = [strn stringByAppendingString:@"~~)"]; break;
             default:
                 strn = [strn stringByAppendingString:@")"];
                 d = 5;

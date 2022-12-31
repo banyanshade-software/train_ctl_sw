@@ -82,6 +82,9 @@ extern int errorhandler;
     tvars._mode = train_manual;
     ctrl3_init_train(0, &tvars, sone, 1);
     NSLog(@"init done");
+    NSString *s = dump_msgbuf(0);
+    NSLog(@"...%@", s);
+    EXPMSG({.to=MA3_UI_GEN,      .from=MA1_CTRL(0), .cmd=CMD_TRSTATE_NOTIF, .v1=train_state_station, .v2=0});
 }
 
 - (void)tearDown {
@@ -109,7 +112,8 @@ extern int errorhandler;
 
 
 
-- (void)testStartRightNormal {
+- (void)testStartRightNormal
+{
     tconf->trainlen_left_cm = 0;
     tconf->trainlen_right_cm = 12;
     tvars._curposmm = 30;
@@ -121,6 +125,11 @@ extern int errorhandler;
     XCTAssert(tvars._spd_limit == 99);
     NSString *s = dump_msgbuf(0);
     NSLog(@"...%@", s);
+    // {80, F0, C3, 2, 0},
+    // {80, 90, 20, 257, 511},
+    //{80, 90, 24, 90, 0},
+    //{80, 00, 44, 1485, 1025},
+    //{80, F0, C3, 1, 2}
     EXPMSG({.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_C1_C2,        .vb0=1, .vb1=1, .vb2=0xFF, .vb3=1},
            {.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_TARGET_SPEED, .v1=90, .v2=0},
            {.to=MA0_CANTON(0), .subc=1, .from=MA1_CTRL(0), .cmd=CMD_POSE_SET_TRIG, .va16=1485, .vcu8=4, .vb8=1},

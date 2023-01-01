@@ -15,6 +15,7 @@ typedef enum pose_trig_tag {
     
     // tag_end_lsblk used when a canton is divided in sblk without specific current detection
     tag_end_lsblk = 1,
+    tag_need_c2,        // C2 needs to be powered and reserved
     
     tag_stop_blk_wait,  // stopped for occupency (eg before turnout)
     tag_stop_eot,       // stop for end of track
@@ -22,8 +23,7 @@ typedef enum pose_trig_tag {
     tag_chkocc,     // rightcars will go into new segment, rightcars and leftcars need to be updated
     tag_brake,      // should start braking
     
-    tag_free_left,
-    tag_free_right, // TODO do we really need both ?
+    tag_free_back,  // cars on the rear leaving a block
     
     tag_auto_u1,
 } pose_trig_tag_t;

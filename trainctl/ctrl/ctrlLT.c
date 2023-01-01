@@ -407,7 +407,7 @@ static int _train_check_dir(int tidx, train_ctrl_t *tvars, int sdir, rettrigs_t 
     itm_debug3(DBG_CTRL, "rc2", tidx, rc2, tvars->_state);
     if (rc2>0) {
         // set brake
-        tvars->stopposmm = tvars->_curposmm + rc2*10*sdir;
+        tvars->stopposmm = ctrl3_getcurpossmm(tvars, conf_train_get(tidx), (sdir<0)) + rc2*10*sdir;
         tvars->brake = 1;
     } else {
         tvars->brake = 0;
@@ -492,8 +492,9 @@ static void _apply_speed(int tidx, train_ctrl_t *tvars)
     if (spd > tvars->_spd_limit) spd = SIGNOF0(spd)*tvars->_spd_limit;
 
     // apply brake
+    int32_t pos = ctrl3_getcurpossmm(tvars, conf_train_get(tidx), (tvars->_sdir<0));
     if (tvars->brake) {
-        int dist = abs(tvars->_curposmm - tvars->stopposmm);
+        int dist = abs(pos - tvars->stopposmm);
         int maxspd = brake_maxspd(dist);
         if (spd>maxspd) spd = maxspd;
     }

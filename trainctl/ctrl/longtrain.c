@@ -43,7 +43,7 @@ static int32_t get_lsblk_len_cm_steep(lsblk_num_t lsbk, const conf_train_t *tcon
 }
 
 
-static int32_t getcurpossmm(train_ctrl_t *tvars, const conf_train_t *tconf, int left)
+int32_t ctrl3_getcurpossmm(train_ctrl_t *tvars, const conf_train_t *tconf, int left)
 {
     if (POSE_UNKNOWN == tvars->_curposmm) {
         if (left) return tvars->beginposmm;
@@ -59,7 +59,7 @@ int ctrl3_get_next_sblks_(_UNUSED_ int tidx, train_ctrl_t *tvars,  const conf_tr
     int cm = left ? tconf->trainlen_left_cm : tconf->trainlen_right_cm;
     lsblk_num_t cblk = tvars->c1_sblk;
     // curposmm
-    int l0 = getcurpossmm(tvars, tconf, left) / 10;
+    int l0 = ctrl3_getcurpossmm(tvars, tconf, left) / 10;
     for (;;) {
         int l = get_lsblk_len_cm(cblk, NULL);
         if (l0) {
@@ -144,7 +144,7 @@ int ctrl3_check_front_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *
     ret->isocc = 0;
     struct forwdsblk *fsblk = left ? &tvars->leftcars : &tvars->rightcars;
     int retc = 0;
-    int curcm = tvars->_curposmm/10;
+    int curcm = ctrl3_getcurpossmm(tvars, tconf, left)/10;
     int maxcm = get_lsblk_len_cm(tvars->c1_sblk, NULL);
     memset(ret, 0, sizeof(rettrigs_t));
     // distance that will trigger a c1sblk change

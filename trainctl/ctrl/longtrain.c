@@ -47,7 +47,7 @@ int32_t ctrl3_getcurpossmm(train_ctrl_t *tvars, const conf_train_t *tconf, int l
 {
     if (POSE_UNKNOWN == tvars->_curposmm) {
         if (left) return tvars->beginposmm;
-        return tvars->beginposmm + get_lsblk_len_cm_steep(tvars->c1_sblk, tconf, tvars);
+        return tvars->beginposmm + 10*get_lsblk_len_cm_steep(tvars->c1_sblk, tconf, tvars);
     }
     return tvars->_curposmm;
 }

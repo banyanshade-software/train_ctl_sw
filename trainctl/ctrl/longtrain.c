@@ -94,7 +94,7 @@ int ctrl3_get_next_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *tco
 }
 
 static const int brake_len_cm = 16;
-static const int margin_len_cm = 12;
+static const int margin_stop_len_cm = 12;
 
 
 static int trig_for_frontdistcm(_UNUSED_ int tidx, train_ctrl_t *tvars,  _UNUSED_ const conf_train_t *tconf, int left, int distcm)
@@ -156,7 +156,7 @@ int ctrl3_check_front_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *
         ret->trigs[0].tag = tag_chkocc;
     }
     uint8_t a;
-    int l1 = check_for_dist(tidx, tvars, fsblk, left,  brake_len_cm+margin_len_cm, &a);
+    int l1 = check_for_dist(tidx, tvars, fsblk, left,  brake_len_cm+margin_stop_len_cm, &a);
     if (l1<=0) {
         retc = brake_len_cm+l1;
         if (retc<=0) retc = 1;
@@ -172,7 +172,7 @@ int ctrl3_check_front_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *
             ret->trigs[1].tag = tag_brake;
         }
     }
-    int l2 = check_for_dist(tidx, tvars, fsblk, left, margin_len_cm, &a);
+    int l2 = check_for_dist(tidx, tvars, fsblk, left, margin_stop_len_cm, &a);
     //printf("l2/8=%d\n", l2);
     if (l2<=0) {
         retc = -1;

@@ -63,7 +63,7 @@ const stat_val_t statval_ctrl[] = {
         { trctl, offsetof(train_ctrl_t, can2_addr),        sizeof(uint8_t)         _P("T#_ctrl_canton2_addr")},
         { trctl, offsetof(train_ctrl_t, spd_limit),        sizeof(uint16_t)        _P("T#_ctrl_spd_limit")},
         { trctl, offsetof(train_ctrl_t, curposmm),         sizeof(int32_t)         _P("T#_curposmm")},
-        { trctl, offsetof(train_ctrl_t, beginposmm),       sizeof(int32_t)         _P("T#_beginposmm")},
+        { trctl, offsetof(train_ctrl_t, beginposmm),       sizeof(int32_t)         _P("T#beginposmm")},
 #endif
         { NULL,  sizeof(train_oldctrl_t), 0 _P(NULL)}
 };

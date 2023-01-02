@@ -95,9 +95,10 @@ int ctrl3_get_next_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *tco
 
 static const int brake_len_cm = 16;
 static const int margin_stop_len_cm = 12;
+static const int margin_c2_len_cm = 25;
 
 
-static int trig_for_frontdistcm(_UNUSED_ int tidx, train_ctrl_t *tvars,  _UNUSED_ const conf_train_t *tconf, int left, int distcm)
+static int trigmm_for_frontdistcm(_UNUSED_ int tidx, train_ctrl_t *tvars,  _UNUSED_ const conf_train_t *tconf, int left, int distcm)
 {
     struct forwdsblk _UNUSED_ *fsblk = left ? &tvars->leftcars : &tvars->rightcars;
     if (!left) {
@@ -150,28 +151,37 @@ int ctrl3_check_front_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *
     // distance that will trigger a c1sblk change
     //int dc1mm =  10*get_lsblk_len_cm(tvars->c1_sblk, NULL) - (tvars->_curposmm - tvars->beginposmm) ;
     // trigger for end of seg
-    int lmm = trig_for_frontdistcm(tidx, tvars, tconf, left, fsblk->rlen_cm);
+    
+    int trigidx = 0;
+    int lmm = trigmm_for_frontdistcm(tidx, tvars, tconf, left, fsblk->rlen_cm);
     if (lmm>=0) {
-        ret->trigs[0].poscm = lmm/10;
-        ret->trigs[0].tag = tag_chkocc;
+        ret->trigs[trigidx].poscm = lmm/10;
+        ret->trigs[trigidx].tag = tag_chkocc;
+        trigidx++;
     }
     uint8_t a;
+    
+    
     int l1 = check_for_dist(tidx, tvars, fsblk, left,  brake_len_cm+margin_stop_len_cm, &a);
     if (l1<=0) {
         retc = brake_len_cm+l1;
         if (retc<=0) retc = 1;
     } else if (!left) {
         if ((l1>0) && (l1+curcm<maxcm)) {
-            ret->trigs[1].poscm = l1+curcm;
-            ret->trigs[1].tag = tag_brake;
+            ret->trigs[trigidx].poscm = l1+curcm;
+            ret->trigs[trigidx].tag = tag_brake;
+            trigidx++;
         }
     } else {
         // left
         if ((l1>0) && (l1<maxcm)) {
-            ret->trigs[1].poscm = curcm-l1;
-            ret->trigs[1].tag = tag_brake;
+            ret->trigs[trigidx].poscm = curcm-l1;
+            ret->trigs[trigidx].tag = tag_brake;
+            trigidx++;
         }
     }
+    
+    int stoplmm = 0;
     int l2 = check_for_dist(tidx, tvars, fsblk, left, margin_stop_len_cm, &a);
     //printf("l2/8=%d\n", l2);
     if (l2<=0) {
@@ -183,17 +193,61 @@ int ctrl3_check_front_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *
         }
     } else if (!left) {
         if ((l2>0) && (l2+curcm<maxcm)) {
-            ret->trigs[2].poscm = l2+curcm;
-            ret->trigs[2].tag = a ? tag_stop_blk_wait : tag_stop_eot;
+            stoplmm = l2*10;
+            ret->trigs[trigidx].poscm = l2+curcm;
+            ret->trigs[trigidx].tag = a ? tag_stop_blk_wait : tag_stop_eot;
+            trigidx++;
         }
     } else {
         // left
         if (l2 <= maxcm) {
-            ret->trigs[2].poscm = curcm-l2;
-            ret->trigs[2].tag = a ? tag_stop_blk_wait : tag_stop_eot;
+            stoplmm = l2*10;
+            ret->trigs[trigidx].poscm = curcm-l2;
+            ret->trigs[trigidx].tag = a ? tag_stop_blk_wait : tag_stop_eot;
+            trigidx++;
         }
     }
 
+    if (retc<0) return retc;
+    
+    lsblk_num_t ns = next_lsblk(tvars->c1_sblk, left, &a);
+    if (ns.n != -1) {
+        // if same canton and no ina3221
+        if ((canton_for_lsblk(ns).v == tvars->can1_xaddr.v)
+            && (ignore_ina_pres() || (get_lsblk_ina3221(tvars->c1_sblk) == get_lsblk_ina3221(ns)))) {
+            int l = 0;
+            if (!left) {
+                l = tvars->beginposmm + get_lsblk_len_cm(tvars->c1_sblk, NULL);
+                if (l>=stoplmm) goto chkc1;
+            } else {
+                l = tvars->beginposmm;
+                if (l<=stoplmm) goto chkc1;
+            }
+            ret->trigs[trigidx].poscm = l/10;
+            ret->trigs[trigidx].tag = tag_end_lsblk;
+            trigidx++;
+        }
+    chkc1:
+        if (canton_for_lsblk(ns).v != tvars->can1_xaddr.v) {
+            //static int trig_for_frontdistcm(_UNUSED_ int tidx, train_ctrl_t *tvars,  _UNUSED_ const conf_train_t *tconf, int left, int distcm)
+
+            int l1 = trigmm_for_frontdistcm(tidx, tvars, tconf, left,  margin_c2_len_cm)/10;
+            
+            if (!left) {
+                if (l1>=stoplmm) goto done;
+                if (l1<=0) {
+                    goto done;
+                }
+            } else {
+                if (l1<=stoplmm) goto done;
+            }
+            ret->trigs[trigidx].poscm = l1/10;
+            ret->trigs[trigidx].tag = tag_need_c2;
+            trigidx++;
+        }
+    done:
+        itm_debug1(DBG_CTRL, "hop", tidx);
+    }
     return retc;
 }
 

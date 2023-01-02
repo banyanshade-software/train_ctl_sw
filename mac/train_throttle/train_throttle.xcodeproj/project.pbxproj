@@ -85,6 +85,7 @@
 		1B46F811280C283D00BAD6E8 /* oam_flash.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B46F80F280C283C00BAD6E8 /* oam_flash.c */; };
 		1B46F814280C288E00BAD6E8 /* simu_flash.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B46F813280C288E00BAD6E8 /* simu_flash.c */; };
 		1B4BCB022549ADC90062961D /* statval.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B4BCB002549ADC70062961D /* statval.c */; };
+		1B4CB7D32963641200146D0A /* TestLongTrain1.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B4CB7D22963641200146D0A /* TestLongTrain1.m */; };
 		1B4F7DC92916AEB4002140C9 /* conf_servo.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B4F7DC82916AEB4002140C9 /* conf_servo.c */; };
 		1B4F7DCE2916AEC4002140C9 /* conf_servo.fields.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B4F7DCD2916AEC4002140C9 /* conf_servo.fields.c */; };
 		1B60925A291993DF00FCE51C /* conf_servo.fields.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B4F7DCD2916AEC4002140C9 /* conf_servo.fields.c */; };
@@ -270,6 +271,7 @@
 		1B4B70A12729194F00FBDB52 /* TopologyTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TopologyTest.m; sourceTree = "<group>"; };
 		1B4BCB002549ADC70062961D /* statval.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = statval.c; sourceTree = "<group>"; };
 		1B4BCB012549ADC80062961D /* statval.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = statval.h; sourceTree = "<group>"; };
+		1B4CB7D22963641200146D0A /* TestLongTrain1.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TestLongTrain1.m; sourceTree = "<group>"; };
 		1B4F7DC62916AEB3002140C9 /* conf_servo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = conf_servo.h; sourceTree = "<group>"; };
 		1B4F7DC72916AEB4002140C9 /* conf_servo.propag.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = conf_servo.propag.h; sourceTree = "<group>"; };
 		1B4F7DC82916AEB4002140C9 /* conf_servo.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = conf_servo.c; sourceTree = "<group>"; };
@@ -643,6 +645,7 @@
 				1B812B3C273FA77B00924749 /* cautoP.c */,
 				1BEB93D1272B342500508C17 /* TestCtrlP.m */,
 				1B53774527E7E0C1009CA93C /* TestLongTrain.m */,
+				1B4CB7D22963641200146D0A /* TestLongTrain1.m */,
 				1BAC041129527121005DC958 /* TestLTFsm.m */,
 				1BAB9A8528558FA8005EF72B /* README.md */,
 			);
@@ -1000,6 +1003,7 @@
 				1B2688A82952439800E31486 /* longtrain.c in Sources */,
 				1B2688692951201600E31486 /* conf_boards.c in Sources */,
 				1B26886A2951201600E31486 /* topology.c in Sources */,
+				1B4CB7D32963641200146D0A /* TestLongTrain1.m in Sources */,
 				1B26886B2951201600E31486 /* conf_train.c in Sources */,
 				1B26886D2951201600E31486 /* misc.c in Sources */,
 				1B26886E2951201600E31486 /* lf_mqueue.c in Sources */,

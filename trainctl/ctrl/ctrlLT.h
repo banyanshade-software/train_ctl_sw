@@ -55,8 +55,8 @@ typedef struct {
     struct forwdsblk rightcars;
     //
     int32_t _curposmm;
-    int32_t stopposmm;
-    int32_t beginposmm; // left side is 0, mm of right side
+    int32_t stopposmm;  // when brake condition, position where train is expected to stop
+    int32_t beginposmm; // left side ofl sblk,  either 0, or -len
 
     uint8_t brake:1;
     uint8_t off_requested:1;
@@ -64,6 +64,9 @@ typedef struct {
 
 
 #define POSE_UNKNOWN 9999999
+
+
+extern int ignore_ina_pres(void);
 
 
 // ----------------------------------------------------------------

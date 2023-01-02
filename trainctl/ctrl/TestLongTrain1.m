@@ -1,5 +1,5 @@
 //
-//  TestLongTrain.m
+//  TestLongTrain1.m
 //  trainctlTests
 //
 //  Created by danielbraun on 20/03/2022.
@@ -16,24 +16,22 @@
 #include "longtrain.h"
 #include "trig_tags.h"
 
-@interface TestLongTrain : XCTestCase
+@interface TestLongTrain1 : XCTestCase
 
 @end
 
-@implementation TestLongTrain {
+@implementation TestLongTrain1 {
     train_ctrl_t tvars;
     conf_train_t *tconf;
 }
 
 
-static lsblk_num_t snone = {-1};
-static lsblk_num_t szero = {0};
-static lsblk_num_t sone = {1};
-static lsblk_num_t stwo = {2};
+static lsblk_num_t snine = {9};
+static lsblk_num_t sten = {10};
+static lsblk_num_t seleven = {11};
+static lsblk_num_t stwelve = {12};
 
-static const xtrnaddr_t to0 = { .v = 0};
-static const xtrnaddr_t to1 = { .v = 1};
-
+extern int errorhandler;
 
 - (void)setUp {
     
@@ -47,12 +45,10 @@ static const xtrnaddr_t to1 = { .v = 1};
     occupency_clear();
     mqf_clear(&from_ctrl);
     memset(&tvars, 0, sizeof(tvars));
-    topology_set_turnout(to0, topo_tn_straight, -1);
-    topology_set_turnout(to1, topo_tn_turn, -1);
-
+    
 
     tvars._mode = train_manual;
-    ctrl3_init_train(0, &tvars, sone, 1);
+    ctrl3_init_train(0, &tvars, snine, 1);
     NSLog(@"init done");
 }
 
@@ -73,82 +69,143 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     return 0;
 }
 
-- (void) test1
+- (void) testRight1
 {
     tconf->trainlen_left_cm = 0;
-    tconf->trainlen_right_cm = 19;
-    tvars._curposmm = 30;
+    
+    // (A)
+    tconf->trainlen_right_cm = 20;
+    tvars._curposmm = 300;
     lsblk_num_t r[4] = {0};
     int n = ctrl3_get_next_sblks_(0, &tvars, tconf, 0, r, 4, NULL);
     XCTAssert(n==0);
     
-    tconf->trainlen_right_cm = 30;
+    // (B)
+    tconf->trainlen_right_cm = 29;
     n = ctrl3_get_next_sblks_(0, &tvars, tconf, 0, r, 4, NULL);
     XCTAssert(n==0);
     
+    // (C)
+    tconf->trainlen_right_cm = 30;
+    n = ctrl3_get_next_sblks_(0, &tvars, tconf, 0, r, 4, NULL);
+    XCTAssert(n==1);
+    
+    static const int exp0[] = { 10 };
+    int rc = check_lsblk_array(r, exp0, n);
+    XCTAssert(!rc);
+    
+    // (D)
     tconf->trainlen_right_cm = 44;
     n = ctrl3_get_next_sblks_(0, &tvars, tconf, 0, r, 4, NULL);
     XCTAssert(n=1);
     
-    static const int exp1[] = { 3 };
-    int rc = check_lsblk_array(r, exp1, n);
+    static const int exp1[] = { 10 };
+    rc = check_lsblk_array(r, exp1, n);
     XCTAssert(!rc);
     
-    tconf->trainlen_right_cm = 120;
+    // (E)
+    tconf->trainlen_right_cm = 100;
     n = ctrl3_get_next_sblks_(0, &tvars, tconf, 0, r, 4, NULL);
-    XCTAssert(n==2);
-    static const int exp2[] = { 3, -1};
+    XCTAssert(n==3);
+    static const int exp2[] = { 10, 11, 12};
     rc = check_lsblk_array(r, exp2, n);
     XCTAssert(!rc);
+    
+    // (F)
+    tconf->trainlen_right_cm = 130;
+    n = ctrl3_get_next_sblks_(0, &tvars, tconf, 0, r, 4, NULL);
+    XCTAssert(n==4);
+    static const int exp3[] = { 10, 11, 12, 0xFF};
+    rc = check_lsblk_array(r, exp2, n);
+    XCTAssert(rc==-1);
+    
 }
 
-- (void) test2
+- (void) testRight2
 {
     tconf->trainlen_left_cm = 0;
-    tconf->trainlen_right_cm = 19;
-    ctrl3_init_train(0, &tvars, szero, 1);
-    tvars._curposmm = 900;
     int16_t remain = -1;
-    lsblk_num_t r[4] = {0};
 
-    // int ctrl2_get_next_sblks_(_UNUSED_ int tidx, train_ctrl_t *tvars,  const conf_train_t *tconf, int left, lsblk_num_t *resp, int nsblk, int16_t *premainlen)
+    // (A)
+    tconf->trainlen_right_cm = 20;
+    tvars._curposmm = 300;
+    lsblk_num_t r[4] = {0};
     int n = ctrl3_get_next_sblks_(0, &tvars, tconf, 0, r, 4, &remain);
-    XCTAssert(n==1);    // len left is 9
-    static const int exp1[] = { 1 };
-    int rc = check_lsblk_array(r, exp1, n);
-    XCTAssert(!rc);
-    XCTAssert(remain==98-90+45-19);
+    XCTAssert(n==0);
+    XCTAssert(remain==10);
     
-    tconf->trainlen_right_cm = 72;
+    // (B)
+    tconf->trainlen_right_cm = 29;
     n = ctrl3_get_next_sblks_(0, &tvars, tconf, 0, r, 4, &remain);
-    XCTAssert(n==2);
-    static const int exp3[] = {1, 3 };
-    rc = check_lsblk_array(r, exp3, n);
+    XCTAssert(n==0);
+    XCTAssert(remain==1);
+
+    // (C)
+    tconf->trainlen_right_cm = 30;
+    n = ctrl3_get_next_sblks_(0, &tvars, tconf, 0, r, 4, &remain);
+    XCTAssert(n==1);
+    XCTAssert(remain==40);
+
+    static const int exp0[] = { 10 };
+    int rc = check_lsblk_array(r, exp0, n);
     XCTAssert(!rc);
-    XCTAssert(remain == 98-90+45+54-72);
+    
+    // (D)
+    tconf->trainlen_right_cm = 44;
+    n = ctrl3_get_next_sblks_(0, &tvars, tconf, 0, r, 4, &remain);
+    XCTAssert(n=1);
+    XCTAssert(remain==26);
+    static const int exp1[] = { 10 };
+    rc = check_lsblk_array(r, exp1, n);
+    XCTAssert(!rc);
+    
+    // (E)
+    tconf->trainlen_right_cm = 100;
+    n = ctrl3_get_next_sblks_(0, &tvars, tconf, 0, r, 4, &remain);
+    XCTAssert(n==3);
+    XCTAssert(remain==10);
+    static const int exp2[] = { 10, 11, 12};
+    rc = check_lsblk_array(r, exp2, n);
+    XCTAssert(!rc);
+    
+    // (F)
+    tconf->trainlen_right_cm = 130;
+    n = ctrl3_get_next_sblks_(0, &tvars, tconf, 0, r, 4, &remain);
+    XCTAssert(n==4);
+    static const int exp3[] = { 10, 11, 12, 0xFF};
+    rc = check_lsblk_array(r, exp2, n);
+    XCTAssert(rc==-1);
+    XCTAssert(remain==0);
 }
 
-- (void) test3
+- (void) testLeft1
 {
-    tconf->trainlen_left_cm = 35;
-    tconf->trainlen_right_cm = 19;
-    tvars._curposmm = 400; // 40cm out of 45 for s1
+    tvars.c1_sblk = seleven;
+    tconf->trainlen_left_cm = 20;
+    tconf->trainlen_right_cm = 52;// not used here
+    tvars._curposmm = 50; // 5cm
     int16_t remain = -1;
     lsblk_num_t r[4] = {0};
     
+    // (A)
     int n = ctrl3_get_next_sblks_(0, &tvars, tconf, 1, r, 4, &remain);
-    XCTAssert(n==0);
-    XCTAssert(remain == 40-35);
-    
-    tvars._curposmm = 50; // 5cm out of 45 for s1
-    n = ctrl3_get_next_sblks_(0, &tvars, tconf, 1, r, 4, &remain);
     XCTAssert(n==1);
-    static const int exp1[] = { 0 };
-    int rc = check_lsblk_array(r, exp1, n);
+    XCTAssert(remain == 25);
+    static const int exp0[] = { 10 };
+    int rc = check_lsblk_array(r, exp0, n);
     XCTAssert(!rc);
-    XCTAssert(remain==98+5-35);
+
+    // (B)
+    tconf->trainlen_left_cm = 50;
+    n = ctrl3_get_next_sblks_(0, &tvars, tconf, 1, r, 4, &remain);
+    XCTAssert(n==2);
+    static const int exp1[] = { 10, 9 };
+    rc = check_lsblk_array(r, exp1, n);
+    XCTAssert(!rc);
+    XCTAssert(remain==55);
 }
 
+#if 0
 
 - (void) test_chk_front_right
 {
@@ -504,7 +561,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     //static const int exp2[] = { 2 };
     //int rc = check_lsblk_array(tvars.leftcars.r, exp2, 1);
     //XCTAssert(!rc);
-    XCTAssert(tvars.leftcars.rlen_cm == 21); 
+    XCTAssert(tvars.leftcars.rlen_cm == 21);
     
         
     rettrigs_t rettrigs = {0};
@@ -634,5 +691,5 @@ void dump_msg(mqf_t *mq, int n)
 }
 
 int tsktick_freqhz = 100;
-
+#endif
 @end

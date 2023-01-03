@@ -21,6 +21,7 @@ config servo {
     user int8_t direction
         = (switcher:*) table(servosw, dir)
         = (simu) table(servosw, dir)
+		= (unit_test) table(utservo, dir)
         = (default) 0;
     user uint16_t min
         = (switcher:*) table(servosw, min)
@@ -54,11 +55,11 @@ table servosw
 ;
 
 table utservo 
-	( power_port, power_pin,    tim,            ch,     min,    max,    spd,    pos0)
-    ( GPIOD,             -1,      4, TIM_CHANNEL_1,    2300,   7230,     80,     5000)
-    ( GPIOD,             -1,      4, TIM_CHANNEL_2,    2300,   7230,     80,     5000)
-    ( GPIOD,             -1,      4, TIM_CHANNEL_3,    2300,   7230,     80,     5000)
-    ( GPIOD,             -1,      4, TIM_CHANNEL_4,    2300,   7230,     80,     5000)
+	( power_port, power_pin,    tim,            ch,     min,    max,    spd,    pos0n    dir)
+    ( GPIOD,             -1,      4, TIM_CHANNEL_1,    2300,   7230,     80,     5000,    0)
+    ( GPIOD,             -1,      4, TIM_CHANNEL_2,    2300,   7230,     80,     5000,    0)
+    ( GPIOD,             -1,      4, TIM_CHANNEL_3,    2300,   7230,     80,     5000,    0)
+    ( GPIOD,             -1,      4, TIM_CHANNEL_4,    2300,   7230,     80,     5000,    0)
 ;
 
 attrib servo h_code {

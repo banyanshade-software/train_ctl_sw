@@ -1517,6 +1517,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
+					UNIT_TEST,
 				);
 				INFOPLIST_FILE = train_lowTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1536,6 +1537,11 @@
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					TRAIN_SIMU,
+					HOST_SIDE,
+					UNIT_TEST,
+				);
 				INFOPLIST_FILE = train_lowTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

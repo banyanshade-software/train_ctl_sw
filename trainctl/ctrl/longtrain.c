@@ -95,7 +95,7 @@ int ctrl3_get_next_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *tco
 
 static const int brake_len_cm = 16;
 static const int margin_stop_len_cm = 12;
-static const int margin_c2_len_cm = 25;
+static const int margin_c2_len_cm = 20;
 
 
 static int trigmm_for_frontdistcm(_UNUSED_ int tidx, train_ctrl_t *tvars,  _UNUSED_ const conf_train_t *tconf, int left, int distcm)

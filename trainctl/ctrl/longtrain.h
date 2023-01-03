@@ -12,7 +12,7 @@
 #include <stdio.h>
 
 /// return value for ctrl2_check_front_sblks
-#define NUMTRIGS 3
+#define NUMTRIGS 6
 struct sttrig {
     int16_t poscm;
     int8_t tag;

@@ -209,6 +209,50 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     XCTAssert(remain==10);
 }
 
+- (void) testRight4
+{
+    tconf->trainlen_left_cm = 0;
+    int16_t remain = -1;
+    int n;
+    int rc;
+    lsblk_num_t r[4] = {0};
+
+    memset(r, 0, sizeof(r));
+    tvars.beginposmm = 0+0;
+    tvars._curposmm = 300+0;
+    tconf->trainlen_right_cm = 100;
+    n = ctrl3_get_next_sblks_(0, &tvars, tconf, 0, r, 4, &remain);
+    XCTAssert(n==3);
+    XCTAssert(remain==10);
+    static const int exp2[] = { 10, 11, 12};
+    rc = check_lsblk_array(r, exp2, n);
+    XCTAssert(!rc);
+    
+    
+    memset(r, 0, sizeof(r));
+    tvars.beginposmm = 0+342;
+    tvars._curposmm = 300+342;
+    tconf->trainlen_right_cm = 100;
+    n = ctrl3_get_next_sblks_(0, &tvars, tconf, 0, r, 4, &remain);
+    XCTAssert(n==3);
+    XCTAssert(remain==10);
+    static const int exp3[] = { 10, 11, 12};
+    rc = check_lsblk_array(r, exp3, n);
+    XCTAssert(!rc);
+    
+    
+    memset(r, 0, sizeof(r));
+    tvars.beginposmm = 0-2123;
+    tvars._curposmm = 300-2123;
+    tconf->trainlen_right_cm = 100;
+    n = ctrl3_get_next_sblks_(0, &tvars, tconf, 0, r, 4, &remain);
+    XCTAssert(n==3);
+    XCTAssert(remain==10);
+    static const int exp4[] = { 10, 11, 12};
+    rc = check_lsblk_array(r, exp4, n);
+    XCTAssert(!rc);
+}
+    
 - (void) testLeft1
 {
     tvars.c1_sblk = seleven;

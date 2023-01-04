@@ -55,7 +55,7 @@ table servosw
 ;
 
 table utservo 
-	( power_port, power_pin,    tim,            ch,     min,    max,    spd,    pos0n    dir)
+	( power_port, power_pin,    tim,            ch,     min,    max,    spd,    pos0n,    dir)
     ( GPIOD,             -1,      4, TIM_CHANNEL_1,    2300,   7230,     80,     5000,    0)
     ( GPIOD,             -1,      4, TIM_CHANNEL_2,    2300,   7230,     80,     5000,    0)
     ( GPIOD,             -1,      4, TIM_CHANNEL_3,    2300,   7230,     80,     5000,    0)

@@ -139,6 +139,25 @@ static int check_for_dist(_UNUSED_ int tidx, train_ctrl_t *tvars,  struct forwds
     return 9999;
 }
 
+static int check_front(int tidx, train_ctrl_t *tvars,  struct forwdsblk *fsblk, int left, int16_t maxcm, uint8_t *pa)
+{
+    lsblk_num_t ns = (fsblk->numlsblk>0) ? fsblk->r[fsblk->numlsblk-1] : tvars->c1_sblk;
+    int cm0 = (ctrl3_getcurpossmm(tvars, conf_train_get(tidx), left)-tvars->beginposmm)/10;
+    int cm = 0;
+    int slen = get_lsblk_len_cm(ns, NULL);
+    for (;;) {
+        ns = next_lsblk(ns, left, pa);
+        if (ns.n == -1) {
+            // EOT or BLKWAIT
+            printf("ho");
+            return cm;
+        } else {
+            cm += get_lsblk_len_cm(ns, NULL);
+            if (cm+cm0 >= maxcm) return 0;
+        }
+    }
+}
+
 int ctrl3_check_front_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *tconf, int left,  rettrigs_t *ret)
 {
     ret->isoet = 0;
@@ -161,7 +180,34 @@ int ctrl3_check_front_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *
     }
     uint8_t a;
     
-    
+    int ltcm = left ? tconf->trainlen_left_cm : tconf->trainlen_right_cm;
+    int bcm = tvars->beginposmm/10;
+    int k = check_front(tidx, tvars, fsblk, left, maxcm, &a);
+    if (k) {
+        int lstp = maxcm+k-ltcm-margin_stop_len_cm;
+        printf("lstp=%d\n", lstp);//+curcm
+        if (lstp<0) {
+            retc = lstp;
+        } else if (lstp>maxcm) {
+            // ignore, too far, will recalc before trig
+        } else {
+            ret->trigs[trigidx].poscm = lstp+bcm;
+            ret->trigs[trigidx].tag = a ? tag_stop_blk_wait : tag_stop_eot;
+            trigidx++;
+        }
+        int lbrk = lstp-brake_len_cm;
+        printf("lbrk=%d\n", lbrk);
+        if (lbrk<0) {
+            retc = brake_len_cm+lbrk;
+        } else if (lbrk>maxcm){
+            // ignore
+        } else {
+            ret->trigs[trigidx].poscm = lbrk+bcm;
+            ret->trigs[trigidx].tag = tag_brake;
+            trigidx++;
+        }
+    }
+    /*
     int l1 = check_for_dist(tidx, tvars, fsblk, left,  brake_len_cm+margin_stop_len_cm, &a);
     if ((1)) {
         if (l1==9999) {
@@ -215,7 +261,8 @@ int ctrl3_check_front_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *
     }
 
     if (retc<0) return retc;
-    
+    */
+#if 0
     lsblk_num_t ns = next_lsblk(tvars->c1_sblk, left, &a);
     if (ns.n != -1) {
         // if same canton and no ina3221
@@ -254,6 +301,7 @@ int ctrl3_check_front_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *
     done:
         itm_debug1(DBG_CTRL, "hop", tidx);
     }
+#endif
     return retc;
 }
 

@@ -18,8 +18,8 @@ struct sttrig {
     int8_t tag;
 };
 typedef struct {
-    uint8_t isoet:1;
-    uint8_t isocc:1;
+    uint8_t isoet; //:1;
+    uint8_t isocc; //:1;
     struct sttrig trigs[NUMTRIGS];
 } rettrigs_t;
 

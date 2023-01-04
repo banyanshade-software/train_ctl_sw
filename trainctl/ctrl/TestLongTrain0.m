@@ -58,6 +58,18 @@ extern int errorhandler;
 
 - (void) testChkRight
 {
+    [self chkRight:0];
+}
+- (void) testChkRight2
+{
+    [self chkRight:1000];
+}
+- (void) testChkRight3
+{
+    [self chkRight:-1000];
+}
+- (void) chkRight:(int)beg
+{
     int rc;
     
     tconf->trainlen_left_cm = 0;
@@ -65,7 +77,8 @@ extern int errorhandler;
     occupency_clear();
     
     // (A)
-    tvars._curposmm = 100;
+    tvars.beginposmm = beg*10;
+    tvars._curposmm = 100+beg*10;
     
     ctrl3_get_next_sblks(0, &tvars, tconf);
     XCTAssert(tvars.rightcars.numlsblk == 0);
@@ -74,7 +87,7 @@ extern int errorhandler;
     rettrigs_t rettrigs = {0};
     rc = ctrl3_check_front_sblks(0, &tvars, tconf, 0, &rettrigs);
     XCTAssert(rc==0);
-    const rettrigs_t expt1 = { 0, 0, {{55, tag_chkocc}, {34, tag_brake}, {50,tag_stop_eot}}};
+    const rettrigs_t expt1 = { 0, 0, {{55+beg, tag_chkocc}, {50+beg,tag_stop_eot}, {34+beg, tag_brake}, {0,0}, {0,0}}};
     XCTAssert(!memcmp(&rettrigs, &expt1, sizeof(rettrigs_t)));
 }
 

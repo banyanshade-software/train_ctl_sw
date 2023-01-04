@@ -161,7 +161,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     ctrl3_init_train(0, &tvars, stwo, 1); // s2 90cm
     tvars._curposmm = 600;             //   ---- reste 30cm sur s2 et 48-30=18 sur s1 (45cm)
     ctrl3_get_next_sblks(0, &tvars, tconf);
-    XCTAssert(tvars.rightcars.nr == 1);
+    XCTAssert(tvars.rightcars.numlsblk == 1);
     static const int exp2[] = { 1 };
     int rc = check_lsblk_array(tvars.rightcars.r, exp2, 1);
     XCTAssert(!rc);
@@ -227,7 +227,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     ctrl3_init_train(0, &tvars, stwo, 1); // s2 90cm
     tvars._curposmm = 600;             //   ---- reste 30cm sur s2 et 48-30=18 sur s1 (45cm)
     ctrl3_get_next_sblks(0, &tvars, tconf);
-    XCTAssert(tvars.rightcars.nr == 1);
+    XCTAssert(tvars.rightcars.numlsblk == 1);
     static const int exp2[] = { 1 };
     int rc = check_lsblk_array(tvars.rightcars.r, exp2, 1);
     XCTAssert(!rc);
@@ -311,7 +311,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     ctrl3_init_train(0, &tvars, stwo, 1); // s2 90cm
     tvars._curposmm = 620;
     ctrl3_get_next_sblks(0, &tvars, tconf);
-    XCTAssert(tvars.rightcars.nr == 1);
+    XCTAssert(tvars.rightcars.numlsblk == 1);
     static const int exp2[] = { 1 };
     int rc = check_lsblk_array(tvars.rightcars.r, exp2, 1);
     XCTAssert(!rc);
@@ -335,7 +335,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     ctrl3_init_train(0, &tvars, stwo, 1); // s2 90cm
     tvars._curposmm = 620;
     ctrl3_get_next_sblks(0, &tvars, tconf);
-    XCTAssert(tvars.rightcars.nr == 1);
+    XCTAssert(tvars.rightcars.numlsblk == 1);
     static const int exp2[] = { 1 };
     int rc = check_lsblk_array(tvars.rightcars.r, exp2, 1);
     XCTAssert(!rc);
@@ -362,7 +362,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     ctrl3_init_train(0, &tvars, stwo, 1); // s2 90cm
     tvars._curposmm = 750;
     ctrl3_get_next_sblks(0, &tvars, tconf);
-    XCTAssert(tvars.rightcars.nr == 1);
+    XCTAssert(tvars.rightcars.numlsblk == 1);
     static const int exp2[] = { 1 };
     int rc = check_lsblk_array(tvars.rightcars.r, exp2, 1);
     XCTAssert(!rc);
@@ -386,7 +386,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     ctrl3_init_train(0, &tvars, stwo, 1); // s2 90cm
     tvars._curposmm = 750;
     ctrl3_get_next_sblks(0, &tvars, tconf);
-    XCTAssert(tvars.rightcars.nr == 1);
+    XCTAssert(tvars.rightcars.numlsblk == 1);
     static const int exp2[] = { 1 };
     int rc = check_lsblk_array(tvars.rightcars.r, exp2, 1);
     XCTAssert(!rc);
@@ -411,7 +411,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     ctrl3_init_train(0, &tvars, stwo, 1); // s2 90cm
     tvars._curposmm = 600;             //   ---- reste 30cm sur s2 et 48-30=18 sur s1 (45cm)
     ctrl3_get_next_sblks(0, &tvars, tconf);
-    XCTAssert(tvars.rightcars.nr == 1);
+    XCTAssert(tvars.rightcars.numlsblk == 1);
     static const int exp2[] = { 1 };
     int rc = check_lsblk_array(tvars.rightcars.r, exp2, 1);
     XCTAssert(!rc);
@@ -500,7 +500,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     tvars._curposmm = (45-4)*10;
     // 20cm sur s1, reste 45-4-20 = 21
     ctrl3_get_next_sblks(0, &tvars, tconf);
-    XCTAssert(tvars.leftcars.nr == 0);
+    XCTAssert(tvars.leftcars.numlsblk == 0);
     //static const int exp2[] = { 2 };
     //int rc = check_lsblk_array(tvars.leftcars.r, exp2, 1);
     //XCTAssert(!rc);

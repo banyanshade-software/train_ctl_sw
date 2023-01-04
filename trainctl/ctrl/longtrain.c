@@ -88,8 +88,8 @@ int ctrl3_get_next_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *tco
 {
     memset(tvars->rightcars.r, 0xFF, sizeof(tvars->rightcars.r));
     memset(tvars->leftcars.r, 0xFF, sizeof(tvars->leftcars.r));
-    tvars->rightcars.nr = ctrl3_get_next_sblks_(tidx, tvars, tconf, 0, tvars->rightcars.r, MAX_LSBLK_CARS, &tvars->rightcars.rlen_cm);
-    tvars->leftcars.nr = ctrl3_get_next_sblks_(tidx, tvars, tconf, 1, tvars->leftcars.r, MAX_LSBLK_CARS, &tvars->leftcars.rlen_cm);
+    tvars->rightcars.numlsblk = ctrl3_get_next_sblks_(tidx, tvars, tconf, 0, tvars->rightcars.r, MAX_LSBLK_CARS, &tvars->rightcars.rlen_cm);
+    tvars->leftcars.numlsblk = ctrl3_get_next_sblks_(tidx, tvars, tconf, 1, tvars->leftcars.r, MAX_LSBLK_CARS, &tvars->leftcars.rlen_cm);
     return 0; // XXX error handling here
 }
 
@@ -118,7 +118,7 @@ static int trigmm_for_frontdistcm(_UNUSED_ int tidx, train_ctrl_t *tvars,  _UNUS
 
 static int check_for_dist(_UNUSED_ int tidx, train_ctrl_t *tvars,  struct forwdsblk *fsblk, int left, int distcm, uint8_t *pa)
 {
-    lsblk_num_t ns = (fsblk->nr>0) ? fsblk->r[fsblk->nr-1] : tvars->c1_sblk;
+    lsblk_num_t ns = (fsblk->numlsblk>0) ? fsblk->r[fsblk->numlsblk-1] : tvars->c1_sblk;
     int slen = get_lsblk_len_cm(ns, NULL);
     int cklen = fsblk->rlen_cm-distcm;
 
@@ -163,6 +163,12 @@ int ctrl3_check_front_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *
     
     
     int l1 = check_for_dist(tidx, tvars, fsblk, left,  brake_len_cm+margin_stop_len_cm, &a);
+    if ((1)) {
+        if (l1==9999) {
+            // rerun for gdb
+            l1 = check_for_dist(tidx, tvars, fsblk, left,  brake_len_cm+margin_stop_len_cm, &a);
+        }
+    }
     if (l1<=0) {
         retc = brake_len_cm+l1;
         if (retc<=0) retc = 1;
@@ -259,7 +265,7 @@ int ctrl3_update_front_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t 
     if ((1)) {
         // sanity check, c1sblk should not have change
         lsblk_num_t ns = next_lsblk(tvars->c1_sblk, left, NULL);
-        if (fsblk->nr) {
+        if (fsblk->numlsblk) {
             if (fsblk->r[0].n != ns.n) return -1;
         }
     }
@@ -274,7 +280,7 @@ int ctrl3_update_front_sblks_c1changed(int tidx, train_ctrl_t *tvars,  const con
     
     if ((1)) {
         // sanity check, c1sblk should be first item
-        if (fsblk->nr) {
+        if (fsblk->numlsblk) {
             if (fsblk->r[0].n != tvars->c1_sblk.n) return -1;
         }
     }

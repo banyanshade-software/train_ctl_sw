@@ -626,7 +626,7 @@ static uint32_t pose_convert_from_mm(const conf_train_t *tconf, int32_t mm)
 
 static int _car_occupied(int tidx, train_ctrl_t *tvars,  struct forwdsblk *fwdcars)
 {
-    for (int i=0; i<fwdcars->nr; i++) {
+    for (int i=0; i<fwdcars->numlsblk; i++) {
         lsblk_num_t lsb = fwdcars->r[i];
         if (lsb.n == -1) continue;
         xblkaddr_t blk = canton_for_lsblk(lsb);

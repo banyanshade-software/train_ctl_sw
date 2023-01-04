@@ -33,7 +33,7 @@
 struct forwdsblk {
     lsblk_num_t r[MAX_LSBLK_CARS];
     int16_t     rlen_cm;            // caution value should be updated if curposmm changed
-    int8_t      nr;
+    int8_t      numlsblk;
 };
 #endif
 

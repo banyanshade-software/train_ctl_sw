@@ -30,7 +30,8 @@ typedef enum {
 struct forwdsblk {
     lsblk_num_t r[MAX_LSBLK_CARS];
     int16_t     rlen_cm;            // caution value should be updated if curposmm changed
-    int8_t      nr;
+    int8_t      numlsblk;
+    int8_t      numlsblk_withmargin;
 };
 
 extern uint8_t ctrl_flag_notify_speed ;

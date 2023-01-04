@@ -293,7 +293,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     tvars._curposmm = 200;
     
     ctrl3_get_next_sblks(0, &tvars, tconf);
-    XCTAssert(tvars.rightcars.nr == 0);
+    XCTAssert(tvars.rightcars.numlsblk == 0);
     XCTAssert(tvars.rightcars.rlen_cm ==2);
    
     rettrigs_t rettrigs = {0};

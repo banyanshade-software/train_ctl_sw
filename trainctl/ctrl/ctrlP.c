@@ -324,8 +324,8 @@ static void set_speed_limit(train_oldctrl_t *tvar, uint16_t lim)
 
 void ctrl2_reset_longtrain(_UNUSED_ int tidx, train_oldctrl_t *tvars)
 {
-    tvars->rightcars.nr = 0;
-    tvars->leftcars.nr = 0;
+    tvars->rightcars.numlsblk = 0;
+    tvars->leftcars.numlsblk = 0;
     memset(tvars->rightcars.r, 0xFF, sizeof(tvars->rightcars.r));
     memset(tvars->leftcars.r, 0xFF, sizeof(tvars->leftcars.r));
 }

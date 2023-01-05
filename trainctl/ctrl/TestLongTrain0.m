@@ -95,6 +95,8 @@ extern int errorhandler;
     XCTAssert(rc==0);
     const rettrigs_t expt1 = { 0, 0, {{55+beg, tag_chkocc}, {50+beg,tag_stop_eot}, {34+beg, tag_brake}, {0,0}, {0,0}}};
     XCTAssert(!cmptrigs(&rettrigs, &expt1));
+    
+    
 }
 
 

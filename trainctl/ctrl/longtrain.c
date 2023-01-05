@@ -113,7 +113,7 @@ static int trigmm_for_frontdistcm(_UNUSED_ int tidx, train_ctrl_t *tvars,  _UNUS
             return lmm+tvars->beginposmm;
         }
     }
-    return -1;
+    return -999999;
 }
 
 static int check_for_dist(_UNUSED_ int tidx, train_ctrl_t *tvars,  struct forwdsblk *fsblk, int left, int distcm, uint8_t *pa)
@@ -143,6 +143,7 @@ static int check_front(int tidx, train_ctrl_t *tvars,  struct forwdsblk *fsblk, 
 {
     lsblk_num_t ns = (fsblk->numlsblk>0) ? fsblk->r[fsblk->numlsblk-1] : tvars->c1_sblk;
     int cm0 = (ctrl3_getcurpossmm(tvars, conf_train_get(tidx), left)-tvars->beginposmm)/10;
+    cm0 += fsblk->rlen_cm;
     int cm = 0;
     int slen = get_lsblk_len_cm(ns, NULL);
     for (;;) {
@@ -153,7 +154,7 @@ static int check_front(int tidx, train_ctrl_t *tvars,  struct forwdsblk *fsblk, 
             return cm;
         } else {
             cm += get_lsblk_len_cm(ns, NULL);
-            if (cm+cm0 >= maxcm) return 0;
+            if (cm+cm0 >= maxcm+brake_len_cm+margin_stop_len_cm) return 0;
         }
     }
 }
@@ -166,6 +167,7 @@ int ctrl3_check_front_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *
     int retc = 0;
     int curcm = ctrl3_getcurpossmm(tvars, tconf, left)/10;
     int maxcm = get_lsblk_len_cm(tvars->c1_sblk, NULL);
+
     memset(ret, 0, sizeof(rettrigs_t));
     // distance that will trigger a c1sblk change
     //int dc1mm =  10*get_lsblk_len_cm(tvars->c1_sblk, NULL) - (tvars->_curposmm - tvars->beginposmm) ;
@@ -173,7 +175,7 @@ int ctrl3_check_front_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *
     
     int trigidx = 0;
     int lmm = trigmm_for_frontdistcm(tidx, tvars, tconf, left, fsblk->rlen_cm);
-    if (lmm-tvars->beginposmm>=0) {
+    if ((0 <= lmm-tvars->beginposmm)  && (lmm-tvars->beginposmm <= maxcm*10)) {
         ret->trigs[trigidx].poscm = lmm/10;
         ret->trigs[trigidx].tag = tag_chkocc;
         trigidx++;

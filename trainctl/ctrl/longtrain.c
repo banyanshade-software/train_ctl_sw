@@ -173,7 +173,7 @@ int ctrl3_check_front_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *
     
     int trigidx = 0;
     int lmm = trigmm_for_frontdistcm(tidx, tvars, tconf, left, fsblk->rlen_cm);
-    if (lmm>=0) {
+    if (lmm-tvars->beginposmm>=0) {
         ret->trigs[trigidx].poscm = lmm/10;
         ret->trigs[trigidx].tag = tag_chkocc;
         trigidx++;

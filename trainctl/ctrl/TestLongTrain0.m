@@ -24,6 +24,8 @@
     conf_train_t *tconf;
 }
 
+int cmptrigs(const rettrigs_t *r1, const rettrigs_t *r2);
+
 static lsblk_num_t s13 = {13};
 static lsblk_num_t s14 = {14};
 
@@ -64,6 +66,10 @@ extern int errorhandler;
 {
     [self chkRight:1000];
 }
+- (void) testChkRight2b
+{
+    [self chkRight:123];
+}
 - (void) testChkRight3
 {
     [self chkRight:-1000];
@@ -88,8 +94,20 @@ extern int errorhandler;
     rc = ctrl3_check_front_sblks(0, &tvars, tconf, 0, &rettrigs);
     XCTAssert(rc==0);
     const rettrigs_t expt1 = { 0, 0, {{55+beg, tag_chkocc}, {50+beg,tag_stop_eot}, {34+beg, tag_brake}, {0,0}, {0,0}}};
-    XCTAssert(!memcmp(&rettrigs, &expt1, sizeof(rettrigs_t)));
+    XCTAssert(!cmptrigs(&rettrigs, &expt1));
 }
 
 
 @end
+
+
+int cmptrigs(const rettrigs_t *r1, const rettrigs_t *r2)
+{
+    if (r1->isocc != r2->isocc) return -1;
+    if (r1->isoet != r2->isoet) return -2;
+    for (int i=0; i<NUMTRIGS; i++) {
+        if (r1->trigs[i].poscm != r2->trigs[i].poscm) return i+10;
+        if (r1->trigs[i].tag != r2->trigs[i].tag) return i+100;
+    }
+    return 0;
+}

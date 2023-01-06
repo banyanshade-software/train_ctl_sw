@@ -60,7 +60,7 @@ void next_lsblk_nums(lsblk_num_t blknum, uint8_t left, lsblk_num_t *pb1, lsblk_n
 /// @param left 0=right, 1=left
 /// @param palternate will be set to 1 if different turnout postion may lead to a route
 
-lsblk_num_t next_lsblk(lsblk_num_t blknum, uint8_t left, uint8_t *palternate);
+lsblk_num_t next_lsblk(lsblk_num_t blknum, uint8_t left, int8_t *palternate);
 
 // ---------------------------------------------------------------------
 

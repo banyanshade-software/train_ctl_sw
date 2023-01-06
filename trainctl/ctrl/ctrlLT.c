@@ -395,10 +395,7 @@ static int _train_check_dir(int tidx, train_ctrl_t *tvars, int sdir, rettrigs_t 
     const conf_train_t *conf = conf_train_get(tidx);
     int rc1 = ctrl3_get_next_sblks(tidx, tvars, conf);
     int rc2 = ctrl3_check_front_sblks(tidx, tvars, conf_train_get(tidx), (sdir<0) ? 1 : 0, rett);
-    /*if (rc2<0) {
-        if (rett->isocc) *isocc = 1;
-        if (rett.isoet) *iseot = 1;
-    }*/
+    
     if (rc2 < 0) {
         if (!rett->isocc && !rett->isoet) {
             FatalError("FSMb", "rcneg unk", Error_FSM_ShouldEotOcc);

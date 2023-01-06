@@ -139,7 +139,7 @@ static int check_for_dist(_UNUSED_ int tidx, train_ctrl_t *tvars,  struct forwds
     return 9999;
 }
 
-static int check_front(int tidx, train_ctrl_t *tvars,  struct forwdsblk *fsblk, int left, int16_t maxcm, uint8_t *pa)
+static int check_front(int tidx, train_ctrl_t *tvars,  struct forwdsblk *fsblk, int left, int16_t maxcm, int8_t *pa)
 {
     lsblk_num_t ns = (fsblk->numlsblk>0) ? fsblk->r[fsblk->numlsblk-1] : tvars->c1_sblk;
     int cm0 = (ctrl3_getcurpossmm(tvars, conf_train_get(tidx), left)-tvars->beginposmm)/10;
@@ -154,7 +154,10 @@ static int check_front(int tidx, train_ctrl_t *tvars,  struct forwdsblk *fsblk, 
             return cm;
         } else {
             cm += get_lsblk_len_cm(ns, NULL);
-            if (cm+cm0 >= maxcm+brake_len_cm+margin_stop_len_cm) return 0;
+            if (cm+cm0 >= maxcm+brake_len_cm+margin_stop_len_cm) {
+                *pa = -1;
+                return 0;
+            }
         }
     }
 }
@@ -180,16 +183,21 @@ int ctrl3_check_front_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *
         ret->trigs[trigidx].tag = tag_chkocc;
         trigidx++;
     }
-    uint8_t a;
+    int8_t a;
     
     int ltcm = left ? tconf->trainlen_left_cm : tconf->trainlen_right_cm;
     int bcm = tvars->beginposmm/10;
     int k = check_front(tidx, tvars, fsblk, left, maxcm, &a);
-    if (k) {
+    if (a != -1) {
+        // lcccccccc----|-----||
+        //                 k
         int lstp = maxcm+k-ltcm-margin_stop_len_cm;
         printf("lstp=%d\n", lstp);//+curcm
         if (lstp<0) {
             retc = lstp;
+            if (a) ret->isocc = 1;
+            else ret->isoet = 1;
+            return retc;
         } else if (lstp>maxcm) {
             // ignore, too far, will recalc before trig
         } else {

@@ -175,7 +175,7 @@ int get_lsblk_len_cm(lsblk_num_t blknum, int8_t *psteep)
 	
 }
 
-lsblk_num_t next_lsblk(lsblk_num_t blknum, uint8_t left, uint8_t *palternate)
+lsblk_num_t next_lsblk(lsblk_num_t blknum, uint8_t left, int8_t *palternate)
 {
     if (palternate) *palternate = 0;
     if (blknum.n == -1) return blknum;

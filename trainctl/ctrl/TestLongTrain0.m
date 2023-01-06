@@ -99,7 +99,32 @@ extern int errorhandler;
     
 }
 
-
+- (void)testCheckBrake
+{
+    [self checkBrake:0];
+}
+- (void) checkBrake:(int)beg
+{
+    int rc;
+    
+    tconf->trainlen_left_cm = 0;
+    tconf->trainlen_right_cm = 15;
+    occupency_clear();
+    
+    // (A)
+    tvars.beginposmm = beg*10;
+    tvars._curposmm = 400+beg*10;
+    
+    ctrl3_get_next_sblks(0, &tvars, tconf);
+    XCTAssert(tvars.rightcars.numlsblk == 0);
+    XCTAssert(tvars.rightcars.rlen_cm == 70-10-15); //45
+   
+    rettrigs_t rettrigs = {0};
+    rc = ctrl3_check_front_sblks(0, &tvars, tconf, 0, &rettrigs);
+    XCTAssert(rc>0);
+    const rettrigs_t expt1 = { 0, 0, {{55+beg, tag_chkocc}, {50+beg,tag_stop_eot}, {34+beg, tag_brake}, {0,0}, {0,0}}};
+    XCTAssert(!cmptrigs(&rettrigs, &expt1));
+}
 @end
 
 

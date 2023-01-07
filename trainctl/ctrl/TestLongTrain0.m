@@ -118,6 +118,25 @@ extern int errorhandler;
     [self checkBrake:0 d:48];
 }
 
+- (void)testCheckBrake1b
+{
+    [self checkBrake:1000 d:40]; // 6
+}
+
+- (void)testCheckBrake2b
+{
+    [self checkBrake:1000 d:47];
+}
+
+- (void)testCheckBrake1c
+{
+    [self checkBrake:-1000 d:40];
+}
+
+- (void)testCheckBrake2c
+{
+    [self checkBrake:-1000 d:47];
+}
 - (void) checkBrake:(int)beg d:(int)cp
 {
     int rc;
@@ -137,10 +156,61 @@ extern int errorhandler;
     rettrigs_t rettrigs = {0};
     rc = ctrl3_check_front_sblks(0, &tvars, tconf, 0, &rettrigs);
     XCTAssert(rc>0);
-    XCTAssert(rc==cp-49+15);
+    XCTAssert(rc==16-(cp-49+15));
     const rettrigs_t expt1 = { 0, 0, 2, {{55+beg, tag_chkocc}, {50+beg,tag_stop_eot}, {0,0}, {0,0}, {0,0}}};
     XCTAssert(!cmptrigs(&rettrigs, &expt1));
 }
+
+
+
+- (void)testCheckStop1
+{
+    [self checkStop:0 d:51 b:0];
+}
+
+- (void)testCheckStop2
+{
+    [self checkStop:0 d:55 b:1];
+}
+
+- (void)testCheckStop3
+{
+    [self checkStop:1000 d:56 b:1];
+}
+
+- (void) checkStop:(int)beg d:(int)cp b:(int)b
+{
+    int rc;
+    
+    tconf->trainlen_left_cm = 0;
+    tconf->trainlen_right_cm = 15;
+    occupency_clear();
+    
+    // (A)
+    tvars.beginposmm = beg*10;
+    tvars._curposmm = cp*10+beg*10;
+    
+    ctrl3_get_next_sblks(0, &tvars, tconf);
+    if (b) {
+        XCTAssert(tvars.rightcars.numlsblk == 1);
+        XCTAssert(tvars.rightcars.rlen_cm == 70+3-cp-15); //45
+    } else {
+        XCTAssert(tvars.rightcars.numlsblk == 0);
+        XCTAssert(tvars.rightcars.rlen_cm == 70-cp-15); //45
+    }
+    rettrigs_t rettrigs = {0};
+    rc = ctrl3_check_front_sblks(0, &tvars, tconf, 0, &rettrigs);
+    XCTAssert(rc<0);
+    if (b) {
+        const rettrigs_t expt1 = { 1, 0, 1, {{58+beg, tag_chkocc},  {0,0}, {0,0}, {0,0}}};
+        XCTAssert(!cmptrigs(&rettrigs, &expt1));
+    } else {
+        const rettrigs_t expt1 = { 1, 0, 1, {{55+beg, tag_chkocc},  {0,0}, {0,0}, {0,0}}};
+        XCTAssert(!cmptrigs(&rettrigs, &expt1));
+    }
+}
+
+
 @end
 
 

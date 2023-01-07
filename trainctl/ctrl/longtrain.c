@@ -162,19 +162,28 @@ static int check_front(int tidx, train_ctrl_t *tvars,  struct forwdsblk *fsblk, 
     }
 }
 
-int _add_trig(rettrigs_t *ret, int rlencm, int c1lencm, int curcm, int k, pose_trig_tag_t tag, int dist)
+#define ADD_TRIG_NOTHING 0x7FFF
+int _add_trig(int left, rettrigs_t *ret, int rlencm, int c1lencm, int curcm, int k, pose_trig_tag_t tag, int dist, int maxcm)
 {
+    if (left) {
+        // todo
+        printf("hai");
+    }
     int l = dist-k;
     int trg = curcm+rlencm-l;
-    if (l>rlencm) {
+    if (l>=rlencm) {
         int s = l-rlencm;
         return s;
     } else if (l<c1lencm) {
-        ret->trigs[ret->ntrig].poscm = trg;
-        ret->trigs[ret->ntrig].tag = tag;
-        ret->ntrig++;
+        if (trg>maxcm) {
+            printf("hu");
+        } else {
+            ret->trigs[ret->ntrig].poscm = trg;
+            ret->trigs[ret->ntrig].tag = tag;
+            ret->ntrig++;
+        }
     }
-    return 0;
+    return ADD_TRIG_NOTHING;
 }
 
 int ctrl3_check_front_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *tconf, int left,  rettrigs_t *ret)
@@ -199,8 +208,8 @@ int ctrl3_check_front_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *
     }
     int8_t a;
     
-    int ltcm = left ? tconf->trainlen_left_cm : tconf->trainlen_right_cm;
-    int bcm = tvars->beginposmm/10;
+    //int ltcm = left ? tconf->trainlen_left_cm : tconf->trainlen_right_cm;
+    //int bcm = tvars->beginposmm/10;
     int k = check_front(tidx, tvars, fsblk, left, c1lencm, &a);
     if (a != -1) {
         // lcccc|cc----------|-----||
@@ -209,12 +218,19 @@ int ctrl3_check_front_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *
         //             <lstp >
         //          < rlen   >
         // train can advance rlen-lstp
-        int rc = _add_trig(ret, fsblk->rlen_cm, c1lencm, curcm, k, a ? tag_stop_blk_wait : tag_stop_eot, margin_stop_len_cm);
-        if (rc) return -1;
+        int maxcm = tvars->beginposmm/10+c1lencm;
+        int rc = _add_trig(left, ret, fsblk->rlen_cm, c1lencm, curcm, k, a ? tag_stop_blk_wait : tag_stop_eot, margin_stop_len_cm, maxcm);
+        if (rc!=ADD_TRIG_NOTHING) {
+            if (a) ret->isocc = 1;
+            else ret->isoet = 1;
+            return -1;
+        }
+        rc = _add_trig(left, ret, fsblk->rlen_cm, c1lencm, curcm, k, tag_brake, margin_stop_len_cm+brake_len_cm, maxcm);
         
-        rc = _add_trig(ret, fsblk->rlen_cm, c1lencm, curcm, k, tag_brake, margin_stop_len_cm+brake_len_cm);
-        
-        if (rc) return rc;
+        if (rc!=ADD_TRIG_NOTHING) {
+            // braake
+            return brake_len_cm - rc;
+        }
 #if 0
         int lstp = margin_stop_len_cm-k;
         int trg = curcm+fsblk->rlen_cm-lstp;

@@ -99,11 +99,26 @@ extern int errorhandler;
     
 }
 
-- (void)testCheckBrake
+- (void)testCheckBrake1
 {
-    [self checkBrake:0];
+    [self checkBrake:0 d:40];
 }
-- (void) checkBrake:(int)beg
+
+- (void)testCheckBrake2
+{
+    [self checkBrake:0 d:41];
+}
+
+- (void)testCheckBrake3
+{
+    [self checkBrake:0 d:49];
+}
+- (void)testCheckBrake4
+{
+    [self checkBrake:0 d:48];
+}
+
+- (void) checkBrake:(int)beg d:(int)cp
 {
     int rc;
     
@@ -113,15 +128,16 @@ extern int errorhandler;
     
     // (A)
     tvars.beginposmm = beg*10;
-    tvars._curposmm = 400+beg*10;
+    tvars._curposmm = cp*10+beg*10;
     
     ctrl3_get_next_sblks(0, &tvars, tconf);
     XCTAssert(tvars.rightcars.numlsblk == 0);
-    XCTAssert(tvars.rightcars.rlen_cm == 70-40-15); //45
+    XCTAssert(tvars.rightcars.rlen_cm == 70-cp-15); //45
    
     rettrigs_t rettrigs = {0};
     rc = ctrl3_check_front_sblks(0, &tvars, tconf, 0, &rettrigs);
     XCTAssert(rc>0);
+    XCTAssert(rc==cp-49+15);
     const rettrigs_t expt1 = { 0, 0, 2, {{55+beg, tag_chkocc}, {50+beg,tag_stop_eot}, {0,0}, {0,0}, {0,0}}};
     XCTAssert(!cmptrigs(&rettrigs, &expt1));
 }

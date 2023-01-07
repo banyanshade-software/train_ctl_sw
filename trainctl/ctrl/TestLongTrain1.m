@@ -16,11 +16,11 @@
 #include "longtrain.h"
 #include "trig_tags.h"
 
-@interface TestLongTrain1 : XCTestCase
+@interface TestLongTrainRight1 : XCTestCase
 
 @end
 
-@implementation TestLongTrain1 {
+@implementation TestLongTrainRight1 {
     train_ctrl_t tvars;
     conf_train_t *tconf;
 }

@@ -286,7 +286,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     XCTAssert(!memcmp(&rettrigs, &expt6, sizeof(rettrigs_t)));
 
     // up to last trig
-    tvars._curposmm = rettrigs.trigs[2].poscm*10; // 390
+    tvars._curposmm = rettrigs.trigs[0].poscm*10; // 390
     rc = ctrl3_update_front_sblks(0, &tvars, tconf, 0);
     XCTAssert(!rc);
     XCTAssert(tvars.rightcars.rlen_cm == 12); // 16+12

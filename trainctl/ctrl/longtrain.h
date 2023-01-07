@@ -20,6 +20,7 @@ struct sttrig {
 typedef struct {
     uint8_t isoet:1;
     uint8_t isocc:1;
+    uint8_t ntrig;
     struct sttrig trigs[NUMTRIGS];
 } rettrigs_t;
 

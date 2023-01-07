@@ -164,6 +164,7 @@ static int check_front(int tidx, train_ctrl_t *tvars,  struct forwdsblk *fsblk, 
 
 int ctrl3_check_front_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *tconf, int left,  rettrigs_t *ret)
 {
+    memset(ret, 0, sizeof(rettrigs_t));
     ret->isoet = 0;
     ret->isocc = 0;
     struct forwdsblk *fsblk = left ? &tvars->leftcars : &tvars->rightcars;
@@ -171,17 +172,15 @@ int ctrl3_check_front_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *
     int curcm = ctrl3_getcurpossmm(tvars, tconf, left)/10;
     int c1lencm = get_lsblk_len_cm(tvars->c1_sblk, NULL);
 
-    memset(ret, 0, sizeof(rettrigs_t));
     // distance that will trigger a c1sblk change
     //int dc1mm =  10*get_lsblk_len_cm(tvars->c1_sblk, NULL) - (tvars->_curposmm - tvars->beginposmm) ;
     // trigger for end of seg
     
-    int trigidx = 0;
     int lmm = trigmm_for_frontdistcm(tidx, tvars, tconf, left, fsblk->rlen_cm);
     if ((0 <= lmm-tvars->beginposmm)  && (lmm-tvars->beginposmm <= c1lencm*10)) {
-        ret->trigs[trigidx].poscm = lmm/10;
-        ret->trigs[trigidx].tag = tag_chkocc;
-        trigidx++;
+        ret->trigs[ret->ntrig].poscm = lmm/10;
+        ret->trigs[ret->ntrig].tag = tag_chkocc;
+        ret->ntrig++;
     }
     int8_t a;
     
@@ -204,9 +203,9 @@ int ctrl3_check_front_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *
             else ret->isoet = 1;
             return retc;
         } else if (lstp<c1lencm) {
-            ret->trigs[trigidx].poscm = trg;
-            ret->trigs[trigidx].tag = a ? tag_stop_blk_wait : tag_stop_eot;
-            trigidx++;
+            ret->trigs[ret->ntrig].poscm = trg;
+            ret->trigs[ret->ntrig].tag = a ? tag_stop_blk_wait : tag_stop_eot;
+            ret->ntrig++;
         }
         int lbrk = lstp-brake_len_cm;
         printf("lbrk=%d\n", lbrk);
@@ -215,9 +214,9 @@ int ctrl3_check_front_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *
         } else if (lbrk>c1lencm){
             // ignore
         } else {
-            ret->trigs[trigidx].poscm = lbrk+bcm;
-            ret->trigs[trigidx].tag = tag_brake;
-            trigidx++;
+            ret->trigs[ret->ntrig].poscm = lbrk+bcm;
+            ret->trigs[ret->ntrig].tag = tag_brake;
+            ret->ntrig++;
         }
     }
     /*

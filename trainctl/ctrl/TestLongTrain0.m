@@ -117,12 +117,12 @@ extern int errorhandler;
     
     ctrl3_get_next_sblks(0, &tvars, tconf);
     XCTAssert(tvars.rightcars.numlsblk == 0);
-    XCTAssert(tvars.rightcars.rlen_cm == 70-10-15); //45
+    XCTAssert(tvars.rightcars.rlen_cm == 70-40-15); //45
    
     rettrigs_t rettrigs = {0};
     rc = ctrl3_check_front_sblks(0, &tvars, tconf, 0, &rettrigs);
     XCTAssert(rc>0);
-    const rettrigs_t expt1 = { 0, 0, {{55+beg, tag_chkocc}, {50+beg,tag_stop_eot}, {34+beg, tag_brake}, {0,0}, {0,0}}};
+    const rettrigs_t expt1 = { 0, 0, {{55+beg, tag_chkocc}, {50+beg,tag_stop_eot}, {0,0}, {0,0}, {0,0}}};
     XCTAssert(!cmptrigs(&rettrigs, &expt1));
 }
 @end

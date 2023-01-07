@@ -169,7 +169,7 @@ int ctrl3_check_front_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *
     struct forwdsblk *fsblk = left ? &tvars->leftcars : &tvars->rightcars;
     int retc = 0;
     int curcm = ctrl3_getcurpossmm(tvars, tconf, left)/10;
-    int maxcm = get_lsblk_len_cm(tvars->c1_sblk, NULL);
+    int c1lencm = get_lsblk_len_cm(tvars->c1_sblk, NULL);
 
     memset(ret, 0, sizeof(rettrigs_t));
     // distance that will trigger a c1sblk change
@@ -178,7 +178,7 @@ int ctrl3_check_front_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *
     
     int trigidx = 0;
     int lmm = trigmm_for_frontdistcm(tidx, tvars, tconf, left, fsblk->rlen_cm);
-    if ((0 <= lmm-tvars->beginposmm)  && (lmm-tvars->beginposmm <= maxcm*10)) {
+    if ((0 <= lmm-tvars->beginposmm)  && (lmm-tvars->beginposmm <= c1lencm*10)) {
         ret->trigs[trigidx].poscm = lmm/10;
         ret->trigs[trigidx].tag = tag_chkocc;
         trigidx++;
@@ -187,21 +187,24 @@ int ctrl3_check_front_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *
     
     int ltcm = left ? tconf->trainlen_left_cm : tconf->trainlen_right_cm;
     int bcm = tvars->beginposmm/10;
-    int k = check_front(tidx, tvars, fsblk, left, maxcm, &a);
+    int k = check_front(tidx, tvars, fsblk, left, c1lencm, &a);
     if (a != -1) {
-        // lcccccccc----|-----||
-        //                 k
-        int lstp = maxcm+k-ltcm-margin_stop_len_cm;
-        printf("lstp=%d\n", lstp);//+curcm
-        if (lstp<0) {
+        // lcccc|cc----------|-----||
+        //                      k
+        //             <--margin--->
+        //             <lstp >
+        //          < rlen   >
+        // train can advance rlen-lstp
+        int lstp = margin_stop_len_cm-k;
+        int trg = curcm+fsblk->rlen_cm-lstp;
+        printf("lstp=%d->trg=%d\n", lstp, trg);//+curcm
+        if (lstp>fsblk->rlen_cm) {
             retc = lstp;
             if (a) ret->isocc = 1;
             else ret->isoet = 1;
             return retc;
-        } else if (lstp>maxcm) {
-            // ignore, too far, will recalc before trig
-        } else {
-            ret->trigs[trigidx].poscm = lstp+bcm;
+        } else if (lstp<c1lencm) {
+            ret->trigs[trigidx].poscm = trg;
             ret->trigs[trigidx].tag = a ? tag_stop_blk_wait : tag_stop_eot;
             trigidx++;
         }
@@ -209,7 +212,7 @@ int ctrl3_check_front_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *
         printf("lbrk=%d\n", lbrk);
         if (lbrk<0) {
             retc = brake_len_cm+lbrk;
-        } else if (lbrk>maxcm){
+        } else if (lbrk>c1lencm){
             // ignore
         } else {
             ret->trigs[trigidx].poscm = lbrk+bcm;

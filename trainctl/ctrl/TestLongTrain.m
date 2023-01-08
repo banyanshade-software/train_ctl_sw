@@ -180,8 +180,8 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     rettrigs_t rettrigs = {0};
     rc = ctrl3_check_front_sblks(0, &tvars, tconf, 0, &rettrigs);
     XCTAssert(rc==0);
-    const rettrigs_t expt1 = { 0, 0, 1, {{87, tag_chkocc}, {0, 0}, {0,0}}};
-    XCTAssert(!memcmp(&rettrigs, &expt1, sizeof(rettrigs_t)));
+    const rettrigs_t expt1 = { 0, 0, 2, {{87, tag_chkocc}, {67, tag_reserve_c2}, {0,0}}};
+    XCTAssert(!cmptrigs(&rettrigs, &expt1));
     
     
     topology_set_turnout(to1, 0, -1);
@@ -197,7 +197,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     XCTAssert(rc>0);
     XCTAssert(rc==15);
     const rettrigs_t expt2 = { 0, 0, 2, { {87, tag_chkocc}, {75,tag_stop_blk_wait}, {0, 0}}};
-    XCTAssert(!memcmp(&rettrigs, &expt2, sizeof(rettrigs_t)));
+    XCTAssert(!cmptrigs(&rettrigs, &expt2));
     
     tvars._curposmm = 600+10;
     ctrl3_get_next_sblks(0, &tvars, tconf);
@@ -239,8 +239,8 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     rettrigs_t rettrigs = {0};
     rc = ctrl3_check_front_sblks(0, &tvars, tconf, 0, &rettrigs);
     XCTAssert(rc==0);
-    const rettrigs_t expt1 = {0, 0, 1, { {87, tag_chkocc}, {0, 0}, {0,0}}};
-    XCTAssert(!memcmp(&rettrigs, &expt1, sizeof(rettrigs_t)));
+    const rettrigs_t expt1 = {0, 0, 2, { {87, tag_chkocc}, {67, tag_reserve_c2}, {0,0}}};
+    XCTAssert(!cmptrigs(&rettrigs, &expt1));
     
     // ------------------------
     // trains progress until triggering of tag_chkocc
@@ -323,7 +323,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     rettrigs_t rettrigs = {0};
     rc = ctrl3_check_front_sblks(0, &tvars, tconf, 0, &rettrigs);
     XCTAssert(rc==0);
-    const rettrigs_t expt1 = {0, 0, 1, { {87, tag_chkocc}, {0, 0}, {0, 0}}};
+    const rettrigs_t expt1 = {0, 0, 2, { {87, tag_chkocc}, {67, tag_reserve_c2}, {0, 0}}};
     XCTAssert(!memcmp(&rettrigs, &expt1, sizeof(rettrigs_t)));
 }
 - (void) testStartOccTurnout
@@ -512,8 +512,8 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     rettrigs_t rettrigs = {0};
     int rc = ctrl3_check_front_sblks(0, &tvars, tconf, 1, &rettrigs);
     XCTAssert(rc==0);
-    const rettrigs_t expt1 = {0, 0, 1, { {20, tag_chkocc}, {0, 0}, {0,0}}};
-    XCTAssert(!memcmp(&rettrigs, &expt1, sizeof(rettrigs_t)));
+    const rettrigs_t expt1 = {0, 0, 2, { {20, tag_chkocc}, {40, tag_reserve_c2}, {0,0}}};
+    XCTAssert(!cmptrigs(&rettrigs, &expt1));
     
     // ------------------------
     // trains progress until triggering of tag_chkocc

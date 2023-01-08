@@ -153,7 +153,9 @@ static int _check_front_condition_res_c2(lsblk_num_t lastsblk, lsblk_num_t tests
 {
     xblkaddr_t c1 = canton_for_lsblk(lastsblk);
     xblkaddr_t c2 = canton_for_lsblk(testsblk);
-    if (c1.v != c2.v) return 1;
+    if ((c2.v !=0xff) && (c1.v != c2.v)) {
+        return 1;
+    }
     return 0;
 }
 
@@ -257,6 +259,10 @@ int ctrl3_check_front_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *
     
     //int ltcm = left ? tconf->trainlen_left_cm : tconf->trainlen_right_cm;
     //int bcm = tvars->beginposmm/10;
+    int maxcm = tvars->beginposmm/10+c1lencm;
+    int mincm = tvars->beginposmm/10;
+    int trlen = left ? tconf->trainlen_left_cm : tconf->trainlen_right_cm;
+    
     int k = check_front(tidx, tvars, fsblk, left, c1lencm, &a, _check_front_condition_eot);
     if (a != -1) {
         // lcccc|cc----------|-----||
@@ -265,22 +271,27 @@ int ctrl3_check_front_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *
         //             <lstp >
         //          < rlen   >
         // train can advance rlen-lstp
-        int maxcm = tvars->beginposmm/10+c1lencm;
-        int mincm = tvars->beginposmm/10;
-        int trlen = left ? tconf->trainlen_left_cm : tconf->trainlen_right_cm;
+        
         int rc = _add_trig(left, ret, fsblk->rlen_cm, c1lencm, curcm, k, a ? tag_stop_blk_wait : tag_stop_eot, margin_stop_len_cm, mincm, maxcm, trlen);
         if (rc!=ADD_TRIG_NOTHING) {
             if (a) ret->isocc = 1;
             else ret->isoet = 1;
-            return -1;
-        }
-        rc = _add_trig(left, ret, fsblk->rlen_cm, c1lencm, curcm, k, tag_brake, margin_stop_len_cm+brake_len_cm, mincm, maxcm, trlen);
-        
-        if (rc!=ADD_TRIG_NOTHING) {
-            // braake
-            return brake_len_cm - rc;
+            retc = -1;
+        } else {
+            // dont check for brake if already in stop condition
+            rc = _add_trig(left, ret, fsblk->rlen_cm, c1lencm, curcm, k, tag_brake, margin_stop_len_cm+brake_len_cm, mincm, maxcm, trlen);
+            if (rc!=ADD_TRIG_NOTHING) {
+                // brake
+                retc = brake_len_cm - rc;
+            }
         }
     }
+    
+    k = check_front(tidx, tvars, fsblk, left, c1lencm, &a, _check_front_condition_res_c2);
+    if (a != -1) {
+        _add_trig(left, ret, fsblk->rlen_cm, c1lencm, curcm, k, tag_reserve_c2, margin_c2_len_cm, mincm, maxcm, trlen);
+    }
+    return retc;
   
 #if 0
     lsblk_num_t ns = next_lsblk(tvars->c1_sblk, left, &a);

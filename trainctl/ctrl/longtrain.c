@@ -159,6 +159,20 @@ static int _check_front_condition_res_c2(lsblk_num_t lastsblk, lsblk_num_t tests
     return 0;
 }
 
+int _check_front_condition_s1pose(lsblk_num_t lastsblk, lsblk_num_t testsblk)
+{
+    xblkaddr_t c1 = canton_for_lsblk(lastsblk);
+    xblkaddr_t c2 = canton_for_lsblk(testsblk);
+    if (c1.v != c2.v) {
+        return 0;
+    }
+    int a1 = get_lsblk_ina3221(lastsblk);
+    int a2 = get_lsblk_ina3221(testsblk);
+    if (a1 == a2) return 1;
+    return 0;
+}
+
+
 static int check_front(int tidx, train_ctrl_t *tvars,  struct forwdsblk *fsblk, int left, int16_t maxcm, int8_t *pa, check_condition_t cond)
 {
     lsblk_num_t fs = (fsblk->numlsblk>0) ? fsblk->r[fsblk->numlsblk-1] : tvars->c1_sblk;
@@ -195,10 +209,19 @@ static int check_front(int tidx, train_ctrl_t *tvars,  struct forwdsblk *fsblk, 
                 if (cm+cm0 >= maxcm+brake_len_cm+margin_stop_len_cm) {
                     *pa = -1;
                     return 0;
+                } else if (ns.n == -1) {
+                    *pa = -1;
+                    return 0;
                 }
             }
         }
     }
+}
+
+static int check_loco(int tidx, train_ctrl_t *tvars,  struct forwdsblk *fsblk, int left, int16_t maxcm, int8_t *pa, check_condition_t cond)
+{
+    *pa = -1; // TODO
+    return 0;
 }
 
 #define ADD_TRIG_NOTHING 0x7FFF
@@ -290,6 +313,12 @@ int ctrl3_check_front_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *
     k = check_front(tidx, tvars, fsblk, left, c1lencm, &a, _check_front_condition_res_c2);
     if (a != -1) {
         _add_trig(left, ret, fsblk->rlen_cm, c1lencm, curcm, k, tag_reserve_c2, margin_c2_len_cm, mincm, maxcm, trlen);
+    }
+    
+    // c1 change and power c2
+    k = check_loco(tidx, tvars, fsblk, left, c1lencm, &a, _check_front_condition_s1pose);
+    if (a != -1) {
+        _add_trig(left, ret, fsblk->rlen_cm, c1lencm, curcm, k, tag_end_lsblk, 0, mincm, maxcm, trlen);
     }
     return retc;
   

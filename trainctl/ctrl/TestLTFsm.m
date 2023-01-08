@@ -133,6 +133,7 @@ extern int errorhandler;
     EXPMSG({.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_C1_C2,        .vb0=1, .vb1=1, .vb2=0xFF, .vb3=1},
            {.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_TARGET_SPEED, .v1=90, .v2=0},
            {.to=MA0_CANTON(0), .subc=1, .from=MA1_CTRL(0), .cmd=CMD_POSE_SET_TRIG, .va16=1485, .vcu8=tag_chkocc, .vb8=1},
+           {.to=MA0_CANTON(0), .subc=1, .from=MA1_CTRL(0), .cmd=CMD_POSE_SET_TRIG, .va16=585, .vcu8=tag_reserve_c2, .vb8=1},
            {.to=MA3_UI_GEN,      .from=MA1_CTRL(0), .cmd=CMD_TRSTATE_NOTIF,    .v1=1, .v2=2});
 }
 

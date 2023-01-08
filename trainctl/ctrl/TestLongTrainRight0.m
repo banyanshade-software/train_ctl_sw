@@ -93,7 +93,7 @@ extern int errorhandler;
     rettrigs_t rettrigs = {0};
     rc = ctrl3_check_front_sblks(0, &tvars, tconf, 0, &rettrigs);
     XCTAssert(rc==0);
-    const rettrigs_t expt1 = { 0, 0, 3, {{55+beg, tag_chkocc}, {50+beg,tag_stop_eot}, {34+beg, tag_brake}, {0,0}, {0,0}}};
+    const rettrigs_t expt1 = { 0, 0, 4, {{55+beg, tag_chkocc}, {50+beg,tag_stop_eot}, {34+beg, tag_brake}, {70+beg,tag_end_lsblk}, {0,0}}};
     XCTAssert(!cmptrigs(&rettrigs, &expt1));
     
     
@@ -157,7 +157,7 @@ extern int errorhandler;
     rc = ctrl3_check_front_sblks(0, &tvars, tconf, 0, &rettrigs);
     XCTAssert(rc>0);
     XCTAssert(rc==16-(cp-49+15));
-    const rettrigs_t expt1 = { 0, 0, 2, {{55+beg, tag_chkocc}, {50+beg,tag_stop_eot}, {0,0}, {0,0}, {0,0}}};
+    const rettrigs_t expt1 = { 0, 0, 3, {{55+beg, tag_chkocc}, {50+beg,tag_stop_eot}, {70+beg,tag_end_lsblk}, {0,0}, {0,0}}};
     XCTAssert(!cmptrigs(&rettrigs, &expt1));
 }
 
@@ -202,10 +202,10 @@ extern int errorhandler;
     rc = ctrl3_check_front_sblks(0, &tvars, tconf, 0, &rettrigs);
     XCTAssert(rc<0);
     if (b) {
-        const rettrigs_t expt1 = { 1, 0, 1, {{58+beg, tag_chkocc},  {0,0}, {0,0}, {0,0}}};
+        const rettrigs_t expt1 = { 1, 0, 1, {{58+beg, tag_chkocc},  {70+beg,tag_end_lsblk}, {0,0}, {0,0}}};
         XCTAssert(!cmptrigs(&rettrigs, &expt1));
     } else {
-        const rettrigs_t expt1 = { 1, 0, 1, {{55+beg, tag_chkocc},  {0,0}, {0,0}, {0,0}}};
+        const rettrigs_t expt1 = { 1, 0, 1, {{55+beg, tag_chkocc},  {70+beg,tag_end_lsblk}, {0,0}, {0,0}}};
         XCTAssert(!cmptrigs(&rettrigs, &expt1));
     }
 }
@@ -218,6 +218,7 @@ int cmptrigs(const rettrigs_t *r1, const rettrigs_t *r2)
 {
     if (r1->isocc != r2->isocc) return -1;
     if (r1->isoet != r2->isoet) return -2;
+    if (r1->ntrig != r2->ntrig) return -3;
     for (int i=0; i<NUMTRIGS; i++) {
         if (r1->trigs[i].poscm != r2->trigs[i].poscm) {
             return i+10;

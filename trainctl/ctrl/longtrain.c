@@ -220,8 +220,47 @@ static int check_front(int tidx, train_ctrl_t *tvars,  struct forwdsblk *fsblk, 
 
 static int check_loco(int tidx, train_ctrl_t *tvars,  struct forwdsblk *fsblk, int left, int16_t maxcm, int8_t *pa, check_condition_t cond)
 {
-    *pa = -1; // TODO
-    return 0;
+    lsblk_num_t fs = tvars->c1_sblk;
+    lsblk_num_t ns = fs;
+    int cm0 = (ctrl3_getcurpossmm(tvars, conf_train_get(tidx), left)-tvars->beginposmm)/10;
+    if (left) {
+        //cm0 -= fsblk->rlen_cm;
+        int cm = 0;
+        for (;;) {
+            ns = next_lsblk(ns, left, pa);
+            if (cond(fs, ns)) {
+                // EOT or BLKWAIT
+                return cm;
+            } else {
+                cm += get_lsblk_len_cm(ns, NULL);
+                if (cm+cm0 >= maxcm+brake_len_cm+margin_stop_len_cm) {
+                    *pa = -1;
+                    return 0;
+                }
+            }
+        }
+
+    } else {
+        //cm0 += fsblk->rlen_cm;
+        int cm = 0;
+        //int slen = get_lsblk_len_cm(ns, NULL);
+        for (;;) {
+            ns = next_lsblk(ns, left, pa);
+            if (cond(fs, ns)) {
+                // EOT or BLKWAIT
+                return cm;
+            } else {
+                cm += get_lsblk_len_cm(ns, NULL);
+                if (cm+cm0 >= maxcm+brake_len_cm+margin_stop_len_cm) {
+                    *pa = -1;
+                    return 0;
+                } else if (ns.n == -1) {
+                    *pa = -1;
+                    return 0;
+                }
+            }
+        }
+    }
 }
 
 #define ADD_TRIG_NOTHING 0x7FFF
@@ -267,6 +306,7 @@ int ctrl3_check_front_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *
     int retc = 0;
     int curcm = ctrl3_getcurpossmm(tvars, tconf, left)/10;
     int c1lencm = get_lsblk_len_cm(tvars->c1_sblk, NULL);
+    int bpcm = tvars->beginposmm/10;
 
     // distance that will trigger a c1sblk change
     //int dc1mm =  10*get_lsblk_len_cm(tvars->c1_sblk, NULL) - (tvars->_curposmm - tvars->beginposmm) ;
@@ -315,10 +355,31 @@ int ctrl3_check_front_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *
         _add_trig(left, ret, fsblk->rlen_cm, c1lencm, curcm, k, tag_reserve_c2, margin_c2_len_cm, mincm, maxcm, trlen);
     }
     
+    // s1 end
+    if ((1)) {
+        lsblk_num_t ns = next_lsblk(tvars->c1_sblk, left, NULL);
+        xblkaddr_t c1 = canton_for_lsblk(tvars->c1_sblk);
+        xblkaddr_t c2 = canton_for_lsblk(ns);
+        if (c1.v == c2.v) {
+            int a1 = get_lsblk_ina3221(tvars->c1_sblk);
+            int a2 = get_lsblk_ina3221(ns);
+            if (ignore_ina_pres() || (a1 == a2)) {
+                if (!left) {
+                    ret->trigs[ret->ntrig].poscm = bpcm + c1lencm;
+                } else {
+                    ret->trigs[ret->ntrig].poscm = bpcm;
+                }
+                ret->trigs[ret->ntrig].tag = tag_end_lsblk;
+                ret->ntrig++;
+            }
+        }
+    }
     // c1 change and power c2
-    k = check_loco(tidx, tvars, fsblk, left, c1lencm, &a, _check_front_condition_s1pose);
-    if (a != -1) {
-        _add_trig(left, ret, fsblk->rlen_cm, c1lencm, curcm, k, tag_end_lsblk, 0, mincm, maxcm, trlen);
+    if ((0)) {
+        k = check_loco(tidx, tvars, fsblk, left, c1lencm, &a, _check_front_condition_res_c2);
+        if (a != -1) {
+            _add_trig(left, ret, 0/*fsblk->rlen_cm*/, c1lencm, curcm, k, tag_need_c2, 0, mincm, maxcm, trlen);
+        }
     }
     return retc;
   

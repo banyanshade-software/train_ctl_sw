@@ -318,7 +318,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     rettrigs_t rettrigs = {0};
     rc = ctrl3_check_front_sblks(0, &tvars, tconf, 0, &rettrigs);
     XCTAssert(rc==0);
-    const rettrigs_t expt1 = { 0, 0, 1, {{22 + bcm, tag_chkocc}, {52+bcm, tag_reserve_c2}, {0,0}}};
+    const rettrigs_t expt1 = { 0, 0, 2, {{22 + bcm, tag_chkocc}, {52+bcm, tag_reserve_c2}, {0,0}}};
     XCTAssert(!cmptrigs(&rettrigs, &expt1));
 
     // (B) first trig
@@ -339,7 +339,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     XCTAssert(tvars.rightcars.rlen_cm == 2);
     rc = ctrl3_check_front_sblks(0, &tvars, tconf, 0, &rettrigs);
     XCTAssert(rc==0);
-    const rettrigs_t expt4 = {0, 0, 3, { {beg+2, tag_chkocc},  {beg+30,tag_stop_eot}, {beg+14, tag_brake}}};
+    const rettrigs_t expt4 = {0, 0, 4, { {beg+2, tag_chkocc},  {beg+30,tag_stop_eot}, {beg+14, tag_brake}, {beg+40, tag_end_lsblk}}};
     XCTAssert(!cmptrigs(&rettrigs, &expt4));
 
     // (D1) advance to first trig
@@ -347,7 +347,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     ctrl3_get_next_sblks(0, &tvars, tconf);
     XCTAssert(tvars.rightcars.rlen_cm == 10);
     rc = ctrl3_check_front_sblks(0, &tvars, tconf, 0, &rettrigs);
-    const rettrigs_t expt5 = {0, 0, 3, { {beg+10+2, tag_chkocc},  {beg+30,tag_stop_eot}, {beg+14, tag_brake}}};
+    const rettrigs_t expt5 = {0, 0, 4, { {beg+10+2, tag_chkocc},  {beg+30,tag_stop_eot}, {beg+14, tag_brake}, {beg+40, tag_end_lsblk}}};
     XCTAssert(!cmptrigs(&rettrigs, &expt5));
 
     
@@ -360,7 +360,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     XCTAssert(tvars.rightcars.rlen_cm == 2);
     rc = ctrl3_check_front_sblks(0, &tvars, tconf, 0, &rettrigs);
     XCTAssert(rc==0);
-    const rettrigs_t expt4b = {0, 0, 3, { {2, tag_chkocc},    {30,tag_stop_eot}, {14, tag_brake}}};
+    const rettrigs_t expt4b = {0, 0, 4, { {2, tag_chkocc},    {30,tag_stop_eot}, {14, tag_brake}, {40, tag_end_lsblk}}};
     XCTAssert(!cmptrigs(&rettrigs, &expt4b));
     
     

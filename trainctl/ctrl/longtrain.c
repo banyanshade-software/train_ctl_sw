@@ -116,7 +116,8 @@ static int trigmm_for_frontdistcm(_UNUSED_ int tidx, train_ctrl_t *tvars,  _UNUS
     return -999999;
 }
 
-static int check_for_dist(_UNUSED_ int tidx, train_ctrl_t *tvars,  struct forwdsblk *fsblk, int left, int distcm, uint8_t *pa)
+/*
+static int check_for_dist(_UNUSED_ int tidx, train_ctrl_t *tvars,  struct forwdsblk *fsblk, int left, int distcm, int8_t *pa)
 {
     lsblk_num_t ns = (fsblk->numlsblk>0) ? fsblk->r[fsblk->numlsblk-1] : tvars->c1_sblk;
     int slen = get_lsblk_len_cm(ns, NULL);
@@ -138,6 +139,7 @@ static int check_for_dist(_UNUSED_ int tidx, train_ctrl_t *tvars,  struct forwds
     }
     return 9999;
 }
+ */
 
 static int check_front(int tidx, train_ctrl_t *tvars,  struct forwdsblk *fsblk, int left, int16_t maxcm, int8_t *pa)
 {
@@ -150,7 +152,6 @@ static int check_front(int tidx, train_ctrl_t *tvars,  struct forwdsblk *fsblk, 
             ns = next_lsblk(ns, left, pa);
             if (ns.n == -1) {
                 // EOT or BLKWAIT
-                printf("ho");
                 return cm;
             } else {
                 cm += get_lsblk_len_cm(ns, NULL);
@@ -169,7 +170,6 @@ static int check_front(int tidx, train_ctrl_t *tvars,  struct forwdsblk *fsblk, 
             ns = next_lsblk(ns, left, pa);
             if (ns.n == -1) {
                 // EOT or BLKWAIT
-                printf("ho");
                 return cm;
             } else {
                 cm += get_lsblk_len_cm(ns, NULL);
@@ -185,10 +185,6 @@ static int check_front(int tidx, train_ctrl_t *tvars,  struct forwdsblk *fsblk, 
 #define ADD_TRIG_NOTHING 0x7FFF
 int _add_trig(int left, rettrigs_t *ret, int rlencm, int c1lencm, int curcm, int k, pose_trig_tag_t tag, int dist, int mincm, int maxcm, int trlen)
 {
-    if (left) {
-        // todo
-        printf("hai");
-    }
     int l = dist-k;
     if (!left) {
         int trg = curcm+rlencm-l;
@@ -197,7 +193,7 @@ int _add_trig(int left, rettrigs_t *ret, int rlencm, int c1lencm, int curcm, int
             return s;
         } else if (l<c1lencm) {
             if (trg>maxcm) {
-                printf("hu");
+                //printf("hu");
             } else {
                 ret->trigs[ret->ntrig].poscm = trg;
                 ret->trigs[ret->ntrig].tag = tag;
@@ -267,89 +263,10 @@ int ctrl3_check_front_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *
             // braake
             return brake_len_cm - rc;
         }
-#if 0
-        int lstp = margin_stop_len_cm-k;
-        int trg = curcm+fsblk->rlen_cm-lstp;
-        printf("lstp=%d->trg=%d\n", lstp, trg);//+curcm
-        if (lstp>fsblk->rlen_cm) {
-            retc = lstp;
-            if (a) ret->isocc = 1;
-            else ret->isoet = 1;
-            return retc;
-        } else if (lstp<c1lencm) {
-            ret->trigs[ret->ntrig].poscm = trg;
-            ret->trigs[ret->ntrig].tag = a ? tag_stop_blk_wait : tag_stop_eot;
-            ret->ntrig++;
-        }
-        int lbrk = lstp-brake_len_cm;
-        printf("lbrk=%d\n", lbrk);
-        if (lbrk<0) {
-            retc = brake_len_cm+lbrk;
-        } else if (lbrk>c1lencm){
-            // ignore
-        } else {
-            ret->trigs[ret->ntrig].poscm = lbrk+bcm;
-            ret->trigs[ret->ntrig].tag = tag_brake;
-            ret->ntrig++;
-        }
-#endif
+
 
     }
-    /*
-    int l1 = check_for_dist(tidx, tvars, fsblk, left,  brake_len_cm+margin_stop_len_cm, &a);
-    if ((1)) {
-        if (l1==9999) {
-            // rerun for gdb
-            l1 = check_for_dist(tidx, tvars, fsblk, left,  brake_len_cm+margin_stop_len_cm, &a);
-        }
-    }
-    if (l1<=0) {
-        retc = brake_len_cm+l1;
-        if (retc<=0) retc = 1;
-    } else if (!left) {
-        if ((l1>0) && (l1+curcm<maxcm)) {
-            ret->trigs[trigidx].poscm = l1+curcm;
-            ret->trigs[trigidx].tag = tag_brake;
-            trigidx++;
-        }
-    } else {
-        // left
-        if ((l1>0) && (l1<maxcm)) {
-            ret->trigs[trigidx].poscm = curcm-l1;
-            ret->trigs[trigidx].tag = tag_brake;
-            trigidx++;
-        }
-    }
-    
-    int stoplmm = 0;
-    int l2 = check_for_dist(tidx, tvars, fsblk, left, margin_stop_len_cm, &a);
-    //printf("l2/8=%d\n", l2);
-    if (l2<=0) {
-        retc = -1;
-        if (a) {
-            ret->isocc = 1;
-        } else {
-            ret->isoet = 1;
-        }
-    } else if (!left) {
-        if ((l2>0) && (l2+curcm<maxcm)) {
-            stoplmm = l2*10;
-            ret->trigs[trigidx].poscm = l2+curcm;
-            ret->trigs[trigidx].tag = a ? tag_stop_blk_wait : tag_stop_eot;
-            trigidx++;
-        }
-    } else {
-        // left
-        if (l2 <= maxcm) {
-            stoplmm = l2*10;
-            ret->trigs[trigidx].poscm = curcm-l2;
-            ret->trigs[trigidx].tag = a ? tag_stop_blk_wait : tag_stop_eot;
-            trigidx++;
-        }
-    }
-
-    if (retc<0) return retc;
-    */
+  
 #if 0
     lsblk_num_t ns = next_lsblk(tvars->c1_sblk, left, &a);
     if (ns.n != -1) {

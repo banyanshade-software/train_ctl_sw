@@ -141,16 +141,33 @@ static int check_for_dist(_UNUSED_ int tidx, train_ctrl_t *tvars,  struct forwds
 }
  */
 
-static int check_front(int tidx, train_ctrl_t *tvars,  struct forwdsblk *fsblk, int left, int16_t maxcm, int8_t *pa)
+typedef int (*check_condition_t)(lsblk_num_t lastsblk, lsblk_num_t testsblk);
+
+static int _check_front_condition_eot(lsblk_num_t lastsblk, lsblk_num_t testsblk)
 {
-    lsblk_num_t ns = (fsblk->numlsblk>0) ? fsblk->r[fsblk->numlsblk-1] : tvars->c1_sblk;
+    if (testsblk.n == -1) return 1;
+    return 0;
+}
+
+static int _check_front_condition_res_c2(lsblk_num_t lastsblk, lsblk_num_t testsblk)
+{
+    xblkaddr_t c1 = canton_for_lsblk(lastsblk);
+    xblkaddr_t c2 = canton_for_lsblk(testsblk);
+    if (c1.v != c2.v) return 1;
+    return 0;
+}
+
+static int check_front(int tidx, train_ctrl_t *tvars,  struct forwdsblk *fsblk, int left, int16_t maxcm, int8_t *pa, check_condition_t cond)
+{
+    lsblk_num_t fs = (fsblk->numlsblk>0) ? fsblk->r[fsblk->numlsblk-1] : tvars->c1_sblk;
+    lsblk_num_t ns = fs;
     int cm0 = (ctrl3_getcurpossmm(tvars, conf_train_get(tidx), left)-tvars->beginposmm)/10;
     if (left) {
         cm0 -= fsblk->rlen_cm;
         int cm = 0;
         for (;;) {
             ns = next_lsblk(ns, left, pa);
-            if (ns.n == -1) {
+            if (cond(fs, ns)) {
                 // EOT or BLKWAIT
                 return cm;
             } else {
@@ -168,7 +185,7 @@ static int check_front(int tidx, train_ctrl_t *tvars,  struct forwdsblk *fsblk, 
         //int slen = get_lsblk_len_cm(ns, NULL);
         for (;;) {
             ns = next_lsblk(ns, left, pa);
-            if (ns.n == -1) {
+            if (cond(fs, ns)) {
                 // EOT or BLKWAIT
                 return cm;
             } else {
@@ -240,7 +257,7 @@ int ctrl3_check_front_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *
     
     //int ltcm = left ? tconf->trainlen_left_cm : tconf->trainlen_right_cm;
     //int bcm = tvars->beginposmm/10;
-    int k = check_front(tidx, tvars, fsblk, left, c1lencm, &a);
+    int k = check_front(tidx, tvars, fsblk, left, c1lencm, &a, _check_front_condition_eot);
     if (a != -1) {
         // lcccc|cc----------|-----||
         //                      k
@@ -263,8 +280,6 @@ int ctrl3_check_front_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *
             // braake
             return brake_len_cm - rc;
         }
-
-
     }
   
 #if 0

@@ -15,7 +15,8 @@ typedef enum pose_trig_tag {
     
     // tag_end_lsblk used when a canton is divided in sblk without specific current detection
     tag_end_lsblk = 1,
-    tag_need_c2,        // C2 needs to be powered and reserved
+    tag_need_c2,        // C2 needs to be powered
+    tag_reserve_c2,     // C2 needs to be occupied
     
     tag_stop_blk_wait,  // stopped for occupency (eg before turnout)
     tag_stop_eot,       // stop for end of track

@@ -675,22 +675,6 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "E6ED4E30-F3BA-4C8D-8538-61E0DE9FC409"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../../trainctl/ctrl/longtrain.c"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "111"
-            endingLineNumber = "111"
-            landmarkName = "trigmm_for_frontdistcm(tidx, tvars, tconf, left, distcm)"
-            landmarkType = "9">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
             uuid = "F89B6912-2DC7-4B44-99B4-68600F36FFD7"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
@@ -1473,22 +1457,6 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "5D2F3A39-79F0-4F96-AA1D-2A3185626242"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../../trainctl/ctrl/longtrain.c"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "103"
-            endingLineNumber = "103"
-            landmarkName = "trigmm_for_frontdistcm(tidx, tvars, tconf, left, distcm)"
-            landmarkType = "9">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
             uuid = "DBEB26AD-2706-4661-A09D-D0271FCE2088"
             shouldBeEnabled = "No"
             ignoreCount = "0"
@@ -1496,10 +1464,10 @@
             filePath = "../../trainctl/ctrl/longtrain.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "292"
-            endingLineNumber = "292"
-            landmarkName = "unknown"
-            landmarkType = "0">
+            startingLineNumber = "307"
+            endingLineNumber = "307"
+            landmarkName = "ctrl3_check_front_sblks(tidx, tvars, tconf, left, ret)"
+            landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -2046,10 +2014,10 @@
             filePath = "../../trainctl/ctrl/longtrain.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "243"
-            endingLineNumber = "243"
-            landmarkName = "unknown"
-            landmarkType = "0">
+            startingLineNumber = "260"
+            endingLineNumber = "260"
+            landmarkName = "ctrl3_check_front_sblks(tidx, tvars, tconf, left, ret)"
+            landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -2062,10 +2030,10 @@
             filePath = "../../trainctl/ctrl/longtrain.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "235"
-            endingLineNumber = "235"
-            landmarkName = "unknown"
-            landmarkType = "0">
+            startingLineNumber = "252"
+            endingLineNumber = "252"
+            landmarkName = "ctrl3_check_front_sblks(tidx, tvars, tconf, left, ret)"
+            landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -2160,22 +2128,6 @@
             endingLineNumber = "328"
             landmarkName = "-checkFrontRight:"
             landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "8BEEA336-DAC1-4D11-B110-6EB556E80C5E"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../../trainctl/ctrl/longtrain.c"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "116"
-            endingLineNumber = "116"
-            landmarkName = "trigmm_for_frontdistcm(tidx, tvars, tconf, left, distcm)"
-            landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -2673,10 +2625,10 @@
             filePath = "../../trainctl/ctrl/longtrain.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "260"
-            endingLineNumber = "260"
-            landmarkName = "unknown"
-            landmarkType = "0">
+            startingLineNumber = "277"
+            endingLineNumber = "277"
+            landmarkName = "ctrl3_check_front_sblks(tidx, tvars, tconf, left, ret)"
+            landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -3251,10 +3203,10 @@
             filePath = "../../trainctl/ctrl/longtrain.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "264"
-            endingLineNumber = "264"
-            landmarkName = "unknown"
-            landmarkType = "0">
+            startingLineNumber = "281"
+            endingLineNumber = "281"
+            landmarkName = "ctrl3_check_front_sblks(tidx, tvars, tconf, left, ret)"
+            landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy

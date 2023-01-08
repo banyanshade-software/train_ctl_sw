@@ -543,7 +543,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     // rlen = 78 at start of s2
     // -> 70-12(margin) -> 58 stop  90-58 -> 32 (20+12)
     // -> 70-12(margin)-16(brake) -> 42 start braking 90-42 -> 48 (20+12+16)
-    const rettrigs_t expt5 = {0, 0, 3, { {20, tag_chkocc}, {48, tag_brake}, {32, tag_stop_eot}}};
+    const rettrigs_t expt5 = {0, 0, 3, { {20, tag_chkocc}, {32, tag_stop_eot}, {48, tag_brake}}};
     XCTAssert(!memcmp(&rettrigs, &expt5, sizeof(rettrigs_t)));
     
     // up to first trig

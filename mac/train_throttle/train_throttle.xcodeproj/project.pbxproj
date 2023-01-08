@@ -105,6 +105,7 @@
 		1B7A2A13262D599E004E0481 /* itm_debug.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B7A2A11262D599E004E0481 /* itm_debug.c */; };
 		1B7A2A14262D599E004E0481 /* lf_mqueue.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B7A2A12262D599E004E0481 /* lf_mqueue.c */; };
 		1B7B5DEB2965FFF800955045 /* TestLongTrainRight0.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B7B5DEA2965FFF800955045 /* TestLongTrainRight0.m */; };
+		1B7B5E012969B40A00955045 /* TestLongTrainLeft0.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B7B5E002969B40A00955045 /* TestLongTrainLeft0.m */; };
 		1B7D0A8E2814A0B6008EEDD4 /* framing.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B7D0A8C2814A0B6008EEDD4 /* framing.c */; };
 		1B7D0A932815A175008EEDD4 /* oam_error.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B7D0A922815A175008EEDD4 /* oam_error.c */; };
 		1B812B3D273FA77B00924749 /* cautoP.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B812B3C273FA77B00924749 /* cautoP.c */; };
@@ -305,6 +306,7 @@
 		1B7A2A11262D599E004E0481 /* itm_debug.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = itm_debug.c; sourceTree = "<group>"; };
 		1B7A2A12262D599E004E0481 /* lf_mqueue.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = lf_mqueue.c; sourceTree = "<group>"; };
 		1B7B5DEA2965FFF800955045 /* TestLongTrainRight0.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TestLongTrainRight0.m; sourceTree = "<group>"; };
+		1B7B5E002969B40A00955045 /* TestLongTrainLeft0.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TestLongTrainLeft0.m; sourceTree = "<group>"; };
 		1B7D0A8C2814A0B6008EEDD4 /* framing.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = framing.c; sourceTree = "<group>"; };
 		1B7D0A8D2814A0B6008EEDD4 /* framing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = framing.h; sourceTree = "<group>"; };
 		1B7D0A8F2814A0CD008EEDD4 /* boards_def.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = boards_def.h; sourceTree = "<group>"; };
@@ -649,6 +651,7 @@
 				1B53774527E7E0C1009CA93C /* TestLongTrain.m */,
 				1B4CB7D22963641200146D0A /* TestLongTrainRight1.m */,
 				1B7B5DEA2965FFF800955045 /* TestLongTrainRight0.m */,
+				1B7B5E002969B40A00955045 /* TestLongTrainLeft0.m */,
 				1BAC041129527121005DC958 /* TestLTFsm.m */,
 				1BAB9A8528558FA8005EF72B /* README.md */,
 			);
@@ -1010,6 +1013,7 @@
 				1B4CB7D32963641200146D0A /* TestLongTrainRight1.m in Sources */,
 				1B26886B2951201600E31486 /* conf_train.c in Sources */,
 				1B26886D2951201600E31486 /* misc.c in Sources */,
+				1B7B5E012969B40A00955045 /* TestLongTrainLeft0.m in Sources */,
 				1B26886E2951201600E31486 /* lf_mqueue.c in Sources */,
 				1B2688B9295254EB00E31486 /* TestLongTrain.m in Sources */,
 				1B26886F2951201600E31486 /* adc_mean.c in Sources */,

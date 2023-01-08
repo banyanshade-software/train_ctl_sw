@@ -143,41 +143,73 @@ static int check_front(int tidx, train_ctrl_t *tvars,  struct forwdsblk *fsblk, 
 {
     lsblk_num_t ns = (fsblk->numlsblk>0) ? fsblk->r[fsblk->numlsblk-1] : tvars->c1_sblk;
     int cm0 = (ctrl3_getcurpossmm(tvars, conf_train_get(tidx), left)-tvars->beginposmm)/10;
-    cm0 += fsblk->rlen_cm;
-    int cm = 0;
-    int slen = get_lsblk_len_cm(ns, NULL);
-    for (;;) {
-        ns = next_lsblk(ns, left, pa);
-        if (ns.n == -1) {
-            // EOT or BLKWAIT
-            printf("ho");
-            return cm;
-        } else {
-            cm += get_lsblk_len_cm(ns, NULL);
-            if (cm+cm0 >= maxcm+brake_len_cm+margin_stop_len_cm) {
-                *pa = -1;
-                return 0;
+    if (left) {
+        cm0 -= fsblk->rlen_cm;
+        int cm = 0;
+        for (;;) {
+            ns = next_lsblk(ns, left, pa);
+            if (ns.n == -1) {
+                // EOT or BLKWAIT
+                printf("ho");
+                return cm;
+            } else {
+                cm += get_lsblk_len_cm(ns, NULL);
+                if (cm+cm0 >= maxcm+brake_len_cm+margin_stop_len_cm) {
+                    *pa = -1;
+                    return 0;
+                }
+            }
+        }
+
+    } else {
+        cm0 += fsblk->rlen_cm;
+        int cm = 0;
+        //int slen = get_lsblk_len_cm(ns, NULL);
+        for (;;) {
+            ns = next_lsblk(ns, left, pa);
+            if (ns.n == -1) {
+                // EOT or BLKWAIT
+                printf("ho");
+                return cm;
+            } else {
+                cm += get_lsblk_len_cm(ns, NULL);
+                if (cm+cm0 >= maxcm+brake_len_cm+margin_stop_len_cm) {
+                    *pa = -1;
+                    return 0;
+                }
             }
         }
     }
 }
 
 #define ADD_TRIG_NOTHING 0x7FFF
-int _add_trig(int left, rettrigs_t *ret, int rlencm, int c1lencm, int curcm, int k, pose_trig_tag_t tag, int dist, int maxcm)
+int _add_trig(int left, rettrigs_t *ret, int rlencm, int c1lencm, int curcm, int k, pose_trig_tag_t tag, int dist, int mincm, int maxcm, int trlen)
 {
     if (left) {
         // todo
         printf("hai");
     }
     int l = dist-k;
-    int trg = curcm+rlencm-l;
-    if (l>=rlencm) {
-        int s = l-rlencm;
-        return s;
-    } else if (l<c1lencm) {
-        if (trg>maxcm) {
-            printf("hu");
-        } else {
+    if (!left) {
+        int trg = curcm+rlencm-l;
+        if (l>=rlencm) {
+            int s = l-rlencm;
+            return s;
+        } else if (l<c1lencm) {
+            if (trg>maxcm) {
+                printf("hu");
+            } else {
+                ret->trigs[ret->ntrig].poscm = trg;
+                ret->trigs[ret->ntrig].tag = tag;
+                ret->ntrig++;
+            }
+        }
+    } else {
+        int trg = mincm+l+trlen;
+        if (l>=rlencm) {
+            int s = l-rlencm;
+            return s;
+        } else if (l<c1lencm) {
             ret->trigs[ret->ntrig].poscm = trg;
             ret->trigs[ret->ntrig].tag = tag;
             ret->ntrig++;
@@ -219,13 +251,15 @@ int ctrl3_check_front_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *
         //          < rlen   >
         // train can advance rlen-lstp
         int maxcm = tvars->beginposmm/10+c1lencm;
-        int rc = _add_trig(left, ret, fsblk->rlen_cm, c1lencm, curcm, k, a ? tag_stop_blk_wait : tag_stop_eot, margin_stop_len_cm, maxcm);
+        int mincm = tvars->beginposmm/10;
+        int trlen = left ? tconf->trainlen_left_cm : tconf->trainlen_right_cm;
+        int rc = _add_trig(left, ret, fsblk->rlen_cm, c1lencm, curcm, k, a ? tag_stop_blk_wait : tag_stop_eot, margin_stop_len_cm, mincm, maxcm, trlen);
         if (rc!=ADD_TRIG_NOTHING) {
             if (a) ret->isocc = 1;
             else ret->isoet = 1;
             return -1;
         }
-        rc = _add_trig(left, ret, fsblk->rlen_cm, c1lencm, curcm, k, tag_brake, margin_stop_len_cm+brake_len_cm, maxcm);
+        rc = _add_trig(left, ret, fsblk->rlen_cm, c1lencm, curcm, k, tag_brake, margin_stop_len_cm+brake_len_cm, mincm, maxcm, trlen);
         
         if (rc!=ADD_TRIG_NOTHING) {
             // braake

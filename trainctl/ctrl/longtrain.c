@@ -210,9 +210,11 @@ int _add_trig(int left, rettrigs_t *ret, int rlencm, int c1lencm, int curcm, int
             int s = l-rlencm;
             return s;
         } else if (l<c1lencm) {
-            ret->trigs[ret->ntrig].poscm = trg;
-            ret->trigs[ret->ntrig].tag = tag;
-            ret->ntrig++;
+            if (trg<curcm) {
+                ret->trigs[ret->ntrig].poscm = trg;
+                ret->trigs[ret->ntrig].tag = tag;
+                ret->ntrig++;
+            }
         }
     }
     return ADD_TRIG_NOTHING;

@@ -25,6 +25,8 @@
     conf_train_t *tconf;
 }
 
+int cmptrigs(const rettrigs_t *r1, const rettrigs_t *r2);
+
 
 static lsblk_num_t snone = {-1};
 static lsblk_num_t szero = {0};
@@ -525,7 +527,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     XCTAssert(rc==0);
     const rettrigs_t expt2 = {0, 0, 0, { {0, 0}, {0, 0}, {0,0}}};
     // no trig until c1 changes
-    XCTAssert(!memcmp(&rettrigs, &expt2, sizeof(rettrigs_t)));
+    XCTAssert(!cmptrigs(&rettrigs, &expt2));
     
     // change c1
     // ----- b1 (45cm) ------+---- b3 (54cm) ----|end
@@ -546,8 +548,8 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     const rettrigs_t expt5 = {0, 0, 3, { {20, tag_chkocc}, {32, tag_stop_eot}, {48, tag_brake}}};
     XCTAssert(!memcmp(&rettrigs, &expt5, sizeof(rettrigs_t)));
     
-    // up to first trig
-    tvars._curposmm = rettrigs.trigs[1].poscm*10; // 230
+    // up to brake trig
+    tvars._curposmm = rettrigs.trigs[2].poscm*10; // 230
     rc = ctrl3_update_front_sblks(0, &tvars, tconf, 0);
     XCTAssert(!rc);
     XCTAssert(tvars.leftcars.rlen_cm == 28); // 16+12
@@ -556,11 +558,11 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     // rlen = 51 at start of c1
     // -> 51-12(margin) -> stop
     // -> 51-12(margin)-16(brake) -> 23 start braking
-    const rettrigs_t expt6 = {0, 0,2, { {20, tag_chkocc}, {0, 0}, {32, tag_stop_eot}}};
-    XCTAssert(!memcmp(&rettrigs, &expt6, sizeof(rettrigs_t)));
+    const rettrigs_t expt6 = {0, 0,2, { {20, tag_chkocc}, {32, tag_stop_eot}}};
+    XCTAssert(!cmptrigs(&rettrigs, &expt6));
 
     // up to last trig
-    tvars._curposmm = rettrigs.trigs[2].poscm*10; // 320
+    tvars._curposmm = rettrigs.trigs[1].poscm*10; // 320
     rc = ctrl3_update_front_sblks(0, &tvars, tconf, 0);
     XCTAssert(!rc);
     XCTAssert(tvars.leftcars.rlen_cm == 12); // 16+12
@@ -570,7 +572,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     // -> 51-12(margin) -> stop
     // -> 51-12(margin)-16(brake) -> 23 start braking
     const rettrigs_t expt7 = {1, 0, 1, { {20, tag_chkocc}, {0, 0}, {0, 0}}};
-    XCTAssert(!memcmp(&rettrigs, &expt7, sizeof(rettrigs_t)));
+    XCTAssert(!cmptrigs(&rettrigs, &expt7));
 }
 
 // ----------------------------------------------------------

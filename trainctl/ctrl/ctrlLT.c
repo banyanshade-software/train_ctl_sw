@@ -49,6 +49,8 @@ static void _update_spd_limit(int tidx, train_ctrl_t *tvars, int sdir);
 static void _set_speed(int tidx, train_ctrl_t *tvars, int signed_speed, int apply);
 static void _set_state(int tidx, train_ctrl_t *tvars, train_state_t newstate);
 static void _apply_speed(int tidx, train_ctrl_t *tvars);
+static void _check_c2(int tidx, train_ctrl_t *tvars, rettrigs_t *rett);
+
 // -----------------------------------------------------------------
 
 
@@ -124,6 +126,8 @@ void turn_train_on(int tidx, train_ctrl_t *tvars)
 }
 
 
+
+
 void ctrl3_upcmd_set_desired_speed(int tidx, train_ctrl_t *tvars, int16_t desired_speed)
 {
     //int is_eot = 0;
@@ -149,6 +153,7 @@ station:
             }
             if (rc<0) FatalError("FSMd", "setdir", Error_FSM_ChkNeg1);
             // otherwise, start train
+            _check_c2(tidx, tvars, &rett);
             _set_dir(tidx, tvars, sdir);
             _update_spd_limit(tidx, tvars, sdir);
             _set_speed(tidx, tvars, desired_speed, 1);
@@ -384,6 +389,12 @@ void ctrl3_occupency_updated(int tidx, train_ctrl_t *tvars)
     }
     FatalError("FSMo", "end fsm", Error_FSM_Nothandled);
 }
+
+
+void ctrl3_evt_entered_c2(int tidx, train_ctrl_t *tvars, uint8_t from_bemf)
+{
+    
+}
 // -----------------------------------------------------------------
 
 static int _train_check_dir(int tidx, train_ctrl_t *tvars, int sdir, rettrigs_t *rett)
@@ -393,7 +404,7 @@ static int _train_check_dir(int tidx, train_ctrl_t *tvars, int sdir, rettrigs_t 
         return 0;
     }
     const conf_train_t *conf = conf_train_get(tidx);
-    int rc1 = ctrl3_get_next_sblks(tidx, tvars, conf);
+    ctrl3_get_next_sblks(tidx, tvars, conf);
     int rc2 = ctrl3_check_front_sblks(tidx, tvars, conf_train_get(tidx), (sdir<0) ? 1 : 0, rett);
     
     if (rc2 < 0) {
@@ -409,7 +420,8 @@ static int _train_check_dir(int tidx, train_ctrl_t *tvars, int sdir, rettrigs_t 
     } else {
         tvars->brake = 0;
     }
-    return rc2; //xxxxx
+    
+    return rc2;
 
 }
 
@@ -592,7 +604,32 @@ static void _set_state(int tidx, train_ctrl_t *tvars, train_state_t newstate)
     mqf_write_from_ctrl(&m);
 }
 
+static void _set_and_power_c2(int tidx, train_ctrl_t *tvars)
+{
+    if (tvars->can2_xaddr.v != 0xFF) {
+        if (tvars->can2_xaddr.v != tvars->can2_future.v) {
+            FatalError("FUT2", "bad future c2", Error_FSM_BadFut2);
+        }
+        return;
+    }
+    tvars->can2_xaddr = tvars->can2_future;
+}
 
+static void _reserve_c2(int tidx, train_ctrl_t *tvars)
+{
+    lsblk_num_t ns = {-1};
+    set_block_addr_occupency(tvars->can2_future, BLK_OCC_C2, tidx, ns);
+}
+
+static void _check_c2(int tidx, train_ctrl_t *tvars, rettrigs_t *rett)
+{
+    if (rett->res_c2) {
+        _reserve_c2(tidx, tvars);
+    }
+    if (rett->power_c2) {
+        _set_and_power_c2(tidx, tvars);
+    }
+}
 
 
 

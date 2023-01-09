@@ -48,7 +48,9 @@ typedef struct {
     lsblk_num_t c1_sblk;
     xblkaddr_t  can1_xaddr;
     xblkaddr_t  can2_xaddr;
+    xblkaddr_t  can2_future;
     uint8_t c1c2dir_changed:1;
+    uint8_t measure_pose_percm:1;
 
     //
     // #longtrain
@@ -132,5 +134,8 @@ void ctrl3_occupency_updated(int tidx, train_ctrl_t *tvars);
 void turn_train_on(int tidx, train_ctrl_t *tvars);
 
 void turn_train_off(int tidx, train_ctrl_t *tvars);
+
+
+void ctrl3_evt_entered_c2(int tidx, train_ctrl_t *tvars, uint8_t from_bemf);
 
 #endif /* ctrlLT_h */

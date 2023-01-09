@@ -500,18 +500,18 @@ static void normal_process_msg(msg_64_t *m)
     
         case CMD_BEMF_DETECT_ON_C2: {
             itm_debug2(DBG_CTRL,"BEMF/C2", tidx,  m->v1u);
-            if (m->v1u != otvar->can2_xaddr.v) {
-                // typ. because we already switch to c2 (msg SET_C1_C2 and CMD_BEMF_DETECT_ON_C2 cross over
-                itm_debug3(DBG_CTRL, "not c2", tidx, m->v1u, otvar->can2_xaddr.v);
+            if (m->v1u != tvars->can2_xaddr.v) {
+                itm_debug3(DBG_CTRL, "not c2", tidx, m->v1u, tvars->can2_xaddr.v);
                 break;
             }
-            if (otvar->measure_pose_percm) {
-                otvar->measure_pose_percm = 0;
+            if (tvars->measure_pose_percm) {
+                tvars->measure_pose_percm = 0;
                 lsblk_num_t s1 = {1};
                 lsblk_num_t s4 = {4};
                 posecm_measured(tidx, m->v2*10, s1, s4);
             }
-            ctrl2_evt_entered_c2(tidx, otvar, 1);
+            ctrl3_evt_entered_c2(tidx, tvars, 1);
+            //ctrl2_evt_entered_c2(tidx, otvar, 1);
             break;
         }
            

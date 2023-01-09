@@ -141,25 +141,26 @@ static int check_for_dist(_UNUSED_ int tidx, train_ctrl_t *tvars,  struct forwds
 }
  */
 
-typedef int (*check_condition_t)(lsblk_num_t lastsblk, lsblk_num_t testsblk);
+typedef int (*check_condition_t)( train_ctrl_t *tvars, lsblk_num_t lastsblk, lsblk_num_t testsblk);
 
-static int _check_front_condition_eot(lsblk_num_t lastsblk, lsblk_num_t testsblk)
+static int _check_front_condition_eot( train_ctrl_t *tvars, lsblk_num_t lastsblk, lsblk_num_t testsblk)
 {
     if (testsblk.n == -1) return 1;
     return 0;
 }
 
-static int _check_front_condition_res_c2(lsblk_num_t lastsblk, lsblk_num_t testsblk)
+static int _check_front_condition_res_c2(train_ctrl_t *tvars, lsblk_num_t lastsblk, lsblk_num_t testsblk)
 {
     xblkaddr_t c1 = canton_for_lsblk(lastsblk);
     xblkaddr_t c2 = canton_for_lsblk(testsblk);
     if ((c2.v !=0xff) && (c1.v != c2.v)) {
+        tvars->can2_future = c2;
         return 1;
     }
     return 0;
 }
 
-int _check_front_condition_s1pose(lsblk_num_t lastsblk, lsblk_num_t testsblk)
+int _check_front_condition_s1pose( train_ctrl_t *tvars, lsblk_num_t lastsblk, lsblk_num_t testsblk)
 {
     xblkaddr_t c1 = canton_for_lsblk(lastsblk);
     xblkaddr_t c2 = canton_for_lsblk(testsblk);
@@ -183,7 +184,7 @@ static int check_front(int tidx, train_ctrl_t *tvars,  struct forwdsblk *fsblk, 
         int cm = 0;
         for (;;) {
             ns = next_lsblk(ns, left, pa);
-            if (cond(fs, ns)) {
+            if (cond(tvars, fs, ns)) {
                 // EOT or BLKWAIT
                 return cm;
             } else {
@@ -201,7 +202,7 @@ static int check_front(int tidx, train_ctrl_t *tvars,  struct forwdsblk *fsblk, 
         //int slen = get_lsblk_len_cm(ns, NULL);
         for (;;) {
             ns = next_lsblk(ns, left, pa);
-            if (cond(fs, ns)) {
+            if (cond(tvars, fs, ns)) {
                 // EOT or BLKWAIT
                 return cm;
             } else {
@@ -228,7 +229,7 @@ static int check_loco(int tidx, train_ctrl_t *tvars,  struct forwdsblk *fsblk, i
         int cm = 0;
         for (;;) {
             ns = next_lsblk(ns, left, pa);
-            if (cond(fs, ns)) {
+            if (cond(tvars, fs, ns)) {
                 // EOT or BLKWAIT
                 return cm;
             } else {
@@ -246,7 +247,7 @@ static int check_loco(int tidx, train_ctrl_t *tvars,  struct forwdsblk *fsblk, i
         //int slen = get_lsblk_len_cm(ns, NULL);
         for (;;) {
             ns = next_lsblk(ns, left, pa);
-            if (cond(fs, ns)) {
+            if (cond(tvars, fs, ns)) {
                 // EOT or BLKWAIT
                 return cm;
             } else {
@@ -297,6 +298,41 @@ int _add_trig(int left, rettrigs_t *ret, int rlencm, int c1lencm, int curcm, int
     return ADD_TRIG_NOTHING;
 }
 
+int _add_trig_loco(int left, rettrigs_t *ret, int rlencm, int c1lencm, int curcm, int k, pose_trig_tag_t tag, int dist, int mincm, int maxcm, int trlen)
+{
+    // ---------|------||
+    //          < -k-->
+    //      <---dist-->
+    int l = dist-k;
+    if (!left) {
+        int trg = mincm+c1lencm-l;
+        if (mincm+l<=curcm) {
+            int s = mincm+l-curcm;
+            return s;
+        } else if (l<c1lencm) {
+            if (trg>maxcm) {
+                //printf("hu");
+            } else {
+                ret->trigs[ret->ntrig].poscm = trg;
+                ret->trigs[ret->ntrig].tag = tag;
+                ret->ntrig++;
+            }
+        }
+    } else {
+        int trg = mincm+l+trlen;
+        if (l>=rlencm) {
+            int s = l-rlencm;
+            return s;
+        } else if (l<c1lencm) {
+            if (trg<curcm) {
+                ret->trigs[ret->ntrig].poscm = trg;
+                ret->trigs[ret->ntrig].tag = tag;
+                ret->ntrig++;
+            }
+        }
+    }
+    return ADD_TRIG_NOTHING;
+}
 int ctrl3_check_front_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *tconf, int left,  rettrigs_t *ret)
 {
     memset(ret, 0, sizeof(rettrigs_t));
@@ -352,7 +388,10 @@ int ctrl3_check_front_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *
     
     k = check_front(tidx, tvars, fsblk, left, c1lencm, &a, _check_front_condition_res_c2);
     if (a != -1) {
-        _add_trig(left, ret, fsblk->rlen_cm, c1lencm, curcm, k, tag_reserve_c2, margin_c2_len_cm, mincm, maxcm, trlen);
+        int rc = _add_trig(left, ret, fsblk->rlen_cm, c1lencm, curcm, k, tag_reserve_c2, margin_c2_len_cm, mincm, maxcm, trlen);
+        if (rc != ADD_TRIG_NOTHING) {
+            ret->res_c2 = 1;
+        }
     }
     
     // s1 end
@@ -374,11 +413,14 @@ int ctrl3_check_front_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *
             }
         }
     }
-    // c1 change and power c2
-    if ((0)) {
+    //  power c2
+    if ((1)) {
         k = check_loco(tidx, tvars, fsblk, left, c1lencm, &a, _check_front_condition_res_c2);
         if (a != -1) {
-            _add_trig(left, ret, 0/*fsblk->rlen_cm*/, c1lencm, curcm, k, tag_need_c2, 0, mincm, maxcm, trlen);
+            int rc = _add_trig_loco(left, ret, 0/*fsblk->rlen_cm*/, c1lencm, curcm, k, tag_need_c2, margin_c2_len_cm, mincm, maxcm, trlen);
+            if (rc != ADD_TRIG_NOTHING) {
+                ret->power_c2 = 1;
+            }
         }
     }
     return retc;

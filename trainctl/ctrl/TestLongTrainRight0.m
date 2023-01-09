@@ -34,8 +34,6 @@ extern int errorhandler;
 - (void)setUp {
     
     errorhandler = 0;
-    //extern uint8_t topology_num;
-    //topology_num = 0;
 
     tconf = (conf_train_t *) conf_train_get(0);
     notify_occupency_change = 0;
@@ -93,11 +91,12 @@ extern int errorhandler;
     rettrigs_t rettrigs = {0};
     rc = ctrl3_check_front_sblks(0, &tvars, tconf, 0, &rettrigs);
     XCTAssert(rc==0);
-    const rettrigs_t expt1 = { 0, 0, 4, {{55+beg, tag_chkocc}, {50+beg,tag_stop_eot}, {34+beg, tag_brake}, {70+beg,tag_end_lsblk}, {0,0}}};
+    const rettrigs_t expt1 = { 0, 0, 0, 0, 4, {{55+beg, tag_chkocc}, {50+beg,tag_stop_eot}, {34+beg, tag_brake}, {70+beg,tag_end_lsblk}, {0,0}}};
     XCTAssert(!cmptrigs(&rettrigs, &expt1));
-    
-    
 }
+
+
+
 
 - (void)testCheckBrake1
 {
@@ -157,7 +156,7 @@ extern int errorhandler;
     rc = ctrl3_check_front_sblks(0, &tvars, tconf, 0, &rettrigs);
     XCTAssert(rc>0);
     XCTAssert(rc==16-(cp-49+15));
-    const rettrigs_t expt1 = { 0, 0, 3, {{55+beg, tag_chkocc}, {50+beg,tag_stop_eot}, {70+beg,tag_end_lsblk}, {0,0}, {0,0}}};
+    const rettrigs_t expt1 = { 0, 0, 0, 0, 3, {{55+beg, tag_chkocc}, {50+beg,tag_stop_eot}, {70+beg,tag_end_lsblk}, {0,0}, {0,0}}};
     XCTAssert(!cmptrigs(&rettrigs, &expt1));
 }
 
@@ -202,10 +201,10 @@ extern int errorhandler;
     rc = ctrl3_check_front_sblks(0, &tvars, tconf, 0, &rettrigs);
     XCTAssert(rc<0);
     if (b) {
-        const rettrigs_t expt1 = { 1, 0, 2, {{58+beg, tag_chkocc},  {70+beg,tag_end_lsblk}, {0,0}, {0,0}}};
+        const rettrigs_t expt1 = { 1, 0, 0, 0, 2, {{58+beg, tag_chkocc},  {70+beg,tag_end_lsblk}, {0,0}, {0,0}}};
         XCTAssert(!cmptrigs(&rettrigs, &expt1));
     } else {
-        const rettrigs_t expt1 = { 1, 0, 2, {{55+beg, tag_chkocc},  {70+beg,tag_end_lsblk}, {0,0}, {0,0}}};
+        const rettrigs_t expt1 = { 1, 0, 0, 0, 2, {{55+beg, tag_chkocc},  {70+beg,tag_end_lsblk}, {0,0}, {0,0}}};
         XCTAssert(!cmptrigs(&rettrigs, &expt1));
     }
 }
@@ -218,7 +217,9 @@ int cmptrigs(const rettrigs_t *r1, const rettrigs_t *r2)
 {
     if (r1->isocc != r2->isocc) return -1;
     if (r1->isoet != r2->isoet) return -2;
-    if (r1->ntrig != r2->ntrig) return -3;
+    if (r1->power_c2 != r2->power_c2) return -3;
+    if (r1->res_c2 != r2->res_c2) return -4;
+    if (r1->ntrig != r2->ntrig) return -5;
     for (int i=0; i<NUMTRIGS; i++) {
         if (r1->trigs[i].poscm != r2->trigs[i].poscm) {
             return i+10;

@@ -277,7 +277,7 @@ static void free_block_other(int tidx, _UNUSED_ train_oldctrl_t *tvars, xblkaddr
 // ----------------------
 
 
-static lsblk_num_t next_lsblk_free(int tidx, train_oldctrl_t *tvars,  uint8_t left, uint8_t *palternate, xblkaddr_t *pcan)
+static lsblk_num_t next_lsblk_free(int tidx, train_oldctrl_t *tvars,  uint8_t left, int8_t *palternate, xblkaddr_t *pcan)
 {
     lsblk_num_t nsa = {-1};
     lsblk_num_t retns = {-1};

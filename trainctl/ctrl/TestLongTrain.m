@@ -423,7 +423,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     rettrigs_t rettrigs = {0};
     rc = ctrl3_check_front_sblks(0, &tvars, tconf, 0, &rettrigs);
     XCTAssert(rc==15);  // 27 cm rlen -> 12 margin + 16 brake
-    const rettrigs_t expt1 = {0, 0, 0, 0, 2,{ {87, tag_chkocc},{75, tag_stop_blk_wait}}};
+    const rettrigs_t expt1 = {0, 0, 0, 1, 2,{ {87, tag_chkocc},{75, tag_stop_blk_wait}}};
     XCTAssert(!cmptrigs(&rettrigs, &expt1));
     
     // ------------------------
@@ -442,7 +442,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     XCTAssert(!rc);
     rc = ctrl3_check_front_sblks(0, &tvars, tconf, 0, &rettrigs);
     XCTAssert(rc==-1);
-    const rettrigs_t expt2 = {0, 1, 0, 0, 1, { {87, tag_chkocc}, {0, 0}, {0, 0}}};
+    const rettrigs_t expt2 = {0, 1, 0, 1, 1, { {87, tag_chkocc}, {0, 0}, {0, 0}}};
     XCTAssert(!cmptrigs(&rettrigs, &expt2));
 
     // change to1 to normal
@@ -451,7 +451,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     XCTAssert(!rc);
     rc = ctrl3_check_front_sblks(0, &tvars, tconf, 0, &rettrigs);
     XCTAssert(rc==0);
-    const rettrigs_t expt3 = {0, 0, 0, 0, 1, { {87, tag_chkocc}, {0, 0}, {0, 0}}};
+    const rettrigs_t expt3 = {0, 0, 1, 1, 1, { {87, tag_chkocc}, {0, 0}, {0, 0}}};
     XCTAssert(!cmptrigs(&rettrigs, &expt3));
     
 }

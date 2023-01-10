@@ -393,7 +393,62 @@ void ctrl3_occupency_updated(int tidx, train_ctrl_t *tvars)
 
 void ctrl3_evt_entered_c2(int tidx, train_ctrl_t *tvars, uint8_t from_bemf)
 {
+    if (from_bemf && ignore_bemf_pres()) return;
+    itm_debug3(DBG_CTRL, "evt_ent_c2", tidx, tvars->can1_xaddr.v,  tvars->can2_xaddr.v);
+
+    if (tvars->_state != train_state_running) {
+        itm_debug3(DBG_CTRL|DBG_ERR, "ent C2/badst", tidx, tvars->_state, from_bemf);
+        return;
+    }
+    if (tvars->c1c2) {
+        itm_debug3(DBG_CTRL|DBG_ERR, "ent C2/c1c2", tidx, tvars->_state, from_bemf);
+    }
+    tvars->c1c2 = 1;
     
+    
+    if (from_bemf && ignore_ina_pres()) {
+        //ctrl_set_timer(tidx, tvars, TLEAVE_C1, TLEAVE_C1_VALUE);
+    } else {
+        //ctrl_set_timer(tidx, tvar, TLEAVE_C1, TGUARD_C1_VALUE);
+    }
+}
+void ctrl3_evt_leaved_c1(int tidx, train_ctrl_t *tvars)
+{
+    itm_debug3(DBG_CTRL|DBG_POSE, "evt_left_c1", tidx, tvars->_state, tvars->can1_xaddr.v);
+    if (tvars->_state != train_running_c1) {
+        itm_debug2(DBG_CTRL|DBG_ERR, "leav_c1/bs", tidx, tvars->_state);
+        return;
+    }
+    if (!tvars->c1c2) {
+        itm_debug2(DBG_CTRL|DBG_ERR, "leav_c1/nc1c2", tidx, tvars->_state);
+        return;
+    }
+    tvars->c1c2 = 0;
+#if 0
+    ctrl_reset_timer(tidx, tvars, TLEAVE_C1);
+    free_block_c1(tidx, tvars);
+    //set_block_addr_occupency(tvars->can1_addr, BLK_OCC_FREE, 0xFF, snone);
+    if (1 == tvars->can2_xaddr.v) { // XXX Hardcoded for now
+        tvars->measure_pose_percm = 1;
+    }
+    itm_debug2(DBG_CTRL, "** C1", tidx, tvars->can1_xaddr.v);
+    tvars->can1_xaddr = tvars->can2_xaddr;
+    tvars->c1_sblk = first_lsblk_with_canton(tvars->can2_xaddr, tvars->c1_sblk);
+    if (tvars->c1_sblk.n == -1) {
+        FatalError("C1no", "No C1 in leaved C1", Error_CtrlNoC1l);
+    }
+
+    int len = get_lsblk_len_cm_steep(tvars->c1_sblk, conf_train_get(tidx), tvars);
+    if (tvars->_dir<0) {
+        tvars->beginposmm =  -len*10;
+    } else {
+        tvars->beginposmm = 0;
+    }
+    itm_debug2(DBG_CTRL|DBG_POSE, "beginpos", tidx, tvars->beginposmm);
+
+    tvars->can2_xaddr.v = 0xFF; // will be updated by update_c2
+    tvars->tick_flags |=  _TFLAG_C1_CHANGED|_TFLAG_C1_CHANGED | _TFLAG_C1LSB_CHANGED;
+#endif
 }
 // -----------------------------------------------------------------
 
@@ -593,7 +648,31 @@ static void _set_state(int tidx, train_ctrl_t *tvars, train_state_t newstate)
         default:
             break;
     }
-    
+    // sanity check on c1
+    if ((1)) {
+        if (tvars->c1_sblk.n == -1) {
+            FatalError("FSMb", "FSM san", Error_FSM_Sanity5);
+        } else {
+            xblkaddr_t b = canton_for_lsblk(tvars->c1_sblk);
+            if (b.v == 0xFF) {
+                FatalError("FSMb", "FSM san", Error_FSM_Sanity6);
+            } else if (b.v != tvars->can1_xaddr.v) {
+                FatalError("FSMb", "FSM san", Error_FSM_Sanity7);
+            }
+        }
+        
+        // sanity check on c1c2
+        if (tvars->c1c2) {
+            if (tvars->can2_xaddr.v == 0xFF) {
+                FatalError("FSMb", "FSM san", Error_FSM_Sanity8);
+            }
+        }
+        if (tvars->can2_xaddr.v != 0xFF) {
+            if (tvars->can2_xaddr.v == tvars->can1_xaddr.v) {
+                FatalError("FSMb", "FSM san", Error_FSM_Sanity9);
+            }
+        }
+    }
     // notify UI
     msg_64_t m = {0};
     m.from = MA1_CTRL(tidx);

@@ -423,48 +423,7 @@ int ctrl3_check_front_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *
             }
         }
     }
-    return retc;
-  
-#if 0
-    lsblk_num_t ns = next_lsblk(tvars->c1_sblk, left, &a);
-    if (ns.n != -1) {
-        // if same canton and no ina3221
-        if ((canton_for_lsblk(ns).v == tvars->can1_xaddr.v)
-            && (ignore_ina_pres() || (get_lsblk_ina3221(tvars->c1_sblk) == get_lsblk_ina3221(ns)))) {
-            int l = 0;
-            if (!left) {
-                l = tvars->beginposmm + get_lsblk_len_cm(tvars->c1_sblk, NULL);
-                if (l>=stoplmm) goto chkc1;
-            } else {
-                l = tvars->beginposmm;
-                if (l<=stoplmm) goto chkc1;
-            }
-            ret->trigs[trigidx].poscm = l/10;
-            ret->trigs[trigidx].tag = tag_end_lsblk;
-            trigidx++;
-        }
-    chkc1:
-        if (canton_for_lsblk(ns).v != tvars->can1_xaddr.v) {
-            //static int trig_for_frontdistcm(_UNUSED_ int tidx, train_ctrl_t *tvars,  _UNUSED_ const conf_train_t *tconf, int left, int distcm)
-
-            int l1 = trigmm_for_frontdistcm(tidx, tvars, tconf, left,  margin_c2_len_cm)/10;
-            
-            if (!left) {
-                if (l1>=stoplmm) goto done;
-                if (l1<=0) {
-                    goto done;
-                }
-            } else {
-                if (l1<=stoplmm) goto done;
-            }
-            ret->trigs[trigidx].poscm = l1/10;
-            ret->trigs[trigidx].tag = tag_need_c2;
-            trigidx++;
-        }
-    done:
-        itm_debug1(DBG_CTRL, "hop", tidx);
-    }
-#endif
+    
     return retc;
 }
 

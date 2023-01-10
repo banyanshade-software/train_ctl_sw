@@ -51,6 +51,8 @@ typedef struct {
     xblkaddr_t  can2_future;
     uint8_t c1c2dir_changed:1;
     uint8_t measure_pose_percm:1;
+    uint8_t c1c2:1;
+    uint8_t off_requested:1;
 
     //
     // #longtrain
@@ -62,7 +64,6 @@ typedef struct {
     int32_t beginposmm; // left side ofl sblk,  either 0, or -len
 
     uint8_t brake:1;
-    uint8_t off_requested:1;
 } train_ctrl_t;
 
 
@@ -137,5 +138,8 @@ void turn_train_off(int tidx, train_ctrl_t *tvars);
 
 
 void ctrl3_evt_entered_c2(int tidx, train_ctrl_t *tvars, uint8_t from_bemf);
+
+extern int ignore_ina_pres(void);
+extern int ignore_bemf_pres(void);
 
 #endif /* ctrlLT_h */

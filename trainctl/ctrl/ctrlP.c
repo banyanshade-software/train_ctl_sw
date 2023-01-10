@@ -651,7 +651,7 @@ void ctrl2_update_c2(int tidx, train_oldctrl_t *tvar, const conf_train_t *tconf,
     tvar->can2_xaddr.v = 0xFF;
     lsblk_num_t ns = snone;
     if (tvar->_dir) {
-        uint8_t alternate = 0;
+        int8_t alternate = 0;
         xblkaddr_t c2r;
         ns = next_lsblk_free(tidx, tvar, tvar->_dir<0, &alternate, &c2r);
         xblkaddr_t c2n = canton_for_lsblk(ns);

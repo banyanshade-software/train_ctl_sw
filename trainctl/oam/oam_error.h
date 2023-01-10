@@ -73,7 +73,12 @@ enum fatal_error_code {
     Error_FSM_Sanity2,
     Error_FSM_Sanity3,
     Error_FSM_Sanity4,
-    
+    Error_FSM_Sanity5,
+    Error_FSM_Sanity6,
+    Error_FSM_Sanity7,
+    Error_FSM_Sanity8,
+    Error_FSM_Sanity9,
+
 };
 
 

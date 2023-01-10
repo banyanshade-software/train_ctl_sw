@@ -24,11 +24,22 @@
 
 static NSString *dump_msgbuf(int clear);
 static int compareMsg64(const msg_64_t *exp, int n, int clear);
+static int compareMsg64_itrig(const msg_64_t *exp, int n, int clear);
+
+
 
 #define EXPMSG(...) do {                                     \
     const msg_64_t exp[] =  { __VA_ARGS__ } ;                \
     int n = sizeof(exp)/sizeof(msg_64_t);                    \
     int rcc = compareMsg64(exp, n, 1);                        \
+    XCTAssert(!rcc);                                          \
+} while (0)
+
+
+#define EXPMSG_ITRIG(...) do {                                     \
+    const msg_64_t exp[] =  { __VA_ARGS__ } ;                \
+    int n = sizeof(exp)/sizeof(msg_64_t);                    \
+    int rcc = compareMsg64_itrig(exp, n, 1);                        \
     XCTAssert(!rcc);                                          \
 } while (0)
 
@@ -56,10 +67,10 @@ mqf_t from_ctrl =  {
 }
 
 
-static lsblk_num_t snone = {-1};
-static lsblk_num_t szero = {0};
+//static lsblk_num_t snone = {-1};
+//static lsblk_num_t szero = {0};
 static lsblk_num_t sone = {1};
-static lsblk_num_t stwo = {2};
+//static lsblk_num_t stwo = {2};
 
 static const xtrnaddr_t to0 = { .v = 0};
 static const xtrnaddr_t to1 = { .v = 1};
@@ -130,7 +141,7 @@ extern int errorhandler;
     //{80, 90, 24, 90, 0},
     //{80, 00, 44, 1485, 1025},
     //{80, F0, C3, 1, 2}
-    EXPMSG({.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_C1_C2,        .vb0=1, .vb1=1, .vb2=0xFF, .vb3=1},
+    EXPMSG_ITRIG({.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_C1_C2,        .vb0=1, .vb1=1, .vb2=0xFF, .vb3=1},
            {.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_TARGET_SPEED, .v1=90, .v2=0},
            {.to=MA0_CANTON(0), .subc=1, .from=MA1_CTRL(0), .cmd=CMD_POSE_SET_TRIG, .va16=1485, .vcu8=tag_chkocc, .vb8=1},
            {.to=MA0_CANTON(0), .subc=1, .from=MA1_CTRL(0), .cmd=CMD_POSE_SET_TRIG, .va16=585, .vcu8=tag_reserve_c2, .vb8=1},
@@ -163,7 +174,7 @@ extern int errorhandler;
     XCTAssert(tvars._spd_limit == 99);
     NSString *s = dump_msgbuf(0);
     NSLog(@"...%@", s);
-    EXPMSG({.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_C1_C2,        .vb0=1, .vb1=1, .vb2=0xFF, .vb3=1},
+    EXPMSG_ITRIG({.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_C1_C2,        .vb0=1, .vb1=1, .vb2=0xFF, .vb3=1},
            {.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_TARGET_SPEED, .v1=40, .v2=0},
            {.to=MA0_CANTON(0), .subc=1, .from=MA1_CTRL(0), .cmd=CMD_POSE_SET_TRIG, .va16=855, .vcu8=tag_chkocc, .vb8=1},
            {.to=MA0_CANTON(0), .subc=1, .from=MA1_CTRL(0), .cmd=CMD_POSE_SET_TRIG, .va16=315, .vcu8=tag_stop_eot, .vb8=1},
@@ -182,7 +193,7 @@ extern int errorhandler;
     XCTAssert(tvars._spd_limit == 99);
     NSString *s = dump_msgbuf(0);
     NSLog(@"...%@", s);
-    EXPMSG({.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_C1_C2,        .vb0=1, .vb1=1, .vb2=0xFF, .vb3=1},
+    EXPMSG_ITRIG({.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_C1_C2,        .vb0=1, .vb1=1, .vb2=0xFF, .vb3=1},
            {.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_TARGET_SPEED, .v1=60, .v2=0},
            {.to=MA0_CANTON(0), .subc=1, .from=MA1_CTRL(0), .cmd=CMD_POSE_SET_TRIG, .va16=945, .vcu8=tag_chkocc, .vb8=1},
            {.to=MA0_CANTON(0), .subc=1, .from=MA1_CTRL(0), .cmd=CMD_POSE_SET_TRIG, .va16=405, .vcu8=tag_stop_eot, .vb8=1},
@@ -257,7 +268,7 @@ extern int errorhandler;
     s = dump_msgbuf(0);
     NSLog(@"...%@", s);
     // {80, 90, 20, 257, 511},{80, 90, 24, 90, 0},{80, 00, 44, 225, 1025},{80, 00, 44, 1395, 1281},{80, F0, C3, 1, 3}
-    EXPMSG({.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_C1_C2,        .vb0=1, .vb1=1, .vb2=0xFF, .vb3=1},
+    EXPMSG_ITRIG({.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_C1_C2,        .vb0=1, .vb1=1, .vb2=0xFF, .vb3=1},
            {.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_TARGET_SPEED, .v1=90, .v2=0},
            {.to=MA0_CANTON(0), .subc=1, .from=MA1_CTRL(0), .cmd=CMD_POSE_SET_TRIG, .va16=225, .vcu8=tag_chkocc, .vb8=1},
            {.to=MA0_CANTON(0), .subc=1, .from=MA1_CTRL(0), .cmd=CMD_POSE_SET_TRIG, .va16=1395, .vcu8=tag_brake, .vb8=1},
@@ -364,7 +375,8 @@ extern int errorhandler;
     XCTAssert(tvars._spd_limit == 99);
     NSString *s = dump_msgbuf(0);
     NSLog(@"...%@", s);
-    EXPMSG({.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_C1_C2,        .vb0=1, .vb1=-1, .vb2=0xFF, .vb3=-1},
+    // {80, 90, 20, -255, -256},{80, 90, 24, 90, 0},{80, F0, C3, 1, 2}
+    EXPMSG_ITRIG({.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_C1_C2,        .vb0=1, .vb1=-1, .vb2=0, .vb3=-1},
            {.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_TARGET_SPEED, .v1=90, .v2=0},
            /*{.to=MA0_CANTON(0), .subc=1, .from=MA1_CTRL(0), .cmd=CMD_POSE_SET_TRIG, .va16=945, .vcu8=tag_chkocc, .vb8=1},
            {.to=MA0_CANTON(0), .subc=1, .from=MA1_CTRL(0), .cmd=CMD_POSE_SET_TRIG, .va16=405, .vcu8=tag_stop_eot, .vb8=1},*/
@@ -415,6 +427,43 @@ static int compareMsg64(const msg_64_t *exp, int n, int clear)
                 break;
             }
         }
+    }
+    if (clear) {
+        mqf_clear(&from_ctrl);
+    }
+    return rc;
+}
+
+static int compareMsg64_itrig(const msg_64_t *exp, int n, int clear)
+{
+    int rc = 0;
+    int nq = 0;
+    int ql = mqf_len(&from_ctrl);
+    for (int i=0; i<n; i++) {
+        if (exp[i].cmd == CMD_POSE_SET_TRIG) continue;
+        msg_64_t m = {0};
+        for (;;) {
+            if (nq>=ql) {
+                NSLog(@"missing q msg");
+                return -1;
+            }
+            m = qbuf[nq];
+            nq++;
+            if (m.cmd == CMD_POSE_SET_TRIG) continue;
+            break;
+        }
+        if (memcmp(&m, &exp[i], sizeof(msg_64_t))) {
+            NSLog(@"%d exp: %2.2x %2.2x cmd=%2.2x subc=%d v1=%d v2=%d", i,
+                  exp[i].from, exp[i].to, exp[i].cmd, exp[i].subc, exp[i].v1, exp[i].v2);
+            NSLog(@"%d got: %2.2x %2.2x cmd=%2.2x subc=%d v1=%d v2=%d", i,
+                  qbuf[i].from, qbuf[i].to, qbuf[i].cmd, qbuf[i].subc, qbuf[i].v1, qbuf[i].v2);
+            rc = i+1;
+            break;
+        }
+    }
+    if (nq != ql) {
+        NSLog(@"too many q msg");
+        return -1;
     }
     if (clear) {
         mqf_clear(&from_ctrl);

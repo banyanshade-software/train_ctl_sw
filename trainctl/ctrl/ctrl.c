@@ -565,6 +565,13 @@ int ignore_ina_pres(void)
 	return 0;
 }
 
+int ignore_bemf_pres(void)
+{
+    if (ignore_ina_presence) return 0;
+    if (ignore_bemf_presence) return 1;
+    return 0;
+}
+
 // ---------------------------------------------------------------
 
 static void evt_tleave(int tidx, train_oldctrl_t *tvars)

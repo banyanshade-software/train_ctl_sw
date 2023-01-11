@@ -23,6 +23,7 @@
 #include "ctrl.h"
 #include "ctrlLT.h"
 #include "longtrain.h"
+#include "trace_train.h"
 //#include "ctrlP.h"
 //#include "cautoP.h"
 
@@ -276,12 +277,14 @@ void ctrl3_pose_triggered(int tidx, train_ctrl_t *tvars, pose_trig_tag_t trigtag
 
     if (ca_addr.v != tvars->can1_xaddr.v) {
         itm_debug3(DBG_ERR|DBG_POSEC|DBG_CTRL, "ptrg bad", tidx, ca_addr.v, tvars->can1_xaddr.v);
+        trace_train_trig(ctrl_tasklet.last_tick, tidx, tvars, trigtag, -1);
         return;
     }
     
     const conf_train_t *tconf = conf_train_get(tidx);
     tvars->_curposmm = pose_convert_to_mm(tconf, cposd10*10);
     itm_debug3(DBG_POSE|DBG_CTRL, "curposmm", tidx, tvars->_curposmm, trigtag);
+    trace_train_trig(ctrl_tasklet.last_tick, tidx, tvars, trigtag, tvars->_curposmm);
 
     
     switch (tvars->_state) {
@@ -595,6 +598,7 @@ static void _apply_trigs(int tidx, train_ctrl_t *tvars, const rettrigs_t *rett)
         _set_one_trig(tidx, conf,  tvars->_sdir, tvars->can1_xaddr ,
                       pose_convert_from_mm(conf, rett->trigs[i].poscm*10),
                       rett->trigs[i].tag);
+        trace_train_trig_set(ctrl_tasklet.last_tick, tidx, tvars, rett->trigs[i].tag, rett->trigs[i].poscm*10);
     }
 }
 

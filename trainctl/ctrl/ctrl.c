@@ -521,7 +521,7 @@ static void normal_process_msg(msg_64_t *m)
            
         case CMD_POSE_TRIGGERED:
             itm_debug3(DBG_POSEC, "Trig", m->v1u, m->v2u, m->subc);
-            trace_train_trig(ctrl_tasklet.last_tick, tidx, tvars, (pose_trig_tag_t)m->vcu8, m->va16);
+            //trace_train_trig(ctrl_tasklet.last_tick, tidx, tvars, (pose_trig_tag_t)m->vcu8, m->va16);
             xblkaddr_t tb = FROM_CANTON(*m);
             // int ctrl2_evt_pose_triggered(int tidx, train_oldctrl_t *tvar, const conf_train_t *tconf, xblkaddr_t ca_addr, uint8_t tag, int16_t cposd10)
             //ctrl2_evt_pose_triggered(tidx, otvar, NULL, tb, m->vcu8, m->va16);

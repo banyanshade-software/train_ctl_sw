@@ -50,9 +50,15 @@ typedef struct {
     int32_t pose;
 } train_trace_trig_record_t;
 
+typedef enum {
+    trace_kind_tick = 1,
+    trace_kind_trig,
+    trace_kind_trig_set,
+} trace_rec_kind_t;
+
 typedef struct {
     uint32_t tick;
-    int istick;
+    trace_rec_kind_t kind;
     union {
         train_trace_tick_record_t tickrec;
         train_trace_trig_record_t trigrec;
@@ -106,7 +112,7 @@ void _trace_train_postick(uint32_t tick, int tidx, train_ctrl_t *tvars)
     train_trace_record_t *rec = get_newrec(tidx);
     if (!rec) return;
     rec->tick = tick;
-    rec->istick = 1;
+    rec->kind = trace_kind_tick;
     rec->tickrec.c1lblk = tvars->c1_sblk;
     rec->tickrec.sdir = tvars->_sdir;
     rec->tickrec.beginposmm = tvars->beginposmm;
@@ -115,7 +121,7 @@ void _trace_train_postick(uint32_t tick, int tidx, train_ctrl_t *tvars)
     rec->tickrec._desired_signed_speed = tvars->_desired_signed_speed;
     rec->tickrec._target_unisgned_speed = tvars->_target_unisgned_speed;
     
-    if (lrec && (lrec->istick)) {
+    if (lrec && (lrec->kind == trace_kind_tick)) {
         if (!memcmp(&lrec->tickrec, &rec->tickrec, sizeof(train_trace_tick_record_t))) {
             cancel_rec(tidx);
         } else {
@@ -130,10 +136,23 @@ void _trace_train_trig(uint32_t tick, int tidx, train_ctrl_t *tvars, pose_trig_t
     train_trace_record_t *rec = get_newrec(tidx);
     if (!rec) return;
     rec->tick = tick;
-    rec->istick = 0;
+    rec->kind = trace_kind_trig;
     rec->trigrec.tag = tag;
     rec->trigrec.pose = pos;
 }
+
+
+void _trace_train_trig_set(uint32_t tick, int tidx, train_ctrl_t *tvars, pose_trig_tag_t tag, int32_t pos)
+{
+    train_trace_record_t *rec = get_newrec(tidx);
+    if (!rec) return;
+    rec->tick = tick;
+    rec->kind = trace_kind_trig_set;
+    rec->trigrec.tag = tag;
+    rec->trigrec.pose = pos;
+}
+
+
 static const char *state_name(train_state_t st)
 {
     switch (st) {
@@ -178,9 +197,9 @@ void trace_train_dump(int tidx)
         train_trace_record_t *rec = &t->rec[idx];
         if (f && !rec->tick) continue;
         f = 0;
-        switch (rec->istick) {
-            case 1:
-                printf("%2d %6.6d state=%9s dir=%d sblk=%d spd=%3d dspd=%3d pos=%d from %d\n",
+        switch (rec->kind) {
+            case trace_kind_tick:
+                printf("%2d %6.6d      state=%-9s dir=%d sblk=%d spd=%3d dspd=%3d pos=%d from %d\n",
                        idx, rec->tick,
                        state_name(rec->tickrec.state),
                        rec->tickrec.sdir,
@@ -190,9 +209,11 @@ void trace_train_dump(int tidx)
                        rec->tickrec.curposmm,
                        rec->tickrec.beginposmm);
                 break;
-            case 0:
-                printf("%2d %6.6d TRIG %9s pos=%d\n",
+            case trace_kind_trig: // FALLTHRU
+            case trace_kind_trig_set:
+                printf("%2d %6.6d %s %-9s pos=%d\n",
                        idx, rec->tick,
+                       (rec->kind == trace_kind_trig) ? "TRIG" : "--set",
                        trig_name(rec->trigrec.tag),
                        rec->trigrec.pose);
                 

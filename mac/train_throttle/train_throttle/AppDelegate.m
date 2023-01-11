@@ -2144,15 +2144,15 @@ uint32_t SimuTick = 0;
 
     int notif = NOTIF_NEW_ADC_1;
    
-    bemf_tick(notif,        mt, mdt);
-    msgsrv_tick(notif,      mt, mdt);
-    tasklet_run(&OAM_tasklet, mt);
-    tasklet_run(&spdctl_tasklet, mt);
-    tasklet_run(&canton_tasklet, mt);
+    bemf_tick(notif,         mt, mdt);
+    msgsrv_tick(notif,       mt, mdt);
+    tasklet_run(&OAM_tasklet,     mt);
+    tasklet_run(&spdctl_tasklet,  mt);
+    tasklet_run(&canton_tasklet,  mt);
     tasklet_run(&turnout_tasklet, mt);
-    tasklet_run(&servo_tasklet, mt);
-    tasklet_run(&ctrl_tasklet,  mt);
-    tasklet_run(&planner_tasklet,  mt);
+    tasklet_run(&servo_tasklet,   mt);
+    tasklet_run(&ctrl_tasklet,    mt);
+    tasklet_run(&planner_tasklet, mt);
     /*
     //OAM_Tasklet(notif, mt, mdt);
     spdctl_run_tick(notif,  mt, mdt);

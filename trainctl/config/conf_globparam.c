@@ -150,7 +150,7 @@ static conf_globparam_t conf_globparam[1] = {
      .pwmfreq = 100,
      .test_mode = 0,
      .oscillo = 0,
-     .ignoreIna3221 = 0,
+     .ignoreIna3221 = 1,
   }
 };
 

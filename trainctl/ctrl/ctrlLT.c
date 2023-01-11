@@ -50,6 +50,7 @@ static void _set_speed(int tidx, train_ctrl_t *tvars, int signed_speed, int appl
 static void _set_state(int tidx, train_ctrl_t *tvars, train_state_t newstate);
 static void _apply_speed(int tidx, train_ctrl_t *tvars);
 static void _check_c2(int tidx, train_ctrl_t *tvars, rettrigs_t *rett);
+static void _updated_while_running(int tidx, train_ctrl_t *tvars);
 
 // -----------------------------------------------------------------
 
@@ -298,8 +299,27 @@ void ctrl3_pose_triggered(int tidx, train_ctrl_t *tvars, pose_trig_tag_t trigtag
         case train_state_running:
             switch (trigtag) {
                 case tag_end_lsblk:
+                    itm_debug2(DBG_CTRL, "end lsb", tidx, tvars->c1_sblk.n);
+                    lsblk_num_t ns = next_lsblk(tvars->c1_sblk, (tvars->_sdir<0) ? 1 : 0, NULL);
+                    if (ns.n == -1) {
+                        itm_debug2(DBG_ERR|DBG_CTRL, "end/nxt", tidx, tvars->c1_sblk.n);
+                        break;
+                    }
+                    xblkaddr_t b = canton_for_lsblk(ns);
+                    if (b.v != tvars->can1_xaddr.v) {
+                        itm_debug2(DBG_ERR|DBG_CTRL, "end/badc1", tidx, tvars->c1_sblk.n);
+                        break;
+                    }
+                    tvars->c1_sblk = ns;
+                    ctrl3_update_front_sblks_c1changed(tidx, tvars, conf_train_get(tidx), tvars->_sdir<0 ? 1 : 0);
+                    _updated_while_running(tidx, tvars);
+                    return;
+                    break;
+                case tag_chkocc:
                     // TODO
                     // update position, update trigs
+                    ctrl3_update_front_sblks(tidx, tvars, conf_train_get(tidx), tvars->_sdir<0 ? 1 : 0);
+                    _updated_while_running(tidx, tvars);
                     return;
                     break;
                 case tag_stop_blk_wait:
@@ -312,7 +332,19 @@ void ctrl3_pose_triggered(int tidx, train_ctrl_t *tvars, pose_trig_tag_t trigtag
                     _set_state(tidx, tvars, train_state_end_of_track0);
                     return;
                     break;
+               
+                    
+                case tag_brake:
+                    itm_debug2(DBG_ERR|DBG_CTRL, "trg brj", tidx, tvars->c1_sblk.n);
+                    break;
+                case tag_need_c2:
+                    itm_debug2(DBG_ERR|DBG_CTRL, "trg nc2", tidx, tvars->c1_sblk.n);
+                    break;
+                case tag_reserve_c2:
+                    itm_debug2(DBG_ERR|DBG_CTRL, "trg rc2", tidx, tvars->c1_sblk.n);
+                    break;
                 default:
+                    itm_debug2(DBG_ERR|DBG_CTRL, "unh trg", tidx, tvars->c1_sblk.n);
                     break;
             }
         default:
@@ -325,8 +357,6 @@ void ctrl3_pose_triggered(int tidx, train_ctrl_t *tvars, pose_trig_tag_t trigtag
 
 void ctrl3_occupency_updated(int tidx, train_ctrl_t *tvars)
 {
-    int is_eot = 0;
-    int is_occ = 0;
     int rc = 0;
     rettrigs_t rett = {0};
     switch (tvars->_state) {
@@ -403,8 +433,24 @@ void ctrl3_evt_entered_c2(int tidx, train_ctrl_t *tvars, uint8_t from_bemf)
     if (tvars->c1c2) {
         itm_debug3(DBG_CTRL|DBG_ERR, "ent C2/c1c2", tidx, tvars->_state, from_bemf);
     }
+    if (tvars->can2_xaddr.v == 0xFF) {
+        itm_debug3(DBG_CTRL|DBG_ERR, "ent C2/noc2", tidx, tvars->_state, from_bemf);
+        return;
+    }
     tvars->c1c2 = 1;
     
+    // swap can1 and can2
+    xblkaddr_t t = tvars->can1_xaddr;
+    tvars->can1_xaddr = tvars->can2_xaddr;
+    tvars->can2_xaddr = t;
+    
+    if (1 == tvars->can1_xaddr.v) { // XXX Hardcoded for now
+        tvars->measure_pose_percm = 1;
+    }
+    tvars->c1_sblk = first_lsblk_with_canton(tvars->can1_xaddr, tvars->c1_sblk);
+    ctrl3_update_front_sblks_c1changed(tidx, tvars, conf_train_get(tidx), tvars->_sdir<0 ? 1 : 0);
+    
+    _updated_while_running(tidx,tvars);
     
     if (from_bemf && ignore_ina_pres()) {
         //ctrl_set_timer(tidx, tvars, TLEAVE_C1, TLEAVE_C1_VALUE);
@@ -412,6 +458,33 @@ void ctrl3_evt_entered_c2(int tidx, train_ctrl_t *tvars, uint8_t from_bemf)
         //ctrl_set_timer(tidx, tvar, TLEAVE_C1, TGUARD_C1_VALUE);
     }
 }
+
+static void _updated_while_running(int tidx, train_ctrl_t *tvars)
+{
+    rettrigs_t rett = {0};
+    int rc = _train_check_dir(tidx, tvars, tvars->_sdir, &rett);
+    if (rett.isoet) {
+        _set_speed(tidx, tvars, 0, 1);
+        _set_state(tidx, tvars, train_state_end_of_track);
+        return;
+    }
+    if (rett.isocc) {
+        int spd = tvars->_desired_signed_speed;
+        _set_speed(tidx, tvars, 0, 1);
+        _set_speed(tidx, tvars, spd, 0);
+        _set_state(tidx, tvars, train_state_blkwait);
+        return;
+    }
+    if (rc<0) FatalError("FSMd", "setdir", Error_FSM_ChkNeg1);
+    _check_c2(tidx, tvars, &rett);
+    _set_dir(tidx, tvars, tvars->_sdir);
+    _update_spd_limit(tidx, tvars, tvars->_sdir);
+    _set_speed(tidx, tvars, tvars->_desired_signed_speed, 1);
+    _apply_trigs(tidx, tvars, &rett);
+    _set_state(tidx, tvars, train_state_running);
+    return;
+}
+
 void ctrl3_evt_leaved_c1(int tidx, train_ctrl_t *tvars)
 {
     itm_debug3(DBG_CTRL|DBG_POSE, "evt_left_c1", tidx, tvars->_state, tvars->can1_xaddr.v);
@@ -627,13 +700,14 @@ static void _set_state(int tidx, train_ctrl_t *tvars, train_state_t newstate)
     switch (newstate) {
         case train_state_blkwait:
         case train_state_blkwait0:
+            if (!tvars->_desired_signed_speed) {
+                FatalError("FSMb", "FSM san check", Error_FSM_Sanity2);
+            }
+            // FALLTHRU
         case train_state_end_of_track0:
         case train_state_end_of_track:
             if (!tvars->_sdir) {
                 FatalError("FSMb", "FSM san check", Error_FSM_Sanity1);
-            }
-            if (!tvars->_desired_signed_speed) {
-                FatalError("FSMb", "FSM san check", Error_FSM_Sanity2);
             }
             break;
         case train_state_station:

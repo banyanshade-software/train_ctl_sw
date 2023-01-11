@@ -303,6 +303,7 @@ void ctrl3_pose_triggered(int tidx, train_ctrl_t *tvars, pose_trig_tag_t trigtag
                     lsblk_num_t ns = next_lsblk(tvars->c1_sblk, (tvars->_sdir<0) ? 1 : 0, NULL);
                     if (ns.n == -1) {
                         itm_debug2(DBG_ERR|DBG_CTRL, "end/nxt", tidx, tvars->c1_sblk.n);
+                        return;
                         break;
                     }
                     xblkaddr_t b = canton_for_lsblk(ns);
@@ -311,6 +312,7 @@ void ctrl3_pose_triggered(int tidx, train_ctrl_t *tvars, pose_trig_tag_t trigtag
                         break;
                     }
                     tvars->c1_sblk = ns;
+                    tvars->beginposmm = tvars->_curposmm; // TODO adjust for trig delay
                     ctrl3_update_front_sblks_c1changed(tidx, tvars, conf_train_get(tidx), tvars->_sdir<0 ? 1 : 0);
                     _updated_while_running(tidx, tvars);
                     return;
@@ -335,7 +337,7 @@ void ctrl3_pose_triggered(int tidx, train_ctrl_t *tvars, pose_trig_tag_t trigtag
                
                     
                 case tag_brake:
-                    itm_debug2(DBG_ERR|DBG_CTRL, "trg brj", tidx, tvars->c1_sblk.n);
+                    itm_debug2(DBG_ERR|DBG_CTRL, "trg brk", tidx, tvars->c1_sblk.n);
                     break;
                 case tag_need_c2:
                     itm_debug2(DBG_ERR|DBG_CTRL, "trg nc2", tidx, tvars->c1_sblk.n);
@@ -464,6 +466,7 @@ static void _updated_while_running(int tidx, train_ctrl_t *tvars)
     rettrigs_t rett = {0};
     int rc = _train_check_dir(tidx, tvars, tvars->_sdir, &rett);
     if (rett.isoet) {
+        int rc = _train_check_dir(tidx, tvars, tvars->_sdir, &rett);
         _set_speed(tidx, tvars, 0, 1);
         _set_state(tidx, tvars, train_state_end_of_track);
         return;

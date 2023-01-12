@@ -640,4 +640,11 @@ void dump_msg(mqf_t *mq, int n)
 
 int tsktick_freqhz = 100;
 
+
+// in unit tests, only needed for last_tick
+static const tasklet_def_t ctrl_tdef = {0};
+tasklet_t ctrl_tasklet = { .def = &ctrl_tdef, .init_done = 0, .queue=NULL};
+
+
+
 @end

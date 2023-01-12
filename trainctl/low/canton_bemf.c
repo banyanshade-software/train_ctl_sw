@@ -157,7 +157,8 @@ static int _add_trig(canton_bemf_t *cvars, uint8_t from, int32_t posval, uint8_t
             // but for now it could be a bug in ctrlP.c
             itm_debug3(DBG_ERR|DBG_POSEC, "same trig", posval, cvars->trigs[pi].postag, posetag);
         }
-        if (cvars->trigs[pi].posval) continue;
+        if (cvars->trigs[pi].postag) continue;
+        itm_debug3(DBG_POSEC, "add pi", pi, posetag, posval);
         cvars->trigs[pi].posval = posval;
         cvars->trigs[pi].dir = dir;
         cvars->trigs[pi].postag = posetag;
@@ -354,7 +355,7 @@ static void process_adc(volatile adc_result_t *buf, _UNUSED_ uint32_t deltaticks
                     // pose is incrementing
                     if (cvars->pose > cvars->trigs[ti].posval) {
                         ptag = cvars->trigs[ti].postag;
-                        itm_debug3(DBG_POSEC|DBG_POSE, "TRIG>", cvars->pose, cvars->trigs[ti].posval, ptag);
+                        itm_debug3(DBG_POSEC|DBG_POSE, "TRIG>", ti, cvars->pose, cvars->trigs[ti].posval);
                         cvars->trigs[ti].posval = 0;
                         ptrig = &cvars->trigs[ti];
                         break;
@@ -363,7 +364,7 @@ static void process_adc(volatile adc_result_t *buf, _UNUSED_ uint32_t deltaticks
                     // pose is decrementing
                     if (cvars->pose < cvars->trigs[ti].posval) {
                         ptag = cvars->trigs[ti].postag;
-                        itm_debug3(DBG_POSEC|DBG_POSE, "TRIG<", cvars->pose, cvars->trigs[ti].posval, ptag);
+                        itm_debug3(DBG_POSEC|DBG_POSE, "TRIG<", ti, cvars->pose, cvars->trigs[ti].posval);
                         cvars->trigs[ti].posval = 0;
                         ptrig = &cvars->trigs[ti];
                         break;
@@ -378,7 +379,6 @@ static void process_adc(volatile adc_result_t *buf, _UNUSED_ uint32_t deltaticks
 		msg_64_t m = {0};
 		m.from = MA0_CANTON(oam_localBoardNum());
 		m.subc = i;
-        //m.subc = ptag; // xxxx
 		m.to = cvars->bemf_to;
         
 		m.cmd = CMD_BEMF_NOTIF;
@@ -394,6 +394,8 @@ static void process_adc(volatile adc_result_t *buf, _UNUSED_ uint32_t deltaticks
             m.vcu8 = ptag;
             m.vb8 = ptrig->dir;
             mqf_write(&from_canton, &m);
+            // clear pose trigger
+            ptrig->postag = 0;
         }
     }
 }

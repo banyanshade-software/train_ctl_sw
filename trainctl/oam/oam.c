@@ -1069,7 +1069,7 @@ static void handle_master_tick(_UNUSED_ uint32_t tick, _UNUSED_ uint32_t dt)
 	if (tick>lbsc+tempo) {
 		lbsc = tick;
 		static int cnt = 0;
-		if (initial && (cnt>100)) {
+		if (initial && (cnt>10)) {
 			initial=0;
 			_bcast_normal();
 			return;

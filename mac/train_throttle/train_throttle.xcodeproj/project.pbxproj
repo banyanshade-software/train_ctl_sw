@@ -108,6 +108,8 @@
 		1B7B5E012969B40A00955045 /* TestLongTrainLeft0.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B7B5E002969B40A00955045 /* TestLongTrainLeft0.m */; };
 		1B7B5E09296E965900955045 /* trace_train.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B7B5E08296E965900955045 /* trace_train.c */; };
 		1B7B5E0A296E965900955045 /* trace_train.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B7B5E08296E965900955045 /* trace_train.c */; };
+		1B7B5E122970A50800955045 /* ctc_periodic_refresh.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B7B5E112970A50800955045 /* ctc_periodic_refresh.c */; };
+		1B7B5E132970A50800955045 /* ctc_periodic_refresh.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B7B5E112970A50800955045 /* ctc_periodic_refresh.c */; };
 		1B7D0A8E2814A0B6008EEDD4 /* framing.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B7D0A8C2814A0B6008EEDD4 /* framing.c */; };
 		1B7D0A932815A175008EEDD4 /* oam_error.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B7D0A922815A175008EEDD4 /* oam_error.c */; };
 		1B812B3D273FA77B00924749 /* cautoP.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B812B3C273FA77B00924749 /* cautoP.c */; };
@@ -311,6 +313,8 @@
 		1B7B5E002969B40A00955045 /* TestLongTrainLeft0.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TestLongTrainLeft0.m; sourceTree = "<group>"; };
 		1B7B5E07296E965900955045 /* trace_train.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = trace_train.h; sourceTree = "<group>"; };
 		1B7B5E08296E965900955045 /* trace_train.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = trace_train.c; sourceTree = "<group>"; };
+		1B7B5E102970A50800955045 /* ctc_periodic_refresh.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ctc_periodic_refresh.h; sourceTree = "<group>"; };
+		1B7B5E112970A50800955045 /* ctc_periodic_refresh.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ctc_periodic_refresh.c; sourceTree = "<group>"; };
 		1B7D0A8C2814A0B6008EEDD4 /* framing.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = framing.c; sourceTree = "<group>"; };
 		1B7D0A8D2814A0B6008EEDD4 /* framing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = framing.h; sourceTree = "<group>"; };
 		1B7D0A8F2814A0CD008EEDD4 /* boards_def.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = boards_def.h; sourceTree = "<group>"; };
@@ -641,6 +645,8 @@
 				1B7B5E07296E965900955045 /* trace_train.h */,
 				1B7B5E08296E965900955045 /* trace_train.c */,
 				1B92EA2E2631A0BA00558716 /* ctrl.c */,
+				1B7B5E102970A50800955045 /* ctc_periodic_refresh.h */,
+				1B7B5E112970A50800955045 /* ctc_periodic_refresh.c */,
 				1B92EA2F2631A0BA00558716 /* ctrl.h */,
 				1B77BEC8274A471200BC5230 /* detectP.h */,
 				1B77BEC9274A471200BC5230 /* detectP.c */,
@@ -1012,6 +1018,7 @@
 				1B2688632951201600E31486 /* occupency.c in Sources */,
 				1B2688652951201600E31486 /* conf_topology.c in Sources */,
 				1B7B5DEB2965FFF800955045 /* TestLongTrainRight0.m in Sources */,
+				1B7B5E132970A50800955045 /* ctc_periodic_refresh.c in Sources */,
 				1B2688662951201600E31486 /* TopologyTest.m in Sources */,
 				1B2688A82952439800E31486 /* longtrain.c in Sources */,
 				1B2688692951201600E31486 /* conf_boards.c in Sources */,
@@ -1149,6 +1156,7 @@
 				1B455A25280F671000F09E33 /* conf_train.fields.c in Sources */,
 				1B138EF828134CA000DC181B /* conf_utestloc.c in Sources */,
 				1B455A20280F671000F09E33 /* conf_canton.fields.c in Sources */,
+				1B7B5E122970A50800955045 /* ctc_periodic_refresh.c in Sources */,
 				1B238C8A285E54F6000DA9B8 /* tasklet.c in Sources */,
 				1B3657BB275BED540042491A /* CTCManager.m in Sources */,
 				1BF42FD62914F525004EC55B /* servo.c in Sources */,

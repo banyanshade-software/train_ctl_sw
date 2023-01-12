@@ -30,6 +30,7 @@
 #include "../leds/led.h"
 #include "../config/conf_globparam.h"
 #include "trace_train.h"
+#include "ctc_periodic_refresh.h"
 
 #ifndef BOARD_HAS_CTRL
 #error BOARD_HAS_CTRL not defined, remove this file from build
@@ -301,6 +302,8 @@ static void ctrl_tick(uint32_t tick, _UNUSED_ uint32_t dt)
         if (tvars->_mode == train_notrunning) continue;
         if ((0)) ctrl2_tick_process(tidx, otvars, tconf, occ); // xxxxxx
     }
+    
+    ctc_periodic_refresh(tick);
 }
 // ----------------------------------------------------------------------------
 

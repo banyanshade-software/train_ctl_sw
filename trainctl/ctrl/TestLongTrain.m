@@ -16,6 +16,8 @@
 #include "longtrain.h"
 #include "trig_tags.h"
 
+#include "TestLongTrainSupport.h"
+
 @interface TestLongTrain : XCTestCase
 
 @end
@@ -578,19 +580,6 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
 // ----------------------------------------------------------
 // ----------------------------------------------------------
 
-void FatalError(const char *shortsmsg, const char *longmsg, enum fatal_error_code errcode)
-{
-    errorhandler++;
-    //abort();
-}
-int ignore_ina_pres(void)
-{
-    return 0;
-}
-int ignore_bemf_pres(void)
-{
-    return 0;
-}
 // ----------------------------------------------------------
 // ----------------------------------------------------------
 
@@ -600,7 +589,6 @@ int ignore_bemf_pres(void)
 // ----------------------------------------------------------
 // ----------------------------------------------------------
 
-uint32_t SimuTick = 0;
 
 /*
 static msg_64_t qbuf[16];
@@ -626,24 +614,6 @@ static int compareMsg64(const msg_64_t *exp, int n, int clear);
     XCTAssert(!rcc);                                          \
 } while (0)
  */
-
-
-int errorhandler = 0;
-void Error_Handler(void)
-{
-    errorhandler++;
-}
-void dump_msg(mqf_t *mq, int n)
-{
-    errorhandler++;
-}
-
-int tsktick_freqhz = 100;
-
-
-// in unit tests, only needed for last_tick
-static const tasklet_def_t ctrl_tdef = {0};
-tasklet_t ctrl_tasklet = { .def = &ctrl_tdef, .init_done = 0, .queue=NULL};
 
 
 

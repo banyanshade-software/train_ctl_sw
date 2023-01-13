@@ -15,6 +15,8 @@
 #include "longtrain.h"
 #include "trig_tags.h"
 
+#include "TestLongTrainSupport.h"
+
 @interface TestLongTrainRight0 : XCTestCase
 
 @end
@@ -24,12 +26,10 @@
     conf_train_t *tconf;
 }
 
-int cmptrigs(const rettrigs_t *r1, const rettrigs_t *r2);
 
 static lsblk_num_t s13 = {13};
 static lsblk_num_t s14 = {14};
 
-extern int errorhandler;
 
 - (void)setUp {
     
@@ -209,24 +209,20 @@ extern int errorhandler;
     }
 }
 
-
+/*
+ 15 010390      state=running   dir=1 sblk=4 spd= 74 dspd= 74 pos=176 from 125
+ 16 010830 TRIG end_lsblk pos=342
+ 17 010830 --set chkocc    pos=630
+ 18 010830 --set stop_eot  pos=510
+ 19 010830 --set brake     pos=350
+ 20 010830      state=running   dir=1 sblk=5 spd= 74 dspd= 74 pos=342 from 342
+ 21 010840 TRIG end_lsblk pos=352
+ 22 010840      state=running   dir=1 sblk=5 spd= 74 dspd= 74 pos=352 from 342
+ 23 010850 TRIG brake     pos=350
+ 24 010850 --set chkocc    pos=640
+ 25 010850 --set stop_eot  pos=520
+ 26 010850 --set brake     pos=360 <------- should not be trigged
+ 27 010850      state=running   dir=1 sblk=5 spd= 74 dspd= 74 pos=350 from 342
+ */
 @end
 
-
-int cmptrigs(const rettrigs_t *r1, const rettrigs_t *r2)
-{
-    if (r1->isocc != r2->isocc) return -1;
-    if (r1->isoet != r2->isoet) return -2;
-    if (r1->power_c2 != r2->power_c2) return -3;
-    if (r1->res_c2 != r2->res_c2) return -4;
-    if (r1->ntrig != r2->ntrig) return -5;
-    for (int i=0; i<NUMTRIGS; i++) {
-        if (r1->trigs[i].poscm != r2->trigs[i].poscm) {
-            return i+10;
-        }
-        if (r1->trigs[i].tag != r2->trigs[i].tag) {
-            return i+100;
-        }
-    }
-    return 0;
-}

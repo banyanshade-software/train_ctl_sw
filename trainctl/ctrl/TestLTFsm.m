@@ -16,50 +16,14 @@
 #include "longtrain.h"
 #include "trig_tags.h"
 
+#include "TestLongTrainSupport.h"
+
 @interface TestLTFsm : XCTestCase
 
 @end
 
 
 
-static NSString *dump_msgbuf(int clear);
-static int compareMsg64(const msg_64_t *exp, int n, int clear);
-static int compareMsg64_itrig(const msg_64_t *exp, int n, int clear);
-
-
-
-#define EXPMSG(...) do {                                     \
-    const msg_64_t exp[] =  { __VA_ARGS__ } ;                \
-    int n = sizeof(exp)/sizeof(msg_64_t);                    \
-    int rcc = compareMsg64(exp, n, 1);                        \
-    XCTAssert(!rcc);                                          \
-} while (0)
-
-
-#define EXPMSG_ITRIG(...) do {                                     \
-    const msg_64_t exp[] =  { __VA_ARGS__ } ;                \
-    int n = sizeof(exp)/sizeof(msg_64_t);                    \
-    int rcc = compareMsg64_itrig(exp, n, 1);                        \
-    XCTAssert(!rcc);                                          \
-} while (0)
-
-#define EXPMSG_NONE() do {                                     \
-    int rcc = compareMsg64(NULL, 0, 1);                        \
-    XCTAssert(!rcc);                                          \
-} while (0)
-
-static msg_64_t qbuf[16];
-
-mqf_t from_ctrl =  {
-    .head=0,
-    .tail=0,
-    .msgsiz=sizeof(msg_64_t),
-    .num=16,
-    .maxuse=0,
-    .msgbuf=(uint8_t *) qbuf,
-    .silentdrop=0
-    
-};
 
 @implementation TestLTFsm {
     train_ctrl_t tvars;
@@ -74,7 +38,6 @@ static lsblk_num_t sone = {1};
 
 static const xtrnaddr_t to0 = { .v = 0};
 static const xtrnaddr_t to1 = { .v = 1};
-extern int errorhandler;
 
 - (void)setUp
 {
@@ -388,85 +351,4 @@ extern int errorhandler;
 
 // ---------------------------------------------------------
 
-static NSString *dump_msgbuf(int clear)
-{
-    NSString *r = @"";
-    int first = 1;
-    for (int i=0; i<from_ctrl.head; i++) {
-        r = [r stringByAppendingFormat:@"%s{%2.2X, %2.2X, %2.2X, %d, %d}",
-             first ? "" : ",",
-             qbuf[i].from,
-             qbuf[i].to,
-             qbuf[i].cmd,
-             qbuf[i].v1,
-             qbuf[i].v2 ];
-        first = 0;
-    }
-    if (clear) {
-        mqf_clear(&from_ctrl);
-    }
-    return r;
-}
 
-
-static int compareMsg64(const msg_64_t *exp, int n, int clear)
-{
-    int rc = 0;
-    if (mqf_len(&from_ctrl) != n) {
-        NSLog(@"expect %d msg, got %d", n, mqf_len(&from_ctrl));
-        rc = -2;
-    } else {
-        for (int i=0; i<n; i++) {
-            // per msg compare, for easier debug
-            if (memcmp(&qbuf[i], &exp[i], sizeof(msg_64_t))) {
-                NSLog(@"%d exp: %2.2x %2.2x cmd=%2.2x subc=%d v1=%d v2=%d", i,
-                      exp[i].from, exp[i].to, exp[i].cmd, exp[i].subc, exp[i].v1, exp[i].v2);
-                NSLog(@"%d got: %2.2x %2.2x cmd=%2.2x subc=%d v1=%d v2=%d", i,
-                      qbuf[i].from, qbuf[i].to, qbuf[i].cmd, qbuf[i].subc, qbuf[i].v1, qbuf[i].v2);
-                rc = i+1;
-                break;
-            }
-        }
-    }
-    if (clear) {
-        mqf_clear(&from_ctrl);
-    }
-    return rc;
-}
-
-static int compareMsg64_itrig(const msg_64_t *exp, int n, int clear)
-{
-    int rc = 0;
-    int nq = 0;
-    int ql = mqf_len(&from_ctrl);
-    for (int i=0; i<n; i++) {
-        if (exp[i].cmd == CMD_POSE_SET_TRIG) continue;
-        msg_64_t m = {0};
-        for (;;) {
-            if (nq>=ql) {
-                NSLog(@"missing q msg");
-                return -1;
-            }
-            m = qbuf[nq];
-            nq++;
-            if (m.cmd == CMD_POSE_SET_TRIG) continue;
-            break;
-        }
-        if (memcmp(&m, &exp[i], sizeof(msg_64_t))) {
-            NSLog(@"%d exp: %2.2x %2.2x cmd=%2.2x subc=%d v1=%d v2=%d", i,
-                  exp[i].from, exp[i].to, exp[i].cmd, exp[i].subc, exp[i].v1, exp[i].v2);
-            NSLog(@"%d got: %2.2x %2.2x cmd=%2.2x subc=%d v1=%d v2=%d", i,
-                  qbuf[i].from, qbuf[i].to, qbuf[i].cmd, qbuf[i].subc, qbuf[i].v1, qbuf[i].v2);
-            rc = i+1;
-            break;
-        }
-    }
-    if (nq != ql) {
-        NSLog(@"too many q msg");
-        return -1;
-    }
-    if (clear) {
-        mqf_clear(&from_ctrl);
-    }
-    return rc;
-}

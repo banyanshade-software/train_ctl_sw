@@ -341,6 +341,8 @@ void ctrl3_pose_triggered(int tidx, train_ctrl_t *tvars, pose_trig_tag_t trigtag
                     
                 case tag_brake:
                     itm_debug2(DBG_ERR|DBG_CTRL, "trg brk", tidx, tvars->c1_sblk.n);
+                    _updated_while_running(tidx, tvars);
+                    return;
                     break;
                 case tag_need_c2:
                     itm_debug2(DBG_ERR|DBG_CTRL, "trg nc2", tidx, tvars->c1_sblk.n);

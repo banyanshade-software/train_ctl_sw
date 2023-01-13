@@ -16,6 +16,8 @@
 #include "longtrain.h"
 #include "trig_tags.h"
 
+#include "TestLongTrainSupport.h"
+
 @interface TestLongTrainRight1 : XCTestCase
 
 @end
@@ -31,11 +33,6 @@ static lsblk_num_t sten = {10};
 static lsblk_num_t seleven = {11};
 static lsblk_num_t stwelve = {12};
 
-
-int cmptrigs(const rettrigs_t *r1, const rettrigs_t *r2);
-
-
-extern int errorhandler;
 
 - (void)setUp {
     
@@ -794,19 +791,6 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
 // ----------------------------------------------------------
 // ----------------------------------------------------------
 
-void FatalError(const char *shortsmsg, const char *longmsg, enum fatal_error_code errcode)
-{
-    errorhandler++;
-    //abort();
-}
-int ignore_ina_pres(void)
-{
-    return 0;
-}
-int ignore_bemf_pres(void)
-{
-    return 0;
-}
 // ----------------------------------------------------------
 // ----------------------------------------------------------
 
@@ -816,44 +800,8 @@ int ignore_bemf_pres(void)
 // ----------------------------------------------------------
 // ----------------------------------------------------------
 
-uint32_t SimuTick = 0;
-
-/*
-static msg_64_t qbuf[16];
-
-mqf_t from_ctrl =  {
-    .head=0,
-    .tail=0,
-    .msgsiz=sizeof(msg_64_t),
-    .num=16,
-    .maxuse=0,
-    .msgbuf=(uint8_t *) qbuf,
-    .silentdrop=0
-    
-};
-
-static NSString *dump_msgbuf(int clear);
-static int compareMsg64(const msg_64_t *exp, int n, int clear);
-
-#define EXPMSG(...) do {                                     \
-    const msg_64_t exp[] =  { __VA_ARGS__ } ;                \
-    int n = sizeof(exp)/sizeof(msg_64_t);                    \
-    int rcc = compareMsg64(exp, n, 1);                        \
-    XCTAssert(!rcc);                                          \
-} while (0)
- */
 
 
-int errorhandler = 0;
-void Error_Handler(void)
-{
-    errorhandler++;
-}
-void dump_msg(mqf_t *mq, int n)
-{
-    errorhandler++;
-}
 
-int tsktick_freqhz = 100;
 #endif
 @end

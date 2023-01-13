@@ -15,6 +15,8 @@
 #include "longtrain.h"
 #include "trig_tags.h"
 
+#include "TestLongTrainSupport.h"
+
 @interface TestLongTrainLeft0 : XCTestCase
 
 @end
@@ -24,11 +26,9 @@
     conf_train_t *tconf;
 }
 
-int cmptrigs(const rettrigs_t *r1, const rettrigs_t *r2);
 
 static lsblk_num_t s21 = {21};
 
-extern int errorhandler;
 
 - (void)setUp {
     

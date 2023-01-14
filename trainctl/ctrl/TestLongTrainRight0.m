@@ -30,6 +30,7 @@
 //static lsblk_num_t s13 = {13};
 static lsblk_num_t s14 = {14};
 static lsblk_num_t s5 = {5};
+static lsblk_num_t s4 = {4};
 
 
 - (void)setUp {
@@ -104,6 +105,11 @@ static lsblk_num_t s5 = {5};
     [self checkBrake:0 d:40];
 }
 
+
+- (void)testCheckBrake34
+{
+    [self checkBrake:0 d:34];
+}
 - (void)testCheckBrake2
 {
     [self checkBrake:0 d:41];
@@ -161,6 +167,56 @@ static lsblk_num_t s5 = {5};
     XCTAssert(!cmptrigs(&rettrigs, &expt1));
 }
 
+
+- (void)testCheckTagBrake1
+{
+    [self checkTagBrake:0 d:33];
+}
+- (void)testCheckTagBrake2
+{
+    [self checkTagBrake:0 d:30];
+}
+
+- (void)testCheckTagBrake1a
+{
+    [self checkTagBrake:1000 d:33];
+}
+- (void)testCheckTagBrake2a
+{
+    [self checkTagBrake:1000 d:30];
+}
+
+- (void)testCheckTagBrake1b
+{
+    [self checkTagBrake:-1000 d:33];
+}
+- (void)testCheckTagBrake2b
+{
+    [self checkTagBrake:-1000 d:30];
+}
+
+- (void) checkTagBrake:(int)beg d:(int)cp
+{
+    int rc;
+    
+    tconf->trainlen_left_cm = 0;
+    tconf->trainlen_right_cm = 15;
+    occupency_clear();
+    
+    // (A)
+    tvars.beginposmm = beg*10;
+    tvars._curposmm = cp*10+beg*10;
+    
+    ctrl3_get_next_sblks(0, &tvars, tconf);
+    XCTAssert(tvars.rightcars.numlsblk == 0);
+    XCTAssert(tvars.rightcars.rlen_cm == 70-cp-15); //45
+   
+    rettrigs_t rettrigs = {0};
+    rc = ctrl3_check_front_sblks(0, &tvars, tconf, 0, &rettrigs);
+    XCTAssert(rc==0);
+    const rettrigs_t expt1 = { 0, 0, 0, 0, 4, {{55+beg, tag_chkocc}, {50+beg,tag_stop_eot}, {34+beg, tag_brake}, {70+beg,tag_end_lsblk}, {0,0}, {0,0}}};
+    XCTAssert(!cmptrigs(&rettrigs, &expt1));
+}
 
 
 - (void)testCheckStop1

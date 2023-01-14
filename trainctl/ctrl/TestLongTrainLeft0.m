@@ -150,6 +150,60 @@ static lsblk_num_t s21 = {21};
     XCTAssert(!cmptrigs(&rettrigs, &expt1));
 }
 
+- (void)testCheckTagBrake1
+{
+    [self checkTagBrake:0 d:37];
+}
+
+- (void)testCheckTagBrake2
+{
+    [self checkTagBrake:0 d:38];
+}
+
+
+- (void)testCheckTagBrake1a
+{
+    [self checkTagBrake:1000 d:37];
+}
+
+- (void)testCheckTagBrake2a
+{
+    [self checkTagBrake:1000 d:38];
+}
+
+- (void)testCheckTagBrake1b
+{
+    [self checkTagBrake:-1000 d:37];
+}
+
+- (void)testCheckTagBrake2b
+{
+    [self checkTagBrake:-1000 d:38];
+}
+
+
+- (void) checkTagBrake:(int)beg d:(int)cp
+{
+    int rc;
+
+    tconf->trainlen_left_cm = 15;
+    tconf->trainlen_right_cm = 0;
+    occupency_clear();
+    
+    // (A)
+    tvars.beginposmm = beg*10;
+    tvars._curposmm = cp*10+beg*10;
+    
+    ctrl3_get_next_sblks(0, &tvars, tconf);
+    XCTAssert(tvars.leftcars.numlsblk == 0);
+    XCTAssert(tvars.leftcars.rlen_cm == cp-15); //45
+   
+    rettrigs_t rettrigs = {0};
+    rc = ctrl3_check_front_sblks(0, &tvars, tconf, 1, &rettrigs);
+    XCTAssert(rc==0);
+    const rettrigs_t expt1 = { 0, 0, 0, 0, 4, {{15+beg, tag_chkocc}, {20+beg,tag_stop_eot}, {36+beg,tag_brake}, {beg,tag_end_lsblk}, {0,0}}};
+    XCTAssert(!cmptrigs(&rettrigs, &expt1));
+}
 
 
 - (void)testCheckStop1

@@ -141,6 +141,8 @@ static void _clear_trig(canton_bemf_t *cvars)
     for (int pi=0; pi<NUM_TRIGS; pi++) {
         cvars->trigs[pi].posval = 0;
         cvars->trigs[pi].postag = 0;
+        cvars->trigs[pi].sender = 0;
+        cvars->trigs[pi].dir = 0;
     }
 }
 

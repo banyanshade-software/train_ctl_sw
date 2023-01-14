@@ -288,14 +288,14 @@ static lsblk_num_t s4 = {4};
     
     ctrl3_init_train(0, &tvars, s5, 1);
 
-    tconf->trainlen_left_cm = 0;
-    tconf->trainlen_right_cm = 15;
+    tconf->trainlen_left_cm = 6;
+    tconf->trainlen_right_cm = 18;
     occupency_clear();
     
     rettrigs_t rettrigs = {0};
 
-    tvars.beginposmm = 342;
-    tvars._curposmm = 350;
+    tvars.beginposmm = 347;
+    tvars._curposmm = 356;
     ctrl3_get_next_sblks(0, &tvars, tconf);
     rc = ctrl3_check_front_sblks(0, &tvars, tconf, 0, &rettrigs);
     XCTAssert(rc>0);

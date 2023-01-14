@@ -27,11 +27,11 @@ static inline void trace_train_postick(uint32_t tick, int tidx, train_ctrl_t *tv
 }
 
 
-void _trace_train_trig(uint32_t tick, int tidx, train_ctrl_t *tvars, pose_trig_tag_t tag, int32_t pos);
-static inline void trace_train_trig(uint32_t tick, int tidx, train_ctrl_t *tvars, pose_trig_tag_t tag, int32_t pos)
+void _trace_train_trig(uint32_t tick, int tidx, train_ctrl_t *tvars, pose_trig_tag_t tag, int32_t oldpos, int32_t adjutedpos);
+static inline void trace_train_trig(uint32_t tick, int tidx, train_ctrl_t *tvars, pose_trig_tag_t tag, int32_t oldpos, int32_t adjutedpos)
 {
     if (!trace_train_enable) return;
-    _trace_train_trig(tick, tidx, tvars, tag, pos);
+    _trace_train_trig(tick, tidx, tvars, tag, oldpos, adjutedpos);
 }
 
 void _trace_train_trig_set(uint32_t tick, int tidx, train_ctrl_t *tvars, pose_trig_tag_t tag, int32_t pos);

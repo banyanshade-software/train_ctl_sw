@@ -47,7 +47,8 @@ typedef struct {
 
 typedef struct {
     pose_trig_tag_t tag;
-    int32_t pose;
+    int32_t oldpose;
+    int32_t adjustedpose;
 } train_trace_trig_record_t;
 
 typedef enum {
@@ -131,14 +132,15 @@ void _trace_train_postick(uint32_t tick, int tidx, train_ctrl_t *tvars)
     
 }
 
-void _trace_train_trig(uint32_t tick, int tidx, train_ctrl_t *tvars, pose_trig_tag_t tag, int32_t pos)
+void _trace_train_trig(uint32_t tick, int tidx, train_ctrl_t *tvars, pose_trig_tag_t tag, int32_t oldpos, int32_t adjutedpos)
 {
     train_trace_record_t *rec = get_newrec(tidx);
     if (!rec) return;
     rec->tick = tick;
     rec->kind = trace_kind_trig;
     rec->trigrec.tag = tag;
-    rec->trigrec.pose = pos;
+    rec->trigrec.oldpose = oldpos;
+    rec->trigrec.adjustedpose = adjutedpos;
 }
 
 
@@ -149,7 +151,7 @@ void _trace_train_trig_set(uint32_t tick, int tidx, train_ctrl_t *tvars, pose_tr
     rec->tick = tick;
     rec->kind = trace_kind_trig_set;
     rec->trigrec.tag = tag;
-    rec->trigrec.pose = pos;
+    rec->trigrec.adjustedpose = pos;
 }
 
 
@@ -209,14 +211,19 @@ void trace_train_dump(int tidx)
                        rec->tickrec.curposmm,
                        rec->tickrec.beginposmm);
                 break;
-            case trace_kind_trig: // FALLTHRU
-            case trace_kind_trig_set:
-                printf("%2d %6.6d %s %-9s pos=%d\n",
+            case trace_kind_trig:
+                printf("%2d %6.6d TRIG   %-9s pos=%d->%d\n",
                        idx, rec->tick,
-                       (rec->kind == trace_kind_trig) ? "TRIG" : "--set",
                        trig_name(rec->trigrec.tag),
-                       rec->trigrec.pose);
-                
+                       rec->trigrec.oldpose,
+                       rec->trigrec.adjustedpose);
+                break;
+            case trace_kind_trig_set:
+                printf("%2d %6.6d --set  %-9s pos=%d\n",
+                       idx, rec->tick,
+                       trig_name(rec->trigrec.tag),
+                       rec->trigrec.adjustedpose);
+                break;
             default:
                 break;
         }

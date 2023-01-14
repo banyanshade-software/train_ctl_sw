@@ -277,14 +277,15 @@ void ctrl3_pose_triggered(int tidx, train_ctrl_t *tvars, pose_trig_tag_t trigtag
 
     if (ca_addr.v != tvars->can1_xaddr.v) {
         itm_debug3(DBG_ERR|DBG_POSEC|DBG_CTRL, "ptrg bad", tidx, ca_addr.v, tvars->can1_xaddr.v);
-        trace_train_trig(ctrl_tasklet.last_tick, tidx, tvars, trigtag, -1);
+        trace_train_trig(ctrl_tasklet.last_tick, tidx, tvars, trigtag, tvars->_curposmm, -1);
         return;
     }
     
     const conf_train_t *tconf = conf_train_get(tidx);
+    int32_t oldpos = tvars->_curposmm;
     tvars->_curposmm = pose_convert_to_mm(tconf, cposd10*10);
     itm_debug3(DBG_POSE|DBG_CTRL, "curposmm", tidx, tvars->_curposmm, trigtag);
-    trace_train_trig(ctrl_tasklet.last_tick, tidx, tvars, trigtag, tvars->_curposmm);
+    trace_train_trig(ctrl_tasklet.last_tick, tidx, tvars, trigtag, oldpos, tvars->_curposmm);
 
     
     switch (tvars->_state) {

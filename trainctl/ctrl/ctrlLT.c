@@ -562,7 +562,7 @@ static int _train_check_dir(int tidx, train_ctrl_t *tvars, int sdir, rettrigs_t 
 }
 
 
-static void _set_one_trig(int numtrain, const conf_train_t *tconf, int8_t dir,  xblkaddr_t canaddr, int32_t pose, uint8_t tag)
+static void _set_one_trig(int numtrain, const conf_train_t *tconf, int num, int8_t dir,  xblkaddr_t canaddr, int32_t pose, uint8_t tag)
 {
     itm_debug3(DBG_CTRL, "set posetr", numtrain, tag, pose);
     if (!tag) {
@@ -585,6 +585,7 @@ static void _set_one_trig(int numtrain, const conf_train_t *tconf, int8_t dir,  
     if (tconf->reversed)  m.va16 = -pose/10;
     else m.va16 = pose/10;
     m.vcu8 = tag;
+    if (!num) m.vcu8 |= 0x80;
     m.vb8 = dir;
     itm_debug3(DBG_CTRL|DBG_POSEC, "S_TRIG", numtrain, tag, dir);
     mqf_write_from_ctrl(&m);
@@ -597,7 +598,7 @@ static void _apply_trigs(int tidx, train_ctrl_t *tvars, const rettrigs_t *rett)
     const conf_train_t *conf = conf_train_get(tidx);
     for (int i=0; i<NUMTRIGS;i++) {
         if (!rett->trigs[i].tag) continue;
-        _set_one_trig(tidx, conf,  tvars->_sdir, tvars->can1_xaddr ,
+        _set_one_trig(tidx, conf, i, tvars->_sdir, tvars->can1_xaddr ,
                       pose_convert_from_mm(conf, rett->trigs[i].poscm*10),
                       rett->trigs[i].tag);
         trace_train_trig_set(ctrl_tasklet.last_tick, tidx, tvars, rett->trigs[i].tag, rett->trigs[i].poscm*10);

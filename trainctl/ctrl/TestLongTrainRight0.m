@@ -27,8 +27,9 @@
 }
 
 
-static lsblk_num_t s13 = {13};
+//static lsblk_num_t s13 = {13};
 static lsblk_num_t s14 = {14};
+static lsblk_num_t s5 = {5};
 
 
 - (void)setUp {
@@ -224,5 +225,24 @@ static lsblk_num_t s14 = {14};
  26 010850 --set brake     pos=360 <------- should not be trigged
  27 010850      state=running   dir=1 sblk=5 spd= 74 dspd= 74 pos=350 from 342
  */
+
+- (void) testBrake350
+{
+    int rc;
+    
+    ctrl3_init_train(0, &tvars, s5, 1);
+
+    tconf->trainlen_left_cm = 0;
+    tconf->trainlen_right_cm = 15;
+    occupency_clear();
+    
+    rettrigs_t rettrigs = {0};
+
+    tvars.beginposmm = 342;
+    tvars._curposmm = 350;
+    ctrl3_get_next_sblks(0, &tvars, tconf);
+    rc = ctrl3_check_front_sblks(0, &tvars, tconf, 0, &rettrigs);
+    XCTAssert(rc>0);
+}
 @end
 

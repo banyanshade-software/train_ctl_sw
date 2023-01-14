@@ -136,7 +136,13 @@ void bemf_tick(uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_ uint32_t d
 	}
 }
 
-
+static void _clear_trig(canton_bemf_t *cvars)
+{
+    for (int pi=0; pi<NUM_TRIGS; pi++) {
+        cvars->trigs[pi].posval = 0;
+        cvars->trigs[pi].postag = 0;
+    }
+}
 
 static int _add_trig(canton_bemf_t *cvars, uint8_t from, int32_t posval, uint8_t posetag, int8_t dir)
 {
@@ -172,6 +178,10 @@ static int _add_trig(canton_bemf_t *cvars, uint8_t from, int32_t posval, uint8_t
 
 static void add_trig(canton_bemf_t *cvars, uint8_t from, int32_t posval, uint8_t posetag, int8_t dir)
 {
+    if (posetag & 0x80) {
+        _clear_trig(cvars);
+        posetag &= 0x7F;
+    }
     int pi = _add_trig(cvars, from, posval, posetag, dir);
     if (pi) {
         // check trig ?

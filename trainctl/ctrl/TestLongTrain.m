@@ -121,7 +121,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     static const int exp1[] = { 1 };
     int rc = check_lsblk_array(r, exp1, n);
     XCTAssert(!rc);
-    XCTAssert(remain==98-90+45-19);
+    XCTAssert(remain==10*(98-90+45-19));
     
     tconf->trainlen_right_cm = 72;
     n = ctrl3_get_next_sblks_(0, &tvars, tconf, 0, r, 4, &remain);
@@ -129,7 +129,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     static const int exp3[] = {1, 3 };
     rc = check_lsblk_array(r, exp3, n);
     XCTAssert(!rc);
-    XCTAssert(remain == 98-90+45+54-72);
+    XCTAssert(remain == 10*(98-90+45+54-72));
 }
 
 - (void) test3
@@ -142,7 +142,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     
     int n = ctrl3_get_next_sblks_(0, &tvars, tconf, 1, r, 4, &remain);
     XCTAssert(n==0);
-    XCTAssert(remain == 40-35);
+    XCTAssert(remain == 400-350);
     
     tvars._curposmm = 50; // 5cm out of 45 for s1
     n = ctrl3_get_next_sblks_(0, &tvars, tconf, 1, r, 4, &remain);
@@ -150,7 +150,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     static const int exp1[] = { 0 };
     int rc = check_lsblk_array(r, exp1, n);
     XCTAssert(!rc);
-    XCTAssert(remain==98+5-35);
+    XCTAssert(remain==10*(98+5-35));
 }
 
 
@@ -169,7 +169,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     static const int exp2[] = { 1 };
     int rc = check_lsblk_array(tvars.rightcars.r, exp2, 1);
     XCTAssert(!rc);
-    XCTAssert(tvars.rightcars.rlen_cm == 90-60+45-48); // 27
+    XCTAssert(tvars.rightcars.rlen_mm == 10*(90-60+45-48)); // 27
     
     // train is on sblk2, cars on 3 and 1
     // (2)----(3)- - <tn0> - - (1) - - -<tn1>- -(5)-
@@ -203,7 +203,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     
     tvars._curposmm = 600+10;
     ctrl3_get_next_sblks(0, &tvars, tconf);
-    XCTAssert(tvars.rightcars.rlen_cm == 26);
+    XCTAssert(tvars.rightcars.rlen_mm == 260);
     rc = ctrl3_check_front_sblks(0, &tvars, tconf, 0, &rettrigs);
     XCTAssert(rc>0);
     XCTAssert(rc==140);
@@ -212,7 +212,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     
     tvars._curposmm = 600+160;
     ctrl3_get_next_sblks(0, &tvars, tconf);
-    XCTAssert(tvars.rightcars.rlen_cm == 11);
+    XCTAssert(tvars.rightcars.rlen_mm == 110);
     rc = ctrl3_check_front_sblks(0, &tvars, tconf, 0, &rettrigs);
     XCTAssert(rc<0);
     const rettrigs_t expt4 = {0, 1, 0, 1, 1,{ {870, tag_chkocc}, {0, 0}, {0, 0}}};
@@ -235,7 +235,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     static const int exp2[] = { 1 };
     int rc = check_lsblk_array(tvars.rightcars.r, exp2, 1);
     XCTAssert(!rc);
-    XCTAssert(tvars.rightcars.rlen_cm == 27);
+    XCTAssert(tvars.rightcars.rlen_mm == 270);
     
         
     rettrigs_t rettrigs = {0};
@@ -249,7 +249,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     tvars._curposmm = rettrigs.trigs[0].posmm; // 870
     rc = ctrl3_update_front_sblks(0, &tvars, tconf, 0);
     XCTAssert(!rc);
-    XCTAssert(tvars.rightcars.rlen_cm == 90-87+45-48+54); // 54
+    XCTAssert(tvars.rightcars.rlen_mm == 10*(90-87+45-48+54)); // 54
 
     rc = ctrl3_check_front_sblks(0, &tvars, tconf, 0, &rettrigs);
     XCTAssert(rc==0);
@@ -266,7 +266,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     tvars.beginposmm = 0;
     rc = ctrl3_update_front_sblks_c1changed(0, &tvars, tconf, 0);
     XCTAssert(!rc);
-    XCTAssert(tvars.rightcars.rlen_cm == 51); // 27
+    XCTAssert(tvars.rightcars.rlen_mm == 510); // 27
     
     rc = ctrl3_check_front_sblks(0, &tvars, tconf, 0, &rettrigs);
     XCTAssert(rc==0);
@@ -280,7 +280,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     tvars._curposmm = rettrigs.trigs[1].posmm; // 230
     rc = ctrl3_update_front_sblks(0, &tvars, tconf, 0);
     XCTAssert(!rc);
-    XCTAssert(tvars.rightcars.rlen_cm == 28); // 16+12
+    XCTAssert(tvars.rightcars.rlen_mm == 280); // 16+12
     rc = ctrl3_check_front_sblks(0, &tvars, tconf, 0, &rettrigs);
     XCTAssert(rc==160);
     // rlen = 51 at start of c1
@@ -293,7 +293,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     tvars._curposmm = rettrigs.trigs[0].posmm; // 390
     rc = ctrl3_update_front_sblks(0, &tvars, tconf, 0);
     XCTAssert(!rc);
-    XCTAssert(tvars.rightcars.rlen_cm == 12); // 16+12
+    XCTAssert(tvars.rightcars.rlen_mm == 120); // 16+12
     rc = ctrl3_check_front_sblks(0, &tvars, tconf, 0, &rettrigs);
     XCTAssert(rc<0);
     // rlen = 51 at start of c1
@@ -319,7 +319,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     static const int exp2[] = { 1 };
     int rc = check_lsblk_array(tvars.rightcars.r, exp2, 1);
     XCTAssert(!rc);
-    XCTAssert(tvars.rightcars.rlen_cm == 25);
+    XCTAssert(tvars.rightcars.rlen_mm == 250);
     
         
     rettrigs_t rettrigs = {0};
@@ -343,7 +343,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     static const int exp2[] = { 1 };
     int rc = check_lsblk_array(tvars.rightcars.r, exp2, 1);
     XCTAssert(!rc);
-    XCTAssert(tvars.rightcars.rlen_cm == 25);
+    XCTAssert(tvars.rightcars.rlen_mm == 250);
     
         
     rettrigs_t rettrigs = {0};
@@ -370,7 +370,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     static const int exp2[] = { 1 };
     int rc = check_lsblk_array(tvars.rightcars.r, exp2, 1);
     XCTAssert(!rc);
-    XCTAssert(tvars.rightcars.rlen_cm == 12);
+    XCTAssert(tvars.rightcars.rlen_mm == 120);
     
         
     rettrigs_t rettrigs = {0};
@@ -394,7 +394,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     static const int exp2[] = { 1 };
     int rc = check_lsblk_array(tvars.rightcars.r, exp2, 1);
     XCTAssert(!rc);
-    XCTAssert(tvars.rightcars.rlen_cm == 12);
+    XCTAssert(tvars.rightcars.rlen_mm == 120);
     
         
     rettrigs_t rettrigs = {0};
@@ -419,7 +419,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     static const int exp2[] = { 1 };
     int rc = check_lsblk_array(tvars.rightcars.r, exp2, 1);
     XCTAssert(!rc);
-    XCTAssert(tvars.rightcars.rlen_cm == 27);
+    XCTAssert(tvars.rightcars.rlen_mm == 270);
     
         
     rettrigs_t rettrigs = {0};
@@ -508,7 +508,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     //static const int exp2[] = { 2 };
     //int rc = check_lsblk_array(tvars.leftcars.r, exp2, 1);
     //XCTAssert(!rc);
-    XCTAssert(tvars.leftcars.rlen_cm == 21); 
+    XCTAssert(tvars.leftcars.rlen_mm == 210);
     
         
     rettrigs_t rettrigs = {0};
@@ -522,7 +522,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     tvars._curposmm = rettrigs.trigs[0].posmm; // 200
     rc = ctrl3_update_front_sblks(0, &tvars, tconf, 1);
     XCTAssert(!rc);
-    XCTAssert(tvars.leftcars.rlen_cm == 90); // s2 len
+    XCTAssert(tvars.leftcars.rlen_mm == 900); // s2 len
     
               //xxxx
     rc = ctrl3_check_front_sblks(0, &tvars, tconf, 1, &rettrigs);
@@ -540,7 +540,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     tvars.beginposmm = 0;
     rc = ctrl3_update_front_sblks_c1changed(0, &tvars, tconf, 1);
     XCTAssert(!rc);
-    XCTAssert(tvars.leftcars.rlen_cm == 70); // 27
+    XCTAssert(tvars.leftcars.rlen_mm == 700); // 27
     
     rc = ctrl3_check_front_sblks(0, &tvars, tconf, 1, &rettrigs);
     XCTAssert(rc==0);
@@ -554,7 +554,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     tvars._curposmm = rettrigs.trigs[2].posmm; // 230
     rc = ctrl3_update_front_sblks(0, &tvars, tconf, 0);
     XCTAssert(!rc);
-    XCTAssert(tvars.leftcars.rlen_cm == 28); // 16+12
+    XCTAssert(tvars.leftcars.rlen_mm == 280); // 16+12
     rc = ctrl3_check_front_sblks(0, &tvars, tconf, 1, &rettrigs);
     XCTAssert(rc==160);
     // rlen = 51 at start of c1
@@ -567,7 +567,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     tvars._curposmm = rettrigs.trigs[1].posmm; // 320
     rc = ctrl3_update_front_sblks(0, &tvars, tconf, 0);
     XCTAssert(!rc);
-    XCTAssert(tvars.leftcars.rlen_cm == 12); // 16+12
+    XCTAssert(tvars.leftcars.rlen_mm == 120); // 16+12
     rc = ctrl3_check_front_sblks(0, &tvars, tconf, 1, &rettrigs);
     XCTAssert(rc<0);
     // rlen = 51 at start of c1

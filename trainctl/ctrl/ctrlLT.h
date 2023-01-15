@@ -29,7 +29,7 @@ typedef enum {
 #define MAX_LSBLK_CARS 4
 struct forwdsblk {
     lsblk_num_t r[MAX_LSBLK_CARS];
-    int16_t     rlen_cm;            // caution value should be updated if curposmm changed
+    int16_t     rlen_mm;            // caution value should be updated if curposmm changed
     int8_t      numlsblk;
     int8_t      numlsblk_withmargin;
 };

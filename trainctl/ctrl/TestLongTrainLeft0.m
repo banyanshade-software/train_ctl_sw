@@ -87,7 +87,7 @@ static lsblk_num_t s21 = {21};
     
     ctrl3_get_next_sblks(0, &tvars, tconf);
     XCTAssert(tvars.leftcars.numlsblk == 0);
-    XCTAssert(tvars.leftcars.rlen_cm == 70-10-15); //45
+    XCTAssert(tvars.leftcars.rlen_mm == 10*(70-10-15)); //45
    
     rettrigs_t rettrigs = {0};
     rc = ctrl3_check_front_sblks(0, &tvars, tconf, 1, &rettrigs);
@@ -140,7 +140,7 @@ static lsblk_num_t s21 = {21};
     
     ctrl3_get_next_sblks(0, &tvars, tconf);
     XCTAssert(tvars.leftcars.numlsblk == 0);
-    XCTAssert(tvars.leftcars.rlen_cm == cp-15); //45
+    XCTAssert(tvars.leftcars.rlen_mm == 10*(cp-15)); //45
    
     rettrigs_t rettrigs = {0};
     rc = ctrl3_check_front_sblks(0, &tvars, tconf, 1, &rettrigs);
@@ -196,7 +196,7 @@ static lsblk_num_t s21 = {21};
     
     ctrl3_get_next_sblks(0, &tvars, tconf);
     XCTAssert(tvars.leftcars.numlsblk == 0);
-    XCTAssert(tvars.leftcars.rlen_cm == cp-15); //45
+    XCTAssert(tvars.leftcars.rlen_mm == 10*(cp-15)); //45
    
     rettrigs_t rettrigs = {0};
     rc = ctrl3_check_front_sblks(0, &tvars, tconf, 1, &rettrigs);
@@ -241,10 +241,10 @@ static lsblk_num_t s21 = {21};
     ctrl3_get_next_sblks(0, &tvars, tconf);
     if (b) {
         XCTAssert(tvars.leftcars.numlsblk == 1);
-        XCTAssert(tvars.leftcars.rlen_cm == 70+3-cp-15);
+        XCTAssert(tvars.leftcars.rlen_mm == 10*(70+3-cp-15));
     } else {
         XCTAssert(tvars.leftcars.numlsblk == 0);
-        XCTAssert(tvars.leftcars.rlen_cm == cp-15); //45
+        XCTAssert(tvars.leftcars.rlen_mm == 10*(cp-15)); //45
     }
     rettrigs_t rettrigs = {0};
     rc = ctrl3_check_front_sblks(0, &tvars, tconf, 1, &rettrigs);

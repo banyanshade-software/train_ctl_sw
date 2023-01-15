@@ -52,30 +52,30 @@ int32_t ctrl3_getcurpossmm(train_ctrl_t *tvars, const conf_train_t *tconf, int l
     return tvars->_curposmm;
 }
 
-int ctrl3_get_next_sblks_(_UNUSED_ int tidx, train_ctrl_t *tvars,  const conf_train_t *tconf, int left, lsblk_num_t *resp, int nsblk, int16_t *premainlen)
+int ctrl3_get_next_sblks_(_UNUSED_ int tidx, train_ctrl_t *tvars,  const conf_train_t *tconf, int left, lsblk_num_t *resp, int nsblk, int16_t *premainlenmm)
 {
-    if (premainlen) *premainlen = 0;
+    if (premainlenmm) *premainlenmm = 0;
     int lidx = 0;
-    int cm = left ? tconf->trainlen_left_cm : tconf->trainlen_right_cm;
+    int mm = 10*(left ? tconf->trainlen_left_cm : tconf->trainlen_right_cm);
     lsblk_num_t cblk = tvars->c1_sblk;
     // curposmm
-    int l0 = (ctrl3_getcurpossmm(tvars, tconf, left) - tvars->beginposmm) / 10;
+    int l0mm = ctrl3_getcurpossmm(tvars, tconf, left) - tvars->beginposmm;
     for (;;) {
-        int l = get_lsblk_len_cm(cblk, NULL);
-        if (l0) {
+        int lmm = 10*get_lsblk_len_cm(cblk, NULL);
+        if (l0mm) {
             if (left) {
-                l = l0;
+                lmm = l0mm;
             } else {
-                l = l-l0;
+                lmm = lmm-l0mm;
             }
-            l0 = 0;
+            l0mm = 0;
         }
-        if (l > cm) {
+        if (lmm > mm) {
             // done
-            if (premainlen) *premainlen = l-cm;
+            if (premainlenmm) *premainlenmm = lmm-mm;
             return lidx;
         }
-        cm -= l;
+        mm -= lmm;
         cblk = next_lsblk(cblk, left, NULL);
         resp[lidx] = cblk;
         lidx++;
@@ -88,8 +88,8 @@ int ctrl3_get_next_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *tco
 {
     memset(tvars->rightcars.r, 0xFF, sizeof(tvars->rightcars.r));
     memset(tvars->leftcars.r, 0xFF, sizeof(tvars->leftcars.r));
-    tvars->rightcars.numlsblk = ctrl3_get_next_sblks_(tidx, tvars, tconf, 0, tvars->rightcars.r, MAX_LSBLK_CARS, &tvars->rightcars.rlen_cm);
-    tvars->leftcars.numlsblk = ctrl3_get_next_sblks_(tidx, tvars, tconf, 1, tvars->leftcars.r, MAX_LSBLK_CARS, &tvars->leftcars.rlen_cm);
+    tvars->rightcars.numlsblk = ctrl3_get_next_sblks_(tidx, tvars, tconf, 0, tvars->rightcars.r, MAX_LSBLK_CARS, &tvars->rightcars.rlen_mm);
+    tvars->leftcars.numlsblk = ctrl3_get_next_sblks_(tidx, tvars, tconf, 1, tvars->leftcars.r, MAX_LSBLK_CARS, &tvars->leftcars.rlen_mm);
     return 0; // XXX error handling here
 }
 
@@ -98,17 +98,17 @@ static const int margin_stop_len_mm = 120;
 static const int margin_c2_len_mm = 200;
 
 
-static int trigmm_for_frontdistcm(_UNUSED_ int tidx, train_ctrl_t *tvars,  _UNUSED_ const conf_train_t *tconf, int left, int distcm)
+static int trigmm_for_frontdistmm(_UNUSED_ int tidx, train_ctrl_t *tvars,  _UNUSED_ const conf_train_t *tconf, int left, int distmm)
 {
     struct forwdsblk _UNUSED_ *fsblk = left ? &tvars->leftcars : &tvars->rightcars;
     if (!left) {
-        int lmm = tvars->_curposmm - tvars->beginposmm + 10*distcm;
+        int lmm = tvars->_curposmm - tvars->beginposmm + distmm;
         if (lmm<10*get_lsblk_len_cm(tvars->c1_sblk, NULL)) {
             return lmm+tvars->beginposmm;
         }
     } else {
         // ex: curpos = 900, begin = 0, seg len = 90, dist 70
-        int lmm = (tvars->_curposmm - tvars->beginposmm) - 10*distcm;
+        int lmm = (tvars->_curposmm - tvars->beginposmm) - distmm;
         if (lmm>=0 && lmm<=10*get_lsblk_len_cm(tvars->c1_sblk, NULL)) {
             return lmm+tvars->beginposmm;
         }
@@ -180,7 +180,7 @@ static int check_front(int tidx, train_ctrl_t *tvars,  struct forwdsblk *fsblk, 
     lsblk_num_t ns = fs;
     int mm0 = ctrl3_getcurpossmm(tvars, conf_train_get(tidx), left)-tvars->beginposmm;
     if (left) {
-        mm0 -= 10*fsblk->rlen_cm;
+        mm0 -= fsblk->rlen_mm;
         int mm = 0;
         for (;;) {
             ns = next_lsblk(ns, left, pa);
@@ -197,7 +197,7 @@ static int check_front(int tidx, train_ctrl_t *tvars,  struct forwdsblk *fsblk, 
         }
 
     } else {
-        mm0 += 10*fsblk->rlen_cm;
+        mm0 += fsblk->rlen_mm;
         int mm = 0;
         //int slen = get_lsblk_len_cm(ns, NULL);
         for (;;) {
@@ -350,7 +350,7 @@ int ctrl3_check_front_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *
     //int dc1mm =  10*get_lsblk_len_cm(tvars->c1_sblk, NULL) - (tvars->_curposmm - tvars->beginposmm) ;
     // trigger for end of seg
     
-    int lmm = trigmm_for_frontdistcm(tidx, tvars, tconf, left, fsblk->rlen_cm);
+    int lmm = trigmm_for_frontdistmm(tidx, tvars, tconf, left, fsblk->rlen_mm);
     if ((0 <= lmm-tvars->beginposmm)  && (lmm-tvars->beginposmm <= c1lenmm)) {
         ret->trigs[ret->ntrig].posmm = lmm;
         ret->trigs[ret->ntrig].tag = tag_chkocc;
@@ -373,14 +373,14 @@ int ctrl3_check_front_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *
         //          < rlen   >
         // train can advance rlen-lstp
         
-        int rc = _add_trig(left, ret, 10*fsblk->rlen_cm, c1lenmm, curmm, kmm, a ? tag_stop_blk_wait : tag_stop_eot, margin_stop_len_mm, minmm, maxmm, trlenmm);
+        int rc = _add_trig(left, ret, fsblk->rlen_mm, c1lenmm, curmm, kmm, a ? tag_stop_blk_wait : tag_stop_eot, margin_stop_len_mm, minmm, maxmm, trlenmm);
         if (rc!=ADD_TRIG_NOTHING) {
             if (a) ret->isocc = 1;
             else ret->isoet = 1;
             retc = -1;
         } else {
             // dont check for brake if already in stop condition
-            rc = _add_trig(left, ret, 10*fsblk->rlen_cm, c1lenmm, curmm, kmm, tag_brake, margin_stop_len_mm+brake_len_mm, minmm, maxmm, trlenmm);
+            rc = _add_trig(left, ret, fsblk->rlen_mm, c1lenmm, curmm, kmm, tag_brake, margin_stop_len_mm+brake_len_mm, minmm, maxmm, trlenmm);
             if (rc!=ADD_TRIG_NOTHING) {
                 // brake
                 retc = brake_len_mm - rc;
@@ -390,7 +390,7 @@ int ctrl3_check_front_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *
     
     kmm = check_front(tidx, tvars, fsblk, left, c1lenmm, &a, _check_front_condition_res_c2);
     if (a != -1) {
-        int rc = _add_trig(left, ret, 10*fsblk->rlen_cm, c1lenmm, curmm, kmm, tag_reserve_c2, margin_c2_len_mm, minmm, maxmm, trlenmm);
+        int rc = _add_trig(left, ret, fsblk->rlen_mm, c1lenmm, curmm, kmm, tag_reserve_c2, margin_c2_len_mm, minmm, maxmm, trlenmm);
         if (rc != ADD_TRIG_NOTHING) {
             ret->res_c2 = 1;
         }

@@ -30,7 +30,7 @@ int cmptrigs(const rettrigs_t *r1, const rettrigs_t *r2)
     if (r1->res_c2 != r2->res_c2) return -4;
     if (r1->ntrig != r2->ntrig) return -5;
     for (int i=0; i<NUMTRIGS; i++) {
-        if (r1->trigs[i].poscm != r2->trigs[i].poscm) {
+        if (r1->trigs[i].posmm != r2->trigs[i].posmm) {
             return i+10;
         }
         if (r1->trigs[i].tag != r2->trigs[i].tag) {

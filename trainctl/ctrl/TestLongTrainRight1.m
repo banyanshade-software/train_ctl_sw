@@ -299,7 +299,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
 }
 
 
-- (void) checkC2powerRight:(int)bcm cpos:(int)cpos
+- (void) checkC2powerRight:(int)bmm cpos:(int)cpos
 {
     int rc;
     
@@ -307,8 +307,8 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     tconf->trainlen_right_cm = 18;
     occupency_clear();
     tvars.c1_sblk = sten;
-    tvars.beginposmm = bcm*10;
-    tvars._curposmm = (cpos + bcm)*10;
+    tvars.beginposmm = bmm;
+    tvars._curposmm = cpos*10 + bmm;
     
     ctrl3_get_next_sblks(0, &tvars, tconf);
     XCTAssert(tvars.rightcars.numlsblk == 0);
@@ -317,7 +317,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     rettrigs_t rettrigs = {0};
     rc = ctrl3_check_front_sblks(0, &tvars, tconf, 0, &rettrigs);
     XCTAssert(rc==0);
-    const rettrigs_t expt1 = { 0, 0, 0, 0, 5, {{22 + bcm, tag_chkocc}, {34+bcm, tag_brake}, {12+bcm,tag_reserve_c2}, {40+bcm, tag_end_lsblk}, {30+bcm, tag_need_c2}}};
+    const rettrigs_t expt1 = { 0, 0, 0, 0, 5, {{220 + bmm, tag_chkocc}, {340+bmm, tag_brake}, {120+bmm,tag_reserve_c2}, {400+bmm, tag_end_lsblk}, {300+bmm, tag_need_c2}}};
     XCTAssert(!cmptrigs(&rettrigs, &expt1));
 }
 
@@ -326,7 +326,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
 {
     [self  checkC2powerRightB:0 cpos:31 ];
 }
-- (void) checkC2powerRightB:(int)bcm cpos:(int)cpos
+- (void) checkC2powerRightB:(int)bmm cpos:(int)cpos
 {
     int rc;
     
@@ -334,8 +334,8 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     tconf->trainlen_right_cm = 18;
     occupency_clear();
     tvars.c1_sblk = sten;
-    tvars.beginposmm = bcm*10;
-    tvars._curposmm = (cpos + bcm)*10;
+    tvars.beginposmm = bmm;
+    tvars._curposmm = (cpos*10 + bmm);
     
     ctrl3_get_next_sblks(0, &tvars, tconf);
     XCTAssert(tvars.rightcars.numlsblk == 1);
@@ -344,7 +344,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     rettrigs_t rettrigs = {0};
     rc = ctrl3_check_front_sblks(0, &tvars, tconf, 0, &rettrigs);
     XCTAssert(rc==0);
-    const rettrigs_t expt1 = { 0, 0, 1, 1, 3, {{32 + bcm, tag_chkocc}, {34+bcm, tag_brake},  {40+bcm, tag_end_lsblk}}};
+    const rettrigs_t expt1 = { 0, 0, 1, 1, 3, {{320 + bmm, tag_chkocc}, {340+bmm, tag_brake},  {400+bmm, tag_end_lsblk}}};
     XCTAssert(!cmptrigs(&rettrigs, &expt1));
 }
 
@@ -362,17 +362,17 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     [self checkFrontRight:-100];
 }
 
-- (void) checkFrontRight:(int)bcm
+- (void) checkFrontRight:(int)bmm
 {
     int rc;
     
     tconf->trainlen_left_cm = 0;
     tconf->trainlen_right_cm = 38;
     occupency_clear();
-    tvars.beginposmm = bcm*10;
+    tvars.beginposmm = bmm;
     
     // (A)
-    tvars._curposmm = 200 + bcm*10;
+    tvars._curposmm = 200 + bmm;
     
     ctrl3_get_next_sblks(0, &tvars, tconf);
     XCTAssert(tvars.rightcars.numlsblk == 0);
@@ -381,28 +381,28 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     rettrigs_t rettrigs = {0};
     rc = ctrl3_check_front_sblks(0, &tvars, tconf, 0, &rettrigs);
     XCTAssert(rc==0);
-    const rettrigs_t expt1 = { 0, 0, 0, 1, 2, {{22 + bcm, tag_chkocc}, {52+bcm, tag_reserve_c2}, {0,0}}};
+    const rettrigs_t expt1 = { 0, 0, 0, 1, 2, {{220+bmm, tag_chkocc}, {520+bmm, tag_reserve_c2}, {0,0}}};
     XCTAssert(!cmptrigs(&rettrigs, &expt1));
 
     // (B) first trig
-    tvars._curposmm = 220 + bcm*10;
+    tvars._curposmm = 220 + bmm;
     ctrl3_get_next_sblks(0, &tvars, tconf);
     XCTAssert(tvars.rightcars.rlen_cm == 40);
     rc = ctrl3_check_front_sblks(0, &tvars, tconf, 0, &rettrigs);
     XCTAssert(rc==0);
-    const rettrigs_t expt3 = {0, 0, 0, 1, 1, { {52+bcm, tag_reserve_c2},  {0,0}, {0, 0}}};
+    const rettrigs_t expt3 = {0, 0, 0, 1, 1, { {520+bmm, tag_reserve_c2},  {0,0}, {0, 0}}};
     XCTAssert(!cmptrigs(&rettrigs, &expt3));
     
     // (C1) change c1sblk
-    int beg = bcm + 60;
+    int beg = bmm + 600;
     tvars.c1_sblk.n = 10;
-    tvars.beginposmm = 0+beg*10;
-    tvars._curposmm = 0+beg*10;
+    tvars.beginposmm = 0+beg;
+    tvars._curposmm = 0+beg;
     ctrl3_get_next_sblks(0, &tvars, tconf);
     XCTAssert(tvars.rightcars.rlen_cm == 2);
     rc = ctrl3_check_front_sblks(0, &tvars, tconf, 0, &rettrigs);
     XCTAssert(rc==0);
-    const rettrigs_t expt4 = {0, 0, 1, 0, 5, { {beg+2, tag_chkocc},  {beg+30,tag_stop_eot}, {beg+14, tag_brake}, {beg+40, tag_end_lsblk}, {beg+30, tag_need_c2}}};
+    const rettrigs_t expt4 = {0, 0, 1, 0, 5, { {beg+20, tag_chkocc},  {beg+300,tag_stop_eot}, {beg+140, tag_brake}, {beg+400, tag_end_lsblk}, {beg+300, tag_need_c2}}};
     XCTAssert(!cmptrigs(&rettrigs, &expt4));
 
     // (D1) advance to first trig
@@ -410,7 +410,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     ctrl3_get_next_sblks(0, &tvars, tconf);
     XCTAssert(tvars.rightcars.rlen_cm == 10);
     rc = ctrl3_check_front_sblks(0, &tvars, tconf, 0, &rettrigs);
-    const rettrigs_t expt5 = {0, 0, 1, 0, 5, { {beg+10+2, tag_chkocc},  {beg+30,tag_stop_eot}, {beg+14, tag_brake}, {beg+40, tag_end_lsblk}, {beg+30, tag_need_c2}}};
+    const rettrigs_t expt5 = {0, 0, 1, 0, 5, { {beg+100+20, tag_chkocc},  {beg+300,tag_stop_eot}, {beg+140, tag_brake}, {beg+400, tag_end_lsblk}, {beg+300, tag_need_c2}}};
     XCTAssert(!cmptrigs(&rettrigs, &expt5));
 
     
@@ -423,7 +423,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     XCTAssert(tvars.rightcars.rlen_cm == 2);
     rc = ctrl3_check_front_sblks(0, &tvars, tconf, 0, &rettrigs);
     XCTAssert(rc==0);
-    const rettrigs_t expt4b = {0, 0, 1, 0, 5, { {2, tag_chkocc},    {30,tag_stop_eot}, {14, tag_brake}, {40, tag_end_lsblk}, {30, tag_need_c2}}};
+    const rettrigs_t expt4b = {0, 0, 1, 0, 5, { {20, tag_chkocc},    {300,tag_stop_eot}, {140, tag_brake}, {400, tag_end_lsblk}, {300, tag_need_c2}}};
     XCTAssert(!cmptrigs(&rettrigs, &expt4b));
     
     

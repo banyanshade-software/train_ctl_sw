@@ -552,7 +552,7 @@ static int _train_check_dir(int tidx, train_ctrl_t *tvars, int sdir, rettrigs_t 
     itm_debug3(DBG_CTRL, "rc2", tidx, rc2, tvars->_state);
     if (rc2>0) {
         // set brake
-        tvars->stopposmm = ctrl3_getcurpossmm(tvars, conf_train_get(tidx), (sdir<0)) + rc2*10*sdir;
+        tvars->stopposmm = ctrl3_getcurpossmm(tvars, conf_train_get(tidx), (sdir<0)) + rc2*sdir;
         tvars->brake = 1;
     } else {
         tvars->brake = 0;
@@ -600,9 +600,9 @@ static void _apply_trigs(int tidx, train_ctrl_t *tvars, const rettrigs_t *rett)
     for (int i=0; i<NUMTRIGS;i++) {
         if (!rett->trigs[i].tag) continue;
         _set_one_trig(tidx, conf, i, tvars->_sdir, tvars->can1_xaddr ,
-                      pose_convert_from_mm(conf, rett->trigs[i].poscm*10),
+                      pose_convert_from_mm(conf, rett->trigs[i].posmm),
                       rett->trigs[i].tag);
-        trace_train_trig_set(ctrl_tasklet.last_tick, tidx, tvars, rett->trigs[i].tag, rett->trigs[i].poscm*10);
+        trace_train_trig_set(ctrl_tasklet.last_tick, tidx, tvars, rett->trigs[i].tag, rett->trigs[i].posmm);
     }
 }
 

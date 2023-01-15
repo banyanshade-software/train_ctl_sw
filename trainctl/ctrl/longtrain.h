@@ -14,7 +14,7 @@
 /// return value for ctrl2_check_front_sblks
 #define NUMTRIGS 6
 struct sttrig {
-    int16_t poscm;
+    int16_t posmm;
     int8_t tag;
 };
 typedef struct {

@@ -93,9 +93,9 @@ int ctrl3_get_next_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *tco
     return 0; // XXX error handling here
 }
 
-static const int brake_len_cm = 16;
-static const int margin_stop_len_cm = 12;
-static const int margin_c2_len_cm = 20;
+static const int brake_len_mm = 160;
+static const int margin_stop_len_mm = 120;
+static const int margin_c2_len_mm = 200;
 
 
 static int trigmm_for_frontdistcm(_UNUSED_ int tidx, train_ctrl_t *tvars,  _UNUSED_ const conf_train_t *tconf, int left, int distcm)
@@ -174,22 +174,22 @@ int _check_front_condition_s1pose( train_ctrl_t *tvars, lsblk_num_t lastsblk, ls
 }
 
 
-static int check_front(int tidx, train_ctrl_t *tvars,  struct forwdsblk *fsblk, int left, int16_t maxcm, int8_t *pa, check_condition_t cond)
+static int check_front(int tidx, train_ctrl_t *tvars,  struct forwdsblk *fsblk, int left, int16_t maxmm, int8_t *pa, check_condition_t cond)
 {
     lsblk_num_t fs = (fsblk->numlsblk>0) ? fsblk->r[fsblk->numlsblk-1] : tvars->c1_sblk;
     lsblk_num_t ns = fs;
-    int cm0 = (ctrl3_getcurpossmm(tvars, conf_train_get(tidx), left)-tvars->beginposmm)/10;
+    int mm0 = ctrl3_getcurpossmm(tvars, conf_train_get(tidx), left)-tvars->beginposmm;
     if (left) {
-        cm0 -= fsblk->rlen_cm;
-        int cm = 0;
+        mm0 -= 10*fsblk->rlen_cm;
+        int mm = 0;
         for (;;) {
             ns = next_lsblk(ns, left, pa);
             if (cond(tvars, fs, ns)) {
                 // EOT or BLKWAIT
-                return cm;
+                return mm;
             } else {
-                cm += get_lsblk_len_cm(ns, NULL);
-                if (cm+cm0 >= maxcm+brake_len_cm+margin_stop_len_cm) {
+                mm += 10*get_lsblk_len_cm(ns, NULL);
+                if (mm+mm0 >= maxmm+brake_len_mm+margin_stop_len_mm) {
                     *pa = -1;
                     return 0;
                 }
@@ -197,17 +197,17 @@ static int check_front(int tidx, train_ctrl_t *tvars,  struct forwdsblk *fsblk, 
         }
 
     } else {
-        cm0 += fsblk->rlen_cm;
-        int cm = 0;
+        mm0 += 10*fsblk->rlen_cm;
+        int mm = 0;
         //int slen = get_lsblk_len_cm(ns, NULL);
         for (;;) {
             ns = next_lsblk(ns, left, pa);
             if (cond(tvars, fs, ns)) {
                 // EOT or BLKWAIT
-                return cm;
+                return mm;
             } else {
-                cm += get_lsblk_len_cm(ns, NULL);
-                if (cm+cm0 >= maxcm+brake_len_cm+margin_stop_len_cm) {
+                mm += 10*get_lsblk_len_cm(ns, NULL);
+                if (mm+mm0 >= maxmm+brake_len_mm+margin_stop_len_mm) {
                     *pa = -1;
                     return 0;
                 } else if (ns.n == -1) {
@@ -219,22 +219,22 @@ static int check_front(int tidx, train_ctrl_t *tvars,  struct forwdsblk *fsblk, 
     }
 }
 
-static int check_loco(int tidx, train_ctrl_t *tvars,  struct forwdsblk *fsblk, int left, int16_t maxcm, int8_t *pa, check_condition_t cond)
+static int check_loco(int tidx, train_ctrl_t *tvars,  struct forwdsblk *fsblk, int left, int16_t maxmm, int8_t *pa, check_condition_t cond)
 {
     lsblk_num_t fs = tvars->c1_sblk;
     lsblk_num_t ns = fs;
-    int cm0 = (ctrl3_getcurpossmm(tvars, conf_train_get(tidx), left)-tvars->beginposmm)/10;
+    int mm0 = ctrl3_getcurpossmm(tvars, conf_train_get(tidx), left)-tvars->beginposmm;
     if (left) {
         //cm0 -= fsblk->rlen_cm;
-        int cm = 0;
+        int mm = 0;
         for (;;) {
             ns = next_lsblk(ns, left, pa);
             if (cond(tvars, fs, ns)) {
                 // EOT or BLKWAIT
-                return cm;
+                return mm;
             } else {
-                cm += get_lsblk_len_cm(ns, NULL);
-                if (cm+cm0 >= maxcm+brake_len_cm+margin_stop_len_cm) {
+                mm += 10*get_lsblk_len_cm(ns, NULL);
+                if (mm+mm0 >= maxmm+brake_len_mm+margin_stop_len_mm) {
                     *pa = -1;
                     return 0;
                 }
@@ -243,16 +243,16 @@ static int check_loco(int tidx, train_ctrl_t *tvars,  struct forwdsblk *fsblk, i
 
     } else {
         //cm0 += fsblk->rlen_cm;
-        int cm = 0;
+        int mm = 0;
         //int slen = get_lsblk_len_cm(ns, NULL);
         for (;;) {
             ns = next_lsblk(ns, left, pa);
             if (cond(tvars, fs, ns)) {
                 // EOT or BLKWAIT
-                return cm;
+                return mm;
             } else {
-                cm += get_lsblk_len_cm(ns, NULL);
-                if (cm+cm0 >= maxcm+brake_len_cm+margin_stop_len_cm) {
+                mm += 10*get_lsblk_len_cm(ns, NULL);
+                if (mm+mm0 >= maxmm+brake_len_mm+margin_stop_len_mm) {
                     *pa = -1;
                     return 0;
                 } else if (ns.n == -1) {
@@ -264,32 +264,34 @@ static int check_loco(int tidx, train_ctrl_t *tvars,  struct forwdsblk *fsblk, i
     }
 }
 
+
+// _add_trig : all distances in mm
 #define ADD_TRIG_NOTHING 0x7FFF
-int _add_trig(int left, rettrigs_t *ret, int rlencm, int c1lencm, int curcm, int k, pose_trig_tag_t tag, int dist, int mincm, int maxcm, int trlen)
+int _add_trig(int left, rettrigs_t *ret, int rlenmm, int c1lenmm, int curmm, int kmm, pose_trig_tag_t tag, int distmm, int minmm, int maxmm, int trlenmm)
 {
-    int l = dist-k;
+    int lmm = distmm-kmm;
     if (!left) {
-        int trg = curcm+rlencm-l;
-        if (l>=rlencm) {
-            int s = l-rlencm;
-            return s;
-        } else if (l<c1lencm) {
-            if (trg>maxcm) {
+        int trg = curmm+rlenmm-lmm;
+        if (lmm>=rlenmm) {
+            int smm = lmm-rlenmm;
+            return smm;
+        } else if (lmm<c1lenmm) {
+            if (trg>maxmm) {
                 //printf("hu");
             } else {
-                ret->trigs[ret->ntrig].poscm = trg;
+                ret->trigs[ret->ntrig].posmm = trg;
                 ret->trigs[ret->ntrig].tag = tag;
                 ret->ntrig++;
             }
         }
     } else {
-        int trg = mincm+l+trlen;
-        if (l>=rlencm) {
-            int s = l-rlencm;
-            return s;
-        } else if (l<c1lencm) {
-            if (trg<curcm) {
-                ret->trigs[ret->ntrig].poscm = trg;
+        int trg = minmm+lmm+trlenmm;
+        if (lmm >= rlenmm) {
+            int smm = lmm-rlenmm;
+            return smm;
+        } else if (lmm < c1lenmm) {
+            if (trg<curmm) {
+                ret->trigs[ret->ntrig].posmm = trg;
                 ret->trigs[ret->ntrig].tag = tag;
                 ret->ntrig++;
             }
@@ -298,34 +300,34 @@ int _add_trig(int left, rettrigs_t *ret, int rlencm, int c1lencm, int curcm, int
     return ADD_TRIG_NOTHING;
 }
 
-int _add_trig_loco(int left, rettrigs_t *ret, int rlencm, int c1lencm, int curcm, int k, pose_trig_tag_t tag, int dist, int mincm, int maxcm, int trlen)
+int _add_trig_loco(int left, rettrigs_t *ret, int rlenmm, int c1lenmm, int curmm, int kmm, pose_trig_tag_t tag, int dist, int minmm, int maxmm, int trlen)
 {
     // ---------|------||
     //          < -k-->
     //      <---dist-->
-    int l = dist-k;
+    int lmm = dist-kmm;
     if (!left) {
-        int trg = mincm+c1lencm-l;
-        if (mincm+l<=curcm) {
-            int s = mincm+l-curcm;
-            return s;
-        } else if (l<c1lencm) {
-            if (trg>maxcm) {
+        int trg = minmm+c1lenmm-lmm;
+        if (minmm+lmm <= curmm) {
+            int smm = minmm+lmm-curmm;
+            return smm;
+        } else if (lmm < c1lenmm) {
+            if (trg > maxmm) {
                 //printf("hu");
             } else {
-                ret->trigs[ret->ntrig].poscm = trg;
+                ret->trigs[ret->ntrig].posmm = trg;
                 ret->trigs[ret->ntrig].tag = tag;
                 ret->ntrig++;
             }
         }
     } else {
-        int trg = mincm+l+trlen;
-        if (l>=rlencm) {
-            int s = l-rlencm;
-            return s;
-        } else if (l<c1lencm) {
-            if (trg<curcm) {
-                ret->trigs[ret->ntrig].poscm = trg;
+        int trg = minmm+lmm+trlen;
+        if (lmm >= rlenmm) {
+            int smm = lmm-rlenmm;
+            return smm;
+        } else if (lmm < c1lenmm) {
+            if (trg < curmm) {
+                ret->trigs[ret->ntrig].posmm = trg;
                 ret->trigs[ret->ntrig].tag = tag;
                 ret->ntrig++;
             }
@@ -340,17 +342,17 @@ int ctrl3_check_front_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *
     ret->isocc = 0;
     struct forwdsblk *fsblk = left ? &tvars->leftcars : &tvars->rightcars;
     int retc = 0;
-    int curcm = ctrl3_getcurpossmm(tvars, tconf, left)/10;
-    int c1lencm = get_lsblk_len_cm(tvars->c1_sblk, NULL);
-    int bpcm = tvars->beginposmm/10;
+    int curmm = ctrl3_getcurpossmm(tvars, tconf, left);
+    int c1lenmm = 10*get_lsblk_len_cm(tvars->c1_sblk, NULL);
+    int bpmm = tvars->beginposmm;
 
     // distance that will trigger a c1sblk change
     //int dc1mm =  10*get_lsblk_len_cm(tvars->c1_sblk, NULL) - (tvars->_curposmm - tvars->beginposmm) ;
     // trigger for end of seg
     
     int lmm = trigmm_for_frontdistcm(tidx, tvars, tconf, left, fsblk->rlen_cm);
-    if ((0 <= lmm-tvars->beginposmm)  && (lmm-tvars->beginposmm <= c1lencm*10)) {
-        ret->trigs[ret->ntrig].poscm = lmm/10;
+    if ((0 <= lmm-tvars->beginposmm)  && (lmm-tvars->beginposmm <= c1lenmm)) {
+        ret->trigs[ret->ntrig].posmm = lmm;
         ret->trigs[ret->ntrig].tag = tag_chkocc;
         ret->ntrig++;
     }
@@ -358,11 +360,11 @@ int ctrl3_check_front_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *
     
     //int ltcm = left ? tconf->trainlen_left_cm : tconf->trainlen_right_cm;
     //int bcm = tvars->beginposmm/10;
-    int maxcm = tvars->beginposmm/10+c1lencm;
-    int mincm = tvars->beginposmm/10;
-    int trlen = left ? tconf->trainlen_left_cm : tconf->trainlen_right_cm;
+    int maxmm = tvars->beginposmm+c1lenmm;
+    int minmm = tvars->beginposmm;
+    int trlenmm = 10*(left ? tconf->trainlen_left_cm : tconf->trainlen_right_cm);
     
-    int k = check_front(tidx, tvars, fsblk, left, c1lencm, &a, _check_front_condition_eot);
+    int kmm = check_front(tidx, tvars, fsblk, left, c1lenmm, &a, _check_front_condition_eot);
     if (a != -1) {
         // lcccc|cc----------|-----||
         //                      k
@@ -371,24 +373,24 @@ int ctrl3_check_front_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *
         //          < rlen   >
         // train can advance rlen-lstp
         
-        int rc = _add_trig(left, ret, fsblk->rlen_cm, c1lencm, curcm, k, a ? tag_stop_blk_wait : tag_stop_eot, margin_stop_len_cm, mincm, maxcm, trlen);
+        int rc = _add_trig(left, ret, 10*fsblk->rlen_cm, c1lenmm, curmm, kmm, a ? tag_stop_blk_wait : tag_stop_eot, margin_stop_len_mm, minmm, maxmm, trlenmm);
         if (rc!=ADD_TRIG_NOTHING) {
             if (a) ret->isocc = 1;
             else ret->isoet = 1;
             retc = -1;
         } else {
             // dont check for brake if already in stop condition
-            rc = _add_trig(left, ret, fsblk->rlen_cm, c1lencm, curcm, k, tag_brake, margin_stop_len_cm+brake_len_cm, mincm, maxcm, trlen);
+            rc = _add_trig(left, ret, 10*fsblk->rlen_cm, c1lenmm, curmm, kmm, tag_brake, margin_stop_len_mm+brake_len_mm, minmm, maxmm, trlenmm);
             if (rc!=ADD_TRIG_NOTHING) {
                 // brake
-                retc = brake_len_cm - rc;
+                retc = brake_len_mm - rc;
             }
         }
     }
     
-    k = check_front(tidx, tvars, fsblk, left, c1lencm, &a, _check_front_condition_res_c2);
+    kmm = check_front(tidx, tvars, fsblk, left, c1lenmm, &a, _check_front_condition_res_c2);
     if (a != -1) {
-        int rc = _add_trig(left, ret, fsblk->rlen_cm, c1lencm, curcm, k, tag_reserve_c2, margin_c2_len_cm, mincm, maxcm, trlen);
+        int rc = _add_trig(left, ret, 10*fsblk->rlen_cm, c1lenmm, curmm, kmm, tag_reserve_c2, margin_c2_len_mm, minmm, maxmm, trlenmm);
         if (rc != ADD_TRIG_NOTHING) {
             ret->res_c2 = 1;
         }
@@ -404,9 +406,9 @@ int ctrl3_check_front_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *
             int a2 = get_lsblk_ina3221(ns);
             if (ignore_ina_pres() || (a1 == a2)) {
                 if (!left) {
-                    ret->trigs[ret->ntrig].poscm = bpcm + c1lencm;
+                    ret->trigs[ret->ntrig].posmm = bpmm + c1lenmm;
                 } else {
-                    ret->trigs[ret->ntrig].poscm = bpcm;
+                    ret->trigs[ret->ntrig].posmm = bpmm;
                 }
                 ret->trigs[ret->ntrig].tag = tag_end_lsblk;
                 ret->ntrig++;
@@ -415,9 +417,9 @@ int ctrl3_check_front_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *
     }
     //  power c2
     if ((1)) {
-        k = check_loco(tidx, tvars, fsblk, left, c1lencm, &a, _check_front_condition_res_c2);
+        kmm = check_loco(tidx, tvars, fsblk, left, c1lenmm, &a, _check_front_condition_res_c2);
         if (a != -1) {
-            int rc = _add_trig_loco(left, ret, 0/*fsblk->rlen_cm*/, c1lencm, curcm, k, tag_need_c2, margin_c2_len_cm, mincm, maxcm, trlen);
+            int rc = _add_trig_loco(left, ret, 0, c1lenmm, curmm, kmm, tag_need_c2, margin_c2_len_mm, minmm, maxmm, trlenmm);
             if (rc != ADD_TRIG_NOTHING) {
                 ret->power_c2 = 1;
             }

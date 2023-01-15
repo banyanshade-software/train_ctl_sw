@@ -267,19 +267,38 @@ static lsblk_num_t s4 = {4};
 }
 
 /*
- 15 010390      state=running   dir=1 sblk=4 spd= 74 dspd= 74 pos=176 from 125
- 16 010830 TRIG end_lsblk pos=342
- 17 010830 --set chkocc    pos=630
- 18 010830 --set stop_eot  pos=510
- 19 010830 --set brake     pos=350
- 20 010830      state=running   dir=1 sblk=5 spd= 74 dspd= 74 pos=342 from 342
- 21 010840 TRIG end_lsblk pos=352
- 22 010840      state=running   dir=1 sblk=5 spd= 74 dspd= 74 pos=352 from 342
- 23 010850 TRIG brake     pos=350
- 24 010850 --set chkocc    pos=640
- 25 010850 --set stop_eot  pos=520
- 26 010850 --set brake     pos=360 <------- should not be trigged
- 27 010850      state=running   dir=1 sblk=5 spd= 74 dspd= 74 pos=350 from 342
+ 0 000010      state=station   dir=0 sblk=2 spd=  0 dspd=  0 pos=9999999 from 0
+ 1 005970 --set  end_lsblk pos=600
+ 2 005970      state=running   dir=1 sblk=2 spd= 81 dspd= 81 pos=9999999 from 0
+ 3 007090 --set  end_lsblk pos=120
+ 4 007090      state=running   dir=1 sblk=1 spd= 81 dspd= 81 pos=9999999 from 0
+ 5 007290 TRIG   end_lsblk pos=9999999->127
+ 6 007290 --set  chkocc    pos=160
+ 7 007290 --set  end_lsblk pos=340
+ 8 007290      state=running   dir=1 sblk=4 spd= 81 dspd= 81 pos=127 from 127
+ 9 007370 TRIG   chkocc    pos=127->160
+10 007370 --set  chkocc    pos=170
+11 007370 --set  end_lsblk pos=340
+12 007370      state=running   dir=1 sblk=4 spd= 81 dspd= 81 pos=160 from 127
+13 007410 TRIG   chkocc    pos=160->176
+14 007410 --set  end_lsblk pos=340
+15 007410      state=running   dir=1 sblk=4 spd= 81 dspd= 81 pos=176 from 127
+16 007810 TRIG   end_lsblk pos=176->342
+17 007810 --set  chkocc    pos=630
+18 007810 --set  stop_eot  pos=510
+19 007810 --set  brake     pos=350
+20 007810      state=running   dir=1 sblk=5 spd= 81 dspd= 81 pos=342 from 342 xxxx
+21 007830 TRIG   brake     pos=342->350
+22 007830 --set  chkocc    pos=640
+23 007830 --set  stop_eot  pos=520
+24 007830 --set  brake     pos=360
+25 007830      state=running   dir=1 sblk=5 spd= 81 dspd= 81 pos=350 from 342
+26 007860 TRIG   brake     pos=350->367
+ 
+ s4 len = 22
+ s5 len = 47
+ 47-18-12-16 = 1 (brake)
+ eot at 17
  */
 
 - (void) testBrake350
@@ -294,8 +313,14 @@ static lsblk_num_t s4 = {4};
     
     rettrigs_t rettrigs = {0};
 
-    tvars.beginposmm = 347;
-    tvars._curposmm = 356;
+    tvars.beginposmm = 342;
+    tvars._curposmm = 350;
+    tvars._state = train_state_running;
+    tvars._sdir = 1;
+    tvars._desired_signed_speed = 81;
+    tvars._spd_limit = 99;
+    tvars._target_unisgned_speed = 81;
+    tvars.can1_xaddr.v = 2;
     ctrl3_get_next_sblks(0, &tvars, tconf);
     rc = ctrl3_check_front_sblks(0, &tvars, tconf, 0, &rettrigs);
     XCTAssert(rc>0);

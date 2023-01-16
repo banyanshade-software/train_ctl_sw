@@ -108,6 +108,9 @@ static inline  int numTopology(void)
 static inline const topo_lsblk_t *Topology(lsblk_num_t blknum)
 {
 	if (!_Topology) _readTopology();
+    if ((blknum.n<0) || (blknum.n >=_numTopology)) {
+        FatalError("Tphi", "bad lsblk for topo", Error_Lsblk_Invalid);
+    }
     return &_Topology[blknum.n];
 
 }

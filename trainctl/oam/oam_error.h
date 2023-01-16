@@ -50,7 +50,7 @@ enum fatal_error_code {
 	Error_NumBnum2,
 	Error_NoFlash,
 	Error_FlashRentered,
-
+    
 	Error_CAN_Rx_Overrun0,
 	Error_CAN_Rx_Overrun1,
 
@@ -78,6 +78,7 @@ enum fatal_error_code {
     Error_FSM_Sanity7,
     Error_FSM_Sanity8,
     Error_FSM_Sanity9,
+    Error_Lsblk_Invalid,
 
 };
 

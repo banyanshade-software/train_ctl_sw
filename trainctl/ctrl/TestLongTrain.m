@@ -510,7 +510,12 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     //XCTAssert(!rc);
     XCTAssert(tvars.leftcars.rlen_mm == 210);
     
-        
+    /* c1 (len 450)
+     pos  410
+      ---|----<ccccccL>--|
+                      ^410
+          (210)  (200) (40)
+     */
     rettrigs_t rettrigs = {0};
     int rc = ctrl3_check_front_sblks(0, &tvars, tconf, 1, &rettrigs);
     XCTAssert(rc==0);

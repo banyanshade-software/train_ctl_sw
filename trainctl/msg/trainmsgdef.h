@@ -24,6 +24,7 @@ typedef enum {
     CMD_BEMF_OFF,					// spdctl->canton							stop measure bemf
     CMD_SET_TARGET_SPEED,			// ctrl->spdctl		v1u=spd					set (unsigned) speed
     CMD_STOP, 						// ctrl->spdctl								stop canton (min volt, pwv=0), equiv to CMD_SETVPWM 7,0
+    CMD_BRAKE,                      // ctrl->spdctl subc: 1=set, 0=clear, v32=pos
     
     // 010 xxxxx
     CMD_BEMF_DETECT_ON_C2 = 0x40,	// spdctl->ctrl		v1u=C2 v2=POSE/10		sent when C2 canton detect BEMF

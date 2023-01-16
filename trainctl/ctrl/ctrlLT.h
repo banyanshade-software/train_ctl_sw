@@ -60,7 +60,7 @@ typedef struct {
     struct forwdsblk rightcars;
     //
     int32_t _curposmm;
-    int32_t stopposmm;  // when brake condition, position where train is expected to stop
+    //int32_t stopposmm;  // when brake condition, position where train is expected to stop
     int32_t beginposmm; // left side ofl sblk,  either 0, or -len
 
     uint8_t brake:1;

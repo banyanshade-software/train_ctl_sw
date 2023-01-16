@@ -342,6 +342,12 @@ void ctrl3_pose_triggered(int tidx, train_ctrl_t *tvars, pose_trig_tag_t trigtag
                     
                 case tag_brake:
                     itm_debug2(DBG_ERR|DBG_CTRL, "trg brk", tidx, tvars->c1_sblk.n);
+                    if (tvars->brake) {
+                        itm_debug2(DBG_ERR|DBG_CTRL, "already brk", tidx, tvars->c1_sblk.n);
+                        return;
+                    }
+                    // start brake
+                    // tvars->brake = 1; done by _train_check_dir
                     _updated_while_running(tidx, tvars);
                     return;
                     break;
@@ -551,10 +557,27 @@ static int _train_check_dir(int tidx, train_ctrl_t *tvars, int sdir, rettrigs_t 
     }
     itm_debug3(DBG_CTRL, "rc2", tidx, rc2, tvars->_state);
     if (rc2>0) {
-        // set brake
-        tvars->stopposmm = ctrl3_getcurpossmm(tvars, conf_train_get(tidx), (sdir<0)) + rc2*sdir;
+        // start brake
+        int32_t stopposmm = ctrl3_getcurpossmm(tvars, conf_train_get(tidx), (sdir<0)) + rc2*sdir;
         tvars->brake = 1;
+        msg_64_t m = {0};
+        m.from = MA1_CTRL(tidx);
+        m.to = MA1_SPDCTL(tidx);
+        m.cmd = CMD_BRAKE;
+        m.v32 = pose_convert_from_mm(conf, stopposmm)/10;
+        m.subc = 1;
+        mqf_write_from_ctrl(&m);
     } else {
+        if (tvars->brake) {
+            // clear brake
+            msg_64_t m = {0};
+            m.from = MA1_CTRL(tidx);
+            m.to = MA1_SPDCTL(tidx);
+            m.cmd = CMD_BRAKE;
+            m.subc = 0;
+            m.v32 = 0;
+            mqf_write_from_ctrl(&m);
+        }
         tvars->brake = 0;
     }
     
@@ -640,12 +663,14 @@ static void _apply_speed(int tidx, train_ctrl_t *tvars)
     if (spd > tvars->_spd_limit) spd = SIGNOF0(spd)*tvars->_spd_limit;
 
     // apply brake
+#if 0
     int32_t pos = ctrl3_getcurpossmm(tvars, conf_train_get(tidx), (tvars->_sdir<0));
     if (tvars->brake) {
         int dist = abs(pos - tvars->stopposmm);
         int maxspd = brake_maxspd(dist);
         if (spd>maxspd) spd = maxspd;
     }
+#endif
     
     if (tvars->_target_unisgned_speed == spd) {
         // dont send if same value

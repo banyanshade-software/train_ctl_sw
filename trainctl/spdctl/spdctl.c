@@ -126,7 +126,10 @@ typedef struct train_vars {
 	uint16_t C1_cur_volt_idx;
 	uint16_t C2_cur_volt_idx;
 
-    int16_t lastpose;
+    int16_t lastposed10;
+    int16_t stopposed10;
+    int16_t startbreakd10;
+    int16_t spdbrake;
 	//int32_t position_estimate;
     //int32_t pose_trig[MAX_TRIG];
     //uint8_t pose_trig_tag[MAX_TRIG];
@@ -136,6 +139,7 @@ typedef struct train_vars {
 
     uint8_t	c2hicnt:4;	// number of bemf_c2>bemf_c1, before setting c2bemf and notify higher layer
     uint8_t c2bemf:1; 	// 1=bemf shall be taken on C2
+    uint8_t brake:1;
 } train_vars_t;
 
 
@@ -222,15 +226,15 @@ static void spdctl_handle_msg(msg_64_t *m)
 			if (cfrom.v == tvars->C1x.v) {
 				if (!tidx) oscillo_t0bemf = m->v1;
 				else if (1==tidx) oscillo_t1bemf = m->v1;
-
 				itm_debug3(DBG_PID, "st bemf", tidx, m->v1, m->from);
+                tvars->lastposed10 = m->v2;
 				if (!tvars->c2bemf) tvars->bemf_mv = m->v1;
 				break;
 			} else if (cfrom.v == tvars->C2x.v) {
 				itm_debug3(DBG_PID, "c2 bemf", tidx, m->v1, m->from);
 				if (tvars->c2bemf) {
 					tvars->bemf_mv = m->v1;
-                    tvars->lastpose = m->v2;
+                    tvars->lastposed10 = m->v2;
 					if (!tidx) oscillo_t0bemf = m->v1;
 					else if (1==tidx) oscillo_t1bemf = m->v1;
 				}
@@ -273,6 +277,17 @@ static void spdctl_handle_msg(msg_64_t *m)
 			}
 			tvars->target_speed = (int16_t) m->v1u;
 			break;
+        case CMD_BRAKE:
+                if (m->subc) {
+                    tvars->brake = 1;
+                    tvars->stopposed10 = m->v32;
+                    tvars->startbreakd10 = tvars->lastposed10;
+                    tvars->spdbrake = tvars->target_speed;
+                } else {
+                    tvars->brake = 0;
+                    tvars->stopposed10 = 0;
+                }
+                break;
 		case CMD_SET_C1_C2:
 			itm_debug3(DBG_SPDCTL|DBG_CTRL, "set_c1_c2", tidx, m->vbytes[0], m->vbytes[2]);
 			//set_c1_c2(int tidx, train_vars_t *tvars, xblkaddr_t c1, int8_t dir1, xblkaddr_t c2, int8_t dir2)
@@ -492,11 +507,12 @@ static int pose_add_trig(train_vars_t *tvars, int16_t tag, int32_t pose)
 
 void send_train_stopped(int numtrain, train_vars_t *tvars)
 {
+    tvars->brake = 0;
     msg_64_t m = {0};
     m.from = MA1_SPDCTL(numtrain);
     m.to = MA1_CTRL(numtrain);
     m.cmd = CMD_STOP_DETECTED;
-    m.v32 = tvars->lastpose; // XXX TODO scale ?
+    m.v32 = tvars->lastposed10; // XXX TODO scale ?
     mqf_write_from_spdctl(&m);
 }
 
@@ -519,7 +535,11 @@ static void train_periodic_control(int numtrain, _UNUSED_ uint32_t dt)
 	int16_t v = tvars->target_speed;
 
 	itm_debug2(DBG_SPDCTL, "target", numtrain, v);
-
+    if (tvars->brake) {
+        int32_t k1000 = (1000*(tvars->stopposed10-tvars->lastposed10))/(tvars->stopposed10- tvars->startbreakd10);
+        if (k1000<0) k1000 = 0;
+        v = (int16_t)((tvars->spdbrake * k1000)/1000);
+    }
 
     // inertia before PID
 	if (1==tconf->enable_inertia) {

@@ -187,6 +187,9 @@ static int check_front(int tidx, train_ctrl_t *tvars,  struct forwdsblk *fsblk, 
             if (cond(tvars, fs, ns)) {
                 // EOT or BLKWAIT
                 return mm;
+            } else if (ns.n == -1) {
+                *pa = -1;
+                return 0;
             } else {
                 mm += 10*get_lsblk_len_cm(ns, NULL);
                 if (mm+mm0 >= maxmm+brake_len_mm+margin_stop_len_mm) {
@@ -205,6 +208,9 @@ static int check_front(int tidx, train_ctrl_t *tvars,  struct forwdsblk *fsblk, 
             if (cond(tvars, fs, ns)) {
                 // EOT or BLKWAIT
                 return mm;
+            } else if (ns.n == -1) {
+                *pa = -1;
+                return 0;
             } else {
                 mm += 10*get_lsblk_len_cm(ns, NULL);
                 if (mm+mm0 >= maxmm+brake_len_mm+margin_stop_len_mm) {
@@ -232,6 +238,9 @@ static int check_loco(int tidx, train_ctrl_t *tvars,  struct forwdsblk *fsblk, i
             if (cond(tvars, fs, ns)) {
                 // EOT or BLKWAIT
                 return mm;
+            } else if (ns.n == -1) {
+                *pa = -1;
+                return 0;
             } else {
                 mm += 10*get_lsblk_len_cm(ns, NULL);
                 if (mm+mm0 >= maxmm+brake_len_mm+margin_stop_len_mm) {
@@ -250,6 +259,9 @@ static int check_loco(int tidx, train_ctrl_t *tvars,  struct forwdsblk *fsblk, i
             if (cond(tvars, fs, ns)) {
                 // EOT or BLKWAIT
                 return mm;
+            } else if (ns.n == -1) {
+                *pa = -1;
+                return 0;
             } else {
                 mm += 10*get_lsblk_len_cm(ns, NULL);
                 if (mm+mm0 >= maxmm+brake_len_mm+margin_stop_len_mm) {

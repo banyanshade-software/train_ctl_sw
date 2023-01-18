@@ -1,8 +1,8 @@
 
 
-PACKCC=../../tools/packcc/build/clang/debug/bin/packcc
+PACKCC=../../../tools/packcc/build/clang/debug/bin/packcc
 
-all: config genmsg
+all: config 
 
 CFLAGS += -g -Wall -Werror
 
@@ -15,9 +15,6 @@ config: $(OBJS)
 config.c: config.peg
 	$(PACKCC)  -l config.peg
 	
-genmsg.c: genmsg.peg
-	$(PACKCC)  -l genmsg.peg
-
 clean:
 	rm -f *.o *.log .depend conf_*
 

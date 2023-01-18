@@ -28,5 +28,6 @@ typedef struct msgrecord msgrecord_t;
 // sending over usb (invoked by usbtask.c)
 void frame_send_recordmsg(void(*cb)(const uint8_t *d, int l));
 
+void record_msg_dump(void);
 
 #endif /* MSG_MSGRECORD_H_ */

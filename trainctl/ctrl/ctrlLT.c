@@ -47,7 +47,7 @@ static void _apply_trigs(int tidx, train_ctrl_t *tvars, const rettrigs_t *rett);
 
 static void _set_dir(int tidx, train_ctrl_t *tvars, int sdir);
 static void _update_spd_limit(int tidx, train_ctrl_t *tvars, int sdir);
-static void _set_speed(int tidx, train_ctrl_t *tvars, int signed_speed, int apply);
+static void _set_speed(int tidx, train_ctrl_t *tvars, int signed_speed, int applyspd, int brakerc);
 static void _set_state(int tidx, train_ctrl_t *tvars, train_state_t newstate);
 static void _apply_speed(int tidx, train_ctrl_t *tvars);
 static void _check_c2(int tidx, train_ctrl_t *tvars, rettrigs_t *rett);
@@ -105,7 +105,7 @@ void turn_train_off(int tidx, train_ctrl_t *tvars)
             _set_state(tidx, tvars, train_state_off);
             break;
         default:
-            _set_speed(tidx, tvars, 0, 1);
+            _set_speed(tidx, tvars, 0, 1, 0);
             tvars->off_requested = 1;
             break;
     }
@@ -149,7 +149,7 @@ station:
             }
             if (rett.isocc) {
                 _set_dir(tidx, tvars, sdir);
-                _set_speed(tidx, tvars, desired_speed, 0);
+                _set_speed(tidx, tvars, desired_speed, 0, 0);
                 _set_state(tidx, tvars, train_state_blkwait);
                 return;
             }
@@ -158,7 +158,7 @@ station:
             _check_c2(tidx, tvars, &rett);
             _set_dir(tidx, tvars, sdir);
             _update_spd_limit(tidx, tvars, sdir);
-            _set_speed(tidx, tvars, desired_speed, 1);
+            _set_speed(tidx, tvars, desired_speed, 1, rc);
             _apply_trigs(tidx, tvars, &rett);
             _set_state(tidx, tvars, train_state_running);
             return;
@@ -167,7 +167,7 @@ station:
         case train_state_running:
             if (sdir == tvars->_sdir) {
                 _update_spd_limit(tidx, tvars, sdir);
-                _set_speed(tidx, tvars, desired_speed, 1);
+                _set_speed(tidx, tvars, desired_speed, 1, rc);
                 return;
             } else {
                 // change direction
@@ -202,7 +202,8 @@ void ctrl3_upcmd_set_desired_speed_zero(int tidx, train_ctrl_t *tvars)
             break;
             
         case train_state_running:
-            _set_speed(tidx, tvars, 0, 1);
+            _set_speed(tidx, tvars, 0, 1, 0);
+            //_set_state(tidx, tvars, train_state_station); performed by stop detected
             return;
             
         case train_state_blkwait:
@@ -214,7 +215,7 @@ void ctrl3_upcmd_set_desired_speed_zero(int tidx, train_ctrl_t *tvars)
             
         case train_state_blkwait0:
         case train_state_end_of_track0:
-            _set_speed(tidx, tvars, 0, 0);
+            _set_speed(tidx, tvars, 0, 0, 0);
             return;
             break;
         default:
@@ -329,12 +330,12 @@ void ctrl3_pose_triggered(int tidx, train_ctrl_t *tvars, pose_trig_tag_t trigtag
                     return;
                     break;
                 case tag_stop_blk_wait:
-                    _set_speed(tidx, tvars, 0, 1);
+                    _set_speed(tidx, tvars, 0, 1, 0);
                     _set_state(tidx, tvars, train_state_blkwait0);
                     return;
                     break;
                 case tag_stop_eot:
-                    _set_speed(tidx, tvars, 0, 1);
+                    _set_speed(tidx, tvars, 0, 1, 0);
                     _set_state(tidx, tvars, train_state_end_of_track0);
                     return;
                     break;
@@ -387,14 +388,14 @@ void ctrl3_occupency_updated(int tidx, train_ctrl_t *tvars)
             rc = _train_check_dir(tidx, tvars, tvars->_sdir, &rett);
             if (rett.isocc) {
                 int spd = tvars->_desired_signed_speed;
-                _set_speed(tidx, tvars, 0, 1);
-                _set_speed(tidx, tvars, spd, 0);
+                _set_speed(tidx, tvars, 0, 1, 0);
+                _set_speed(tidx, tvars, spd, 0, 0);
                 _set_state(tidx, tvars, train_state_blkwait);
                 return;
             }
             if (rett.isoet) {
                 FatalError("FSMe", "run to eot", Error_FSM_RunToEot);
-                _set_speed(tidx, tvars, 0, 1);
+                _set_speed(tidx, tvars, 0, 1, 0);
                 _set_state(tidx, tvars, train_state_end_of_track);
                 return;
             }
@@ -422,7 +423,7 @@ void ctrl3_occupency_updated(int tidx, train_ctrl_t *tvars)
             if (rc<0) FatalError("FSMd", "setdir", Error_FSM_ChkNeg2);
             // train exit blkwait condition and can start
             _update_spd_limit(tidx, tvars, tvars->_sdir);
-            _set_speed(tidx, tvars, tvars->_desired_signed_speed, 1);
+            _set_speed(tidx, tvars, tvars->_desired_signed_speed, 1, rc);
             _apply_trigs(tidx, tvars, &rett);
             _set_state(tidx, tvars, train_state_running);
             return;
@@ -479,14 +480,14 @@ static void _updated_while_running(int tidx, train_ctrl_t *tvars)
     int rc = _train_check_dir(tidx, tvars, tvars->_sdir, &rett);
     if (rett.isoet) {
         int rc = _train_check_dir(tidx, tvars, tvars->_sdir, &rett);
-        _set_speed(tidx, tvars, 0, 1);
+        _set_speed(tidx, tvars, 0, 1, rc);
         _set_state(tidx, tvars, train_state_end_of_track);
         return;
     }
     if (rett.isocc) {
         int spd = tvars->_desired_signed_speed;
-        _set_speed(tidx, tvars, 0, 1);
-        _set_speed(tidx, tvars, spd, 0);
+        _set_speed(tidx, tvars, 0, 1, 0);
+        _set_speed(tidx, tvars, spd, 0, 0);
         _set_state(tidx, tvars, train_state_blkwait);
         return;
     }
@@ -494,7 +495,7 @@ static void _updated_while_running(int tidx, train_ctrl_t *tvars)
     _check_c2(tidx, tvars, &rett);
     _set_dir(tidx, tvars, tvars->_sdir);
     _update_spd_limit(tidx, tvars, tvars->_sdir);
-    _set_speed(tidx, tvars, tvars->_desired_signed_speed, 1);
+    _set_speed(tidx, tvars, tvars->_desired_signed_speed, 1, rc);
     _apply_trigs(tidx, tvars, &rett);
     _set_state(tidx, tvars, train_state_running);
     return;
@@ -556,30 +557,6 @@ static int _train_check_dir(int tidx, train_ctrl_t *tvars, int sdir, rettrigs_t 
         }
     }
     itm_debug3(DBG_CTRL, "rc2", tidx, rc2, tvars->_state);
-    if (rc2>0) {
-        // start brake
-        int32_t stopposmm = ctrl3_getcurpossmm(tvars, conf_train_get(tidx), (sdir<0)) + rc2*sdir;
-        tvars->brake = 1;
-        msg_64_t m = {0};
-        m.from = MA1_CTRL(tidx);
-        m.to = MA1_SPDCTL(tidx);
-        m.cmd = CMD_BRAKE;
-        m.v32 = pose_convert_from_mm(conf, stopposmm)/10;
-        m.subc = 1;
-        mqf_write_from_ctrl(&m);
-    } else {
-        if (tvars->brake) {
-            // clear brake
-            msg_64_t m = {0};
-            m.from = MA1_CTRL(tidx);
-            m.to = MA1_SPDCTL(tidx);
-            m.cmd = CMD_BRAKE;
-            m.subc = 0;
-            m.v32 = 0;
-            mqf_write_from_ctrl(&m);
-        }
-        tvars->brake = 0;
-    }
     
     return rc2;
 
@@ -644,14 +621,43 @@ static void _update_spd_limit(int tidx, train_ctrl_t *tvars, int sdir)
     tvars->_spd_limit = 99;
 }
 
-static void _set_speed(int tidx, train_ctrl_t *tvars, int signed_speed, int applyspd)
+static void _set_speed(int tidx, train_ctrl_t *tvars, int signed_speed, int applyspd, int brakerc)
 {
     if (signed_speed && (tvars->_sdir != SIGNOF0(signed_speed))) {
         FatalError("DIRs", "bad spd sign", Error_FSM_SignDir);
     }
+    
+   
+    
+    
     tvars->_desired_signed_speed = signed_speed;
     if (!applyspd) return;
     _apply_speed(tidx, tvars);
+    
+    if (brakerc>0) {
+        // start brake
+        int sdir = tvars->_sdir;
+        const conf_train_t *conf = conf_train_get(tidx);
+        int32_t stopposmm = ctrl3_getcurpossmm(tvars, conf_train_get(tidx), (sdir<0)) + brakerc*sdir;
+        tvars->brake = 1;
+        msg_64_t m = {0};
+        m.from = MA1_CTRL(tidx);
+        m.to = MA1_SPDCTL(tidx);
+        m.cmd = CMD_BRAKE;
+        m.v32 = pose_convert_from_mm(conf, stopposmm)/10;
+        m.subc = 1;
+        mqf_write_from_ctrl(&m);
+    } else  if (tvars->brake) {
+        // clear brake
+        msg_64_t m = {0};
+        m.from = MA1_CTRL(tidx);
+        m.to = MA1_SPDCTL(tidx);
+        m.cmd = CMD_BRAKE;
+        m.subc = 0;
+        m.v32 = 0;
+        mqf_write_from_ctrl(&m);
+        tvars->brake = 0;
+    }
 }
 
 static uint8_t brake_maxspd(int distmm);

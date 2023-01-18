@@ -17,7 +17,7 @@
  * 			target_speed -> inertia -> BEMF feedback -> volt + pwm
  */
 
-// #define RECORD_MSG 1
+#define RECORD_MSG 1
 
 #include <stdint.h>
 #include <memory.h>

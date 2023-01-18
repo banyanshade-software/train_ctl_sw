@@ -42,5 +42,9 @@ int compareMsg64_itrig(const msg_64_t *exp, int n, int clear);
 } while (0)
 
 extern mqf_t from_ctrl;
+extern mqf_t to_spdctl;
+extern mqf_t from_spdctl;
+
+void sendMsg64(msg_64_t *msg, int nummsg, mqf_t *queue);
 
 #endif /* TestLongTrainSupport_h */

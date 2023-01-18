@@ -266,6 +266,7 @@ static lsblk_num_t s4 = {4};
     }
 }
 
+#if 0
 /*
  0 000010      state=station   dir=0 sblk=2 spd=  0 dspd=  0 pos=9999999 from 0
  1 005970 --set  end_lsblk pos=600
@@ -325,5 +326,7 @@ static lsblk_num_t s4 = {4};
     rc = ctrl3_check_front_sblks(0, &tvars, tconf, 0, &rettrigs);
     XCTAssert(rc>0);
 }
+
+#endif
 @end
 

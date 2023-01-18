@@ -132,13 +132,14 @@ static const xtrnaddr_t to1 = { .v = 1};
     [self startRight];
     XCTAssert(tvars._state == train_state_running);
     XCTAssert(tvars._sdir == 1);
-    XCTAssert(tvars._target_unisgned_speed == 40);
+    XCTAssert(tvars._target_unisgned_speed == 90);
     XCTAssert(tvars._desired_signed_speed == 90);
     XCTAssert(tvars._spd_limit == 99);
     NSString *s = dump_msgbuf(0);
     NSLog(@"...%@", s);
     EXPMSG_ITRIG({.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_C1_C2,        .vb0=1, .vb1=1, .vb2=0xFF, .vb3=1},
-           {.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_TARGET_SPEED, .v1=40, .v2=0},
+           {.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_TARGET_SPEED, .v1=90, .v2=0},
+            {.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_BRAKE, .v1=315, .subc=1},
            {.to=MA0_CANTON(0), .subc=1, .from=MA1_CTRL(0), .cmd=CMD_POSE_SET_TRIG, .va16=855, .vcu8=tag_chkocc, .vb8=1},
            {.to=MA0_CANTON(0), .subc=1, .from=MA1_CTRL(0), .cmd=CMD_POSE_SET_TRIG, .va16=315, .vcu8=tag_stop_eot, .vb8=1},
            {.to=MA3_UI_GEN,      .from=MA1_CTRL(0), .cmd=CMD_TRSTATE_NOTIF,    .v1=1, .v2=2});
@@ -151,13 +152,14 @@ static const xtrnaddr_t to1 = { .v = 1};
     [self startRight];
     XCTAssert(tvars._state == train_state_running);
     XCTAssert(tvars._sdir == 1);
-    XCTAssert(tvars._target_unisgned_speed == 60);
+    XCTAssert(tvars._target_unisgned_speed == 90);
     XCTAssert(tvars._desired_signed_speed == 90);
     XCTAssert(tvars._spd_limit == 99);
     NSString *s = dump_msgbuf(0);
     NSLog(@"...%@", s);
     EXPMSG_ITRIG({.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_C1_C2,        .vb0=1, .vb1=1, .vb2=0xFF, .vb3=1},
-           {.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_TARGET_SPEED, .v1=60, .v2=0},
+           {.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_TARGET_SPEED, .v1=90, .v2=0},
+                 {.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_BRAKE, .v1=405, .subc=1},
            {.to=MA0_CANTON(0), .subc=1, .from=MA1_CTRL(0), .cmd=CMD_POSE_SET_TRIG, .va16=945, .vcu8=tag_chkocc, .vb8=1},
            {.to=MA0_CANTON(0), .subc=1, .from=MA1_CTRL(0), .cmd=CMD_POSE_SET_TRIG, .va16=405, .vcu8=tag_stop_eot, .vb8=1},
            {.to=MA3_UI_GEN,      .from=MA1_CTRL(0), .cmd=CMD_TRSTATE_NOTIF,    .v1=1, .v2=2});

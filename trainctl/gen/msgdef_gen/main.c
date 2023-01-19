@@ -21,6 +21,7 @@
 #include "genmsg.h"
 
 
+/*
 static config_node_t *find_by_name_and_type(config_node_t *node, const char *s, node_type_t t)
 {
     for ( ; node; node = node->next) {
@@ -30,9 +31,10 @@ static config_node_t *find_by_name_and_type(config_node_t *node, const char *s, 
     }
     return NULL;
 }
+*/
 
-
-int main(int argc, char **argv) {
+int main(int argc, char **argv) 
+{
     if (argc > 2) {
         fprintf(stderr, "ERROR: Too many arguments\n");
         return 1; /* usage error */
@@ -45,21 +47,21 @@ int main(int argc, char **argv) {
         system__initialize(&system);
         system__open_source_file(&system, path);
         parser = msgdef_create(&system);
-        config_node_t *ast;
+        msg_node_t *ast;
         const int b = msgdef_parse(parser, &ast);
         if (system.source.ecount > 0) longjmp(system.jmp, 1); /* never returns */
         if (b) {
             ret = 10; /* internal error */
             fprintf(stderr, "FATAL: Internal error\n");
                 /* <-- input text remaining due to incompleteness of the grammar */
-        }
-        else {
-	    fprintf(stderr, "parsed\n");
+        } else {
+	        fprintf(stderr, "parsed\n");
            	system__dump_ast(&system, ast);
-            config_node_t *root = create_config_node(&system, CONFIG_NODE_ROOT, range__void());
-            config_node_t *next = NULL;
-            config_node_t *loc = NULL;
-            for (config_node_t *n = ast; n; n = next) {
+            msg_node_t *root = create_msg_node(&system, MSG_NODE_ROOT);
+#if 0
+            msg_node_t *next = NULL;
+            msg_node_t *loc = NULL;
+            for (msg_node_t *n = ast; n; n = next) {
                 next = n->next;
                 n->next = NULL;
                 switch (n->tag) {
@@ -90,8 +92,11 @@ int main(int argc, char **argv) {
                     break;
                 }
             }
-            for (config_node_t *n = loc; n; n = n->next) {
-                config_node_t *c;
+#endif
+#if 0
+            for (msg_node_t *n = loc; n; n = n->next) {
+
+                msg_node_t *c;
                 switch (n->tag) {
                 default:
                     break;
@@ -110,8 +115,10 @@ int main(int argc, char **argv) {
                     break;
                 }
             }
+#endif
 
 
+#if 0
             config_node_t *bm;
             config_node_t *pbm = NULL;
             static const char *boards[] = { "simu", "main_zero", "switcher", "dispatcher", "mainV0", "mainV04", "ui", "unit_test",  NULL};
@@ -122,7 +129,7 @@ int main(int argc, char **argv) {
                 bm->next = pbm;
                 pbm = bm;
             }
-
+#endif
 			/*generate_hfiles(root, bm);
 			generate_cfile(root, 1, bm);
         
@@ -130,8 +137,7 @@ int main(int argc, char **argv) {
             generate_cfile_fieldname(root);
             */
         }
-    }
-    else {
+    } else {
         ret = 2; /* error during parsing */
     }
     msgdef_destroy(parser);

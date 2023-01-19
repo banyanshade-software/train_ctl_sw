@@ -3,7 +3,7 @@
 
 %prefix "msgdef"
 
-%value "config_node_t *"
+%value "msg_node_t *"
 %auxil "system_t *"
 
 %header {
@@ -32,19 +32,39 @@ msgdef
     <- linelist _ end_of_file
 
 linelist
-    <- line _ msgdef 
-     / line
+    <- l:line _ n:msgdef 
+        { if (l) {
+            $$ = l;
+            $$->next = n;
+          } else {
+            $$ = l;
+          }
+        }
+     / l:line
+        { $$ = l; }
 
 line
     <-
        _ '#' ( !EOL . )* EOL
-     / _ kw_start _ integer (comment)? _ EOL
-     / _ identifier _ (',')? _ comment? EOL
+     / _ kw_start _ v:integer (c:comment)? _ EOL
+        { $$ = create_msg_node(auxil, MSG_NODE_START); 
+          $$->value = v->value;
+          $$->comment = c->string;
+        }
+     / _ m:identifier _ (',')? _ c:comment? EOL
+        { $$ = create_msg_node(auxil, MSG_NODE_MSG); 
+          $$->string = m->string;
+          $$->comment = c->string;
+        }
+       
      / _ EOL
 
 comment
     <-
        _ '//' ( !EOL . )* EOL
+    {
+        $$ = create_msg_node_text(auxil, MSG_NODE_COMMENT, range__new($0s, $0e));
+    }
 
 
 
@@ -56,30 +76,30 @@ L <- [a-zA-Z_]
 integer
    <- '0'[xX]X+
     {
-        $$ = create_config_node_intstr(auxil, CONFIG_NODE_INT, range__new($0s, $0e), 16);
+        $$ = create_msg_node_intstr(auxil, MSG_NODE_INT, range__new($0s, $0e), 16);
     }
     / '0'O+
     {
-        $$ = create_config_node_intstr(auxil, CONFIG_NODE_INT, range__new($0s, $0e), 8);
+        $$ = create_msg_node_intstr(auxil, MSG_NODE_INT, range__new($0s, $0e), 8);
     }
     / !'0' D+
     {
-        $$ = create_config_node_intstr(auxil, CONFIG_NODE_INT, range__new($0s, $0e), 10);
+        $$ = create_msg_node_intstr(auxil, MSG_NODE_INT, range__new($0s, $0e), 10);
     }
     / D !D
     {
-        $$ = create_config_node_intstr(auxil, CONFIG_NODE_INT, range__new($0s, $0e), 10);
+        $$ = create_msg_node_intstr(auxil, MSG_NODE_INT, range__new($0s, $0e), 10);
     }
     / '-'D+
     {
-        $$ = create_config_node_intstr(auxil, CONFIG_NODE_INT, range__new($0s, $0e), 10);
+        $$ = create_msg_node_intstr(auxil, MSG_NODE_INT, range__new($0s, $0e), 10);
     }
 
 
 identifier
    <- !keyword L(L/D)*
     {
-        $$ = create_config_node_text(auxil, CONFIG_NODE_IDENT, range__new($0s, $0e));
+        $$ = create_msg_node_text(auxil, MSG_NODE_IDENT, range__new($0s, $0e));
     }
 
 keyword

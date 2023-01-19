@@ -167,26 +167,25 @@ int system__read_source_file(system_t *obj) {
 
 // -------
 
-config_node_t *create_config_node(system_t *obj, node_type_t type, range_t range)
+msg_node_t *create_msg_node(system_t *obj, node_type_t type)
 {
-    config_node_t *const node = (config_node_t *)system__allocate_memory(obj, sizeof(config_node_t));
+    msg_node_t *const node = (msg_node_t *)system__allocate_memory(obj, sizeof(msg_node_t));
     node->tag = type;
-    node->range = range;
     node->system = obj;
     return node;
 }
 
-config_node_t *create_config_node_text(system_t *obj, node_type_t type, range_t range) 
+msg_node_t *create_msg_node_text(system_t *obj, node_type_t type, range_t range) 
 {
-    config_node_t *node = create_config_node(obj, type, range);
+    msg_node_t *node = create_msg_node(obj, type);
     node->string = strndup(obj->source.text.p + range.min, range.max - range.min);
     //printf("id : <%s>\n", node->string);
     return node;
 }
 
-config_node_t *create_config_node_intstr(system_t *obj, node_type_t type, range_t range, int base) 
+msg_node_t *create_msg_node_intstr(system_t *obj, node_type_t type, range_t range, int base) 
 {
-    config_node_t *node = create_config_node(obj, type, range);
+    msg_node_t *node = create_msg_node(obj, type);
     node->string = strndup(obj->source.text.p + range.min, range.max - range.min);
 	node->value = strtol(node->string, NULL, base);
     //printf("val : <%d>\n", node->value);
@@ -194,23 +193,23 @@ config_node_t *create_config_node_intstr(system_t *obj, node_type_t type, range_
 }
 
 
-config_node_t *create_config_node_int(system_t *obj, node_type_t type, range_t range, int v)
+msg_node_t *create_msg_node_int(system_t *obj, node_type_t type, range_t range, int v)
 {
-	config_node_t *node = create_config_node(obj, type, range);
+	msg_node_t *node = create_msg_node(obj, type);
     node->value = v;
     return node;
 }
 
-config_node_t *create_config_node_string(system_t *obj, node_type_t type, const char *str)
+msg_node_t *create_msg_node_string(system_t *obj, node_type_t type, const char *str)
 {
-	config_node_t *node = create_config_node(obj, type, range__void());
+	msg_node_t *node = create_msg_node(obj, type);
 	node->string = strdup(str);
 	return node;
 }
 
 
 
-void config_node_append(config_node_t *node, config_node_t *end)
+void msg_node_append(msg_node_t *node, msg_node_t *end)
 {
 	for (; node->next; node=node->next);
 	node->next = end;
@@ -227,7 +226,7 @@ void system__destroy_all_ast_nodes(system_t *obj) {
 }
 
 
-void ast_node__destroy(config_node_t *obj) {
+void ast_node__destroy(msg_node_t *obj) {
 /*
     if (obj->parent != NULL) {
         if (obj->sibling.prev != NULL) {
@@ -317,22 +316,16 @@ void system__handle_syntax_error(system_t *obj, syntax_error_t error, range_t ra
 }
 
 
-static void dump_ast_(system_t *obj, config_node_t *node, int level) {
+static void dump_ast_(system_t *obj, msg_node_t *node, int level) {
 	if (!node) return;
     const char *type = "UNKNOWN";
     switch (node->tag) {
-	case CONFIG_NODE_ROOT:		type="ROOT";	break;
-    case CONFIG_NODE_IDENT:		type="IDENT";	break;
-    case CONFIG_NODE_CONF:		type="CONF";	break;
-	case CONFIG_NODE_FIELD:		type="FIELD";	break;
-	case CONFIG_NODE_TABLE:		type="TABLE";	break;
-	case CONFIG_NODE_TABLELINE:	type="LINE";	break;
-	case CONFIG_NODE_TABLEREF:	type="TREF";	break;
-	case CONFIG_NODE_INT:		type="INT";		break;
-    case CONFIG_NODE_SUBCONF:   type="SUBCONF"; break;
-    case CONFIG_NODE_SUBREF:    type="SREF";    break;
-    case CONFIG_NODE_ATTR_CODE: type="CODE";    break;
-    case CONFIG_NODE_ATTR_LOCAL: type="LOCATTR";    break;
+	case MSG_NODE_ROOT:		    type="ROOT";	break;
+    case MSG_NODE_IDENT:		type="IDENT";	break;
+    case MSG_NODE_COMMENT:		type="COMMENT";	break;
+    case MSG_NODE_START:		type="START";	break;
+	case MSG_NODE_MSG:		    type="MSG";	    break;
+	case MSG_NODE_INT:	    	type="INT";		break;
 	default: break;
 	}
 
@@ -342,30 +335,13 @@ static void dump_ast_(system_t *obj, config_node_t *node, int level) {
 	printf("%*s%s: string=%s", 2 * level, "", type, n);
 	switch (node->tag) {
 	default: printf("\n"); break;
-	case CONFIG_NODE_FIELD:
-		if (node->bitfield) printf(":%d", node->bitfield);
-		if (node->nptr) printf(",nptr=%d,", node->nptr);
-		if (node->type) printf(",type=%s,", node->type);
-		if (node->array) printf("[%d]", node->array);
-		if (node->configurable) printf(" (USER)");
+	case MSG_NODE_START:
+		printf(":%d", node->value);
 		printf("\n");
 		break;
-    case CONFIG_NODE_SUBCONF:
-    case CONFIG_NODE_CONF:
+    case MSG_NODE_MSG:
+        //dump_ast_(obj, node->fields, level+1);
 		printf("\n");
-        dump_ast_(obj, node->fields, level+1);
-		printf("\n");
-        break;
-    case CONFIG_NODE_TABLE:
-        printf("\n%*scols:\n", 2*level, "");
-        dump_ast_(obj, node->coldef, level+1);
-        printf("%*slines:\n", 2*level, "");
-        dump_ast_(obj, node->lines, level+1);
-		printf("\n");
-        break;
-    case CONFIG_NODE_TABLELINE:
-        printf("\n");
-        dump_ast_(obj, node->lineval, level+1);
         break;
 	}
 
@@ -373,7 +349,7 @@ static void dump_ast_(system_t *obj, config_node_t *node, int level) {
 }
 
 
-void system__dump_ast(system_t *obj, config_node_t *root) {
+void system__dump_ast(system_t *obj, msg_node_t *root) {
     dump_ast_(obj, root, 0);
 }
 

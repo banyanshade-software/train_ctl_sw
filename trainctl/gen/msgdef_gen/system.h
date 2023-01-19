@@ -32,85 +32,26 @@ typedef struct system_tag system_t;
                 
 
 typedef enum node_type_tag {
-    CONFIG_NODE_ROOT, // not used
-    CONFIG_NODE_TABLE,
-    CONFIG_NODE_TABLELINE,
-    CONFIG_NODE_CONF,
-    CONFIG_NODE_FIELD,
-    CONFIG_NODE_SUBCONF,
-    CONFIG_NODE_SUBREF,
-	CONFIG_NODE_BOARDVAL,
-	CONFIG_NODE_VALUE,
-	CONFIG_NODE_TABLEREF,
-
-    CONFIG_NODE_ATTR_LOCAL,
-    CONFIG_NODE_ATTR_CODE,
-    CONFIG_NODE_ATTR_STORETYPE,
-    CONFIG_NODE_ATTR_STORENUM,
-    CONFIG_NODE_ATTR_GENTPL,
-
-	// transiant use only
-    CONFIG_NODE_IDENT,	
-    CONFIG_NODE_INT,
-	
-	// from main.c
-	CONFIG_NODE_BOARD
-
+    MSG_NODE_ROOT, // not used
+    MSG_NODE_START,
+    MSG_NODE_MSG,
+    MSG_NODE_INT,
+    MSG_NODE_IDENT,
+    MSG_NODE_COMMENT,
 } node_type_t;
 
 
 	
-typedef struct config_node {
-    range_t range; /* the byte range in the source text */
-    system_t *system; /* the system that manages this AST node */
+typedef struct msg_node {
+    //range_t range;      /* the byte range in the source text */
+    system_t *system;   /* the system that manages this AST node */
+    struct msg_node *next;
     enum node_type_tag tag;
-    struct config_node *next;
 
     char *string;
     int value;
-    char *hcode;
-    char *ccode;
-
-    union {
-		struct { // root node CONFIG_NODE_ROOT
-			struct config_node *defs;
-			struct config_node *subdefs;
-            struct config_node *tables;
-            struct config_node *globattrib;
-        };
-		struct { // config CONFIG_NODE_CONF or CONFIG_NODE_SUBCONF
-			struct config_node *fields;
-            struct config_node *numinst;
-            struct config_node *attr;
-		};
-		struct { // field definition CONFIG_NODE_FIELD
-			int configurable;
-			int bitfield;
-			int array;
-			int nptr;
-			char *type;
-			struct config_node *boardvalues;
-			struct config_node *parentconf;
-		};
-		struct { // per board value CONFIG_NODE_BOARDVAL
-			struct config_node *val;
-		};
-        struct { // table CONFIG_NODE_TABLE
-            struct config_node *coldef;
-            struct config_node *lines;
-        };
-        struct { // CONFIG_NODE_TABLELINE
-            struct config_node *lineval;
-        };
-        struct { // CONFIG_NODE_TABLEREF
-            char *tablename;
-            char *colname;
-        };
-        struct { // CONFIG_NODE_ATTR_LOCAL
-            struct config_node *attrnode; 
-        };
-    };
-} config_node_t;
+    char *comment;
+} msg_node_t;
 
 
 typedef enum syntax_error_tag {
@@ -137,8 +78,8 @@ struct system_tag {
         size_t ecount; /* the error count */
     } source;
     struct system_managed_tag {
-        config_node_t *first; /* the first managed AST node */
-        config_node_t *last; /* the last managed AST node */
+        msg_node_t *first; /* the first managed AST node */
+        msg_node_t *last; /* the last managed AST node */
     } managed;
     jmp_buf jmp;
 };
@@ -159,19 +100,21 @@ void system__handle_syntax_error(system_t *obj, syntax_error_t error, range_t ra
 
 void system__destroy_all_ast_nodes(system_t *obj);
 
-void system__dump_ast(system_t *obj, config_node_t *root);
+void system__dump_ast(system_t *obj, msg_node_t *root);
 
 //void ast_node__prepend_child(ast_node_t *obj, ast_node_t *node);
 //void ast_node__append_child(ast_node_t *obj, ast_node_t *node);
-void ast_node__destroy(config_node_t *obj);
+void ast_node__destroy(msg_node_t *obj);
 
 
-config_node_t *create_config_node(system_t *obj, node_type_t type, range_t range);
-config_node_t *create_config_node_text(system_t *obj, node_type_t type, range_t range);
-config_node_t *create_config_node_string(system_t *obj, node_type_t type, const char *str);
-config_node_t *create_config_node_int(system_t *obj, node_type_t type, range_t range, int v);
-config_node_t *create_config_node_intstr(system_t *obj, node_type_t type, range_t range, int base);
-void config_node_append(config_node_t *node, config_node_t *end);
+msg_node_t *create_msg_node(system_t *obj, node_type_t type);
+msg_node_t *create_msg_node_intstr(system_t *obj, node_type_t type, range_t range, int base);
+msg_node_t *create_msg_node_text(system_t *obj, node_type_t type, range_t range);
+msg_node_t *create_msg_node_string(system_t *obj, node_type_t type, const char *str);
+msg_node_t *create_msg_node_int(system_t *obj, node_type_t type, range_t range, int v);
+
+msg_node_t *create_msg_node_string(system_t *obj, node_type_t type, const char *str);
+
 
 #ifdef __cplusplus
 }

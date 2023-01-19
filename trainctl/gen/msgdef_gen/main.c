@@ -55,9 +55,9 @@ int main(int argc, char **argv)
             fprintf(stderr, "FATAL: Internal error\n");
                 /* <-- input text remaining due to incompleteness of the grammar */
         } else {
-	        fprintf(stderr, "parsed\n");
+	        fprintf(stderr, "parsed, ast=%p\n", ast);
            	system__dump_ast(&system, ast);
-            msg_node_t *root = create_msg_node(&system, MSG_NODE_ROOT);
+            //msg_node_t *root = create_msg_node(&system, MSG_NODE_ROOT);
 #if 0
             msg_node_t *next = NULL;
             msg_node_t *loc = NULL;

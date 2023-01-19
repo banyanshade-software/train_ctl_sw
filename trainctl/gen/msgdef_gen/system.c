@@ -343,6 +343,13 @@ static void dump_ast_(system_t *obj, msg_node_t *node, int level) {
         //dump_ast_(obj, node->fields, level+1);
 		printf("\n");
         break;
+    case MSG_NODE_INT:
+        printf("V=%d\n", node->value);
+        break;
+    case MSG_NODE_IDENT:
+    case MSG_NODE_COMMENT:
+        printf("S=%s\n", node->string);
+        break;
 	}
 
 	dump_ast_(obj, node->next, level);

@@ -29,7 +29,8 @@ static const char *dbg_str[] = { "EVAL_", "MATCH", "ABAND" };
 }
 
 msgdef
-    <- linelist _ end_of_file
+    <- l:linelist _ end_of_file
+    { $$ = l; }
 
 linelist
     <- l:line _ n:msgdef 
@@ -37,7 +38,7 @@ linelist
             $$ = l;
             $$->next = n;
           } else {
-            $$ = l;
+            $$ = n;
           }
         }
      / l:line
@@ -49,12 +50,12 @@ line
      / _ kw_start _ v:integer (c:comment)? _ EOL
         { $$ = create_msg_node(auxil, MSG_NODE_START); 
           $$->value = v->value;
-          $$->comment = c->string;
+          //$$->comment = c->string;
         }
      / _ m:identifier _ (',')? _ c:comment? EOL
         { $$ = create_msg_node(auxil, MSG_NODE_MSG); 
           $$->string = m->string;
-          $$->comment = c->string;
+          //$$->comment = c->string;
         }
        
      / _ EOL

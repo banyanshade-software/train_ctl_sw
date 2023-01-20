@@ -52,29 +52,32 @@ line
           $$->value = v->value;
           $$->comment = c ? c->string : NULL;
         }
-     / _ m:identifier _ type  _ (c:comment)? EOL
+     / _ m:identifier _ t:type  _ (c:comment)? EOL
         { $$ = create_msg_node(auxil, MSG_NODE_MSG); 
           $$->string = m->string;
           $$->comment = c ? c->string : NULL;
+          $$->typef = t->typef;
+          $$->typev = t->typev;
+          $$->types = t->types;
         }
      / _ c:comment EOL 
      / _ EOL
 
 type 
     <-
-        'void'
-     /  'b4'
-     /  'val40'
-     /  'v16,v8,v8u'
-     /  'tbd'
-     /  'v1u,v2u'
-     /  'v1u,v2'
-     /  'v1,v2u'
-     /  'v1,v2'
-     /  'v1u'
-     /  'v1'
-     /  'v32u'
-     /  'v32'
+        'void'      { $$ = create_msg_node(auxil, MSG_NODE_TYPE); $$->typef = TYPE_V32; $$->typev = 0; $$->types = 0; }
+     /  'b4'        { $$ = create_msg_node(auxil, MSG_NODE_TYPE); $$->typef = TYPE_B4;  $$->typev = 4; $$->types = 0;}
+     /  'val40'     { $$ = create_msg_node(auxil, MSG_NODE_TYPE); $$->typef = TYPE_V40; $$->typev = 1; $$->types = 0;}
+     /  'v16,v8,v8u'{ $$ = create_msg_node(auxil, MSG_NODE_TYPE); $$->typef = TYPE_VCU; $$->typev = 3; $$->types = 0;}
+     /  'tbd'       { $$ = create_msg_node(auxil, MSG_NODE_TYPE); $$->typef = TYPE_V32; $$->typev = 0; $$->types = 0;}
+     /  'v1u,v2u'   { $$ = create_msg_node(auxil, MSG_NODE_TYPE); $$->typef = TYPE_V16; $$->typev = 2; $$->types = 0;}
+     /  'v1u,v2'    { $$ = create_msg_node(auxil, MSG_NODE_TYPE); $$->typef = TYPE_V16; $$->typev = 2; $$->types = 2;}
+     /  'v1,v2u'    { $$ = create_msg_node(auxil, MSG_NODE_TYPE); $$->typef = TYPE_V16; $$->typev = 2; $$->types = 1;}
+     /  'v1,v2'     { $$ = create_msg_node(auxil, MSG_NODE_TYPE); $$->typef = TYPE_V16; $$->typev = 2; $$->types = 3;}
+     /  'v1u'       { $$ = create_msg_node(auxil, MSG_NODE_TYPE); $$->typef = TYPE_V16; $$->typev = 1; $$->types = 0;}
+     /  'v1'        { $$ = create_msg_node(auxil, MSG_NODE_TYPE); $$->typef = TYPE_V16; $$->typev = 1; $$->types = 1;}
+     /  'v32u'      { $$ = create_msg_node(auxil, MSG_NODE_TYPE); $$->typef = TYPE_V32; $$->typev = 1; $$->types = 0;}
+     /  'v32'       { $$ = create_msg_node(auxil, MSG_NODE_TYPE); $$->typef = TYPE_V32; $$->typev = 1; $$->types = 1;}
 
 comment
     <-

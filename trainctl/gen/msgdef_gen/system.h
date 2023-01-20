@@ -38,8 +38,16 @@ typedef enum node_type_tag {
     MSG_NODE_INT,
     MSG_NODE_IDENT,
     MSG_NODE_COMMENT,
+    MSG_NODE_TYPE,
 } node_type_t;
 
+typedef enum msg_type {
+    TYPE_V32,
+    TYPE_B4,
+    TYPE_V40,
+    TYPE_VCU,
+    TYPE_V16,
+} msg_type_tag_t;
 
 	
 typedef struct msg_node {
@@ -51,6 +59,10 @@ typedef struct msg_node {
     char *string;
     int value;
     char *comment;
+
+    msg_type_tag_t typef;
+    int typev;
+    int types;
 } msg_node_t;
 
 

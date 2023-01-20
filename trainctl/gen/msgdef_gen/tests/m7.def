@@ -1,105 +1,106 @@
-# polop
-#
-#
+# generation file for trainmsgdef.h
+# 
+# tainmsgdef.h :
+#       genmsg h msg.def > trainmsgdef.h 
+
+// hi 3 bits of cmd define prioriry
+
+
 start 0
-    CMD_EMERGENCY_STOP ,			// ui,any->(all)							stop/reset all tasklet
-    CMD_TIM_SYNC,                   //
-    CMD_RESET,						// ui,any->(all)							reset all tasklet, currently do same as CMD_EMERGENCY_STOP, but could do more, e.g. resetting some params
-    CMD_SETRUN_MODE,				// ui,any->(all)	v1u=mode				start given runmode
+    CMD_EMERGENCY_STOP  void	// ui,any->(all)	stop/reset all tasklet
+    CMD_TIM_SYNC        void    // for future time sync over CAN
+    CMD_RESET           void	// ui,any->(all)	reset all tasklet, currently do same as CMD_EMERGENCY_STOP, but could do more, e.g. resetting some params
+    CMD_SETRUN_MODE     v1u	    // ui,any->(all)	v1u=mode				start given runmode
     
-    // high prio 001 xxxxx 0x20
-    CMD_SET_C1_C2,			// ctrl->spdctl		b:c1,dir1,c2,dir2		set C1,C2 for sender train
-    CMD_SETVPWM,					// spdctl->canton	v1u=voltidx,v2=pwm		set power on canton
-    CMD_BEMF_ON,					// spdctl->canton							start measure bemf
-    CMD_BEMF_OFF,					// spdctl->canton							stop measure bemf
-    CMD_SET_TARGET_SPEED,			// ctrl->spdctl		v1u=spd					set (unsigned) speed
-    CMD_STOP, 						// ctrl->spdctl								stop canton (min volt, pwv=0), equiv to CMD_SETVPWM 7,0
-    CMD_BRAKE,                      // ctrl->spdctl subc: 1=set, 0=clear, v32=pos
+start 0x20      // high prio 001 xxxxx 
+    CMD_SET_C1_C2       b4		// ctrl->spdctl		b:c1,dir1,c2,dir2		set C1,C2 for sender train
+    CMD_SETVPWM		    v1u,v2	// spdctl->canton	v1u=voltidx,v2=pwm		set power on canton
+    CMD_BEMF_ON 		void	// spdctl->canton							start measure bemf
+    CMD_BEMF_OFF		void	// spdctl->canton							stop measure bemf
+    CMD_SET_TARGET_SPEED v1u	// ctrl->spdctl		v1u=spd					set (unsigned) speed
+    CMD_STOP 			void	// ctrl->spdctl								stop canton (min volt, pwv=0), equiv to CMD_SETVPWM 7,0
+    CMD_BRAKE           v32     // ctrl->spdctl subc: 1=set, 0=clear, v32=pos
     
-start 0x40 // 010 xxxxx
-    CMD_BEMF_DETECT_ON_C2,	// spdctl->ctrl		v1u=C2 v2=POSE/10		sent when C2 canton detect BEMF
-    CMD_BEMF_NOTIF,					// canton->spdctl	v1=voff v2=pose subc=trig tag canton BEMF measurement
-    CMD_BEMF_DETECT_ON_C2ALT,		// 											unused for now
-    CMD_PRESENCE_SUB_CHANGE,		// ina->ctrl		subc=ch v1=pres v2=vi   ina change value notification
+start 0x40      // 010 xxxxx
+    CMD_BEMF_DETECT_ON_C2 v1u	// spdctl->ctrl		v1u=C2 v2=POSE/10		sent when C2 canton detect BEMF
+    CMD_BEMF_NOTIF		  v1,v2	// canton->spdctl	v1=voff v2=pose subc=trig tag canton BEMF measurement
+    CMD_BEMF_DETECT_ON_C2ALT v1,v2 // 											unused for now
+    CMD_PRESENCE_SUB_CHANGE	v1u,v2 // ina->ctrl		subc=ch v1=pres v2=vi   ina change value notification
     
-    CMD_POSE_SET_TRIG,              // ctrl->canton     vcu8=tag va16=POSE/10   vb8=dir    set POSE trigger
-    //CMD_POSE_SET_TRIG0,			// ctrl->spdctl		v1=POSE/10				set POSE trigger 0
-    //CMD_POSE_SET_TRIG_U1,			// ctrl->spdctl		v1=POSE/10				set POSE trigger U1
-    CMD_POSE_TRIGGERED,				// bemf->ctrl		va16=pos/100, vb=dir, vc=tag  trigger notification
-    CMD_STOP_DETECTED,				// spdctl->ctrl		v32=POSE				stop condition (after pid and inertia) reached
+    CMD_POSE_SET_TRIG   v16,v8,v8u      // ctrl->canton     vcu8=tag va16=POSE/10   vb8=dir    set POSE trigger
+    CMD_POSE_TRIGGERED	v16,v8,v8u	// bemf->ctrl		va16=pos/100, vb=dir, vc=tag  trigger notification
+    CMD_STOP_DETECTED	v32     	// spdctl->ctrl		v32=POSE				stop condition (after pid and inertia) reached
     
 start 0x60 // 011 xxxxx
-    CMD_TURNOUT_A,			// ctrl->turnout,ui	subc=tn					set turnout pos to straight (low level)
-    CMD_TURNOUT_B,					// ctrl->turnout,ui subc=tn					set turnout pos to turn (low level)
-    CMD_TURNOUT_HI_A,				// ui,auto->ctrl	v1=tn					set turnout to straight (registering with occupency/train ctl)
-    CMD_TURNOUT_HI_B,				// ui,auto->ctrl	v1=tn					set turnout to turn (registering with occupency/train ctl)
-    CMD_TURNOUT_HI_TOG,				// ui->ctrl			v1=tn					toggle turnout pos
+    CMD_TURNOUT_A       void // ctrl->turnout,ui	subc=tn					set turnout pos to straight (low level)
+    CMD_TURNOUT_B		void // ctrl->turnout,ui subc=tn					set turnout pos to turn (low level)
+    CMD_TURNOUT_HI_A    v1u	 // ui,auto->ctrl	v1=tn					set turnout to straight (registering with occupency/train ctl)
+    CMD_TURNOUT_HI_B	v1u	 // ui,auto->ctrl	v1=tn					set turnout to turn (registering with occupency/train ctl)
+    CMD_TURNOUT_HI_TOG	v1u	 // ui->ctrl			v1=tn					toggle turnout pos
     
-start 0x80 // 100 xxxxx = 0x80
-    CMD_START_DETECT_TRAIN,			// [detect2] ctrl->canton					start train detection
-    CMD_STOP_DETECT_TRAIN,			// [detect2] ctrl->canton					stop train detection
-	CMD_START_INA_MONITOR,			// [detect2] ctrl->ina3221					start monitoring current
-	CMD_INA_REPORT,					// [detect2] ina3221->ctrl					report measured current
-    CMD_UI_DETECT,					// [detect2] ctrl->ui						detection info
+start 0x80 // 100 xxxxx 
+    CMD_START_DETECT_TRAIN v1u	// [detect2] ctrl->canton					start train detection
+    CMD_STOP_DETECT_TRAIN  void	// [detect2] ctrl->canton					stop train detection
+	CMD_START_INA_MONITOR  v1u  // [detect2] ctrl->ina3221					start monitoring current
+	CMD_INA_REPORT  	   v1	// [detect2] ina3221->ctrl					report measured current
+    CMD_UI_DETECT          v1,v2u // [detect2] ctrl->ui						detection info
     
-	CMD_SERVO_SET,					// any -> servo  subc=servn v1u=pos v2u=spd_or_0
-	CMD_SERVO_ACK,					// servo->sender subc=servn v1u=pos
-    CMD_SERVODOOR_SET,              // any -> servo  subc=servn v1u=1 open, 0 close
-    CMD_SERVODOOR_ACK,              // servo->sender subc=servn v1u=1 open, 0 close
+	CMD_SERVO_SET	    v1u,v2u	// any -> servo  subc=servn v1u=pos v2u=spd_or_0
+	CMD_SERVO_ACK	    v1u	    // servo->sender subc=servn v1u=pos
+    CMD_SERVODOOR_SET   v1u      // any -> servo  subc=servn v1u=1 open, 0 close
+    CMD_SERVODOOR_ACK   v1u      // servo->sender subc=servn v1u=1 open, 0 close
 
-start 0xA0 // 101 xxxxx = 0xA0
+start 0xA0 // 101 xxxxx 
 
-start 0xC0 // 110 xxxxx = 0xC0 GUI
-    CMD_MDRIVE_SPEED_DIR0,	// ui->ctrl			v1u=spd v2=dir			set dir and speed (desired speed)
-    //CMD_TRDIR_NOTIF,				// ctrl->ui	obsolete ?
-    CMD_TRTSPD_NOTIF,				// ctrl->ui			v1u=spd v2=dir			notify spd and dir
-    //CMD_TRSTATUS_NOTIF,				// ctrl->ui
-    CMD_TRMODE_NOTIF,				// ctrl->ui			v1u=mode				mode notif
-    CMD_TRSTATE_NOTIF,				// ctrl->ui			v1u=state v2u=oldstate				state chg notif
-    CMD_BLK_CHG_NOTIF,				// ctrl->ui			b:blk,occ,trnum,sblk	occupency change notif
-    CMD_TN_RESER_NOTIF,				// ctrl->ui			v1=turnout v2=trnum		turnout lock/unlock notif
-    CMD_SET_TRAIN_MODE,				// ui,?->ctrl		v1u=tr v2u=mode			chg train mode, mostly to off
-    CMD_START_AUTO,					// ui->ctrl			mv1u=autonum			start auto global scenario
-    CMD_TN_CHG_NOTIF,               // ctrl->ui         subc=turnout v1=pos     notif UI turnout change (used to be done by SETA/SETB)
+start 0xC0 // 110 xxxxx  GUI
+    CMD_MDRIVE_SPEED_DIR v1u,v2 // ui->ctrl			v1u=spd v2=dir			set dir and speed (desired speed)
+    CMD_TRTSPD_NOTIF	 v1u,v2	// ctrl->ui			v1u=spd v2=dir			notify spd and dir
+    CMD_TRMODE_NOTIF	 v1u	// ctrl->ui			v1u=mode				mode notif
+    CMD_TRSTATE_NOTIF	 v1u	// ctrl->ui			v1u=state v2u=oldstate				state chg notif
+    CMD_BLK_CHG_NOTIF	 b4	    // ctrl->ui			b:blk,occ,trnum,sblk	occupency change notif
+    CMD_TN_RESER_NOTIF	 v1,v2	// ctrl->ui			v1=turnout v2=trnum		turnout lock/unlock notif
+    CMD_SET_TRAIN_MODE	 v1u,v2u// ui,?->ctrl		v1u=tr v2u=mode			chg train mode, mostly to off
+    CMD_START_AUTO	     v1u	// ui->ctrl			mv1u=autonum			start auto global scenario
+    CMD_TN_CHG_NOTIF     v1   // ctrl->ui         subc=turnout v1=pos     notif UI turnout change (used to be done by SETA/SETB)
     
     // local master-only store
-    CMD_PARAM_LUSER_COMMIT,            // ui(?) -> oam(0)
-    CMD_PARAM_LUSER_GET,               // ui ->oam(0)
-    CMD_PARAM_LUSER_SET,               // ui ->oam(0)
-    CMD_PARAM_LUSER_VAL,                // oam(0) ->ui
+    CMD_PARAM_LUSER_COMMIT void  // ui(?) -> oam(0)
+    CMD_PARAM_LUSER_GET    val40 // ui ->oam(0)
+    CMD_PARAM_LUSER_SET    val40 // ui ->oam(0)
+    CMD_PARAM_LUSER_VAL    val40 // oam(0) ->ui
     
     // normal multiboard store
-	CMD_PARAM_USER_SET,				// ui(?) -> oam(0)							user parameter chage
-	CMD_PARAM_USER_GET,				// ui(?) -> oam(0)
-	CMD_PARAM_USER_VAL,				// oam(0) -> ui(?)
-	CMD_PARAM_PROPAG,				// oam(0) -> oam(slave)
+	CMD_PARAM_USER_SET     val40	// ui(?) -> oam(0)							user parameter chage
+	CMD_PARAM_USER_GET	   val40	// ui(?) -> oam(0)
+	CMD_PARAM_USER_VAL	   val40	// oam(0) -> ui(?)
+	CMD_PARAM_PROPAG       val40	// oam(0) -> oam(slave)
     
-    // 111 xxxxx = 0xE0 debug and misc low prio
-start 0xE0
-    CMD_NOOP,				// ?->can									msg intended for CAN testing, do nothing
-	CMD_NOTIF_PRES,					// ctrl -> ui							    ina based presence on sblk (bitfield)
-    CMD_TIM_SYNC_ACK,               //                                          slave->master ack synchro
-    CMD_LED_RUN,					// auto,ui->led		v1u=lednum v2u=prg		run led program
-    CMD_INA3221_REPORT,				// ina->ui (debug)
-    CMD_VOFF_NOTIF,					// canton->ui (debug)						used if NOTIF_VOFF=1
-    CMD_INA3221_VAL1,
-    CMD_NOTIF_SPEED,				// spdctl->ui	(debug)
-	CMD_TRIG_OSCILLO,				// any -> spdctl	v1=canton_of_interest
+start 0xE0  // 111 xxxxx  Debug and misc low prio
+    CMD_NOOP			   void	    // ?->can									msg intended for CAN testing, do nothing
+	CMD_NOTIF_PRES		   tbd     // ctrl -> ui							    ina based presence on sblk (bitfield)
+    CMD_TIM_SYNC_ACK       void      //                                          slave->master ack synchro
+    CMD_LED_RUN		       v1u,v2u  // auto,ui->led		v1u=lednum v2u=prg		run led program
+    CMD_INA3221_REPORT	   b4      // ina->ui (debug)
+    CMD_VOFF_NOTIF		   v1,v2     // canton->ui (debug)						used if NOTIF_VOFF=1
+    CMD_INA3221_VAL1       tbd
+    CMD_NOTIF_SPEED	       v1       // spdctl->ui	(debug)
+	CMD_TRIG_OSCILLO	   v1       // any -> spdctl	v1=canton_of_interest
 
-	CMD_CANTEST,					// any (cantest) -> any (cantest)
-	CMD_CANTEST_RESP,				// any - > any (ui)
+	CMD_CANTEST		       v1u      // any (cantest) -> any (cantest)
+	CMD_CANTEST_RESP       v1u,v2u	// any - > any (ui)
 
-	CMD_USB_STATS,					// any -> usb								send stats
-	CMD_USB_OSCILLO,				// any -> usb								send oscillo values
-    CMD_USB_RECORD_MSG,				// any -> usb								dump recorded msg if enabled (see msgrecord.h)
+	CMD_USB_STATS		   tbd       // any -> usb								send stats
+	CMD_USB_OSCILLO	       tbd       // any -> usb								send oscillo values
+    CMD_USB_RECORD_MSG	   tbd     	// any -> usb								dump recorded msg if enabled (see msgrecord.h)
 
-    CMD_OAM_MASTER,
-    CMD_OAM_SLAVE,
-    CMD_OAM_BNUM,
-	CMD_OAM_SLV_OK,
-    CMD_OAM_CUSTOM,                 // any -> OAM(), not defined (for test)
+    CMD_OAM_MASTER          tbd
+    CMD_OAM_SLAVE           tbd
+    CMD_OAM_BNUM            tbd
+	CMD_OAM_SLV_OK          tbd
+    CMD_OAM_CUSTOM          tbd // any -> OAM(), not defined (for test)
 
-	CMD_PLANNER_RESET,				// UI->planner								stop all trains, reset planner
-	CMD_PLANNER_ADD,				// UI->planner
-	CMD_PLANNER_CANCEL,				// UI->planner
-	CMD_PLANNER_COMMIT				// UI->planner
+	CMD_PLANNER_RESET	    tbd // UI->planner								stop all trains, reset planner
+	CMD_PLANNER_ADD		    tbd // UI->planner
+	CMD_PLANNER_CANCEL		tbd // UI->planner
+	CMD_PLANNER_COMMIT		tbd // UI->planner
+

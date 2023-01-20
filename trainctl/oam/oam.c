@@ -223,7 +223,7 @@ static void OAM_Init(void)
         //uint32_t myid = oam_getDeviceUniqueId();
         //int myboard = boardIdToBoardNum(myid);
     
-        msg_64_t m;
+        msg_64_t m = {0};
         m.from = MA3_BROADCAST;
         m.to = MA2_LOCAL_BCAST;
         m.cmd = CMD_SETRUN_MODE;
@@ -248,7 +248,7 @@ static void OAM_change_mode(runmode_t run_mode)
 
 static void _bcast_normal(void)
 {
-	msg_64_t m;
+    msg_64_t m = {0};
 	m.from = MA3_BROADCAST;
 	m.to = MA3_BROADCAST;
 	m.cmd = CMD_SETRUN_MODE;
@@ -276,7 +276,7 @@ void OAM_Tasklet(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_
 		//int myboard = boardIdToBoardNum(myid);
     
 		first = 0;
-		msg_64_t m;
+        msg_64_t m = {0};
 		m.from = MA3_BROADCAST;
 		m.to = MA2_LOCAL_BCAST;
 		m.cmd = CMD_SETRUN_MODE;

@@ -6227,7 +6227,7 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "D597935B-45B2-451C-8166-32AB8CEFF03D"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../../trainctl/ctrl/ctrl.c"
@@ -6812,7 +6812,7 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "5AAF6BD4-9074-48F8-BCAA-4B0B35EEAB1D"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../../trainctl/spdctl/spdctl.c"
@@ -6837,6 +6837,22 @@
             startingLineNumber = "54"
             endingLineNumber = "54"
             landmarkName = "record_msg_read(ptr)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "9F90336F-0DBE-4DF4-9C87-A21ADCF5D353"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../trainctl/msg/msgrecord.c"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "36"
+            endingLineNumber = "36"
+            landmarkName = "next_record_buf()"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>

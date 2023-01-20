@@ -76,20 +76,38 @@ void frame_send_recordmsg(void(*cb)(const uint8_t *d, int l))
 		cb((uint8_t *)r, sizeof(msgrecord_t));
 		idx = (idx + 1) % (MSGRECORD_NUMREC);
 	}
-	endidx = 0;
-	startidx = 0;
+	//endidx = 0;
+	//startidx = 0;
 	disable_record = 0;
 }
 #ifdef TRAIN_SIMU
 
-const char *traincmd_name(uint8_t cmd);
+const char *traincmd_name(uint8_t cmd); // generated in trainmsgstr.c
+
+const char *addrname(uint8_t a)
+{
+    static char r[32];
+    if ((0)) {
+    } else if (MA1_IS_CTRL(a)) {
+        sprintf(r, "MA1_CTRL(%d)",   a & 0xF);
+    } else if (MA1_IS_SPDCTL(a)) {
+        sprintf(r, "MA1_SPDCTL(%d)", a & 0xF);
+    } else if (MA0_IS_CANTON(a)) {
+        sprintf(r, "MA0_CANTON(%d)", a & 0xF);
+    } else {
+        sprintf(r, "%2.2X", a);
+    }
+    return r;
+}
 
 static void dumpastext(const uint8_t *d, int l)
 {
     msgrecord_t *r = (msgrecord_t *)d;
     printf("{%d, %u, {", r->dir, r->ts);
-    printf(".from=0x%2.2X, .to=0x%2.2X, .subc=%d, .cmd=%s, ",
-           r->m.from, r->m.to, r->m.subc, traincmd_name(r->m.cmd));
+    printf(".from=0x%s, ", addrname(r->m.from));
+    printf(".to=0x%s, ", addrname(r->m.to));
+    printf(".subc=%d, .cmd=%s, ",
+           r->m.subc, traincmd_name(r->m.cmd));
     printf(".v1=%d, .v2=%d", r->m.v1, r->m.v2);
     printf("}},\n");
 }

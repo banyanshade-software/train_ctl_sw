@@ -692,7 +692,7 @@ static void train_periodic_control(int numtrain, _UNUSED_ uint32_t dt)
 
 static void set_c1_c2(int tidx, train_vars_t *tvars, xblkaddr_t c1, int8_t dir1, xblkaddr_t c2, int8_t dir2)
 {
-	msg_64_t m;
+    msg_64_t m = {0};
 	m.from = MA1_SPDCTL(tidx);
 
 	itm_debug3(DBG_SPDCTL, "s-c1", tidx, c1.v, dir1);

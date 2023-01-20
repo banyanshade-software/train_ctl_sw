@@ -38,6 +38,7 @@ int main(int argc, char **argv)
     if (argc !=3) {
         fprintf(stderr, "usage: %s gen deffile\n", argv[0]);
         fprintf(stderr, "  gen values :\n    h   :  generate msgdef.h\n");
+        fprintf(stderr, "    s   :  generate msgstr.c\n");
         return 1; /* usage error */
     }
     const char *path = argv[2];
@@ -66,6 +67,9 @@ int main(int argc, char **argv)
             if (0) {
             } else if (!strcmp(gen, "h")) {
                 generate_msgdef_header(ast);
+            } else if (!strcmp(gen, "s")) {
+                generate_msgdef_str(ast);
+
             } else {
                 fprintf(stderr, "bad gen parameteri '%s'\n", gen);
                 exit(2);

@@ -81,19 +81,15 @@ void frame_send_recordmsg(void(*cb)(const uint8_t *d, int l))
 	disable_record = 0;
 }
 #ifdef TRAIN_SIMU
-static const char * cmdstr(uint8_t cmd)
-{
-    static char str[64];
-    sprintf(str, "CMD_%2.2X", cmd);
-    return str;
-}
+
+const char *traincmd_name(uint8_t cmd);
 
 static void dumpastext(const uint8_t *d, int l)
 {
     msgrecord_t *r = (msgrecord_t *)d;
     printf("{%d, %u, {", r->dir, r->ts);
-    printf(".from=%2.2X, .to=%2.2X, .subc=%d, .cmd=%s, ",
-           r->m.from, r->m.to, r->m.subc, cmdstr(r->m.cmd));
+    printf(".from=0x%2.2X, .to=0x%2.2X, .subc=%d, .cmd=%s, ",
+           r->m.from, r->m.to, r->m.subc, traincmd_name(r->m.cmd));
     printf(".v1=%d, .v2=%d", r->m.v1, r->m.v2);
     printf("}},\n");
 }

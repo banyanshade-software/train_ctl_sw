@@ -52,3 +52,29 @@ typedef enum {\n");
 
 }
 
+void generate_msgdef_str(msg_node_t *root)
+{
+    printf("\
+// this file is generated automatically, do not edit\n\
+#include <stdint.h>\n\
+#include \"trainmsgdef.h\"\n\
+\n\
+const char *traincmd_name(uint8_t cmd)\n{\n\
+    switch(cmd) {\n\
+    default : return \"???\";\n");
+
+    for (msg_node_t *n = root; n; n=n->next) {
+        switch (n->tag) {
+        default: continue;
+        case MSG_NODE_MSG:
+                printf("\tcase %-20s: return \"%s\";\n", n->string, n->string);
+                break;
+        } 
+    }
+
+    printf("\
+    }\n\
+}\n\n");
+
+}
+

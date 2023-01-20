@@ -692,7 +692,7 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "60C4D94B-DB53-4742-8983-AC6C6BFBCCD0"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../../trainctl/spdctl/spdctl.c"
@@ -6834,8 +6834,8 @@
             filePath = "../../trainctl/msg/msgrecord.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "54"
-            endingLineNumber = "54"
+            startingLineNumber = "55"
+            endingLineNumber = "55"
             landmarkName = "record_msg_read(ptr)"
             landmarkType = "9">
          </BreakpointContent>
@@ -6850,8 +6850,8 @@
             filePath = "../../trainctl/msg/msgrecord.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "36"
-            endingLineNumber = "36"
+            startingLineNumber = "37"
+            endingLineNumber = "37"
             landmarkName = "next_record_buf()"
             landmarkType = "9">
          </BreakpointContent>

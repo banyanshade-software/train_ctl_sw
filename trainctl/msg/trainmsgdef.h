@@ -5,7 +5,7 @@
 typedef enum {
 	// ---------------------------- group 0x00
 	CMD_EMERGENCY_STOP      = 0x00, // 0x00 (0) // ui,any->(all)	stop/reset all tasklet
-	CMD_TIM_SYNC                  , // 0x01 (1) //
+	CMD_TIM_SYNC                  , // 0x01 (1) // for future time sync over CAN
 	CMD_RESET                     , // 0x02 (2) // ui,any->(all)	reset all tasklet, currently do same as CMD_EMERGENCY_STOP, but could do more, e.g. resetting some params
 	CMD_SETRUN_MODE               , // 0x03 (3) // ui,any->(all)	v1u=mode				start given runmode
 

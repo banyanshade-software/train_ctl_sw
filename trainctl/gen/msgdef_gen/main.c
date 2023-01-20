@@ -61,7 +61,7 @@ int main(int argc, char **argv)
                 /* <-- input text remaining due to incompleteness of the grammar */
         } else {
 	        fprintf(stderr, "parsed, ast=%p\n", ast);
-           	system__dump_ast(&system, ast);
+           	if ((0)) system__dump_ast(&system, ast);
 
             if (0) {
             } else if (!strcmp(gen, "h")) {

@@ -65,7 +65,6 @@ comment
        _ '//' ( !EOL . )* &EOL
     {
         $$ = create_msg_node_text(auxil, MSG_NODE_COMMENT, range__new($0s, $0e));
-        printf("--- %s\n", $$->string);
     }
 
 

@@ -22,7 +22,7 @@
 static const char *dbg_str[] = { "EVAL_", "MATCH", "ABAND" };
 
 #define PCC_DEBUG(auxil, event, rule, level, pos, buffer, length) do {\
-     if ((1)) fprintf(stdout, "%*s%s %s @%d [%.*s]\n", (int)(level * 2), "", dbg_str[event], rule, (int)pos, (int)length,  buffer); fflush(stdout); \
+     if ((0)) fprintf(stdout, "%*s%s %s @%d [%.*s]\n", (int)(level * 2), "", dbg_str[event], rule, (int)pos, (int)length,  buffer); fflush(stdout); \
 } while(0)
 
 
@@ -50,21 +50,22 @@ line
      / _ kw_start _ v:integer _ (c:comment)? _ EOL
         { $$ = create_msg_node(auxil, MSG_NODE_START); 
           $$->value = v->value;
-          //$$->comment = c->string;
+          $$->comment = c ? c->string : NULL;
         }
      / _ m:identifier _ (',')? _ (c:comment)? EOL
         { $$ = create_msg_node(auxil, MSG_NODE_MSG); 
           $$->string = m->string;
-          //$$->comment = c->string;
+          $$->comment = c ? c->string : NULL;
         }
      / _ c:comment EOL 
      / _ EOL
 
 comment
     <-
-       _ '//' ( !EOL . )* EOL
+       _ '//' ( !EOL . )* &EOL
     {
         $$ = create_msg_node_text(auxil, MSG_NODE_COMMENT, range__new($0s, $0e));
+        printf("--- %s\n", $$->string);
     }
 
 

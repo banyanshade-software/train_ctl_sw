@@ -26,9 +26,10 @@ tyoedef enum {\n");
             printf("\t// ---------------------------- group 0x%2.2X\n", val);
             break;
         case MSG_NODE_MSG:
-            printf("\t%s, // 0x%2.2x (%d)\n",
+            printf("\t%-30s, // 0x%2.2x (%d) %s\n",
                 n->string,
-                val, val);
+                val, val,
+                n->comment ? n->comment : "");
             val++;
             break;
         default:

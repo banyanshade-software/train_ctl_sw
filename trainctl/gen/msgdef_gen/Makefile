@@ -27,7 +27,7 @@ depend: .depend
 	$(CC) $(CFLAGS) -MM $^ > "$@"
 
 # ---------------------
-test: tests/m1.log tests/m2.log tests/m3.log tests/m4.log tests/m5.log tests/m6.log
+test: tests/m1.log tests/m2.log tests/m3.log tests/m4.log tests/m5.log tests/m6.log tests/m7.log
 
 tests/%.log: tests/%.def genmsg
 	./genmsg h - < $< > $@

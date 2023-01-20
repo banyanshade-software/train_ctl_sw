@@ -14,7 +14,7 @@ void generate_msgdef_header(msg_node_t *root)
 #ifndef trainmsgdef_h\n\
 #define trainmsgdef_h\n\
 \n\
-tyoedef enum {\n");
+typedef enum {\n");
 
     int val = 0;
     int num = 0;

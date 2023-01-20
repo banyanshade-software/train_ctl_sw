@@ -1,0 +1,6 @@
+start 0 // zero
+    CMD_EMERGENCY_STOP,
+    CMD_TIM_SYNC,
+    CMD_RESET,
+    CMD_SETRUN_MODE,
+    CMD_SET_C1_C2,

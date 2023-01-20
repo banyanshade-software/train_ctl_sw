@@ -6,7 +6,7 @@ all: genmsg
 
 CFLAGS += -g -Wall -Werror
 
-SRCS=genmsg.c main.c system.c utility.c
+SRCS=genmsg.c main.c system.c utility.c gen.c
 
 OBJS = $(SRCS:%.c=%.o)
 
@@ -30,7 +30,7 @@ depend: .depend
 test: tests/m1.log tests/m2.log tests/m3.log tests/m4.log tests/m5.log
 
 tests/%.log: tests/%.def genmsg
-	./genmsg < $< > $@
+	./genmsg h - < $< > $@
 
 
 

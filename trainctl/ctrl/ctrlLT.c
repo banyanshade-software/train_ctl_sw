@@ -178,6 +178,8 @@ station:
             
         case train_state_end_of_track:
         case train_state_end_of_track0:
+        case train_state_blkwait:
+        case train_state_blkwait0:
             if (sdir == tvars->_sdir) {
                 // same dir, ignore
                 return;
@@ -186,6 +188,8 @@ station:
             goto station;
             break;
             
+       
+           
         default:
             break;
     }

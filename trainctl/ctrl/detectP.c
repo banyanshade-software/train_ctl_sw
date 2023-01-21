@@ -186,7 +186,7 @@ void analyse_bemf_final(void)
             
             // set occupency
         	//xblkaddr_t bn = {.v=cnum};
-            set_block_addr_occupency(bnum, BLK_OCC_STOP, trnum, sblk);
+            set_block_addr_occupency(bnum, BLK_OCC_LOCO_STOP, trnum, sblk);
             
             // train params
             const conf_train_t *tconf = conf_train_get(trnum);

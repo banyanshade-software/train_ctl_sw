@@ -53,9 +53,9 @@ static int check_occupency3(int b1, int b2, int b3)
         int s = get_block_addr_occupency(bi);
         int expocc = ((i==b1)||(i==b2)||(i==b3)) ? 1 : 0;
         switch (s) {
-            case BLK_OCC_STOP:
-            case BLK_OCC_LEFT:
-            case BLK_OCC_RIGHT:
+            case BLK_OCC_LOCO_STOP:
+            case BLK_OCC_LOCO_LEFT:
+            case BLK_OCC_LOCO_RIGHT:
             case BLK_OCC_C2:
                 if (expocc) break;
                 return -1;
@@ -571,7 +571,7 @@ uint8_t ctrl_flag_notify_speed = 0;
 
     // sudently set blk 1 occupied
     _topology_or_occupency_changed = 0;
-    set_block_addr_occupency(ca1, BLK_OCC_STOP, 1, snone);
+    set_block_addr_occupency(ca1, BLK_OCC_LOCO_STOP, 1, snone);
     XCTAssert(_topology_or_occupency_changed);
     
     // try to restart

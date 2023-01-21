@@ -112,7 +112,7 @@ void set_block_addr_occupency(xblkaddr_t blkaddr, uint8_t v, uint8_t trnum, lsbl
     }
 }
 
-static int _set_occupied(xblkaddr_t blkaddr, uint8_t trnum, lsblk_num_t lsb, int car)
+static int _set_occupied(xblkaddr_t blkaddr, uint8_t trnum, lsblk_num_t lsb, int car, int sdir)
 {
     int chg = 0;
     if (0xFF == blkaddr.v) FatalError("OccFF", "bad occupency", Error_Occupency);
@@ -124,7 +124,7 @@ static int _set_occupied(xblkaddr_t blkaddr, uint8_t trnum, lsblk_num_t lsb, int
             return -1;
         } else {
             if (!car) {
-                co->occ = BLK_OCC_LOCO;
+                co->occ = occupied(sdir);
                 co->trnum = trnum;
                 co->lsblk = lsb;
                 topology_updated(trnum);
@@ -139,7 +139,7 @@ static int _set_occupied(xblkaddr_t blkaddr, uint8_t trnum, lsblk_num_t lsb, int
             }
         }
     } else {
-        co->occ = car ? BLK_OCC_CARS : BLK_OCC_LOCO;
+        co->occ = car ? BLK_OCC_CARS : occupied(sdir);
         co->trnum = trnum;
         co->lsblk = lsb;
         topology_updated(trnum);
@@ -151,15 +151,15 @@ static int _set_occupied(xblkaddr_t blkaddr, uint8_t trnum, lsblk_num_t lsb, int
     return 0;
 }
 
-int occupency_set_occupied(xblkaddr_t blkaddr, uint8_t trnum, lsblk_num_t lsb)
+int occupency_set_occupied(xblkaddr_t blkaddr, uint8_t trnum, lsblk_num_t lsb, int sdir)
 {
-    return _set_occupied(blkaddr, trnum, lsb, 0);
+    return _set_occupied(blkaddr, trnum, lsb, 0, sdir);
 }
 
 
-int occupency_set_occupied_car(xblkaddr_t blkaddr, uint8_t trnum, lsblk_num_t lsb)
+int occupency_set_occupied_car(xblkaddr_t blkaddr, uint8_t trnum, lsblk_num_t lsb, int sdir)
 {
-    return _set_occupied(blkaddr, trnum, lsb, 1);
+    return _set_occupied(blkaddr, trnum, lsb, 1, sdir);
 }
 
 

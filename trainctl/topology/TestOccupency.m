@@ -34,15 +34,15 @@ static const xblkaddr_t ca4 = { .v = 4 };
 }
 
 - (void)testDir {
-    XCTAssert(BLK_OCC_LEFT==occupied(-1));
-    XCTAssert(BLK_OCC_RIGHT==occupied(1));
-    XCTAssert(BLK_OCC_STOP==occupied(0));
+    XCTAssert(BLK_OCC_LOCO_LEFT==occupied(-1));
+    XCTAssert(BLK_OCC_LOCO_RIGHT==occupied(1));
+    XCTAssert(BLK_OCC_LOCO_STOP==occupied(0));
 }
 
 - (void) test1
 {
-    set_block_addr_occupency(ca3, BLK_OCC_STOP, 4, s42);
-    XCTAssert(BLK_OCC_STOP == get_block_addr_occupency(ca3));
+    set_block_addr_occupency(ca3, BLK_OCC_LOCO_STOP, 4, s42);
+    XCTAssert(BLK_OCC_LOCO_STOP == get_block_addr_occupency(ca3));
     XCTAssert(BLK_OCC_FREE == get_block_addr_occupency(ca2));
     XCTAssert(BLK_OCC_FREE == get_block_addr_occupency(ca4));
     
@@ -60,7 +60,7 @@ static const xblkaddr_t ca4 = { .v = 4 };
 
 - (void) test2
 {
-    set_block_addr_occupency(ca3, BLK_OCC_STOP, 4, s42);
+    set_block_addr_occupency(ca3, BLK_OCC_LOCO_STOP, 4, s42);
     XCTAssert(occupency_block_is_free(ca2, 5));
     XCTAssert(occupency_block_is_free(ca4, 5));
     XCTAssert(!occupency_block_is_free(ca3, 5));

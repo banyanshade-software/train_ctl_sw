@@ -15,17 +15,17 @@
 
 
 
-#define BLK_OCC_FREE    0x00
-#define BLK_OCC_STOP    0x01
-#define BLK_OCC_LOCO    0x01
-#define BLK_OCC_LEFT    0x02
-#define BLK_OCC_RIGHT   0x03
-#define BLK_OCC_C2      0x04
+#define BLK_OCC_FREE        0x00
+//#define BLK_OCC_STOP        0x01
+#define BLK_OCC_LOCO_STOP   0x01
+#define BLK_OCC_LOCO_LEFT   0x02
+#define BLK_OCC_LOCO_RIGHT  0x03
+#define BLK_OCC_C2          0x04
 
-#define BLK_OCC_CARS    0x05        // #longtrain
+#define BLK_OCC_CARS        0x05        // #longtrain
 
-#define BLK_OCC_DELAY1    0x10
-#define BLK_OCC_DELAYM    0x16
+#define BLK_OCC_DELAY1      0x10
+#define BLK_OCC_DELAYM      0x16
 
 extern uint8_t notify_occupency_change;
 
@@ -40,7 +40,7 @@ void set_block_addr_occupency(xblkaddr_t blkaddr, uint8_t v, uint8_t trnum, lsbl
 /// @param blkaddr block addr
 /// @param trnum train number
 /// @param lsb concerned lsb
-int occupency_set_occupied(xblkaddr_t blkaddr, uint8_t trnum, lsblk_num_t lsb);
+int occupency_set_occupied(xblkaddr_t blkaddr, uint8_t trnum, lsblk_num_t lsb, int sdir);
 
 
 /// occupency_set_occupied_car
@@ -49,7 +49,7 @@ int occupency_set_occupied(xblkaddr_t blkaddr, uint8_t trnum, lsblk_num_t lsb);
 /// @param blkaddr block addr
 /// @param trnum train number
 /// @param lsb concern lsb
-int occupency_set_occupied_car(xblkaddr_t blkaddr, uint8_t trnum, lsblk_num_t lsb);
+int occupency_set_occupied_car(xblkaddr_t blkaddr, uint8_t trnum, lsblk_num_t lsb, int sdir);
 
 /// occupency_set_free
 /// clear occupency on block
@@ -69,9 +69,9 @@ uint8_t occupency_block_is_free(xblkaddr_t blkaddr, uint8_t trnum);
 
 static inline uint8_t occupied(int dir)
 {
-    if (dir<0) return BLK_OCC_LEFT;
-    if (dir>0) return BLK_OCC_RIGHT;
-    return BLK_OCC_STOP;
+    if (dir<0) return BLK_OCC_LOCO_LEFT;
+    if (dir>0) return BLK_OCC_LOCO_RIGHT;
+    return BLK_OCC_LOCO_STOP;
 }
 
 

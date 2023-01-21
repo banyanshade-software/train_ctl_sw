@@ -80,7 +80,7 @@ void ctrl3_init_train(int tidx, train_ctrl_t *tvars, lsblk_num_t sblk, int on)
     tvars->_target_unisgned_speed = 0;
     
     tvars->beginposmm = 0;
-    tvars->_curposmm = POSE_UNKNOWN;
+    tvars->_curposmm = 0; //POSE_UNKNOWN;
     tvars->c1_sblk = sblk;
     //TODO
     tvars->c1c2dir_changed = 1;
@@ -276,6 +276,11 @@ void ctrl3_stop_detected(int tidx, train_ctrl_t *tvars)
 }
 
 
+static void _reserve_c2(int tidx, train_ctrl_t *tvars);
+static void _set_and_power_c2(int tidx, train_ctrl_t *tvars);
+
+
+
 void ctrl3_pose_triggered(int tidx, train_ctrl_t *tvars, pose_trig_tag_t trigtag, xblkaddr_t ca_addr, int16_t cposd10)
 {
     itm_debug3(DBG_CTRL|DBG_POSEC, "POSEtrg", tidx, ca_addr.v, cposd10);
@@ -291,7 +296,7 @@ void ctrl3_pose_triggered(int tidx, train_ctrl_t *tvars, pose_trig_tag_t trigtag
     tvars->_curposmm = pose_convert_to_mm(tconf, cposd10*10);
     itm_debug3(DBG_POSE|DBG_CTRL, "curposmm", tidx, tvars->_curposmm, trigtag);
     trace_train_trig(ctrl_tasklet.last_tick, tidx, tvars, trigtag, oldpos, tvars->_curposmm);
-
+    int rc;
     
     switch (tvars->_state) {
         case train_state_off:
@@ -358,10 +363,14 @@ void ctrl3_pose_triggered(int tidx, train_ctrl_t *tvars, pose_trig_tag_t trigtag
                     break;
                 case tag_need_c2:
                     itm_debug2(DBG_ERR|DBG_CTRL, "trg nc2", tidx, tvars->c1_sblk.n);
+                    _set_and_power_c2(tidx, tvars);
+                    return;
                     break;
                 case tag_reserve_c2:
-                    itm_debug2(DBG_ERR|DBG_CTRL, "trg rc2", tidx, tvars->c1_sblk.n);
+                    _reserve_c2(tidx, tvars);
+                    return;
                     break;
+                
                 default:
                     itm_debug2(DBG_ERR|DBG_CTRL, "unh trg", tidx, tvars->c1_sblk.n);
                     break;
@@ -618,6 +627,7 @@ static void _set_dir(int tidx, train_ctrl_t *tvars, int sdir)
     if (tvars->_sdir == sdir) return;
     tvars->_sdir = sdir;
     tvars->c1c2dir_changed = 1;
+    occupency_set_occupied(tvars->can1_xaddr, tidx, tvars->c1_sblk, tvars->_sdir);
 }
 static void _update_spd_limit(int tidx, train_ctrl_t *tvars, int sdir)
 {
@@ -863,7 +873,7 @@ static int _car_occupied(int tidx, train_ctrl_t *tvars,  struct forwdsblk *fwdca
         lsblk_num_t lsb = fwdcars->r[i];
         if (lsb.n == -1) continue;
         xblkaddr_t blk = canton_for_lsblk(lsb);
-        int rc = occupency_set_occupied_car(blk, tidx, lsb);
+        int rc = occupency_set_occupied_car(blk, tidx, lsb, tvars->_sdir);
         if (rc) return rc;
     }
     return 0;
@@ -871,7 +881,7 @@ static int _car_occupied(int tidx, train_ctrl_t *tvars,  struct forwdsblk *fwdca
 static int _lock_train_occupency(int tidx, train_ctrl_t *tvars)
 {
     int rc;
-    rc = occupency_set_occupied(tvars->can1_xaddr, tidx, tvars->c1_sblk);
+    rc = occupency_set_occupied(tvars->can1_xaddr, tidx, tvars->c1_sblk, tvars->_sdir);
     if (rc) return rc;
     rc = _car_occupied(tidx, tvars, &tvars->rightcars);
     if (rc) return rc;

@@ -159,10 +159,10 @@ static int _dim(int col, int dim)
     if (v==BLK_OCC_FREE) col = @"darkgray";
     else {
         switch (v) {
-            case BLK_OCC_STOP:  d=1; strn = [strn stringByAppendingString:@"--)"]; break;
-            case BLK_OCC_C2:    d=2; strn = [strn stringByAppendingString:@"..)"]; break;
-            case BLK_OCC_LEFT:  d=0; strn = [strn stringByAppendingString:@" <)"]; break;
-            case BLK_OCC_RIGHT: d=0; strn = [strn stringByAppendingString:@" >)"]; break;
+            case BLK_OCC_LOCO_STOP: d=1; strn = [strn stringByAppendingString:@"--)"]; break;
+            case BLK_OCC_C2:        d=2; strn = [strn stringByAppendingString:@"..)"]; break;
+            case BLK_OCC_LOCO_LEFT: d=0; strn = [strn stringByAppendingString:@" <)"]; break;
+            case BLK_OCC_LOCO_RIGHT:d=0; strn = [strn stringByAppendingString:@" >)"]; break;
             case BLK_OCC_CARS:  d=0; strn = [strn stringByAppendingString:@"~~)"]; break;
             default:
                 strn = [strn stringByAppendingString:@")"];

@@ -471,7 +471,7 @@ int ctrl3_update_front_sblks_c1changed(int tidx, train_ctrl_t *tvars,  const con
             }
         }
     }
-    occupency_set_occupied(tvars->can1_xaddr, tidx, tvars->c1_sblk);
+    occupency_set_occupied(tvars->can1_xaddr, tidx, tvars->c1_sblk, tvars->_sdir);
     // this could be improved,
     // but for now let's be safe
     return ctrl3_get_next_sblks(tidx, tvars, tconf);

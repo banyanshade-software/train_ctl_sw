@@ -465,9 +465,13 @@ int ctrl3_update_front_sblks_c1changed(int tidx, train_ctrl_t *tvars,  const con
     if ((1)) {
         // sanity check, c1sblk should be first item
         if (fsblk->numlsblk) {
-            if (fsblk->r[0].n != tvars->c1_sblk.n) return -1;
+            if (fsblk->r[0].n != tvars->c1_sblk.n) {
+                // will actually occur with POS_UNKNOWN
+                //return -1;
+            }
         }
     }
+    occupency_set_occupied(tvars->can1_xaddr, tidx, tvars->c1_sblk);
     // this could be improved,
     // but for now let's be safe
     return ctrl3_get_next_sblks(tidx, tvars, tconf);

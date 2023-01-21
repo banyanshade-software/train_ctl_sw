@@ -294,13 +294,15 @@ static void ctrl_tick(uint32_t tick, _UNUSED_ uint32_t dt)
     for (int tidx = 0; tidx<NUM_TRAINS; tidx++) {
         train_ctrl_t *tvars = &trctl[tidx];
         trace_train_postick(tick, tidx, tvars);
+        if (occ) ctrl3_occupency_updated(tidx, tvars);
         
-        
+        /*
         train_oldctrl_t *otvars = &otrctl[tidx];
         const conf_train_t *tconf = conf_train_get(tidx);
         if (!tconf->enabled) continue;
         if (tvars->_mode == train_notrunning) continue;
         if ((0)) ctrl2_tick_process(tidx, otvars, tconf, occ); // xxxxxx
+         */
     }
     
     ctc_periodic_refresh(tick);

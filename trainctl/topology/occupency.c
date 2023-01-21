@@ -37,7 +37,6 @@ static  canton_occ_t canton_occ[0x40] = {0};
 
 
 
-//uint8_t occupency_changed = 0; replaced by topology_or_occupency_changed
 static uint32_t lastcheck = 0;
 
 void occupency_clear(void)
@@ -108,7 +107,7 @@ void set_block_addr_occupency(xblkaddr_t blkaddr, uint8_t v, uint8_t trnum, lsbl
         chg = 1;
     }
     if (chg) {
-        topology_or_occupency_changed = 1;
+        topology_updated(trnum);
         notif_blk_occup_chg(blkaddr, co);
     }
 }
@@ -128,7 +127,7 @@ static int _set_occupied(xblkaddr_t blkaddr, uint8_t trnum, lsblk_num_t lsb, int
                 co->occ = BLK_OCC_LOCO;
                 co->trnum = trnum;
                 co->lsblk = lsb;
-                topology_or_occupency_changed = 1;
+                topology_updated(trnum);
                 chg = 1;
             } else {
                 if ((co->lsblk.n == lsb.n) && (co->occ != BLK_OCC_CARS)) {
@@ -143,7 +142,7 @@ static int _set_occupied(xblkaddr_t blkaddr, uint8_t trnum, lsblk_num_t lsb, int
         co->occ = car ? BLK_OCC_CARS : BLK_OCC_LOCO;
         co->trnum = trnum;
         co->lsblk = lsb;
-        topology_or_occupency_changed = 1;
+        topology_updated(trnum);
         chg = 1;
     }
     if (chg) {
@@ -184,7 +183,7 @@ void occupency_set_free(xblkaddr_t blkaddr, uint8_t trnum)
         // non delayed free, untested
         co->trnum = -1;
         co->lsblk.n = -1;
-        topology_or_occupency_changed = 1;
+        topology_updated(trnum);
     }
     if (chg) {
         notif_blk_occup_chg(blkaddr, co);
@@ -226,10 +225,10 @@ void check_block_delayed(_UNUSED_ uint32_t tick, _UNUSED_ uint32_t dt)
             itm_debug1(DBG_CTRL, "FREE(d)", i);
             xblkaddr_t bi = {.v= i};
         	_block_freed(bi, &canton_occ[i]);
+            topology_updated(canton_occ[i].trnum);
             canton_occ[i].occ = BLK_OCC_FREE;
             canton_occ[i].trnum = 0xFF;
             canton_occ[i].lsblk.n = -1;
-            topology_or_occupency_changed = 1;
             notif_blk_occup_chg(bi, &canton_occ[i]);
         } else if (canton_occ[i].occ > BLK_OCC_DELAY1) {
             canton_occ[i].occ --;

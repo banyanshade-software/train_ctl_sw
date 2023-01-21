@@ -65,7 +65,6 @@ void check_block_delayed(uint32_t tick, uint32_t dt);
 uint8_t occupency_block_is_free(xblkaddr_t blkaddr, uint8_t trnum);
 
 
-// extern uint8_t occupency_changed; replaced by topology_or_occupency_changed
 
 
 static inline uint8_t occupied(int dir)

@@ -59,7 +59,8 @@ static int tn_index(xtrnaddr_t tn)
 //static volatile uint8_t  lockedby[MAX_TOTAL_TURNOUTS]; // XXX TODO this should be total number of turnouts
 //static volatile uint32_t turnoutvals = 0; // bit field
 
-uint8_t topology_or_occupency_changed = 0;
+uint8_t _topology_or_occupency_changed = 0;
+
 
 int topology_set_turnout(xtrnaddr_t turnout, enum topo_turnout_state v, int numtrain)
 {
@@ -76,20 +77,9 @@ int topology_set_turnout(xtrnaddr_t turnout, enum topo_turnout_state v, int numt
 		}
 	}
 	turnout_st[tnidx].st = v;
-    topology_or_occupency_changed = 1;
-	/*
-    if (!d) {
-        if (v) {
-            __sync_fetch_and_or(&turnoutvals, (1ULL<<turnout.v));
-        } else {
-            __sync_fetch_and_and(&turnoutvals, ~(1ULL<<turnout.v));
-        }
-        topology_or_occupency_changed = 1;
-    } else {
-        abort();
-    }
-    */
-
+    topology_updated(numtrain);
+	
+    
 	itm_debug2(DBG_TURNOUT, "tt", turnout.v, topology_get_turnout(turnout));
 	return 0;
 }

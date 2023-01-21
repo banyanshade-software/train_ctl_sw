@@ -285,8 +285,8 @@ static void ctrl_tick(uint32_t tick, _UNUSED_ uint32_t dt)
     check_timers(tick);
     
     
-    uint8_t occ = topology_or_occupency_changed;
-    topology_or_occupency_changed = 0;
+    uint8_t occ = _topology_or_occupency_changed;
+    _topology_or_occupency_changed = 0;
     
     if (occ) {
         itm_debug1(DBG_CTRL, "ct/occ", 0);

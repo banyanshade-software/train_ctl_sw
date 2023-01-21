@@ -121,7 +121,7 @@ static void check_for_ctrl(int tidx, train_oldctrl_t *tvars)
             events[n]++;
     		itm_debug3(DBG_AUTO, "ca.trig", tidx, n, events[n]);
             tvars->routeidx++;
-            topology_or_occupency_changed = 1;
+            topology_updated(tidx);
             continue;
         }
         if ((r & 0xF8) == _AR_WEVENT(0)) {
@@ -238,14 +238,14 @@ void cauto_had_trigU1(int tidx, train_oldctrl_t *tvars)
 	itm_debug1(DBG_AUTO, "ca.trigU1", tidx);
     //_ctrl2_upcmd_set_desired_speed(tidx, tvars, 0);
     tvars->got_u1 = 1;
-    topology_or_occupency_changed = 1;
+    topology_updated(tidx);
 }
 
 void cauto_had_timer(_UNUSED_ int tidx, train_oldctrl_t *tvars)
 {
 	itm_debug1(DBG_AUTO, "ca.had_tim", tidx);
 	tvars->got_texp = 1;
-    topology_or_occupency_changed = 1;
+    topology_updated(tidx);
 }
 
 

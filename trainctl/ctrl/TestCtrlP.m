@@ -570,9 +570,9 @@ uint8_t ctrl_flag_notify_speed = 0;
     
 
     // sudently set blk 1 occupied
-    topology_or_occupency_changed = 0;
+    _topology_or_occupency_changed = 0;
     set_block_addr_occupency(ca1, BLK_OCC_STOP, 1, snone);
-    XCTAssert(topology_or_occupency_changed);
+    XCTAssert(_topology_or_occupency_changed);
     
     // try to restart
     ctrl2_upcmd_set_desired_speed(0, &tvars, 90);

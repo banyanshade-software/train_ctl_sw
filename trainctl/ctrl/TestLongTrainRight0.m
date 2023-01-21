@@ -29,8 +29,8 @@
 
 //static lsblk_num_t s13 = {13};
 static lsblk_num_t s14 = {14};
-static lsblk_num_t s5 = {5};
-static lsblk_num_t s4 = {4};
+//static lsblk_num_t s5 = {5};
+//static lsblk_num_t s4 = {4};
 
 
 - (void)setUp {

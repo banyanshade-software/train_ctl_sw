@@ -181,9 +181,10 @@ typedef void (^respblk_t)(void);
     _trainParamWin.hidesOnDeactivate = YES;
     //_trainParamWin.mainWindow
     //_trainParamWin.excludedFromWindowsMenu = YES;
+    /*
     NSApplication *app = [aNotification object];
     id m = [NSApp windowsMenu];
-    
+    */
     // for debug
     //[self getParams]; //XXX XXX
     //[self startBLE];
@@ -2823,6 +2824,10 @@ void impl_uitrack_change_tn_reserv(int tn, int train)
 
 
 
+
+- (void)userContentController:(nonnull WKUserContentController *)userContentController didReceiveScriptMessage:(nonnull WKScriptMessage *)message {
+    
+}
 
 @end
 

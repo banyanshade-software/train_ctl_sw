@@ -31,7 +31,7 @@
 static lsblk_num_t snine = {9};
 static lsblk_num_t sten = {10};
 static lsblk_num_t seleven = {11};
-static lsblk_num_t stwelve = {12};
+//static lsblk_num_t stwelve = {12};
 
 
 - (void)setUp {
@@ -116,7 +116,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     tconf->trainlen_right_cm = 130;
     n = ctrl3_get_next_sblks_(0, &tvars, tconf, 0, r, 4, NULL);
     XCTAssert(n==4);
-    static const int exp3[] = { 10, 11, 12, 0xFF};
+    //static const int exp3[] = { 10, 11, 12, 0xFF};
     rc = check_lsblk_array(r, exp2, n);
     XCTAssert(rc==-1);
     
@@ -173,7 +173,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     tconf->trainlen_right_cm = 130;
     n = ctrl3_get_next_sblks_(0, &tvars, tconf, 0, r, 4, &remain);
     XCTAssert(n==4);
-    static const int exp3[] = { 10, 11, 12, 0xFF};
+    //static const int exp3[] = { 10, 11, 12, 0xFF};
     rc = check_lsblk_array(r, exp2, n);
     XCTAssert(rc==-1);
     XCTAssert(remain==0);

@@ -54,7 +54,7 @@
     //id m = [NSApp windowsMenu];
     [super close];
     [self updateWindowMenu:NO];
-    id m2 = [NSApp windowsMenu];
+    //id m2 = [NSApp windowsMenu];
     //[NSApp updateWindowsItem:self];
     //[NSApp changeWindowsItem:self title:@"plop" filename:false];
 }

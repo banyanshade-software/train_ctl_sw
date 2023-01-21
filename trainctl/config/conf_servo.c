@@ -38,7 +38,7 @@ static conf_servo_t conf_servo[4] = {
      .min = 2300,
      .max = 7230,
      .spd = 80,
-     .pos0 = GPIOD,
+     .pos0 = 5000,
   },
   {     // 1
      .port_power = GPIOD,
@@ -49,7 +49,7 @@ static conf_servo_t conf_servo[4] = {
      .min = 2300,
      .max = 7230,
      .spd = 80,
-     .pos0 = GPIOD,
+     .pos0 = 5000,
   },
   {     // 2
      .port_power = GPIOD,
@@ -60,7 +60,7 @@ static conf_servo_t conf_servo[4] = {
      .min = 2300,
      .max = 7230,
      .spd = 80,
-     .pos0 = GPIOD,
+     .pos0 = 5000,
   },
   {     // 3
      .port_power = GPIOD,
@@ -71,7 +71,7 @@ static conf_servo_t conf_servo[4] = {
      .min = 2300,
      .max = 7230,
      .spd = 80,
-     .pos0 = GPIOD,
+     .pos0 = 5000,
   }
 };
 

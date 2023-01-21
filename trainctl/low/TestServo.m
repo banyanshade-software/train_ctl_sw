@@ -188,7 +188,7 @@ int oam_localBoardNum(void)
         SimuTick += 10;
         tasklet_run(&servo_tasklet, SimuTick);
     }
-    NSString *s = dump_msgbuf(0);
+    NSString *s = dump_msgbuf(0);(void)s;
     EXPMSG({.to=MA3_UI_CTC,   .from=MA0_SERVO(1), .subc=0, .cmd=CMD_SERVO_ACK, .v1u=4000});
 }
 
@@ -207,7 +207,7 @@ int oam_localBoardNum(void)
         SimuTick += 10;
         tasklet_run(&servo_tasklet, SimuTick);
     }
-    NSString *s = dump_msgbuf(0);
+    NSString *s = dump_msgbuf(0); (void) s;
     EXPMSG({.to=MA3_UI_CTC,   .from=MA0_SERVO(1), .subc=0, .cmd=CMD_SERVO_ACK, .v1u=7230});
 }
 

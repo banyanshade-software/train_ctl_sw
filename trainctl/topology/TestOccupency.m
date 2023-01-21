@@ -15,8 +15,8 @@
 @end
 
 static const lsblk_num_t snone = {-1};
-static const lsblk_num_t szero = {0};
-static const lsblk_num_t sone = {1};
+//static const lsblk_num_t szero = {0};
+//static const lsblk_num_t sone = {1};
 static const lsblk_num_t s42 = {42};
 
 static const xblkaddr_t ca2 = { .v = 2 };

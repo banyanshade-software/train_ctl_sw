@@ -483,7 +483,7 @@ void ctrl2_check_checkstart(int tidx, train_oldctrl_t *tvars)
             	}
             	itm_debug3(DBG_ERR|DBG_CTRL, "miss stp?", tidx, tvars->_dir, tvars->desired_speed);
             }
-            uint8_t alternate;
+            int8_t alternate;
             ns = next_lsblk_free(tidx, tvars,  (tvars->desired_speed<0),  &alternate, NULL);
             itm_debug3(DBG_CTRL, "cs next", tidx, ns.n, alternate);
             if (ns.n>=0) {
@@ -588,7 +588,7 @@ void ctrl2_update_topo(int tidx, train_oldctrl_t *tvar, const conf_train_t *tcon
     int d = (tvar->_dir) ? tvar->_dir : SIGNOF0(tvar->desired_speed);
     if (!d) return;
     
-    uint8_t alternate = 0;
+    int8_t alternate = 0;
     lsblk_num_t ns = next_lsblk_free(tidx, tvar, (d < 0), &alternate, NULL);
     
     if (ns.n < 0) {

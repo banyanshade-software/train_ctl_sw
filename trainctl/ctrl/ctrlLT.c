@@ -32,7 +32,7 @@
 #error BOARD_HAS_CTRL not defined, remove this file from build
 #endif
 
-static lsblk_num_t snone = {-1};
+static _UNUSED_ lsblk_num_t snone = {-1};
 
 // -----------------------------------------------------------------
 
@@ -664,7 +664,7 @@ static void _set_speed(int tidx, train_ctrl_t *tvars, int signed_speed, int appl
     }
 }
 
-static uint8_t brake_maxspd(int distmm);
+//static uint8_t brake_maxspd(int distmm);
 
 static void _apply_speed(int tidx, train_ctrl_t *tvars)
 {
@@ -831,13 +831,13 @@ static void _check_c2(int tidx, train_ctrl_t *tvars, rettrigs_t *rett)
 }
 
 
-
+/*
 static uint8_t brake_maxspd(int distmm)
 {
     // TODO better brake
     return (distmm>100) ? 100:distmm;
 }
-
+*/
 static uint32_t pose_convert_from_mm(const conf_train_t *tconf, int32_t mm);
 static uint32_t pose_convert_to_mm( const conf_train_t *tconf, int32_t poseval);
 

@@ -30,7 +30,7 @@
 int cmptrigs(const rettrigs_t *r1, const rettrigs_t *r2);
 
 
-static lsblk_num_t snone = {-1};
+//static lsblk_num_t snone = {-1};
 static lsblk_num_t szero = {0};
 static lsblk_num_t sone = {1};
 static lsblk_num_t stwo = {2};

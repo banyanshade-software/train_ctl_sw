@@ -157,7 +157,7 @@ uint8_t ctrl_flag_notify_speed = 0;
     ctrl_set_pose_trig(0, &tvars, 1, ca1,  -40, tag_end_lsblk);
     XCTAssert(mqf_len(&from_ctrl)==2);
 
-    NSString *s = dump_msgbuf(0);
+    NSString *s = dump_msgbuf(0); (void)s;
 
     EXPMSG({.to=MA0_CANTON(0), .subc=1,  .from=MA1_CTRL(0), .cmd=CMD_POSE_SET_TRIG, .vcu8=tag_auto_u1, .va16=14, .vb8=1},
            {.to=MA0_CANTON(0), .subc=1,  .from=MA1_CTRL(0), .cmd=CMD_POSE_SET_TRIG, .vcu8=tag_end_lsblk, .va16=-4, .vb8=1});
@@ -337,7 +337,7 @@ uint8_t ctrl_flag_notify_speed = 0;
     XCTAssert(rc==2);
     XCTAssert(tvars._dir == 0);
     XCTAssert(0==check_occupency(0, -1));
-    NSString *s1 = dump_msgbuf(0);
+    NSString *s1 = dump_msgbuf(0); (void)s1;
     // {D0, C8, 11, 0, 1}
     // {D0, C8, 11, 0, 255},{D0, 81, 26, 2, 0}
     EXPMSG({.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_C1_C2,        .vb0=0, .vb1=0, .vb2=0xFF, .vb3=0});
@@ -396,7 +396,7 @@ uint8_t ctrl_flag_notify_speed = 0;
     rc = ctrl2_tick_process(0, &tvars, tconf, 0);
     XCTAssert(rc==4);
     int l1 = get_lsblk_len_cm(sone, NULL);
-    NSString *s = dump_msgbuf(0);
+    NSString *s = dump_msgbuf(0); (void)s;
     //{D0, C8, 11, 257, 511},{D0, 81, 26, 1, 0},{D0, C8, 51, 420, 0},{D0, C8, 10, 70, 0}
 
     
@@ -472,7 +472,7 @@ uint8_t ctrl_flag_notify_speed = 0;
     ctrl2_evt_stop_detected(0, &tvars,tconf, 333);
     rc = ctrl2_tick_process(0, &tvars, tconf, 0);
     XCTAssert(rc==2);
-    NSString *st = dump_msgbuf(1);
+    NSString *st = dump_msgbuf(1); (void)st;
     XCTAssert(tvars._ostate == train_blk_wait);
     XCTAssert(tvars._dir == 0); // because stopped
     XCTAssert(tvars._target_speed == 0);

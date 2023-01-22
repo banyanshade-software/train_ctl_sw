@@ -91,10 +91,12 @@ void bemf_msg(msg_64_t *m)
 		break;
             
     case CMD_POSE_SET_TRIG:
-            if ((m->from & 0x7) != (cbvars[idx].bemf_to &  0x7)) { // XXXX
-                // sanity check, bemf_to is spdctl(numtrain) and sender should be ctrl(numtrain)
-                itm_debug2(DBG_ERR, "st/bad", m->from, cbvars[idx].bemf_to);
-                break;
+            if (cbvars[idx].bemf_to != 0xFF) {
+                if ((m->from & 0x7) != (cbvars[idx].bemf_to &  0x7)) { // XXXX
+                    // sanity check, bemf_to is spdctl(numtrain) and sender should be ctrl(numtrain)
+                    itm_debug2(DBG_ERR, "st/bad", m->from, cbvars[idx].bemf_to);
+                    //break;
+                }
             }
             add_trig(&cbvars[idx], m->from, m->va16*100, m->vcu8, m->vb8);
             break;

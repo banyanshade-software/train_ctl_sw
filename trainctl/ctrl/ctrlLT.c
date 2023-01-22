@@ -822,6 +822,8 @@ static void _set_and_power_c2(int tidx, train_ctrl_t *tvars)
         return;
     }
     tvars->can2_xaddr = tvars->can2_future;
+    tvars->c1c2dir_changed = 1;
+    _sendlow_c1c2_dir(tidx, tvars);
 }
 
 static void _reserve_c2(int tidx, train_ctrl_t *tvars)

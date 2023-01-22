@@ -49,7 +49,7 @@
         dir[i] = 0;
     }
     s1[0].n = 2;
-    position[0]=60;
+    position[0]= 0; //60;
     return self;
 }
 

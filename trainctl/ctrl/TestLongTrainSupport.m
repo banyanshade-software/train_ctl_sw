@@ -141,7 +141,7 @@ int compareMsg64_itrig(const msg_64_t *exp, int n, int clear)
             NSLog(@"%d exp: %2.2x %2.2x cmd=%2.2x subc=%d v1=%d v2=%d", i,
                   exp[i].from, exp[i].to, exp[i].cmd, exp[i].subc, exp[i].v1, exp[i].v2);
             NSLog(@"%d got: %2.2x %2.2x cmd=%2.2x subc=%d v1=%d v2=%d", i,
-                  qbuf[i].from, qbuf[i].to, qbuf[i].cmd, qbuf[i].subc, qbuf[i].v1, qbuf[i].v2);
+                  m.from, m.to, m.cmd, m.subc, m.v1, m.v2);
             rc = i+1;
             break;
         }

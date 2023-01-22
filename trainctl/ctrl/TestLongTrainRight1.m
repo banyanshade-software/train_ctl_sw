@@ -381,7 +381,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     rettrigs_t rettrigs = {0};
     rc = ctrl3_check_front_sblks(0, &tvars, tconf, 0, &rettrigs);
     XCTAssert(rc==0);
-    const rettrigs_t expt1 = { 0, 0, 0, 1, 2, {{220+bmm, tag_chkocc}, {520+bmm, tag_reserve_c2}, {0,0}}};
+    const rettrigs_t expt1 = { 0, 0, 0, 0, 2, {{220+bmm, tag_chkocc}, {520+bmm, tag_reserve_c2}, {0,0}}};
     XCTAssert(!cmptrigs(&rettrigs, &expt1));
 
     // (B) first trig
@@ -390,7 +390,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     XCTAssert(tvars.rightcars.rlen_mm == 400);
     rc = ctrl3_check_front_sblks(0, &tvars, tconf, 0, &rettrigs);
     XCTAssert(rc==0);
-    const rettrigs_t expt3 = {0, 0, 0, 1, 1, { {520+bmm, tag_reserve_c2},  {0,0}, {0, 0}}};
+    const rettrigs_t expt3 = {0, 0, 0, 0, 1, { {520+bmm, tag_reserve_c2},  {0,0}, {0, 0}}};
     XCTAssert(!cmptrigs(&rettrigs, &expt3));
     
     // (C1) change c1sblk

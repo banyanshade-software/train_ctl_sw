@@ -44,6 +44,7 @@
 
 #import "AppDelegateP.h"
 
+#define BEMF_MULTIPLICATOR (1.0)
 
 uint16_t dummy[3];
 
@@ -2131,7 +2132,9 @@ uint32_t SimuTick = 0;
     [_simTrain0 computeTrainsAfter:mdt sinceStart:mt];
     for (int nc = 0; nc < NUM_CANTONS; nc++) {
         double bemf = [_simTrain0 bemfForCantonNum:nc];
+        bemf *= BEMF_MULTIPLICATOR;
         int bemfi = -(bemf/4.545) * 3.3 *4096;
+        
 #if NEW_ADC_AVG
         //adc_result[0].meas[nc].vA = (bemfi>0) ? 0 : -bemfi;
         //adc_result[0].meas[nc].vB = (bemfi>0) ? bemfi : 0;

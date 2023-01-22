@@ -31,6 +31,7 @@
 #endif
 
 #include "../low/canton.h"
+#include "../low/canton_bemf.h"
 #include "inertia.h"
 #include "pidctl.h"
 //#include "train.h"
@@ -196,6 +197,8 @@ static void spdctl_reset(void)
 		trspc_vars[i].C1x.v = 0xFF;
 		trspc_vars[i].C2x.v = 0xFF;
 	}
+    // reset BEMF
+    bemf_reset();
 }
 
 volatile int16_t oscillo_t0bemf = 0;

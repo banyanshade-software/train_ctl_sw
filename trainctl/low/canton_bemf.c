@@ -35,7 +35,7 @@ volatile adc_buf_t train_adc_buf[2]; // double buffer
 runmode_t bemf_run_mode = runmode_off;
 uint8_t bemf_test_all = 0;
 
-#define NUM_TRIGS 4
+#define NUM_TRIGS 5
 typedef struct {
     int32_t posval;
     int8_t dir;

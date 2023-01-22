@@ -320,7 +320,7 @@ int _add_trig_loco(int left, rettrigs_t *ret, int rlenmm, int c1lenmm, int curmm
     int lmm = dist-kmm;
     if (!left) {
         int trg = minmm+c1lenmm-lmm;
-        if (minmm+lmm <= curmm) {
+        if (trg <= curmm) {
             int smm = minmm+lmm-curmm;
             return smm;
         } else if (lmm < c1lenmm) {

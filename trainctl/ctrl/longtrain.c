@@ -28,7 +28,7 @@
 //#include "cautoP.h"
 
 
-static int32_t get_lsblk_len_cm_steep(lsblk_num_t lsbk, const conf_train_t *tconf, train_ctrl_t *tvar)
+int32_t get_lsblk_len_cm_steep(lsblk_num_t lsbk, const conf_train_t *tconf, train_ctrl_t *tvar)
 {
     int8_t steep = 0;
     int cm = get_lsblk_len_cm(lsbk, &steep);

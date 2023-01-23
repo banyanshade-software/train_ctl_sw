@@ -476,6 +476,14 @@ void ctrl3_evt_entered_c2(int tidx, train_ctrl_t *tvars, uint8_t from_bemf)
         tvars->measure_pose_percm = 1;
     }
     tvars->c1_sblk = first_lsblk_with_canton(tvars->can1_xaddr, tvars->c1_sblk);
+    if (tvars->_sdir >= 0) {
+        tvars->beginposmm = 0;
+    } else {
+        int len = get_lsblk_len_cm_steep(tvars->c1_sblk, conf_train_get(tidx), tvars);
+        tvars->beginposmm = -len;
+    }
+    tvars->_curposmm = 0;
+
     ctrl3_update_front_sblks_c1changed(tidx, tvars, conf_train_get(tidx), tvars->_sdir<0 ? 1 : 0);
     
     _updated_while_running(tidx,tvars);
@@ -493,6 +501,8 @@ static void _updated_while_running(int tidx, train_ctrl_t *tvars)
     int rc = _train_check_dir(tidx, tvars, tvars->_sdir, &rett);
     if (rett.isoet) {
         int rc = _train_check_dir(tidx, tvars, tvars->_sdir, &rett);
+        rc = _train_check_dir(tidx, tvars, tvars->_sdir, &rett);
+        rc = _train_check_dir(tidx, tvars, tvars->_sdir, &rett);
         _set_speed(tidx, tvars, 0, 1, rc);
         _set_state(tidx, tvars, train_state_end_of_track);
         return;
@@ -606,12 +616,33 @@ static void _set_one_trig(int numtrain, const conf_train_t *tconf, int num, int8
 }
 
 
+#define MARGIN_TRIG 150
 
 static void _apply_trigs(int tidx, train_ctrl_t *tvars, const rettrigs_t *rett)
 {
     const conf_train_t *conf = conf_train_get(tidx);
+    // get min pose (right) or max pose (left)
+    int min=0;
+    int n = 0;
     for (int i=0; i<NUMTRIGS;i++) {
         if (!rett->trigs[i].tag) continue;
+        if (!n) min = rett->trigs[i].posmm;
+        else {
+            if (tvars->_sdir >= 0) {
+                if (rett->trigs[i].posmm < min) min = rett->trigs[i].posmm;
+            } else {
+                if (rett->trigs[i].posmm > min) min = rett->trigs[i].posmm;
+            }
+        }
+    }
+    
+    for (int i=0; i<NUMTRIGS;i++) {
+        if (!rett->trigs[i].tag) continue;
+        if (tvars->_sdir >= 0) {
+            if (rett->trigs[i].posmm > min+MARGIN_TRIG) continue;
+        } else {
+            if (rett->trigs[i].posmm < min-MARGIN_TRIG) continue;
+        }
         _set_one_trig(tidx, conf, i, tvars->_sdir, tvars->can1_xaddr ,
                       pose_convert_from_mm(conf, rett->trigs[i].posmm),
                       rett->trigs[i].tag);
@@ -815,6 +846,9 @@ static void _set_state(int tidx, train_ctrl_t *tvars, train_state_t newstate)
 
 static void _set_and_power_c2(int tidx, train_ctrl_t *tvars)
 {
+    if (tvars->c1c2) {
+        
+    }
     if (tvars->can2_xaddr.v != 0xFF) {
         if (tvars->can2_xaddr.v != tvars->can2_future.v) {
             FatalError("FUT2", "bad future c2", Error_FSM_BadFut2);

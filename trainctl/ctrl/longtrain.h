@@ -67,4 +67,6 @@ int ctrl3_update_front_sblks_c1changed(int tidx, train_ctrl_t *tvars,  const con
 
 int32_t ctrl3_getcurpossmm(train_ctrl_t *tvars, const conf_train_t *tconf, int left);
 
+int32_t get_lsblk_len_cm_steep(lsblk_num_t lsbk, const conf_train_t *tconf, train_ctrl_t *tvar);
+
 #endif /* longtrain_h */

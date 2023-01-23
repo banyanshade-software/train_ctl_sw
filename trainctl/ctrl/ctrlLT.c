@@ -847,7 +847,7 @@ static void _set_state(int tidx, train_ctrl_t *tvars, train_state_t newstate)
 static void _set_and_power_c2(int tidx, train_ctrl_t *tvars)
 {
     if (tvars->c1c2) {
-        
+        tvars->can2_xaddr.v = 0xFF;
     }
     if (tvars->can2_xaddr.v != 0xFF) {
         if (tvars->can2_xaddr.v != tvars->can2_future.v) {

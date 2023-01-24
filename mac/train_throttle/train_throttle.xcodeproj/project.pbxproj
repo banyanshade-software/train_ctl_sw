@@ -353,6 +353,7 @@
 		1B7B5E8629767D3200955045 /* TestSpdctl.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TestSpdctl.m; sourceTree = "<group>"; };
 		1B7B5E9B297B295C00955045 /* trainmsgstr.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = trainmsgstr.c; sourceTree = "<group>"; };
 		1B7B5EAB297B49DC00955045 /* trainmsgstr.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = trainmsgstr.h; sourceTree = "<group>"; };
+		1B7B5ECA297F12C900955045 /* spdcxdir.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = spdcxdir.h; sourceTree = "<group>"; };
 		1B7D0A8C2814A0B6008EEDD4 /* framing.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = framing.c; sourceTree = "<group>"; };
 		1B7D0A8D2814A0B6008EEDD4 /* framing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = framing.h; sourceTree = "<group>"; };
 		1B7D0A8F2814A0CD008EEDD4 /* boards_def.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = boards_def.h; sourceTree = "<group>"; };
@@ -662,6 +663,7 @@
 				1B1C75F92724446100F95111 /* TestInertia.m */,
 				1BAB9A87285591C5005EF72B /* README.md */,
 				1B7B5E8629767D3200955045 /* TestSpdctl.m */,
+				1B7B5ECA297F12C900955045 /* spdcxdir.h */,
 			);
 			path = spdctl;
 			sourceTree = "<group>";

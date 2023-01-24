@@ -731,7 +731,7 @@ void ctrl2_sendlow_c1c2(int tidx, train_oldctrl_t *tvar)
     msg_64_t m = {0};
     m.from = MA1_CTRL(tidx);
     m.to =  MA1_SPDCTL(tidx);
-    m.cmd = CMD_SET_C1_C2;
+    m.cmd = CMD_SET_C1_C2old;
     int dir = tvar->_dir;
     
     const conf_train_t *tconf = conf_train_get(tidx);
@@ -741,7 +741,7 @@ void ctrl2_sendlow_c1c2(int tidx, train_oldctrl_t *tvar)
     m.vbytes[1] = dir;
     m.vbytes[2] = tvar->can2_xaddr.v;
     m.vbytes[3] = dir; // 0;
-    mqf_write_from_ctrl(&m);
+    //mqf_write_from_ctrl(&m);
 }
 
 void ctrl2_evt_entered_c2(int tidx, train_oldctrl_t *tvar, uint8_t from_bemf)

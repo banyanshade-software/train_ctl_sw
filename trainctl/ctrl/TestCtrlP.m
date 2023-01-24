@@ -209,7 +209,7 @@ uint8_t ctrl_flag_notify_speed = 0;
     XCTAssert(rc==1);
     //NSString *s = dump_msgbuf(0);
     // {D0, C8, 11, 1, 255},{D0, 81, 26, 2, 0},{D0, C8, 10, 0, 0}
-    EXPMSG({.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_C1_C2,        .vb0=1, .vb1=0, .vb2=0xFF, .vb3=0},
+    EXPMSG({.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_C1_C2old,        .vb0=1, .vb1=0, .vb2=0xFF, .vb3=0},
            {.to=MA3_UI_GEN, .from=MA1_CTRL(0), .cmd=CMD_TRSTATE_NOTIF,    .v1=2, .v2=0},
            {.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_TARGET_SPEED, .v1=0, .v2=0});
     XCTAssert(0==check_occupency(1, -1));
@@ -230,7 +230,7 @@ uint8_t ctrl_flag_notify_speed = 0;
     rc = ctrl2_tick_process(0, &tvars, tconf, 0);
     //XCTAssert(rc==2);
     NSString *s = dump_msgbuf(0);
-    EXPMSG({.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_C1_C2,        .vb0=1, .vb1=-1, .vb2=0, .vb3=-1}
+    EXPMSG({.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_C1_C2old,        .vb0=1, .vb1=-1, .vb2=0, .vb3=-1}
           ,{.to=MA3_UI_GEN, .from=MA1_CTRL(0), .cmd=CMD_TRSTATE_NOTIF,    .v1=1, .v2=0}
           ,{.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_TARGET_SPEED, .v1=92, .v2=0});
     XCTAssert(tvars._ostate == train_running_c1);
@@ -267,7 +267,7 @@ uint8_t ctrl_flag_notify_speed = 0;
     s = dump_msgbuf(0);
     //{D0, C8, 51, -840, -1},{D0, C8, 11, -256, -1},{D0, C8, 10, 70, 0}
     // CMD_POSE_SET_TRIG2
-    EXPMSG({.to=MA1_SPDCTL(0),          .from=MA1_CTRL(0), .cmd=CMD_SET_C1_C2,        .vb0=0, .vb1=-1, .vb2=0xFF, .vb3=-1}
+    EXPMSG({.to=MA1_SPDCTL(0),          .from=MA1_CTRL(0), .cmd=CMD_SET_C1_C2old,        .vb0=0, .vb1=-1, .vb2=0xFF, .vb3=-1}
           ,{.to=MA0_CANTON(0), .subc=0, .from=MA1_CTRL(0), .cmd=CMD_POSE_SET_TRIG,   .va16=-172, .vb8=-1, .vcu8=tag_stop_eot}
           //,{.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_POSE_SET_TRIG0,   .v32=-1720}
           ,{.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_TARGET_SPEED, .v1=70, .v2=0});
@@ -305,7 +305,7 @@ uint8_t ctrl_flag_notify_speed = 0;
     XCTAssert(0==check_occupency(0, -1));
     //NSString *s1 = dump_msgbuf(0);
     // {D0, C8, 11, 0, 1}
-    EXPMSG({.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_C1_C2,        .vb0=0, .vb1=0, .vb2=0xFF, .vb3=0});
+    EXPMSG({.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_C1_C2old,        .vb0=0, .vb1=0, .vb2=0xFF, .vb3=0});
     
     // delayed free for block1
     purge_block_delayed();
@@ -316,7 +316,7 @@ uint8_t ctrl_flag_notify_speed = 0;
     XCTAssert(rc==4);
     //NSString *s = dump_msgbuf(0);
     // {D0, C8, 11, 256, 257},{D0, 81, 26, 1, 0},{D0, C8, 10, 70, 0}
-    EXPMSG({.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_C1_C2,        .vb0=0, .vb1=1, .vb2=1, .vb3=1},
+    EXPMSG({.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_C1_C2old,        .vb0=0, .vb1=1, .vb2=1, .vb3=1},
            {.to=MA3_UI_GEN, .from=MA1_CTRL(0), .cmd=CMD_TRSTATE_NOTIF,    .v1=1, .v2=0},
            {.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_TARGET_SPEED, .v1=90, .v2=0});
     XCTAssert(tvars._dir==1);
@@ -340,7 +340,7 @@ uint8_t ctrl_flag_notify_speed = 0;
     NSString *s1 = dump_msgbuf(0); (void)s1;
     // {D0, C8, 11, 0, 1}
     // {D0, C8, 11, 0, 255},{D0, 81, 26, 2, 0}
-    EXPMSG({.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_C1_C2,        .vb0=0, .vb1=0, .vb2=0xFF, .vb3=0});
+    EXPMSG({.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_C1_C2old,        .vb0=0, .vb1=0, .vb2=0xFF, .vb3=0});
     
     // do NOT delayed free for block1 (delayed free is activated, but no tick)
     // thus going right will be forbidden due to block occupied
@@ -370,7 +370,7 @@ uint8_t ctrl_flag_notify_speed = 0;
     XCTAssert(rc==3);
     //NSString *s2 = dump_msgbuf(0);
     // {D0, C8, 11, 256, 257},{D0, 81, 26, 1, 0},{D0, C8, 10, 90, 0}
-    EXPMSG({.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_C1_C2,        .vb0=0, .vb1=1, .vb2=1, .vb3=1}
+    EXPMSG({.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_C1_C2old,        .vb0=0, .vb1=1, .vb2=1, .vb3=1}
           ,{.to=MA3_UI_GEN, .from=MA1_CTRL(0), .cmd=CMD_TRSTATE_NOTIF,    .v1=1, .v2=0}
           ,{.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_TARGET_SPEED, .v1=90, .v2=0});
     XCTAssert(tvars._dir==1);
@@ -400,7 +400,7 @@ uint8_t ctrl_flag_notify_speed = 0;
     //{D0, C8, 11, 257, 511},{D0, 81, 26, 1, 0},{D0, C8, 51, 420, 0},{D0, C8, 10, 70, 0}
 
     
-    EXPMSG({.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_C1_C2,        .vb0=1, .vb1=1, .vb2=0xFF, .vb3=1}
+    EXPMSG({.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_C1_C2old,        .vb0=1, .vb1=1, .vb2=0xFF, .vb3=1}
            ,{.to=MA3_UI_GEN,     .from=MA1_CTRL(0), .cmd=CMD_TRSTATE_NOTIF,    .v1=1, .v2=0}
            ,{.to=MA0_CANTON(0), .subc=1, .from=MA1_CTRL(0), .cmd=CMD_POSE_SET_TRIG,   .vcu8=tag_stop_blk_wait, .va16=66, .vb8=1}
            ,{.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_TARGET_SPEED, .v1=70, .v2=0});
@@ -439,7 +439,7 @@ uint8_t ctrl_flag_notify_speed = 0;
     XCTAssert(rc==3);
     s = dump_msgbuf(0);
     //{D0, C8, 11, 257, 259},{D0, 81, 26, 1, 0},{D0, C8, 10, 92, 0}
-    EXPMSG({.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_C1_C2,        .vb0=1, .vb1=1, .vb2=3, .vb3=1}
+    EXPMSG({.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_C1_C2old,        .vb0=1, .vb1=1, .vb2=3, .vb3=1}
           ,{.to=MA3_UI_GEN, .from=MA1_CTRL(0), .cmd=CMD_TRSTATE_NOTIF,    .v1=1, .v2=0}
           ,{.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_TARGET_SPEED, .v1=92, .v2=0});
     XCTAssert(tvars._dir == 1);
@@ -484,7 +484,7 @@ uint8_t ctrl_flag_notify_speed = 0;
     XCTAssert(rc==3);
     s = dump_msgbuf(0);
     //{D0, C8, 11, 257, 259},{D0, 81, 26, 1, 0},{D0, C8, 10, 92, 0}
-    EXPMSG({.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_C1_C2,        .vb0=1, .vb1=1, .vb2=3, .vb3=1}
+    EXPMSG({.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_C1_C2old,        .vb0=1, .vb1=1, .vb2=3, .vb3=1}
           ,{.to=MA3_UI_GEN, .from=MA1_CTRL(0), .cmd=CMD_TRSTATE_NOTIF,    .v1=1, .v2=0}
           ,{.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_TARGET_SPEED, .v1=92, .v2=0});
     XCTAssert(tvars._dir == 1);
@@ -503,7 +503,7 @@ uint8_t ctrl_flag_notify_speed = 0;
     XCTAssert(rc==3);
     //NSString *s = dump_msgbuf(0);
     //{D0, C8, 11, 257, 259},{D0, 81, 26, 1, 0},{D0, C8, 10, 92, 0}
-    EXPMSG({.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_C1_C2,        .vb0=1, .vb1=1, .vb2=3, .vb3=1}
+    EXPMSG({.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_C1_C2old,        .vb0=1, .vb1=1, .vb2=3, .vb3=1}
           ,{.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_TARGET_SPEED, .v1=92, .v2=0});
     XCTAssert(tvars._dir == 1);
     XCTAssert(tvars._target_speed == 92);
@@ -540,7 +540,7 @@ uint8_t ctrl_flag_notify_speed = 0;
     rc = ctrl2_tick_process(0, &tvars, tconf, 0);
     //XCTAssert(rc==3);
     NSString *s = dump_msgbuf(0);
-    EXPMSG({.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_C1_C2,        .vb0=0, .vb1=1, .vb2=1, .vb3=1}
+    EXPMSG({.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_C1_C2old,        .vb0=0, .vb1=1, .vb2=1, .vb3=1}
           ,{.to=MA3_UI_GEN, .from=MA1_CTRL(0), .cmd=CMD_TRSTATE_NOTIF,    .v1=1, .v2=0}
           ,{.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_TARGET_SPEED, .v1=92, .v2=0});
     XCTAssert(tvars._ostate == train_running_c1);
@@ -614,7 +614,7 @@ uint8_t ctrl_flag_notify_speed = 0;
     XCTAssert(rc==3);
     s = dump_msgbuf(0);
    
-    EXPMSG({.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0),  .cmd=CMD_SET_C1_C2, .vb0=3, .vb1=-1, .vb2=0xFF, .vb3=-1}
+    EXPMSG({.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0),  .cmd=CMD_SET_C1_C2old, .vb0=3, .vb1=-1, .vb2=0xFF, .vb3=-1}
           ,{.to=MA3_UI_GEN,      .from=MA1_CTRL(0), .cmd=CMD_TRSTATE_NOTIF,    .v1=1, .v2=0}
           ,{.to=MA0_CANTON(0), .subc=3, .from=MA1_CTRL(0), .cmd=CMD_POSE_SET_TRIG,   .vcu8=tag_end_lsblk, .va16=0, .vb8=-1}
           ,{.to=MA1_SPDCTL(0),  .from=MA1_CTRL(0), .cmd=CMD_SET_TARGET_SPEED, .v1=30, .v2=0});
@@ -631,7 +631,7 @@ uint8_t ctrl_flag_notify_speed = 0;
     // {D0, C8, 11, -253, -1},{D0, 81, 26, 1, 0},{D0, C8, 50, -640, -1},{D0, C8, 10, 82, 0}
     // {D0, C8, 11, -253, -1},{D0, 81, 26, 1, 0},{D0, C8, 50, -640, -1},{D0, C8, 10, 82, 0}
 
-    EXPMSG({.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_C1_C2, .vb0=3, .vb1=-1, .vb2=0xFF, .vb3=-1}
+    EXPMSG({.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_C1_C2old, .vb0=3, .vb1=-1, .vb2=0xFF, .vb3=-1}
           ,{.to=MA3_UI_GEN,      .from=MA1_CTRL(0), .cmd=CMD_TRSTATE_NOTIF,    .v1=1, .v2=0}
           ,{.to=MA0_CANTON(0),.subc=3, .from=MA1_CTRL(0), .cmd=CMD_POSE_SET_TRIG,   .va16=-200, .vb8=-1, .vcu8=tag_end_lsblk}
           ,{.to=MA1_SPDCTL(0),         .from=MA1_CTRL(0), .cmd=CMD_SET_TARGET_SPEED, .v1=30, .v2=0});
@@ -674,7 +674,7 @@ uint8_t ctrl_flag_notify_speed = 0;
 
 
 
-    EXPMSG({.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_C1_C2, .vb0=3, .vb1=1, .vb2=0xFF, .vb3=1}
+    EXPMSG({.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_C1_C2old, .vb0=3, .vb1=1, .vb2=0xFF, .vb3=1}
           ,{.to=MA3_UI_GEN, .from=MA1_CTRL(0), .cmd=CMD_TRSTATE_NOTIF,    .v1=1, .v2=0}
           ,{.to=MA0_CANTON(0), .subc=3,   .from=MA1_CTRL(0), .cmd=CMD_POSE_SET_TRIG,   .va16=-200, .vb8=1, .vcu8=tag_end_lsblk}
           ,{.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_TARGET_SPEED, .v1=42, .v2=0});
@@ -721,7 +721,7 @@ uint8_t ctrl_flag_notify_speed = 0;
     s = dump_msgbuf(0);
    
     
-    EXPMSG({.to=MA1_SPDCTL(0),        .from=MA1_CTRL(0), .cmd=CMD_SET_C1_C2, .vb0=3, .vb1=-1, .vb2=0xFF, .vb3=-1}
+    EXPMSG({.to=MA1_SPDCTL(0),        .from=MA1_CTRL(0), .cmd=CMD_SET_C1_C2old, .vb0=3, .vb1=-1, .vb2=0xFF, .vb3=-1}
           ,{.to=MA3_UI_GEN,          .from=MA1_CTRL(0), .cmd=CMD_TRSTATE_NOTIF,    .v1=1, .v2=0}
           ,{.to=MA0_CANTON(0), .subc=3,.from=MA1_CTRL(0), .cmd=CMD_POSE_SET_TRIG,  .vcu8=tag_end_lsblk, .va16=0, .vb8=-1}
           ,{.to=MA1_SPDCTL(0),        .from=MA1_CTRL(0), .cmd=CMD_SET_TARGET_SPEED, .v1=82, .v2=0});
@@ -798,7 +798,7 @@ uint8_t ctrl_flag_notify_speed = 0;
     //NSString *s1 = dump_msgbuf(0);
     // {D0, 81, 26, 4, 0},{D0, C8, 10, 0, 0}
     //EXPMSG({.to=MA3_UI_GEN, .from=MA1_CTRL(0), .cmd=CMD_TRSTATE_NOTIF,    .v1=2, .v2=0}
-    //      ,{.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_C1_C2,        .vb0=3, .vb1=0, .vb2=0xFF, .vb3=0});
+    //      ,{.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_C1_C2old,        .vb0=3, .vb1=0, .vb2=0xFF, .vb3=0});
     
 }
 
@@ -854,7 +854,7 @@ uint8_t ctrl_flag_notify_speed = 0;
     // _dir and _target_speed should have been reseted becaunse train_station state
     XCTAssert(tvars._target_speed == 0);
     XCTAssert(tvars._dir == 0);
-    EXPMSG({.to=MA1_SPDCTL(0), .from=MA1_CTRL(0), .cmd=CMD_SET_C1_C2, .vb0=1, .vb1=0, .vb2=0xFF, .vb3=0});
+    EXPMSG({.to=MA1_SPDCTL(0), .from=MA1_CTRL(0), .cmd=CMD_SET_C1_C2old, .vb0=1, .vb1=0, .vb2=0xFF, .vb3=0});
     
     // start on sblk 1
     XCTAssert(tvars.can1_xaddr == 0x01);
@@ -874,7 +874,7 @@ uint8_t ctrl_flag_notify_speed = 0;
     //NSString *s = dump_msgbuf(0);
     //{D0, 81, 26, 4, 0},{D0, C8, 11, 257, 511}
     EXPMSG({.to=MA3_UI_GEN, .from=MA1_CTRL(0), .cmd=CMD_TRSTATE_NOTIF, .v1=4, .v2=0},
-           {.to=MA1_SPDCTL(0), .from=MA1_CTRL(0), .cmd=CMD_SET_C1_C2, .vb0=1, .vb1=1, .vb2=0xFF, .vb3=1});
+           {.to=MA1_SPDCTL(0), .from=MA1_CTRL(0), .cmd=CMD_SET_C1_C2old, .vb0=1, .vb1=1, .vb2=0xFF, .vb3=1});
 
     // train should restart after turnout change
     topology_set_turnout(1, 1, -1);
@@ -888,7 +888,7 @@ uint8_t ctrl_flag_notify_speed = 0;
     //NSString *s3 = dump_msgbuf(0);
     //{D0, 81, 26, 1, 0},{D0, C8, 11, 257, 259},{D0, 81, 24, 90, 1},{D0, C8, 10, 90, 0}
     EXPMSG({.to=MA3_UI_GEN, .from=MA1_CTRL(0), .cmd=CMD_TRSTATE_NOTIF, .v1=1, .v2=0},
-           {.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_C1_C2, .vb0=1, .vb1=1, .vb2=3, .vb3=1},
+           {.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_C1_C2old, .vb0=1, .vb1=1, .vb2=3, .vb3=1},
            {.to=MA3_UI_GEN, .from=MA1_CTRL(0), .cmd=CMD_TRTSPD_NOTIF, .v1=90, .v2=1},
            {.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_TARGET_SPEED, .v1=90, .v2=0});
 
@@ -904,7 +904,7 @@ uint8_t ctrl_flag_notify_speed = 0;
     XCTAssert(tvars._target_speed == 70);
     //NSString *s3 = dump_msgbuf(0);
     //{D0, C8, 11, 259, 511},{D0, 81, 24, 70, 1},{D0, C8, 10, 70, 0},{D0, C8, 51, 320, 0}
-    EXPMSG({.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_C1_C2, .vb0=3, .vb1=1, .vb2=0xFF, .vb3=1},
+    EXPMSG({.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_C1_C2old, .vb0=3, .vb1=1, .vb2=0xFF, .vb3=1},
            {.to=MA3_UI_GEN, .from=MA1_CTRL(0), .cmd=CMD_TRTSPD_NOTIF, .v1=70, .v2=1},
            {.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_TARGET_SPEED, .v1=70, .v2=0},
            {.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_POSE_SET_TRIG2, .v32=320});

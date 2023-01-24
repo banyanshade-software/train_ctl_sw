@@ -46,8 +46,11 @@ typedef struct {
     uint8_t         _spd_limit;
     //
     lsblk_num_t c1_sblk;
+    
+    xblkaddr_t  canOld_xaddr;
     xblkaddr_t  can1_xaddr;
     xblkaddr_t  can2_xaddr;
+    
     xblkaddr_t  can2_future;
     uint8_t c1c2dir_changed:1;
     uint8_t measure_pose_percm:1;

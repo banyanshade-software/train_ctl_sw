@@ -13,7 +13,8 @@ start 0
     CMD_SETRUN_MODE     v1u	    // ui,any->(all)	v1u=mode				start given runmode
     
 start 0x20      // high prio 001 xxxxx 
-    CMD_SET_C1_C2       b4		// ctrl->spdctl		b:c1,dir1,c2,dir2		set C1,C2 for sender train
+    CMD_SET_C4          b4		// ctrl->spdctl		subc=dirs b:c1,c2,c3,cb	set C1,C2 for sender train
+    CMD_SET_C1_C2old    b4      // obsolete, replace by CMD_SET_C4, here only for ctrlP.c is still compiled
     CMD_SETVPWM		    v1u,v2	// spdctl->canton	v1u=voltidx,v2=pwm		set power on canton
     CMD_BEMF_ON 		void	// spdctl->canton							start measure bemf
     CMD_BEMF_OFF		void	// spdctl->canton							stop measure bemf

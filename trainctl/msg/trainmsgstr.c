@@ -11,7 +11,8 @@ const char *traincmd_name(uint8_t cmd)
 	case CMD_TIM_SYNC        : return "CMD_TIM_SYNC";
 	case CMD_RESET           : return "CMD_RESET";
 	case CMD_SETRUN_MODE     : return "CMD_SETRUN_MODE";
-	case CMD_SET_C1_C2       : return "CMD_SET_C1_C2";
+	case CMD_SET_C4          : return "CMD_SET_C4";
+	case CMD_SET_C1_C2old    : return "CMD_SET_C1_C2old";
 	case CMD_SETVPWM         : return "CMD_SETVPWM";
 	case CMD_BEMF_ON         : return "CMD_BEMF_ON";
 	case CMD_BEMF_OFF        : return "CMD_BEMF_OFF";
@@ -90,7 +91,8 @@ msg_type_t traincmd_format(uint8_t cmd)
 	case CMD_TIM_SYNC        : return CMD_TYPE_V32;
 	case CMD_RESET           : return CMD_TYPE_V32;
 	case CMD_SETRUN_MODE     : return CMD_TYPE_V16;
-	case CMD_SET_C1_C2       : return CMD_TYPE_B4;
+	case CMD_SET_C4          : return CMD_TYPE_B4;
+	case CMD_SET_C1_C2old    : return CMD_TYPE_B4;
 	case CMD_SETVPWM         : return CMD_TYPE_V16;
 	case CMD_BEMF_ON         : return CMD_TYPE_V32;
 	case CMD_BEMF_OFF        : return CMD_TYPE_V32;

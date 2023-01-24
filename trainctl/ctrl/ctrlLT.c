@@ -26,7 +26,7 @@
 #include "trace_train.h"
 //#include "ctrlP.h"
 //#include "cautoP.h"
-
+#include "../spdctl/spdcxdir.h"
 
 #ifndef BOARD_HAS_CTRL
 #error BOARD_HAS_CTRL not defined, remove this file from build
@@ -85,6 +85,8 @@ void ctrl3_init_train(int tidx, train_ctrl_t *tvars, lsblk_num_t sblk, int on)
     //TODO
     tvars->c1c2dir_changed = 1;
     tvars->can2_xaddr.v = 0xFF;
+    tvars->canOld_xaddr.v = 0xFF;
+    tvars->can2_future.v = 0xFF;
     tvars->can1_xaddr = canton_for_lsblk(sblk);
     
     if (on) turn_train_on(tidx, tvars);
@@ -467,10 +469,10 @@ void ctrl3_evt_entered_c2(int tidx, train_ctrl_t *tvars, uint8_t from_bemf)
     }
     tvars->c1c2 = 1;
     
-    // swap can1 and can2
-    xblkaddr_t t = tvars->can1_xaddr;
+    // set canOld with can1, then set can1 with can2
+    tvars->canOld_xaddr = tvars->can1_xaddr;
     tvars->can1_xaddr = tvars->can2_xaddr;
-    tvars->can2_xaddr = t;
+    tvars->can2_xaddr.v = 0xFF;
     
     if (1 == tvars->can1_xaddr.v) { // XXX Hardcoded for now
         tvars->measure_pose_percm = 1;
@@ -536,6 +538,8 @@ void ctrl3_evt_leaved_c1(int tidx, train_ctrl_t *tvars)
         return;
     }
     tvars->c1c2 = 0;
+    tvars->canOld_xaddr.v = 0xFF;
+    tvars->c1c2dir_changed = 1;
 #if 0
     ctrl_reset_timer(tidx, tvars, TLEAVE_C1);
     free_block_c1(tidx, tvars);
@@ -765,16 +769,24 @@ static void _sendlow_c1c2_dir(int tidx, train_ctrl_t *tvars)
     msg_64_t m = {0};
     m.from = MA1_CTRL(tidx);
     m.to =  MA1_SPDCTL(tidx);
-    m.cmd = CMD_SET_C1_C2;
+    m.cmd = CMD_SET_C4;
+    
     int dir = tvars->_sdir;
     
     const conf_train_t *tconf = conf_train_get(tidx);
     if (tconf->reversed) dir = -dir;
     
+    uint8_t dirbits = __spdcx_bit(0, dir);
+    dirbits |= __spdcx_bit(1, dir);
+    dirbits |= __spdcx_bit(2, dir);
+    dirbits |= __spdcx_bit(3, dir);
+    m.subc = dirbits;
+    
     m.vbytes[0] = tvars->can1_xaddr.v;
-    m.vbytes[1] = dir;
-    m.vbytes[2] = tvars->can2_xaddr.v;
-    m.vbytes[3] = dir; // TODO dir might be reversed
+    m.vbytes[1] = tvars->can2_xaddr.v;
+    m.vbytes[2] = 0xFF;
+    m.vbytes[3] = tvars->canOld_xaddr.v;
+
     mqf_write_from_ctrl(&m);
 }
 
@@ -824,9 +836,12 @@ static void _set_state(int tidx, train_ctrl_t *tvars, train_state_t newstate)
         
         // sanity check on c1c2
         if (tvars->c1c2) {
-            if (tvars->can2_xaddr.v == 0xFF) {
+            if (tvars->canOld_xaddr.v == 0xFF) {
                 FatalError("FSMb", "FSM san", Error_FSM_Sanity8);
             }
+        }
+        if (tvars->canOld_xaddr.v != 0xFF) {
+            if (!tvars->c1c2)  FatalError("FSMb", "FSM san", Error_FSM_Sanity8);
         }
         if (tvars->can2_xaddr.v != 0xFF) {
             if (tvars->can2_xaddr.v == tvars->can1_xaddr.v) {
@@ -846,9 +861,9 @@ static void _set_state(int tidx, train_ctrl_t *tvars, train_state_t newstate)
 
 static void _set_and_power_c2(int tidx, train_ctrl_t *tvars)
 {
-    if (tvars->c1c2) {
-        tvars->can2_xaddr.v = 0xFF;
-    }
+    //if (tvars->c1c2) {
+    //    tvars->canOld_xaddr.v = 0xFF;
+    //}
     if (tvars->can2_xaddr.v != 0xFF) {
         if (tvars->can2_xaddr.v != tvars->can2_future.v) {
             FatalError("FUT2", "bad future c2", Error_FSM_BadFut2);

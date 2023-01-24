@@ -104,7 +104,7 @@ static const xtrnaddr_t to1 = { .v = 1};
     //{80, 90, 24, 90, 0},
     //{80, 00, 44, 1485, 1025},
     //{80, F0, C3, 1, 2}
-    EXPMSG_ITRIG({.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_C1_C2,        .vb0=1, .vb1=1, .vb2=0xFF, .vb3=1},
+    EXPMSG_ITRIG({.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_C4, .subc=0x55,       .vb0=1, .vb1=0xFF, .vb2=0xFF, .vb3=0xFF},
            {.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_TARGET_SPEED, .v1=90, .v2=0},
            {.to=MA0_CANTON(0), .subc=1, .from=MA1_CTRL(0), .cmd=CMD_POSE_SET_TRIG, .va16=1485, .vcu8=tag_chkocc, .vb8=1},
            {.to=MA0_CANTON(0), .subc=1, .from=MA1_CTRL(0), .cmd=CMD_POSE_SET_TRIG, .va16=585, .vcu8=tag_reserve_c2, .vb8=1},
@@ -137,7 +137,7 @@ static const xtrnaddr_t to1 = { .v = 1};
     XCTAssert(tvars._spd_limit == 99);
     NSString *s = dump_msgbuf(0);
     NSLog(@"...%@", s);
-    EXPMSG_ITRIG({.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_C1_C2,        .vb0=1, .vb1=1, .vb2=0xFF, .vb3=1},
+    EXPMSG_ITRIG({.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_C4, .subc=0x55,        .vb0=1, .vb1=0xFF, .vb2=0xFF, .vb3=0xFF},
            {.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_TARGET_SPEED, .v1=90, .v2=0},
             {.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_BRAKE, .v1=315, .subc=1},
            {.to=MA0_CANTON(0), .subc=1, .from=MA1_CTRL(0), .cmd=CMD_POSE_SET_TRIG, .va16=855, .vcu8=tag_chkocc, .vb8=1},
@@ -157,7 +157,7 @@ static const xtrnaddr_t to1 = { .v = 1};
     XCTAssert(tvars._spd_limit == 99);
     NSString *s = dump_msgbuf(0);
     NSLog(@"...%@", s);
-    EXPMSG_ITRIG({.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_C1_C2,        .vb0=1, .vb1=1, .vb2=0xFF, .vb3=1},
+    EXPMSG_ITRIG({.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_C4, .subc=0x55,        .vb0=1, .vb1=0xFF, .vb2=0xFF, .vb3=0xFF},
            {.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_TARGET_SPEED, .v1=90, .v2=0},
                  {.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_BRAKE, .v1=405, .subc=1},
            {.to=MA0_CANTON(0), .subc=1, .from=MA1_CTRL(0), .cmd=CMD_POSE_SET_TRIG, .va16=945, .vcu8=tag_chkocc, .vb8=1},
@@ -233,7 +233,7 @@ static const xtrnaddr_t to1 = { .v = 1};
     s = dump_msgbuf(0);
     NSLog(@"...%@", s);
     // {80, 90, 20, 257, 511},{80, 90, 24, 90, 0},{80, 00, 44, 225, 1025},{80, 00, 44, 1395, 1281},{80, F0, C3, 1, 3}
-    EXPMSG_ITRIG({.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_C1_C2,        .vb0=1, .vb1=1, .vb2=0xFF, .vb3=1},
+    EXPMSG_ITRIG({.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_C4, .subc=0x55,        .vb0=1, .vb1=0xFF, .vb2=0xFF, .vb3=0xFF},
            {.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_TARGET_SPEED, .v1=90, .v2=0},
            {.to=MA0_CANTON(0), .subc=1, .from=MA1_CTRL(0), .cmd=CMD_POSE_SET_TRIG, .va16=225, .vcu8=tag_chkocc, .vb8=1},
            {.to=MA0_CANTON(0), .subc=1, .from=MA1_CTRL(0), .cmd=CMD_POSE_SET_TRIG, .va16=1395, .vcu8=tag_brake, .vb8=1},
@@ -342,8 +342,8 @@ static const xtrnaddr_t to1 = { .v = 1};
     NSLog(@"...%@", s);
     // {80, 90, 20, -255, -256},{80, 90, 24, 90, 0},{80, F0, C3, 1, 2}
     // {80, 90, 20, 1, 0},{80, 90, 20, -255, -256},{80, 90, 24, 90, 0},{80, F0, C3, 1, 2}
-    EXPMSG_ITRIG({.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .subc=0, .cmd=CMD_SET_C1_C2,        .vb0=1, .vb1=0, .vb2=0, .vb3=0},
-                 {.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .subc=0, .cmd=CMD_SET_C1_C2,        .vb0=1, .vb1=-1, .vb2=0, .vb3=-1},
+    EXPMSG_ITRIG({.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .subc=0, .cmd=CMD_SET_C4, .vb0=1, .vb1=0, .vb2=0xFF, .vb3=0xFF},
+           {.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .subc=0, .cmd=CMD_SET_C4,    .subc=0xAA,     .vb0=1, .vb1=0, .vb2=0xFF, .vb3=0xFF},
            {.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_TARGET_SPEED, .v1=90, .v2=0},
            /*{.to=MA0_CANTON(0), .subc=1, .from=MA1_CTRL(0), .cmd=CMD_POSE_SET_TRIG, .va16=945, .vcu8=tag_chkocc, .vb8=1},
            {.to=MA0_CANTON(0), .subc=1, .from=MA1_CTRL(0), .cmd=CMD_POSE_SET_TRIG, .va16=405, .vcu8=tag_stop_eot, .vb8=1},*/

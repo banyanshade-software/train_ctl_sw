@@ -41,6 +41,7 @@
 //#include "auto1.h"
 //#include "txrxcmd.h"
 #include "statval.h"
+#include "spdcxdir.h"
 
 #include "../config/conf_train.h"
 #include "../config/conf_canton.h"
@@ -115,11 +116,14 @@ typedef struct train_vars {
 	pidctl_vars_t pidvars;
 	inertia_vars_t inertiavars;
 
-	xblkaddr_t C1x;	// current canton adress
-	xblkaddr_t C2x; // next canton address
+    uint8_t     dirbits;
+    xblkaddr_t  Cx[4];
+    
+	//xblkaddr_t C1x;	// current canton adress
+	//xblkaddr_t C2x; // next canton address
 	// TODO add C2alt, alternative next canton (manual turnout / detect defect in turnout)
-	int8_t  C1_dir; // -1 or +1
-	int8_t  C2_dir;
+	//int8_t  C1_dir; // -1 or +1
+	//int8_t  C2_dir;
 
 	int16_t last_speed;
 	int16_t prev_last_speed;
@@ -179,23 +183,28 @@ const stat_val_t statval_spdctrl[] = {
 static void train_periodic_control(int numtrain, uint32_t dt);
 static void _set_speed(int tidx, const conf_train_t *cnf, train_vars_t *vars);
 static void spdctl_reset(void);
-static void set_c1_c2(int tidx, train_vars_t *tvars, xblkaddr_t c1, int8_t dir1, xblkaddr_t c2, int8_t dir2);
+//static void set_c1_c2(int tidx, train_vars_t *tvars, xblkaddr_t c1, int8_t dir1, xblkaddr_t c2, int8_t dir2);
 
 //static void pose_check_trig(int numtrain, train_vars_t *tvars, int32_t lastincr);
 
+/*
 static inline xblkaddr_t to_xblk(uint8_t val)
 {
 	xblkaddr_t x;
 	x.v = val;
 	return x;
 }
+*/
+
 
 static void spdctl_reset(void)
 {
 	memset(trspc_vars, 0, sizeof(trspc_vars));
 	for (int  i = 0; i<NUM_TRAINS; i++) {
-		trspc_vars[i].C1x.v = 0xFF;
-		trspc_vars[i].C2x.v = 0xFF;
+        trspc_vars[i].dirbits = 0;
+        for (int k=0; k<4; k++) trspc_vars[i].Cx[k].v = 0xFF;
+		//trspc_vars[i].C1x.v = 0xFF;
+		//trspc_vars[i].C2x.v = 0xFF;
 	}
     // reset BEMF
     bemf_reset();
@@ -206,6 +215,9 @@ volatile int16_t oscillo_t1bemf = 0;
 
 extern volatile int oscillo_trigger_start;
 extern volatile int oscillo_canton_of_interest;
+
+static void _start_canton(int tidx, uint8_t v);
+static void _stop_canton(int tidx,  uint8_t v);
 
 
 static void spdctl_handle_msg(msg_64_t *m)
@@ -219,13 +231,59 @@ static void spdctl_handle_msg(msg_64_t *m)
 	default:
 		break;
 	}
-
+    int k=0;
 	if (MA1_ADDR_IS_TRAIN_ADDR(m->to)) {
 		int tidx = MA1_TRAIN(m->to);
 		USE_TRAIN(tidx)
 		xblkaddr_t cfrom = FROM_CANTON(*m);
 		switch (m->cmd) {
 		case CMD_BEMF_NOTIF:
+                for (k=0; k<4; k++) {
+                    if (tvars->Cx[k].v == cfrom.v) break;
+                }
+                if (k==4) {
+                    itm_debug2(DBG_ERR|DBG_PID, "unk bemf", m->v1, m->from);
+                } else if (k==0) {
+                    // C1
+                    if (!tidx) oscillo_t0bemf = m->v1;
+                    else if (1==tidx) oscillo_t1bemf = m->v1;
+                    itm_debug3(DBG_PID, "st bemf", tidx, m->v1, m->from);
+                    tvars->lastposed10 = m->v2;
+                    if (!tvars->c2bemf) tvars->bemf_mv = m->v1;
+                } else if ((k==1)||(k==2)) {
+                    // C2
+                    itm_debug3(DBG_PID, "c2 bemf", tidx, m->v1, m->from);
+                    if (tvars->c2bemf) {
+                        tvars->bemf_mv = m->v1;
+                        tvars->lastposed10 = m->v2;
+                        if (!tidx) oscillo_t0bemf = m->v1;
+                        else if (1==tidx) oscillo_t1bemf = m->v1;
+                    } else if (abs(m->v1) > abs(tvars->bemf_mv)+300) {
+                        itm_debug3(DBG_PRES|DBG_PRES|DBG_CTRL, "c2_hi", tidx, m->v1, tvars->bemf_mv);
+                        if (tvars->c2hicnt >= 1) {
+                            msg_64_t m = {0};
+                            m.from = MA1_SPDCTL(tidx);
+                            m.to = MA1_CTRL(tidx);
+                            m.cmd = CMD_BEMF_DETECT_ON_C2;
+                            m.v1u = tvars->Cx[k].v;
+                            /* XXXXX int32_t p = tvars->position_estimate / 100;
+                             if (abs(p)>0x7FFF) {
+                             // TODO: problem here pose is > 16bits
+                             itm_debug1(DBG_POSEC|DBG_ERR, "L pose", p);
+                             p = SIGNOF(p)*0x7FFF;
+                             }
+                             m.v2 = (int16_t) p;*/
+                            mqf_write_from_spdctl(&m);
+                            
+                            tvars->c2hicnt = 0;
+                            tvars->c2bemf = 1;
+                        } else {
+                            tvars->c2hicnt++;
+                        }
+                    }
+                }
+                break;
+#if 0
 			if (cfrom.v == tvars->C1x.v) {
 				if (!tidx) oscillo_t0bemf = m->v1;
 				else if (1==tidx) oscillo_t1bemf = m->v1;
@@ -272,7 +330,8 @@ static void spdctl_handle_msg(msg_64_t *m)
 				// error
 			}
 			break;
-
+#endif
+                
 		case CMD_SET_TARGET_SPEED:
 			itm_debug1(DBG_SPDCTL, "set_t_spd", m->v1u);
 			if (!tvars->target_speed && (m->v1u > 10)) {
@@ -291,11 +350,43 @@ static void spdctl_handle_msg(msg_64_t *m)
                     tvars->stopposed10 = 0;
                 }
                 break;
+        case CMD_SET_C4:
+                itm_debug3(DBG_SPDCTL|DBG_CTRL, "set_c4", tidx, m->vbytes[0], m->vbytes[1]);
+                tvars->dirbits = m->subc;
+                for (int i=0; i<4; i++) {
+                    uint8_t v = tvars->Cx[i].v;
+                    if (v == 0xFF) continue;
+                    int k;
+                    for (k=0; k<4; k++) {
+                        if (m->vbytes[k]==v) break;
+                    }
+                    if (k==4) {
+                        _stop_canton(tidx, v);
+                    }
+                }
+                for (int k=0; k<4; k++) {
+                    uint8_t v = m->vbytes[k];
+                    if (0xFF==v) continue;;
+                    int i;
+                    for (i=0; i<4; i++) {
+                        if (tvars->Cx[i].v == v) break;
+                    }
+                    if (i==4) {
+                        _start_canton(tidx, v);
+                    }
+                }
+                for (int i=0; i<4; i++) {
+                    tvars->Cx[i].v = m->vbytes[i];
+                }
+                break;
+                
+#if 0
 		case CMD_SET_C1_C2:
 			itm_debug3(DBG_SPDCTL|DBG_CTRL, "set_c1_c2", tidx, m->vbytes[0], m->vbytes[2]);
 			//set_c1_c2(int tidx, train_vars_t *tvars, xblkaddr_t c1, int8_t dir1, xblkaddr_t c2, int8_t dir2)
 			set_c1_c2(tidx, tvars, to_xblk(m->vbytes[0]), m->vbytes[1], to_xblk(m->vbytes[2]), m->vbytes[3]);
 			break;
+#endif
 		case CMD_POSE_SET_TRIG: //ctrl->canton     subc=tag v1=POSE/10   v2=dir now to CANTON
 			itm_debug1(DBG_POSEC|DBG_ERR, "should be sent to canton_bemf",0);
 			// XXX itm_debug3(DBG_POSEC, "POSE set", tidx, m->v1, tvars->subc);
@@ -557,7 +648,8 @@ static void train_periodic_control(int numtrain, _UNUSED_ uint32_t dt)
     if (tconf->enable_pid) {
         // corresponding BEMF target
         // 100% = 1.5V
-        int32_t tbemf = 1800*v/100 * tvars->C1_dir;
+        int8_t dir = __spdcx_dir(tvars->dirbits, 0);
+        int32_t tbemf = 1800*v/100 * dir;
         //tbemf = tbemf / 4; //XXX why ?? new cables (more capacitance ?)
         // TODO make this divisor a parameter
         pidctl_set_target(&tconf->pidctl, &tvars->pidvars, tbemf);
@@ -604,7 +696,7 @@ static void train_periodic_control(int numtrain, _UNUSED_ uint32_t dt)
         	v3 = (v2>100) ? 100 : v2;
         	v3 = (v3<-100) ? -100: v3;
         	itm_debug3(DBG_PID, "pid/r", numtrain, v3, v2);
-        	v = (int16_t)v3 * tvars->C1_dir; // because it will be multiplied again when setting pwm
+            v = (int16_t)v3 * __spdcx_dir(tvars->dirbits, 0); // because it will be multiplied again when setting pwm
         }
     }
     if (tconf->postIIR) {
@@ -693,6 +785,33 @@ static void train_periodic_control(int numtrain, _UNUSED_ uint32_t dt)
 }
 
 
+static void _start_canton(int tidx, uint8_t v)
+{
+    msg_64_t m = {0};
+    m.from = MA1_SPDCTL(tidx);
+    xblkaddr_t c;
+    c.v = v;
+    TO_CANTON(m, c);
+    //m.to = c2;
+    m.cmd = CMD_BEMF_ON;
+    mqf_write_from_spdctl(&m);
+}
+static void _stop_canton(int tidx, uint8_t v)
+{
+    msg_64_t m = {0};
+    m.from = MA1_SPDCTL(tidx);
+    xblkaddr_t c;
+    c.v = v;
+    TO_CANTON(m, c);
+    itm_debug1(DBG_SPDCTL, "stp c2", tidx);
+    m.cmd = CMD_STOP;
+    mqf_write_from_spdctl(&m);
+    m.cmd = CMD_BEMF_OFF;
+    mqf_write_from_spdctl(&m);
+}
+
+
+#if 0
 static void set_c1_c2(int tidx, train_vars_t *tvars, xblkaddr_t c1, int8_t dir1, xblkaddr_t c2, int8_t dir2)
 {
     msg_64_t m = {0};
@@ -748,22 +867,18 @@ static void set_c1_c2(int tidx, train_vars_t *tvars, xblkaddr_t c1, int8_t dir1,
 	tvars->C2_dir = dir2;
 	tvars->last_speed = 9000; // make sure cmd is sent
 }
-
+#endif
 
 
 static void _set_speed(int tidx, const conf_train_t *cnf, train_vars_t *vars)
 {
     const conf_canton_t *c1;
-    const conf_canton_t *c2;
 
 
 	int16_t sv100 = vars->last_speed;
 
     c1 =  conf_canton_template(); //conf_canton_get(vars->C1);
-    c2 =  c1; // conf_canton_template(); // conf_canton_get(vars->C2);
-    
-    if (vars->C1x.v == 0xFF) c1 = NULL;
-    if (vars->C2x.v == 0xFF) c2 = NULL;
+
     
     if (!c1) {
     	itm_debug1(DBG_ERR|DBG_SPDCTL, "no canton", sv100);
@@ -775,9 +890,22 @@ static void _set_speed(int tidx, const conf_train_t *cnf, train_vars_t *vars)
     int sig = SIGNOF(sv100);
     uint16_t v = abs(sv100);
     uint16_t pwm_duty = volt_index(v*10 /* mili*/,
-                                   c1, c2,
+                                   c1, c1,
                                    &pvi1, &pvi2, cnf->volt_policy);
+    msg_64_t m = {0};
+    m.from = MA1_SPDCTL(tidx);
+    m.cmd = CMD_SETVPWM;
+    m.v1u = pvi1;
 
+    for (int i=0; i<4; i++) {
+        if (vars->Cx[i].v == 0xFF) continue;
+        int dir = sig * __spdcx_dir(vars->dirbits, i);
+        TO_CANTON(m, vars->Cx[i]);
+        m.v2 = dir*pwm_duty;
+        mqf_write_from_spdctl(&m);
+    }
+}
+#if 0
 	int dir1 = sig * vars->C1_dir;
 	int dir2 = sig * vars->C2_dir;
 
@@ -809,6 +937,8 @@ static void _set_speed(int tidx, const conf_train_t *cnf, train_vars_t *vars)
     	mqf_write_from_spdctl(&m);
     }
 }
+#endif
+
 
 
 /* =========================================================================== */

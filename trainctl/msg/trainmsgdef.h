@@ -10,13 +10,14 @@ typedef enum {
 	CMD_SETRUN_MODE               , // 0x03 (3) // ui,any->(all)	v1u=mode				start given runmode
 
 	// ---------------------------- group 0x20
-	CMD_SET_C1_C2           = 0x20, // 0x20 (32) // ctrl->spdctl		b:c1,dir1,c2,dir2		set C1,C2 for sender train
-	CMD_SETVPWM                   , // 0x21 (33) // spdctl->canton	v1u=voltidx,v2=pwm		set power on canton
-	CMD_BEMF_ON                   , // 0x22 (34) // spdctl->canton							start measure bemf
-	CMD_BEMF_OFF                  , // 0x23 (35) // spdctl->canton							stop measure bemf
-	CMD_SET_TARGET_SPEED          , // 0x24 (36) // ctrl->spdctl		v1u=spd					set (unsigned) speed
-	CMD_STOP                      , // 0x25 (37) // ctrl->spdctl								stop canton (min volt, pwv=0), equiv to CMD_SETVPWM 7,0
-	CMD_BRAKE                     , // 0x26 (38) // ctrl->spdctl subc: 1=set, 0=clear, v32=pos
+	CMD_SET_C4              = 0x20, // 0x20 (32) // ctrl->spdctl		subc=dirs b:c1,c2,c3,cb	set C1,C2 for sender train
+	CMD_SET_C1_C2old              , // 0x21 (33) // obsolete, replace by CMD_SET_C4, here only for ctrlP.c is still compiled
+	CMD_SETVPWM                   , // 0x22 (34) // spdctl->canton	v1u=voltidx,v2=pwm		set power on canton
+	CMD_BEMF_ON                   , // 0x23 (35) // spdctl->canton							start measure bemf
+	CMD_BEMF_OFF                  , // 0x24 (36) // spdctl->canton							stop measure bemf
+	CMD_SET_TARGET_SPEED          , // 0x25 (37) // ctrl->spdctl		v1u=spd					set (unsigned) speed
+	CMD_STOP                      , // 0x26 (38) // ctrl->spdctl								stop canton (min volt, pwv=0), equiv to CMD_SETVPWM 7,0
+	CMD_BRAKE                     , // 0x27 (39) // ctrl->spdctl subc: 1=set, 0=clear, v32=pos
 
 	// ---------------------------- group 0x40
 	CMD_BEMF_DETECT_ON_C2   = 0x40, // 0x40 (64) // spdctl->ctrl		v1u=C2 v2=POSE/10		sent when C2 canton detect BEMF

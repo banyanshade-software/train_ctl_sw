@@ -14,7 +14,14 @@
 #include "led.h"
 #include "ledio.h"
 
-
+/*
+ TODO : use DMA for higher speed
+ https://stackoverflow.com/questions/68476220/stm32-use-dma-to-generate-bit-pattern-on-gpio-pin
+ https://www.youtube.com/watch?v=8z-pJSTi7ME
+ https://www.cnblogs.com/shangdawei/p/4749332.html
+ https://www.eevblog.com/forum/microcontrollers/stm32f4-dma-mem-gtgpio-triggered-by-timer/
+ https://www.st.com/resource/en/application_note/an4666-parallel-synchronous-transmission-using-gpio-and-dma-stmicroelectronics.pdf
+ */
 #ifndef BOARD_HAS_LED
 #error BOARD_HAS_LED not defined, remove this file from build
 #endif

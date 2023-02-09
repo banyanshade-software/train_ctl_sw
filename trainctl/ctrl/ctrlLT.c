@@ -86,7 +86,9 @@ void ctrl3_init_train(int tidx, train_ctrl_t *tvars, lsblk_num_t sblk, int on)
     tvars->c1c2dir_changed = 1;
     tvars->can2_xaddr.v = 0xFF;
     tvars->canOld_xaddr.v = 0xFF;
-    tvars->can2_future.v = 0xFF;
+    tvars->tmp_c2_future.v = 0xFF;
+    tvars->pow_c2_future.v = 0xFF;
+    tvars->res_c2_future.v = 0xFF;
     tvars->can1_xaddr = canton_for_lsblk(sblk);
     
     if (on) turn_train_on(tidx, tvars);
@@ -865,12 +867,17 @@ static void _set_and_power_c2(int tidx, train_ctrl_t *tvars)
     //    tvars->canOld_xaddr.v = 0xFF;
     //}
     if (tvars->can2_xaddr.v != 0xFF) {
-        if (tvars->can2_xaddr.v != tvars->can2_future.v) {
+        if (tvars->can2_xaddr.v != tvars->pow_c2_future.v) {
+            // need to power new c2, but previous c1c2 transition not yet done
             FatalError("FUT2", "bad future c2", Error_FSM_BadFut2);
         }
         return;
     }
-    tvars->can2_xaddr = tvars->can2_future;
+    if (tvars->pow_c2_future.v == tvars->can1_xaddr.v) {
+        FatalError("FUt2", "bad future c2", Error_FSM_BadFut2b);
+    }
+    tvars->can2_xaddr = tvars->pow_c2_future;
+    tvars->pow_c2_future.v = 0xFF;
     tvars->c1c2dir_changed = 1;
     _sendlow_c1c2_dir(tidx, tvars);
 }
@@ -878,7 +885,8 @@ static void _set_and_power_c2(int tidx, train_ctrl_t *tvars)
 static void _reserve_c2(int tidx, train_ctrl_t *tvars)
 {
     lsblk_num_t ns = {-1};
-    set_block_addr_occupency(tvars->can2_future, BLK_OCC_C2, tidx, ns);
+    set_block_addr_occupency(tvars->res_c2_future, BLK_OCC_C2, tidx, ns);
+    tvars->res_c2_future.v = 0xFF;
 }
 
 static void _check_c2(int tidx, train_ctrl_t *tvars, rettrigs_t *rett)

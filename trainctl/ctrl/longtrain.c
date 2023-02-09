@@ -154,7 +154,13 @@ static int _check_front_condition_res_c2(train_ctrl_t *tvars, lsblk_num_t lastsb
     xblkaddr_t c1 = canton_for_lsblk(lastsblk);
     xblkaddr_t c2 = canton_for_lsblk(testsblk);
     if ((c2.v !=0xff) && (c1.v != c2.v)) {
-        tvars->can2_future = c2;
+        if (c2.v == tvars->can1_xaddr.v) {
+            return 0;
+        }
+        if (c2.v == tvars->can2_xaddr.v) {
+            return 0;
+        }
+        tvars->tmp_c2_future = c2;
         return 1;
     }
     return 0;
@@ -400,7 +406,11 @@ int ctrl3_check_front_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *
         }
     }
     
+    tvars->tmp_c2_future.v = 0xFF;
     kmm = check_front(tidx, tvars, fsblk, left, c1lenmm, &a, _check_front_condition_res_c2);
+    if (tvars->res_c2_future.v == 0xFF) {
+        tvars->res_c2_future = tvars->tmp_c2_future;
+    }
     if (a != -1) {
         int rc = _add_trig(left, ret, fsblk->rlen_mm, c1lenmm, curmm, kmm, tag_reserve_c2, margin_c2_len_mm, minmm, maxmm, trlenmm);
         if (rc != ADD_TRIG_NOTHING) {
@@ -429,7 +439,11 @@ int ctrl3_check_front_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *
     }
     //  power c2
     if ((1)) {
+        tvars->tmp_c2_future.v = 0xFF;
         kmm = check_loco(tidx, tvars, fsblk, left, c1lenmm, &a, _check_front_condition_res_c2);
+        if (tvars->pow_c2_future.v == 0xFF) {
+            tvars->pow_c2_future = tvars->tmp_c2_future;
+        }
         if (a != -1) {
             int rc = _add_trig_loco(left, ret, 0, c1lenmm, curmm, kmm, tag_need_c2, margin_c2_len_mm, minmm, maxmm, trlenmm);
             if (rc != ADD_TRIG_NOTHING) {

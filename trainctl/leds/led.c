@@ -100,6 +100,15 @@ static const uint32_t prog_flash[] = {
 		JMP(0)
 
 };
+static const uint32_t prog_12p[] = {
+    INF( 0b000000010000000100000001)
+};
+
+static const uint32_t prog_6p[] = {
+	    R(0, 0b000000010000000000000001),
+	    R(0, 0b000000000000000100000000),
+		JMP(0)
+};
 
 static const uint32_t *progs[] = {
 	/* 0 */ prog_off,
@@ -111,7 +120,9 @@ static const uint32_t *progs[] = {
     /* 6 */ prog_neon, // same for now
     /* 7 */ prog_dimoff,
 	/* 8 */ prog_dimon,
-	/* 9 */ prog_flash
+	/* 9 */ prog_flash,
+	/*10*/  prog_12p,
+	/*11*/  prog_6p,
 };
 // ---------------------------------------
 
@@ -221,7 +232,9 @@ void led_reset_all(void)
 }
 void led_start_prog(uint8_t lednum, uint8_t prognum)
 {
-    start_prog(&leds[lednum], prognum);
+	if (lednum<NUM_LEDS) {
+		start_prog(&leds[lednum], prognum);
+	}
 }
 
 void led_run_all(void)
@@ -230,6 +243,15 @@ void led_run_all(void)
         first = 0;
         for (int i=0; i<NUM_LEDS; i++) {
             reset_machine(&leds[i]);
+        }
+        if ((0)) {
+        	//simple test w standalone board
+        	//led_start_prog(0, LED_PRG_FLASH);
+        	//led_start_prog(1, LED_PRG_25p);
+        	//led_start_prog(2, LED_PRG_FLASH);
+        	//led_start_prog(3, LED_PRG_25p);
+        	//led_start_prog(4, LED_PRG_FLASH);
+        	led_start_prog(5, LED_PRG_12p);
         }
     }
     for (int i=0; i<NUM_LEDS; i++) {

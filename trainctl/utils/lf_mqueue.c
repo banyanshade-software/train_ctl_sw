@@ -35,7 +35,7 @@ static inline int _mqf_len(const mqf_t *m)
 		l = m->num + m->head - m->tail;
 	}
 	if (l<0) {
-		itm_debug1(DBG_ERR|DBG_MSG, "big pb", 1);
+		//itm_debug1(DBG_ERR|DBG_MSG, "big pb", 1);
 		FatalError("Qpb", "msgq big problem", Error_MsgQBig);
 	}
 	return l;
@@ -50,15 +50,20 @@ void dump_msg(mqf_t *mq, int n);
 
 void mqf_qfull(mqf_t *mq, _UNUSED_ int t)
 {
-	itm_debug1(DBG_ERR|DBG_MSG, "w/full", 0);
-	for (;;) {
-		static uint8_t dmp = 0;
-		if (dmp) {
-			dmp = 0;
-			for (int i=0; i<_mqf_len(mq); i++) {
-				dump_msg(mq, i);
+	itm_debug0ls(DBG_ERR|DBG_MSG, "w/full");
+
+	if ((0)) {
+		for (;;) {
+			static uint8_t dmp = 0;
+			if (dmp) {
+				dmp = 0;
+				for (int i=0; i<_mqf_len(mq); i++) {
+					dump_msg(mq, i);
+				}
 			}
 		}
+	} else {
+		FatalError("Qf", "msqg full", Error_MsgQFull);
 	}
 }
 int mqf_write(mqf_t *m, void *ptr)
@@ -68,12 +73,13 @@ int mqf_write(mqf_t *m, void *ptr)
 	if (l > m->maxuse) m->maxuse = (int8_t) l;
 
     if (m->num == l) {
-		itm_debug1(DBG_ERR|DBG_MSG, "w/full", 0);
+		itm_debug0ls(DBG_ERR|DBG_MSG, "w/full");
 		mqf_qfull(m,0);
         return -1;
     }
     if (m->num-1 == l) {
-    	itm_debug1(DBG_MSG, "w/full1", m->silentdrop);
+    	//itm_debug1(DBG_MSG, "w/full1", m->silentdrop);
+    	itm_debug0ls(DBG_MSG, "w/full1");
     	if (!m->silentdrop) mqf_qfull(m,1);
         return -1;
     }

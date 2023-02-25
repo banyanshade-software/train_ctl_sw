@@ -46,9 +46,20 @@ extern uint32_t debug_flags;
  * using traces in IRQ is possible, but the amount of msg shall be strictly limited
  */
 
-void _itm_debug3(int err, const char *msg, int32_t v1, int32_t v2, int32_t v3, int n);
+void _itm_debug3(int err, const char *msg, int32_t v1, int32_t v2, int32_t v3, uint8_t n);
+void _itm_debug0(int err, const char *msg);
+void _itm_debug0lowstack(const char *msg);
 
 
+static inline void itm_debug0(uint32_t f, const char *msg)
+{
+	if (f & debug_flags) _itm_debug0(f & DBG_ERR, msg);
+}
+
+static inline void itm_debug0ls(uint32_t f, const char *msg)
+{
+	if (f & debug_flags) _itm_debug0lowstack( msg);
+}
 static inline void itm_debug1(uint32_t f, const char *msg, int32_t v)
 {
 	if (f & debug_flags) _itm_debug3(f & DBG_ERR, msg, v, 0, 0, 1);
@@ -63,7 +74,7 @@ static inline void itm_debug3(uint32_t f, const char *msg, int32_t v1, int32_t v
 }
 
 
-void itm_write(const char *str, int len);
+void itm_write(const char *str, uint16_t len);
 
 #ifdef TRAIN_SIMU
 char* itoa ( int32_t  value,  char str[],  int radix);

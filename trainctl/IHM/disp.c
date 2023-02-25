@@ -599,15 +599,7 @@ _UNUSED_ static char hexchr(int v)
 	return '0'+v;
 }
 
-/*
-static void write_num(char *buf, uint32_t v, int ndigit)
-{
-	for (;ndigit>0; ndigit--) {
-		buf[ndigit-1] = '0'+ (v % 10);
-		v = v/10;
-	}
-}
-*/
+
 
 static void _write_unum(uint8_t devnum, uint16_t v, FontDef *curfont, uint8_t hzero, uint8_t fp1000)
 {

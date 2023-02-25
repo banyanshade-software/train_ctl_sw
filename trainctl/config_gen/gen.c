@@ -433,7 +433,9 @@ void generate_cfile(config_node_t *root, int continue_next, config_node_t *board
 
         if (storetype == 1) {
             fprintf(output, "\n\nvoid *conf_%s_ptr(void)\n",n);
-            fprintf(output, "{\n    return &conf_%s[0];\n}\n\n", n);
+            fprintf(output, "{\n    if (conf_%s_num_entries()>0) {\n", n);
+            fprintf(output, "           return &conf_%s[0];\n", n);
+            fprintf(output, "    } else {\n           return NULL;\n    }\n}\n\n");
 
             fprintf(output, "\n\nint32_t conf_%s_local_get(unsigned int fieldnum, unsigned int instnum)\n", n);
             fprintf(output, "{\n    const conf_%s_t *c = conf_%s_get(instnum);\n    if (!c) return 0;\n", n, n);

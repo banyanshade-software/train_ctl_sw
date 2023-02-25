@@ -93,7 +93,25 @@ static volatile int emerg_stop = 0;
 void TurnoutEmergencyStop(void)
 {
 	emerg_stop = 1;
-	turnout_init();
+
+
+	for (int tidx=0; tidx<NUM_TURNOUTS; tidx++) {
+		const conf_turnout_t *aconf = conf_turnout_get(tidx);
+		if (!aconf) {
+			//itm_debug1(DBG_TURNOUT, "tn skip", tidx);
+			continue;
+		}
+#ifndef TRAIN_SIMU
+		if (!aconf->cmd_portA) return;
+		if (!aconf->cmd_portB) return;
+
+		HAL_GPIO_WritePin(aconf->cmd_portA, aconf->pinA, GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(aconf->cmd_portB, aconf->pinB, GPIO_PIN_RESET);
+#endif
+		// keep stack low as this is called by FatalError()
+
+		(void)aconf; // unused
+	}
 }
 
 // ------------------------------------------------------
@@ -252,7 +270,7 @@ static void turnout_init(void)
 		avars->value = 0;
 		avars->st = ST_IDLE;
 		if (!aconf) {
-			itm_debug1(DBG_TURNOUT, "tn skip", tidx);
+			//itm_debug1(DBG_TURNOUT, "tn skip", tidx);
 			continue;
 		}
 #ifndef TRAIN_SIMU
@@ -262,11 +280,13 @@ static void turnout_init(void)
 		HAL_GPIO_WritePin(aconf->cmd_portA, aconf->pinA, GPIO_PIN_RESET);
 		HAL_GPIO_WritePin(aconf->cmd_portB, aconf->pinB, GPIO_PIN_RESET);
 #endif
-		itm_debug1(DBG_TURNOUT, "A/RESET", tidx);
-		debug_info('A', 0, "RESET", 0, 0,0);
+		// removed debug to keep stack low as this is called by FatalError()
+		//itm_debug1(DBG_TURNOUT, "A/RESET", tidx);
+		//debug_info('A', 0, "RESET", 0, 0,0);
 		(void)aconf; // unused
 	}
 }
+
 /*
 int turnout_state(int tidx)
 {

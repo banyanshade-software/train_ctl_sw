@@ -187,8 +187,10 @@ static int _can_send_msg(msg_64_t *msg, int f)
 		FatalError("CANtx", "CAN tx ", Error_CanTx);
 		return 1;
 	}
-	if (f) itm_debug3(DBG_CAN, "Tx/I", msg->to, msg->cmd, TxMailbox);
-	else   itm_debug3(DBG_CAN, "Tx/p", msg->to, msg->cmd, TxMailbox);
+	if ((0)) {
+		if (f) itm_debug3(DBG_CAN, "Tx/I", msg->to, msg->cmd, TxMailbox);
+		else   itm_debug3(DBG_CAN, "Tx/p", msg->to, msg->cmd, TxMailbox);
+	}
 	return 0;
 }
 
@@ -271,7 +273,7 @@ void HAL_CAN_TxMailbox0CompleteCallback(CAN_HandleTypeDef *hcan)
 {
   /* Prevent unused argument(s) compilation warning */
   UNUSED(hcan);
-  itm_debug1(DBG_CAN, "TxM0cplt", 0);
+  itm_debug0ls(DBG_CAN, "TxM0cplt");
   _send_msg_if_any(1);
 }
 
@@ -285,7 +287,7 @@ void HAL_CAN_TxMailbox1CompleteCallback(CAN_HandleTypeDef *hcan)
 {
   /* Prevent unused argument(s) compilation warning */
   UNUSED(hcan);
-  itm_debug1(DBG_CAN, "TxM1cplt", 0);
+  itm_debug0ls(DBG_CAN, "TxM1cplt");
   _send_msg_if_any(1);
 }
 
@@ -299,7 +301,7 @@ void HAL_CAN_TxMailbox2CompleteCallback(CAN_HandleTypeDef *hcan)
 {
   /* Prevent unused argument(s) compilation warning */
   UNUSED(hcan);
-  itm_debug1(DBG_CAN, "TxM2cplt", 0);
+  itm_debug0ls(DBG_CAN, "TxM2cplt");
   _send_msg_if_any(1);
 }
 
@@ -360,11 +362,11 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
 {
   /* Prevent unused argument(s) compilation warning */
   UNUSED(hcan);
-  itm_debug1(DBG_CAN, "RxF0Pend", 0);
+  //itm_debug1(DBG_CAN, "RxF0Pend", 0);
   CAN_RxHeaderTypeDef rxHeader = {0};
   msg_64_t m;
   if (HAL_OK != HAL_CAN_GetRxMessage(hcan, CAN_RX_FIFO0, &rxHeader, (uint8_t *)&m)) {
-	  itm_debug1(DBG_CAN|DBG_ERR, "Rx Err", 0);
+	  //itm_debug1(DBG_CAN|DBG_ERR, "Rx Err", 0);
 	  return;
   }
 
@@ -372,7 +374,7 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
 	  static uint32_t lastId = 0;
 	  static int cnt= 0;
 	  if (lastId == rxHeader.StdId) {
-		  itm_debug2(DBG_CAN, "dup msg", lastId, m.cmd);
+		  //itm_debug2(DBG_CAN, "dup msg", lastId, m.cmd);
 		  cnt++;
 		  if (cnt>1000) lastId = 0;
 		  return;
@@ -387,22 +389,22 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
 			  &&(m.cmd==CMD_NOOP)
 			  &&(m.v1 == 422)
 			  &&(m.v2 == -4242)) {
-		  itm_debug1(DBG_CAN, "RX OK", 0);
+		  //itm_debug1(DBG_CAN, "RX OK", 0);
 	  } else {
-		  itm_debug1(DBG_CAN|DBG_ERR, "RX BAD", 0);
+		  //itm_debug1(DBG_CAN|DBG_ERR, "RX BAD", 0);
 	  }
   }
   bh();
-  itm_debug3(DBG_CAN, "RX : ", m.cmd, m.v1, m.v2);
+  //itm_debug3(DBG_CAN, "RX : ", m.cmd, m.v1, m.v2);
   if ((1)) {
 	  static int expn = 0;
 	  if (m.cmd == CMD_NOOP) {
 		  if (m.v1 != expn) {
-			  itm_debug2(DBG_CAN, "exp", expn, m.v1);
+			  //itm_debug2(DBG_CAN, "exp", expn, m.v1);
 		  }
 		  expn = m.v1+1;
 	  } else {
-		  itm_debug3(DBG_CAN, "other", m.cmd, m.v1, m.v2);
+		  //itm_debug3(DBG_CAN, "other", m.cmd, m.v1, m.v2);
 	  }
   }
   //flash_led();

@@ -21,7 +21,11 @@ __weak void local_ui_fatal(void)
 }
 
 #ifndef TRAIN_SIMU
-void FatalError( const char *short4lettersmsg, _UNUSED_ const char *longmsg, _UNUSED_ enum fatal_error_code errcode)
+
+// TODO : specific stack for this vect
+// so we can display etc... or reset with specific error ?
+
+void _FatalError( const char *short4lettersmsg, /*_UNUSED_ const char *longmsg,*/ _UNUSED_ enum fatal_error_code errcode)
 {
 	if (!_fatal) {
 		_fatal = short4lettersmsg;

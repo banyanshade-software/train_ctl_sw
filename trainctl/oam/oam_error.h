@@ -45,6 +45,7 @@ enum fatal_error_code {
 	Error_OccTrn,
 	Error_MsgQBig,
 	Error_MsgQLen,
+	Error_MsgQFull,
 	Error_BrdSlvMaster,
 	Error_NumBnum,
 	Error_NumBnum2,
@@ -71,8 +72,11 @@ enum fatal_error_code {
 /// @param shortsmsg message associated with error, short enough for ssd1306 (typ 4 or 5 chars)
 /// @param longmsg long message, usable e.g. with debugger
 /// @param errcode numeric errorcode (fatal_error_code), displayable and usable as debug
-void FatalError(const char *shortsmsg, const char *longmsg, enum fatal_error_code errcode);
 
+
+void _FatalError(const char *shortsmsg, enum fatal_error_code errcode);
+
+#define FatalError(_s, _l, _e)  do { _FatalError(_s, _e); } while(0)
 
 
 extern const char *_fatal;

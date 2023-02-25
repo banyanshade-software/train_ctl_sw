@@ -2857,7 +2857,11 @@ const conf_topology_t *conf_topology_get(int num)
 
 void *conf_topology_ptr(void)
 {
-    return &conf_topology[0];
+    if (conf_topology_num_entries()>0) {
+           return &conf_topology[0];
+    } else {
+           return NULL;
+    }
 }
 
 

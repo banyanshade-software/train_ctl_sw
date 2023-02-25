@@ -676,7 +676,11 @@ const conf_train_t *conf_train_get(int num)
 
 void *conf_train_ptr(void)
 {
-    return &conf_train[0];
+    if (conf_train_num_entries()>0) {
+           return &conf_train[0];
+    } else {
+           return NULL;
+    }
 }
 
 

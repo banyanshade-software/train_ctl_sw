@@ -346,7 +346,11 @@ const conf_boards_t *conf_boards_get(int num)
 
 void *conf_boards_ptr(void)
 {
-    return &conf_boards[0];
+    if (conf_boards_num_entries()>0) {
+           return &conf_boards[0];
+    } else {
+           return NULL;
+    }
 }
 
 

@@ -172,7 +172,11 @@ const conf_globparam_t *conf_globparam_get(int num)
 
 void *conf_globparam_ptr(void)
 {
-    return &conf_globparam[0];
+    if (conf_globparam_num_entries()>0) {
+           return &conf_globparam[0];
+    } else {
+           return NULL;
+    }
 }
 
 

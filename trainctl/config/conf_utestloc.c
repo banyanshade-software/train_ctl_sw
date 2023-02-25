@@ -184,7 +184,11 @@ const conf_utestloc_t *conf_utestloc_get(int num)
 
 void *conf_utestloc_ptr(void)
 {
-    return &conf_utestloc[0];
+    if (conf_utestloc_num_entries()>0) {
+           return &conf_utestloc[0];
+    } else {
+           return NULL;
+    }
 }
 
 

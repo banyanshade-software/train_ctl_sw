@@ -18,7 +18,7 @@ typedef struct {
 	unsigned int task;
 } trace_event_t;
 
-#define MAXTASK 32
+#define MAXTASK 16
 
 /*
  * abstract class for all tools
@@ -26,14 +26,15 @@ typedef struct {
 
 class TraceTool {
 public:
-	TraceTool(FILE *output);
-	virtual void finalReport(void) = 0;
+	TraceTool(FILE *output, TraceTool *nexttool);
+	void printReport(void);
 	void handleEvent(trace_event_t *);
 
 	TraceTool *next;
 protected:
 	virtual void processEvent(trace_event_t *) = 0;
 	virtual bool filterEvent(trace_event_t *);
+	virtual void finalReport(void) = 0;
 	bool isIdleTask(unsigned int tasknum);
 
 	FILE *out;
@@ -42,7 +43,7 @@ private:
 
 class TraceToolTask : public TraceTool {
 public:
-	TraceToolTask(FILE *output, int tasknum);
+	TraceToolTask(FILE *output, TraceTool *nexttool, int tasknum);
 protected:
 	virtual bool filterEvent(trace_event_t *);
 	int tasknum;
@@ -51,9 +52,10 @@ private:
 
 
 
+
 class GlobalCpu : public TraceTool {
 public:
-	GlobalCpu(FILE *out);
+	GlobalCpu(FILE *out, TraceTool *nexttool);
 protected:
 	virtual bool filterEvent(trace_event_t *);
 	void processEvent(trace_event_t *);
@@ -67,5 +69,16 @@ private:
 	unsigned long long totcycle[MAXTASK];
 };
 
+
+class TimeLine : public TraceTool {
+public:
+	TimeLine(FILE *stdout, TraceTool *nexttool);
+protected:
+	void processEvent(trace_event_t *);
+	void finalReport(void);
+private:
+    char taskstate[2*MAXTASK+1];
+
+};
 
 #endif /* TRACETOOL_H_ */

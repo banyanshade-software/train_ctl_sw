@@ -1,11 +1,11 @@
 
 all: traceviewer
 
-CCFLAGS += -g -Wall
+CXXFLAGS += -g -Wall -std=c++11
 OBJS=traceviewer.o tracetool.o
 
 traceviewer: $(OBJS)
-	$(CXX) -o $@  $^ $(LDFLAGS)
+	$(CXX) $(CXXFLAGS) -o $@  $^ $(LDFLAGS)
 
 
 clean: 

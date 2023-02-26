@@ -60,7 +60,8 @@ int main(int argc, char **argv)
     unsigned long lastcycle = 0;
     double lastts = 0.0;
 
-    TraceTool *tools = new GlobalCpu(stdout);
+    TraceTool *tools = new GlobalCpu(stdout, NULL);
+    tools = new TimeLine(stdout, tools);
 
     while (fgets(line, 1024, stdin)) {
         //printf("---- %s\n", line);
@@ -140,7 +141,7 @@ int main(int argc, char **argv)
             printf("%8lu [%6lu] %s %s TASK%d\n", cycle, dcycle, taskview, evts, task);
         }
     }
-    if (tools) tools->finalReport();
+    if (tools) tools->printReport();
 
     printf("scanned %d, skipped %d, other ch %d\n", nlines, nskip, noch);
 }

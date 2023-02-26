@@ -5,6 +5,7 @@
 
 #include "../../trainctl/stm32/monitoring_def.h"
 
+#include "tracetool.h"
 /*
 "   32";"ITM Port 1";"515";"107404534 ?";"?";"No timestamp received for packet, cycles value guessed. "
 "   33";"ITM Port 1";"260";"107404534";"2,237594 s";"Timestamp delayed. Packet delayed. "
@@ -43,7 +44,6 @@ static int extract_fields(char *line, char **fields, int n)
     return fidx;
 }
 
-#define MAXTASK 16
 
 int main(int argc, char **argv)
 {
@@ -59,6 +59,8 @@ int main(int argc, char **argv)
     memcpy(taskview, taskstate, 2*MAXTASK+1);
     unsigned long lastcycle = 0;
     double lastts = 0.0;
+
+    TraceTool *tools = new GlobalCpu(stdout);
 
     while (fgets(line, 1024, stdin)) {
         //printf("---- %s\n", line);
@@ -100,7 +102,20 @@ int main(int argc, char **argv)
         unsigned int evt = atoi(fields[2]);
         unsigned int evt_type = evt >> 8;
         unsigned int task = evt & 0xFF;
-        char *evts = "??";
+
+
+        trace_event_t event;
+        event.cycle = cycle;
+        event.dcycle = dcycle;
+        event.ts = ts;
+        event.dts = ts-lastts;
+        event.event = evt_type;
+        event.task = task;
+
+        if (tools) tools->handleEvent(&event);
+
+
+        const char *evts = "??";
         int tick = 0;
         
         memcpy(taskview, taskstate, 2*MAXTASK+1);
@@ -125,5 +140,7 @@ int main(int argc, char **argv)
             printf("%8lu [%6lu] %s %s TASK%d\n", cycle, dcycle, taskview, evts, task);
         }
     }
+    if (tools) tools->finalReport();
+
     printf("scanned %d, skipped %d, other ch %d\n", nlines, nskip, noch);
 }

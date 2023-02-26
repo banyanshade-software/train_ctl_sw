@@ -1,5 +1,12 @@
 
 all: traceviewer
 
-CFLAGS += -g -Wall
-traceviewer: traceviewer.o
+CCFLAGS += -g -Wall
+OBJS=traceviewer.o tracetool.o
+
+traceviewer: $(OBJS)
+	$(CXX) -o $@  $^ $(LDFLAGS)
+
+
+clean: 
+	rm -f $(OBJS)

@@ -70,15 +70,4 @@ private:
 };
 
 
-class TimeLine : public TraceTool {
-public:
-	TimeLine(FILE *stdout, TraceTool *nexttool);
-protected:
-	void processEvent(trace_event_t *);
-	void finalReport(void);
-private:
-    char taskstate[2*MAXTASK+1];
-
-};
-
 #endif /* TRACETOOL_H_ */

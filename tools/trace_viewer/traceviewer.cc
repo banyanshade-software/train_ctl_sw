@@ -6,6 +6,8 @@
 #include "../../trainctl/stm32/monitoring_def.h"
 
 #include "tracetool.h"
+#include "timeline.h"
+
 /*
 "   32";"ITM Port 1";"515";"107404534 ?";"?";"No timestamp received for packet, cycles value guessed. "
 "   33";"ITM Port 1";"260";"107404534";"2,237594 s";"Timestamp delayed. Packet delayed. "

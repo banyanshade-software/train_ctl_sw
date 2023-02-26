@@ -1,6 +1,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 #include "../../trainctl/stm32/monitoring_def.h"
 
@@ -42,12 +43,19 @@ static int extract_fields(char *line, char **fields, int n)
     return fidx;
 }
 
+#define MAXTASK 16
+
 int main(int argc, char **argv)
 {
     int nlines = 0;
     int nskip = 0;
     char *fields[6];
     char line[1024];
+    char taskview[MAXTASK+1]; // max 16 tasks
+    char taskstate[MAXTASK+1];
+    memset(taskstate, ' ', sizeof(taskstate));
+    taskstate[MAXTASK]='\0';
+    memcpy(taskview, taskstate, MAXTASK+1);
     while (fgets(line, 1024, stdin)) {
         //printf("---- %s\n", line);
         int n = extract_fields(line, fields, 6);
@@ -76,15 +84,17 @@ int main(int argc, char **argv)
         unsigned int task = evt & 0xFF;
         char *evts = "??";
         int tick = 0;
+        
+        memcpy(taskview, taskstate, MAXTASK+1);
         switch (evt_type) {
-        case MONITOR_SW_IN:     evts = "SCHED IN   "; break;
-        case MONITOR_SW_OUT:    evts = "SCHED OUT  "; break;
+        case MONITOR_SW_IN:     evts = "SCHED IN   "; taskstate[task]='X'; taskview[task]='I'; break;
+        case MONITOR_SW_OUT:    evts = "SCHED OUT  "; taskstate[task]=' '; taskview[task]='-'; break;
         case MONITOR_TICK:      evts = "TICK"; tick = 1; break;
-        case MONITOR_READY:     evts = "READY      "; break;
-        case MONITOR_NOTIF_WB:  evts = "NOTIF W BLK"; break;
-        case MONITOR_NOTIF_W:   evts = "SCHED W    "; break;
-        case MONITOR_DELAY_U:   evts = "DELAY UNTIL"; break;
-        case MONITOR_DELAY:     evts = "DELAY      "; break;
+        case MONITOR_READY:     evts = "READY      "; taskview[task]='R'; break;
+        case MONITOR_NOTIF_WB:  evts = "NOTIF W BLK"; taskview[task]='W'; break;
+        case MONITOR_NOTIF_W:   evts = "SCHED W    "; taskview[task]='W'; break;
+        case MONITOR_DELAY_U:   evts = "DELAY UNTIL"; taskview[task]='D'; break;
+        case MONITOR_DELAY:     evts = "DELAY      "; taskview[task]='D'; break;
         case MONITOR_NOTIF:     evts = "NOTIF snd  "; break;
         case MONITOR_NOTIF_ISR: evts = "NOTIF s ISR"; break;
         default : break;
@@ -92,9 +102,9 @@ int main(int argc, char **argv)
         if (ts>=0) printf("%12.6f : ", ts);
         else printf("             : ");
         if (tick) {
-            printf("%8lu ------------------------------------ systick\n", cycle);
+            printf("%8lu %s ------------------------------------ systick\n", cycle, taskview);
         } else {
-            printf("%8lu %s TASK%d\n", cycle, evts, task);
+            printf("%8lu %s %s TASK%d\n", cycle, taskview, evts, task);
         }
     }
     printf("scanned %d, skipped %d\n", nlines, nskip);

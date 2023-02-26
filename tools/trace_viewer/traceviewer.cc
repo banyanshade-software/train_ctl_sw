@@ -52,11 +52,7 @@ int main(int argc, char **argv)
     int noch = 0;
     char *fields[6];
     char line[1024];
-    char taskview[2*MAXTASK+1]; // max 16 tasks
-    char taskstate[2*MAXTASK+1];
-    memset(taskstate, ' ', sizeof(taskstate));
-    taskstate[2*MAXTASK]='\0';
-    memcpy(taskview, taskstate, 2*MAXTASK+1);
+
     unsigned long lastcycle = 0;
     double lastts = 0.0;
 
@@ -77,69 +73,35 @@ int main(int argc, char **argv)
             continue;
         }
 
-        //printf("n=%d num %s port %s\n", n, fields[0], fields[1]);
+        trace_event_t event;
+        event.dts = 0.0;
 
-        //"   33";"ITM Port 1";"260";"107404534";"2,237594 s";"Timestamp delayed. Packet delayed. "
-        double ts;
-        double dts = 0.0;
+
         if (fields[4][0]=='?') {
-            ts = -1;
+        	event.ts = -1;
         } else {
-            //printf("ts:%s\n", fields[4]);
             // fix decimal point
             for (char *p = fields[4]; *p; p++) {
                 if (','==*p) *p = '.';
             }
-            ts = atof(fields[4]);
+            event.ts = atof(fields[4]);
             if (lastts) {
-                dts = ts - lastts;
+            	event.dts = event.ts - lastts;
             }
-            lastts = ts; 
+            lastts = event.ts;
         }
-        unsigned long cycle = atoi(fields[3]);
-        unsigned long dcycle = 0;
-        if (lastcycle) dcycle = cycle-lastcycle;
-        lastcycle = cycle;
+        event.cycle = atoi(fields[3]);
+        event.dcycle = 0;
+        if (lastcycle) event.dcycle = event.cycle-lastcycle;
+        lastcycle = event.cycle;
         unsigned int evt = atoi(fields[2]);
-        unsigned int evt_type = evt >> 8;
-        unsigned int task = evt & 0xFF;
+        event.event = evt >> 8;
+        event.task = evt & 0xFF;
 
-
-        trace_event_t event;
-        event.cycle = cycle;
-        event.dcycle = dcycle;
-        event.ts = ts;
-        event.dts = ts-lastts;
-        event.event = evt_type;
-        event.task = task;
 
         if (tools) tools->handleEvent(&event);
 
 
-        const char *evts = "??";
-        int tick = 0;
-        
-        memcpy(taskview, taskstate, 2*MAXTASK+1);
-        switch (evt_type) {
-        case MONITOR_SW_IN:     evts = "SCHED IN   "; taskstate[2*task]=(task==4) ? 'x' : 'X'; taskview[2*task]='I'; break;
-        case MONITOR_SW_OUT:    evts = "SCHED OUT  "; taskstate[2*task]='|'; taskview[2*task]='-'; break;
-        case MONITOR_TICK:      evts = "TICK"; tick = 1; break;
-        case MONITOR_READY:     evts = "READY      "; taskview[2*task]='R'; break;
-        case MONITOR_NOTIF_WB:  evts = "NOTIF W BLK"; taskview[2*task]='W'; break;
-        case MONITOR_NOTIF_W:   evts = "SCHED W    "; taskview[2*task]='W'; break;
-        case MONITOR_DELAY_U:   evts = "DELAY UNTIL"; taskview[2*task]='D'; break;
-        case MONITOR_DELAY:     evts = "DELAY      "; taskview[2*task]='D'; break;
-        case MONITOR_NOTIF:     evts = "NOTIF snd  "; break;
-        case MONITOR_NOTIF_ISR: evts = "NOTIF s ISR"; break;
-        default : break;
-        }
-        if (ts>=0) printf("%12.6f [%0.4f] : ", ts, dts);
-        else printf("                      : ");
-        if (tick) {
-            printf("%8lu [%6lu] %s ------------------------------------ systick\n", cycle, dcycle, taskview);
-        } else {
-            printf("%8lu [%6lu] %s %s TASK%d\n", cycle, dcycle, taskview, evts, task);
-        }
     }
     if (tools) tools->printReport();
 

@@ -33,7 +33,7 @@ void TraceTool::printReport(void)
 {
 	fprintf(out, "\n\n=============== reports ================\n");
 	finalReport();
-	if (next) next->printReport();
+	if (next) next->finalReport();
 }
 
 // ------------

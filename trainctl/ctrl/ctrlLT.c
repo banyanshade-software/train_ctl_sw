@@ -584,6 +584,8 @@ static int _train_check_dir(int tidx, train_ctrl_t *tvars, int sdir, rettrigs_t 
         if (!rett->isocc && !rett->isoet) {
             FatalError("FSMb", "rcneg unk", Error_FSM_ShouldEotOcc);
         }
+    } else {
+        ctrl3_check_back_sblks(tidx, tvars, conf_train_get(tidx), (sdir<0) ? 1 : 0, rett);
     }
     itm_debug3(DBG_CTRL, "rc2", tidx, rc2, tvars->_state);
     

@@ -47,6 +47,8 @@ int ctrl3_get_next_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *tco
 ///                 0 otherwise
 int ctrl3_check_front_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *tconf, int left,  rettrigs_t *ret);
 
+int ctrl3_check_back_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *tconf, int left,  rettrigs_t *ret);
+
 
 /// ctrl3_update_front_sblks
 /// called when tag_chkocc occurs, it will update tvars->leftcars  and tvars->rightcars

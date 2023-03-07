@@ -80,7 +80,6 @@ static void notif_blk_occup_chg(xblkaddr_t blk, canton_occ_t *co)
 
 void set_block_addr_occupency(xblkaddr_t blkaddr, uint8_t v, uint8_t trnum, lsblk_num_t lsb)
 {
-    //abort(); // obsolete
     int chg = 0;
     if (0xFF == blkaddr.v) FatalError("OccFF", "bad occupency", Error_Occupency);
     //int blknum = addr_to_num(blkaddr);

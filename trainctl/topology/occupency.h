@@ -11,7 +11,7 @@
 
 
 
-#define USE_BLOCK_DELAY_FREE 1
+#define USE_BLOCK_DELAY_FREE 0
 
 
 

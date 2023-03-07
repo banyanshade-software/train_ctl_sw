@@ -47,8 +47,12 @@ static const xblkaddr_t ca4 = { .v = 4 };
     XCTAssert(BLK_OCC_FREE == get_block_addr_occupency(ca4));
     
     set_block_addr_occupency(ca3, BLK_OCC_FREE, 4, snone);
-    XCTAssert(get_block_addr_occupency(ca3)>=BLK_OCC_DELAY1);
-    
+    if ((USE_BLOCK_DELAY_FREE)) {
+        XCTAssert(get_block_addr_occupency(ca3)>=BLK_OCC_DELAY1);
+    } else {
+        XCTAssert(get_block_addr_occupency(ca3)==BLK_OCC_FREE);
+
+    }
     for (int i=0; i<20; i++) {
         check_block_delayed(i*100, 100);
     }

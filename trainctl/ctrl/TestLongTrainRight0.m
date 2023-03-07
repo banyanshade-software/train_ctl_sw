@@ -135,6 +135,10 @@ static lsblk_num_t s14 = {14};
 {
     [self chkRightBack:1000 pos:100];
 }
+
+
+
+
 - (void) chkRightBack:(int)beg pos:(int)posmm
 {
     int rc;
@@ -163,6 +167,38 @@ static lsblk_num_t s14 = {14};
     XCTAssert(!cmptrigs(&rettrigs, &expt1));
 }
 
+
+- (void) testChkRightBack140
+{
+    [self chkRightBack2:0 pos:140];
+}
+
+- (void) chkRightBack2:(int)beg pos:(int)posmm
+{
+    int rc;
+    
+    tconf->trainlen_left_cm = 12;
+    tconf->trainlen_right_cm = 15;
+    occupency_clear();
+    
+    // (train on b14 ,curpos 140, got 1cm at end of b14)
+    // b13 is 3cm, so rlen should be 1 cm
+    // (A)
+    tvars.beginposmm = beg;
+    tvars._curposmm = posmm+beg;
+    
+    ctrl3_get_next_sblks(0, &tvars, tconf);
+    XCTAssert(tvars.rightcars.numlsblk == 0);
+    XCTAssert(tvars.rightcars.rlen_mm == (700-posmm-150)); //45
+   
+    XCTAssert(tvars.leftcars.numlsblk == 0);
+    XCTAssert(tvars.leftcars.rlen_mm == posmm-120);
+    rettrigs_t rettrigs = {0};
+    rc = ctrl3_check_back_sblks(0, &tvars, tconf, 0, &rettrigs);
+    XCTAssert(rc==0);
+    const rettrigs_t expt1 = { 0, 0, 0, 0, 0, {{0,0}, {0,0}}};
+    XCTAssert(!cmptrigs(&rettrigs, &expt1));
+}
 
 - (void)testCheckBrake1
 {

@@ -342,9 +342,13 @@ void ctrl3_pose_triggered(int tidx, train_ctrl_t *tvars, pose_trig_tag_t trigtag
                     _updated_while_running(tidx, tvars);
                     return;
                     break;
-                case tag_stop_blk_wait:
+                case tag_stop_blk_wait: {
+                    int spd = tvars->_desired_signed_speed;
                     _set_speed(tidx, tvars, 0, 1, 0);
+                    _set_speed(tidx, tvars, spd, 0, 0);
+
                     _set_state(tidx, tvars, train_state_blkwait0);
+                }
                     return;
                     break;
                 case tag_stop_eot:
@@ -375,6 +379,11 @@ void ctrl3_pose_triggered(int tidx, train_ctrl_t *tvars, pose_trig_tag_t trigtag
                     return;
                     break;
                 
+                case tag_free_back:
+                    // free back if different canton
+                    _updated_while_running(tidx, tvars);
+                    return;
+                    break;
                 default:
                     itm_debug2(DBG_ERR|DBG_CTRL, "unh trg", tidx, tvars->c1_sblk.n);
                     break;
@@ -504,7 +513,7 @@ static void _updated_while_running(int tidx, train_ctrl_t *tvars)
     rettrigs_t rett = {0};
     int rc = _train_check_dir(tidx, tvars, tvars->_sdir, &rett);
     if (rett.isoet) {
-        int rc = _train_check_dir(tidx, tvars, tvars->_sdir, &rett);
+        int rc = _train_check_dir(tidx, tvars, tvars->_sdir, &rett);// XXX for debug
         rc = _train_check_dir(tidx, tvars, tvars->_sdir, &rett);
         rc = _train_check_dir(tidx, tvars, tvars->_sdir, &rett);
         _set_speed(tidx, tvars, 0, 1, rc);
@@ -578,6 +587,14 @@ static int _train_check_dir(int tidx, train_ctrl_t *tvars, int sdir, rettrigs_t 
     }
     const conf_train_t *conf = conf_train_get(tidx);
     ctrl3_get_next_sblks(tidx, tvars, conf);
+    
+    if (tvars->freelsblk.n != -1) {
+        xblkaddr_t fc = canton_for_lsblk(tvars->freelsblk);
+        if (fc.v != tvars->can1_xaddr.v) {
+            set_block_addr_occupency(fc, BLK_OCC_FREE, tidx, snone);
+        }
+    }
+    
     int rc2 = ctrl3_check_front_sblks(tidx, tvars, conf_train_get(tidx), (sdir<0) ? 1 : 0, rett);
     
     if (rc2 < 0) {

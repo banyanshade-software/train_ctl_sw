@@ -52,7 +52,7 @@ int32_t ctrl3_getcurpossmm(train_ctrl_t *tvars, const conf_train_t *tconf, int l
     return tvars->_curposmm;
 }
 
-int ctrl3_get_next_sblks_(_UNUSED_ int tidx, train_ctrl_t *tvars,  const conf_train_t *tconf, int left, lsblk_num_t *resp, int nsblk, int16_t *premainlenmm)
+static inline int ctrl3_get_next_sblks__(_UNUSED_ int tidx, train_ctrl_t *tvars,  const conf_train_t *tconf, int left, lsblk_num_t *resp, int nsblk, int16_t *premainlenmm)
 {
     if (premainlenmm) *premainlenmm = 0;
     int lidx = 0;
@@ -83,13 +83,52 @@ int ctrl3_get_next_sblks_(_UNUSED_ int tidx, train_ctrl_t *tvars,  const conf_tr
         if (cblk.n == -1) return lidx;
     }
 }
+int ctrl3_get_next_sblks_(_UNUSED_ int tidx, train_ctrl_t *tvars,  const conf_train_t *tconf, int left, lsblk_num_t *resp, int nsblk, int16_t *premainlenmm)
+{
+    int rc = ctrl3_get_next_sblks__(tidx, tvars, tconf, left, resp, nsblk, premainlenmm);
+    if (!rc &&(resp[0].n != -1)) {
+        resp[0].n = -1;
+    }
+    if (rc && (resp[0].n == -1)) {
+        rc = 0;
+    }
+    return rc;
+}
+
+
+static lsblk_num_t _last(struct forwdsblk *f, lsblk_num_t cur)
+{
+    if (f->numlsblk) return f->r[f->numlsblk-1];
+    return  cur;
+}
 
 int ctrl3_get_next_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *tconf)
 {
+    lsblk_num_t lastright = _last(&tvars->rightcars, tvars->c1_sblk);
+    lsblk_num_t lastleft  = _last(&tvars->leftcars, tvars->c1_sblk);
+    tvars->freelsblk.n = -1;
+    int lastnright = tvars->rightcars.numlsblk;
+    int lastnleft  = tvars->leftcars.numlsblk;
+    
     memset(tvars->rightcars.r, 0xFF, sizeof(tvars->rightcars.r));
     memset(tvars->leftcars.r, 0xFF, sizeof(tvars->leftcars.r));
     tvars->rightcars.numlsblk = ctrl3_get_next_sblks_(tidx, tvars, tconf, 0, tvars->rightcars.r, MAX_LSBLK_CARS, &tvars->rightcars.rlen_mm);
     tvars->leftcars.numlsblk = ctrl3_get_next_sblks_(tidx, tvars, tconf, 1, tvars->leftcars.r, MAX_LSBLK_CARS, &tvars->leftcars.rlen_mm);
+    
+    if (tvars->_sdir>0) {
+        if (lastnleft >= tvars->leftcars.numlsblk+2) {
+            printf("problem here");
+        }
+        lsblk_num_t l = _last(&tvars->leftcars, tvars->c1_sblk);
+        if (l.n != lastleft.n) {
+            tvars->freelsblk = lastleft;
+        }
+    } else if (tvars->_sdir <0) {
+        lsblk_num_t l = _last(&tvars->rightcars, tvars->c1_sblk);
+        if (l.n != lastright.n) {
+            tvars->freelsblk = lastright;
+        }
+    }
     return 0; // XXX error handling here
 }
 
@@ -492,6 +531,8 @@ int ctrl3_check_front_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *
 int ctrl3_check_back_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *tconf, int left,  rettrigs_t *ret)
 {
     struct forwdsblk *fsblk = left ? &tvars->rightcars : &tvars->leftcars;
+    /* if no back sblk don't even try to find a block to be freed */
+    if (!fsblk->numlsblk) return 0;
     int retc = 0;
     lsblk_num_t leftblk = fsblk->numlsblk ? fsblk->r[fsblk->numlsblk-1] : tvars->c1_sblk;
     int lastlmm = 10*get_lsblk_len_cm(leftblk, NULL);

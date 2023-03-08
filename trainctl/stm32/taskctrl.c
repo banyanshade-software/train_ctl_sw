@@ -526,6 +526,7 @@ volatile uint8_t oscillo_evtadc;
 
 void HAL_ADC_ConvCpltCallback(_UNUSED_ ADC_HandleTypeDef* hadc)
 {
+	traceUserDMA(0);
 	if (hadc != &hadc1) {
 		HAL_ADC_ConvCpltCallback2(hadc);
 		return;
@@ -554,6 +555,7 @@ void HAL_ADC_ConvCpltCallback(_UNUSED_ ADC_HandleTypeDef* hadc)
 
 void HAL_ADC_ConvHalfCpltCallback(_UNUSED_ ADC_HandleTypeDef* hadc)
 {
+	traceUserDMA(1);
 	if (hadc != &hadc1) {
 		HAL_ADC_ConvHalfCpltCallback2(hadc);
 		return;

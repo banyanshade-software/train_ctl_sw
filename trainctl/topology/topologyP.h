@@ -48,9 +48,10 @@ typedef conf_topology_t topo_lsblk_t;
 
 const topo_lsblk_t *topology_get_sblkd(int lsblk);
 
+#ifndef TOPOLOGY_SVG
 
 void occupency_turnout_release_for_train_canton(int train, xblkaddr_t canton);
 void occupency_clear_turnouts(void);
-
+#endif
 
 #endif /* topologyP_h */

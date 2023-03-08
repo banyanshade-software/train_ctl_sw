@@ -1455,7 +1455,6 @@ __weak void StartOscillo(void const * argument)
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
   /* USER CODE BEGIN Callback 0 */
-
   /* USER CODE END Callback 0 */
   if (htim->Instance == TIM7) {
     HAL_IncTick();
@@ -1463,12 +1462,15 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
   /* USER CODE BEGIN Callback 1 */
 
   if (htim->Instance == TIM5) {
+	  traceUserTIMER(5);
 	  tim5_elapsed();
   }
   if (htim->Instance == TIM8) {
+	  traceUserTIMER(8);
 	  itm_debug1(DBG_TIM, "tim8",0);
   }
   if (htim->Instance == TIM1) {
+	  traceUserTIMER(1);
 	  //static int igncnt=0;
 	  static uint32_t lasttick = 0;
 	  uint32_t t1 = __HAL_TIM_GET_COUNTER(&htim1);

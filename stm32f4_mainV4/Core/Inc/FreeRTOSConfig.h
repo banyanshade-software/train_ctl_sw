@@ -76,6 +76,7 @@
 #define configIDLE_SHOULD_YIELD                  0
 #define configQUEUE_REGISTRY_SIZE                8
 #define configCHECK_FOR_STACK_OVERFLOW           2
+#define configUSE_APPLICATION_TASK_TAG           1
 #define configENABLE_BACKWARD_COMPATIBILITY      0
 #define configUSE_PORT_OPTIMISED_TASK_SELECTION  1
 #define configRECORD_STACK_HIGH_ADDRESS          1
@@ -150,6 +151,10 @@ standard names. */
 
 /* USER CODE BEGIN Defines */
 /* Section where parameter definitions can be added (for instance, to override default ones in FreeRTOS.h) */
+
+
+ #include "stm32/monitoring.h"
+
 /* USER CODE END Defines */
 
 #endif /* FREERTOS_CONFIG_H */

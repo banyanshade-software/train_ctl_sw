@@ -10,10 +10,17 @@
 
 #include "monitoring_def.h"
 
-#define MONITOR_CH 1
 
+//#define ENABLE_TRACES
+
+#ifdef ENABLE_TRACES
+#define MONITOR_CH 1
+#define TRACE_MAW_WAIT 50
+
+// pxTaskTag
 
 extern void itmTraceSend(int ch, uint8_t type,  uint8_t data);
+void itmTraceTaskCreate(int tcbnnum, int tasknum, char *taskname);
 
 #define traceTASK_SWITCHED_IN()      		do { itmTraceSend(MONITOR_CH, MONITOR_SW_IN, pxCurrentTCB->uxTCBNumber); } while(0)
 #define traceTASK_SWITCHED_OUT()     		do { itmTraceSend(MONITOR_CH, MONITOR_SW_OUT, pxCurrentTCB->uxTCBNumber); } while(0)
@@ -29,5 +36,18 @@ extern void itmTraceSend(int ch, uint8_t type,  uint8_t data);
 #define traceTASK_NOTIFY()     				do { itmTraceSend(MONITOR_CH, MONITOR_NOTIF, pxCurrentTCB->uxTCBNumber); } while(0)
 #define traceTASK_NOTIFY_FROM_ISR()     	do { itmTraceSend(MONITOR_CH, MONITOR_NOTIF_ISR, pxTCB->uxTCBNumber); } while(0)
 
+#define traceUserTIMER(_numtim)				do { itmTraceSend(MONITOR_CH, MONITOR_EVT_TIM, _numtim); } while(0)
+#define traceUserDMA(_info)				    do { itmTraceSend(MONITOR_CH, MONITOR_EVT_DMA, _info); } while(0)
+
+
+//#define traceTASK_CREATE(_tcb)				do { itmTraceTaskCreate((_tcb) ? (_tcb)->uxTCBNumber : -1, (_tcb) ? (_tcb)->uxTaskNumber : -1, (_tcb) ? (_tcb)->pcTaskName: ""); } while(0)
+
+#else
+
+#define traceUserTIMER(_numtim)				do {  } while(0)
+#define traceUserDMA(_info)				    do {  } while(0)
+
+
+#endif // ENABLE_TRACES
 
 #endif /* STM32_MONITORING_H_ */

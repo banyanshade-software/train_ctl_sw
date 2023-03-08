@@ -23,4 +23,8 @@
 #define MONITOR_NOTIF_ISR	21
 
 
+// to be added by user
+#define MONITOR_EVT_TIM		64
+#define MONITOR_EVT_DMA		65
+
 #endif /* STM32_MONITORING_DEF_H_ */

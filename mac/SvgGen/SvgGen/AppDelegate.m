@@ -407,4 +407,8 @@ int occupency_turnout_reserve(uint8_t turnout, int8_t numtrain)
 {
     return 0;
 }
+enum topo_turnout_state topology_get_turnout(xtrnaddr_t turnout)
+{
+    return 0;
+}
 @end

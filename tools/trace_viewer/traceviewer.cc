@@ -7,6 +7,8 @@
 
 #include "tracetool.h"
 #include "timeline.h"
+#include "globalcpu.h"
+#include "TaskLatency.h"
 
 /*
 "   32";"ITM Port 1";"515";"107404534 ?";"?";"No timestamp received for packet, cycles value guessed. "
@@ -59,6 +61,11 @@ int main(int argc, char **argv)
     double lastts = 0.0;
 
     TraceTool *tools = new GlobalCpu(stdout, NULL);
+    tools = new TaskLatency(stdout, tools, 1);
+    tools = new TaskLatency(stdout, tools, 2);
+    tools = new TaskLatency(stdout, tools, 3);
+    tools = new TaskLatency(stdout, tools, 4);
+    tools = new TaskLatency(stdout, tools, 5);
     tools = new TimeLine(stdout, tools);
 
     while (fgets(line, 1024, stdin)) {

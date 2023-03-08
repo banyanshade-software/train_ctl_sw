@@ -31,6 +31,10 @@ void GlobalCpu::processEvent(trace_event_t *evt)
 {
 	lastcycle = evt->cycle;
 	if (evt->event == MONITOR_SW_IN) {
+		if (curtask>=0) {
+			fprintf(out, "missing SW_OUT %d -> %d\n", curtask, evt->task);
+			curtask=-1;
+		}
 		assert(curtask<0);
 		if (-2==curtask) firstcycle = evt->cycle;
 		curtask = evt->task;

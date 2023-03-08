@@ -51,7 +51,17 @@ private:
 };
 
 
-
+class StatVal {
+public:
+	StatVal();
+	void addValue(unsigned long long v);
+	void printStats(FILE *out);
+protected:
+	unsigned int nval;
+	unsigned long long min;
+	unsigned long long max;
+	unsigned long long total;
+};
 
 
 #endif /* TRACETOOL_H_ */

@@ -37,7 +37,7 @@ void TimeLine::processEvent(trace_event_t *evt)
     case MONITOR_TICK:      evts = "TICK"; tick = 1; break;
     case MONITOR_READY:     evts = "READY      "; taskview[2*task]='R'; break;
     case MONITOR_NOTIF_WB:  evts = "NOTIF W BLK"; taskview[2*task]='W'; break;
-    case MONITOR_NOTIF_W:   evts = "SCHED W    "; taskview[2*task]='W'; break;
+    case MONITOR_NOTIF_W:   evts = "NOTIF W    "; taskview[2*task]='W'; break;
     case MONITOR_DELAY_U:   evts = "DELAY UNTIL"; taskview[2*task]='D'; break;
     case MONITOR_DELAY:     evts = "DELAY      "; taskview[2*task]='D'; break;
     case MONITOR_NOTIF:     evts = "NOTIF snd  "; break;

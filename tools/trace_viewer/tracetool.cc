@@ -33,7 +33,8 @@ void TraceTool::printReport(void)
 {
 	fprintf(out, "\n\n=============== reports ================\n");
 	finalReport();
-	if (next) next->finalReport();
+	printf("next %p\n", next);
+	if (next) next->printReport();
 }
 
 // ------------
@@ -52,4 +53,31 @@ bool TraceToolTask::filterEvent(trace_event_t *evt)
 // ------------------------------------------------------------------------------------------------
 
 
-// ------------
+
+StatVal::StatVal()
+{
+	nval = 0;
+	total = 0;
+	min = 0;
+	max = 0;
+}
+
+void StatVal::addValue(unsigned long long v)
+{
+	if (!nval) {
+		min = max = total = v;
+	} else {
+		total += v;
+		if (v<min) min = v;
+		if (v>max) max = v;
+	}
+	nval++;
+}
+
+void StatVal::printStats(FILE *out)
+{
+	fprintf(out, "\t%u values\n", nval);
+	fprintf(out, "\tmin   : %llu\n", min);
+	fprintf(out, "\tmax   : %llu\n", max);
+	fprintf(out, "\tavg   : %llu\n", total/nval);
+}

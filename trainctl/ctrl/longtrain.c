@@ -60,9 +60,11 @@ static inline int ctrl3_get_next_sblks__(_UNUSED_ int tidx, train_ctrl_t *tvars,
     lsblk_num_t cblk = tvars->c1_sblk;
     // curposmm
     int l0mm = ctrl3_getcurpossmm(tvars, tconf, left) - tvars->beginposmm;
+    int first = 1;
     for (;;) {
         int lmm = 10*get_lsblk_len_cm(cblk, NULL);
-        if (l0mm) {
+        if (first /*l0mm*/) {
+            first=0;
             if (left) {
                 lmm = l0mm;
             } else {
@@ -104,6 +106,13 @@ static lsblk_num_t _last(struct forwdsblk *f, lsblk_num_t cur)
 
 int ctrl3_get_next_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *tconf)
 {
+    /*if ((1)) {
+        // XXX remove, for debug
+        extern int __from_check_dir;
+        if (!__from_check_dir) {
+            printf("ho not from check_dir");
+        }
+    }*/
     lsblk_num_t lastright = _last(&tvars->rightcars, tvars->c1_sblk);
     lsblk_num_t lastleft  = _last(&tvars->leftcars, tvars->c1_sblk);
     tvars->freelsblk.n = -1;
@@ -116,19 +125,39 @@ int ctrl3_get_next_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *tco
     tvars->leftcars.numlsblk = ctrl3_get_next_sblks_(tidx, tvars, tconf, 1, tvars->leftcars.r, MAX_LSBLK_CARS, &tvars->leftcars.rlen_mm);
     
     if (tvars->_sdir>0) {
-        if (lastnleft >= tvars->leftcars.numlsblk+2) {
-            printf("problem here");
-        }
-        lsblk_num_t l = _last(&tvars->leftcars, tvars->c1_sblk);
-        if (l.n != lastleft.n) {
-            tvars->freelsblk = lastleft;
+        if (lastnleft>0) {
+            if (lastnleft >= tvars->leftcars.numlsblk+2) {
+                printf("problem here");
+                abort();
+            }
+            lsblk_num_t l = _last(&tvars->leftcars, tvars->c1_sblk);
+            if (l.n != lastleft.n) {
+                if (lastleft.n == tvars->c1_sblk.n) abort();
+                tvars->freelsblk = lastleft;
+            }
         }
     } else if (tvars->_sdir <0) {
-        lsblk_num_t l = _last(&tvars->rightcars, tvars->c1_sblk);
-        if (l.n != lastright.n) {
-            tvars->freelsblk = lastright;
+        if (lastnright>0) {
+            lsblk_num_t l = _last(&tvars->rightcars, tvars->c1_sblk);
+            if (l.n != lastright.n) {
+                tvars->freelsblk = lastright;
+            }
         }
     }
+    // XXX handle freelsblk here ?
+    // no must be in ctrlLT.c
+    /* call map :
+     _train_check_dir()  <--- handled here
+        _updated_while_running()
+        ctrl3_occupency_updated()
+        ctrl3_upcmd_set_desired_speed()
+     ctrl3_update_front_sblks()
+        ctrl3_pose_triggered()
+     ctrl3_update_front_sblks_c1changed()
+        -[TestLongTrain testProgressLeft]
+        -[TestLongTrain testProgressRight]
+     turn_train_on()
+     */
     return 0; // XXX error handling here
 }
 
@@ -658,7 +687,7 @@ int ctrl3_update_front_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t 
     return ctrl3_get_next_sblks(tidx, tvars, tconf);
 }
 
-int ctrl3_update_front_sblks_c1changed(int tidx, train_ctrl_t *tvars,  const conf_train_t *tconf, int left)
+void ctrl3_update_c1changed(int tidx, train_ctrl_t *tvars,  const conf_train_t *tconf, int left)
 {
     struct forwdsblk *fsblk = left ? &tvars->leftcars : &tvars->rightcars;
     
@@ -674,5 +703,5 @@ int ctrl3_update_front_sblks_c1changed(int tidx, train_ctrl_t *tvars,  const con
     occupency_set_occupied(tvars->can1_xaddr, tidx, tvars->c1_sblk, tvars->_sdir);
     // this could be improved,
     // but for now let's be safe
-    return ctrl3_get_next_sblks(tidx, tvars, tconf);
+    //return ctrl3_get_next_sblks(tidx, tvars, tconf);
 }

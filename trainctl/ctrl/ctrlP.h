@@ -234,6 +234,6 @@ int ctrl3_update_front_sblks(int tidx, train_oldctrl_t *tvars,  const conf_train
 /// @param tvars train tvars structure
 /// @param tconf triain tconf config pointer
 /// @param left 1 if train is going left, 0 if it is going right
-int ctrl3_update_front_sblks_c1changed(int tidx, train_oldctrl_t *tvars,  const conf_train_t *tconf, int left);
+int ctrl3_update_c1changed(int tidx, train_oldctrl_t *tvars,  const conf_train_t *tconf, int left);
 
 #endif /* ctrlP_h */

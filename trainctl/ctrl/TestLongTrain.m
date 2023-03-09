@@ -264,7 +264,10 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     tvars.c1_sblk.n = 1;
     tvars._curposmm = 0;
     tvars.beginposmm = 0;
-    rc = ctrl3_update_front_sblks_c1changed(0, &tvars, tconf, 0);
+    ctrl3_update_c1changed(0, &tvars, tconf, 0);
+    rc = ctrl3_get_next_sblks(0, &tvars, tconf);
+    
+    ctrl3_get_next_sblks(0, &tvars, tconf);
     XCTAssert(!rc);
     XCTAssert(tvars.rightcars.rlen_mm == 510); // 27
     
@@ -543,7 +546,12 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     tvars.c1_sblk.n = 2;
     tvars._curposmm = 900; // s2 len = 90
     tvars.beginposmm = 0;
-    rc = ctrl3_update_front_sblks_c1changed(0, &tvars, tconf, 1);
+    
+    //rc = ctrl3_update_c1changed(0, &tvars, tconf, 1);
+    ctrl3_update_c1changed(0, &tvars, tconf, 1);
+    rc = ctrl3_get_next_sblks(0, &tvars, tconf);
+    
+    ctrl3_get_next_sblks(0, &tvars, tconf);
     XCTAssert(!rc);
     XCTAssert(tvars.leftcars.rlen_mm == 700); // 27
     

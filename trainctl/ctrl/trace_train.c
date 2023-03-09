@@ -51,10 +51,16 @@ typedef struct {
     int32_t adjustedpose;
 } train_trace_trig_record_t;
 
+typedef struct {
+    int8_t sblk;
+    int8_t canton;
+} train_trace_free_record_t;
+
 typedef enum {
     trace_kind_tick = 1,
     trace_kind_trig,
     trace_kind_trig_set,
+    trace_kind_free,
 } trace_rec_kind_t;
 
 typedef struct {
@@ -63,6 +69,7 @@ typedef struct {
     union {
         train_trace_tick_record_t tickrec;
         train_trace_trig_record_t trigrec;
+        train_trace_free_record_t freerec;
     };
 } train_trace_record_t;
 
@@ -154,6 +161,15 @@ void _trace_train_trig_set(uint32_t tick, int tidx, train_ctrl_t *tvars, pose_tr
     rec->trigrec.adjustedpose = pos;
 }
 
+void _trace_train_free(uint32_t tick, int tidx, int sblk, int canton)
+{
+    train_trace_record_t *rec = get_newrec(tidx);
+    if (!rec) return;
+    rec->tick = tick;
+    rec->kind = trace_kind_free;
+    rec->freerec.sblk = sblk;
+    rec->freerec.canton = canton;
+}
 
 static const char *state_name(train_state_t st)
 {
@@ -224,6 +240,10 @@ void trace_train_dump(int tidx)
                        trig_name(rec->trigrec.tag),
                        rec->trigrec.adjustedpose);
                 break;
+            case trace_kind_free:
+                printf("%2d %6.6d free sblk=%d canton=%d\n",
+                       idx, rec->tick,
+                       rec->freerec.sblk, rec->freerec.canton);
             default:
                 break;
         }

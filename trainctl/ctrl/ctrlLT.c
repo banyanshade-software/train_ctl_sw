@@ -331,14 +331,14 @@ void ctrl3_pose_triggered(int tidx, train_ctrl_t *tvars, pose_trig_tag_t trigtag
                     }
                     tvars->c1_sblk = ns;
                     tvars->beginposmm = tvars->_curposmm; // TODO adjust for trig delay
-                    ctrl3_update_front_sblks_c1changed(tidx, tvars, conf_train_get(tidx), tvars->_sdir<0 ? 1 : 0);
+                    ctrl3_update_c1changed(tidx, tvars, conf_train_get(tidx), tvars->_sdir<0 ? 1 : 0);
                     _updated_while_running(tidx, tvars);
                     return;
                     break;
                 case tag_chkocc:
                     // TODO
                     // update position, update trigs
-                    ctrl3_update_front_sblks(tidx, tvars, conf_train_get(tidx), tvars->_sdir<0 ? 1 : 0);
+                    //ctrl3_update_front_sblks(tidx, tvars, conf_train_get(tidx), tvars->_sdir<0 ? 1 : 0);
                     _updated_while_running(tidx, tvars);
                     return;
                     break;
@@ -497,7 +497,7 @@ void ctrl3_evt_entered_c2(int tidx, train_ctrl_t *tvars, uint8_t from_bemf)
     }
     tvars->_curposmm = 0;
 
-    ctrl3_update_front_sblks_c1changed(tidx, tvars, conf_train_get(tidx), tvars->_sdir<0 ? 1 : 0);
+    ctrl3_update_c1changed(tidx, tvars, conf_train_get(tidx), tvars->_sdir<0 ? 1 : 0);
     
     _updated_while_running(tidx,tvars);
     
@@ -579,20 +579,43 @@ void ctrl3_evt_leaved_c1(int tidx, train_ctrl_t *tvars)
 }
 // -----------------------------------------------------------------
 
+int __from_check_dir = 0; // XXX remove this is for debug
+
 static int _train_check_dir(int tidx, train_ctrl_t *tvars, int sdir, rettrigs_t *rett)
 {
     if (!sdir) {
         FatalError("FSMd", "FSM no dir", Error_FSM_NoDir);
         return 0;
     }
-    const conf_train_t *conf = conf_train_get(tidx);
-    ctrl3_get_next_sblks(tidx, tvars, conf);
-    
     if (tvars->freelsblk.n != -1) {
         xblkaddr_t fc = canton_for_lsblk(tvars->freelsblk);
         if (fc.v != tvars->can1_xaddr.v) {
             set_block_addr_occupency(fc, BLK_OCC_FREE, tidx, snone);
         }
+        tvars->freelsblk.n = -1;
+    }
+    
+    
+    const conf_train_t *conf = conf_train_get(tidx);
+    __from_check_dir = 1;
+    ctrl3_get_next_sblks(tidx, tvars, conf);
+    __from_check_dir = 0;
+    
+    if (tvars->freelsblk.n != -1) {
+        if ((1)) {
+            // XXX remove me. For debug, test on canton is enough
+            if (tvars->freelsblk.n == tvars->c1_sblk.n) {
+                printf("ho bizarre ca");
+            }
+        }
+        xblkaddr_t fc = canton_for_lsblk(tvars->freelsblk);
+        if (fc.v != tvars->can1_xaddr.v) {
+            trace_train_free(ctrl_tasklet.last_tick, tidx, tvars->freelsblk.n, fc.v);
+            set_block_addr_occupency(fc, BLK_OCC_FREE, tidx, snone);
+        } else {
+            trace_train_free(ctrl_tasklet.last_tick, tidx, tvars->freelsblk.n, -1);
+        }
+        tvars->freelsblk.n = -1;
     }
     
     int rc2 = ctrl3_check_front_sblks(tidx, tvars, conf_train_get(tidx), (sdir<0) ? 1 : 0, rett);

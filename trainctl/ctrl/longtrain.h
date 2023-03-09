@@ -60,12 +60,12 @@ int ctrl3_update_front_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t 
 
 
 
-/// called when c1sblk changed, it will update tvars->leftcars  and tvars->rightcars
+/// called when c1sblk changed, it will NOT update tvars->leftcars  and tvars->rightcars
 /// @param tidx train number
 /// @param tvars train tvars structure
 /// @param tconf triain tconf config pointer
 /// @param left 1 if train is going left, 0 if it is going right
-int ctrl3_update_front_sblks_c1changed(int tidx, train_ctrl_t *tvars,  const conf_train_t *tconf, int left);
+void ctrl3_update_c1changed(int tidx, train_ctrl_t *tvars,  const conf_train_t *tconf, int left);
 
 int32_t ctrl3_getcurpossmm(train_ctrl_t *tvars, const conf_train_t *tconf, int left);
 

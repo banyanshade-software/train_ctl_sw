@@ -89,9 +89,15 @@ int ctrl3_get_next_sblks_(_UNUSED_ int tidx, train_ctrl_t *tvars,  const conf_tr
 {
     int rc = ctrl3_get_next_sblks__(tidx, tvars, tconf, left, resp, nsblk, premainlenmm);
     if (!rc &&(resp[0].n != -1)) {
+        // should not happen
+        FatalError("SBlk", "bad sblk__", Error_NextSblk);
         resp[0].n = -1;
     }
     if (rc && (resp[0].n == -1)) {
+        //rc = ctrl3_get_next_sblks__(tidx, tvars, tconf, left, resp, nsblk, premainlenmm);// for debug
+        // will happen if train is positionned at begin of track, and
+        // left side is too long (hence curposmm is impossible if left len is correct)
+        // it happens specifically at init
         rc = 0;
     }
     return rc;

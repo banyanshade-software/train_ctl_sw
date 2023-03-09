@@ -80,6 +80,7 @@ enum fatal_error_code {
     Error_FSM_Sanity8,
     Error_FSM_Sanity9,
     Error_Lsblk_Invalid,
+    Error_NextSblk,
 
 };
 

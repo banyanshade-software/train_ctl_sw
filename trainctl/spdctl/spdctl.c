@@ -238,6 +238,11 @@ static void spdctl_handle_msg(msg_64_t *m)
 		xblkaddr_t cfrom = FROM_CANTON(*m);
 		switch (m->cmd) {
 		case CMD_BEMF_NOTIF:
+                /*if ((1)) { // debug
+                    if ((cfrom.v == MA0_CANTON(3)) && (m->v1 != 0))  {
+                        printf("break here");
+                    }
+                }*/
                 for (k=0; k<4; k++) {
                     if (tvars->Cx[k].v == cfrom.v) break;
                 }
@@ -280,7 +285,11 @@ static void spdctl_handle_msg(msg_64_t *m)
                         } else {
                             tvars->c2hicnt++;
                         }
-                    }
+                    } 
+                } else if (k==3) {
+                    itm_debug2(DBG_PID, "Cold emf", m->v1, m->from);
+                } else {
+                    itm_debug2(DBG_ERR|DBG_PID, "Unk bemf", m->v1, m->from);
                 }
                 break;
 #if 0
@@ -352,6 +361,7 @@ static void spdctl_handle_msg(msg_64_t *m)
                 break;
         case CMD_SET_C4:
                 itm_debug3(DBG_SPDCTL|DBG_CTRL, "set_c4", tidx, m->vbytes[0], m->vbytes[1]);
+                tvars->c2bemf = 0;
                 tvars->dirbits = m->subc;
                 for (int i=0; i<4; i++) {
                     uint8_t v = tvars->Cx[i].v;

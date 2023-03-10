@@ -462,7 +462,7 @@ int _add_trig_loco(int left, rettrigs_t *ret, int rlenmm, int c1lenmm, int curmm
 }
 int ctrl3_check_front_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *tconf, int left,  rettrigs_t *ret)
 {
-    memset(ret, 0, sizeof(rettrigs_t));
+    //memset(ret, 0, sizeof(rettrigs_t));
     ret->isoet = 0;
     ret->isocc = 0;
     struct forwdsblk *fsblk = left ? &tvars->leftcars : &tvars->rightcars;
@@ -709,5 +709,5 @@ void ctrl3_update_c1changed(int tidx, train_ctrl_t *tvars,  const conf_train_t *
     occupency_set_occupied(tvars->can1_xaddr, tidx, tvars->c1_sblk, tvars->_sdir);
     // this could be improved,
     // but for now let's be safe
-    //return ctrl3_get_next_sblks(tidx, tvars, tconf);
+    //return ctrl3_get_next_sblks(tidx, tvars, tconf); moved out
 }

@@ -43,6 +43,9 @@ typedef struct {
     train_state_t state;
     int16_t         _desired_signed_speed;
     uint16_t        _target_unisgned_speed;
+    uint8_t oldc1;
+    uint8_t c1;
+    uint8_t c2;
 } train_trace_tick_record_t;
 
 typedef struct {
@@ -56,11 +59,17 @@ typedef struct {
     int8_t canton;
 } train_trace_free_record_t;
 
+typedef struct {
+    int8_t sblk;
+    int8_t canton;
+} train_trace_simu_record_t;
+
 typedef enum {
     trace_kind_tick = 1,
     trace_kind_trig,
     trace_kind_trig_set,
     trace_kind_free,
+    trace_kind_simu,
 } trace_rec_kind_t;
 
 typedef struct {
@@ -70,6 +79,7 @@ typedef struct {
         train_trace_tick_record_t tickrec;
         train_trace_trig_record_t trigrec;
         train_trace_free_record_t freerec;
+        train_trace_simu_record_t simurec;
     };
 } train_trace_record_t;
 
@@ -128,7 +138,10 @@ void _trace_train_postick(uint32_t tick, int tidx, train_ctrl_t *tvars)
     rec->tickrec.state = tvars->_state;
     rec->tickrec._desired_signed_speed = tvars->_desired_signed_speed;
     rec->tickrec._target_unisgned_speed = tvars->_target_unisgned_speed;
-    
+    rec->tickrec.c1 = tvars->can1_xaddr.v;
+    rec->tickrec.c2 = tvars->can2_xaddr.v;
+    rec->tickrec.oldc1 = tvars->canOld_xaddr.v;
+
     if (lrec && (lrec->kind == trace_kind_tick)) {
         if (!memcmp(&lrec->tickrec, &rec->tickrec, sizeof(train_trace_tick_record_t))) {
             cancel_rec(tidx);
@@ -171,6 +184,17 @@ void _trace_train_free(uint32_t tick, int tidx, int sblk, int canton)
     rec->freerec.canton = canton;
 }
 
+void _trace_train_simu(uint32_t tick, int tidx, int sblk, int canton)
+{
+    train_trace_record_t *rec = get_newrec(tidx);
+    if (!rec) return;
+    rec->tick = tick;
+    rec->kind = trace_kind_simu;
+    rec->simurec.sblk = sblk;
+    rec->simurec.canton = canton;
+}
+
+
 static const char *state_name(train_state_t st)
 {
     switch (st) {
@@ -200,6 +224,7 @@ static const char *trig_name(pose_trig_tag_t tag)
         case tag_brake:         return "brake";
         case tag_free_back:     return "free_back";
         case tag_auto_u1:       return "u1";
+        case tag_leave_canton:  return "leave";
 
         default: return "???";
     }
@@ -217,7 +242,7 @@ void trace_train_dump(int tidx)
         f = 0;
         switch (rec->kind) {
             case trace_kind_tick:
-                printf("%2d %6.6d      state=%-9s dir=%d sblk=%d spd=%3d dspd=%3d pos=%d from %d\n",
+                printf("%2d %6.6d      state=%-9s dir=%d sblk=%d spd=%3d dspd=%3d pos=%d from %d -- pow %d %d %d\n",
                        idx, rec->tick,
                        state_name(rec->tickrec.state),
                        rec->tickrec.sdir,
@@ -225,7 +250,10 @@ void trace_train_dump(int tidx)
                        rec->tickrec._target_unisgned_speed,
                        rec->tickrec._desired_signed_speed,
                        rec->tickrec.curposmm,
-                       rec->tickrec.beginposmm);
+                       rec->tickrec.beginposmm,
+                       rec->tickrec.oldc1,
+                       rec->tickrec.c1,
+                       rec->tickrec.c2);
                 break;
             case trace_kind_trig:
                 printf("%2d %6.6d TRIG   %-9s pos=%d->%d\n",
@@ -244,6 +272,12 @@ void trace_train_dump(int tidx)
                 printf("%2d %6.6d free sblk=%d canton=%d\n",
                        idx, rec->tick,
                        rec->freerec.sblk, rec->freerec.canton);
+                break;
+            case trace_kind_simu:
+                printf("%2d %6.6d ======== simu: sblk=%d canton=%d\n",
+                       idx, rec->tick,
+                       rec->simurec.sblk, rec->simurec.canton);
+                break;
             default:
                 break;
         }

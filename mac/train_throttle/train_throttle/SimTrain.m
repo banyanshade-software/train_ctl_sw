@@ -10,6 +10,7 @@
 #import "railconfig.h"
 #include "topology.h"
 #include "conf_train.h"
+#include "trace_train.h"
 
 @interface SimTrain ()
 //@property (nonatomic,readwrite) double speed;
@@ -99,6 +100,7 @@
                     s1[tn] = ns;
                     position[tn] = 0;
                     xblkaddr_t nb = canton_for_lsblk(ns);
+                    _trace_train_simu(SimuTick, tn, ns.n, nb.v);
                     if (nb.v != cn.v) {
                         cold[tn] = cn.v;
                         cn = nb;

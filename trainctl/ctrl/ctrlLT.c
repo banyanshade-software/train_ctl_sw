@@ -51,7 +51,8 @@ static void _set_speed(int tidx, train_ctrl_t *tvars, int signed_speed, int appl
 static void _set_state(int tidx, train_ctrl_t *tvars, train_state_t newstate);
 static void _apply_speed(int tidx, train_ctrl_t *tvars);
 static void _check_c2(int tidx, train_ctrl_t *tvars, rettrigs_t *rett);
-static void _updated_while_running(int tidx, train_ctrl_t *tvars, int c1changed);
+static void _updated_while_running(int tidx, train_ctrl_t *tvars);
+static void _evt_leaved_c1old(int tidx, train_ctrl_t *tvars);
 
 // -----------------------------------------------------------------
 
@@ -332,14 +333,14 @@ void ctrl3_pose_triggered(int tidx, train_ctrl_t *tvars, pose_trig_tag_t trigtag
                     tvars->c1_sblk = ns;
                     tvars->beginposmm = tvars->_curposmm; // TODO adjust for trig delay
                     ctrl3_update_c1changed(tidx, tvars, conf_train_get(tidx), tvars->_sdir<0 ? 1 : 0);
-                    _updated_while_running(tidx, tvars, 0);
+                    _updated_while_running(tidx, tvars);
                     return;
                     break;
                 case tag_chkocc:
                     // TODO
                     // update position, update trigs
                     //ctrl3_update_front_sblks(tidx, tvars, conf_train_get(tidx), tvars->_sdir<0 ? 1 : 0);
-                    _updated_while_running(tidx, tvars, 0);
+                    _updated_while_running(tidx, tvars);
                     return;
                     break;
                 case tag_stop_blk_wait: {
@@ -366,7 +367,7 @@ void ctrl3_pose_triggered(int tidx, train_ctrl_t *tvars, pose_trig_tag_t trigtag
                     }
                     // start brake
                     // tvars->brake = 1; done by _train_check_dir
-                    _updated_while_running(tidx, tvars, 0);
+                    _updated_while_running(tidx, tvars);
                     return;
                     break;
                 case tag_need_c2:
@@ -381,9 +382,16 @@ void ctrl3_pose_triggered(int tidx, train_ctrl_t *tvars, pose_trig_tag_t trigtag
                 
                 case tag_free_back:
                     // free back if different canton
-                    _updated_while_running(tidx, tvars, 0);
+                    _updated_while_running(tidx, tvars);
                     return;
                     break;
+                    
+                case tag_leave_canton:
+                    _evt_leaved_c1old(tidx, tvars);
+                    _updated_while_running(tidx, tvars);
+                    return;
+                    break;
+                    
                 default:
                     itm_debug2(DBG_ERR|DBG_CTRL, "unh trg", tidx, tvars->c1_sblk.n);
                     break;
@@ -485,6 +493,9 @@ void ctrl3_evt_entered_c2(int tidx, train_ctrl_t *tvars, uint8_t from_bemf)
     tvars->can1_xaddr = tvars->can2_xaddr;
     tvars->can2_xaddr.v = 0xFF;
     
+    if (tvars->pow_c2_future.v != 0xFF) {
+        _set_and_power_c2(tidx, tvars); //
+    }
     if (1 == tvars->can1_xaddr.v) { // XXX Hardcoded for now
         tvars->measure_pose_percm = 1;
     }
@@ -498,7 +509,7 @@ void ctrl3_evt_entered_c2(int tidx, train_ctrl_t *tvars, uint8_t from_bemf)
     tvars->_curposmm = 0;
 
     ctrl3_update_c1changed(tidx, tvars, conf_train_get(tidx), tvars->_sdir<0 ? 1 : 0);
-    _updated_while_running(tidx,tvars, 1);
+    _updated_while_running(tidx,tvars);
     
     if (from_bemf && ignore_ina_pres()) {
         //ctrl_set_timer(tidx, tvars, TLEAVE_C1, TLEAVE_C1_VALUE);
@@ -508,10 +519,10 @@ void ctrl3_evt_entered_c2(int tidx, train_ctrl_t *tvars, uint8_t from_bemf)
 }
 
 #define LEAVE_MARGIN 70     // in mm
-static void _updated_while_running(int tidx, train_ctrl_t *tvars, int c1changed)
+static void _updated_while_running(int tidx, train_ctrl_t *tvars)
 {
     rettrigs_t rett = {0};
-    if (c1changed) {
+    if (tvars->canOld_xaddr.v != 0xFF) {
         int pos=0;
         int l = 10*get_lsblk_len_cm(tvars->c1_sblk, NULL);
         if (tvars->_sdir>=0) {
@@ -558,8 +569,31 @@ static void _updated_while_running(int tidx, train_ctrl_t *tvars, int c1changed)
     return;
 }
 
+static void _evt_leaved_c1old(int tidx, train_ctrl_t *tvars)
+{
+    itm_debug3(DBG_CTRL|DBG_POSE, "evt_left_c2", tidx, tvars->_state, tvars->can1_xaddr.v);
+    if (tvars->_state != train_running_c1) {
+        itm_debug2(DBG_CTRL|DBG_ERR, "leav_c1/bs", tidx, tvars->_state);
+        return;
+    }
+    if (!tvars->c1c2) {
+        itm_debug2(DBG_CTRL|DBG_ERR, "leav_c1/nc1c2", tidx, tvars->_state);
+        return;
+    }
+    
+    tvars->c1c2 = 0;
+    tvars->canOld_xaddr.v = 0xFF;
+    tvars->c1c2dir_changed = 1;
+    
+    if (tvars->pow_c2_future.v != 0xFF) {
+        _set_and_power_c2(tidx, tvars);
+        //printf("break here\n");
+    }
+}
+
 void ctrl3_evt_leaved_c1(int tidx, train_ctrl_t *tvars)
 {
+    // TODO : KO this is not leave c1, should only update pos
     itm_debug3(DBG_CTRL|DBG_POSE, "evt_left_c1", tidx, tvars->_state, tvars->can1_xaddr.v);
     if (tvars->_state != train_running_c1) {
         itm_debug2(DBG_CTRL|DBG_ERR, "leav_c1/bs", tidx, tvars->_state);

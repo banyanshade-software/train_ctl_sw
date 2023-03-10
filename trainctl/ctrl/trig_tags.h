@@ -9,7 +9,10 @@
 #ifndef trig_tags_h
 #define trig_tags_h
 
-
+/*
+ trigger tag identify cause of trigger, and possible actions
+ values must feet on 7 bits, leaving 127 possible values
+ */
 typedef enum pose_trig_tag {
     tag_invalid = 0,    // reserved. 0 means "no trigger"
     
@@ -25,6 +28,7 @@ typedef enum pose_trig_tag {
     tag_brake,      // should start braking
     
     tag_free_back,  // cars on the rear leaving a block
+    tag_leave_canton,
     
     tag_auto_u1,
 } pose_trig_tag_t;

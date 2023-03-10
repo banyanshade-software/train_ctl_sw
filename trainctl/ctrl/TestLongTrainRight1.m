@@ -77,7 +77,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     // (A)
     tconf->trainlen_right_cm = 20;
     tvars._curposmm = 300;
-    lsblk_num_t r[4] = {0};
+    lsblk_num_t r[4] = {-1,-1,-1,-1};
     int n = ctrl3_get_next_sblks_(0, &tvars, tconf, 0, r, 4, NULL);
     XCTAssert(n==0);
     
@@ -130,7 +130,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     // (A)
     tconf->trainlen_right_cm = 20;
     tvars._curposmm = 300;
-    lsblk_num_t r[4] = {0};
+    lsblk_num_t r[4] = {-1,-1,-1,-1};
     int n = ctrl3_get_next_sblks_(0, &tvars, tconf, 0, r, 4, &remain);
     XCTAssert(n==0);
     XCTAssert(remain==100);
@@ -190,21 +190,21 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     tconf->trainlen_right_cm = 20;
     tvars.beginposmm = 0;
     tvars._curposmm = 300;
-    lsblk_num_t r[4] = {0};
+    lsblk_num_t r[4] = {-1,-1,-1,-1};
     int n = ctrl3_get_next_sblks_(0, &tvars, tconf, 0, r, 4, &remain);
     XCTAssert(n==0);
     XCTAssert(remain==100);
     
     tvars.beginposmm = 0+1112;
     tvars._curposmm = 300+1112;
-    lsblk_num_t r1[4] = {0};
+    lsblk_num_t r1[4] = {-1,-1,-1,-1};
     n = ctrl3_get_next_sblks_(0, &tvars, tconf, 0, r1, 4, &remain);
     XCTAssert(n==0);
     XCTAssert(remain==100);
 
     tvars.beginposmm = 0-923;
     tvars._curposmm = 300-923;
-    lsblk_num_t r2[4] = {0};
+    lsblk_num_t r2[4] = {-1,-1,-1,-1};
     n = ctrl3_get_next_sblks_(0, &tvars, tconf, 0, r2, 4, &remain);
     XCTAssert(n==0);
     XCTAssert(remain==100);
@@ -216,7 +216,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     int16_t remain = -1;
     int n;
     int rc;
-    lsblk_num_t r[4] = {0};
+    lsblk_num_t r[4] = {-1,-1,-1,-1};
 
     memset(r, 0, sizeof(r));
     tvars.beginposmm = 0+0;
@@ -261,7 +261,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     tconf->trainlen_right_cm = 52;// not used here
     tvars._curposmm = 50; // 5cm
     int16_t remain = -1;
-    lsblk_num_t r[4] = {0};
+    lsblk_num_t r[4] = {-1,-1,-1,-1};
     
     // (A)
     int n = ctrl3_get_next_sblks_(0, &tvars, tconf, 1, r, 4, &remain);
@@ -388,6 +388,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     tvars._curposmm = 220 + bmm;
     ctrl3_get_next_sblks(0, &tvars, tconf);
     XCTAssert(tvars.rightcars.rlen_mm == 400);
+    memset(&rettrigs, 0, sizeof(rettrigs_t));
     rc = ctrl3_check_front_sblks(0, &tvars, tconf, 0, &rettrigs);
     XCTAssert(rc==0);
     const rettrigs_t expt3 = {0, 0, 0, 0, 1, { {520+bmm, tag_reserve_c2},  {0,0}, {0, 0}}};
@@ -400,6 +401,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     tvars._curposmm = 0+beg;
     ctrl3_get_next_sblks(0, &tvars, tconf);
     XCTAssert(tvars.rightcars.rlen_mm == 20);
+    memset(&rettrigs, 0, sizeof(rettrigs_t));
     rc = ctrl3_check_front_sblks(0, &tvars, tconf, 0, &rettrigs);
     XCTAssert(rc==0);
     const rettrigs_t expt4 = {0, 0, 1, 0, 5, { {beg+20, tag_chkocc},  {beg+300,tag_stop_eot}, {beg+140, tag_brake}, {beg+400, tag_end_lsblk}, {beg+300, tag_need_c2}}};
@@ -409,6 +411,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     tvars._curposmm += 20;
     ctrl3_get_next_sblks(0, &tvars, tconf);
     XCTAssert(tvars.rightcars.rlen_mm == 100);
+    memset(&rettrigs, 0, sizeof(rettrigs_t));
     rc = ctrl3_check_front_sblks(0, &tvars, tconf, 0, &rettrigs);
     const rettrigs_t expt5 = {0, 0, 1, 0, 5, { {beg+100+20, tag_chkocc},  {beg+300,tag_stop_eot}, {beg+140, tag_brake}, {beg+400, tag_end_lsblk}, {beg+300, tag_need_c2}}};
     XCTAssert(!cmptrigs(&rettrigs, &expt5));
@@ -421,6 +424,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     tvars._curposmm = 0;
     ctrl3_get_next_sblks(0, &tvars, tconf);
     XCTAssert(tvars.rightcars.rlen_mm == 20);
+    memset(&rettrigs, 0, sizeof(rettrigs_t));
     rc = ctrl3_check_front_sblks(0, &tvars, tconf, 0, &rettrigs);
     XCTAssert(rc==0);
     const rettrigs_t expt4b = {0, 0, 1, 0, 5, { {20, tag_chkocc},    {300,tag_stop_eot}, {140, tag_brake}, {400, tag_end_lsblk}, {300, tag_need_c2}}};
@@ -677,7 +681,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     tconf->trainlen_left_cm = 19;
     tconf->trainlen_right_cm = 0;
     tvars._curposmm = 30;
-    lsblk_num_t r[4] = {0};
+    lsblk_num_t r[4] = {-1,-1,-1,-1};
     // (s0) - (s1)
     //         3cm     on s0, 19-3 = 16cm
     int n = ctrl3_get_next_sblks_(0, &tvars, tconf, 1, r, 4, NULL);

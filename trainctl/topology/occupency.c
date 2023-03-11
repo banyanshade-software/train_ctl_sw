@@ -33,7 +33,8 @@ typedef struct {
     lsblk_num_t lsblk;
 } canton_occ_t;
 
-static  canton_occ_t canton_occ[0x40] = {0};
+#define NUM_OCC_CANTON 0x40
+static  canton_occ_t canton_occ[NUM_OCC_CANTON] = {0};
 
 
 
@@ -43,7 +44,22 @@ void occupency_clear(void)
 {
     lastcheck = 0;
     memset(canton_occ, 0, sizeof(canton_occ));
+    for (int i=0; i<NUM_OCC_CANTON; i++) {
+        canton_occ[i].trnum = 0xFF;
+    }
     occupency_clear_turnouts();
+}
+
+void occupency_remove_train(int trnum)
+{
+    for (int i=0; i<NUM_OCC_CANTON; i++) {
+        if (canton_occ[i].trnum == trnum) {
+            canton_occ[i].trnum = 0xFF;
+            canton_occ[i].occ = BLK_OCC_FREE;
+            canton_occ[i].lsblk.n = -1;
+        }
+    }
+    occupency_turnout_release_for_train(trnum);
 }
 
 static void _block_freed(xblkaddr_t cnum, canton_occ_t *co)

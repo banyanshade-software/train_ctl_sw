@@ -17,7 +17,8 @@
 #include "../topology/topology.h"
 #include "../topology/topologyP.h"
 #include "../ctrl/ctrl.h"
-#include "../ctrl/ctrlP.h"
+//#include "../ctrl/ctrlP.h"
+#include "../ctrl/ctrlLT.h"
 #include "../ctrl/cautoP.h"
 #include "../leds/led.h"
 
@@ -112,7 +113,8 @@ static void planner_tick(_UNUSED_ uint32_t tick, _UNUSED_ uint32_t dt)
 	  for (int n = 0; n<NUM_PENDING; n++) {
 	    	if (0xFF == PlanPending[n].train) continue;
 	    	if (PlanPending[n].startTick && (tick >= PlanPending[n].startTick)) {
-	    		planner_start_pending(n, ctrl_get_autocode(PlanPending[n].train));
+                abort();
+	    		planner_start_pending(n, NULL /* ctrl_get_autocode(PlanPending[n].train)*/);
 	    		PlanPending[n].startTick = 0;
 	    }
 	}
@@ -242,17 +244,22 @@ static void planner_start_pending(int n, uint8_t Auto1ByteCode[])
             if ((p->right2 == b) || (p->right1 == b)) ndir = 1;
             if (ndir != dir) {
                 if (dir) {
+                    abort();
+                    /*
                     Auto1ByteCode[bytecodeIndex++] = _AR_TRG_LIM; //_AR_TRG_END;
                     Auto1ByteCode[bytecodeIndex++] = _AR_WTRG_U1;
                     Auto1ByteCode[bytecodeIndex++] = _AR_SPD(0);
                     Auto1ByteCode[bytecodeIndex++] = _AR_WSTOP;
                     Auto1ByteCode[bytecodeIndex++] = _AR_TIMER(1);
                     Auto1ByteCode[bytecodeIndex++] = _AR_WTIMER;
+                     */
                 }
-                Auto1ByteCode[bytecodeIndex++] = _AR_SPD(ndir*spd);
+                abort();
+                //Auto1ByteCode[bytecodeIndex++] = _AR_SPD(ndir*spd);
             }
             dir = ndir;
-            Auto1ByteCode[bytecodeIndex++] = b;
+            abort();
+            //Auto1ByteCode[bytecodeIndex++] = b;
         }
         /*
         if ((b==1) && (!led)) {
@@ -269,12 +276,15 @@ static void planner_start_pending(int n, uint8_t Auto1ByteCode[])
         if (b==target) {
             if (dir) {
                 //Auto1ByteCode[bytecodeIndex++] = b;
+                abort();
+                /*
                 Auto1ByteCode[bytecodeIndex++] = _AR_TRG_LIM;
                 Auto1ByteCode[bytecodeIndex++] = _AR_WTRG_U1;
                 Auto1ByteCode[bytecodeIndex++] = _AR_SPD(0);
+                 */
                 //Auto1ByteCode[bytecodeIndex++] = _AR_WSTOP;
             }
-            Auto1ByteCode[bytecodeIndex++] = _AR_END;
+            //Auto1ByteCode[bytecodeIndex++] = _AR_END;
             break;
         }
         int s=0xFFFFF;

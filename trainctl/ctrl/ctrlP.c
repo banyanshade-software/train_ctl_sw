@@ -6,6 +6,8 @@
 //  Copyright © 2021 Daniel BRAUN. All rights reserved.
 //
 
+#if 0 // obsolete
+
 #include <stdint.h>
 
 
@@ -1218,3 +1220,6 @@ int ctrl2_update_front_sblks_c1changed(int tidx, train_oldctrl_t *tvars,  const 
     return ctrl2_get_next_sblks(tidx, tvars, tconf);
 }
 #endif
+
+
+#endif // obsolete

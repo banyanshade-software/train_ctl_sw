@@ -9,6 +9,7 @@
 #ifndef cautoP_h
 #define cautoP_h
 
+#if 0 // to be refactor
 int cauto_update_turnouts(int tidx, lsblk_num_t cur, uint8_t left, uint8_t next);
 
 
@@ -79,4 +80,5 @@ void cauto_end_tick(int tidx, train_oldctrl_t *tvars);
 
 #define _ARX_CLR_EVENT 0x01
 
+#endif // to be refactor
 #endif /* cautoP_h */

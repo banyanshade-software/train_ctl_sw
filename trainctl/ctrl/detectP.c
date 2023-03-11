@@ -14,6 +14,8 @@
 #include "../topology/occupency.h"
 
 #include "ctrl.h"
+#if 0 // unmaintained
+
 #include "ctrlP.h"
 #include "detectP.h"
 #include "../utils/measval.h"
@@ -377,3 +379,22 @@ void detect2_process_msg(msg_64_t *m)
 0421487@q/6/3/255
  */
 
+#else  // unmaintained
+
+
+void detect2_init(void)
+{
+    
+}
+
+void detect2_process_tick(uint32_t tick)
+{
+    
+}
+void detect2_process_msg(msg_64_t *m)
+{
+    
+}
+
+
+#endif // unmaintained

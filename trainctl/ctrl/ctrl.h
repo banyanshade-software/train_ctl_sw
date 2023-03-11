@@ -14,6 +14,11 @@ extern tasklet_t ctrl_tasklet;
 //void ctrl_run_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt);
 
 
+#define ignore_bemf_presence 0
+#define ignore_ina_presence  0
+
+int ignore_ina_pres(void);
+
 
 
 

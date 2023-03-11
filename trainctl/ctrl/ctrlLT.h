@@ -145,6 +145,10 @@ void turn_train_off(int tidx, train_ctrl_t *tvars);
 
 void ctrl3_evt_entered_c2(int tidx, train_ctrl_t *tvars, uint8_t from_bemf);
 
+
+
+void ctrl3_set_mode(int tidx, train_ctrl_t *tvar, train_mode_t mode);
+
 extern int ignore_ina_pres(void);
 extern int ignore_bemf_pres(void);
 

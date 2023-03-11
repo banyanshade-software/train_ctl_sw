@@ -12,14 +12,15 @@
 #include "../topology/topology.h"
 #include "../topology/occupency.h"
 
-#include "ctrl.h"
-#include "ctrlP.h"
-#include "cautoP.h"
-
-
 #ifndef BOARD_HAS_CTRL
 #error BOARD_HAS_CTRL not defined, remove this file from build
 #endif
+
+#if 0 // to be completely refactor with LT
+
+#include "ctrl.h"
+#include "ctrlP.h"
+#include "cautoP.h"
 
 
 static void route_error(int tidx, train_oldctrl_t *tvars)
@@ -295,3 +296,6 @@ void cauto_end_tick(int tidx, train_oldctrl_t *tvars)
 	}
 	check_for_ctrl(tidx, tvars);
 }
+
+
+#endif

@@ -55,6 +55,17 @@ static int tn_index(xtrnaddr_t tn)
 	return v;
 }
 
+static xtrnaddr_t reverse_tn_index(int tridx)
+{
+    xtrnaddr_t tn;
+    for (int i=0; i<0xFF; i++) {
+        tn.v = i;
+        int t = tn_index(tn);
+        if (t==tridx) return tn;
+    }
+    tn.v = 0xFF;
+    return tn;
+}
 
 //static volatile uint8_t  lockedby[MAX_TOTAL_TURNOUTS]; // XXX TODO this should be total number of turnouts
 //static volatile uint32_t turnoutvals = 0; // bit field
@@ -275,6 +286,22 @@ void occupency_turnout_release_for_train_canton(int train, xblkaddr_t canton)
 	    }
 }
 
+void occupency_turnout_release_for_train(int train)
+{
+    // release reservation for any turnout reserved by a given train
+    if (train<0) FatalError("OccTrn", "bad train num", Error_OccTrn);
+
+    for (int tnidx=0; tnidx<MAX_TOTAL_TURNOUTS; tnidx++) {
+        if (turnout_st[tnidx].lockby == train) {
+            int l = turnout_st[tnidx].lockby;
+            turnout_st[tnidx].lockby = 0xF;
+            if (l != 0xF) {
+                xtrnaddr_t turnout = reverse_tn_index(tnidx);
+                _notify_chg_owner(turnout, -1);
+            }
+        }
+    }
+}
 /*	for (int tn = 0; tn<MAX_TOTAL_TURNOUTS; tn++) {
 		if (lockedby[tn] != train) continue;
 		xblkaddr_t ca1, ca2, ca3;

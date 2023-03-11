@@ -14,6 +14,8 @@
 
 //#include "ctrlLP.h"
 
+#error obsolete
+
 // ---------------------------
 //--------------------------------
 //per train stucture

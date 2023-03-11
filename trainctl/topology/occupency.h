@@ -15,7 +15,7 @@
 
 
 
-#define BLK_OCC_FREE        0x00
+#define BLK_OCC_FREE        0x00        // must be 0
 //#define BLK_OCC_STOP        0x01
 #define BLK_OCC_LOCO_STOP   0x01
 #define BLK_OCC_LOCO_LEFT   0x02
@@ -78,5 +78,6 @@ static inline uint8_t occupied(int dir)
 int occupency_turnout_reserve(xtrnaddr_t turnout, int8_t train);
 void occupency_turnout_release(xtrnaddr_t turnout, int8_t train);
 
+void occupency_remove_train(int trnum);
 
 #endif /* occupency_h */

@@ -10,6 +10,7 @@
 
 
 #include "../msg/trainmsg.h"
+#include "misc.h"
 
 extern uint8_t _topology_or_occupency_changed;
 

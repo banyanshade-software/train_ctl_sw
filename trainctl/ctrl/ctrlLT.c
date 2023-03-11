@@ -98,6 +98,15 @@ void ctrl3_init_train(int tidx, train_ctrl_t *tvars, lsblk_num_t sblk, int on)
 
 void turn_train_off(int tidx, train_ctrl_t *tvars)
 {
+    tvars->canOld_xaddr.v = 0xFF;
+    tvars->can2_xaddr.v = 0xFF;
+    tvars->c1c2 = 0;
+    tvars->pow_c2_future.v = 0xFF;
+    tvars->c1c2dir_changed = 1;
+    if (tvars->can2_xaddr.v != 0xFF) {
+        set_block_addr_occupency(tvars->can2_xaddr, BLK_OCC_FREE, tidx, snone);
+    }
+
     switch (tvars->_state) {
         case train_state_off:
             return;
@@ -114,6 +123,10 @@ void turn_train_off(int tidx, train_ctrl_t *tvars)
             tvars->off_requested = 1;
             break;
     }
+    if (tvars->can1_xaddr.v != 0xFF) {
+        set_block_addr_occupency(tvars->can1_xaddr, BLK_OCC_FREE, tidx, tvars->c1_sblk);
+    }
+
 }
 void turn_train_on(int tidx, train_ctrl_t *tvars)
 {
@@ -132,6 +145,26 @@ void turn_train_on(int tidx, train_ctrl_t *tvars)
     itm_debug1(DBG_ERR|DBG_CTRL, "cant reserve", tidx);
 }
 
+
+
+void ctrl3_set_mode(int tidx, train_ctrl_t *tvar, train_mode_t mode)
+{
+    itm_debug2(DBG_CTRL, "set mode", tidx, mode);
+    if (tvar->_mode == mode) return;
+    tvar->_mode = mode;
+    
+    // notif UI
+    msg_64_t m;
+    m.from = MA1_CTRL(tidx);
+    m.to = MA3_UI_GEN; //(UISUB_TFT);
+    m.cmd = CMD_TRMODE_NOTIF;
+    m.v1u = mode;
+    mqf_write_from_ctrl(&m);
+
+    if (mode == train_notrunning) {
+        turn_train_off(tidx, tvar);
+    }
+}
 
 
 
@@ -1054,6 +1087,8 @@ static int _lock_train_occupency(int tidx, train_ctrl_t *tvars)
 }
 static void _release_all_blocks(int tidx, train_ctrl_t *tvars)
 {
-    FatalError("NI", "not implemented", Error_FSM_NotImplemented);
+    occupency_remove_train(tidx);
+
+    //FatalError("NI", "not implemented", Error_FSM_NotImplemented);
 }
 

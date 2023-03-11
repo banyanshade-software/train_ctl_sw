@@ -93,6 +93,7 @@
 		1B6092682919944000FCE51C /* conf_servo.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B4F7DC82916AEB4002140C9 /* conf_servo.c */; };
 		1B61090D256AAE1A00F1AC45 /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B61090C256AAE1900F1AC45 /* CoreBluetooth.framework */; };
 		1B67360F2531E4450063EA9A /* SimTrain.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B67360E2531E4450063EA9A /* SimTrain.m */; };
+		1B69246829BCBFEA00ED150F /* TestLongTrainSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B7B5E192971318000955045 /* TestLongTrainSupport.m */; };
 		1B693C4427D9CFEA0063D8B6 /* detect_loco.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B693C4227D9CFEA0063D8B6 /* detect_loco.c */; };
 		1B76688B2925855C00E2CE96 /* ToolWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B76688A2925855C00E2CE96 /* ToolWindow.m */; };
 		1B77BECA274A471200BC5230 /* detectP.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B77BEC9274A471200BC5230 /* detectP.c */; };
@@ -148,7 +149,6 @@
 		1BA4B4A22551DE820043D763 /* NSCalendar+Gmt.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BA4B4A12551DE810043D763 /* NSCalendar+Gmt.m */; };
 		1BAC041329527121005DC958 /* TestLTFsm.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BAC041129527121005DC958 /* TestLTFsm.m */; };
 		1BC90306272092EC0087CEA7 /* led.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BC90305272092EC0087CEA7 /* led.c */; };
-		1BC9030F2720AD250087CEA7 /* trainctlTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC9030E2720AD250087CEA7 /* trainctlTests.m */; };
 		1BC903172720AD730087CEA7 /* LedTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC903162720AD730087CEA7 /* LedTest.m */; };
 		1BC903182720B1920087CEA7 /* led.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BC90305272092EC0087CEA7 /* led.c */; };
 		1BC9031A2720B4E60087CEA7 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1BC903192720B4E60087CEA7 /* XCTest.framework */; };
@@ -167,7 +167,6 @@
 		1BEB93CC272B317500508C17 /* occupency.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BEB93C92729F10D00508C17 /* occupency.c */; };
 		1BEB93CF272B325700508C17 /* ctrlP.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BEB93CE272B325700508C17 /* ctrlP.c */; };
 		1BEB93D0272B325700508C17 /* ctrlP.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BEB93CE272B325700508C17 /* ctrlP.c */; };
-		1BEB93D2272B342500508C17 /* TestCtrlP.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BEB93D1272B342500508C17 /* TestCtrlP.m */; };
 		1BED2A9825173CF40080FC97 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BED2A9725173CF40080FC97 /* AppDelegate.m */; };
 		1BED2A9A25173D1E0080FC97 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1BED2A9925173D1E0080FC97 /* Assets.xcassets */; };
 		1BED2A9D25173D1F0080FC97 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1BED2A9B25173D1F0080FC97 /* MainMenu.xib */; };
@@ -416,7 +415,6 @@
 		1BEB93C92729F10D00508C17 /* occupency.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = occupency.c; sourceTree = "<group>"; };
 		1BEB93CD272B325700508C17 /* ctrlP.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ctrlP.h; sourceTree = "<group>"; };
 		1BEB93CE272B325700508C17 /* ctrlP.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ctrlP.c; sourceTree = "<group>"; };
-		1BEB93D1272B342500508C17 /* TestCtrlP.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TestCtrlP.m; sourceTree = "<group>"; };
 		1BED2A9325173CF40080FC97 /* train_throttle.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = train_throttle.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1BED2A9625173CF40080FC97 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		1BED2A9725173CF40080FC97 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -710,7 +708,6 @@
 				1B2688582951146C00E31486 /* trig_tags.h */,
 				1B812B3B273FA77B00924749 /* cautoP.h */,
 				1B812B3C273FA77B00924749 /* cautoP.c */,
-				1BEB93D1272B342500508C17 /* TestCtrlP.m */,
 				1BAB9A8528558FA8005EF72B /* README.md */,
 				1B53774527E7E0C1009CA93C /* TestLongTrain.m */,
 				1B4CB7D22963641200146D0A /* TestLongTrainRight1.m */,
@@ -1156,6 +1153,7 @@
 				1B1C75FA2724446100F95111 /* TestInertia.m in Sources */,
 				1BEB93CC272B317500508C17 /* occupency.c in Sources */,
 				1BEB93D0272B325700508C17 /* ctrlP.c in Sources */,
+				1B69246829BCBFEA00ED150F /* TestLongTrainSupport.m in Sources */,
 				1B8B027628EB833000FE382F /* conf_topology.c in Sources */,
 				1BEB93C72729205300508C17 /* TopologyTest.m in Sources */,
 				1B1C760027248C1500F95111 /* TestMQueue.m in Sources */,
@@ -1163,12 +1161,10 @@
 				1B8B027A28EB834000FE382F /* conf_boards.c in Sources */,
 				1BEB93C82729205800508C17 /* topology.c in Sources */,
 				1B455A272810B6F300F09E33 /* conf_train.c in Sources */,
-				1BC9030F2720AD250087CEA7 /* trainctlTests.m in Sources */,
 				1B1C75FD27245D1400F95111 /* misc.c in Sources */,
 				1B1C760127248DA800F95111 /* lf_mqueue.c in Sources */,
 				1B0ECEB427BAFC37003692B1 /* adc_mean.c in Sources */,
 				1B255145273262B30015B4FA /* TestOccupency.m in Sources */,
-				1BEB93D2272B342500508C17 /* TestCtrlP.m in Sources */,
 				1B1C75FE27245D4E00F95111 /* itm_debug.c in Sources */,
 				1BC903172720AD730087CEA7 /* LedTest.m in Sources */,
 				1BE8B29527418D82000A0FAD /* cautoP.c in Sources */,

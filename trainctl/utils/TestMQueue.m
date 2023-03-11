@@ -8,9 +8,13 @@
 
 #import <XCTest/XCTest.h>
 #include "lf_mqueue.h"
+
+#include "TestLongTrainSupport.h"
+
 //#include "itm_debug.h"
 
-static int errorhandler = 0;
+//static int errorhandler = 0;
+/*
 void Error_Handler(void)
 {
     errorhandler++;
@@ -20,6 +24,7 @@ void dump_msg(mqf_t *mq, int n)
 {
     errorhandler++;
 }
+ */
 
 
 @interface TestMQueue : XCTestCase

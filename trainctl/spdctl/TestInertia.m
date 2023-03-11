@@ -11,10 +11,11 @@
 //#define _UNUSED_
 //#define DBG_INERTIA 0
 //#define itm_debug2(_f, _t, _p1, _p2) do {} while(0)
+#include "TestLongTrainSupport.h"
 #include "inertia.h"
 
-int tsktick_freqhz = 100;
-uint32_t SimuTick = 0;
+//int tsktick_freqhz = 100;
+//uint32_t SimuTick = 0;
 
 @interface TestInertia : XCTestCase
 

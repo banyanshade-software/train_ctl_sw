@@ -571,13 +571,13 @@ int ctrl3_check_back_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *t
     int retc = 0;
     lsblk_num_t leftblk = fsblk->numlsblk ? fsblk->r[fsblk->numlsblk-1] : tvars->c1_sblk;
     int lastlmm = 10*get_lsblk_len_cm(leftblk, NULL);
-    int curmm = ctrl3_getcurpossmm(tvars, tconf, left);
+    //int curmm = ctrl3_getcurpossmm(tvars, tconf, left);
     int llen = lastlmm - fsblk->rlen_mm;
     if (llen<0) {
         return 0;
     }
     int c1lenmm = 10*get_lsblk_len_cm(tvars->c1_sblk, NULL);
-    int bpmm = tvars->beginposmm;
+    //int bpmm = tvars->beginposmm;
 
     // distance that will trigger a c1sblk change
     //int dc1mm =  10*get_lsblk_len_cm(tvars->c1_sblk, NULL) - (tvars->_curposmm - tvars->beginposmm) ;

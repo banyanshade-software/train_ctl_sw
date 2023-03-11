@@ -9,6 +9,14 @@
 #ifndef TestLongTrainSupport_h
 #define TestLongTrainSupport_h
 
+#include "trainmsg.h"
+#include "misc.h"
+
+#include "ctrl.h"
+#include "topology.h"
+#include "ctrlLT.h"
+#include "longtrain.h"
+
 int cmptrigs(const rettrigs_t *r1, const rettrigs_t *r2);
 
 extern int errorhandler;
@@ -29,16 +37,16 @@ int compareMsg64_itrig(const msg_64_t *exp, int n, int clear);
 } while (0)
 
 
-#define EXPMSG_ITRIG(...) do {                                     \
+#define EXPMSG_ITRIG(...) do {                               \
     const msg_64_t exp[] =  { __VA_ARGS__ } ;                \
     int n = sizeof(exp)/sizeof(msg_64_t);                    \
-    int rcc = compareMsg64_itrig(exp, n, 1);                        \
-    XCTAssert(!rcc);                                          \
+    int rcc = compareMsg64_itrig(exp, n, 1);                 \
+    XCTAssert(!rcc);                                         \
 } while (0)
 
-#define EXPMSG_NONE() do {                                     \
-    int rcc = compareMsg64(NULL, 0, 1);                        \
-    XCTAssert(!rcc);                                          \
+#define EXPMSG_NONE() do {                                   \
+    int rcc = compareMsg64(NULL, 0, 1);                      \
+    XCTAssert(!rcc);                                         \
 } while (0)
 
 extern mqf_t from_ctrl;

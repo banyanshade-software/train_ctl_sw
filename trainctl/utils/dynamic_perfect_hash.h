@@ -9,6 +9,10 @@
 #ifndef dynamic_perfect_hash_h
 #define dynamic_perfect_hash_h
 
+#ifndef _UNUSED_
+#define _UNUSED_
+#endif
+
 typedef struct {
     uint8_t p0;
     uint8_t p1;

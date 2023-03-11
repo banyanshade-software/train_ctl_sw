@@ -13,7 +13,7 @@
 
 extern uint8_t _topology_or_occupency_changed;
 
-static inline void topology_updated(int trainnum)
+static inline void topology_updated(_UNUSED_ int trainnum)
 {
     _topology_or_occupency_changed = 1;
 }

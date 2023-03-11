@@ -33,7 +33,7 @@ static inline uint16_t rotateLeft16(uint16_t x, int n)
 
 // 256->64 hash function
 
-static inline void dph64_register(dph64_def_t *dph, int npass, uint8_t v8, int numhash)
+static inline void dph64_register(_UNUSED_ dph64_def_t *dph, _UNUSED_ int npass, _UNUSED_ uint8_t v8, _UNUSED_ int numhash)
 {
    
     
@@ -143,7 +143,7 @@ static inline void dph64_start(dph64_def_t *dph)
 #define MAX_P0  255
 #define MAX_P1  255
 #define MAX_P2  255
-#define MAX_P3  0
+#define MAX_P3  1
 
 static inline int dph64_next(dph64_def_t *dph)
 {

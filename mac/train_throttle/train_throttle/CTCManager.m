@@ -127,6 +127,9 @@ static int _dim(int col, int dim)
     [_ctoWebView evaluateJavaScript:js completionHandler:^(id v, NSError *err) {
         if (err) {
             NSLog(@"js error : %@\n", err);
+            /*
+             normally occurs for future turnouts
+             */
         }
     }];
 

@@ -45,6 +45,13 @@
         "identifier" : "1B26885D2951201600E31486",
         "name" : "trainLPctlTests"
       }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:train_throttle.xcodeproj",
+        "identifier" : "1B7B5E2629767A1E00955045",
+        "name" : "trainSpdctlTests"
+      }
     }
   ],
   "version" : 1

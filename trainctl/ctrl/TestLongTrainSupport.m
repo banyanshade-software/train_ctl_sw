@@ -20,6 +20,10 @@
 #include "TestLongTrainSupport.h"
 
 
+void c3auto_set_turnout(int tidx, xtrnaddr_t tn)
+{
+    abort();
+}
 
 
 int cmptrigs(const rettrigs_t *r1, const rettrigs_t *r2)

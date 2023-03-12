@@ -198,6 +198,14 @@ static  void _notify_chg_owner(xtrnaddr_t turnout, uint8_t numtrain)
     mqf_write_from_ctrl(&m);
 }
 
+int  occupency_turnout_reservedby(xtrnaddr_t turnout)
+{
+    int tnidx = tn_index(turnout);
+    if (tnidx >= MAX_TOTAL_TURNOUTS) return -1;
+    int v = turnout_st[tnidx].lockby;
+    if (v==0xF) return -1;
+    return (int)v;
+}
 
 int occupency_turnout_reserve(xtrnaddr_t turnout, int8_t numtrain)
 {

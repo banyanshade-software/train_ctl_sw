@@ -77,6 +77,7 @@ static inline uint8_t occupied(int dir)
 
 int occupency_turnout_reserve(xtrnaddr_t turnout, int8_t train);
 void occupency_turnout_release(xtrnaddr_t turnout, int8_t train);
+int  occupency_turnout_reservedby(xtrnaddr_t turnout);
 
 void occupency_remove_train(int trnum);
 

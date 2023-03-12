@@ -41,9 +41,14 @@ static const xtrnaddr_t to1 = { .v = 1};
 
 - (void)setUp
 {
+    memset(&tvars, 0, sizeof(tvars));
     mqf_clear(&from_ctrl);
     errorhandler = 0;
     tconf = (conf_train_t *) conf_train_get(0);
+    // some tests change this, so reset it to "normal" values
+    tconf->trainlen_left_cm = 6;
+    tconf->trainlen_right_cm = 12;
+    
     notify_occupency_change = 0;
     ctrl_flag_notify_speed = 0;
     occupency_clear();

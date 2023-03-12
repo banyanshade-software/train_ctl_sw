@@ -634,8 +634,8 @@
             filePath = "../../trainctl/ctrl/longtrain.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "217"
-            endingLineNumber = "217"
+            startingLineNumber = "222"
+            endingLineNumber = "222"
             landmarkName = "trigmm_for_frontdistmm(tidx, tvars, tconf, left, distmm)"
             landmarkType = "9">
          </BreakpointContent>
@@ -650,8 +650,8 @@
             filePath = "../../trainctl/ctrl/longtrain.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "724"
-            endingLineNumber = "724"
+            startingLineNumber = "729"
+            endingLineNumber = "729"
             landmarkName = "ctrl3_update_front_sblks(tidx, tvars, tconf, left)"
             landmarkType = "9">
          </BreakpointContent>
@@ -826,8 +826,8 @@
             filePath = "../../trainctl/ctrl/TestLTFsm.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "59"
-            endingLineNumber = "59"
+            startingLineNumber = "64"
+            endingLineNumber = "64"
             landmarkName = "-setUp"
             landmarkType = "7">
          </BreakpointContent>
@@ -842,8 +842,8 @@
             filePath = "../../trainctl/ctrl/TestLTFsm.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "57"
-            endingLineNumber = "57"
+            startingLineNumber = "62"
+            endingLineNumber = "62"
             landmarkName = "-setUp"
             landmarkType = "7">
          </BreakpointContent>
@@ -1034,8 +1034,8 @@
             filePath = "../../trainctl/ctrl/longtrain.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "209"
-            endingLineNumber = "209"
+            startingLineNumber = "214"
+            endingLineNumber = "214"
             landmarkName = "trigmm_for_frontdistmm(tidx, tvars, tconf, left, distmm)"
             landmarkType = "9">
          </BreakpointContent>
@@ -1050,8 +1050,8 @@
             filePath = "../../trainctl/ctrl/longtrain.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "260"
-            endingLineNumber = "260"
+            startingLineNumber = "265"
+            endingLineNumber = "265"
             landmarkName = "unknown"
             landmarkType = "0">
          </BreakpointContent>
@@ -1066,8 +1066,8 @@
             filePath = "../../trainctl/ctrl/longtrain.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "755"
-            endingLineNumber = "755">
+            startingLineNumber = "760"
+            endingLineNumber = "760">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -1504,8 +1504,8 @@
             filePath = "../../trainctl/ctrl/longtrain.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "334"
-            endingLineNumber = "334"
+            startingLineNumber = "339"
+            endingLineNumber = "339"
             landmarkName = "check_front(tidx, tvars, fsblk, left, maxmm, pa, cond)"
             landmarkType = "9">
          </BreakpointContent>
@@ -1520,8 +1520,8 @@
             filePath = "../../trainctl/ctrl/longtrain.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "330"
-            endingLineNumber = "330"
+            startingLineNumber = "335"
+            endingLineNumber = "335"
             landmarkName = "check_front(tidx, tvars, fsblk, left, maxmm, pa, cond)"
             landmarkType = "9">
          </BreakpointContent>
@@ -1536,8 +1536,8 @@
             filePath = "../../trainctl/ctrl/longtrain.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "333"
-            endingLineNumber = "333"
+            startingLineNumber = "338"
+            endingLineNumber = "338"
             landmarkName = "check_front(tidx, tvars, fsblk, left, maxmm, pa, cond)"
             landmarkType = "9">
          </BreakpointContent>
@@ -1646,8 +1646,8 @@
             filePath = "../../trainctl/ctrl/longtrain.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "222"
-            endingLineNumber = "222"
+            startingLineNumber = "227"
+            endingLineNumber = "227"
             landmarkName = "trigmm_for_frontdistmm(tidx, tvars, tconf, left, distmm)"
             landmarkType = "9">
          </BreakpointContent>
@@ -1912,8 +1912,8 @@
             filePath = "../../trainctl/ctrl/TestLTFsm.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "127"
-            endingLineNumber = "127"
+            startingLineNumber = "132"
+            endingLineNumber = "132"
             landmarkName = "-testStartRightEot"
             landmarkType = "7">
             <Locations>
@@ -2005,8 +2005,8 @@
             filePath = "../../trainctl/ctrl/TestLTFsm.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "120"
-            endingLineNumber = "120"
+            startingLineNumber = "125"
+            endingLineNumber = "125"
             landmarkName = "-testStartRightEot"
             landmarkType = "7">
          </BreakpointContent>
@@ -2021,8 +2021,8 @@
             filePath = "../../trainctl/ctrl/TestLTFsm.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "135"
-            endingLineNumber = "135"
+            startingLineNumber = "140"
+            endingLineNumber = "140"
             landmarkName = "-testStartRightBrake1"
             landmarkType = "7">
             <Locations>
@@ -2099,8 +2099,8 @@
             filePath = "../../trainctl/ctrl/TestLTFsm.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "134"
-            endingLineNumber = "134"
+            startingLineNumber = "139"
+            endingLineNumber = "139"
             landmarkName = "-testStartRightBrake1"
             landmarkType = "7">
          </BreakpointContent>
@@ -2147,8 +2147,8 @@
             filePath = "../../trainctl/ctrl/longtrain.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "525"
-            endingLineNumber = "525"
+            startingLineNumber = "530"
+            endingLineNumber = "530"
             landmarkName = "ctrl3_check_front_sblks(tidx, tvars, tconf, left, ret)"
             landmarkType = "9">
          </BreakpointContent>
@@ -2241,8 +2241,8 @@
             filePath = "../../trainctl/ctrl/longtrain.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "370"
-            endingLineNumber = "370"
+            startingLineNumber = "375"
+            endingLineNumber = "375"
             landmarkName = "check_front(tidx, tvars, fsblk, left, maxmm, pa, cond)"
             landmarkType = "9">
          </BreakpointContent>
@@ -2273,8 +2273,8 @@
             filePath = "../../trainctl/ctrl/longtrain.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "356"
-            endingLineNumber = "356"
+            startingLineNumber = "361"
+            endingLineNumber = "361"
             landmarkName = "check_front(tidx, tvars, fsblk, left, maxmm, pa, cond)"
             landmarkType = "9">
          </BreakpointContent>
@@ -2289,8 +2289,8 @@
             filePath = "../../trainctl/ctrl/longtrain.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "354"
-            endingLineNumber = "354"
+            startingLineNumber = "359"
+            endingLineNumber = "359"
             landmarkName = "check_front(tidx, tvars, fsblk, left, maxmm, pa, cond)"
             landmarkType = "9">
          </BreakpointContent>
@@ -2383,8 +2383,8 @@
             filePath = "../../trainctl/ctrl/longtrain.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "543"
-            endingLineNumber = "543"
+            startingLineNumber = "548"
+            endingLineNumber = "548"
             landmarkName = "ctrl3_check_front_sblks(tidx, tvars, tconf, left, ret)"
             landmarkType = "9">
          </BreakpointContent>
@@ -2947,8 +2947,8 @@
             filePath = "../../trainctl/ctrl/longtrain.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "325"
-            endingLineNumber = "325"
+            startingLineNumber = "330"
+            endingLineNumber = "330"
             landmarkName = "check_front(tidx, tvars, fsblk, left, maxmm, pa, cond)"
             landmarkType = "9">
          </BreakpointContent>
@@ -3213,8 +3213,8 @@
             filePath = "../../trainctl/ctrl/TestLTFsm.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "349"
-            endingLineNumber = "349"
+            startingLineNumber = "354"
+            endingLineNumber = "354"
             landmarkName = "-testStartLeft"
             landmarkType = "7">
             <Locations>
@@ -3306,8 +3306,8 @@
             filePath = "../../trainctl/ctrl/TestLTFsm.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "339"
-            endingLineNumber = "339"
+            startingLineNumber = "344"
+            endingLineNumber = "344"
             landmarkName = "-testStartLeft"
             landmarkType = "7">
          </BreakpointContent>
@@ -3322,8 +3322,8 @@
             filePath = "../../trainctl/ctrl/TestLTFsm.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "208"
-            endingLineNumber = "208"
+            startingLineNumber = "213"
+            endingLineNumber = "213"
             landmarkName = "-testChangeDir"
             landmarkType = "7">
             <Locations>
@@ -3415,8 +3415,8 @@
             filePath = "../../trainctl/ctrl/longtrain.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "595"
-            endingLineNumber = "595"
+            startingLineNumber = "600"
+            endingLineNumber = "600"
             landmarkName = "ctrl3_check_front_sblks(tidx, tvars, tconf, left, ret)"
             landmarkType = "9">
          </BreakpointContent>
@@ -3509,8 +3509,8 @@
             filePath = "../../trainctl/ctrl/longtrain.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "376"
-            endingLineNumber = "376"
+            startingLineNumber = "381"
+            endingLineNumber = "381"
             landmarkName = "check_loco(tidx, tvars, fsblk, left, maxmm, pa, cond)"
             landmarkType = "9">
          </BreakpointContent>
@@ -3759,8 +3759,8 @@
             filePath = "../../trainctl/ctrl/longtrain.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "590"
-            endingLineNumber = "590"
+            startingLineNumber = "595"
+            endingLineNumber = "595"
             landmarkName = "ctrl3_check_front_sblks(tidx, tvars, tconf, left, ret)"
             landmarkType = "9">
          </BreakpointContent>
@@ -3775,8 +3775,8 @@
             filePath = "../../trainctl/ctrl/longtrain.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "466"
-            endingLineNumber = "466"
+            startingLineNumber = "471"
+            endingLineNumber = "471"
             landmarkName = "_add_trig_loco(left, ret, rlenmm, c1lenmm, curmm, kmm, tag, dist, minmm, maxmm, trlen)"
             landmarkType = "9">
          </BreakpointContent>
@@ -3869,8 +3869,8 @@
             filePath = "../../trainctl/ctrl/longtrain.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "469"
-            endingLineNumber = "469"
+            startingLineNumber = "474"
+            endingLineNumber = "474"
             landmarkName = "_add_trig_loco(left, ret, rlenmm, c1lenmm, curmm, kmm, tag, dist, minmm, maxmm, trlen)"
             landmarkType = "9">
          </BreakpointContent>
@@ -4275,8 +4275,8 @@
             filePath = "../../trainctl/ctrl/longtrain.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "597"
-            endingLineNumber = "597"
+            startingLineNumber = "602"
+            endingLineNumber = "602"
             landmarkName = "ctrl3_check_front_sblks(tidx, tvars, tconf, left, ret)"
             landmarkType = "9">
          </BreakpointContent>
@@ -5553,8 +5553,8 @@
             filePath = "../../trainctl/ctrl/longtrain.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "582"
-            endingLineNumber = "582"
+            startingLineNumber = "587"
+            endingLineNumber = "587"
             landmarkName = "ctrl3_check_front_sblks(tidx, tvars, tconf, left, ret)"
             landmarkType = "9">
          </BreakpointContent>
@@ -5569,8 +5569,8 @@
             filePath = "../../trainctl/ctrl/longtrain.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "574"
-            endingLineNumber = "574"
+            startingLineNumber = "579"
+            endingLineNumber = "579"
             landmarkName = "ctrl3_check_front_sblks(tidx, tvars, tconf, left, ret)"
             landmarkType = "9">
          </BreakpointContent>
@@ -5979,8 +5979,8 @@
             filePath = "../../trainctl/ctrl/TestLTFsm.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "142"
-            endingLineNumber = "142"
+            startingLineNumber = "147"
+            endingLineNumber = "147"
             landmarkName = "-testStartRightBrake1"
             landmarkType = "7">
             <Locations>
@@ -6072,8 +6072,8 @@
             filePath = "../../trainctl/ctrl/longtrain.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "559"
-            endingLineNumber = "559"
+            startingLineNumber = "564"
+            endingLineNumber = "564"
             landmarkName = "ctrl3_check_front_sblks(tidx, tvars, tconf, left, ret)"
             landmarkType = "9">
          </BreakpointContent>
@@ -6280,8 +6280,8 @@
             filePath = "../../trainctl/ctrl/longtrain.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "340"
-            endingLineNumber = "340"
+            startingLineNumber = "345"
+            endingLineNumber = "345"
             landmarkName = "check_front(tidx, tvars, fsblk, left, maxmm, pa, cond)"
             landmarkType = "9">
          </BreakpointContent>
@@ -6312,8 +6312,8 @@
             filePath = "../../trainctl/ctrl/longtrain.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "359"
-            endingLineNumber = "359"
+            startingLineNumber = "364"
+            endingLineNumber = "364"
             landmarkName = "check_front(tidx, tvars, fsblk, left, maxmm, pa, cond)"
             landmarkType = "9">
          </BreakpointContent>
@@ -6328,8 +6328,8 @@
             filePath = "../../trainctl/ctrl/TestLTFsm.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "137"
-            endingLineNumber = "137"
+            startingLineNumber = "142"
+            endingLineNumber = "142"
             landmarkName = "-testStartRightBrake1"
             landmarkType = "7">
             <Locations>
@@ -6518,8 +6518,8 @@
             filePath = "../../trainctl/ctrl/longtrain.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "740"
-            endingLineNumber = "740"
+            startingLineNumber = "745"
+            endingLineNumber = "745"
             landmarkName = "ctrl3_update_c1changed(tidx, tvars, tconf, left)"
             landmarkType = "9">
          </BreakpointContent>
@@ -6646,8 +6646,8 @@
             filePath = "../../trainctl/ctrl/longtrain.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "471"
-            endingLineNumber = "471"
+            startingLineNumber = "476"
+            endingLineNumber = "476"
             landmarkName = "_add_trig_loco(left, ret, rlenmm, c1lenmm, curmm, kmm, tag, dist, minmm, maxmm, trlen)"
             landmarkType = "9">
          </BreakpointContent>
@@ -6662,8 +6662,8 @@
             filePath = "../../trainctl/ctrl/longtrain.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "485"
-            endingLineNumber = "485"
+            startingLineNumber = "490"
+            endingLineNumber = "490"
             landmarkName = "_add_trig_loco(left, ret, rlenmm, c1lenmm, curmm, kmm, tag, dist, minmm, maxmm, trlen)"
             landmarkType = "9">
          </BreakpointContent>
@@ -7420,8 +7420,8 @@
             filePath = "../../trainctl/ctrl/longtrain.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "302"
-            endingLineNumber = "302"
+            startingLineNumber = "307"
+            endingLineNumber = "307"
             landmarkName = "_check_front_condition_res_c2(tvars, lastsblk, testsblk)"
             landmarkType = "9">
          </BreakpointContent>
@@ -7688,8 +7688,8 @@
             filePath = "../../trainctl/ctrl/longtrain.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "88"
-            endingLineNumber = "88"
+            startingLineNumber = "93"
+            endingLineNumber = "93"
             landmarkName = "ctrl3_get_next_sblks__(tidx, tvars, tconf, left, resp, nsblk, premainlenmm)"
             landmarkType = "9">
          </BreakpointContent>
@@ -7848,8 +7848,8 @@
             filePath = "../../trainctl/ctrl/longtrain.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "297"
-            endingLineNumber = "297"
+            startingLineNumber = "302"
+            endingLineNumber = "302"
             landmarkName = "_check_front_condition_res_c2(tvars, lastsblk, testsblk)"
             landmarkType = "9">
          </BreakpointContent>
@@ -7864,8 +7864,8 @@
             filePath = "../../trainctl/ctrl/longtrain.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "300"
-            endingLineNumber = "300"
+            startingLineNumber = "305"
+            endingLineNumber = "305"
             landmarkName = "_check_front_condition_res_c2(tvars, lastsblk, testsblk)"
             landmarkType = "9">
          </BreakpointContent>
@@ -7880,8 +7880,8 @@
             filePath = "../../trainctl/ctrl/longtrain.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "160"
-            endingLineNumber = "160"
+            startingLineNumber = "165"
+            endingLineNumber = "165"
             landmarkName = "ctrl3_get_next_sblks(tidx, tvars, tconf)"
             landmarkType = "9">
          </BreakpointContent>
@@ -7912,8 +7912,8 @@
             filePath = "../../trainctl/ctrl/longtrain.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "227"
-            endingLineNumber = "227"
+            startingLineNumber = "232"
+            endingLineNumber = "232"
             landmarkName = "trigmm_for_backdistmm(tidx, tvars, tconf, left, distmm)"
             landmarkType = "9">
          </BreakpointContent>
@@ -7960,8 +7960,8 @@
             filePath = "../../trainctl/ctrl/longtrain.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "625"
-            endingLineNumber = "625"
+            startingLineNumber = "630"
+            endingLineNumber = "630"
             landmarkName = "ctrl3_check_back_sblks(tidx, tvars, tconf, left, ret)"
             landmarkType = "9">
          </BreakpointContent>
@@ -7976,8 +7976,8 @@
             filePath = "../../trainctl/ctrl/longtrain.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "617"
-            endingLineNumber = "617"
+            startingLineNumber = "622"
+            endingLineNumber = "622"
             landmarkName = "ctrl3_check_back_sblks(tidx, tvars, tconf, left, ret)"
             landmarkType = "9">
          </BreakpointContent>
@@ -8134,8 +8134,8 @@
             filePath = "../../trainctl/ctrl/longtrain.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "126"
-            endingLineNumber = "126"
+            startingLineNumber = "131"
+            endingLineNumber = "131"
             landmarkName = "ctrl3_get_next_sblks_(tidx, tvars, tconf, left, resp, nsblk, premainlenmm)"
             landmarkType = "9">
          </BreakpointContent>
@@ -8150,8 +8150,8 @@
             filePath = "../../trainctl/ctrl/longtrain.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "628"
-            endingLineNumber = "628"
+            startingLineNumber = "633"
+            endingLineNumber = "633"
             landmarkName = "ctrl3_check_back_sblks(tidx, tvars, tconf, left, ret)"
             landmarkType = "9">
          </BreakpointContent>
@@ -8166,8 +8166,8 @@
             filePath = "../../trainctl/ctrl/longtrain.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "615"
-            endingLineNumber = "615"
+            startingLineNumber = "620"
+            endingLineNumber = "620"
             landmarkName = "ctrl3_check_back_sblks(tidx, tvars, tconf, left, ret)"
             landmarkType = "9">
          </BreakpointContent>
@@ -8182,8 +8182,8 @@
             filePath = "../../trainctl/ctrl/longtrain.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "168"
-            endingLineNumber = "168"
+            startingLineNumber = "173"
+            endingLineNumber = "173"
             landmarkName = "ctrl3_get_next_sblks(tidx, tvars, tconf)"
             landmarkType = "9">
          </BreakpointContent>
@@ -8198,8 +8198,8 @@
             filePath = "../../trainctl/ctrl/longtrain.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "608"
-            endingLineNumber = "608"
+            startingLineNumber = "613"
+            endingLineNumber = "613"
             landmarkName = "ctrl3_check_back_sblks(tidx, tvars, tconf, left, ret)"
             landmarkType = "9">
          </BreakpointContent>
@@ -8230,8 +8230,8 @@
             filePath = "../../trainctl/ctrl/longtrain.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "185"
-            endingLineNumber = "185"
+            startingLineNumber = "190"
+            endingLineNumber = "190"
             landmarkName = "ctrl3_get_next_sblks(tidx, tvars, tconf)"
             landmarkType = "9">
          </BreakpointContent>
@@ -8262,8 +8262,8 @@
             filePath = "../../trainctl/ctrl/longtrain.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "155"
-            endingLineNumber = "155"
+            startingLineNumber = "160"
+            endingLineNumber = "160"
             landmarkName = "ctrl3_get_next_sblks(tidx, tvars, tconf)"
             landmarkType = "9">
          </BreakpointContent>
@@ -8278,8 +8278,8 @@
             filePath = "../../trainctl/ctrl/longtrain.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "151"
-            endingLineNumber = "151"
+            startingLineNumber = "156"
+            endingLineNumber = "156"
             landmarkName = "ctrl3_get_next_sblks(tidx, tvars, tconf)"
             landmarkType = "9">
          </BreakpointContent>
@@ -8390,8 +8390,8 @@
             filePath = "../../trainctl/ctrl/longtrain.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "129"
-            endingLineNumber = "129"
+            startingLineNumber = "134"
+            endingLineNumber = "134"
             landmarkName = "ctrl3_get_next_sblks_(tidx, tvars, tconf, left, resp, nsblk, premainlenmm)"
             landmarkType = "9">
          </BreakpointContent>
@@ -8868,8 +8868,8 @@
             filePath = "../../trainctl/topology/turnouts.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "213"
-            endingLineNumber = "213"
+            startingLineNumber = "215"
+            endingLineNumber = "215"
             landmarkName = "occupency_turnout_reserve(turnout, numtrain)"
             landmarkType = "9">
          </BreakpointContent>
@@ -8964,8 +8964,8 @@
             filePath = "../../trainctl/ctrl/longtrain.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "531"
-            endingLineNumber = "531"
+            startingLineNumber = "536"
+            endingLineNumber = "536"
             landmarkName = "ctrl3_check_front_sblks(tidx, tvars, tconf, left, ret)"
             landmarkType = "9">
          </BreakpointContent>
@@ -8980,8 +8980,8 @@
             filePath = "../../trainctl/ctrl/longtrain.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "332"
-            endingLineNumber = "332"
+            startingLineNumber = "337"
+            endingLineNumber = "337"
             landmarkName = "check_front(tidx, tvars, fsblk, left, maxmm, pa, cond)"
             landmarkType = "9">
          </BreakpointContent>
@@ -9140,8 +9140,8 @@
             filePath = "../../trainctl/ctrl/TestLTFsm.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "109"
-            endingLineNumber = "109"
+            startingLineNumber = "114"
+            endingLineNumber = "114"
             landmarkName = "-testStartRightNormal"
             landmarkType = "7">
             <Locations>
@@ -9249,8 +9249,8 @@
             filePath = "../../trainctl/ctrl/TestLTFsm.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "93"
-            endingLineNumber = "93"
+            startingLineNumber = "98"
+            endingLineNumber = "98"
             landmarkName = "-testStartRightNormal"
             landmarkType = "7">
          </BreakpointContent>
@@ -9259,14 +9259,14 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "88AE2C18-653B-4EF0-B346-42401AB25A62"
-            shouldBeEnabled = "No"
+            shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../../trainctl/ctrl/TestLTFsm.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "47"
-            endingLineNumber = "47"
+            startingLineNumber = "52"
+            endingLineNumber = "52"
             landmarkName = "-setUp"
             landmarkType = "7">
          </BreakpointContent>
@@ -9297,8 +9297,8 @@
             filePath = "../../trainctl/topology/turnouts.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "183"
-            endingLineNumber = "183"
+            startingLineNumber = "184"
+            endingLineNumber = "184"
             landmarkName = "occupency_clear_turnouts()"
             landmarkType = "9">
          </BreakpointContent>
@@ -9313,8 +9313,8 @@
             filePath = "../../trainctl/topology/turnouts.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "187"
-            endingLineNumber = "187"
+            startingLineNumber = "189"
+            endingLineNumber = "189"
             landmarkName = "occupency_clear_turnouts()"
             landmarkType = "9">
          </BreakpointContent>
@@ -9329,8 +9329,8 @@
             filePath = "../../trainctl/topology/turnouts.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "203"
-            endingLineNumber = "203"
+            startingLineNumber = "205"
+            endingLineNumber = "205"
             landmarkName = "occupency_turnout_reservedby(turnout)"
             landmarkType = "9">
          </BreakpointContent>
@@ -9339,15 +9339,127 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "0AE87993-0FFA-43F5-AC45-B79AF0DDAAC0"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../../trainctl/ctrl/TestLTFsm.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "151"
-            endingLineNumber = "151"
+            startingLineNumber = "156"
+            endingLineNumber = "156"
             landmarkName = "-testStartRightBrake2"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "75964665-7F46-46DC-8835-8D5FD61EFD08"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../trainctl/topology/turnouts.c"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "218"
+            endingLineNumber = "218"
+            landmarkName = "occupency_turnout_reserve(turnout, numtrain)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "60D7B7D3-EA2F-430B-BB01-FD4C03227BF6"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../trainctl/topology/turnouts.c"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "230"
+            endingLineNumber = "230"
+            landmarkName = "occupency_turnout_reserve(turnout, numtrain)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "FD2CD70A-E346-468E-A8B1-E70925F3555D"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../trainctl/topology/turnouts.c"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "88"
+            endingLineNumber = "88"
+            landmarkName = "topology_set_turnout(turnout, v, numtrain)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "FEC721D1-BBB4-4798-837E-6B8C765F3BDD"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../trainctl/ctrl/ctrl.c"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "746"
+            endingLineNumber = "746"
+            landmarkName = "unknown"
+            landmarkType = "0">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "D0F0F3E7-4A1B-4132-BB91-BD8590C5B517"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../trainctl/ctrl/longtrain.c"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "74"
+            endingLineNumber = "74"
+            landmarkName = "next_lsblk_and_reserve(tidx, tvars, sblknum, left, palternate)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "2A8BD9DA-9864-4418-87FE-1584E1DB9783"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../trainctl/topology/turnouts.c"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "226"
+            endingLineNumber = "226"
+            landmarkName = "occupency_turnout_reserve(turnout, numtrain)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "1EE36931-EFD1-44BA-A6EC-32AA25B617BD"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../trainctl/ctrl/TestLTFsm.m"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "47"
+            endingLineNumber = "47"
+            landmarkName = "-setUp"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

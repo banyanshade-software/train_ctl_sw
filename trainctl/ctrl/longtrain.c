@@ -68,7 +68,12 @@ lsblk_num_t next_lsblk_and_reserve(int tidx, train_ctrl_t *tvars, lsblk_num_t sb
     
     int kt = occupency_turnout_reservedby(tn);
     if (kt == -1) {
-        occupency_turnout_reserve(tn, tidx);
+        int rc = occupency_turnout_reserve(tn, tidx);
+        if (rc) {
+            // cant reserve
+            a.n = -1;
+            return a;
+        }
         if (palternate && (tvars->_mode==train_auto)) {
             c3auto_set_turnout(tidx, tn);
         }

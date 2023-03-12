@@ -738,6 +738,7 @@ int ctrl2_set_turnout(xtrnaddr_t tn, enum topo_turnout_state v, int train)
 }
 
  // #longtrain
+/*
 int ctrl2_lock_turnout(xtrnaddr_t tn, int train)
 {
     int rc = occupency_turnout_reserve(tn, train);
@@ -747,6 +748,7 @@ int ctrl2_lock_turnout(xtrnaddr_t tn, int train)
     }
     return rc;
 }
+ */
 
 void ctrl2_unlock_turnout(xtrnaddr_t tn, int train) // #longtrain
 {

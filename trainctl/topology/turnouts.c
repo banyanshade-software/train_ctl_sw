@@ -79,8 +79,9 @@ int topology_set_turnout(xtrnaddr_t turnout, enum topo_turnout_state v, int numt
 
     int tnidx = tn_index(turnout);
 
-    if (tnidx >= MAX_TOTAL_TURNOUTS) return -1;
-
+    if (tnidx >= MAX_TOTAL_TURNOUTS) {
+        return -1;
+    }
 	if (numtrain>=0) {
 		int rc = occupency_turnout_reserve(turnout, numtrain);
 		if (rc) {
@@ -181,6 +182,7 @@ void alloc_turnouts(void)
 
 void occupency_clear_turnouts(void)
 {
+    memset(turnout_st, 0, sizeof(turnout_st));
 	for (int i=0; i<MAX_TOTAL_TURNOUTS; i++) {
 		turnout_st[i].lockby = 0xF;
 	}
@@ -212,14 +214,17 @@ int occupency_turnout_reserve(xtrnaddr_t turnout, int8_t numtrain)
     //int d = turnout.isdoor;
     int tnidx = tn_index(turnout);
 
-	if (tnidx >= MAX_TOTAL_TURNOUTS) return -1;
-
+    if (tnidx >= MAX_TOTAL_TURNOUTS) {
+        return -1;
+    }
 
 	itm_debug3(DBG_CTRL, "res.to", turnout.v, numtrain, turnout_st[tnidx].lockby);
 
 	if (numtrain>=0) {
 		uint8_t old = turnout_st[tnidx].lockby;
-		if (old == numtrain) return 0;
+        if (old == numtrain) {
+            return 0;
+        }
 		if (old != 0xF) {
             itm_debug3(DBG_ERR, "res.to.f", turnout.v, numtrain, turnout_st[tnidx].lockby);
             return -1;

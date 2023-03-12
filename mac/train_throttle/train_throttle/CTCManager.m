@@ -141,7 +141,7 @@ static int _dim(int col, int dim)
     NSString *circle = [NSString stringWithFormat:@"c%d", tn];
     NSString *col = (train>=0) ? [self colorForTrain:train dim:0] : @"darkgray";
     NSString *js = [NSString stringWithFormat:@"el=document.getElementById('%@'); el.style.stroke=\"%@\";  el.style['stroke-width']=\"%dpx\";",
-                    circle, col , train==0xFF ? 1 : 2];
+                    circle, col , train==0xFF ? 1 : 4];
     [_ctoWebView evaluateJavaScript:js completionHandler:^(id v, NSError *err) {
            if (err) {
                NSLog(@"js error : %@\n", err);

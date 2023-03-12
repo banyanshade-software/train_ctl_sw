@@ -22,7 +22,7 @@
 #include "ctrlLT.h"
 
 #include "longtrain.h"
-
+#include "c3autoP.h"
 
 #include "trig_tags.h"
 //#include "cautoP.h"
@@ -52,6 +52,37 @@ int32_t ctrl3_getcurpossmm(train_ctrl_t *tvars, const conf_train_t *tconf, int l
     return tvars->_curposmm;
 }
 
+/* replacement for next_lsblk to handle automatic mode and
+   turnout reservation
+ */
+
+lsblk_num_t next_lsblk_and_reserve(int tidx, train_ctrl_t *tvars, lsblk_num_t sblknum, uint8_t left, int8_t *palternate)
+{
+    if (palternate)  *palternate = 0;
+    lsblk_num_t a, b;
+    xtrnaddr_t tn;
+    next_lsblk_nums(sblknum, left, &a, &b, &tn);
+    if (tn.v == 0xFF) return a;
+    
+    if (palternate) *palternate = 1;
+    
+    int kt = occupency_turnout_reservedby(tn);
+    if (kt == -1) {
+        occupency_turnout_reserve(tn, tidx);
+        if (palternate && (tvars->_mode==train_auto)) {
+            c3auto_set_turnout(tidx, tn);
+        }
+    } else if (kt != tidx) {
+        a.n = -1;
+        return a;
+    }
+    a = (topology_get_turnout(tn) == topo_tn_turn) ? b : a;
+    return a;
+}
+
+
+
+
 static inline int ctrl3_get_next_sblks__(_UNUSED_ int tidx, train_ctrl_t *tvars,  const conf_train_t *tconf, int left, lsblk_num_t *resp, int nsblk, int16_t *premainlenmm)
 {
     if (premainlenmm) *premainlenmm = 0;
@@ -78,7 +109,8 @@ static inline int ctrl3_get_next_sblks__(_UNUSED_ int tidx, train_ctrl_t *tvars,
             return lidx;
         }
         mm -= lmm;
-        cblk = next_lsblk(cblk, left, NULL);
+        //cblk = next_lsblk(cblk, left, NULL);
+        cblk = next_lsblk_and_reserve(tidx, tvars, cblk, left, NULL);
         resp[lidx] = cblk;
         lidx++;
         if (lidx>=nsblk) return lidx;
@@ -296,7 +328,8 @@ static int check_front(int tidx, train_ctrl_t *tvars,  struct forwdsblk *fsblk, 
         mm0 -= fsblk->rlen_mm;
         int mm = 0;
         for (;;) {
-            ns = next_lsblk(ns, left, pa);
+            //ns = next_lsblk(ns, left, pa);
+            ns = next_lsblk_and_reserve(tidx, tvars, ns, left, pa);
             if (cond(tvars, fs, ns)) {
                 // EOT or BLKWAIT
                 return mm;
@@ -460,6 +493,10 @@ int _add_trig_loco(int left, rettrigs_t *ret, int rlenmm, int c1lenmm, int curmm
     }
     return ADD_TRIG_NOTHING;
 }
+
+
+
+
 int ctrl3_check_front_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *tconf, int left,  rettrigs_t *ret)
 {
     //memset(ret, 0, sizeof(rettrigs_t));
@@ -489,7 +526,21 @@ int ctrl3_check_front_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *
     int minmm = tvars->beginposmm;
     int trlenmm = 10*(left ? tconf->trainlen_left_cm : tconf->trainlen_right_cm);
     
-    int kmm = check_front(tidx, tvars, fsblk, left, c1lenmm, &a, _check_front_condition_eot);
+    
+    tvars->tmp_c2_future.v = 0xFF;
+    int kmm = check_front(tidx, tvars, fsblk, left, c1lenmm, &a, _check_front_condition_res_c2);
+    if (tvars->res_c2_future.v == 0xFF) {
+        tvars->res_c2_future = tvars->tmp_c2_future;
+    }
+    if (a != -1) {
+        int rc = _add_trig(left, ret, fsblk->rlen_mm, c1lenmm, curmm, kmm, tag_reserve_c2, margin_c2_len_mm, minmm, maxmm, trlenmm);
+        if (rc != ADD_TRIG_NOTHING) {
+            ret->res_c2 = 1;
+        }
+    }
+    
+    
+    kmm = check_front(tidx, tvars, fsblk, left, c1lenmm, &a, _check_front_condition_eot);
     if (a != -1) {
         // lcccc|cc----------|-----||
         //                      k
@@ -513,17 +564,6 @@ int ctrl3_check_front_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *
         }
     }
     
-    tvars->tmp_c2_future.v = 0xFF;
-    kmm = check_front(tidx, tvars, fsblk, left, c1lenmm, &a, _check_front_condition_res_c2);
-    if (tvars->res_c2_future.v == 0xFF) {
-        tvars->res_c2_future = tvars->tmp_c2_future;
-    }
-    if (a != -1) {
-        int rc = _add_trig(left, ret, fsblk->rlen_mm, c1lenmm, curmm, kmm, tag_reserve_c2, margin_c2_len_mm, minmm, maxmm, trlenmm);
-        if (rc != ADD_TRIG_NOTHING) {
-            ret->res_c2 = 1;
-        }
-    }
     
     // s1 end
     if ((1)) {
@@ -675,6 +715,7 @@ int ctrl3_check_back_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *t
 #endif
     return retc;
 }
+
 
 
 int ctrl3_update_front_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *tconf, int left)

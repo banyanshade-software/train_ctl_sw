@@ -94,6 +94,7 @@
 		1B61090D256AAE1A00F1AC45 /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B61090C256AAE1900F1AC45 /* CoreBluetooth.framework */; };
 		1B67360F2531E4450063EA9A /* SimTrain.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B67360E2531E4450063EA9A /* SimTrain.m */; };
 		1B69246829BCBFEA00ED150F /* TestLongTrainSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B7B5E192971318000955045 /* TestLongTrainSupport.m */; };
+		1B69247729BD3C5C00ED150F /* c3autoP.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B69247629BD3C5C00ED150F /* c3autoP.c */; };
 		1B693C4427D9CFEA0063D8B6 /* detect_loco.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B693C4227D9CFEA0063D8B6 /* detect_loco.c */; };
 		1B76688B2925855C00E2CE96 /* ToolWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B76688A2925855C00E2CE96 /* ToolWindow.m */; };
 		1B77BECA274A471200BC5230 /* detectP.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B77BEC9274A471200BC5230 /* detectP.c */; };
@@ -316,6 +317,8 @@
 		1B61090C256AAE1900F1AC45 /* CoreBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreBluetooth.framework; path = System/Library/Frameworks/CoreBluetooth.framework; sourceTree = SDKROOT; };
 		1B67360D2531E4450063EA9A /* SimTrain.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SimTrain.h; sourceTree = "<group>"; };
 		1B67360E2531E4450063EA9A /* SimTrain.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SimTrain.m; sourceTree = "<group>"; };
+		1B69247529BD3C5C00ED150F /* c3autoP.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = c3autoP.h; sourceTree = "<group>"; };
+		1B69247629BD3C5C00ED150F /* c3autoP.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = c3autoP.c; sourceTree = "<group>"; };
 		1B693C4227D9CFEA0063D8B6 /* detect_loco.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = detect_loco.c; sourceTree = "<group>"; };
 		1B693C4327D9CFEA0063D8B6 /* detect_loco.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = detect_loco.h; sourceTree = "<group>"; };
 		1B7668892925855C00E2CE96 /* ToolWindow.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ToolWindow.h; sourceTree = "<group>"; };
@@ -716,6 +719,8 @@
 				1B7B5E20297131B000955045 /* TestLongTrainSupport.h */,
 				1B7B5E002969B40A00955045 /* TestLongTrainLeft0.m */,
 				1BAC041129527121005DC958 /* TestLTFsm.m */,
+				1B69247529BD3C5C00ED150F /* c3autoP.h */,
+				1B69247629BD3C5C00ED150F /* c3autoP.c */,
 			);
 			path = ctrl;
 			sourceTree = "<group>";
@@ -1265,6 +1270,7 @@
 				1B455A20280F671000F09E33 /* conf_canton.fields.c in Sources */,
 				1B7B5E122970A50800955045 /* ctc_periodic_refresh.c in Sources */,
 				1B238C8A285E54F6000DA9B8 /* tasklet.c in Sources */,
+				1B69247729BD3C5C00ED150F /* c3autoP.c in Sources */,
 				1B3657BB275BED540042491A /* CTCManager.m in Sources */,
 				1BF42FD62914F525004EC55B /* servo.c in Sources */,
 				1B46F814280C288E00BAD6E8 /* simu_flash.c in Sources */,

@@ -20,6 +20,7 @@
 //#include "../ctrl/ctrlP.h"
 #include "../ctrl/ctrlLT.h"
 #include "../ctrl/cautoP.h"
+#include "../ctrl/c3autoP.h"
 #include "../leds/led.h"
 
 #ifndef BOARD_HAS_TRKPLN
@@ -32,6 +33,7 @@ static void planner_reset_all(void);
 static void handle_planner_msg(msg_64_t *m);
 static void planner_tick(_UNUSED_ uint32_t tick, _UNUSED_ uint32_t dt);
 static void planner_plan_pending(int delay);
+static void planner_start_pending3(int n, cauto_path_items_t *pit);
 
 static void planner_enter_runmode(_UNUSED_ runmode_t m)
 {
@@ -106,15 +108,18 @@ static void handle_planner_msg(msg_64_t *m)
 	}
 }
 
-static void planner_start_pending(int n, uint8_t Auto1ByteCode[]);
+//static void planner_start_pending(int n, uint8_t Auto1ByteCode[]);
 
 static void planner_tick(_UNUSED_ uint32_t tick, _UNUSED_ uint32_t dt)
 {
 	  for (int n = 0; n<NUM_PENDING; n++) {
 	    	if (0xFF == PlanPending[n].train) continue;
 	    	if (PlanPending[n].startTick && (tick >= PlanPending[n].startTick)) {
-                abort();
-	    		planner_start_pending(n, NULL /* ctrl_get_autocode(PlanPending[n].train)*/);
+                cauto_path_items_t *p = c3auto_get_path(PlanPending[n].train);
+	    		planner_start_pending3(n, p);
+#ifdef TRAIN_SIMU
+                c3auto_dump(p);
+#endif
 	    		PlanPending[n].startTick = 0;
 	    }
 	}
@@ -168,6 +173,214 @@ static void planner_plan_pending(int delay)
     }
 }
 
+static void planner_start_pending3(int n, cauto_path_items_t *pit)
+{
+    //XXX currently handle only 1st request
+    int train = PlanPending[n].train;
+    if (0xFF == train) return;
+    PlanPending[n].train = 0xFF;
+
+    int spd2 = PlanPending[n].spd/2;
+    int target = PlanPending[n].target;
+    int curpos = ctrl_get_train_curlsblk(train);
+    if (curpos == -1) return;
+    //XXX delay ignored
+    // we keep
+    for (int i=0;i<32;i++) distance[i] = 0xFFFE;
+    distance[target] = 0;
+    visited = 0;
+    for (;;) {
+        // select shortest distance node
+        uint16_t shortest_distance = 0xFFFF;
+        int  shortest_index = -1;
+        for (int i=0; i<32; i++) {
+            if ((distance[i] < shortest_distance) && (0 == (visited & (1UL<<i)))) {
+                shortest_distance = distance[i];
+                shortest_index = i;
+            }
+        }
+        if (-1 == shortest_index) break; // done, all nodes visited
+        
+        lsblk_num_t s = {shortest_index};
+        int l = distance[shortest_index] + get_lsblk_len_cm(s, NULL);
+        for (int i=0; i<32; i++) {
+            if (!get_matrix(shortest_index, i)) continue;
+            if (distance[i] > l) {
+                distance[i] = l;
+            }
+        }
+        visited |= (1UL<<shortest_index);
+    }
+     // debug print
+    int b = curpos;
+#ifdef TRAIN_SIMU
+    for (;;) {
+        printf(" b%d ", b);
+        if (b==target) break;
+        int s=0xFFFFF;
+        int si = -1;
+        for (int i=0; i<32; i++) {
+            if (!get_matrix(b, i)) continue;
+            if (distance[i]<s) {
+                s = distance[i];
+                si = i;
+            }
+        }
+        if (si<0) FatalError("NF", "path not found", Error_Other); // to be removed
+        b = si;
+    }
+    printf("hop\n");
+#endif
+    // convert to c3auto path list
+    int pathindex = 0;
+    b = curpos;
+    int dir = 0;
+    int prevb = -1;
+    for (;;) {
+        if (b==curpos) {
+        } else if (prevb >= 0) {
+            int ndir = 0;
+            xtrnaddr_t tn = { .v = 0xFF};
+            int tnpos = 0;
+            int hastn = 0;
+            
+            const topo_lsblk_t *p = topology_get_sblkd(prevb);
+            if (!p) FatalError("NF", "path not found", Error_Other);
+            if ((p->left2 == b) || (p->left1 == b)) {
+                ndir = -1;
+                if (p->ltn != 0xFF) {
+                    hastn = 1;
+                    tn.v = p->ltn;
+                    tnpos = (p->left2 == b) ? 1 : 0;
+                }
+            } else if ((p->right2 == b) || (p->right1 == b)) {
+                ndir = 1;
+                if (p->rtn != 0xFF) {
+                    hastn = 1;
+                    tn.v = p->rtn;
+                    tnpos = (p->right2 == b) ? 1 : 0;
+                }
+            } else {
+                abort();
+            }
+            pit[pathindex].t = 0;
+            pit[pathindex].val = spd2*ndir;
+            pit[pathindex].sblk.n = prevb;
+            pathindex++;
+            if (hastn) {
+                pit[pathindex].t = 1;
+                pit[pathindex].tn = tn;
+                pit[pathindex].val = tnpos;
+                pathindex++;
+            }
+            dir = ndir;
+        }
+        if (b==target) {
+            pit[pathindex].t = 0;
+            pit[pathindex].val = 0;
+            pit[pathindex].sblk.n = b;
+            pathindex++;
+            break;
+        }
+        int s=0xFFFFF;
+        int si = -1;
+        for (int i=0; i<32; i++) {
+            if (!get_matrix(b, i)) continue;
+            if (distance[i]<s) {
+                s = distance[i];
+                si = i;
+            }
+        }
+        if (si<0) FatalError("NF", "path not found", Error_Other); // to be removed
+        prevb = b;
+        b = si;
+    }
+#if 0 // old
+    // convert to cauto byte code
+    int bytecodeIndex = 0;
+    b = curpos;
+    int prevb = -1;
+    int dir = 0;
+    _UNUSED_ int led = 0;
+    for (;;) {
+        //printf(" b%d ", b);
+        if (b==curpos) {
+            //Auto1ByteCode[bytecodeIndex++] = b;
+        } else if (prevb >= 0) {
+            int ndir = 0;
+            const topo_lsblk_t *p = topology_get_sblkd(prevb);
+            if (!p) FatalError("NF", "path not found", Error_Other);
+            if ((p->left2 == b) || (p->left1 == b)) ndir = -1;
+            if ((p->right2 == b) || (p->right1 == b)) ndir = 1;
+            if (ndir != dir) {
+                if (dir) {
+                    abort();
+                    /*
+                    Auto1ByteCode[bytecodeIndex++] = _AR_TRG_LIM; //_AR_TRG_END;
+                    Auto1ByteCode[bytecodeIndex++] = _AR_WTRG_U1;
+                    Auto1ByteCode[bytecodeIndex++] = _AR_SPD(0);
+                    Auto1ByteCode[bytecodeIndex++] = _AR_WSTOP;
+                    Auto1ByteCode[bytecodeIndex++] = _AR_TIMER(1);
+                    Auto1ByteCode[bytecodeIndex++] = _AR_WTIMER;
+                     */
+                }
+                abort();
+                //Auto1ByteCode[bytecodeIndex++] = _AR_SPD(ndir*spd);
+            }
+            dir = ndir;
+            abort();
+            //Auto1ByteCode[bytecodeIndex++] = b;
+        }
+        /*
+        if ((b==1) && (!led)) {
+            led = 1;
+            Auto1ByteCode[bytecodeIndex++] = _AR_LED;
+            Auto1ByteCode[bytecodeIndex++] = 0;
+            Auto1ByteCode[bytecodeIndex++] = LED_PRG_25p;
+
+            Auto1ByteCode[bytecodeIndex++] = _AR_LED;
+            Auto1ByteCode[bytecodeIndex++] = 1;
+            Auto1ByteCode[bytecodeIndex++] = LED_PRG_NEONON;
+        }
+        */
+        if (b==target) {
+            if (dir) {
+                //Auto1ByteCode[bytecodeIndex++] = b;
+                abort();
+                /*
+                Auto1ByteCode[bytecodeIndex++] = _AR_TRG_LIM;
+                Auto1ByteCode[bytecodeIndex++] = _AR_WTRG_U1;
+                Auto1ByteCode[bytecodeIndex++] = _AR_SPD(0);
+                 */
+                //Auto1ByteCode[bytecodeIndex++] = _AR_WSTOP;
+            }
+            //Auto1ByteCode[bytecodeIndex++] = _AR_END;
+            break;
+        }
+        int s=0xFFFFF;
+        int si = -1;
+        for (int i=0; i<32; i++) {
+            if (!get_matrix(b, i)) continue;
+            if (distance[i]<s) {
+                s = distance[i];
+                si = i;
+            }
+        }
+        if (si<0) FatalError("NF", "path not found", Error_Other); // to be removed
+        prevb = b;
+        b = si;
+    }
+#endif
+    //printf("hop");
+    msg_64_t m = {0};
+    m.cmd = CMD_START_AUTO;
+    m.v1u = 1;
+    m.to = MA1_CTRL(train);
+    m.from = MA3_PLANNER;
+    mqf_write_from_planner(&m);
+}
+
+#if 0
 static void planner_start_pending(int n, uint8_t Auto1ByteCode[])
 {
     //XXX currently handle only 1st request
@@ -308,4 +521,4 @@ static void planner_start_pending(int n, uint8_t Auto1ByteCode[])
     m.from = MA3_PLANNER;
     mqf_write_from_planner(&m);
 }
-
+#endif

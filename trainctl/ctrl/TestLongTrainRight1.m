@@ -317,7 +317,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     rettrigs_t rettrigs = {0};
     rc = ctrl3_check_front_sblks(0, &tvars, tconf, 0, &rettrigs);
     XCTAssert(rc==0);
-    const rettrigs_t expt1 = { 0, 0, 0, 0, 5, {{220 + bmm, tag_chkocc}, {340+bmm, tag_brake}, {120+bmm,tag_reserve_c2}, {400+bmm, tag_end_lsblk}, {300+bmm, tag_need_c2}}};
+    const rettrigs_t expt1 = { 0, 0, 0, 0, 5, {{220 + bmm, tag_chkocc}, {120+bmm,tag_reserve_c2},  {340+bmm, tag_brake}, {400+bmm, tag_end_lsblk}, {300+bmm, tag_need_c2}}};
     XCTAssert(!cmptrigs(&rettrigs, &expt1));
 }
 

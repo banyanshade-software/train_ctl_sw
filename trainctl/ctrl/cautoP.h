@@ -9,6 +9,7 @@
 #ifndef cautoP_h
 #define cautoP_h
 
+
 #if 0 // to be refactor
 int cauto_update_turnouts(int tidx, lsblk_num_t cur, uint8_t left, uint8_t next);
 

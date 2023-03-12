@@ -17,7 +17,7 @@
  * 			target_speed -> inertia -> BEMF feedback -> volt + pwm
  */
 
-#define RECORD_MSG 1
+//#define RECORD_MSG 1
 
 #include <stdint.h>
 #include <memory.h>
@@ -207,7 +207,8 @@ static void spdctl_reset(void)
 		//trspc_vars[i].C2x.v = 0xFF;
 	}
     // reset BEMF
-    bemf_reset();
+    // XXX TODO should not be here since canton_bemf is on remote board
+    //bemf_reset();
 }
 
 volatile int16_t oscillo_t0bemf = 0;

@@ -180,3 +180,12 @@ NSString *dump_msgbuf(int clear)
     }
     return r;
 }
+
+
+
+
+void record_msg_read(void *ptr)
+{
+    
+}
+

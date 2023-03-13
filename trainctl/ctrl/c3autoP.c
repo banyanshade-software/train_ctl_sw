@@ -33,7 +33,8 @@ typedef char compile_assert_c3[(sizeof(cauto_path_items_t) == 2) ? 1 : -1];
 
 
 typedef struct st_path {
-    int cidx;
+    uint16_t cidx;
+    int8_t spd;
     cauto_path_items_t path[C3AUTO_NUM_PATH_ITEM];
 } cauto_vars_t;
 
@@ -49,6 +50,7 @@ static int is_eop(cauto_path_items_t *p)
 void c3auto_start(int tidx)
 {
     c3avar[tidx].cidx = 0;
+    c3avar[tidx].spd = 0;
 }
 void c3auto_set_s1(int tidx, lsblk_num_t s1)
 {
@@ -57,7 +59,16 @@ void c3auto_set_s1(int tidx, lsblk_num_t s1)
         if (c3avar[tidx].path[idx].t) continue;
         if (c3avar[tidx].path[idx].sblk.n == s1.n) {
             c3avar[tidx].cidx = idx;
-            ctrl_set_desired_spd(tidx, c3avar[tidx].path[idx].val*2);
+            int8_t spd2 = c3avar[tidx].path[idx].val;
+            int8_t ospd = c3avar[tidx].spd;
+            if (spd2 != ospd) {
+                if (spd2 && ospd && (SIGNOF(spd2) != SIGNOF((ospd)))) {
+                    // change direction
+                    ctrl_set_desired_spd(tidx, 0);
+                }
+                ctrl_set_desired_spd(tidx, spd2*2);
+                c3avar[tidx].spd = spd2;
+            }
             return;
         }
 

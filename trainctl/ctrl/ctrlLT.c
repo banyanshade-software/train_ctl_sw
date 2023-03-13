@@ -183,7 +183,7 @@ void ctrl3_upcmd_set_desired_speed(int tidx, train_ctrl_t *tvars, int16_t desire
     switch (tvars->_state) {
         case train_state_off:
             return;
-        case train_station:
+        case train_state_station:
 station:
             rc = _train_check_dir(tidx, tvars, sdir, &rett);
             if (rett.isoet) {
@@ -609,7 +609,7 @@ static void _updated_while_running(int tidx, train_ctrl_t *tvars)
 static void _evt_leaved_c1old(int tidx, train_ctrl_t *tvars)
 {
     itm_debug3(DBG_CTRL|DBG_POSE, "evt_left_c2", tidx, tvars->_state, tvars->can1_xaddr.v);
-    if (tvars->_state != train_running_c1) {
+    if (tvars->_state != train_state_running) {
         itm_debug2(DBG_CTRL|DBG_ERR, "leav_c1/bs", tidx, tvars->_state);
         return;
     }
@@ -632,7 +632,7 @@ void ctrl3_evt_leaved_c1(int tidx, train_ctrl_t *tvars)
 {
     // TODO : KO this is not leave c1, should only update pos
     itm_debug3(DBG_CTRL|DBG_POSE, "evt_left_c1", tidx, tvars->_state, tvars->can1_xaddr.v);
-    if (tvars->_state != train_running_c1) {
+    if (tvars->_state != train_state_running) {
         itm_debug2(DBG_CTRL|DBG_ERR, "leav_c1/bs", tidx, tvars->_state);
         return;
     }
@@ -803,7 +803,7 @@ static void _set_dir(int tidx, train_ctrl_t *tvars, int sdir)
     tvars->c1c2dir_changed = 1;
     occupency_set_occupied(tvars->can1_xaddr, tidx, tvars->c1_sblk, tvars->_sdir);
 }
-static void _update_spd_limit(int tidx, train_ctrl_t *tvars, int sdir)
+static void _update_spd_limit(_UNUSED_ int tidx, train_ctrl_t *tvars, _UNUSED_ int sdir)
 {
     // TODO
     tvars->_spd_limit = 99;
@@ -1089,7 +1089,7 @@ static int _lock_train_occupency(int tidx, train_ctrl_t *tvars)
 
     return 0;
 }
-static void _release_all_blocks(int tidx, train_ctrl_t *tvars)
+static void _release_all_blocks(int tidx, _UNUSED_ train_ctrl_t *tvars)
 {
     occupency_remove_train(tidx);
 

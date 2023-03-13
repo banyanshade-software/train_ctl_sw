@@ -152,7 +152,7 @@ void _trace_train_postick(uint32_t tick, int tidx, train_ctrl_t *tvars)
     
 }
 
-void _trace_train_trig(uint32_t tick, int tidx, train_ctrl_t *tvars, pose_trig_tag_t tag, int32_t oldpos, int32_t adjutedpos)
+void _trace_train_trig(uint32_t tick, int tidx, _UNUSED_ train_ctrl_t *tvars, pose_trig_tag_t tag, int32_t oldpos, int32_t adjutedpos)
 {
     train_trace_record_t *rec = get_newrec(tidx);
     if (!rec) return;
@@ -164,7 +164,7 @@ void _trace_train_trig(uint32_t tick, int tidx, train_ctrl_t *tvars, pose_trig_t
 }
 
 
-void _trace_train_trig_set(uint32_t tick, int tidx, train_ctrl_t *tvars, pose_trig_tag_t tag, int32_t pos)
+void _trace_train_trig_set(uint32_t tick, int tidx, _UNUSED_ train_ctrl_t *tvars, pose_trig_tag_t tag, int32_t pos)
 {
     train_trace_record_t *rec = get_newrec(tidx);
     if (!rec) return;
@@ -194,6 +194,7 @@ void _trace_train_simu(uint32_t tick, int tidx, int sblk, int canton)
     rec->simurec.canton = canton;
 }
 
+#ifdef TRAIN_SIMU
 
 static const char *state_name(train_state_t st)
 {
@@ -229,8 +230,12 @@ static const char *trig_name(pose_trig_tag_t tag)
         default: return "???";
     }
 }
+#endif
+
+
 void trace_train_dump(int tidx)
 {
+#ifdef TRAIN_SIMU
     if (tidx>=NUM_TRAIN_TRACE) return;
     train_trace_t *t = &trace[tidx];
 
@@ -282,6 +287,10 @@ void trace_train_dump(int tidx)
                 break;
         }
     }
+#else
+    // target trace dump, TODO
+    (void)tidx; // unused for now
+#endif
 }
 
 #endif

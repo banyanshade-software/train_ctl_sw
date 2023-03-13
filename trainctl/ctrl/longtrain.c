@@ -115,7 +115,7 @@ static inline int ctrl3_get_next_sblks__(_UNUSED_ int tidx, train_ctrl_t *tvars,
         }
         mm -= lmm;
         //cblk = next_lsblk(cblk, left, NULL);
-        int a;
+        int8_t a;
         cblk = next_lsblk_and_reserve(tidx, tvars, cblk, left, &a);
         resp[lidx] = cblk;
         lidx++;
@@ -288,7 +288,7 @@ static int check_for_dist(_UNUSED_ int tidx, train_ctrl_t *tvars,  struct forwds
 
 typedef int (*check_condition_t)( train_ctrl_t *tvars, lsblk_num_t lastsblk, lsblk_num_t testsblk);
 
-static int _check_front_condition_eot( train_ctrl_t *tvars, lsblk_num_t lastsblk, lsblk_num_t testsblk)
+static int _check_front_condition_eot(_UNUSED_ train_ctrl_t *tvars, _UNUSED_ lsblk_num_t lastsblk, lsblk_num_t testsblk)
 {
     if (testsblk.n == -1) return 1;
     return 0;
@@ -311,7 +311,7 @@ static int _check_front_condition_res_c2(train_ctrl_t *tvars, lsblk_num_t lastsb
     return 0;
 }
 
-int _check_front_condition_s1pose( train_ctrl_t *tvars, lsblk_num_t lastsblk, lsblk_num_t testsblk)
+int _check_front_condition_s1pose(_UNUSED_ train_ctrl_t *tvars, lsblk_num_t lastsblk, lsblk_num_t testsblk)
 {
     xblkaddr_t c1 = canton_for_lsblk(lastsblk);
     xblkaddr_t c2 = canton_for_lsblk(testsblk);
@@ -378,7 +378,7 @@ static int check_front(int tidx, train_ctrl_t *tvars,  struct forwdsblk *fsblk, 
     }
 }
 
-static int check_loco(int tidx, train_ctrl_t *tvars,  struct forwdsblk *fsblk, int left, int16_t maxmm, int8_t *pa, check_condition_t cond)
+static int check_loco(int tidx, train_ctrl_t *tvars,  _UNUSED_ struct forwdsblk *fsblk, int left, int16_t maxmm, int8_t *pa, check_condition_t cond)
 {
     lsblk_num_t fs = tvars->c1_sblk;
     lsblk_num_t ns = fs;
@@ -741,7 +741,7 @@ int ctrl3_update_front_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t 
     return ctrl3_get_next_sblks(tidx, tvars, tconf);
 }
 
-void ctrl3_update_c1changed(int tidx, train_ctrl_t *tvars,  const conf_train_t *tconf, int left)
+void ctrl3_update_c1changed(int tidx, train_ctrl_t *tvars,  _UNUSED_ const conf_train_t *tconf, int left)
 {
     struct forwdsblk *fsblk = left ? &tvars->leftcars : &tvars->rightcars;
     

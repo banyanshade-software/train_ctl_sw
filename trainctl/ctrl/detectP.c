@@ -387,11 +387,11 @@ void detect2_init(void)
     
 }
 
-void detect2_process_tick(uint32_t tick)
+void detect2_process_tick(_UNUSED_ uint32_t tick)
 {
     
 }
-void detect2_process_msg(msg_64_t *m)
+void detect2_process_msg(_UNUSED_ msg_64_t *m)
 {
     
 }

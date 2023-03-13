@@ -234,7 +234,7 @@ static void planner_start_pending3(int n, cauto_path_items_t *pit)
     // convert to c3auto path list
     int pathindex = 0;
     b = curpos;
-    int dir = 0;
+    //int dir = 0;
     int prevb = -1;
     for (;;) {
         if (b==curpos) {
@@ -273,7 +273,7 @@ static void planner_start_pending3(int n, cauto_path_items_t *pit)
                 pit[pathindex].val = tnpos;
                 pathindex++;
             }
-            dir = ndir;
+            //dir = ndir;
         }
         if (b==target) {
             pit[pathindex].t = 0;

@@ -30,7 +30,7 @@ typedef enum {
     train_auto,            //    auto mode
 } train_mode_t;
 
-
+/*
 typedef enum {
     train_off=0,
     train_running_c1,    // running (auto or manual)
@@ -38,7 +38,7 @@ typedef enum {
     train_blk_wait,        // stopped (block control)
     train_end_of_track,    // idem but can only be changed by a direction change
 } train_oldstate_t;
-
+*/
 
 int ctrl_get_train_curlsblk(int numtrain);
 

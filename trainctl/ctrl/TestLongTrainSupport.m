@@ -189,3 +189,11 @@ void record_msg_read(void *ptr)
     
 }
 
+void c3auto_set_s1(int tidx, lsblk_num_t s1)
+{
+    
+}
+void c3auto_start(int tidx)
+{
+    
+}

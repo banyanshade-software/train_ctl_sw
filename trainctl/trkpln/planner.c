@@ -261,7 +261,7 @@ static void planner_start_pending3(int n, cauto_path_items_t *pit)
                     tnpos = (p->right2 == b) ? 1 : 0;
                 }
             } else {
-                abort();
+            	FatalError("ABRT", "abort", Error_NotImpl);
             }
             pit[pathindex].t = 0;
             pit[pathindex].val = spd2*ndir;

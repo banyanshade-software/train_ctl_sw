@@ -30,6 +30,7 @@
 #include "../leds/led.h"
 #include "../config/conf_globparam.h"
 #include "trace_train.h"
+#include "../oam/oam.h"
 #include "ctc_periodic_refresh.h"
 
 #ifndef BOARD_HAS_CTRL
@@ -138,16 +139,17 @@ static void ctrl_enter_runmode(runmode_t m)
 }
 // ------------------------------------------------------
 
-
+/*
 static void fatal(void)
 {
 	itm_debug1(DBG_ERR, "fatal", 0);
 #ifdef TRAIN_SIMU
     abort();
 #else
-    for (;;) osDelay(1000);
+	FatalError("ABRT", "sub_presence_changed, Error_NotImpl);
 #endif
 }
+*/
 
 // ----------------------------------------------------------------------------
 // train FSM
@@ -308,7 +310,7 @@ static void ctrl_tick(uint32_t tick, _UNUSED_ uint32_t dt)
          */
     }
     
-    ctc_periodic_refresh(tick);
+    if (Oam_Ready) ctc_periodic_refresh(tick);
 }
 // ----------------------------------------------------------------------------
 
@@ -347,7 +349,7 @@ static void sub_presence_changed(_UNUSED_ uint8_t from_addr,  uint8_t lsegnum,  
 		bh();
 	}
 	itm_debug3(DBG_PRES|DBG_CTRL, "PrsChg-", lsegnum, p, ival);
-    abort();
+	FatalError("ABRT", "sub_presence_changed", Error_NotImpl);
 #if 0
 	// TODO : from_addr should be used for board number
 	for (int tidx=0; tidx < NUM_TRAINS; tidx++) {
@@ -652,7 +654,10 @@ static void evt_timer(int tidx, train_oldctrl_t *tvar, int tnum)
 int ctrl_set_turnout(xtrnaddr_t tn, enum topo_turnout_state v, int train)
 {
 	itm_debug2(DBG_CTRL|DBG_TURNOUT, "TURN", tn.v, v);
-    if (tn.v == 0xFF) fatal();
+    if (tn.v == 0xFF) {
+    	itm_debug1(DBG_ERR|DBG_CTRL, "bad tn", train);
+    	FatalError("TNf", "bad tn", Error_NotImpl);
+    }
 
 
     enum topo_turnout_state val = v;
@@ -705,7 +710,10 @@ int ctrl_set_turnout(xtrnaddr_t tn, enum topo_turnout_state v, int train)
 static void set_door_ack(xtrnaddr_t tn, enum topo_turnout_state v)
 {
     itm_debug2(DBG_CTRL|DBG_TURNOUT, "DACK", tn.v, v);
-    if (tn.v == 0xFF) fatal();
+    if (tn.v == 0xFF) {
+    	itm_debug1(DBG_ERR|DBG_CTRL, "bad dack", 0);
+    	FatalError("DACK", "bad tn", Error_NotImpl);
+    }
 
     if (!tn.isdoor) {
         itm_debug1(DBG_ERR|DBG_CTRL, "dack no d", tn.v);

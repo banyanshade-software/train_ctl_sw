@@ -171,12 +171,15 @@ int ctrl3_get_next_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *tco
     if (tvars->_sdir>0) {
         if (lastnleft>0) {
             if (lastnleft >= tvars->leftcars.numlsblk+2) {
-                printf("problem here");
-                abort();
+                itm_debug1(DBG_ERR|DBG_CTRL, "problem here", 0);
+            	FatalError("ABRT", "ctrl3_get_next_sblks", Error_NotImpl);
             }
             lsblk_num_t l = _last(&tvars->leftcars, tvars->c1_sblk);
             if (l.n != lastleft.n) {
-                if (lastleft.n == tvars->c1_sblk.n) abort();
+                if (lastleft.n == tvars->c1_sblk.n) {
+                	 itm_debug1(DBG_ERR|DBG_CTRL, "problem here", 1);
+                	 FatalError("ABRT", "badc1", Error_NotImpl);
+                }
                 tvars->freelsblk = lastleft;
             }
         }

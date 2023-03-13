@@ -255,6 +255,7 @@ void ctrl3_upcmd_set_desired_speed_zero(int tidx, train_ctrl_t *tvars)
         case train_state_blkwait:
         case train_state_end_of_track:
             _set_dir(tidx, tvars, 0);
+            _set_speed(tidx, tvars, 0, 0, 0);
             _set_state(tidx, tvars, train_state_station);
             return;
             break;

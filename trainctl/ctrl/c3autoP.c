@@ -39,14 +39,54 @@ typedef struct st_path {
 
 cauto_vars_t c3avar[MAX_TRAINS];
 
+static int is_eop(cauto_path_items_t *p)
+{
+    if (p->t) return 0;
+    if (p->val==0) return 1;
+    return 0;
+}
+
+void c3auto_start(int tidx)
+{
+    c3avar[tidx].cidx = 0;
+}
 void c3auto_set_s1(int tidx, lsblk_num_t s1)
 {
+    int idx = c3avar[tidx].cidx;
+    for (;;idx++) {
+        if (c3avar[tidx].path[idx].t) continue;
+        if (c3avar[tidx].path[idx].sblk.n == s1.n) {
+            c3avar[tidx].cidx = idx;
+            ctrl_set_desired_spd(tidx, c3avar[tidx].path[idx].val*2);
+            return;
+        }
+
+        if (is_eop(&c3avar[tidx].path[idx])) {
+            FatalError("nos1", "S1 not found in path", Error_AutoNoS1);
+            ctrl_set_mode(tidx, train_manual);
+            return;
+        }
+    }
     abort();
 }
 void c3auto_set_turnout(int tidx, xtrnaddr_t tn)
 {
-    abort();
+    int idx = c3avar[tidx].cidx;
+    for (;;idx++) {
+        if (is_eop(&c3avar[tidx].path[idx])) {
+            FatalError("notn", "TN not found in path", Error_AutoNoTN);
+            ctrl_set_mode(tidx, train_manual);
+            return;
+        }
+
+        if (0==c3avar[tidx].path[idx].t) continue;
+        if (c3avar[tidx].path[idx].tn.v == tn.v) {
+            ctrl_set_turnout(tn, c3avar[tidx].path[idx].val ? topo_tn_turn : topo_tn_straight, tidx);
+            return;
+        }
+    }
 }
+
 cauto_path_items_t *c3auto_get_path(int numtrain)
 {
     return c3avar[numtrain].path;

@@ -9,6 +9,7 @@
 #ifndef c3autoP_h
 #define c3autoP_h
 
+void c3auto_start(int tidx);
 void c3auto_set_turnout(int tidx, xtrnaddr_t tn);
 void c3auto_set_s1(int tidx, lsblk_num_t s1);
 

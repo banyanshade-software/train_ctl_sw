@@ -116,7 +116,6 @@ msg_handler_t msg_handler_selector(runmode_t m)
 
 // ------------------------------------------------------
 
-static void ctrl_set_mode(int trnum, train_mode_t mode);
 
 static void ctrl_enter_runmode(runmode_t m)
 {
@@ -164,14 +163,14 @@ static void notify_presence_changed(uint8_t from_addr, uint8_t segnum, uint16_t 
 
 // ----------------------------------------------------------------------------
 // turnouts
-static int set_turnout(xtrnaddr_t tn, enum topo_turnout_state v, int train);
+//static int ctrl_set_turnout(xtrnaddr_t tn, enum topo_turnout_state v, int train);
 static void set_door_ack(xtrnaddr_t tn, enum topo_turnout_state v);
 
 
 
 // ----------------------------------------------------------------------------
 
-static void ctrl_set_mode(int trnum, train_mode_t mode)
+void ctrl_set_mode(int trnum, train_mode_t mode)
 {
     ctrl3_set_mode(trnum, &trctl[trnum], mode);
     trctl[trnum]._mode = mode;
@@ -213,8 +212,8 @@ static void _ctrl_init(int normalmode)
 		//ctrl_set_mode(1, train_auto);
 		xtrnaddr_t t0 = { .v = 0};
 		xtrnaddr_t t1 = { .v = 1};
-		set_turnout(t0, topo_tn_straight, -1);
-		set_turnout(t1, topo_tn_straight, -1);
+		ctrl_set_turnout(t0, topo_tn_straight, -1);
+		ctrl_set_turnout(t1, topo_tn_straight, -1);
 		const _UNUSED_ lsblk_num_t s0 = {0};
 		const _UNUSED_ lsblk_num_t s2 = {2};
 		const _UNUSED_ lsblk_num_t s5 = {5};
@@ -434,6 +433,15 @@ uint8_t *ctrl_get_autocode(int numtrain)
 	return tvar->route;
 }
  */
+void ctrl_set_desired_spd(int tidx, int spd)
+{
+    train_ctrl_t *tvars = &trctl[tidx];
+    if (spd) {
+        ctrl3_upcmd_set_desired_speed(tidx, tvars, spd);
+    } else {
+        ctrl3_upcmd_set_desired_speed_zero(tidx, tvars);
+    }
+}
 
 static void normal_process_msg(msg_64_t *m)
 {
@@ -445,17 +453,17 @@ static void normal_process_msg(msg_64_t *m)
         case CMD_TURNOUT_HI_A:
         	// TODO : board
             turnout.v = m->v1u;
-            set_turnout(turnout, topo_tn_straight, -1);
+            ctrl_set_turnout(turnout, topo_tn_straight, -1);
             break;
         case CMD_TURNOUT_HI_B:
             turnout.v = m->v1u;
-            set_turnout(turnout, topo_tn_turn, -1);
+            ctrl_set_turnout(turnout, topo_tn_turn, -1);
             break;
         case CMD_TURNOUT_HI_TOG:
             turnout.v = m->v1u;
             enum topo_turnout_state s = topology_get_turnout(turnout);
             if (s != topo_tn_moving) {
-                set_turnout(turnout, s ? topo_tn_straight : topo_tn_turn, -1);
+                ctrl_set_turnout(turnout, s ? topo_tn_straight : topo_tn_turn, -1);
             }
             break;
         case CMD_SERVO_ACK:
@@ -495,13 +503,6 @@ static void normal_process_msg(msg_64_t *m)
         case CMD_START_AUTO:
             switch (m->v1u) {
                 case 1:
-                    // tvar->route =  Auto1ByteCode;
-                    abort();
-                    /* xxx
-                    otvar->routeidx = 0;
-                    otvar->got_u1 = 0;
-                    otvar->trigu1 = 0;
-                     */
                     ctrl_set_mode(tidx, train_manual); // make sure it is restarted if already auto
                     ctrl_set_mode(tidx, train_auto);
                     break;
@@ -648,7 +649,7 @@ static void evt_timer(int tidx, train_oldctrl_t *tvar, int tnum)
 // - sends info to UI (cto)
 
 
-static int set_turnout(xtrnaddr_t tn, enum topo_turnout_state v, int train)
+int ctrl_set_turnout(xtrnaddr_t tn, enum topo_turnout_state v, int train)
 {
 	itm_debug2(DBG_CTRL|DBG_TURNOUT, "TURN", tn.v, v);
     if (tn.v == 0xFF) fatal();
@@ -734,7 +735,7 @@ static void set_door_ack(xtrnaddr_t tn, enum topo_turnout_state v)
 
 int ctrl2_set_turnout(xtrnaddr_t tn, enum topo_turnout_state v, int train)
 {
-    return set_turnout(tn, v, train);
+    return ctrl_set_turnout(tn, v, train);
 }
 
  // #longtrain

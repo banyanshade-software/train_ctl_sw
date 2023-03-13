@@ -26,6 +26,7 @@
 #include "trace_train.h"
 //#include "ctrlP.h"
 //#include "cautoP.h"
+#include "c3autoP.h"
 #include "../spdctl/spdcxdir.h"
 
 #ifndef BOARD_HAS_CTRL
@@ -152,7 +153,12 @@ void ctrl3_set_mode(int tidx, train_ctrl_t *tvar, train_mode_t mode)
     itm_debug2(DBG_CTRL, "set mode", tidx, mode);
     if (tvar->_mode == mode) return;
     tvar->_mode = mode;
-    
+    if (mode == train_auto) {
+        c3auto_start(tidx);
+        c3auto_set_s1(tidx, tvar->c1_sblk);
+    } else if (mode == train_notrunning) {
+        turn_train_off(tidx, tvar);
+    }
     // notif UI
     msg_64_t m;
     m.from = MA1_CTRL(tidx);
@@ -161,9 +167,7 @@ void ctrl3_set_mode(int tidx, train_ctrl_t *tvar, train_mode_t mode)
     m.v1u = mode;
     mqf_write_from_ctrl(&m);
 
-    if (mode == train_notrunning) {
-        turn_train_off(tidx, tvar);
-    }
+  
 }
 
 

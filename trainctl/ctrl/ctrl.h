@@ -9,6 +9,7 @@
 #define CTRL_CTRL_H_
 
 #include "../msg/tasklet.h"
+#include "../topology/topology.h"
 
 extern tasklet_t ctrl_tasklet;
 //void ctrl_run_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt);
@@ -42,6 +43,10 @@ typedef enum {
 int ctrl_get_train_curlsblk(int numtrain);
 
 uint8_t *ctrl_get_autocode(int numtrain);
+//called by cauto :
+void ctrl_set_mode(int trnum, train_mode_t mode);
+void ctrl_set_desired_spd(int tidx, int spd);
+int ctrl_set_turnout(xtrnaddr_t tn, enum topo_turnout_state v, int train);
 
 
 #endif /* CTRL_CTRL_H_ */

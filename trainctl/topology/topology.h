@@ -8,11 +8,14 @@
 #ifndef TOPOLOGY_TOPOLOGY_H_
 #define TOPOLOGY_TOPOLOGY_H_
 
-
-#include "../msg/trainmsg.h"
 #include "misc.h"
 
+#include "../msg/trainmsg.h"
+
 extern uint8_t _topology_or_occupency_changed;
+#ifndef _UNUSED_
+#define _UNUSED_ __attribute__((unused))
+#endif
 
 static inline void topology_updated(_UNUSED_ int trainnum)
 {

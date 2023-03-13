@@ -36,6 +36,7 @@
     if (self) {
         memset(tcellCtrl, 0, sizeof(tcellCtrl));
     }
+  
     return self;
 }
 - (void)awakeFromNib
@@ -61,6 +62,11 @@
         c.trainNum = row;
         tcellCtrl[row] = c;
         if (0==row) tst = c;
+        if (0==row) {
+            tcellCtrl[row].trainNum = 0;
+            tcellCtrl[row].spd      = 72;
+            tcellCtrl[row].targetLSBLK = 23;
+        }
     }
     //result.autoresizingMask = NSViewHeightSizable ;
     return result;

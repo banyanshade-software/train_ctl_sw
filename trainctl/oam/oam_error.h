@@ -82,6 +82,8 @@ enum fatal_error_code {
     Error_Lsblk_Invalid,
     Error_NextSblk,
 
+    Error_AutoNoS1,
+    Error_AutoNoTN,
 };
 
 

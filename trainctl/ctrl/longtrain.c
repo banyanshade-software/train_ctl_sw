@@ -115,7 +115,8 @@ static inline int ctrl3_get_next_sblks__(_UNUSED_ int tidx, train_ctrl_t *tvars,
         }
         mm -= lmm;
         //cblk = next_lsblk(cblk, left, NULL);
-        cblk = next_lsblk_and_reserve(tidx, tvars, cblk, left, NULL);
+        int a;
+        cblk = next_lsblk_and_reserve(tidx, tvars, cblk, left, &a);
         resp[lidx] = cblk;
         lidx++;
         if (lidx>=nsblk) return lidx;
@@ -355,7 +356,8 @@ static int check_front(int tidx, train_ctrl_t *tvars,  struct forwdsblk *fsblk, 
         int mm = 0;
         //int slen = get_lsblk_len_cm(ns, NULL);
         for (;;) {
-            ns = next_lsblk(ns, left, pa);
+            //ns = next_lsblk(ns, left, pa);
+            ns = next_lsblk_and_reserve(tidx, tvars, ns, left, pa);
             if (cond(tvars, fs, ns)) {
                 // EOT or BLKWAIT
                 return mm;
@@ -753,6 +755,9 @@ void ctrl3_update_c1changed(int tidx, train_ctrl_t *tvars,  const conf_train_t *
         }
     }
     occupency_set_occupied(tvars->can1_xaddr, tidx, tvars->c1_sblk, tvars->_sdir);
+    if (tvars->_mode == train_auto) {
+        c3auto_set_s1(tidx, tvars->c1_sblk);
+    }
     // this could be improved,
     // but for now let's be safe
     //return ctrl3_get_next_sblks(tidx, tvars, tconf); moved out

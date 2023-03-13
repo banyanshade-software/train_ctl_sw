@@ -16,7 +16,8 @@ enum fatal_error_code {
 	Error_None = 0,
 	Error_Stack,
 	Error_Other,		// Error_Handler
-    Error_NotImpl,      // replace abort()
+    Error_Abort,      // replace abort()
+	Error_NotImpl,
 	Error_Check,
 	Error_NoC2s,
 	Error_WrongC1,

@@ -349,7 +349,7 @@ static void sub_presence_changed(_UNUSED_ uint8_t from_addr,  uint8_t lsegnum,  
 		bh();
 	}
 	itm_debug3(DBG_PRES|DBG_CTRL, "PrsChg-", lsegnum, p, ival);
-	FatalError("ABRT", "sub_presence_changed", Error_NotImpl);
+	// FatalError("ABRT", "sub_presence_changed", Error_Abort);
 #if 0
 	// TODO : from_addr should be used for board number
 	for (int tidx=0; tidx < NUM_TRAINS; tidx++) {
@@ -656,7 +656,7 @@ int ctrl_set_turnout(xtrnaddr_t tn, enum topo_turnout_state v, int train)
 	itm_debug2(DBG_CTRL|DBG_TURNOUT, "TURN", tn.v, v);
     if (tn.v == 0xFF) {
     	itm_debug1(DBG_ERR|DBG_CTRL, "bad tn", train);
-    	FatalError("TNf", "bad tn", Error_NotImpl);
+    	FatalError("TNf", "bad tn", Error_Abort);
     }
 
 
@@ -712,7 +712,7 @@ static void set_door_ack(xtrnaddr_t tn, enum topo_turnout_state v)
     itm_debug2(DBG_CTRL|DBG_TURNOUT, "DACK", tn.v, v);
     if (tn.v == 0xFF) {
     	itm_debug1(DBG_ERR|DBG_CTRL, "bad dack", 0);
-    	FatalError("DACK", "bad tn", Error_NotImpl);
+    	FatalError("DACK", "bad tn", Error_Abort);
     }
 
     if (!tn.isdoor) {

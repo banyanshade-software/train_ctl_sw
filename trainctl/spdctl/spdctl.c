@@ -641,8 +641,16 @@ static void train_periodic_control(int numtrain, _UNUSED_ uint32_t dt)
 
 	itm_debug2(DBG_SPDCTL, "target", numtrain, v);
     if (tvars->brake) {
-        int32_t k1000 = (1000*(tvars->stopposed10-tvars->lastposed10))/(tvars->stopposed10- tvars->startbreakd10);
-        if (k1000<0) k1000 = 0;
+    	// XXX possible div0 here
+    	int32_t k1000;
+    	if (tvars->stopposed10 != tvars->startbreakd10) {
+    		k1000 = (1000*(tvars->stopposed10-tvars->lastposed10))/(tvars->stopposed10 - tvars->startbreakd10);
+    	} else {
+    		k1000 = 0;
+    	}
+        if (k1000<0) {
+        	k1000 = 0;
+        }
         v = (int16_t)((tvars->spdbrake * k1000)/1000);
     }
 

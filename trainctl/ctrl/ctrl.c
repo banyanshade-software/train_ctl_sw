@@ -57,15 +57,17 @@ static train_ctrl_t trctl[NUM_TRAINS] = {0};
 const stat_val_t statval_ctrl[] = {
 		{ trctl, offsetof(train_ctrl_t, _sdir),             sizeof(uint8_t)         _P("T#_ctrl_dir")},
 		{ trctl, offsetof(train_ctrl_t, _target_unisgned_speed),    sizeof(uint16_t)        _P("T#_ctrl_target_speed")},
-        { trctl, offsetof(train_ctrl_t, c1_sblk.n),        sizeof(uint8_t)         _P("T#_ctrl_canton1_lsb")},
         { trctl, offsetof(train_ctrl_t, _desired_signed_speed),    sizeof(uint16_t)        _P("T#_ctrl_desired_speed")},
-#ifndef REDUCE_STAT
         { trctl, offsetof(train_ctrl_t, _state),           sizeof(train_state_t)   _P("T#_ctrl_state")},
+
+        { trctl, offsetof(train_ctrl_t, c1_sblk.n),        sizeof(uint8_t)         _P("T#_ctrl_canton1_lsb")},
+        { trctl, offsetof(train_ctrl_t, _curposmm),        sizeof(int32_t)         _P("T#_ctrl_curposmm")},
+        { trctl, offsetof(train_ctrl_t, beginposmm),       sizeof(int32_t)         _P("T#_ctrl_beginposmm")},
+
+#ifndef REDUCE_STAT
         { trctl, offsetof(train_ctrl_t, can1_addr),        sizeof(uint8_t)         _P("T#_ctrl_canton1_addr")},
         { trctl, offsetof(train_ctrl_t, can2_addr),        sizeof(uint8_t)         _P("T#_ctrl_canton2_addr")},
         { trctl, offsetof(train_ctrl_t, spd_limit),        sizeof(uint16_t)        _P("T#_ctrl_spd_limit")},
-        { trctl, offsetof(train_ctrl_t, curposmm),         sizeof(int32_t)         _P("T#_curposmm")},
-        { trctl, offsetof(train_ctrl_t, beginposmm),       sizeof(int32_t)         _P("T#beginposmm")},
 #endif
         { NULL,  sizeof(train_ctrl_t), 0 _P(NULL)}
 };
@@ -234,6 +236,8 @@ static void _ctrl_init(int normalmode)
             ctrl3_init_train(0, &trctl[0], s0, 1);
             ctrl3_init_train(1, &trctl[1], s8, 1);
             ctrl3_init_train(2, &trctl[2], s7, 1);
+
+            trctl[0]._curposmm = 500;
 
 			ctrl_set_mode(0, train_manual);
 			ctrl_set_mode(1, train_manual);

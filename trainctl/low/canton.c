@@ -124,10 +124,10 @@ static canton_vars_t canton_vars[NUM_CANTONS]={0};
 // ------------------------------------------------------
 
 const stat_val_t statval_canton[] = {
-#ifndef REDUCE_STAT
+//#ifndef REDUCE_STAT
         { canton_vars, offsetof(canton_vars_t, cur_dir) ,       1     _P("C#_dir")},
         { canton_vars, offsetof(canton_vars_t, cur_voltidx) ,   1     _P("C#_vidx")},
-#endif
+//#endif
         { canton_vars, offsetof(canton_vars_t, cur_pwm_duty) ,  2     _P("C#_pwm")},
         
         { NULL, sizeof(canton_vars_t), 0  _P(NULL)}

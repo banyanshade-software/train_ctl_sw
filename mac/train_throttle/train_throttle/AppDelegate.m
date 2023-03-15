@@ -140,6 +140,7 @@ typedef void (^respblk_t)(void);
     // avoid exception in KVC
     BOOL processingStatFrame;
     BOOL undefinedKey;
+    NSMutableSet *unhandled_key;
 }
 
 @property (weak) IBOutlet NSWindow *window;
@@ -1658,7 +1659,65 @@ static int frm_unescape(uint8_t *buf, int len)
 #endif // OLD_FRAMING
 
 
+- (BOOL) processStatValInfo:(stat_iterator_t *)step value:(int32_t)v validx:(int)validx
+{
+    off_t offset; int len;
+    int idx=-1;
+    const char *name = NULL;
 
+    get_val_info(step, &offset, &len, &idx, &name);
+    
+    if (!name) {
+        NSLog(@"no stat name");
+        return NO;
+    }
+    
+    NSString *key = nil;
+
+    if (!unhandled_key) unhandled_key = [[NSMutableSet alloc]initWithCapacity:20];
+    NSString *nkey;
+    
+    NSString *m = [NSString stringWithUTF8String:name];
+    key = m;
+    key = [NSString stringWithFormat:m, idx];
+    
+    NSString *sidx = [NSString stringWithFormat:@"%d", idx];
+    nkey= [key stringByReplacingOccurrencesOfString:@"#" withString:sidx];
+   
+    if ([key isEqualToString:@"T#_pid_sum_e"]) {
+        v = v/1000;
+    }
+    NSNumber *nsv = @(v);
+
+    if ([key hasPrefix:@"C#_"]) {
+        [cantons_value setValue:nsv forKey:nkey];
+    } else if ([key hasPrefix:@"T#_"]) {
+        [trains_value setValue:nsv forKey:nkey];
+    }
+    if (![unhandled_key containsObject:nkey]) {
+        //NSLog(@"---- %@\n", key);
+        processingStatFrame = YES;
+        undefinedKey = NO;
+        [self setValue:nsv forKey:nkey];
+        if (undefinedKey) {
+            [unhandled_key addObject:nkey];
+        }
+        processingStatFrame = NO;
+    }
+    if (_recordState == 1) {
+        if (!recordItems) recordItems=[[NSMutableDictionary alloc]init];
+        
+        if (nkey) [recordItems setObject:@(validx) forKey:nkey];
+        NSString *s = [NSString stringWithFormat:@"%@, ", nkey ? nkey : @"_"];
+        [recordFile writeData:[s dataUsingEncoding:NSUTF8StringEncoding]];
+    } else if (_recordState) {
+        NSString *s;
+        s = [NSString stringWithFormat:@"%d, ", v];
+        [recordFile writeData:[s dataUsingEncoding:NSUTF8StringEncoding]];
+    }
+    return YES;
+
+}
 
 
 - (void) setValue:(id)value forUndefinedKey:(NSString *)key
@@ -1690,20 +1749,25 @@ static int frm_unescape(uint8_t *buf, int len)
     int validx;
     for (validx=0,rc = stat_iterator_reset(&step); !rc; rc = stat_iterator_next(&step), validx++) {
         int32_t v = *ptr++;
-        off_t offset; int len;
-        int idx=-1;
-        const char *name = NULL;
+        
 
-        get_val_info(&step, &offset, &len, &idx, &name);
         
         if (nval<0) {
             NSLog(@"short stat frame");
             goto done;
         }
+        BOOL ok = [self processStatValInfo:&step value:v validx:validx];
+        if (!ok) continue;
+        
+#if 0
+        off_t offset; int len;
+        int idx=-1;
+        const char *name = NULL;
+        get_val_info(&step, &offset, &len, &idx, &name);
+        
         //if (!strcmp(name, "C#_pwm")) NSLog(@"stat : '%s'[%d] = %d\n", name ? name : "_", idx, v);
         NSString *key = nil;
 
-        static NSMutableSet *unhandled_key = nil;
         if (!unhandled_key) unhandled_key = [[NSMutableSet alloc]initWithCapacity:20];
         NSString *nkey;
 
@@ -1718,7 +1782,9 @@ static int frm_unescape(uint8_t *buf, int len)
         
         NSString *sidx = [NSString stringWithFormat:@"%d", idx];
         nkey= [key stringByReplacingOccurrencesOfString:@"#" withString:sidx];
-        
+        /*if ([key isEqualToString:@"C#_pwm"]) {
+            NSLog(@"%@: %@ : %d\n", key, nkey, v);
+        }*/
         if ([key isEqualToString:@"T#_pid_sum_e"]) {
             v = v/1000;
         }
@@ -1759,6 +1825,7 @@ static int frm_unescape(uint8_t *buf, int len)
             s = [NSString stringWithFormat:@"%d, ", v];
             [recordFile writeData:[s dataUsingEncoding:NSUTF8StringEncoding]];
         }
+#endif
     }
 done:
     if (_recordState) {
@@ -2118,8 +2185,31 @@ uint32_t SimuTick = 0;
     uint32_t mt = SimuTick;
 #endif
    
+    // process stat
+    // (no frame stat in simu mode, 
+    if ((1)) {
+        
+        cantons_value = [[NSMutableDictionary alloc]initWithCapacity:25];
+        trains_value = [[NSMutableDictionary alloc]initWithCapacity:25];
 
+        stat_iterator_t step;
+        int eos = stat_iterator_reset(&step);
+        int validx = 0;
+        for (;!eos; eos=stat_iterator_next(&step), validx++) {
+            int done;
+            int32_t v = stat_val_get(&step, &done);
+            if (done) break;
+            [self processStatValInfo:&step value:v validx:validx];
+        }
+        [self.cantonTableView reloadData];
+        [self.trainTableView reloadData];
+        if (_recordState) {
+            [recordFile writeData:[@"\n" dataUsingEncoding:NSUTF8StringEncoding]];
+            _recordState = 2;
+        }
+    }
     
+    // process ADC
     for (int i =0; i<2; i++) {
 #if NEW_ADC_AVG
         memset((void*)&(adc_result[i]), 0, sizeof(adc_result));
@@ -2477,7 +2567,7 @@ void notif_target_bemf(const train_config_t *cnf, train_vars_t *vars, int32_t va
 
        @"inertia": @[@"tick", @"T0_ine_t", @"T0_ine_c", @"T1_ine_t", @"T1_ine_c"],
        @"pose"   : @[@"tick", @"T0_spd_curspeed", @"T0_bemf_mv", @"T0_ctrl_dir", @"T0_pose", @"T0_pose_trig1",@"T0_pose_trig2", @"T0_curposmm", @"T0_beginposmm"],
-       @"pose2"   : @[@"tick", @"T0_spd_curspeed", @"T0_bemf_mv", @"T0_ctrl_dir", @"T0_curposmm", @"T0_beginposmm"],
+       @"pose2"   : @[@"tick", @"T0_spd_curspeed", @"T0_bemf_mv", @"T0_ctrl_dir", @"T0_ctrl_curposmm", @"T0_ctrl_beginposmm"],
        @"INA3221"   : @[ @"tick", @"ina0", @"ina1", @"ina2", @"T0_bemf_mv" ],
     };
     NSString *k = nil;

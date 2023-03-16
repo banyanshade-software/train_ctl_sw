@@ -41,6 +41,7 @@
 #include "msgrecord.h"
 #include "planner.h"
 #include "servo.h"
+#include "trace_train.h"
 
 #import "AppDelegateP.h"
 
@@ -169,6 +170,7 @@ typedef void (^respblk_t)(void);
     self.shunting = 0;
     self.transmit = 0;
     self.linkok = 0;
+    self.trainTraceAttribStr = [[NSAttributedString alloc]init];
     nparam = 0;
     [self forAllParamsDo:^(NSControl *c){
         c.enabled = NO;
@@ -1314,6 +1316,9 @@ int conf_servo_fieldnum(const char *str);
         case 'M':
             [self processMsgRecordFrame:frm];
             break;
+        case 'K':
+            [self processTraceFrame:frm];
+            break;
         default:
             NSLog(@"unknown frame type %c", frmtype);
             break;
@@ -2052,6 +2057,16 @@ volatile int oscillo_canton_of_interest = 0;
     return nil;
 }
 
+#pragma mark -
+
+- (void) processTraceFrame:(NSData *)dta
+{
+    NSUInteger len = [dta length];
+    if (len<8) return; // no recorded msg
+    void *records = (msgrecord_t *) [dta bytes];
+
+    trace_train_dumpbuf(records, (int)len);
+}
 #pragma mark -
 
 - (void) frameResponse
@@ -2896,6 +2911,30 @@ didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic
     m.from = MA3_UI_GEN; //(UISUB_USB);
     m.cmd = CMD_USB_RECORD_MSG;
     [self sendMsg64:m];
+}
+
+- (void) traceTrain:(int)tr
+{
+    msg_64_t m = {0};
+    m.to = MA2_USB_LOCAL;
+    m.from = MA3_UI_GEN; //(UISUB_USB);
+    m.cmd = CMD_USB_TRACETRAIN;
+    m.v1 = tr;
+    [self sendMsg64:m];
+}
+- (IBAction) traceTrain0:(id)sender
+{
+    [self traceTrain:0];
+}
+
+- (IBAction) traceTrain1:(id)sender
+{
+    [self traceTrain:1];
+}
+
+- (IBAction) traceTrain2:(id)sender
+{
+    [self traceTrain:2];
 }
 
 #pragma mark -

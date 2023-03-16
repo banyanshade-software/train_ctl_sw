@@ -82,15 +82,16 @@ typedef enum {
 	CMD_USB_STATS                 , // 0xeb (235) // any -> usb								send stats
 	CMD_USB_OSCILLO               , // 0xec (236) // any -> usb								send oscillo values
 	CMD_USB_RECORD_MSG            , // 0xed (237) // any -> usb								dump recorded msg if enabled (see msgrecord.h)
-	CMD_OAM_MASTER                , // 0xee (238) 
-	CMD_OAM_SLAVE                 , // 0xef (239) 
-	CMD_OAM_BNUM                  , // 0xf0 (240) 
-	CMD_OAM_SLV_OK                , // 0xf1 (241) 
-	CMD_OAM_CUSTOM                , // 0xf2 (242) // any -> OAM(), not defined (for test)
-	CMD_PLANNER_RESET             , // 0xf3 (243) // UI->planner								stop all trains, reset planner
-	CMD_PLANNER_ADD               , // 0xf4 (244) // UI->planner
-	CMD_PLANNER_CANCEL            , // 0xf5 (245) // UI->planner
-	CMD_PLANNER_COMMIT            , // 0xf6 (246) // UI->planner
+	CMD_USB_TRACETRAIN            , // 0xee (238) // any -> usb                              dump train trace for train m->v1
+	CMD_OAM_MASTER                , // 0xef (239) 
+	CMD_OAM_SLAVE                 , // 0xf0 (240) 
+	CMD_OAM_BNUM                  , // 0xf1 (241) 
+	CMD_OAM_SLV_OK                , // 0xf2 (242) 
+	CMD_OAM_CUSTOM                , // 0xf3 (243) // any -> OAM(), not defined (for test)
+	CMD_PLANNER_RESET             , // 0xf4 (244) // UI->planner								stop all trains, reset planner
+	CMD_PLANNER_ADD               , // 0xf5 (245) // UI->planner
+	CMD_PLANNER_CANCEL            , // 0xf6 (246) // UI->planner
+	CMD_PLANNER_COMMIT            , // 0xf7 (247) // UI->planner
 } cmd_msg_t;
 
 #endif

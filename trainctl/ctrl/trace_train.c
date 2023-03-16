@@ -194,6 +194,7 @@ void _trace_train_simu(uint32_t tick, int tidx, int sblk, int canton)
     rec->simurec.canton = canton;
 }
 
+
 #ifdef TRAIN_SIMU
 
 static const char *state_name(train_state_t st)
@@ -230,19 +231,30 @@ static const char *trig_name(pose_trig_tag_t tag)
         default: return "???";
     }
 }
+
 #endif
 
+static void _trace_train_dump(train_trace_record_t *t, int numitem, int startidx);
 
 void trace_train_dump(int tidx)
 {
-#ifdef TRAIN_SIMU
     if (tidx>=NUM_TRAIN_TRACE) return;
     train_trace_t *t = &trace[tidx];
+    _trace_train_dump(t->rec, NUM_TRACE_ITEM, t->nextidx);
+}
 
+void trace_train_dumpbuf(void *buf, int numbytes)
+{
+    _trace_train_dump((train_trace_record_t *)buf, numbytes/sizeof(train_trace_record_t), 0);
+}
+
+static void _trace_train_dump(train_trace_record_t *records, int numitem, int startidx)
+{
+#ifdef TRAIN_SIMU
     int f = 1;
-    for (int i=0; i<NUM_TRACE_ITEM; i++) {
-        int idx = (i+t->nextidx) % NUM_TRACE_ITEM;
-        train_trace_record_t *rec = &t->rec[idx];
+    for (int i=0; i<numitem; i++) {
+        int idx = (i+startidx) % numitem;
+        train_trace_record_t *rec = &records[idx];
         if (f && !rec->tick) continue;
         f = 0;
         switch (rec->kind) {
@@ -289,8 +301,24 @@ void trace_train_dump(int tidx)
     }
 #else
     // target trace dump, TODO
-    (void)tidx; // unused for now
+    (void)t;
 #endif
 }
 
-#endif
+
+#ifndef TRAIN_SIMU
+void frame_send_trace(_UNUSED_ void(*cb)(const uint8_t *d, int l), _UNUSED_ int train)
+{
+    train_trace_t *t = &trace[train];
+    int f = 1;
+    int tni = t->nextidx;
+    for (int i=0; i<NUM_TRACE_ITEM; i++) {
+        int idx = (i+tni) % NUM_TRACE_ITEM;
+        train_trace_record_t *rec = &t->rec[idx];
+        if (f && !rec->tick) continue;
+        f = 0;
+        cb((uint8_t *)rec, sizeof(train_trace_record_t));
+    }
+}
+#endif // !TRAIN_SIMU
+#endif // trace_enable

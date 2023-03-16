@@ -35,6 +35,8 @@
 
 @property (nonatomic, readonly)  SimTrain *simTrain0;
 
+@property (nonatomic)  NSAttributedString *trainTraceAttribStr;
+
 - (IBAction) stopAll:(id)sender;
 - (IBAction) goZero:(id)sender;
 

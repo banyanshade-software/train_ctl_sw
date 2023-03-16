@@ -92,7 +92,9 @@ start 0xE0  // 111 xxxxx  Debug and misc low prio
 
 	CMD_USB_STATS		   tbd       // any -> usb								send stats
 	CMD_USB_OSCILLO	       tbd       // any -> usb								send oscillo values
-    CMD_USB_RECORD_MSG	   tbd     	// any -> usb								dump recorded msg if enabled (see msgrecord.h)
+    CMD_USB_RECORD_MSG	   tbd     	 // any -> usb								dump recorded msg if enabled (see msgrecord.h)
+    CMD_USB_TRACETRAIN	   v1u       // any -> usb                              dump train trace for train m->v1
+
 
     CMD_OAM_MASTER          tbd
     CMD_OAM_SLAVE           tbd

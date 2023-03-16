@@ -1201,11 +1201,11 @@
                             </tabViewItem>
                             <tabViewItem label="Record" identifier="" id="WuV-ET-awb">
                                 <view key="view" id="VlL-nK-cbV">
-                                    <rect key="frame" x="10" y="33" width="896" height="466"/>
+                                    <rect key="frame" x="10" y="33" width="896" height="528"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="cNi-lE-t0Y">
-                                            <rect key="frame" x="14" y="418" width="71" height="32"/>
+                                            <rect key="frame" x="14" y="480" width="71" height="32"/>
                                             <buttonCell key="cell" type="push" title="Start" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="f2O-x0-I2A">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                 <font key="font" metaFont="system"/>
@@ -1220,7 +1220,7 @@
                                             </connections>
                                         </button>
                                         <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="r1U-ZC-0xu">
-                                            <rect key="frame" x="14" y="381" width="71" height="32"/>
+                                            <rect key="frame" x="14" y="443" width="71" height="32"/>
                                             <buttonCell key="cell" type="push" title="Mark" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="x7r-aJ-be7">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                 <font key="font" metaFont="system"/>
@@ -1231,7 +1231,7 @@
                                             </connections>
                                         </button>
                                         <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="y2E-v8-UxY">
-                                            <rect key="frame" x="14" y="340" width="71" height="32"/>
+                                            <rect key="frame" x="14" y="402" width="71" height="32"/>
                                             <buttonCell key="cell" type="push" title="Stop" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="1p0-8U-FHZ">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                 <font key="font" metaFont="system"/>
@@ -1242,7 +1242,7 @@
                                             </connections>
                                         </button>
                                         <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="VzA-P6-uii">
-                                            <rect key="frame" x="124" y="425" width="154" height="21"/>
+                                            <rect key="frame" x="124" y="487" width="154" height="21"/>
                                             <constraints>
                                                 <constraint firstAttribute="width" constant="154" id="ZLn-Eh-alv"/>
                                             </constraints>
@@ -1256,7 +1256,7 @@
                                             </connections>
                                         </textField>
                                         <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="udP-Dr-tjq">
-                                            <rect key="frame" x="14" y="299" width="71" height="32"/>
+                                            <rect key="frame" x="14" y="361" width="71" height="32"/>
                                             <buttonCell key="cell" type="push" title="Plot" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Vnu-7U-LpI">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                 <font key="font" metaFont="system"/>
@@ -1271,7 +1271,7 @@
                                             </connections>
                                         </button>
                                         <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="dNW-25-dVW">
-                                            <rect key="frame" x="122" y="303" width="93" height="25"/>
+                                            <rect key="frame" x="122" y="365" width="93" height="25"/>
                                             <popUpButtonCell key="cell" type="push" title="power0" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="DgP-sL-kcM" id="XP9-nh-ts4">
                                                 <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                                 <font key="font" metaFont="menu"/>
@@ -1316,6 +1316,85 @@
                                     </constraints>
                                 </view>
                             </tabViewItem>
+                            <tabViewItem label="Trace" identifier="" id="eRI-Vb-x1Y">
+                                <view key="view" id="0HF-Oq-BHU">
+                                    <rect key="frame" x="10" y="33" width="896" height="528"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                    <subviews>
+                                        <scrollView borderType="none" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xxP-jg-hiv">
+                                            <rect key="frame" x="16" y="16" width="864" height="467"/>
+                                            <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="OZg-2y-Fa6">
+                                                <rect key="frame" x="0.0" y="0.0" width="849" height="467"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                <subviews>
+                                                    <textView importsGraphics="NO" richText="NO" verticallyResizable="YES" spellingCorrection="YES" smartInsertDelete="YES" id="IyY-Q7-pxk">
+                                                        <rect key="frame" x="0.0" y="0.0" width="849" height="467"/>
+                                                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                        <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                        <size key="minSize" width="849" height="467"/>
+                                                        <size key="maxSize" width="849" height="10000000"/>
+                                                        <color key="insertionPointColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                                        <connections>
+                                                            <binding destination="Voe-Tx-rLC" name="attributedString" keyPath="trainTraceAttribStr" id="vxf-59-LL2"/>
+                                                        </connections>
+                                                    </textView>
+                                                </subviews>
+                                            </clipView>
+                                            <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="P8c-3D-nrH">
+                                                <rect key="frame" x="-100" y="-100" width="225" height="15"/>
+                                                <autoresizingMask key="autoresizingMask"/>
+                                            </scroller>
+                                            <scroller key="verticalScroller" verticalHuggingPriority="750" horizontal="NO" id="4oM-yN-qLm">
+                                                <rect key="frame" x="849" y="0.0" width="15" height="467"/>
+                                                <autoresizingMask key="autoresizingMask"/>
+                                            </scroller>
+                                        </scrollView>
+                                        <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="2kP-jB-m1l">
+                                            <rect key="frame" x="10" y="492" width="114" height="32"/>
+                                            <buttonCell key="cell" type="push" title="trace train 0" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="qd1-Ov-qur">
+                                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                <font key="font" metaFont="system"/>
+                                            </buttonCell>
+                                            <connections>
+                                                <action selector="traceTrain0:" target="Voe-Tx-rLC" id="eIV-cY-b6z"/>
+                                            </connections>
+                                        </button>
+                                        <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="UNV-tW-e6S">
+                                            <rect key="frame" x="128" y="492" width="112" height="32"/>
+                                            <buttonCell key="cell" type="push" title="trace train 1" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="ys3-BM-N6w">
+                                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                <font key="font" metaFont="system"/>
+                                            </buttonCell>
+                                            <connections>
+                                                <action selector="traceTrain1:" target="Voe-Tx-rLC" id="G2g-Nl-uub"/>
+                                            </connections>
+                                        </button>
+                                        <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="DSK-Jn-lhy">
+                                            <rect key="frame" x="244" y="492" width="114" height="32"/>
+                                            <buttonCell key="cell" type="push" title="trace train 2" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="tTo-bF-fLv">
+                                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                <font key="font" metaFont="system"/>
+                                            </buttonCell>
+                                            <connections>
+                                                <action selector="traceTrain2:" target="Voe-Tx-rLC" id="uak-sJ-xBU"/>
+                                            </connections>
+                                        </button>
+                                    </subviews>
+                                    <constraints>
+                                        <constraint firstAttribute="bottom" secondItem="xxP-jg-hiv" secondAttribute="bottom" constant="16" id="01v-P5-u9E"/>
+                                        <constraint firstItem="UNV-tW-e6S" firstAttribute="leading" secondItem="2kP-jB-m1l" secondAttribute="trailing" constant="16" id="0Ni-hr-SQY"/>
+                                        <constraint firstItem="DSK-Jn-lhy" firstAttribute="leading" secondItem="UNV-tW-e6S" secondAttribute="trailing" constant="16" id="8ry-Yv-y2g"/>
+                                        <constraint firstItem="UNV-tW-e6S" firstAttribute="firstBaseline" secondItem="2kP-jB-m1l" secondAttribute="firstBaseline" id="FF7-RE-Zwm"/>
+                                        <constraint firstItem="DSK-Jn-lhy" firstAttribute="firstBaseline" secondItem="2kP-jB-m1l" secondAttribute="firstBaseline" id="UJi-Ud-haa"/>
+                                        <constraint firstItem="xxP-jg-hiv" firstAttribute="leading" secondItem="0HF-Oq-BHU" secondAttribute="leading" constant="16" id="hEb-mw-0yz"/>
+                                        <constraint firstItem="2kP-jB-m1l" firstAttribute="top" secondItem="0HF-Oq-BHU" secondAttribute="top" constant="8" id="kSk-UA-6aa"/>
+                                        <constraint firstAttribute="trailing" secondItem="xxP-jg-hiv" secondAttribute="trailing" constant="16" id="qC5-wQ-pl4"/>
+                                        <constraint firstItem="2kP-jB-m1l" firstAttribute="leading" secondItem="0HF-Oq-BHU" secondAttribute="leading" constant="16" id="suw-61-4Jx"/>
+                                        <constraint firstItem="xxP-jg-hiv" firstAttribute="top" secondItem="2kP-jB-m1l" secondAttribute="bottom" constant="16" id="wD8-M6-JV3"/>
+                                    </constraints>
+                                </view>
+                            </tabViewItem>
                             <tabViewItem label="Cantons" identifier="" id="A8w-ZG-JE1">
                                 <view key="view" id="ZHQ-Hi-3bU">
                                     <rect key="frame" x="10" y="33" width="896" height="528"/>
@@ -1325,7 +1404,7 @@
                                             <rect key="frame" x="16" y="16" width="864" height="496"/>
                                             <clipView key="contentView" id="OXu-El-CJ6">
                                                 <rect key="frame" x="1" y="0.0" width="862" height="495"/>
-                                                <autoresizingMask key="autoresizingMask"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" headerView="71L-Yv-M5N" id="gBS-dQ-Fjb">
                                                         <rect key="frame" x="0.0" y="0.0" width="862" height="470"/>

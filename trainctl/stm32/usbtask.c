@@ -156,6 +156,9 @@ __weak void frame_send_stat(_UNUSED_ void(*cb)(const uint8_t *d, int l), _UNUSED
 __weak void frame_send_recordmsg(_UNUSED_ void(*cb)(const uint8_t *d, int l))
 {
 }
+__weak void frame_send_trace(_UNUSED_ void(*cb)(const uint8_t *d, int l), _UNUSED_ int train)
+{
+}
 
 static int initdone = 1;
 
@@ -195,6 +198,16 @@ void USB_Tasklet(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_
 			const uint8_t b[]="|S";
 			_send_bytes(b, 2);
 			frame_send_stat(_send_bytes, t);
+			_send_bytes((uint8_t *)"|", 1);
+			sending_longframe = txnormal;
+			}
+			break;
+		case CMD_USB_TRACETRAIN: {
+			if (sending_longframe != txnormal) break;
+			sending_longframe = sending_oscillo;
+			const uint8_t b[]="|K";
+			_send_bytes(b, 2);
+			frame_send_trace(_send_bytes,  m.v1);
 			_send_bytes((uint8_t *)"|", 1);
 			sending_longframe = txnormal;
 			}

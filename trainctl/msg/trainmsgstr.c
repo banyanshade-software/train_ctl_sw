@@ -71,6 +71,7 @@ const char *traincmd_name(uint8_t cmd)
 	case CMD_USB_STATS       : return "CMD_USB_STATS";
 	case CMD_USB_OSCILLO     : return "CMD_USB_OSCILLO";
 	case CMD_USB_RECORD_MSG  : return "CMD_USB_RECORD_MSG";
+	case CMD_USB_TRACETRAIN  : return "CMD_USB_TRACETRAIN";
 	case CMD_OAM_MASTER      : return "CMD_OAM_MASTER";
 	case CMD_OAM_SLAVE       : return "CMD_OAM_SLAVE";
 	case CMD_OAM_BNUM        : return "CMD_OAM_BNUM";
@@ -151,6 +152,7 @@ msg_type_t traincmd_format(uint8_t cmd)
 	case CMD_USB_STATS       : return CMD_TYPE_V32;
 	case CMD_USB_OSCILLO     : return CMD_TYPE_V32;
 	case CMD_USB_RECORD_MSG  : return CMD_TYPE_V32;
+	case CMD_USB_TRACETRAIN  : return CMD_TYPE_V16;
 	case CMD_OAM_MASTER      : return CMD_TYPE_V32;
 	case CMD_OAM_SLAVE       : return CMD_TYPE_V32;
 	case CMD_OAM_BNUM        : return CMD_TYPE_V32;

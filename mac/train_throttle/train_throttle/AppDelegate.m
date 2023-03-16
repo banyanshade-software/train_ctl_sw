@@ -2283,6 +2283,14 @@ uint32_t SimuTick = 0;
 }
 
 
+void simu_set_train(int tidx, int sblk, int posmm)
+{
+    [theDelegate simu_set_train:tidx sblk:sblk posmm:posmm];
+}
+- (void) simu_set_train:(int)tidx sblk:(int)sblk posmm:(int)posmm
+{
+    [_simTrain0 setTrain:tidx sblk:sblk posmm:posmm];
+}
 void train_simu_canton_volt(int numcanton, int voltidx, int vlt100)
 {
     [theDelegate simuSetVoltCanton:numcanton voltidx:voltidx vlt100:vlt100];

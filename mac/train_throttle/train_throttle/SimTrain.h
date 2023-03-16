@@ -21,10 +21,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (double) bemfForCantonNum:(int)numc;
 
+- (void) setTrain:(int)tidx sblk:(int)sblk posmm:(int)posmm;
 
 //- (int) simuCurCanton;
 //- (int) simuNextCanton;
 
 @end
+
 
 NS_ASSUME_NONNULL_END

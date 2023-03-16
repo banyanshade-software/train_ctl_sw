@@ -24,7 +24,7 @@
     double bemf[NUM_CANTONS];
     
     double speed[NUM_TRAINS];
-    double position[NUM_TRAINS];
+    double positioncm[NUM_TRAINS];
 
     //int c1[NUM_TRAINS];
     lsblk_num_t s1[NUM_TRAINS];
@@ -41,7 +41,7 @@
         s1[i].n = -1;
         cold[i] = -1;
         speed[i] = 0;
-        position[i] = 0;
+        positioncm[i] = 0;
     }
     for (int i=0; i<NUM_CANTONS; i++) {
         bemf[i] = 0.0;
@@ -49,11 +49,17 @@
         pwm[i] = 0;
         dir[i] = 0;
     }
-    s1[0].n = 2;
+    /*s1[0].n = 5;                    // <<<<<<<<<<<<<<<
     position[0]= 0; //60;
+     */
     return self;
 }
 
+- (void) setTrain:(int)tidx sblk:(int)sblk posmm:(int)posmm
+{
+    positioncm[tidx] = posmm/10;
+    s1[tidx].n = sblk;
+}
 - (void)setVolt:(double)v forCantonNum:(int)numc
 {
     NSAssert(numc>=0, @"bad numc");
@@ -83,7 +89,7 @@
         //int cn = c1[tn];
         
         // update pos
-        position[tn] += speed[tn]*ellapsed/1000;
+        positioncm[tn] += speed[tn]*ellapsed/1000;
         //int get_lsblk_len(lsblk_num_t num);
         int blen = get_lsblk_len_cm(s1[tn], NULL);
         //NSLog(@"xxxtrain %d pos: %f len %d", tn, position[tn], get_lsblk_len(s1[tn], NULL));
@@ -92,13 +98,13 @@
         NSAssert(cn.v<NUM_CANTONS, @"bad cn");
 
         if (dir[cn.v]>0) {
-            if (position[tn]>blen) {
+            if (positioncm[tn]>blen) {
                 lsblk_num_t ns = next_lsblk(s1[tn], 0, NULL);
                 if (ns.n < 0) {
                     NSLog(@"END OF TRACK/COL !!");
                 } else {
                     s1[tn] = ns;
-                    position[tn] = 0;
+                    positioncm[tn] = 0;
                     xblkaddr_t nb = canton_for_lsblk(ns);
                     _trace_train_simu(SimuTick, tn, ns.n, nb.v);
                     if (nb.v != cn.v) {
@@ -108,13 +114,13 @@
                 }
             }
         } else if (dir[cn.v]<0) {
-            if (position[tn]<-blen) {
+            if (positioncm[tn]<-blen) {
                 lsblk_num_t ns = next_lsblk(s1[tn], 1, NULL);
                 if (ns.n < 0) {
                     NSLog(@"END OF TRACK/COL !!");
                 } else {
                     s1[tn] = ns;
-                    position[tn] = 0;
+                    positioncm[tn] = 0;
                     xblkaddr_t nb = canton_for_lsblk(ns);
                     if (nb.v != cn.v) {
                         cold[tn] = cn.v;
@@ -153,3 +159,4 @@
 
 
 @end
+

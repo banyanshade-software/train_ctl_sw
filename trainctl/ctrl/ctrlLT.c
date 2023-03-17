@@ -534,7 +534,7 @@ void ctrl3_evt_entered_c2(int tidx, train_ctrl_t *tvars, uint8_t from_bemf)
     if (tvars->pow_c2_future.v != 0xFF) {
         _set_and_power_c2(tidx, tvars); //
     }
-    if (1 == tvars->can1_xaddr.v) { // XXX Hardcoded for now
+    if (2 == tvars->can1_xaddr.v) { // XXX Hardcoded for now
         tvars->measure_pose_percm = 1;
     }
     tvars->c1_sblk = first_lsblk_with_canton(tvars->can1_xaddr, tvars->c1_sblk);
@@ -542,7 +542,7 @@ void ctrl3_evt_entered_c2(int tidx, train_ctrl_t *tvars, uint8_t from_bemf)
         tvars->beginposmm = 0;
     } else {
         int len = get_lsblk_len_cm_steep(tvars->c1_sblk, conf_train_get(tidx), tvars);
-        tvars->beginposmm = -len;
+        tvars->beginposmm = -len*10;
     }
     tvars->_curposmm = 0;
 

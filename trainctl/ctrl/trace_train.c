@@ -91,7 +91,7 @@ typedef struct {
     train_trace_record_t rec[NUM_TRACE_ITEM];
 } train_trace_t;
 
-#define NUM_TRAIN_TRACE 1
+#define NUM_TRAIN_TRACE 2
 
 static train_trace_t trace[NUM_TRAIN_TRACE];
 
@@ -260,6 +260,7 @@ static void _trace_train_dump(train_trace_record_t *records, int numitem, int st
     const char *_ess = h ? "</b>" : "";
     const char *_cr = h ? "<br/>" : "\n";
     char line[256];
+    line[0]='\0';
     printf("offset : %lu\n", offsetof(train_trace_record_t, tickrec.c1lblk));
     printf("offset : %lu\n", offsetof(train_trace_record_t, tickrec.sdir));
     printf("offset : %lu\n", offsetof(train_trace_record_t, tickrec.beginposmm));
@@ -326,6 +327,9 @@ static void _trace_train_dump(train_trace_record_t *records, int numitem, int st
 #ifndef TRAIN_SIMU
 void frame_send_trace(_UNUSED_ void(*cb)(const uint8_t *d, int l), _UNUSED_ int train)
 {
+	if (train >= NUM_TRAIN_TRACE) {
+		return;
+	}
     train_trace_t *t = &trace[train];
     int f = 1;
     int tni = t->nextidx;

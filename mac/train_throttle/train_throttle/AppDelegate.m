@@ -2059,16 +2059,14 @@ volatile int oscillo_canton_of_interest = 0;
 
 #pragma mark -
 
-static NSMutableAttributedString *tracestr = nil;
-
+//static NSMutableAttributedString *tracestr = nil;
+static NSMutableString *tracestr;
 void __trace_train_append_line(char *s)
 {
-    NSData *d = [[NSData alloc]initWithBytes:s length:strlen(s)];
-    NSAttributedString *la = [[NSAttributedString alloc]initWithHTML:d documentAttributes:nil];
     if (!tracestr) {
-        tracestr = [la mutableCopy];
+        abort();
     } else {
-        [tracestr appendAttributedString:la];
+        [tracestr appendString:[NSString stringWithUTF8String:s]];
     }
 }
 
@@ -2077,15 +2075,10 @@ void __trace_train_append_line(char *s)
     NSUInteger len = [dta length];
     if (len<8) return; // no recorded msg
     void *records = (msgrecord_t *) [dta bytes];
-    //tracestr = [[NSMutableAttributedString alloc]init];
-    //NSFont *f = [NSFont fontWithName:@"Courier New" size:13];
-    static const char *hinitstr = "<style>body {font-family: \"Courier New\"}</style><body>coucou<br>\n";
-    NSData *hinit = [[NSData alloc]initWithBytes:hinitstr length:strlen(hinitstr)];
-    tracestr = [[NSMutableAttributedString alloc]initWithHTML:hinit documentAttributes:NULL];
-    //[tracestr addAttribute:NSFontAttributeName value:f range:NSMakeRange(0, [tracestr.string length])];
+    tracestr = [[NSMutableString alloc]initWithUTF8String:"<style>body {font-family: \"Courier New\"}</style><body><br>\n"];
     trace_train_dumpbuf(records, (int)len);
-   
-    self.trainTraceAttribStr = tracestr;
+    NSData *d = [tracestr dataUsingEncoding:NSUTF8StringEncoding];
+    self.trainTraceAttribStr = [[NSAttributedString alloc]initWithHTML:d documentAttributes:nil];
     tracestr = nil;
 }
 #pragma mark -

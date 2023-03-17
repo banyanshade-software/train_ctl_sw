@@ -649,7 +649,7 @@ static conf_topology_t conf_topology[64] = {
      .points = {{L0+6,4}, {L0+6,7}, _VP, _VP},
   },
   {     // 9
-     .canton_addr = CNUM(0, 9),
+     .canton_addr = CNUM(0, 4),
      .ina_segnum = 10,
      .steep = 0,
      .length_cm = 50,
@@ -1560,7 +1560,7 @@ static conf_topology_t conf_topology[64] = {
      .points = {{L0+6,4}, {L0+6,7}, _VP, _VP},
   },
   {     // 9
-     .canton_addr = CNUM(0, 9),
+     .canton_addr = CNUM(0, 4),
      .ina_segnum = 10,
      .steep = 0,
      .length_cm = 50,
@@ -2516,7 +2516,7 @@ static conf_topology_t conf_topology[64] = {
      .points = {{L0+6,4}, {L0+6,7}, _VP, _VP},
   },
   {     // 9
-     .canton_addr = CNUM(0, 9),
+     .canton_addr = CNUM(0, 4),
      .ina_segnum = 10,
      .steep = 0,
      .length_cm = 50,

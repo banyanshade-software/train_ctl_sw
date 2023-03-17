@@ -226,19 +226,23 @@ static void _ctrl_init(int normalmode)
 		const _UNUSED_ lsblk_num_t s8 = {8};
 		if ((1)) {
 #ifdef TRAIN_SIMU
-            ctrl3_init_train(0, &trctl[0], s5, 1);
-            trctl[0]._curposmm = 300;
             void simu_set_train(int tidx, int sblk, int posmm); // SimTrain.m
+
+            ctrl3_init_train(0, &trctl[0], s0, 300, 1);
             simu_set_train(0, trctl[0].c1_sblk.n, trctl[0]._curposmm);
+            
+            ctrl3_init_train(1, &trctl[1], s8, 400, 1);
+            simu_set_train(1, trctl[1].c1_sblk.n, trctl[1]._curposmm);
+            
 			//ctrl2_init_train(0, &otrctl[0], s2);
 			ctrl_set_mode(0, train_manual);
 #else
 			/*ctrl2_init_train(0, &otrctl[0], s0, 1);
 			ctrl2_init_train(1, &otrctl[1], s8, 1);
 			ctrl2_init_train(2, &otrctl[2], s7, 1);*/
-            ctrl3_init_train(0, &trctl[0], s0, 1);
-            ctrl3_init_train(1, &trctl[1], s8, 1);
-            ctrl3_init_train(2, &trctl[2], s7, 1);
+            ctrl3_init_train(0, &trctl[0], s0, 300, 1);
+            ctrl3_init_train(1, &trctl[1], s8, 400, 1);
+            ctrl3_init_train(2, &trctl[2], s7, 200, 1);
 
             trctl[0]._curposmm = 500;
 
@@ -253,7 +257,7 @@ static void _ctrl_init(int normalmode)
 		} else {
             //ctrl2_init_train(0, &otrctl[0], s0);
             //ctrl2_init_train(0, &otrctl[0], s0);
-            ctrl3_init_train(0, &trctl[0], s0, 1);
+            ctrl3_init_train(0, &trctl[0], s0, 300, 1);
             //ctrl3_init_train(0, &trctl[0], s0, 1);
 			//ctrl2_init_train(1, &trctl[1], s2);
 			ctrl_set_mode(0, train_manual);

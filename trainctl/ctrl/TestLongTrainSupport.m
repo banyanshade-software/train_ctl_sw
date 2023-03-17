@@ -96,7 +96,12 @@ mqf_t from_ctrl =  {
     
 };
 
-
+/*void trace_train_dump(int tidx)
+{
+}*/
+void __trace_train_append_line(char *s)
+{
+}
 
 int compareMsg64(const msg_64_t *exp, int n, int clear)
 {

@@ -59,7 +59,7 @@ static const xtrnaddr_t to1 = { .v = 1};
 
 
     tvars._mode = train_manual;
-    ctrl3_init_train(0, &tvars, sone, 1);
+    ctrl3_init_train(0, &tvars, sone, 0, 1);
     NSLog(@"init done");
     NSString *s = dump_msgbuf(0);
     NSLog(@"...%@", s);

@@ -49,7 +49,7 @@ static lsblk_num_t seleven = {11};
     
 
     tvars._mode = train_manual;
-    ctrl3_init_train(0, &tvars, snine, 1);
+    ctrl3_init_train(0, &tvars, snine, 0, 1);
     NSLog(@"init done");
 }
 

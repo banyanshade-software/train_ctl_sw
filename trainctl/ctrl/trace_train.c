@@ -316,7 +316,7 @@ static void _trace_train_dump(train_trace_record_t *records, int numitem, int st
                 break;
         }
         if (h) __trace_train_append_line(line);
-        else   puts(line);
+        else   fputs(line, stdout);
     }
 
 }

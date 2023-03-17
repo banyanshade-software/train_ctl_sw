@@ -45,7 +45,7 @@ static lsblk_num_t s21 = {21};
     
 
     tvars._mode = train_manual;
-    ctrl3_init_train(0, &tvars, s21, 1);
+    ctrl3_init_train(0, &tvars, s21, 0, 1);
     NSLog(@"init done");
 }
 

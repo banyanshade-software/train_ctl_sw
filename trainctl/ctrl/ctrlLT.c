@@ -70,7 +70,7 @@ static void _release_all_blocks(int tidx, train_ctrl_t *tvars);
 // -----------------------------------------------------------------
 
 
-void ctrl3_init_train(int tidx, train_ctrl_t *tvars, lsblk_num_t sblk, int on)
+void ctrl3_init_train(int tidx, train_ctrl_t *tvars, lsblk_num_t sblk, int posmm, int on)
 {
     itm_debug1(DBG_CTRL, "INIT", tidx);
     memset(tvars, 0, sizeof(*tvars));
@@ -82,7 +82,7 @@ void ctrl3_init_train(int tidx, train_ctrl_t *tvars, lsblk_num_t sblk, int on)
     tvars->_target_unisgned_speed = 0;
     
     tvars->beginposmm = 0;
-    tvars->_curposmm = 0; //POSE_UNKNOWN;
+    tvars->_curposmm = posmm; //POSE_UNKNOWN;
     tvars->c1_sblk = sblk;
     //TODO
     tvars->c1c2dir_changed = 1;

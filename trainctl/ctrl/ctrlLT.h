@@ -85,9 +85,10 @@ extern int ignore_ina_pres(void);
 /// initialize train on a given sblk
 /// @param tidx train index
 /// @param tvars train ctrl vars
-/// @param sblk initial train position
+/// @param sblk initial train sblk position
+/// @param posmm initial train position
 /// @param on if true turn train on an put it in station state
-void ctrl3_init_train(int tidx, train_ctrl_t *tvars, lsblk_num_t sblk, int on);
+void ctrl3_init_train(int tidx, train_ctrl_t *tvars, lsblk_num_t sblk, int posmm, int on);
 
 
 /// ctrl3_upcmd_set_desired_speed

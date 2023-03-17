@@ -565,6 +565,10 @@ int ctrl3_check_front_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *
             else ret->isoet = 1;
             retc = -1;
         } else {
+            if ((1)) {
+                extern void trace_train_dump(int tidx);
+                trace_train_dump(tidx);
+            }
             // dont check for brake if already in stop condition
             rc = _add_trig(left, ret, fsblk->rlen_mm, c1lenmm, curmm, kmm, tag_brake, margin_stop_len_mm+brake_len_mm, minmm, maxmm, trlenmm);
             if (rc!=ADD_TRIG_NOTHING) {

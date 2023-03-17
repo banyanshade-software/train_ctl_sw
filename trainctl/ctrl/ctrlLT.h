@@ -23,7 +23,7 @@ typedef enum {
     train_state_blkwait0,        // stopped (block control)
     train_state_end_of_track,    // stopped at end of track
     train_state_end_of_track0,   // idem, waiting for stop confirm
-} train_state_t;
+} __attribute__((packed)) train_state_t;
 
 
 #define MAX_LSBLK_CARS 4

@@ -63,5 +63,6 @@ static inline void trace_train_simu(uint32_t tick, int tidx, int sblk, int canto
 void trace_train_dump(int tidx);
 
 void trace_train_dumpbuf(void *buf, int numbytes);
+extern void __trace_train_append_line(char *s);
 
 #endif /* trace_train_h */

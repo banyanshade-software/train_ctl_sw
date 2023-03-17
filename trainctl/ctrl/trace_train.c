@@ -46,23 +46,23 @@ typedef struct {
     uint8_t oldc1;
     uint8_t c1;
     uint8_t c2;
-} train_trace_tick_record_t;
+} __attribute__((packed)) train_trace_tick_record_t;
 
 typedef struct {
     pose_trig_tag_t tag;
     int32_t oldpose;
     int32_t adjustedpose;
-} train_trace_trig_record_t;
+} __attribute__((packed)) train_trace_trig_record_t;
 
 typedef struct {
     int8_t sblk;
     int8_t canton;
-} train_trace_free_record_t;
+} __attribute__((packed)) train_trace_free_record_t;
 
 typedef struct {
     int8_t sblk;
     int8_t canton;
-} train_trace_simu_record_t;
+} __attribute__((packed)) train_trace_simu_record_t;
 
 typedef enum {
     trace_kind_tick = 1,
@@ -70,7 +70,7 @@ typedef enum {
     trace_kind_trig_set,
     trace_kind_free,
     trace_kind_simu,
-} trace_rec_kind_t;
+} __attribute__((packed)) trace_rec_kind_t;
 
 typedef struct {
     uint32_t tick;
@@ -80,8 +80,8 @@ typedef struct {
         train_trace_trig_record_t trigrec;
         train_trace_free_record_t freerec;
         train_trace_simu_record_t simurec;
-    };
-} train_trace_record_t;
+    } __attribute__((packed));;
+} __attribute__((packed)) train_trace_record_t;
 
 #define NUM_TRACE_ITEM 100
 
@@ -228,30 +228,41 @@ static const char *trig_name(pose_trig_tag_t tag)
         case tag_auto_u1:       return "u1";
         case tag_leave_canton:  return "leave";
 
-        default: return "???";
+        default:
+            return "???";
     }
 }
 
-#endif
 
-static void _trace_train_dump(train_trace_record_t *t, int numitem, int startidx);
+static void _trace_train_dump(train_trace_record_t *t, int numitem, int startidx, int h);
 
 void trace_train_dump(int tidx)
 {
     if (tidx>=NUM_TRAIN_TRACE) return;
     train_trace_t *t = &trace[tidx];
-    _trace_train_dump(t->rec, NUM_TRACE_ITEM, t->nextidx);
+    _trace_train_dump(t->rec, NUM_TRACE_ITEM, t->nextidx, 0);
 }
 
 void trace_train_dumpbuf(void *buf, int numbytes)
 {
-    _trace_train_dump((train_trace_record_t *)buf, numbytes/sizeof(train_trace_record_t), 0);
+    if (numbytes % sizeof(train_trace_record_t)) {
+        printf("problem here\n");
+    }
+    _trace_train_dump((train_trace_record_t *)buf, numbytes/sizeof(train_trace_record_t), 0, 1);
 }
 
-static void _trace_train_dump(train_trace_record_t *records, int numitem, int startidx)
+static void _trace_train_dump(train_trace_record_t *records, int numitem, int startidx, int h)
 {
-#ifdef TRAIN_SIMU
     int f = 1;
+    const char *_ds = h ? "<i>" : "";
+    const char *_eds = h ? "</i>" : "";
+    const char *_ss = h ? "<b>" : "";
+    const char *_ess = h ? "</b>" : "";
+    const char *_cr = h ? "<br/>" : "\n";
+    char line[256];
+    printf("offset : %lu\n", offsetof(train_trace_record_t, tickrec.c1lblk));
+    printf("offset : %lu\n", offsetof(train_trace_record_t, tickrec.sdir));
+    printf("offset : %lu\n", offsetof(train_trace_record_t, tickrec.beginposmm));
     for (int i=0; i<numitem; i++) {
         int idx = (i+startidx) % numitem;
         train_trace_record_t *rec = &records[idx];
@@ -259,9 +270,9 @@ static void _trace_train_dump(train_trace_record_t *records, int numitem, int st
         f = 0;
         switch (rec->kind) {
             case trace_kind_tick:
-                printf("%2d %6.6d      state=%-9s dir=%d sblk=%d spd=%3d dspd=%3d pos=%d from %d -- pow %d %d %d\n",
-                       idx, rec->tick,
-                       state_name(rec->tickrec.state),
+                sprintf(line, "%s%2d %6.6d%s      state=%s%-9s%s dir=%d sblk=%d spd=%3d dspd=%3d pos=%d from %d -- pow %d %d %d%s",
+                       _ds, idx, rec->tick, _eds,
+                       _ss, state_name(rec->tickrec.state), _ess,
                        rec->tickrec.sdir,
                        rec->tickrec.c1lblk.n,
                        rec->tickrec._target_unisgned_speed,
@@ -270,41 +281,47 @@ static void _trace_train_dump(train_trace_record_t *records, int numitem, int st
                        rec->tickrec.beginposmm,
                        rec->tickrec.oldc1,
                        rec->tickrec.c1,
-                       rec->tickrec.c2);
+                       rec->tickrec.c2,
+					   _cr);
                 break;
             case trace_kind_trig:
-                printf("%2d %6.6d TRIG   %-9s pos=%d->%d\n",
+                sprintf(line, "%2d %6.6d TRIG   %-9s pos=%d->%d%s",
                        idx, rec->tick,
                        trig_name(rec->trigrec.tag),
                        rec->trigrec.oldpose,
-                       rec->trigrec.adjustedpose);
+                       rec->trigrec.adjustedpose,
+					   _cr);
                 break;
             case trace_kind_trig_set:
-                printf("%2d %6.6d --set  %-9s pos=%d\n",
+                sprintf(line, "%2d %6.6d --set  %-9s pos=%d%s",
                        idx, rec->tick,
                        trig_name(rec->trigrec.tag),
-                       rec->trigrec.adjustedpose);
+                       rec->trigrec.adjustedpose,
+					   _cr);
                 break;
             case trace_kind_free:
-                printf("%2d %6.6d free sblk=%d canton=%d\n",
+                sprintf(line, "%2d %6.6d free sblk=%d canton=%d%s",
                        idx, rec->tick,
-                       rec->freerec.sblk, rec->freerec.canton);
+                       rec->freerec.sblk, rec->freerec.canton,
+					   _cr);
                 break;
             case trace_kind_simu:
-                printf("%2d %6.6d ======== simu: sblk=%d canton=%d\n",
+                sprintf(line, "%2d %6.6d ======== simu: sblk=%d canton=%d%s",
                        idx, rec->tick,
-                       rec->simurec.sblk, rec->simurec.canton);
+                       rec->simurec.sblk, rec->simurec.canton,
+					   _cr);
                 break;
             default:
                 break;
         }
+        if (h) __trace_train_append_line(line);
+        else   puts(line);
     }
-#else
-    // target trace dump, TODO
-    (void)t;
-#endif
+
 }
 
+
+#endif // TRAIN_SIMU
 
 #ifndef TRAIN_SIMU
 void frame_send_trace(_UNUSED_ void(*cb)(const uint8_t *d, int l), _UNUSED_ int train)

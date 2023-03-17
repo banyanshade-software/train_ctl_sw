@@ -6552,8 +6552,8 @@
             filePath = "train_throttle/AppDelegate.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "2981"
-            endingLineNumber = "2981"
+            startingLineNumber = "3002"
+            endingLineNumber = "3002"
             landmarkName = "Error_Handler()"
             landmarkType = "9">
          </BreakpointContent>
@@ -8394,8 +8394,8 @@
             filePath = "train_throttle/AppDelegate.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "2377"
-            endingLineNumber = "2377"
+            startingLineNumber = "2398"
+            endingLineNumber = "2398"
             landmarkName = "-simuNotifSel:num:cmd:dta:dtalen:"
             landmarkType = "7">
          </BreakpointContent>
@@ -9511,8 +9511,8 @@
             filePath = "train_throttle/AppDelegate.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "2234"
-            endingLineNumber = "2234"
+            startingLineNumber = "2255"
+            endingLineNumber = "2255"
             landmarkName = "-simuTimer"
             landmarkType = "7">
          </BreakpointContent>
@@ -9982,8 +9982,8 @@
             filePath = "train_throttle/AppDelegate.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "2801"
-            endingLineNumber = "2801"
+            startingLineNumber = "2822"
+            endingLineNumber = "2822"
             landmarkName = "-btnRunMode:"
             landmarkType = "7">
          </BreakpointContent>
@@ -10024,7 +10024,7 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "D82D1352-CB0D-432D-9886-823A00F9E3E0"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "train_throttle/AppDelegate.m"
@@ -10046,8 +10046,8 @@
             filePath = "train_throttle/AppDelegate.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "2145"
-            endingLineNumber = "2145"
+            startingLineNumber = "2166"
+            endingLineNumber = "2166"
             landmarkName = "-sendFrame:len:blen:then:"
             landmarkType = "7">
          </BreakpointContent>
@@ -10062,8 +10062,8 @@
             filePath = "train_throttle/AppDelegate.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "2219"
-            endingLineNumber = "2219"
+            startingLineNumber = "2240"
+            endingLineNumber = "2240"
             landmarkName = "-simuTimer"
             landmarkType = "7">
          </BreakpointContent>
@@ -10126,8 +10126,8 @@
             filePath = "train_throttle/AppDelegate.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "2247"
-            endingLineNumber = "2247"
+            startingLineNumber = "2268"
+            endingLineNumber = "2268"
             landmarkName = "-simuTimer"
             landmarkType = "7">
          </BreakpointContent>
@@ -10142,8 +10142,8 @@
             filePath = "train_throttle/AppDelegate.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "2263"
-            endingLineNumber = "2263"
+            startingLineNumber = "2284"
+            endingLineNumber = "2284"
             landmarkName = "-simuTimer"
             landmarkType = "7">
          </BreakpointContent>
@@ -10178,6 +10178,134 @@
             endingLineNumber = "230"
             landmarkName = "_ctrl_init(normalmode)"
             landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "414C818A-5985-47A6-A9AE-5165B54FDC53"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "train_throttle/AppDelegate.m"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "2068"
+            endingLineNumber = "2068"
+            landmarkName = "__trace_train_append_line(s)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "83CB3488-D6E4-4BB8-93A6-48C8702F1DF2"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../trainctl/ctrl/trace_train.c"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "211"
+            endingLineNumber = "211"
+            landmarkName = "state_name(st)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "039D406C-D9E4-467E-84D0-F5D539DB7BE2"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../trainctl/ctrl/trace_train.c"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "202"
+            endingLineNumber = "202"
+            landmarkName = "state_name(st)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "0A2D731F-DDAB-48B9-9505-7B84464286FD"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../trainctl/ctrl/trace_train.c"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "251"
+            endingLineNumber = "251"
+            landmarkName = "trace_train_dumpbuf(buf, numbytes)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "C9621EA6-E1A7-443C-99FE-3C2953EBBC5E"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../trainctl/ctrl/trace_train.c"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "248"
+            endingLineNumber = "248"
+            landmarkName = "trace_train_dumpbuf(buf, numbytes)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "B6D1CAAD-79A5-4F3F-A2CB-86779FBD3E4D"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../trainctl/ctrl/trace_train.c"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "271"
+            endingLineNumber = "271"
+            landmarkName = "_trace_train_dump(records, numitem, startidx, h)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "A10CB599-F322-4F2A-ACE5-4F8636267E17"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../trainctl/ctrl/trace_train.c"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "265"
+            endingLineNumber = "265"
+            landmarkName = "_trace_train_dump(records, numitem, startidx, h)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "65BA0CE6-DF6F-4E64-8170-1FB0882CD951"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "train_throttle/AppDelegate.m"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "2078"
+            endingLineNumber = "2078"
+            landmarkName = "-processTraceFrame:"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

@@ -31,6 +31,6 @@ typedef enum pose_trig_tag {
     tag_leave_canton,
     
     tag_auto_u1,
-} pose_trig_tag_t;
+} __attribute__((packed)) pose_trig_tag_t;
 
 #endif /* trig_tags_h */

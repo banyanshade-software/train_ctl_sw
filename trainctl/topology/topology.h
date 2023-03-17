@@ -8,7 +8,10 @@
 #ifndef TOPOLOGY_TOPOLOGY_H_
 #define TOPOLOGY_TOPOLOGY_H_
 
+#ifndef TOPOLOGY_SVG
 #include "misc.h"
+#endif
+
 
 #include "../msg/trainmsg.h"
 

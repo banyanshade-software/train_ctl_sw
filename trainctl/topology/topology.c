@@ -59,7 +59,9 @@
 
 #define FUTURE_CANTON 0xFF
 
-
+#ifdef TOPOLOGY_SVG
+#define FatalError(_m,_l,_e) do { abort(); } while(0)
+#endif
 
 /*
 unsigned int conf_topology_num_entries(void);
@@ -179,6 +181,14 @@ int get_lsblk_len_cm(lsblk_num_t blknum, int8_t *psteep)
 	
 }
 
+#ifdef TOPOLOGY_SVG
+enum topo_turnout_state  topology_get_turnout(xtrnaddr_t tn)
+{
+    return topo_tn_straight;
+}
+#endif
+
+
 lsblk_num_t next_lsblk(lsblk_num_t blknum, uint8_t left, int8_t *palternate)
 {
     if (palternate) *palternate = 0;
@@ -201,7 +211,6 @@ lsblk_num_t next_lsblk(lsblk_num_t blknum, uint8_t left, int8_t *palternate)
     //if ((a.n<0) && (b.n<0)) return a; // end of track
     return a;
 }
-
 
 xblkaddr_t canton_for_lsblk(lsblk_num_t n)
 {

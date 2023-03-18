@@ -21,7 +21,7 @@
 #include "ctrl.h"
 
 #include "trace_train.h"
-#include "utils/framing.h"
+#include "../utils/framing.h"
 
 
 #if trace_train_enable == 0

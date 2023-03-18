@@ -21,6 +21,8 @@
 #include "ctrl.h"
 
 #include "trace_train.h"
+#include "utils/framing.h"
+
 
 #if trace_train_enable == 0
 void _trace_train_postick(uint32_t tick, int tidx, train_ctrl_t *tvars)
@@ -338,7 +340,9 @@ void frame_send_trace(_UNUSED_ void(*cb)(const uint8_t *d, int l), _UNUSED_ int 
         train_trace_record_t *rec = &t->rec[idx];
         if (f && !rec->tick) continue;
         f = 0;
-        cb((uint8_t *)rec, sizeof(train_trace_record_t));
+		uint8_t buf[32];
+		int l = txrx_frm_escape2(buf, (uint8_t *)rec, sizeof(train_trace_record_t), sizeof(buf));
+        cb(buf, l);
     }
 }
 #endif // !TRAIN_SIMU

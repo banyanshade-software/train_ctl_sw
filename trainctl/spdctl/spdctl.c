@@ -220,7 +220,13 @@ extern volatile int oscillo_canton_of_interest;
 static void _start_canton(int tidx, uint8_t v);
 static void _stop_canton(int tidx,  uint8_t v);
 
-
+int16_t spdctl_get_lastpose(int tidx)
+{
+    USE_TRAIN(tidx);
+    int16_t v = tvars->lastposed10;
+    return v;
+}
+    
 static void spdctl_handle_msg(msg_64_t *m)
 {
 	// msg handled in any state / from & to conditions
@@ -261,7 +267,7 @@ static void spdctl_handle_msg(msg_64_t *m)
                     itm_debug3(DBG_PID, "c2 bemf", tidx, m->v1, m->from);
                     if (tvars->c2bemf) {
                         tvars->bemf_mv = m->v1;
-                        tvars->lastposed10 = m->v2;
+                        //tvars->lastposed10 = m->v2;
                         if (!tidx) oscillo_t0bemf = m->v1;
                         else if (1==tidx) oscillo_t1bemf = m->v1;
                     } else if (abs(m->v1) > abs(tvars->bemf_mv)+300) {
@@ -481,18 +487,7 @@ void spdctl_run_tick(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, uint
             xblkaddr_t cfrom = FROM_CANTON(m);
             switch (m.cmd) {
                 case CMD_BEMF_NOTIF:
-                    /*if (m.subc) { xxxxxxxx removed, pose triggered sent directly by
-                                              bemf to ctrl
-                        //  pose triggered
-                        msg_64_t t = {0};
-                        t.from = MA1_SPDCTL(tidx);
-                        t.to = MA1_CTRL(tidx);
-                        t.cmd = CMD_POSE_TRIGGERED;
-                        t.subc = m.subc;
-                        t.v1 = m.from;
-                        t.v2 = m.v2; // pose value
-                        mqf_write_from_spdctl(&t);
-                    } */
+                    
                     if (cfrom == tvars->C1x) {
                     	if (!tidx) oscillo_t0bemf = m.v1;
                     	else if (1==tidx) oscillo_t1bemf = m.v1;

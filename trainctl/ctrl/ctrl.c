@@ -547,12 +547,12 @@ static void normal_process_msg(msg_64_t *m)
                 itm_debug3(DBG_CTRL, "not c2", tidx, m->v1u, tvars->can2_xaddr.v);
                 break;
             }
-            if (tvars->measure_pose_percm) {
+            /*if (tvars->measure_pose_percm) {
                 tvars->measure_pose_percm = 0;
                 lsblk_num_t s1 = {1};
                 lsblk_num_t s4 = {4};
                 posecm_measured(tidx, m->v2*10, s1, s4);
-            }
+            }*/
             ctrl3_evt_entered_c2(tidx, tvars, 1);
             //ctrl2_evt_entered_c2(tidx, otvar, 1);
             break;
@@ -573,6 +573,9 @@ static void normal_process_msg(msg_64_t *m)
         default:
             break;
 
+        }
+        if (tvars->c1c2dir_changed) {
+            abort();// should have been handled
         }
     } else {
         itm_debug1(DBG_MSG|DBG_CTRL, "bad msg", m->to);

@@ -273,7 +273,7 @@ static void _trace_train_dump(train_trace_record_t *records, int numitem, int st
         f = 0;
         switch (rec->kind) {
             case trace_kind_tick:
-                sprintf(line, "%s%2d %6.6d%s      state=%s%-9s%s dir=%d sblk=%d spd=%3d dspd=%3d pos=%d from %d -- pow %d %d %d%s",
+                sprintf(line, "%s%2d %6.6d%s      state=%s%-9s%s dir=%d sblk=%d spd=%3d dspd=%3d pos=%d from %d -- pow (%d) %d %d%s",
                        _ds, idx, rec->tick, _eds,
                        _ss, state_name(rec->tickrec.state), _ess,
                        rec->tickrec.sdir,

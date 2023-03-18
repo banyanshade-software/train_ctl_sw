@@ -54,6 +54,7 @@ static void _apply_speed(int tidx, train_ctrl_t *tvars);
 static void _check_c2(int tidx, train_ctrl_t *tvars, rettrigs_t *rett);
 static void _updated_while_running(int tidx, train_ctrl_t *tvars);
 static void _evt_leaved_c1old(int tidx, train_ctrl_t *tvars);
+static void _sendlow_c1c2_dir(int tidx, train_ctrl_t *tvars);
 
 // -----------------------------------------------------------------
 
@@ -86,7 +87,7 @@ void ctrl3_init_train(int tidx, train_ctrl_t *tvars, lsblk_num_t sblk, int posmm
     tvars->_curposmm = posmm; //POSE_UNKNOWN;
     tvars->c1_sblk = sblk;
     //TODO
-    tvars->c1c2dir_changed = 1;
+    tvars->c1c2dir_changed = 0;
     tvars->can2_xaddr.v = 0xFF;
     tvars->canOld_xaddr.v = 0xFF;
     tvars->tmp_c2_future.v = 0xFF;
@@ -173,21 +174,44 @@ void ctrl3_set_mode(int tidx, train_ctrl_t *tvar, train_mode_t mode)
 
 static void _adjust_posemm(int tidx, train_ctrl_t *tvar, int expmm, int measmm)
 {
-    
+    if (!measmm) return;
+    const conf_train_t *tconf = conf_train_get(tidx);
+    conf_train_t *wconf = (conf_train_t *)tconf; // writable
+    int pose = tconf->pose_per_cm;
+    int fact100 = (measmm*100)/expmm;
+    wconf->pose_per_cm = pose*fact100/100;
+    if ((1)) {
+        int np = spdctl_get_lastpose(tidx);
+        int nmm = pose_convert_to_mm(tconf, np*10);
+        printf("nmm %d, expmm %d, measmm %d\n", nmm, expmm, measmm);
+        itm_debug3(DBG_CTRL, "adjpcm", tidx, pose, wconf->pose_per_cm);
+    }
+    /*
+    tvars->_curposmm = pose_convert_to_mm(tconf, cposd10*10);
+
+     int32_t mm = poseval*10/tconf->pose_per_cm;
+     return mm;
+     */
+    //tconf->pose_per_cm
 }
 
 static void adjust_measure_lens1(int tidx, train_ctrl_t *tvars)
 {
     int8_t steep = 0;
+    int np = spdctl_get_lastpose(tidx); // TODO only ok because same node
+    const conf_train_t *tconf = conf_train_get(tidx);
+    int nmm = pose_convert_to_mm(tconf, np*10);
     int l = get_lsblk_len_cm(tvars->c1_sblk, &steep);
     if (steep) return;
-    _adjust_posemm(tidx, tvars, l*10, tvars->_curposmm-tvars->beginposmm);
+    _adjust_posemm(tidx, tvars, l*10, nmm-tvars->beginposmm);
 }
 
 
 static void adjust_measure_ends1fromc1(int tidx, train_ctrl_t *tvars)
 {
-    // const conf_train_t *tconf = conf_train_get(tidx);
+    int np = spdctl_get_lastpose(tidx); // TODO only ok because same node
+    const conf_train_t *tconf = conf_train_get(tidx);
+    int nmm = pose_convert_to_mm(tconf, np*10);
     lsblk_num_t s = tvars->c1_sblk;
     int8_t steep = 0;
     int l = 0;
@@ -195,13 +219,27 @@ static void adjust_measure_ends1fromc1(int tidx, train_ctrl_t *tvars)
         l += get_lsblk_len_cm(tvars->c1_sblk, &steep);
         if (steep) return;
         uint8_t left = (tvars->_sdir>0) ? 1 : 0;
-        int8_t alt = 0;
-        s = next_lsblk(s, left, &alt);
-        if ((s.n == -1) || (canton_for_lsblk(s).v != tvars->can1_xaddr.v)) {
-            _adjust_posemm(tidx, tvars, l*10, tvars->_curposmm);
+        lsblk_num_t a,b;
+        xtrnaddr_t tn;
+        next_lsblk_nums(s, left, &a, &b, &tn);
+        int othercanton = 0;
+        if (tn.v != 0xff) {
+            if ((a.n != -1) && (b.n != -1)) {
+                // we don't know where we arrived from, unless both on other canton
+                xblkaddr_t ca = canton_for_lsblk(a);
+                xblkaddr_t cb = canton_for_lsblk(b);
+                if (ca.v == tvars->can1_xaddr.v) return;
+                if (cb.v == tvars->can2_xaddr.v) return;
+                othercanton = 1;
+            } else {
+                if (b.n != -1) s = b;
+                else           s = a;
+            }
+        }
+        if (othercanton || (s.n == -1) || (canton_for_lsblk(s).v != tvars->can1_xaddr.v)) {
+            _adjust_posemm(tidx, tvars, l*10, nmm);
             return;
         }
-        if (alt) return;
     }
 }
 void ctrl3_upcmd_set_desired_speed(int tidx, train_ctrl_t *tvars, int16_t desired_speed)
@@ -290,6 +328,7 @@ void ctrl3_upcmd_set_desired_speed_zero(int tidx, train_ctrl_t *tvars)
         case train_state_end_of_track:
             _set_dir(tidx, tvars, 0);
             _set_speed(tidx, tvars, 0, 0, 0);
+            _sendlow_c1c2_dir(tidx, tvars);
             _set_state(tidx, tvars, train_state_station);
             return;
             break;
@@ -371,20 +410,28 @@ void ctrl3_pose_triggered(int tidx, train_ctrl_t *tvars, pose_trig_tag_t trigtag
     const conf_train_t *tconf = conf_train_get(tidx);
     int32_t oldpos = tvars->_curposmm;
     tvars->_curposmm = pose_convert_to_mm(tconf, cposd10*10);
+    if ((1)) {
+        int np = spdctl_get_lastpose(tidx); // TODO only ok because same node
+        int nmm = pose_convert_to_mm(tconf, np*10);
+        if (abs(nmm - tvars->_curposmm)>5) {
+            printf("%d / %d\n", tvars->_curposmm, nmm);
+            int np2 = spdctl_get_lastpose(tidx);
+        }
+    }
     itm_debug3(DBG_POSE|DBG_CTRL, "curposmm", tidx, tvars->_curposmm, trigtag);
     trace_train_trig(ctrl_tasklet.last_tick, tidx, tvars, trigtag, oldpos, tvars->_curposmm);
     //int rc;
     
     switch (tvars->_state) {
         case train_state_off:
-            return;
+            goto handled;
         case train_state_blkwait0:
         case train_state_blkwait:
         case train_state_end_of_track0:
         case train_state_end_of_track:
         case train_state_station:
             //ignore
-            return;
+            goto handled;
             break;
             
         case train_state_running:
@@ -394,7 +441,7 @@ void ctrl3_pose_triggered(int tidx, train_ctrl_t *tvars, pose_trig_tag_t trigtag
                     lsblk_num_t ns = next_lsblk(tvars->c1_sblk, (tvars->_sdir<0) ? 1 : 0, NULL);
                     if (ns.n == -1) {
                         itm_debug2(DBG_ERR|DBG_CTRL, "end/nxt", tidx, tvars->c1_sblk.n);
-                        return;
+                        goto handled;
                         break;
                     }
                     xblkaddr_t b = canton_for_lsblk(ns);
@@ -408,14 +455,14 @@ void ctrl3_pose_triggered(int tidx, train_ctrl_t *tvars, pose_trig_tag_t trigtag
                     tvars->beginposmm = tvars->_curposmm; // TODO adjust for trig delay
                     ctrl3_update_c1changed(tidx, tvars, conf_train_get(tidx), tvars->_sdir<0 ? 1 : 0);
                     _updated_while_running(tidx, tvars);
-                    return;
+                    goto handled;
                     break;
                 case tag_chkocc:
                     // TODO
                     // update position, update trigs
                     //ctrl3_update_front_sblks(tidx, tvars, conf_train_get(tidx), tvars->_sdir<0 ? 1 : 0);
                     _updated_while_running(tidx, tvars);
-                    return;
+                    goto handled;
                     break;
                 case tag_stop_blk_wait: {
                     int spd = tvars->_desired_signed_speed;
@@ -424,47 +471,47 @@ void ctrl3_pose_triggered(int tidx, train_ctrl_t *tvars, pose_trig_tag_t trigtag
 
                     _set_state(tidx, tvars, train_state_blkwait0);
                     }
-                    return;
+                    goto handled;
                     break;
                 case tag_stop_eot:
                     _set_speed(tidx, tvars, 0, 1, 0);
                     _set_state(tidx, tvars, train_state_end_of_track0);
-                    return;
+                    goto handled;
                     break;
                
                     
                 case tag_brake:
-                    tvars->canMeasureOnCanton = tvars->canMeasureOnSblk = 0;
+                    //tvars->canMeasureOnCanton = tvars->canMeasureOnSblk = 0;
                     itm_debug2(DBG_ERR|DBG_CTRL, "trg brk", tidx, tvars->c1_sblk.n);
                     if (tvars->brake) {
                         itm_debug2(DBG_ERR|DBG_CTRL, "already brk", tidx, tvars->c1_sblk.n);
-                        return;
+                        goto handled;
                     }
                     // start brake
                     // tvars->brake = 1; done by _train_check_dir
                     _updated_while_running(tidx, tvars);
-                    return;
+                    goto handled;
                     break;
                 case tag_need_c2:
                     itm_debug2(DBG_ERR|DBG_CTRL, "trg nc2", tidx, tvars->c1_sblk.n);
                     _set_and_power_c2(tidx, tvars);
-                    return;
+                    goto handled;
                     break;
                 case tag_reserve_c2:
                     _reserve_c2(tidx, tvars);
-                    return;
+                    goto handled;
                     break;
                 
                 case tag_free_back:
                     // free back if different canton
                     _updated_while_running(tidx, tvars);
-                    return;
+                    goto handled;
                     break;
                     
                 case tag_leave_canton:
                     _evt_leaved_c1old(tidx, tvars);
                     _updated_while_running(tidx, tvars);
-                    return;
+                    goto handled;
                     break;
                     
                 default:
@@ -475,6 +522,11 @@ void ctrl3_pose_triggered(int tidx, train_ctrl_t *tvars, pose_trig_tag_t trigtag
             break;
     }
     FatalError("FSM_", "end fsm", Error_FSM_Nothandled);
+    return;
+handled:
+    if (tvars->c1c2dir_changed) {
+        _sendlow_c1c2_dir(tidx, tvars);
+    }
 }
 
 
@@ -595,13 +647,15 @@ void ctrl3_evt_entered_c2(int tidx, train_ctrl_t *tvars, uint8_t from_bemf)
     tvars->canOld_xaddr = tvars->can1_xaddr;
     tvars->can1_xaddr = tvars->can2_xaddr;
     tvars->can2_xaddr.v = 0xFF;
-    
+    tvars->c1c2dir_changed = 1;
     if (tvars->pow_c2_future.v != 0xFF) {
-        _set_and_power_c2(tidx, tvars); //
+        _set_and_power_c2(tidx, tvars); // this will also call _sendlow_c1c2_dir
+    } else {
+        _sendlow_c1c2_dir(tidx, tvars);
     }
-    if (2 == tvars->can1_xaddr.v) { // XXX Hardcoded for now
+    /*if (2 == tvars->can1_xaddr.v) { // XXX Hardcoded for now
         tvars->measure_pose_percm = 1;
-    }
+    }*/
     tvars->c1_sblk = first_lsblk_with_canton(tvars->can1_xaddr, tvars->c1_sblk);
     if (tvars->_sdir >= 0) {
         tvars->beginposmm = 0;
@@ -688,7 +742,8 @@ static void _evt_leaved_c1old(int tidx, train_ctrl_t *tvars)
     tvars->c1c2 = 0;
     tvars->canOld_xaddr.v = 0xFF;
     tvars->c1c2dir_changed = 1;
-    
+    _sendlow_c1c2_dir(tidx, tvars);
+
     if (tvars->pow_c2_future.v != 0xFF) {
         _set_and_power_c2(tidx, tvars);
         //printf("break here\n");
@@ -862,7 +917,6 @@ static void _apply_trigs(int tidx, train_ctrl_t *tvars, const rettrigs_t *rett)
 }
 
 // -----------------------------------------------------------------
-static void _sendlow_c1c2_dir(int tidx, train_ctrl_t *tvars);
 
 static void _set_dir(int tidx, train_ctrl_t *tvars, int sdir)
 {

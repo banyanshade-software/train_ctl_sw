@@ -645,5 +645,9 @@ static int compareMsg64(const msg_64_t *exp, int n, int clear);
  */
 
 
-
+int16_t spdctl_get_lastpose(int tidx)
+{
+    abort();
+    return 0;
+}
 @end

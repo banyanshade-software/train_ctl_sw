@@ -56,7 +56,7 @@ typedef struct {
     lsblk_num_t freelsblk;      // temporary, lsblk on back of train to be released
 
     uint8_t c1c2dir_changed:1;
-    uint8_t measure_pose_percm:1;
+    //uint8_t measure_pose_percm:1;
     uint8_t c1c2:1;
     uint8_t off_requested:1;
 

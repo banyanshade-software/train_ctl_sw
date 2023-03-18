@@ -76,6 +76,29 @@
 }
 
 
+- (void) inaOff:(int)inanum train:(int)train
+{
+    msg_64_t m = {0};
+    m.from = MA0_INA(inanum/12); // change to MA_INA3221_B ?
+    m.to = MA1_CONTROL();
+    m.cmd = CMD_PRESENCE_SUB_CHANGE;
+    m.subc = inanum;
+    m.v1u = 0;
+    m.v2 = 0;//na_svalues[i];
+    mqf_write_from_usb(&m);
+}
+- (void) inaOn:(int)inanum train:(int)train
+{
+    msg_64_t m = {0};
+    m.from = MA0_INA(inanum/12); // change to MA_INA3221_B ?
+    m.to = MA1_CONTROL();
+    m.cmd = CMD_PRESENCE_SUB_CHANGE;
+    m.subc = inanum;
+    m.v1u = 1;
+    m.v2 = 4000;//na_svalues[i];
+    mqf_write_from_usb(&m);
+}
+
 - (void) computeTrainsAfter:(uint32_t)ellapsed sinceStart:(uint32_t)ts
 {
     //if (ellapsed<20) {
@@ -103,10 +126,22 @@
                 if (ns.n < 0) {
                     NSLog(@"END OF TRACK/COL !!");
                 } else {
+                    uint8_t inaold = get_lsblk_ina3221(s1[tn]);
+                    uint8_t inanew = get_lsblk_ina3221(ns);
+                    NSLog(@"switch ina %u->%u", inaold, inanew);
+                    if (inanew != inaold) {
+                        if (inaold != 0xFF) {
+                            [self inaOff:inaold train:tn];
+                        }
+                        if (inanew != 0xFF) {
+                            [self inaOn:inanew train:tn];
+                        }
+                    }
                     s1[tn] = ns;
                     positioncm[tn] = 0;
                     xblkaddr_t nb = canton_for_lsblk(ns);
                     _trace_train_simu(SimuTick, tn, ns.n, nb.v);
+                    
                     if (nb.v != cn.v) {
                         cold[tn] = cn.v;
                         cn = nb;

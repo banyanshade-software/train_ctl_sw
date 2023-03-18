@@ -4,7 +4,7 @@ config globparam {
     user int test_mode = (default) 0;
     user int oscillo = (default) 0;
     user int ignoreIna3221 
-            = (simu) 1
+            = (simu) 0
             = (default) 0;
 } num = (mainV0) 1
       = (mainV04) 1

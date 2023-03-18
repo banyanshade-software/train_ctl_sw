@@ -62,13 +62,15 @@ typedef struct {
 
     //
     // #longtrain
+    uint8_t brake:1;
+    uint8_t canMeasureOnSblk:1;
+    uint8_t canMeasureOnCanton:1;
     struct forwdsblk leftcars;
     struct forwdsblk rightcars;
     //
     int32_t _curposmm;
     int32_t beginposmm; // left side ofl sblk,  either 0, or -len
 
-    uint8_t brake:1;
 } train_ctrl_t;
 
 
@@ -145,6 +147,8 @@ void turn_train_off(int tidx, train_ctrl_t *tvars);
 
 void ctrl3_evt_entered_c2(int tidx, train_ctrl_t *tvars, uint8_t from_bemf);
 
+void ctrl3_evt_entered_new_lsblk_same_canton(int tidx, train_ctrl_t *tvars, lsblk_num_t sblk);
+void ctrl3_evt_entered_new_lsblk_c2_canton(int tidx, train_ctrl_t *tvars,lsblk_num_t sblk);
 
 
 void ctrl3_set_mode(int tidx, train_ctrl_t *tvar, train_mode_t mode);

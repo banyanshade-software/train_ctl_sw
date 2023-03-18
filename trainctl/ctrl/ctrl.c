@@ -361,11 +361,11 @@ static void sub_presence_changed(_UNUSED_ uint8_t from_addr,  uint8_t lsegnum,  
 	}
 	itm_debug3(DBG_PRES|DBG_CTRL, "PrsChg-", lsegnum, p, ival);
 	// FatalError("ABRT", "sub_presence_changed", Error_Abort);
-#if 0
-	// TODO : from_addr should be used for board number
+
+    // TODO : from_addr should be used for board number
 	for (int tidx=0; tidx < NUM_TRAINS; tidx++) {
-		train_oldctrl_t *tvar = &otrctl[tidx];
-        if (tvar->_mode == train_notrunning) continue;
+		train_ctrl_t *tvar = &trctl[tidx];
+        if (tvar->_mode == train_state_off) continue;
         uint8_t is_s1 = 0;
         uint8_t is_s2 = 0;
         uint8_t is_c1 = 0;
@@ -381,31 +381,39 @@ static void sub_presence_changed(_UNUSED_ uint8_t from_addr,  uint8_t lsegnum,  
         if (tvar->can2_xaddr.v != 0xFF) {
         	if (cl.v == tvar->can2_xaddr.v) is_c2 = 1;
         }
-        lsblk_num_t n2 = next_lsblk(tvar->c1_sblk, tvar->_dir<0, NULL);
+        lsblk_num_t n2 = next_lsblk(tvar->c1_sblk, tvar->_sdir<0, NULL);
         if ((n2.n>=0) && (lsegnum == get_lsblk_ina3221(n2))) {
         	is_s2 = 1;
         }
         if (is_s1 || is_c1 || is_s2 || is_c2) {
         	itm_debug3(DBG_PRES|DBG_CTRL, "PrsChg ", tidx, p, is_s1);
         	itm_debug3(DBG_PRES|DBG_CTRL, "PrsChg.", is_s2, is_c1, is_c2);
+        } else {
+            continue;
         }
 
         if (p) {
-        	if (is_s1 && is_c1)        ctrl2_evt_entered_c1(tidx, tvar, 0);
-        	else if (is_c2 && !is_c1)  ctrl2_evt_entered_c2(tidx, tvar, 0);
-        	else if (is_s2  && !is_s1) ctrl2_evt_entered_s2(tidx, tvar);
+            if ((0)) {
+            } else if (is_s2 && !is_s1 && !is_c2) {
+                ctrl3_evt_entered_new_lsblk_same_canton(tidx, tvar, n2);
+            } else if (is_s2 && !is_s1 && is_c2) {
+                ctrl3_evt_entered_new_lsblk_c2_canton(tidx, tvar, n2);
+            } else if (is_c1 && is_s1) {
+                // normal condition, just a intensity toggled
+            } else {
+                abort();
+            }
         } else {
-        	if ((0)) { // XXX
+        	/*if ((0)) { // XXX
         		if (is_c2) {
-        			ctrl2_evt_leaved_c2(tidx, tvar);
+        			ctrl3_evt_leaved_c2(tidx, tvar);
         		} else if (is_c1 && is_s1) {
-        			ctrl2_evt_leaved_c1(tidx, tvar);
+        			ctrl3_evt_leaved_c1(tidx, tvar);
         		}
-        	}
+        	}*/
         }
-        
+
 	}
-#endif
 }
 
 // ----------------------------------------------------------------------------

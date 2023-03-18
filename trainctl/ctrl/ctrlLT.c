@@ -80,7 +80,8 @@ void ctrl3_init_train(int tidx, train_ctrl_t *tvars, lsblk_num_t sblk, int posmm
     tvars->_spd_limit = 100;
     tvars->_state = train_state_off;
     tvars->_target_unisgned_speed = 0;
-    
+    tvars->canMeasureOnCanton = tvars->canMeasureOnSblk = 0;
+
     tvars->beginposmm = 0;
     tvars->_curposmm = posmm; //POSE_UNKNOWN;
     tvars->c1_sblk = sblk;
@@ -170,8 +171,39 @@ void ctrl3_set_mode(int tidx, train_ctrl_t *tvar, train_mode_t mode)
   
 }
 
+static void _adjust_posemm(int tidx, train_ctrl_t *tvar, int expmm, int measmm)
+{
+    
+}
+
+static void adjust_measure_lens1(int tidx, train_ctrl_t *tvars)
+{
+    int8_t steep = 0;
+    int l = get_lsblk_len_cm(tvars->c1_sblk, &steep);
+    if (steep) return;
+    _adjust_posemm(tidx, tvars, l*10, tvars->_curposmm-tvars->beginposmm);
+}
 
 
+static void adjust_measure_ends1fromc1(int tidx, train_ctrl_t *tvars)
+{
+    // const conf_train_t *tconf = conf_train_get(tidx);
+    lsblk_num_t s = tvars->c1_sblk;
+    int8_t steep = 0;
+    int l = 0;
+    for (;;) {
+        l += get_lsblk_len_cm(tvars->c1_sblk, &steep);
+        if (steep) return;
+        uint8_t left = (tvars->_sdir>0) ? 1 : 0;
+        int8_t alt = 0;
+        s = next_lsblk(s, left, &alt);
+        if ((s.n == -1) || (canton_for_lsblk(s).v != tvars->can1_xaddr.v)) {
+            _adjust_posemm(tidx, tvars, l*10, tvars->_curposmm);
+            return;
+        }
+        if (alt) return;
+    }
+}
 void ctrl3_upcmd_set_desired_speed(int tidx, train_ctrl_t *tvars, int16_t desired_speed)
 {
     //int is_eot = 0;
@@ -213,6 +245,8 @@ station:
                 return;
             } else {
                 // change direction
+                tvars->canMeasureOnCanton = 0;
+                tvars->canMeasureOnSblk = 0;
                 ctrl3_upcmd_set_desired_speed_zero(tidx, tvars);
                 return;
             }
@@ -368,7 +402,9 @@ void ctrl3_pose_triggered(int tidx, train_ctrl_t *tvars, pose_trig_tag_t trigtag
                         itm_debug2(DBG_ERR|DBG_CTRL, "end/badc1", tidx, tvars->c1_sblk.n);
                         break;
                     }
+                   
                     tvars->c1_sblk = ns;
+                    tvars->canMeasureOnSblk = 0;
                     tvars->beginposmm = tvars->_curposmm; // TODO adjust for trig delay
                     ctrl3_update_c1changed(tidx, tvars, conf_train_get(tidx), tvars->_sdir<0 ? 1 : 0);
                     _updated_while_running(tidx, tvars);
@@ -387,7 +423,7 @@ void ctrl3_pose_triggered(int tidx, train_ctrl_t *tvars, pose_trig_tag_t trigtag
                     _set_speed(tidx, tvars, spd, 0, 0);
 
                     _set_state(tidx, tvars, train_state_blkwait0);
-                }
+                    }
                     return;
                     break;
                 case tag_stop_eot:
@@ -398,6 +434,7 @@ void ctrl3_pose_triggered(int tidx, train_ctrl_t *tvars, pose_trig_tag_t trigtag
                
                     
                 case tag_brake:
+                    tvars->canMeasureOnCanton = tvars->canMeasureOnSblk = 0;
                     itm_debug2(DBG_ERR|DBG_CTRL, "trg brk", tidx, tvars->c1_sblk.n);
                     if (tvars->brake) {
                         itm_debug2(DBG_ERR|DBG_CTRL, "already brk", tidx, tvars->c1_sblk.n);
@@ -508,6 +545,34 @@ void ctrl3_occupency_updated(int tidx, train_ctrl_t *tvars)
 }
 
 
+
+void ctrl3_evt_entered_new_lsblk_same_canton(int tidx, train_ctrl_t *tvars, lsblk_num_t sblk)
+{
+    // ina detect train entered new lsblk
+    if (tvars->canMeasureOnSblk) {
+        adjust_measure_lens1(tidx, tvars);
+    } else if (tvars->canMeasureOnCanton) {
+        adjust_measure_ends1fromc1(tidx, tvars);
+        tvars->canMeasureOnCanton = 0;
+    }
+    tvars->c1_sblk = sblk;
+    tvars->beginposmm = tvars->_curposmm;
+    tvars->canMeasureOnSblk = 1;
+    ctrl3_update_c1changed(tidx, tvars, conf_train_get(tidx), tvars->_sdir<0 ? 1 : 0);
+    _updated_while_running(tidx, tvars);
+}
+
+void ctrl3_evt_entered_new_lsblk_c2_canton(int tidx, train_ctrl_t *tvars, lsblk_num_t sblk)
+{
+    if (tvars->canMeasureOnSblk) {
+        adjust_measure_lens1(tidx, tvars);
+        tvars->canMeasureOnSblk = 0;
+    } else if (tvars->canMeasureOnCanton) {
+        adjust_measure_ends1fromc1(tidx, tvars);
+        tvars->canMeasureOnCanton = 0;
+    }
+    
+}
 void ctrl3_evt_entered_c2(int tidx, train_ctrl_t *tvars, uint8_t from_bemf)
 {
     if (from_bemf && ignore_bemf_pres()) return;
@@ -545,6 +610,7 @@ void ctrl3_evt_entered_c2(int tidx, train_ctrl_t *tvars, uint8_t from_bemf)
         tvars->beginposmm = -len*10;
     }
     tvars->_curposmm = 0;
+    tvars->canMeasureOnCanton = tvars->canMeasureOnSblk = 1;
 
     ctrl3_update_c1changed(tidx, tvars, conf_train_get(tidx), tvars->_sdir<0 ? 1 : 0);
     _updated_while_running(tidx,tvars);
@@ -628,7 +694,7 @@ static void _evt_leaved_c1old(int tidx, train_ctrl_t *tvars)
         //printf("break here\n");
     }
 }
-
+/*
 void ctrl3_evt_leaved_c1(int tidx, train_ctrl_t *tvars)
 {
     // TODO : KO this is not leave c1, should only update pos
@@ -673,6 +739,7 @@ void ctrl3_evt_leaved_c1(int tidx, train_ctrl_t *tvars)
     tvars->tick_flags |=  _TFLAG_C1_CHANGED|_TFLAG_C1_CHANGED | _TFLAG_C1LSB_CHANGED;
 #endif
 }
+ */
 // -----------------------------------------------------------------
 
 int __from_check_dir = 0; // XXX remove this is for debug
@@ -935,11 +1002,18 @@ static void _set_state(int tidx, train_ctrl_t *tvars, train_state_t newstate)
     if (tvars->_state == newstate) return;
     train_state_t oldstate = tvars->_state;
     tvars->_state = newstate;
+    if (newstate != train_state_running) {
+        tvars->canMeasureOnCanton = tvars->canMeasureOnSblk = 0;
+    }
     //  sanity check
     switch (newstate) {
         case train_state_blkwait:
         case train_state_blkwait0:
             if (!tvars->_desired_signed_speed) {
+                /*
+                 might occurs in running, user stop, still in running but with desired_speed=0, waiting for stop detect
+                 occupency change -> blkwait0
+                 */
                 FatalError("FSMb", "FSM san check", Error_FSM_Sanity2);
             }
             // FALLTHRU

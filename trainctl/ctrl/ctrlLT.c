@@ -1069,6 +1069,7 @@ static void _set_state(int tidx, train_ctrl_t *tvars, train_state_t newstate)
     if (newstate != train_state_running) {
         tvars->canMeasureOnCanton = tvars->canMeasureOnSblk = 0;
     }
+    
     //  sanity check
     switch (newstate) {
         case train_state_blkwait:
@@ -1125,6 +1126,12 @@ static void _set_state(int tidx, train_ctrl_t *tvars, train_state_t newstate)
             if (tvars->can2_xaddr.v == tvars->can1_xaddr.v) {
                 FatalError("FSMb", "FSM san", Error_FSM_Sanity9);
             }
+        }
+    }
+    // notify c3auto
+    if (train_state_station == newstate) {
+        if (tvars->_mode == train_auto) {
+            c3auto_station(tidx);
         }
     }
     // notify UI

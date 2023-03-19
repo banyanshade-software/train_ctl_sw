@@ -52,6 +52,20 @@ void c3auto_start(int tidx)
     c3avar[tidx].cidx = 0;
     c3avar[tidx].spd = 0;
 }
+
+static void _update_sblk(int tidx, int oldidx)
+{
+    int8_t spd2 = c3avar[tidx].path[oldidx].val;
+    int8_t ospd = c3avar[tidx].spd;
+    if (spd2 != ospd) {
+        if (spd2 && ospd && (SIGNOF(spd2) != SIGNOF((ospd)))) {
+            // change direction
+            ctrl_set_desired_spd(tidx, 0);
+        }
+        ctrl_set_desired_spd(tidx, spd2*2);
+        c3avar[tidx].spd = spd2;
+    }
+}
 void c3auto_set_s1(int tidx, lsblk_num_t s1)
 {
     int idx = c3avar[tidx].cidx;
@@ -59,16 +73,7 @@ void c3auto_set_s1(int tidx, lsblk_num_t s1)
         if (c3avar[tidx].path[idx].t) continue;
         if (c3avar[tidx].path[idx].sblk.n == s1.n) {
             c3avar[tidx].cidx = idx;
-            int8_t spd2 = c3avar[tidx].path[idx].val;
-            int8_t ospd = c3avar[tidx].spd;
-            if (spd2 != ospd) {
-                if (spd2 && ospd && (SIGNOF(spd2) != SIGNOF((ospd)))) {
-                    // change direction
-                    ctrl_set_desired_spd(tidx, 0);
-                }
-                ctrl_set_desired_spd(tidx, spd2*2);
-                c3avar[tidx].spd = spd2;
-            }
+            _update_sblk(tidx, idx);
             return;
         }
 
@@ -84,8 +89,38 @@ void c3auto_set_s1(int tidx, lsblk_num_t s1)
 void c3auto_freeback(int tidx, lsblk_num_t freelsblk)
 {
     int idx = c3avar[tidx].cidx;
-    if (c3avar[tidx].path[idx].t) {
-        
+    if (!c3avar[tidx].path[idx].t && !c3avar[tidx].path[idx+1].t) {
+        int d1 = SIGNOF0(c3avar[tidx].path[idx].val);
+        int t =  d1 * SIGNOF0(c3avar[tidx].path[idx+1].val);
+        if (t<0) {
+            // this is direction change
+            lsblk_num_t prev = next_lsblk(c3avar[tidx].path[idx].sblk, (d1>0), NULL);
+            if (prev.n == freelsblk.n) {
+                // all train is now on current sblk (and next sblk)
+                // stop to go to station mode
+                ctrl_set_desired_spd(tidx, 0);
+                c3avar[tidx].spd = 0;
+            }
+        }
+    }
+}
+
+void c3auto_station(int tidx)
+{
+    if (c3avar[tidx].spd) {
+        // not triggered by us
+        itm_debug2(DBG_AUTO|DBG_ERR, "station?", tidx, c3avar[tidx].spd);
+        return;
+    }
+    int idx = c3avar[tidx].cidx;
+    if (!c3avar[tidx].path[idx].t && !c3avar[tidx].path[idx+1].t) {
+        int d1 = SIGNOF0(c3avar[tidx].path[idx].val);
+        int t =  d1 * SIGNOF0(c3avar[tidx].path[idx+1].val);
+        if (t<0) {
+            // this is direction change
+            c3avar[tidx].cidx++;
+            _update_sblk(tidx, idx+1);
+        }
     }
 }
 void c3auto_set_turnout(int tidx, xtrnaddr_t tn)

@@ -616,7 +616,7 @@ void ctrl3_evt_entered_new_lsblk_same_canton(int tidx, train_ctrl_t *tvars, lsbl
         }
     }
     tvars->c1_sblk = sblk;
-    //tvars->beginposmm = tvars->_curposmm;
+    tvars->beginposmm = tvars->_curposmm;
     tvars->canMeasureOnSblk = 1;
     ctrl3_update_c1changed(tidx, tvars, conf_train_get(tidx), tvars->_sdir<0 ? 1 : 0);
     _updated_while_running(tidx, tvars);
@@ -678,7 +678,7 @@ void ctrl3_evt_entered_c2(int tidx, train_ctrl_t *tvars, uint8_t from_bemf)
     tvars->canMeasureOnCanton = tvars->canMeasureOnSblk = 1;
 
     ctrl3_update_c1changed(tidx, tvars, conf_train_get(tidx), tvars->_sdir<0 ? 1 : 0);
-    _updated_while_running(tidx,tvars);
+    _updated_while_running(tidx, tvars);
     
     if (from_bemf && ignore_ina_pres()) {
         //ctrl_set_timer(tidx, tvars, TLEAVE_C1, TLEAVE_C1_VALUE);
@@ -810,53 +810,41 @@ void ctrl3_evt_leaved_c1(int tidx, train_ctrl_t *tvars)
 
 int __from_check_dir = 0; // XXX remove this is for debug
 
+static void freeback(int tidx, train_ctrl_t *tvars)
+{
+    if (tvars->freelsblk.n != -1) {
+        // XXX remove me. For debug, test on canton is enough
+        if (tvars->freelsblk.n == tvars->c1_sblk.n) {
+            printf("ho bizarre ca");
+        }
+        xblkaddr_t fc = canton_for_lsblk(tvars->freelsblk);
+        if (tvars->_mode == train_auto) {
+            c3auto_freeback(tidx, tvars->freelsblk);
+        }
+        if (fc.v != tvars->can1_xaddr.v) {
+            trace_train_free(ctrl_tasklet.last_tick, tidx, tvars->freelsblk.n, fc.v);
+            set_block_addr_occupency(fc, BLK_OCC_FREE, tidx, snone);
+        } else {
+            trace_train_free(ctrl_tasklet.last_tick, tidx, tvars->freelsblk.n, -1);
+        }
+        tvars->freelsblk.n = -1;
+    }
+}
 static int _train_check_dir(int tidx, train_ctrl_t *tvars, int sdir, rettrigs_t *rett)
 {
     if (!sdir) {
         FatalError("FSMd", "FSM no dir", Error_FSM_NoDir);
         return 0;
     }
-    if (tvars->freelsblk.n != -1) {
-        xblkaddr_t fc = canton_for_lsblk(tvars->freelsblk);
-        if (tvars->_mode == train_auto) {
-            c3auto_freeback(tidx, tvars->freelsblk);
-        }
-        if (fc.v != tvars->can1_xaddr.v) {
-            trace_train_free(ctrl_tasklet.last_tick, tidx, tvars->freelsblk.n, fc.v);
-            set_block_addr_occupency(fc, BLK_OCC_FREE, tidx, snone);
-        } else {
-            trace_train_free(ctrl_tasklet.last_tick, tidx, tvars->freelsblk.n, -1);
-        }
-        tvars->freelsblk.n = -1;
-    }
-    
-    
+    freeback(tidx, tvars);
     
     const conf_train_t *conf = conf_train_get(tidx);
     __from_check_dir = 1;
     ctrl3_get_next_sblks(tidx, tvars, conf);
     __from_check_dir = 0;
     
-    if (tvars->freelsblk.n != -1) {
-        if ((1)) {
-            // XXX remove me. For debug, test on canton is enough
-            if (tvars->freelsblk.n == tvars->c1_sblk.n) {
-                printf("ho bizarre ca");
-            }
-        }
-        
-        xblkaddr_t fc = canton_for_lsblk(tvars->freelsblk);
-        if (tvars->_mode == train_auto) {
-            c3auto_freeback(tidx, tvars->freelsblk);
-        }
-        if (fc.v != tvars->can1_xaddr.v) {
-            trace_train_free(ctrl_tasklet.last_tick, tidx, tvars->freelsblk.n, fc.v);
-            set_block_addr_occupency(fc, BLK_OCC_FREE, tidx, snone);
-        } else {
-            trace_train_free(ctrl_tasklet.last_tick, tidx, tvars->freelsblk.n, -1);
-        }
-        tvars->freelsblk.n = -1;
-    }
+    freeback(tidx, tvars);
+    
     
     int rc2 = ctrl3_check_front_sblks(tidx, tvars, conf_train_get(tidx), (sdir<0) ? 1 : 0, rett);
     

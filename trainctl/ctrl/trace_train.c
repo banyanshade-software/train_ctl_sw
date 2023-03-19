@@ -66,12 +66,18 @@ typedef struct {
     int8_t canton;
 } __attribute__((packed)) train_trace_simu_record_t;
 
+typedef struct {
+    int8_t inanum;
+    int8_t inaon;
+} __attribute__((packed)) train_trace_ina_record_t;
+
 typedef enum {
     trace_kind_tick = 1,
     trace_kind_trig,
     trace_kind_trig_set,
     trace_kind_free,
     trace_kind_simu,
+    trace_kind_ina,
 } __attribute__((packed)) trace_rec_kind_t;
 
 typedef struct {
@@ -82,6 +88,7 @@ typedef struct {
         train_trace_trig_record_t trigrec;
         train_trace_free_record_t freerec;
         train_trace_simu_record_t simurec;
+        train_trace_ina_record_t  inarec;
     } __attribute__((packed));;
 } __attribute__((packed)) train_trace_record_t;
 
@@ -186,6 +193,17 @@ void _trace_train_free(uint32_t tick, int tidx, int sblk, int canton)
     rec->freerec.canton = canton;
 }
 
+void _trace_train_ina3221(uint32_t tick, int tidx, int lsegnum, int on)
+{
+    train_trace_record_t *rec = get_newrec(tidx);
+    if (!rec) return;
+    rec->tick = tick;
+    rec->kind = trace_kind_ina;
+    rec->inarec.inanum = lsegnum;
+    rec->inarec.inaon = on;
+}
+
+
 void _trace_train_simu(uint32_t tick, int tidx, int sblk, int canton)
 {
     train_trace_record_t *rec = get_newrec(tidx);
@@ -243,6 +261,13 @@ void trace_train_dump(int tidx)
     if (tidx>=NUM_TRAIN_TRACE) return;
     train_trace_t *t = &trace[tidx];
     _trace_train_dump(t->rec, NUM_TRACE_ITEM, t->nextidx, 0);
+}
+
+void trace_train_dumphtml(int tidx)
+{
+    if (tidx>=NUM_TRAIN_TRACE) return;
+    train_trace_t *t = &trace[tidx];
+    _trace_train_dump(t->rec, NUM_TRACE_ITEM, t->nextidx, 1);
 }
 
 void trace_train_dumpbuf(void *buf, int numbytes)
@@ -314,6 +339,14 @@ static void _trace_train_dump(train_trace_record_t *records, int numitem, int st
                        rec->simurec.sblk, rec->simurec.canton,
 					   _cr);
                 break;
+            case trace_kind_ina:
+                sprintf(line, "%2d %6.6d ------- %sina %d %s%s%s",
+                        idx, rec->tick,
+                        _ds,
+                        rec->inarec.inanum,
+                        rec->inarec.inaon ? "ON" : "off",
+                        _eds,
+                        _cr);
             default:
                 break;
         }

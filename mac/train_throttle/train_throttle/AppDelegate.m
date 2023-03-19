@@ -183,15 +183,8 @@ typedef void (^respblk_t)(void);
     
      
     _trainParamWin.hidesOnDeactivate = YES;
-    //_trainParamWin.mainWindow
-    //_trainParamWin.excludedFromWindowsMenu = YES;
-    /*
-    NSApplication *app = [aNotification object];
-    id m = [NSApp windowsMenu];
-    */
-    // for debug
-    //[self getParams]; //XXX XXX
-    //[self startBLE];
+    
+    self.selectedPanel = @"ctc";
     [self openUsb];
     
     
@@ -2080,6 +2073,8 @@ void __trace_train_append_line(char *s)
     NSData *d = [tracestr dataUsingEncoding:NSUTF8StringEncoding];
     self.trainTraceAttribStr = [[NSAttributedString alloc]initWithHTML:d documentAttributes:nil];
     tracestr = nil;
+    self.selectedPanel = @"trace";
+    
 }
 #pragma mark -
 
@@ -2929,12 +2924,23 @@ didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic
 
 - (void) traceTrain:(int)tr
 {
-    msg_64_t m = {0};
-    m.to = MA2_USB_LOCAL;
-    m.from = MA3_UI_GEN; //(UISUB_USB);
-    m.cmd = CMD_USB_TRACETRAIN;
-    m.v1 = tr;
-    [self sendMsg64:m];
+    if (_linkok == LINK_SIMULOW) {
+        tracestr = [[NSMutableString alloc]initWithUTF8String:"<style>body {font-family: \"Courier New\"}</style><body><br>\n"];
+        trace_train_dumphtml(tr);
+        NSString *s = [_simTrain0 htmlSimuStateForTrain:tr];
+        if (s) [tracestr appendString:s];
+        NSData *d = [tracestr dataUsingEncoding:NSUTF8StringEncoding];
+        self.trainTraceAttribStr = [[NSAttributedString alloc]initWithHTML:d documentAttributes:nil];
+        tracestr = nil;
+        self.selectedPanel = @"trace";
+    } else {
+        msg_64_t m = {0};
+        m.to = MA2_USB_LOCAL;
+        m.from = MA3_UI_GEN; //(UISUB_USB);
+        m.cmd = CMD_USB_TRACETRAIN;
+        m.v1 = tr;
+        [self sendMsg64:m];
+    }
 }
 - (IBAction) traceTrain0:(id)sender
 {

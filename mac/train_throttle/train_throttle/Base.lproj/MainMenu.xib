@@ -723,7 +723,7 @@
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="119" y="326" width="1467" height="685"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1057"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1080"/>
             <view key="contentView" id="EiT-Mj-1SZ">
                 <rect key="frame" x="0.0" y="0.0" width="1467" height="685"/>
                 <autoresizingMask key="autoresizingMask"/>
@@ -909,7 +909,7 @@
                         </constraints>
                         <font key="font" metaFont="system"/>
                         <tabViewItems>
-                            <tabViewItem label="Glob" identifier="" id="BvJ-iO-IQZ">
+                            <tabViewItem label="Glob" identifier="global" id="BvJ-iO-IQZ">
                                 <view key="view" id="pFs-ov-Nau">
                                     <rect key="frame" x="10" y="33" width="896" height="528"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -931,7 +931,7 @@
                                     </constraints>
                                 </view>
                             </tabViewItem>
-                            <tabViewItem label="Turnouts" identifier="" id="7hu-SP-HVv">
+                            <tabViewItem label="Turnouts" identifier="turnout" id="7hu-SP-HVv">
                                 <view key="view" id="VSP-nF-OXb">
                                     <rect key="frame" x="10" y="33" width="896" height="528"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1199,7 +1199,7 @@
                                     </constraints>
                                 </view>
                             </tabViewItem>
-                            <tabViewItem label="Record" identifier="" id="WuV-ET-awb">
+                            <tabViewItem label="Record" identifier="record" id="WuV-ET-awb">
                                 <view key="view" id="VlL-nK-cbV">
                                     <rect key="frame" x="10" y="33" width="896" height="528"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1316,7 +1316,7 @@
                                     </constraints>
                                 </view>
                             </tabViewItem>
-                            <tabViewItem label="Trace" identifier="" id="eRI-Vb-x1Y">
+                            <tabViewItem label="Trace" identifier="trace" id="eRI-Vb-x1Y">
                                 <view key="view" id="0HF-Oq-BHU">
                                     <rect key="frame" x="10" y="33" width="896" height="528"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1327,7 +1327,7 @@
                                                 <rect key="frame" x="0.0" y="0.0" width="849" height="467"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
-                                                    <textView editable="NO" importsGraphics="NO" richText="NO" verticallyResizable="YES" spellingCorrection="YES" smartInsertDelete="YES" id="IyY-Q7-pxk">
+                                                    <textView editable="NO" importsGraphics="NO" verticallyResizable="YES" spellingCorrection="YES" smartInsertDelete="YES" id="IyY-Q7-pxk">
                                                         <rect key="frame" x="0.0" y="0.0" width="849" height="467"/>
                                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                         <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
@@ -1395,7 +1395,7 @@
                                     </constraints>
                                 </view>
                             </tabViewItem>
-                            <tabViewItem label="Cantons" identifier="" id="A8w-ZG-JE1">
+                            <tabViewItem label="Cantons" identifier="canton" id="A8w-ZG-JE1">
                                 <view key="view" id="ZHQ-Hi-3bU">
                                     <rect key="frame" x="10" y="33" width="896" height="528"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1404,7 +1404,7 @@
                                             <rect key="frame" x="16" y="16" width="864" height="496"/>
                                             <clipView key="contentView" id="OXu-El-CJ6">
                                                 <rect key="frame" x="1" y="0.0" width="862" height="495"/>
-                                                <autoresizingMask key="autoresizingMask"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" headerView="71L-Yv-M5N" id="gBS-dQ-Fjb">
                                                         <rect key="frame" x="0.0" y="0.0" width="862" height="470"/>
@@ -1526,7 +1526,7 @@
                                     </constraints>
                                 </view>
                             </tabViewItem>
-                            <tabViewItem label="Train" identifier="" id="ujg-nk-1wM" userLabel="Trains">
+                            <tabViewItem label="Train" identifier="train" id="ujg-nk-1wM" userLabel="Trains">
                                 <view key="view" id="ZLF-gX-cCi">
                                     <rect key="frame" x="10" y="33" width="896" height="528"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1535,7 +1535,7 @@
                                             <rect key="frame" x="16" y="16" width="864" height="496"/>
                                             <clipView key="contentView" id="6EN-7l-fYy">
                                                 <rect key="frame" x="1" y="0.0" width="862" height="495"/>
-                                                <autoresizingMask key="autoresizingMask"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" headerView="ERn-BW-LhA" id="nU3-yp-xkd">
                                                         <rect key="frame" x="0.0" y="0.0" width="862" height="470"/>
@@ -1717,7 +1717,7 @@
                                     </constraints>
                                 </view>
                             </tabViewItem>
-                            <tabViewItem label="CTC" identifier="" id="Emq-bm-k11">
+                            <tabViewItem label="CTC" identifier="ctc" id="Emq-bm-k11">
                                 <view key="view" id="5QP-cq-eLn">
                                     <rect key="frame" x="10" y="33" width="896" height="528"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1743,6 +1743,9 @@
                                 </view>
                             </tabViewItem>
                         </tabViewItems>
+                        <connections>
+                            <binding destination="Voe-Tx-rLC" name="selectedIdentifier" keyPath="selectedPanel" id="9Eo-ni-nLJ"/>
+                        </connections>
                     </tabView>
                     <scrollView borderType="none" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Oda-jb-qBx">
                         <rect key="frame" x="283" y="8" width="684" height="91"/>

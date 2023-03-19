@@ -33,6 +33,14 @@
 
 @synthesize speed = _speed;
 
+- (NSString *) htmlSimuStateForTrain:(int)tidx
+{
+    NSString *s = [NSString stringWithFormat:@"=== Train : %d<br>\n s1=%d pos=%.0fcm spd=%.0f<br>\n", tidx, s1[tidx].n, positioncm[tidx], speed[tidx]];
+    for (int c=0; c<NUM_CANTONS; c++) {
+        s = [s stringByAppendingFormat:@"  C%d : dir=%d vi=%.1f pwm=%.1f bemf=%.1f<br>\n", c, dir[c], volt[c], pwm[c], bemf[c] ];
+    }
+    return s;
+}
 - (instancetype) init
 {
     self = [super init];
@@ -180,7 +188,9 @@
         double spower = dir[cn.v]*volt[cn.v]*pwm[cn.v]/1000.0;
         //NSLog(@"train %d power %f", tn, spower);
         speed[tn] = spower * 50.0;
-        double be = spower * 2.10 / 10.0;
+       
+        const double multbemf = 0.8;  // empirical value that match real model
+        double be =  multbemf * spower * 2.10 / 10.0;
         int revbemf = cnf->reverse_bemf;
         revbemf = 0;
         bemf[cn.v] = be * (revbemf ? -1 : 1);

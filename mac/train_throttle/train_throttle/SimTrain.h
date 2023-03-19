@@ -23,8 +23,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void) setTrain:(int)tidx sblk:(int)sblk posmm:(int)posmm;
 
-//- (int) simuCurCanton;
-//- (int) simuNextCanton;
+
+- (NSString *) htmlSimuStateForTrain:(int)tidx;
+
 
 @end
 

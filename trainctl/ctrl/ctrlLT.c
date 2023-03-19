@@ -71,7 +71,6 @@ static void _release_all_blocks(int tidx, train_ctrl_t *tvars);
 
 // -----------------------------------------------------------------
 
-
 void ctrl3_init_train(int tidx, train_ctrl_t *tvars, lsblk_num_t sblk, int posmm, int on)
 {
     itm_debug1(DBG_CTRL, "INIT", tidx);
@@ -605,20 +604,25 @@ void ctrl3_occupency_updated(int tidx, train_ctrl_t *tvars)
 
 
 
-void ctrl3_evt_entered_new_lsblk_same_canton(int tidx, train_ctrl_t *tvars, lsblk_num_t sblk)
+void ctrl3_evt_entered_new_lsblk_same_canton(int tidx, train_ctrl_t *tvars, lsblk_num_t sblk, int jumped)
 {
     // ina detect train entered new lsblk
-    if (tvars->canMeasureOnSblk) {
-        adjust_measure_lens1(tidx, tvars);
-    } else if (tvars->canMeasureOnCanton) {
-        adjust_measure_ends1fromc1(tidx, tvars);
-        tvars->canMeasureOnCanton = 0;
+    if (!jumped) {
+        if (tvars->canMeasureOnSblk) {
+            adjust_measure_lens1(tidx, tvars);
+        } else if (tvars->canMeasureOnCanton) {
+            adjust_measure_ends1fromc1(tidx, tvars);
+            tvars->canMeasureOnCanton = 0;
+        }
     }
     tvars->c1_sblk = sblk;
-    tvars->beginposmm = tvars->_curposmm;
+    //tvars->beginposmm = tvars->_curposmm;
     tvars->canMeasureOnSblk = 1;
     ctrl3_update_c1changed(tidx, tvars, conf_train_get(tidx), tvars->_sdir<0 ? 1 : 0);
     _updated_while_running(tidx, tvars);
+    if (tvars->c1c2dir_changed) {
+    	_sendlow_c1c2_dir(tidx, tvars);
+    }
 }
 
 void ctrl3_evt_entered_new_lsblk_c2_canton(int tidx, train_ctrl_t *tvars, _UNUSED_ lsblk_num_t sblk)

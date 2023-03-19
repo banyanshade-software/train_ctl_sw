@@ -391,19 +391,46 @@ static void sub_presence_changed(_UNUSED_ uint8_t from_addr,  uint8_t lsegnum,  
         } else {
             continue;
         }
-
         if (p) {
+            trace_train_ina3221(ctrl_tasklet.last_tick, tidx, lsegnum, 1);
             if ((0)) {
             } else if (is_s2 && !is_s1 && !is_c2) {
-                ctrl3_evt_entered_new_lsblk_same_canton(tidx, tvar, n2);
+                ctrl3_evt_entered_new_lsblk_same_canton(tidx, tvar, n2, 0);
             } else if (is_s2 && !is_s1 && is_c2) {
                 ctrl3_evt_entered_new_lsblk_c2_canton(tidx, tvar, n2);
             } else if (is_c1 && is_s1) {
                 // normal condition, just a intensity toggled
+            } else if (is_c1 && !is_s1 && !is_s2) {
+            	// could be next(next(s1), if next(s1) is not ina controlled
+                // and if pose is not correctly adjusted
+                lsblk_num_t b = n2;
+                for (;;) {
+                    if (b.n == -1) break; // for first one, n2 might be -1
+                    b = next_lsblk(b, tvar->_sdir<0, NULL);
+                    if (b.n == -1) break;
+                    if (canton_for_lsblk(b).v != tvar->can1_xaddr.v) break; // other canton, stop searching
+                    if (get_lsblk_ina3221(b) == lsegnum) {
+                        // found
+                        ctrl3_evt_entered_new_lsblk_same_canton(tidx, tvar, b, 1);
+                        return;
+                    }
+                }
+            	itm_debug3(DBG_ERR|DBG_CTRL, "badSub2", tidx, lsegnum, tvar->can1_xaddr.v);
+            	if ((1)) {
+            		msg_64_t m = {0};
+            		m.cmd = CMD_USB_TRACETRAIN;
+            		m.from = MA1_CONTROL();
+            	    m.to = MA2_USB_LOCAL;
+            	    m.v1 = tidx;
+                    mqf_write_from_ctrl(&m);
+            	} else {
+            		FatalError("bSub2", "bad subc2", Error_Abort);
+            	}
             } else {
-                abort();
+            	FatalError("bSubc", "bad subc", Error_Abort);
             }
         } else {
+            trace_train_ina3221(ctrl_tasklet.last_tick, tidx, lsegnum, 0);
         	/*if ((0)) { // XXX
         		if (is_c2) {
         			ctrl3_evt_leaved_c2(tidx, tvar);
@@ -576,7 +603,7 @@ static void normal_process_msg(msg_64_t *m)
 
         }
         if (tvars->c1c2dir_changed) {
-            abort();// should have been handled
+        	FatalError("c1c2", "unhandled c1c2", Error_Abort);
         }
     } else {
         itm_debug1(DBG_MSG|DBG_CTRL, "bad msg", m->to);

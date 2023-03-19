@@ -150,7 +150,7 @@ void turn_train_off(int tidx, train_ctrl_t *tvars);
 
 void ctrl3_evt_entered_c2(int tidx, train_ctrl_t *tvars, uint8_t from_bemf);
 
-void ctrl3_evt_entered_new_lsblk_same_canton(int tidx, train_ctrl_t *tvars, lsblk_num_t sblk);
+void ctrl3_evt_entered_new_lsblk_same_canton(int tidx, train_ctrl_t *tvars, lsblk_num_t sblk, int jumped);
 void ctrl3_evt_entered_new_lsblk_c2_canton(int tidx, train_ctrl_t *tvars,lsblk_num_t sblk);
 
 

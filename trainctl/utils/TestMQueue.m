@@ -124,7 +124,7 @@ LFMQUEUE_DEF_C(testQueue, uint32_t, 8, 1)
     }];
 }
 */
-int16_t spdctl_get_lastpose(int tidx)
+int16_t spdctl_get_lastpose(int tidx, xblkaddr_t b)
 {
     abort();
     return 0;

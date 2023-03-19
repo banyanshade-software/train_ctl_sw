@@ -220,9 +220,13 @@ extern volatile int oscillo_canton_of_interest;
 static void _start_canton(int tidx, uint8_t v);
 static void _stop_canton(int tidx,  uint8_t v);
 
-int16_t spdctl_get_lastpose(int tidx)
+int16_t spdctl_get_lastpose(int tidx, xblkaddr_t b)
 {
     USE_TRAIN(tidx);
+    if (b.v != tvars->Cx[0].v) {
+        FatalError("Spd C1", "bad C1 in spdctl_get_lastpose", Error_Abort);
+        return 0;
+    }
     int16_t v = tvars->lastposed10;
     return v;
 }

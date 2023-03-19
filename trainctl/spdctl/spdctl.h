@@ -29,6 +29,6 @@ extern tasklet_t spdctl_tasklet;
  CAUTION : used by ctrlLT to update pos, but
  only ok because ctrl and spdctl are on same node (and same thread)
  */
-int16_t spdctl_get_lastpose(int tidx);
+int16_t spdctl_get_lastpose(int tidx, xblkaddr_t b);
 
 #endif /* TRAINCONTROL_H_ */

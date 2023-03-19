@@ -65,6 +65,9 @@ typedef struct {
     uint8_t brake:1;
     uint8_t canMeasureOnSblk:1;
     uint8_t canMeasureOnCanton:1;
+    
+    uint8_t num_pos_adjust;
+    
     struct forwdsblk leftcars;
     struct forwdsblk rightcars;
     //

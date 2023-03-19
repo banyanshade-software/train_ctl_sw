@@ -137,7 +137,7 @@
                             [self inaOn:inanew train:tn];
                         }
                     }
-                    s1[tn] = ns;
+                    s1[tn] = ns;    //  >>>>>>>>>>> next sblk >>>>>>>>>>>>>
                     positioncm[tn] = 0;
                     xblkaddr_t nb = canton_for_lsblk(ns);
                     _trace_train_simu(SimuTick, tn, ns.n, nb.v);
@@ -154,7 +154,18 @@
                 if (ns.n < 0) {
                     NSLog(@"END OF TRACK/COL !!");
                 } else {
-                    s1[tn] = ns;
+                    uint8_t inaold = get_lsblk_ina3221(s1[tn]);
+                    uint8_t inanew = get_lsblk_ina3221(ns);
+                    NSLog(@"switch ina %u->%u", inaold, inanew);
+                    if (inanew != inaold) {
+                        if (inaold != 0xFF) {
+                            [self inaOff:inaold train:tn];
+                        }
+                        if (inanew != 0xFF) {
+                            [self inaOn:inanew train:tn];
+                        }
+                    }
+                    s1[tn] = ns; // <<<<<<<<<<< next sblk <<<<<<<<<<q
                     positioncm[tn] = 0;
                     xblkaddr_t nb = canton_for_lsblk(ns);
                     if (nb.v != cn.v) {

@@ -172,18 +172,25 @@ void ctrl3_set_mode(int tidx, train_ctrl_t *tvar, train_mode_t mode)
   
 }
 
-static void _adjust_posemm(int tidx, train_ctrl_t *tvar, int expmm, int measmm)
+static void _adjust_posemm(int tidx, train_ctrl_t *tvars, int expmm, int measmm)
 {
     if (!measmm) return;
     const conf_train_t *tconf = conf_train_get(tidx);
     conf_train_t *wconf = (conf_train_t *)tconf; // writable
     int pose = tconf->pose_per_cm;
-    int fact100 = (measmm*100)/expmm;
+    int n = tvars->num_pos_adjust;
+    if (n<0xFF) tvars->num_pos_adjust++;
+    if (n>20) n = 20;
+    if (n<2) n=2;
+    
+    int fact100 = (measmm*100)/expmm-100;
+    fact100 = 100+(fact100/n);
     wconf->pose_per_cm = pose*fact100/100;
     if ((1)) {
-        int np = spdctl_get_lastpose(tidx);
+        int np = spdctl_get_lastpose(tidx, tvars->can1_xaddr);
         int nmm = pose_convert_to_mm(tconf, np*10);
-        printf("nmm %d, expmm %d, measmm %d\n", nmm, expmm, measmm);
+        itm_debug3(DBG_CTRL, "poserr<", tidx, measmm, expmm);
+        itm_debug3(DBG_CTRL, "poserr>", tidx, nmm, expmm);
         itm_debug3(DBG_CTRL, "adjpcm", tidx, pose, wconf->pose_per_cm);
     }
     /*
@@ -198,7 +205,7 @@ static void _adjust_posemm(int tidx, train_ctrl_t *tvar, int expmm, int measmm)
 static void adjust_measure_lens1(int tidx, train_ctrl_t *tvars)
 {
     int8_t steep = 0;
-    int np = spdctl_get_lastpose(tidx); // TODO only ok because same node
+    int np = spdctl_get_lastpose(tidx, tvars->can1_xaddr); // TODO only ok because same node
     const conf_train_t *tconf = conf_train_get(tidx);
     int nmm = pose_convert_to_mm(tconf, np*10);
     int l = get_lsblk_len_cm(tvars->c1_sblk, &steep);
@@ -209,7 +216,7 @@ static void adjust_measure_lens1(int tidx, train_ctrl_t *tvars)
 
 static void adjust_measure_ends1fromc1(int tidx, train_ctrl_t *tvars)
 {
-    int np = spdctl_get_lastpose(tidx); // TODO only ok because same node
+    int np = spdctl_get_lastpose(tidx, tvars->can1_xaddr); // TODO only ok because same node
     const conf_train_t *tconf = conf_train_get(tidx);
     int nmm = pose_convert_to_mm(tconf, np*10);
     lsblk_num_t s = tvars->c1_sblk;
@@ -349,12 +356,11 @@ void ctrl3_stop_detected(int tidx, train_ctrl_t *tvars)
 {
     switch (tvars->_state) {
         case train_state_off:
-            return;
+            break;
         case train_state_station:
         case train_state_blkwait:
         case train_state_end_of_track:
             //ignore
-            return;
             break;
         
         case train_state_running:
@@ -362,7 +368,6 @@ void ctrl3_stop_detected(int tidx, train_ctrl_t *tvars)
                 _set_dir(tidx, tvars, 0);
                 _set_state(tidx, tvars, train_state_station);
             }
-            return;
             break;
             
         case train_state_blkwait0:
@@ -372,7 +377,6 @@ void ctrl3_stop_detected(int tidx, train_ctrl_t *tvars)
                 _set_dir(tidx, tvars, 0);
                 _set_state(tidx, tvars, train_state_station);
             }
-            return;
             break;
             
         case train_state_end_of_track0:
@@ -382,13 +386,14 @@ void ctrl3_stop_detected(int tidx, train_ctrl_t *tvars)
                 _set_dir(tidx, tvars, 0);
                 _set_state(tidx, tvars, train_state_station);
             }
-            return;
             break;
         default:
+            FatalError("FSM_", "end fsm", Error_FSM_Nothandled);
             break;
     }
-    FatalError("FSM_", "end fsm", Error_FSM_Nothandled);
-
+    if (tvars->c1c2dir_changed) {
+        _sendlow_c1c2_dir(tidx, tvars);
+    }
 }
 
 
@@ -411,11 +416,11 @@ void ctrl3_pose_triggered(int tidx, train_ctrl_t *tvars, pose_trig_tag_t trigtag
     int32_t oldpos = tvars->_curposmm;
     tvars->_curposmm = pose_convert_to_mm(tconf, cposd10*10);
     if ((1)) {
-        int np = spdctl_get_lastpose(tidx); // TODO only ok because same node
+        int np = spdctl_get_lastpose(tidx, tvars->can1_xaddr); // TODO only ok because same node
         int nmm = pose_convert_to_mm(tconf, np*10);
         if (abs(nmm - tvars->_curposmm)>5) {
             printf("%d / %d\n", tvars->_curposmm, nmm);
-            int np2 = spdctl_get_lastpose(tidx);
+            int np2 = spdctl_get_lastpose(tidx, tvars->can1_xaddr);
         }
     }
     itm_debug3(DBG_POSE|DBG_CTRL, "curposmm", tidx, tvars->_curposmm, trigtag);

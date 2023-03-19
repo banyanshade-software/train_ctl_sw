@@ -23,8 +23,8 @@
 #include "../topology/occupency.h"
 
 #include "ctrlLT.h"
-//#include "ctrlP.h"
-//#include "cautoP.h" to be deeply refactor
+
+
 #include "detectP.h"
 
 #include "../leds/led.h"
@@ -365,7 +365,7 @@ static void sub_presence_changed(_UNUSED_ uint8_t from_addr,  uint8_t lsegnum,  
     // TODO : from_addr should be used for board number
 	for (int tidx=0; tidx < NUM_TRAINS; tidx++) {
 		train_ctrl_t *tvar = &trctl[tidx];
-        if (tvar->_mode == train_state_off) continue;
+        if (tvar->_mode == train_notrunning) continue;
         uint8_t is_s1 = 0;
         uint8_t is_s2 = 0;
         uint8_t is_c1 = 0;
@@ -418,7 +418,7 @@ static void sub_presence_changed(_UNUSED_ uint8_t from_addr,  uint8_t lsegnum,  
 
 // ----------------------------------------------------------------------------
 
-
+/*
 static void posecm_measured(int tidx, int32_t pose, lsblk_num_t blk1, lsblk_num_t blk2)
 {
 	int cm = get_lsblk_len_cm(blk1, NULL);
@@ -439,6 +439,7 @@ static void posecm_measured(int tidx, int32_t pose, lsblk_num_t blk1, lsblk_num_
 	itm_debug2(DBG_CTRL|DBG_POSEC, "PPCM updated", tidx, wconf->pose_per_cm);
 
 }
+*/
 
 // ----------------------------------------------------------------------------
 

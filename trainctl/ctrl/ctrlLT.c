@@ -22,6 +22,7 @@
 
 #include "ctrl.h"
 #include "ctrlLT.h"
+#include "../spdctl/spdctl.h"
 #include "longtrain.h"
 #include "trace_train.h"
 //#include "ctrlP.h"
@@ -419,8 +420,9 @@ void ctrl3_pose_triggered(int tidx, train_ctrl_t *tvars, pose_trig_tag_t trigtag
         int np = spdctl_get_lastpose(tidx, tvars->can1_xaddr); // TODO only ok because same node
         int nmm = pose_convert_to_mm(tconf, np*10);
         if (abs(nmm - tvars->_curposmm)>5) {
-            printf("%d / %d\n", tvars->_curposmm, nmm);
-            int np2 = spdctl_get_lastpose(tidx, tvars->can1_xaddr);
+        	itm_debug3(DBG_ERR|DBG_CTRL, "pose?", tidx, tvars->_curposmm, nmm);
+            //printf("%d / %d\n", tvars->_curposmm, nmm);
+           //int np2 = spdctl_get_lastpose(tidx, tvars->can1_xaddr);
         }
     }
     itm_debug3(DBG_POSE|DBG_CTRL, "curposmm", tidx, tvars->_curposmm, trigtag);
@@ -619,7 +621,7 @@ void ctrl3_evt_entered_new_lsblk_same_canton(int tidx, train_ctrl_t *tvars, lsbl
     _updated_while_running(tidx, tvars);
 }
 
-void ctrl3_evt_entered_new_lsblk_c2_canton(int tidx, train_ctrl_t *tvars, lsblk_num_t sblk)
+void ctrl3_evt_entered_new_lsblk_c2_canton(int tidx, train_ctrl_t *tvars, _UNUSED_ lsblk_num_t sblk)
 {
     if (tvars->canMeasureOnSblk) {
         adjust_measure_lens1(tidx, tvars);

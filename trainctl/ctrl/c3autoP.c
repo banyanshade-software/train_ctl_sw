@@ -78,7 +78,7 @@ void c3auto_set_s1(int tidx, lsblk_num_t s1)
             return;
         }
     }
-    abort();
+	FatalError("Ac1", "c3auto_set_s1", Error_Abort);
 }
 void c3auto_set_turnout(int tidx, xtrnaddr_t tn)
 {

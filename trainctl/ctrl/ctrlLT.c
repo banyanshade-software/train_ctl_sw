@@ -818,11 +818,18 @@ static int _train_check_dir(int tidx, train_ctrl_t *tvars, int sdir, rettrigs_t 
     }
     if (tvars->freelsblk.n != -1) {
         xblkaddr_t fc = canton_for_lsblk(tvars->freelsblk);
+        if (tvars->_mode == train_auto) {
+            c3auto_freeback(tidx, tvars->freelsblk);
+        }
         if (fc.v != tvars->can1_xaddr.v) {
+            trace_train_free(ctrl_tasklet.last_tick, tidx, tvars->freelsblk.n, fc.v);
             set_block_addr_occupency(fc, BLK_OCC_FREE, tidx, snone);
+        } else {
+            trace_train_free(ctrl_tasklet.last_tick, tidx, tvars->freelsblk.n, -1);
         }
         tvars->freelsblk.n = -1;
     }
+    
     
     
     const conf_train_t *conf = conf_train_get(tidx);
@@ -837,7 +844,11 @@ static int _train_check_dir(int tidx, train_ctrl_t *tvars, int sdir, rettrigs_t 
                 printf("ho bizarre ca");
             }
         }
+        
         xblkaddr_t fc = canton_for_lsblk(tvars->freelsblk);
+        if (tvars->_mode == train_auto) {
+            c3auto_freeback(tidx, tvars->freelsblk);
+        }
         if (fc.v != tvars->can1_xaddr.v) {
             trace_train_free(ctrl_tasklet.last_tick, tidx, tvars->freelsblk.n, fc.v);
             set_block_addr_occupency(fc, BLK_OCC_FREE, tidx, snone);

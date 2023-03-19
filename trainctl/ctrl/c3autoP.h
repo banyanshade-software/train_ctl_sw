@@ -12,6 +12,7 @@
 void c3auto_start(int tidx);
 void c3auto_set_turnout(int tidx, xtrnaddr_t tn);
 void c3auto_set_s1(int tidx, lsblk_num_t s1);
+void c3auto_freeback(int tidx, lsblk_num_t freelsblk);
 
 typedef struct {
     uint8_t t:1;        // t=0: lsblk, t=1: turnout

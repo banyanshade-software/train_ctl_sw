@@ -80,6 +80,14 @@ void c3auto_set_s1(int tidx, lsblk_num_t s1)
     }
 	FatalError("Ac1", "c3auto_set_s1", Error_Abort);
 }
+
+void c3auto_freeback(int tidx, lsblk_num_t freelsblk)
+{
+    int idx = c3avar[tidx].cidx;
+    if (c3avar[tidx].path[idx].t) {
+        
+    }
+}
 void c3auto_set_turnout(int tidx, xtrnaddr_t tn)
 {
     int idx = c3avar[tidx].cidx;

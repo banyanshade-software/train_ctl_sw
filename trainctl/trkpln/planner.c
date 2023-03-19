@@ -234,7 +234,7 @@ static void planner_start_pending3(int n, cauto_path_items_t *pit)
     // convert to c3auto path list
     int pathindex = 0;
     b = curpos;
-    //int dir = 0;
+    int dir = 0;
     int prevb = -1;
     for (;;) {
         if (b==curpos) {
@@ -263,17 +263,27 @@ static void planner_start_pending3(int n, cauto_path_items_t *pit)
             } else {
             	FatalError("ABRT", "abort", Error_NotImpl);
             }
+          
+            if (!dir) dir = ndir;
+            
             pit[pathindex].t = 0;
-            pit[pathindex].val = spd2*ndir;
+            pit[pathindex].val = spd2*dir;
             pit[pathindex].sblk.n = prevb;
             pathindex++;
+            if (dir && (ndir != dir)) {
+                //printf("change dir\n");
+                pit[pathindex].t = 0;
+                pit[pathindex].val = spd2*ndir;
+                pit[pathindex].sblk.n = prevb;
+                pathindex++;
+            }
             if (hastn) {
                 pit[pathindex].t = 1;
                 pit[pathindex].tn = tn;
                 pit[pathindex].val = tnpos;
                 pathindex++;
             }
-            //dir = ndir;
+            dir = ndir;
         }
         if (b==target) {
             pit[pathindex].t = 0;

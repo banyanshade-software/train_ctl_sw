@@ -685,7 +685,7 @@ static void train_periodic_control(int numtrain, _UNUSED_ uint32_t dt)
     			itm_debug2(DBG_PID, "punch", numtrain, v);
     			v=100;
     		}
-    		tvars->pidvars.stopped = 0;
+            tvars->pidvars.stopped = 0;
     	}
         if (!tvars->pidvars.stopped && (tvars->target_speed == 0) && (abs(tvars->bemf_mv)<100)) {
     		itm_debug1(DBG_PID, "stop", numtrain);

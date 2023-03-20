@@ -74,12 +74,14 @@ lsblk_num_t next_lsblk_and_reserve(int tidx, train_ctrl_t *tvars, lsblk_num_t sb
             a.n = -1;
             return a;
         }
-        if (palternate && (tvars->_mode==train_auto)) {
-            c3auto_set_turnout(tidx, tn);
-        }
+        
     } else if (kt != tidx) {
         a.n = -1;
         return a;
+    }
+    // reserved by me
+    if (palternate && (tvars->_mode==train_auto)) {
+        c3auto_set_turnout(tidx, tn);
     }
     a = (topology_get_turnout(tn) == topo_tn_turn) ? b : a;
     return a;

@@ -60,9 +60,9 @@ static void _update_sblk(int tidx, int oldidx)
     if (spd2 != ospd) {
         if (spd2 && ospd && (SIGNOF(spd2) != SIGNOF((ospd)))) {
             // change direction
-            ctrl_set_desired_spd(tidx, 0);
+            ctrl_delayed_set_desired_spd(tidx, 0);
         }
-        ctrl_set_desired_spd(tidx, spd2*2);
+        ctrl_delayed_set_desired_spd(tidx, spd2*2);
         c3avar[tidx].spd = spd2;
     }
 }
@@ -98,7 +98,7 @@ void c3auto_freeback(int tidx, lsblk_num_t freelsblk)
             if (prev.n == freelsblk.n) {
                 // all train is now on current sblk (and next sblk)
                 // stop to go to station mode
-                ctrl_set_desired_spd(tidx, 0);
+                ctrl_delayed_set_desired_spd(tidx, 0);
                 c3avar[tidx].spd = 0;
             }
         }

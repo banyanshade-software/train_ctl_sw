@@ -45,7 +45,7 @@ int ctrl_get_train_curlsblk(int numtrain);
 uint8_t *ctrl_get_autocode(int numtrain);
 //called by cauto :
 void ctrl_set_mode(int trnum, train_mode_t mode);
-void ctrl_set_desired_spd(int tidx, int spd);
+void ctrl_delayed_set_desired_spd(int tidx, int spd);
 int ctrl_set_turnout(xtrnaddr_t tn, enum topo_turnout_state v, int train);
 
 

@@ -59,7 +59,9 @@ typedef struct {
     //uint8_t measure_pose_percm:1;
     uint8_t c1c2:1;
     uint8_t off_requested:1;
-
+    uint8_t has_delayed_spd:1;
+    
+    int8_t delayed_spd;
     //
     // #longtrain
     uint8_t brake:1;

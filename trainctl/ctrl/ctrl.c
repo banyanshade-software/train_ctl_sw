@@ -421,9 +421,12 @@ static void sub_presence_changed(_UNUSED_ uint8_t from_addr,  uint8_t lsegnum,  
             	} else {
             		FatalError("bSub2", "bad subc2", Error_Abort);
             	}
+            } else if (is_c2) {
+                itm_debug2(DBG_ERR|DBG_CTRL, "sub/c2", tidx, lsegnum);
             } else {
             	FatalError("bSubc", "bad subc", Error_Abort);
             }
+        
         } else {
             trace_train_ina3221(ctrl_tasklet.last_tick, tidx, lsegnum, 0);
         	/*if ((0)) { // XXX

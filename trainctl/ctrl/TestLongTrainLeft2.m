@@ -28,8 +28,9 @@
 }
 
 
-static lsblk_num_t s27 = {27};
+static const lsblk_num_t s27 = {27};
 
+static const xtrnaddr_t to3 = { .v = 3};
 
 
 - (void)setUp {
@@ -42,6 +43,8 @@ static lsblk_num_t s27 = {27};
     notify_occupency_change = 0;
     ctrl_flag_notify_speed = 0;
     occupency_clear();
+    topology_set_turnout(to3, topo_tn_straight, -1);
+    //topology_set_turnout(to3, topo_tn_turn, -1);
     mqf_clear(&from_ctrl);
     memset(&tvars, 0, sizeof(tvars));
     

@@ -1177,7 +1177,7 @@ int conf_servo_fieldnum(const char *str);
 {
     NSData *d;
     @try {
-            d = [usb availableData];
+        d = [usb availableData];
     } @catch (NSException *exception) {
         NSLog(@"exception %@", exception);
         d = nil;

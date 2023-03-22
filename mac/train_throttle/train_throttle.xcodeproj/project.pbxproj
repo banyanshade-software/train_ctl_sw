@@ -96,6 +96,8 @@
 		1B69246829BCBFEA00ED150F /* TestLongTrainSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B7B5E192971318000955045 /* TestLongTrainSupport.m */; };
 		1B69247729BD3C5C00ED150F /* c3autoP.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B69247629BD3C5C00ED150F /* c3autoP.c */; };
 		1B693C4427D9CFEA0063D8B6 /* detect_loco.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B693C4227D9CFEA0063D8B6 /* detect_loco.c */; };
+		1B702E6429CA4AFB00AEEC81 /* TestLongTrainLeft1.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B702E5C29CA4AEA00AEEC81 /* TestLongTrainLeft1.m */; };
+		1B702E7229CAD7AB00AEEC81 /* TestLongTrainLeft2.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B702E7129CAD7AB00AEEC81 /* TestLongTrainLeft2.m */; };
 		1B76688B2925855C00E2CE96 /* ToolWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B76688A2925855C00E2CE96 /* ToolWindow.m */; };
 		1B77BECA274A471200BC5230 /* detectP.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B77BEC9274A471200BC5230 /* detectP.c */; };
 		1B7A29F7262D5904004E0481 /* trainmsg.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B7A29F5262D58F6004E0481 /* trainmsg.c */; };
@@ -322,6 +324,8 @@
 		1B69247629BD3C5C00ED150F /* c3autoP.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = c3autoP.c; sourceTree = "<group>"; };
 		1B693C4227D9CFEA0063D8B6 /* detect_loco.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = detect_loco.c; sourceTree = "<group>"; };
 		1B693C4327D9CFEA0063D8B6 /* detect_loco.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = detect_loco.h; sourceTree = "<group>"; };
+		1B702E5C29CA4AEA00AEEC81 /* TestLongTrainLeft1.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TestLongTrainLeft1.m; sourceTree = "<group>"; };
+		1B702E7129CAD7AB00AEEC81 /* TestLongTrainLeft2.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TestLongTrainLeft2.m; sourceTree = "<group>"; };
 		1B7668892925855C00E2CE96 /* ToolWindow.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ToolWindow.h; sourceTree = "<group>"; };
 		1B76688A2925855C00E2CE96 /* ToolWindow.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ToolWindow.m; sourceTree = "<group>"; };
 		1B77BEC8274A471200BC5230 /* detectP.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = detectP.h; sourceTree = "<group>"; };
@@ -719,6 +723,8 @@
 				1B7B5E192971318000955045 /* TestLongTrainSupport.m */,
 				1B7B5E20297131B000955045 /* TestLongTrainSupport.h */,
 				1B7B5E002969B40A00955045 /* TestLongTrainLeft0.m */,
+				1B702E5C29CA4AEA00AEEC81 /* TestLongTrainLeft1.m */,
+				1B702E7129CAD7AB00AEEC81 /* TestLongTrainLeft2.m */,
 				1BAC041129527121005DC958 /* TestLTFsm.m */,
 				1B69247529BD3C5C00ED150F /* c3autoP.h */,
 				1B69247629BD3C5C00ED150F /* c3autoP.c */,
@@ -1117,6 +1123,8 @@
 				1B2688B9295254EB00E31486 /* TestLongTrain.m in Sources */,
 				1B7B5E1A2971318000955045 /* TestLongTrainSupport.m in Sources */,
 				1B26886F2951201600E31486 /* adc_mean.c in Sources */,
+				1B702E7229CAD7AB00AEEC81 /* TestLongTrainLeft2.m in Sources */,
+				1B702E6429CA4AFB00AEEC81 /* TestLongTrainLeft1.m in Sources */,
 				1BAC041329527121005DC958 /* TestLTFsm.m in Sources */,
 				1B2688732951201600E31486 /* itm_debug.c in Sources */,
 				1B2688762951201600E31486 /* inertia.c in Sources */,

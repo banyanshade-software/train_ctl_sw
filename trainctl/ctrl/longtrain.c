@@ -59,29 +59,33 @@ int32_t ctrl3_getcurpossmm(train_ctrl_t *tvars, const conf_train_t *tconf, int l
 lsblk_num_t next_lsblk_and_reserve(int tidx, train_ctrl_t *tvars, lsblk_num_t sblknum, uint8_t left, int8_t *palternate)
 {
     if (palternate)  *palternate = 0;
+    int back = 0;
+    if ((tvars->_sdir<0) && !left) back = 1;
+    else if ((tvars->_sdir>0) && left) back = 1;
+    
     lsblk_num_t a, b;
     xtrnaddr_t tn;
     next_lsblk_nums(sblknum, left, &a, &b, &tn);
     if (tn.v == 0xFF) return a;
     
     if (palternate) *palternate = 1;
-    
-    int kt = occupency_turnout_reservedby(tn);
-    if (kt == -1) {
-        int rc = occupency_turnout_reserve(tn, tidx);
-        if (rc) {
-            // cant reserve
+    if (!back) {
+        int kt = occupency_turnout_reservedby(tn);
+        if (kt == -1) {
+            int rc = occupency_turnout_reserve(tn, tidx);
+            if (rc) {
+                // cant reserve
+                a.n = -1;
+                return a;
+            }
+        } else if (kt != tidx) {
             a.n = -1;
             return a;
         }
-        
-    } else if (kt != tidx) {
-        a.n = -1;
-        return a;
-    }
-    // reserved by me
-    if (palternate && (tvars->_mode==train_auto)) {
-        c3auto_set_turnout(tidx, tn);
+        // reserved by me
+        if (palternate && (tvars->_mode==train_auto)) {
+            c3auto_set_turnout(tidx, tn);
+        }
     }
     a = (topology_get_turnout(tn) == topo_tn_turn) ? b : a;
     return a;
@@ -152,13 +156,6 @@ static lsblk_num_t _last(struct forwdsblk *f, lsblk_num_t cur)
 
 int ctrl3_get_next_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *tconf)
 {
-    /*if ((1)) {
-        // XXX remove, for debug
-        extern int __from_check_dir;
-        if (!__from_check_dir) {
-            printf("ho not from check_dir");
-        }
-    }*/
     lsblk_num_t lastright = _last(&tvars->rightcars, tvars->c1_sblk);
     lsblk_num_t lastleft  = _last(&tvars->leftcars, tvars->c1_sblk);
     tvars->freelsblk.n = -1;
@@ -349,9 +346,17 @@ static int check_front(int tidx, train_ctrl_t *tvars,  struct forwdsblk *fsblk, 
                 return 0;
             } else {
                 mm += 10*get_lsblk_len_cm(ns, NULL);
-                if (mm+mm0 >= maxmm+brake_len_mm+margin_stop_len_mm) {
-                    *pa = -1;
-                    return 0;
+                if (!left) {
+                    if (mm+mm0 >= maxmm+brake_len_mm+margin_stop_len_mm) {
+                        *pa = -1;
+                        return 0;
+                    }
+                } else {
+                    // xxx KO
+                    if (mm+mm0 >= maxmm+brake_len_mm+margin_stop_len_mm) {
+                        *pa = -1;
+                        return 0;
+                    }
                 }
             }
         }
@@ -551,7 +556,7 @@ int ctrl3_check_front_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *
         }
     }
     
-    
+    // c1lemm ko for check_front() going left
     kmm = check_front(tidx, tvars, fsblk, left, c1lenmm, &a, _check_front_condition_eot);
     if (a != -1) {
         // lcccc|cc----------|-----||

@@ -606,6 +606,10 @@ void ctrl3_occupency_updated(int tidx, train_ctrl_t *tvars)
 
 void ctrl3_evt_entered_new_lsblk_same_canton(int tidx, train_ctrl_t *tvars, lsblk_num_t sblk, int jumped)
 {
+	if (tvars->_state != train_state_running) {
+		itm_debug3(DBG_ERR|DBG_CTRL, "nsblk/bs", tidx, tvars->_state, sblk.n);
+		return;
+	}
     // ina detect train entered new lsblk
     if (!jumped) {
         if (tvars->canMeasureOnSblk) {

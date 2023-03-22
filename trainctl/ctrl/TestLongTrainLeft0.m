@@ -28,6 +28,7 @@
 
 
 static lsblk_num_t s21 = {21};
+static lsblk_num_t s14 = {14};
 
 
 - (void)setUp {
@@ -149,6 +150,12 @@ static lsblk_num_t s21 = {21};
     const rettrigs_t expt1 = { 0, 0, 0, 0, 3, {{150+beg, tag_chkocc}, {200+beg,tag_stop_eot}, {0+beg,tag_end_lsblk}, {0,0}, {0,0}}};
     XCTAssert(!cmptrigs(&rettrigs, &expt1));
 }
+
+
+
+
+
+
 
 - (void)testCheckTagBrake1
 {

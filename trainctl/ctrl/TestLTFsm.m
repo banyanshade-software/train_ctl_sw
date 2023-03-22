@@ -212,7 +212,8 @@ static const xtrnaddr_t to1 = { .v = 1};
     s = dump_msgbuf(0);
     NSLog(@"...%@", s);
     // {80, F0, C3, 2, 1}
-    EXPMSG({.to=MA3_UI_GEN,      .from=MA1_CTRL(0), .cmd=CMD_TRSTATE_NOTIF,    .v1=train_state_station, .v2=train_state_running});
+    EXPMSG({.to=MA3_UI_GEN,      .from=MA1_CTRL(0), .cmd=CMD_TRSTATE_NOTIF,    .v1=train_state_station, .v2=train_state_running},
+           {.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_C4, .subc=0,        .vb0=1, .vb1=0xFF, .vb2=0xFF, .vb3=0xFF});
 
 }
 
@@ -297,7 +298,8 @@ static const xtrnaddr_t to1 = { .v = 1};
     XCTAssert(tvars._desired_signed_speed == 0);
     s = dump_msgbuf(0);
     NSLog(@"...%@", s); // {80, 90, 24, 0, 0},{80, F0, C3, 2, 1}
-    EXPMSG({.to=MA3_UI_GEN,      .from=MA1_CTRL(0), .cmd=CMD_TRSTATE_NOTIF,    .v1=train_state_station, .v2=train_state_running});
+    EXPMSG({.to=MA3_UI_GEN,      .from=MA1_CTRL(0), .cmd=CMD_TRSTATE_NOTIF,    .v1=train_state_station, .v2=train_state_running},
+           {.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .subc=0, .cmd=CMD_SET_C4, .vb0=1, .vb1=0xFF, .vb2=0xFF, .vb3=0xFF});
 
 }
 

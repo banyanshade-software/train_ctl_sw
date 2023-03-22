@@ -202,3 +202,11 @@ void c3auto_start(int tidx)
 {
     
 }
+void c3auto_freeback(int tidx, lsblk_num_t freelsblk)
+{
+    
+}
+void c3auto_station(int tidx)
+{
+    
+}

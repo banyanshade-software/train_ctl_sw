@@ -135,7 +135,11 @@ void c3auto_set_turnout(int tidx, xtrnaddr_t tn)
 
         if (0==c3avar[tidx].path[idx].t) continue;
         if (c3avar[tidx].path[idx].tn.v == tn.v) {
-            ctrl_set_turnout(tn, c3avar[tidx].path[idx].val ? topo_tn_turn : topo_tn_straight, tidx);
+            enum topo_turnout_state cs = topology_get_turnout(tn);
+            enum topo_turnout_state nv = c3avar[tidx].path[idx].val ? topo_tn_turn : topo_tn_straight;
+            if (nv != cs) {
+                ctrl_set_turnout(tn, c3avar[tidx].path[idx].val ? topo_tn_turn : topo_tn_straight, tidx);
+            }
             return;
         }
     }

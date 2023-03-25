@@ -228,7 +228,7 @@ static void _ctrl_init(int normalmode)
 #ifdef TRAIN_SIMU
             void simu_set_train(int tidx, int sblk, int posmm); // SimTrain.m
 
-            ctrl3_init_train(0, &trctl[0], s5, 300, 1);
+            ctrl3_init_train(0, &trctl[0], s5, 172, 1);
             simu_set_train(0, trctl[0].c1_sblk.n, trctl[0]._curposmm);
             ctrl_set_mode(0, train_manual);
 

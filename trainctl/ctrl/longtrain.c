@@ -326,42 +326,57 @@ int _check_front_condition_s1pose(_UNUSED_ train_ctrl_t *tvars, lsblk_num_t last
     return 0;
 }
 
+int ckdebug = 0;
+#define CKFRONT_DEBUG(...) do {\
+  if (ckdebug) printf("----" __VA_ARGS__);\
+} while(0)
 
 static int check_front(int tidx, train_ctrl_t *tvars,  struct forwdsblk *fsblk, int left, int16_t maxmm, int8_t *pa, check_condition_t cond)
 {
     lsblk_num_t fs = (fsblk->numlsblk>0) ? fsblk->r[fsblk->numlsblk-1] : tvars->c1_sblk;
     lsblk_num_t ns = fs;
+    CKFRONT_DEBUG("ns=%d, numlsdblk=%d rlen=%d\n", fs.n, fsblk->numlsblk, fsblk->rlen_mm);
     int mm0 = ctrl3_getcurpossmm(tvars, conf_train_get(tidx), left)-tvars->beginposmm;
+    CKFRONT_DEBUG("mm0=%d\n", mm0);
+    if (mm0<-150) {
+        extern void trace_train_dump(int);
+        trace_train_dump(0);
+        CKFRONT_DEBUG("ho");
+    }
     if (left) {
         mm0 -= fsblk->rlen_mm;
+        CKFRONT_DEBUG("left, mm0 = %d\n", mm0);
         int mm = 0;
         for (;;) {
             //ns = next_lsblk(ns, left, pa);
             ns = next_lsblk_and_reserve(tidx, tvars, ns, left, pa);
+            CKFRONT_DEBUG("    mm=%d ns=%d\n", mm, ns.n);
             if (cond(tvars, fs, ns)) {
                 // EOT or BLKWAIT
+                CKFRONT_DEBUG("   COND true, return %d\n", mm);
                 return mm;
             } else if (ns.n == -1) {
+                CKFRONT_DEBUG("   ns.n==-1, return 0\n");
                 *pa = -1;
                 return 0;
             } else {
                 mm += 10*get_lsblk_len_cm(ns, NULL);
-                if (!left) {
-                    if (mm+mm0 >= maxmm+brake_len_mm+margin_stop_len_mm) {
-                        *pa = -1;
-                        return 0;
-                    }
-                } else {
-                    // xxx KO
-                    if (mm+mm0 >= maxmm+brake_len_mm+margin_stop_len_mm) {
-                        *pa = -1;
-                        return 0;
-                    }
+                CKFRONT_DEBUG("    mm=%d\n", mm);
+                // xxx KO
+                if (mm+mm0 >= maxmm+brake_len_mm+margin_stop_len_mm) {
+                    CKFRONT_DEBUG("   mm=%d mm0=%d, mm+mm0=%d / maxmm=%d, -> %d, return 0\n", mm, mm0, mm+mm0, maxmm, maxmm+brake_len_mm+margin_stop_len_mm);
+                    *pa = -1;
+                    return 0;
+                } else if (ns.n == -1) {
+                    CKFRONT_DEBUG("   ns.n==-1 (b), return 0\n");
+                    *pa = -1;
+                    return 0;
                 }
             }
         }
 
     } else {
+        // right
         mm0 += fsblk->rlen_mm;
         int mm = 0;
         //int slen = get_lsblk_len_cm(ns, NULL);
@@ -444,7 +459,10 @@ static int check_loco(int tidx, train_ctrl_t *tvars,  _UNUSED_ struct forwdsblk 
 #define ADD_TRIG_NOTHING 0x7FFF
 int _add_trig(int left, rettrigs_t *ret, int rlenmm, int c1lenmm, int curmm, int kmm, pose_trig_tag_t tag, int distmm, int minmm, int maxmm, int trlenmm)
 {
+    CKFRONT_DEBUG("add_trig tag%d, rlenmm=%d, c1lenmm=%d, curmm=%d, kmm=%d, distmm=%d, minmm=%d, maxmm=%d, trlenmm=%d",
+                  tag, rlenmm, c1lenmm, curmm, kmm, distmm, minmm, maxmm, trlenmm);
     int lmm = distmm-kmm;
+    CKFRONT_DEBUG("lmm=%d\n", lmm);
     if (!left) {
         int trg = curmm+rlenmm-lmm;
         if (lmm>=rlenmm) {
@@ -461,17 +479,24 @@ int _add_trig(int left, rettrigs_t *ret, int rlenmm, int c1lenmm, int curmm, int
         }
     } else {
         int trg = minmm+lmm+trlenmm;
+        CKFRONT_DEBUG("left trg=%d rlenmm=%d\n", trg, rlenmm);
         if (lmm >= rlenmm) {
             int smm = lmm-rlenmm;
+            CKFRONT_DEBUG("smm=%d -> return smm\n", smm);
             return smm;
         } else if (lmm < c1lenmm) {
+            CKFRONT_DEBUG("lmm %d < c1lenmm %d\n", lmm, c1lenmm);
             if (trg<curmm) {
+                CKFRONT_DEBUG("trg %d < curmm %d, add trig\n", trg, curmm);
                 ret->trigs[ret->ntrig].posmm = trg;
                 ret->trigs[ret->ntrig].tag = tag;
                 ret->ntrig++;
+            } else {
+                CKFRONT_DEBUG("trg %d NOT < curmm %d, ignore\n", trg, curmm);
             }
         }
     }
+    CKFRONT_DEBUG("return NOTHING\n");
     return ADD_TRIG_NOTHING;
 }
 
@@ -557,6 +582,7 @@ int ctrl3_check_front_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *
     }
     
     // c1lemm ko for check_front() going left
+    ckdebug=1;
     kmm = check_front(tidx, tvars, fsblk, left, c1lenmm, &a, _check_front_condition_eot);
     if (a != -1) {
         // lcccc|cc----------|-----||
@@ -584,6 +610,8 @@ int ctrl3_check_front_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t *
             }
         }
     }
+    ckdebug=0;
+
     
     
     // s1 end

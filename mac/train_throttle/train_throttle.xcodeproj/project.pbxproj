@@ -88,6 +88,7 @@
 		1B4CB7D32963641200146D0A /* TestLongTrainRight1.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B4CB7D22963641200146D0A /* TestLongTrainRight1.m */; };
 		1B4F7DC92916AEB4002140C9 /* conf_servo.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B4F7DC82916AEB4002140C9 /* conf_servo.c */; };
 		1B4F7DCE2916AEC4002140C9 /* conf_servo.fields.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B4F7DCD2916AEC4002140C9 /* conf_servo.fields.c */; };
+		1B5C542A29D1660900CE7052 /* longtrain4.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B5C542929D1660900CE7052 /* longtrain4.c */; };
 		1B60925A291993DF00FCE51C /* conf_servo.fields.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B4F7DCD2916AEC4002140C9 /* conf_servo.fields.c */; };
 		1B6092632919942D00FCE51C /* conf_gpropag.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B46F809280C22C300BAD6E8 /* conf_gpropag.c */; };
 		1B6092682919944000FCE51C /* conf_servo.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B4F7DC82916AEB4002140C9 /* conf_servo.c */; };
@@ -317,6 +318,8 @@
 		1B4F7DC82916AEB4002140C9 /* conf_servo.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = conf_servo.c; sourceTree = "<group>"; };
 		1B4F7DCD2916AEC4002140C9 /* conf_servo.fields.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = conf_servo.fields.c; sourceTree = "<group>"; };
 		1B53774527E7E0C1009CA93C /* TestLongTrain.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TestLongTrain.m; sourceTree = "<group>"; };
+		1B5C542829D1660900CE7052 /* longtrain4.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = longtrain4.h; sourceTree = "<group>"; };
+		1B5C542929D1660900CE7052 /* longtrain4.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = longtrain4.c; sourceTree = "<group>"; };
 		1B61090C256AAE1900F1AC45 /* CoreBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreBluetooth.framework; path = System/Library/Frameworks/CoreBluetooth.framework; sourceTree = SDKROOT; };
 		1B67360D2531E4450063EA9A /* SimTrain.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SimTrain.h; sourceTree = "<group>"; };
 		1B67360E2531E4450063EA9A /* SimTrain.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SimTrain.m; sourceTree = "<group>"; };
@@ -713,6 +716,8 @@
 				1B26884D2950FC3A00E31486 /* ctrlLT.c */,
 				1B2688A52952439800E31486 /* longtrain.h */,
 				1B2688A62952439800E31486 /* longtrain.c */,
+				1B5C542829D1660900CE7052 /* longtrain4.h */,
+				1B5C542929D1660900CE7052 /* longtrain4.c */,
 				1B2688582951146C00E31486 /* trig_tags.h */,
 				1B812B3B273FA77B00924749 /* cautoP.h */,
 				1B812B3C273FA77B00924749 /* cautoP.c */,
@@ -1281,6 +1286,7 @@
 				1B7B5E122970A50800955045 /* ctc_periodic_refresh.c in Sources */,
 				1B238C8A285E54F6000DA9B8 /* tasklet.c in Sources */,
 				1B69247729BD3C5C00ED150F /* c3autoP.c in Sources */,
+				1B5C542A29D1660900CE7052 /* longtrain4.c in Sources */,
 				1B3657BB275BED540042491A /* CTCManager.m in Sources */,
 				1BF42FD62914F525004EC55B /* servo.c in Sources */,
 				1B46F814280C288E00BAD6E8 /* simu_flash.c in Sources */,

@@ -26,14 +26,6 @@ typedef enum {
 } __attribute__((packed)) train_state_t;
 
 
-#define MAX_LSBLK_CARS 4
-struct forwdsblk {
-    lsblk_num_t r[MAX_LSBLK_CARS];
-    int16_t     rlen_mm;            // caution value should be updated if curposmm changed
-    int8_t      numlsblk;
-    int8_t      numlsblk_withmargin;
-};
-
 extern uint8_t ctrl_flag_notify_speed ;
 
 
@@ -70,8 +62,6 @@ typedef struct {
     
     uint8_t num_pos_adjust;
     
-    struct forwdsblk leftcars;
-    struct forwdsblk rightcars;
     //
     int32_t _curposmm;
     int32_t beginposmm; // left side ofl sblk,  either 0, or -len
@@ -160,5 +150,7 @@ void ctrl3_set_mode(int tidx, train_ctrl_t *tvar, train_mode_t mode);
 
 extern int ignore_ina_pres(void);
 extern int ignore_bemf_pres(void);
+
+int32_t ctrl3_getcurpossmm(train_ctrl_t *tvars, const conf_train_t *tconf, int left);
 
 #endif /* ctrlLT_h */

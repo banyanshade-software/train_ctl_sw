@@ -9,7 +9,7 @@
 #ifndef longtrain_h
 #define longtrain_h
 
-#include <stdio.h>
+#error obsoleted
 
 /// return value for ctrl2_check_front_sblks
 #define NUMTRIGS 6
@@ -27,6 +27,7 @@ typedef struct {
 } rettrigs_t;
 
 // -------------------------------------------------
+int32_t ctrl3_getcurpossmm(train_ctrl_t *tvars, const conf_train_t *tconf, int left);
 
 
 int ctrl3_get_next_sblks_(int tidx, train_ctrl_t *tvars,  const conf_train_t *tconf, int left, lsblk_num_t *resp, int nsblk, int16_t *premainlen);

@@ -23,7 +23,7 @@
 #include "ctrl.h"
 #include "ctrlLT.h"
 #include "../spdctl/spdctl.h"
-#include "longtrain.h"
+#include "longtrain4.h"
 #include "trace_train.h"
 //#include "ctrlP.h"
 //#include "cautoP.h"
@@ -70,6 +70,30 @@ static int  _lock_train_occupency(int tidx, train_ctrl_t *tvars);
 static void _release_all_blocks(int tidx, train_ctrl_t *tvars);
 
 // -----------------------------------------------------------------
+
+
+static int32_t get_lsblk_len_cm_steep(lsblk_num_t lsbk, const conf_train_t *tconf, train_ctrl_t *tvar)
+{
+    int8_t steep = 0;
+    int cm = get_lsblk_len_cm(lsbk, &steep);
+    itm_debug3(DBG_CTRL|DBG_POSEC, "steep?", steep, tvar->_sdir, lsbk.n);
+    if (steep*tvar->_sdir > 0) {
+        if (!tconf->slipping) FatalError("NSLP", "no slipping", Error_Slipping);
+        int cmold = cm;
+        cm = cm * tconf->slipping / 100;
+        itm_debug3(DBG_CTRL|DBG_POSEC, "steep!", lsbk.n, cmold, cm);
+    }
+    return cm;
+}
+
+int32_t ctrl3_getcurpossmm(train_ctrl_t *tvars, const conf_train_t *tconf, int left)
+{
+    if (POSE_UNKNOWN == tvars->_curposmm) {
+        if (left) return tvars->beginposmm;
+        return tvars->beginposmm + 10*get_lsblk_len_cm_steep(tvars->c1_sblk, tconf, tvars);
+    }
+    return tvars->_curposmm;
+}
 
 void ctrl3_init_train(int tidx, train_ctrl_t *tvars, lsblk_num_t sblk, int posmm, int on)
 {
@@ -139,6 +163,16 @@ void turn_train_on(int tidx, train_ctrl_t *tvars)
         return;
     }
     const conf_train_t *conf = conf_train_get(tidx);
+    // lt4_get_trigs() only to reserve block, rett is ignored
+    rettrigs_t rett = {0};
+    rett.ntrig = 0;
+    lt4_get_trigs(tidx, tvars, conf, 0, &rett);
+    rett.ntrig = 0;
+    lt4_get_trigs(tidx, tvars, conf, 1, &rett);
+
+    _set_state(tidx, tvars, train_state_station);
+
+    /*
     ctrl3_get_next_sblks(tidx, tvars, conf);
     int rc = _lock_train_occupency(tidx, tvars);
     if (!rc) {
@@ -146,6 +180,7 @@ void turn_train_on(int tidx, train_ctrl_t *tvars)
         return;
     }
     itm_debug1(DBG_ERR|DBG_CTRL, "cant reserve", tidx);
+     */
 }
 
 
@@ -401,6 +436,13 @@ static void _reserve_c2(int tidx, train_ctrl_t *tvars);
 static void _set_and_power_c2(int tidx, train_ctrl_t *tvars);
 
 
+static void _update_c1changed(int tidx, train_ctrl_t *tvars,  _UNUSED_ const conf_train_t *tconf, int left)
+{
+    occupency_set_occupied(tvars->can1_xaddr, tidx, tvars->c1_sblk, tvars->_sdir);
+    if (tvars->_mode == train_auto) {
+        c3auto_set_s1(tidx, tvars->c1_sblk);
+    }
+}
 
 void ctrl3_pose_triggered(int tidx, train_ctrl_t *tvars, pose_trig_tag_t trigtag, xblkaddr_t ca_addr, int16_t cposd10)
 {
@@ -459,7 +501,7 @@ void ctrl3_pose_triggered(int tidx, train_ctrl_t *tvars, pose_trig_tag_t trigtag
                     tvars->c1_sblk = ns;
                     tvars->canMeasureOnSblk = 0;
                     tvars->beginposmm = tvars->_curposmm; // TODO adjust for trig delay
-                    ctrl3_update_c1changed(tidx, tvars, conf_train_get(tidx), tvars->_sdir<0 ? 1 : 0);
+                    _update_c1changed(tidx, tvars, conf_train_get(tidx), tvars->_sdir<0 ? 1 : 0);
                     _updated_while_running(tidx, tvars);
                     goto handled;
                     break;
@@ -622,7 +664,7 @@ void ctrl3_evt_entered_new_lsblk_same_canton(int tidx, train_ctrl_t *tvars, lsbl
     tvars->c1_sblk = sblk;
     tvars->beginposmm = tvars->_curposmm;
     tvars->canMeasureOnSblk = 1;
-    ctrl3_update_c1changed(tidx, tvars, conf_train_get(tidx), tvars->_sdir<0 ? 1 : 0);
+    _update_c1changed(tidx, tvars, conf_train_get(tidx), tvars->_sdir<0 ? 1 : 0);
     _updated_while_running(tidx, tvars);
     if (tvars->c1c2dir_changed) {
     	_sendlow_c1c2_dir(tidx, tvars);
@@ -640,6 +682,9 @@ void ctrl3_evt_entered_new_lsblk_c2_canton(int tidx, train_ctrl_t *tvars, _UNUSE
     }
     
 }
+
+
+
 void ctrl3_evt_entered_c2(int tidx, train_ctrl_t *tvars, uint8_t from_bemf)
 {
     if (from_bemf && ignore_bemf_pres()) return;
@@ -681,7 +726,7 @@ void ctrl3_evt_entered_c2(int tidx, train_ctrl_t *tvars, uint8_t from_bemf)
     tvars->_curposmm = 0;
     tvars->canMeasureOnCanton = tvars->canMeasureOnSblk = 1;
 
-    ctrl3_update_c1changed(tidx, tvars, conf_train_get(tidx), tvars->_sdir<0 ? 1 : 0);
+    _update_c1changed(tidx, tvars, conf_train_get(tidx), tvars->_sdir<0 ? 1 : 0);
     _updated_while_running(tidx, tvars);
     
     if (from_bemf && ignore_ina_pres()) {
@@ -843,21 +888,19 @@ static int _train_check_dir(int tidx, train_ctrl_t *tvars, int sdir, rettrigs_t 
     freeback(tidx, tvars);
     
     const conf_train_t *conf = conf_train_get(tidx);
-    __from_check_dir = 1;
-    ctrl3_get_next_sblks(tidx, tvars, conf);
-    __from_check_dir = 0;
+    int rc2 =  lt4_get_trigs(tidx, tvars, conf,  (sdir<0) ? 1 : 0,  rett);
+
     
     freeback(tidx, tvars);
     
     
-    int rc2 = ctrl3_check_front_sblks(tidx, tvars, conf_train_get(tidx), (sdir<0) ? 1 : 0, rett);
     
     if (rc2 < 0) {
         if (!rett->isocc && !rett->isoet) {
             FatalError("FSMb", "rcneg unk", Error_FSM_ShouldEotOcc);
         }
     } else {
-        ctrl3_check_back_sblks(tidx, tvars, conf_train_get(tidx), (sdir<0) ? 1 : 0, rett);
+        lt4_check_back(tidx, tvars, conf_train_get(tidx), (sdir<0) ? 1 : 0, rett);
     }
     itm_debug3(DBG_CTRL, "rc2", tidx, rc2, tvars->_state);
     
@@ -1216,6 +1259,7 @@ static uint32_t pose_convert_from_mm(const conf_train_t *tconf, int32_t mm)
 
 // ---------------------------------------------
 
+#if 0
 static int _car_occupied(int tidx, train_ctrl_t *tvars,  struct forwdsblk *fwdcars)
 {
     for (int i=0; i<fwdcars->numlsblk; i++) {
@@ -1239,6 +1283,7 @@ static int _lock_train_occupency(int tidx, train_ctrl_t *tvars)
 
     return 0;
 }
+#endif
 static void _release_all_blocks(int tidx, _UNUSED_ train_ctrl_t *tvars)
 {
     occupency_remove_train(tidx);

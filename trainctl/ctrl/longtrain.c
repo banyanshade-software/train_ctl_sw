@@ -6,7 +6,7 @@
 //  Copyright © 2022 Daniel BRAUN. All rights reserved.
 //
 
-
+#if 0
 
 #include "../misc.h"
 #include "../msg/trainmsg.h"
@@ -52,11 +52,20 @@ int32_t ctrl3_getcurpossmm(train_ctrl_t *tvars, const conf_train_t *tconf, int l
     return tvars->_curposmm;
 }
 
+int32_t ctrl3_getcurpossmm(train_ctrl_t *tvars, const conf_train_t *tconf, int left)
+{
+    if (POSE_UNKNOWN == tvars->_curposmm) {
+        if (left) return tvars->beginposmm;
+        return tvars->beginposmm + 10*get_lsblk_len_cm_steep(tvars->c1_sblk, tconf, tvars);
+    }
+    return tvars->_curposmm;
+}
+
 /* replacement for next_lsblk to handle automatic mode and
    turnout reservation
  */
 
-lsblk_num_t next_lsblk_and_reserve(int tidx, train_ctrl_t *tvars, lsblk_num_t sblknum, uint8_t left, int8_t *palternate)
+static lsblk_num_t next_lsblk_and_reserve(int tidx, train_ctrl_t *tvars, lsblk_num_t sblknum, uint8_t left, int8_t *palternate)
 {
     if (palternate)  *palternate = 0;
     int back = 0;
@@ -804,3 +813,5 @@ void ctrl3_update_c1changed(int tidx, train_ctrl_t *tvars,  _UNUSED_ const conf_
     // but for now let's be safe
     //return ctrl3_get_next_sblks(tidx, tvars, tconf); moved out
 }
+
+#endif

@@ -15,7 +15,7 @@
 #include "ctrl.h"
 #include "topology.h"
 #include "ctrlLT.h"
-#include "longtrain.h"
+#include "longtrain4.h"
 
 int cmptrigs(const rettrigs_t *r1, const rettrigs_t *r2);
 

@@ -12,7 +12,7 @@
 #include "topology.h"
 #include "occupency.h"
 #include "ctrlLT.h"
-#include "longtrain.h"
+#include "longtrain4.h"
 #include "trig_tags.h"
 
 #include "TestLongTrainSupport.h"
@@ -86,12 +86,13 @@ static lsblk_num_t s14 = {14};
     tvars.beginposmm = beg;
     tvars._curposmm = 100+beg;
     
-    ctrl3_get_next_sblks(0, &tvars, tconf);
-    XCTAssert(tvars.rightcars.numlsblk == 0);
-    XCTAssert(tvars.rightcars.rlen_mm == 10*(70-10-15)); //45
+    //ctrl3_get_next_sblks(0, &tvars, tconf);
+    //XCTAssert(tvars.rightcars.numlsblk == 0);
+    //XCTAssert(tvars.rightcars.rlen_mm == 10*(70-10-15)); //45
    
     rettrigs_t rettrigs = {0};
-    rc = ctrl3_check_front_sblks(0, &tvars, tconf, 0, &rettrigs);
+    //rc = ctrl3_check_front_sblks(0, &tvars, tconf, 0, &rettrigs);
+    rc = lt4_get_trigs(0, &tvars, tconf, 0, &rettrigs);
     XCTAssert(rc==0);
     const rettrigs_t expt1 = { 0, 0, 0, 0, 4, {{550+beg, tag_chkocc}, {500+beg,tag_stop_eot}, {340+beg, tag_brake}, {700+beg,tag_end_lsblk}, {0,0}}};
     XCTAssert(!cmptrigs(&rettrigs, &expt1));
@@ -153,17 +154,20 @@ static lsblk_num_t s14 = {14};
     tvars.beginposmm = beg;
     tvars._curposmm = posmm+beg;
     
-    ctrl3_get_next_sblks(0, &tvars, tconf);
+    /*ctrl3_get_next_sblks(0, &tvars, tconf);
     XCTAssert(tvars.rightcars.numlsblk == 0);
     XCTAssert(tvars.rightcars.rlen_mm == (700-posmm-150)); //45
    
     XCTAssert(tvars.leftcars.numlsblk == 1);
     XCTAssert(tvars.leftcars.r[0].n == 13);
     XCTAssert(tvars.leftcars.rlen_mm == (30-(tconf->trainlen_left_cm*10-posmm)));
+     */
+    int leftlen = 30-(tconf->trainlen_left_cm*10-posmm);
     rettrigs_t rettrigs = {0};
-    rc = ctrl3_check_back_sblks(0, &tvars, tconf, 0, &rettrigs);
+    //rc = ctrl3_check_back_sblks(0, &tvars, tconf, 0, &rettrigs);
+    rc = lt4_get_trigs(0, &tvars, tconf, 0, &rettrigs);
     XCTAssert(rc==0);
-    const rettrigs_t expt1 = { 0, 0, 0, 0, 1, {{posmm+beg+30-tvars.leftcars.rlen_mm, tag_free_back}, {0,0}}};
+    const rettrigs_t expt1 = { 0, 0, 0, 0, 1, {{posmm+beg+30-leftlen, tag_free_back}, {0,0}}};
     XCTAssert(!cmptrigs(&rettrigs, &expt1));
 }
 
@@ -187,14 +191,16 @@ static lsblk_num_t s14 = {14};
     tvars.beginposmm = beg;
     tvars._curposmm = posmm+beg;
     
-    ctrl3_get_next_sblks(0, &tvars, tconf);
+    /*ctrl3_get_next_sblks(0, &tvars, tconf);
     XCTAssert(tvars.rightcars.numlsblk == 0);
     XCTAssert(tvars.rightcars.rlen_mm == (700-posmm-150)); //45
    
     XCTAssert(tvars.leftcars.numlsblk == 0);
-    XCTAssert(tvars.leftcars.rlen_mm == posmm-120);
+    XCTAssert(tvars.leftcars.rlen_mm == posmm-120);*/
     rettrigs_t rettrigs = {0};
-    rc = ctrl3_check_back_sblks(0, &tvars, tconf, 0, &rettrigs);
+    //rc = ctrl3_check_back_sblks(0, &tvars, tconf, 0, &rettrigs);
+    rc = lt4_get_trigs(0, &tvars, tconf, 0, &rettrigs);
+
     XCTAssert(rc==0);
     const rettrigs_t expt1 = { 0, 0, 0, 0, 0, {{0,0}, {0,0}}};
     XCTAssert(!cmptrigs(&rettrigs, &expt1));
@@ -255,12 +261,13 @@ static lsblk_num_t s14 = {14};
     tvars.beginposmm = beg;
     tvars._curposmm = cp*10+beg;
     
-    ctrl3_get_next_sblks(0, &tvars, tconf);
-    XCTAssert(tvars.rightcars.numlsblk == 0);
-    XCTAssert(tvars.rightcars.rlen_mm == 10*(70-cp-15)); //45
+    //ctrl3_get_next_sblks(0, &tvars, tconf);
+    //XCTAssert(tvars.rightcars.numlsblk == 0);
+    //XCTAssert(tvars.rightcars.rlen_mm == 10*(70-cp-15)); //45
    
     rettrigs_t rettrigs = {0};
-    rc = ctrl3_check_front_sblks(0, &tvars, tconf, 0, &rettrigs);
+    //rc = ctrl3_check_front_sblks(0, &tvars, tconf, 0, &rettrigs);
+    rc = lt4_get_trigs(0, &tvars, tconf, 0, &rettrigs);
     XCTAssert(rc>0);
     XCTAssert(rc==10*(16-(cp-49+15)));
     const rettrigs_t expt1 = { 0, 0, 0, 0, 3, {{550+beg, tag_chkocc}, {500+beg,tag_stop_eot}, {700+beg,tag_end_lsblk}, {0,0}, {0,0}}};
@@ -307,12 +314,13 @@ static lsblk_num_t s14 = {14};
     tvars.beginposmm = beg;
     tvars._curposmm = cp*10+beg;
     
-    ctrl3_get_next_sblks(0, &tvars, tconf);
-    XCTAssert(tvars.rightcars.numlsblk == 0);
-    XCTAssert(tvars.rightcars.rlen_mm == 10*(70-cp-15)); //45
+    //ctrl3_get_next_sblks(0, &tvars, tconf);
+    //XCTAssert(tvars.rightcars.numlsblk == 0);
+    //XCTAssert(tvars.rightcars.rlen_mm == 10*(70-cp-15)); //45
    
     rettrigs_t rettrigs = {0};
-    rc = ctrl3_check_front_sblks(0, &tvars, tconf, 0, &rettrigs);
+    //rc = ctrl3_check_front_sblks(0, &tvars, tconf, 0, &rettrigs);
+    rc = lt4_get_trigs(0, &tvars, tconf, 0, &rettrigs);
     XCTAssert(rc==0);
     const rettrigs_t expt1 = { 0, 0, 0, 0, 4, {{550+beg, tag_chkocc}, {500+beg,tag_stop_eot}, {340+beg, tag_brake}, {700+beg,tag_end_lsblk}, {0,0}, {0,0}}};
     XCTAssert(!cmptrigs(&rettrigs, &expt1));
@@ -346,16 +354,17 @@ static lsblk_num_t s14 = {14};
     tvars.beginposmm = beg;
     tvars._curposmm = cp*10+beg;
     
-    ctrl3_get_next_sblks(0, &tvars, tconf);
+    /*ctrl3_get_next_sblks(0, &tvars, tconf);
     if (b) {
         XCTAssert(tvars.rightcars.numlsblk == 1);
         XCTAssert(tvars.rightcars.rlen_mm == 10*(70+3-cp-15)); //45
     } else {
         XCTAssert(tvars.rightcars.numlsblk == 0);
         XCTAssert(tvars.rightcars.rlen_mm == 10*(70-cp-15)); //45
-    }
+    }*/
     rettrigs_t rettrigs = {0};
-    rc = ctrl3_check_front_sblks(0, &tvars, tconf, 0, &rettrigs);
+    //rc = ctrl3_check_front_sblks(0, &tvars, tconf, 0, &rettrigs);
+    rc = lt4_get_trigs(0, &tvars, tconf, 0, &rettrigs);
     XCTAssert(rc<0);
     if (b) {
         const rettrigs_t expt1 = { 1, 0, 0, 0, 2, {{580+beg, tag_chkocc},  {700+beg,tag_end_lsblk}, {0,0}, {0,0}}};

@@ -13,7 +13,7 @@
 #include "topology.h"
 #include "occupency.h"
 #include "ctrlLT.h"
-#include "longtrain.h"
+#include "longtrain4.h"
 #include "trig_tags.h"
 
 #include "TestLongTrainSupport.h"
@@ -75,12 +75,13 @@ static const xtrnaddr_t to3 = { .v = 3};
 {
     int rc;
     
-    ctrl3_get_next_sblks(0, &tvars, tconf);
-    XCTAssert(tvars.leftcars.numlsblk == 0);
-    XCTAssert(tvars.leftcars.rlen_mm == 400-50-150);
+    //ctrl3_get_next_sblks(0, &tvars, tconf);
+    //XCTAssert(tvars.leftcars.numlsblk == 0);
+    //XCTAssert(tvars.leftcars.rlen_mm == 400-50-150);
    
     rettrigs_t rettrigs = {0};
-    rc = ctrl3_check_front_sblks(0, &tvars, tconf, 1, &rettrigs);
+    //rc = ctrl3_check_front_sblks(0, &tvars, tconf, 1, &rettrigs);
+    rc = lt4_get_trigs(0, &tvars, tconf, 0, &rettrigs);
     XCTAssert(rc==0);
     //XCTAssert(rc==10*(cp-15+7-12));
     const rettrigs_t expt1 = { 0, 0, 0, 0, 2, {{-400+150, tag_chkocc}, {-400,tag_end_lsblk}, {0,0}, {0,0}}};

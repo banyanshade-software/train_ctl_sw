@@ -59,11 +59,31 @@ static const int margin_c2_len_mm = 200;
 
  */
 
-static void _add_trig(int tidx, train_ctrl_t *tvars, pose_trig_tag_t tag, int pos)
+static void _add_trig(rettrigs_t *rett, pose_trig_tag_t tag, int pos)
 {
-    
+    if (rett->ntrig>=NUMTRIGS) {
+        FatalError("ntrg", "too many trigs", Error_Abort);
+        return;
+    }
+    rett->trigs[rett->ntrig].posmm = pos;
+    rett->trigs[rett->ntrig].tag = tag;
+    rett->ntrig++;
 }
 
+static void _add_endlsblk_trig(rettrigs_t *rett, lsblk_num_t c1, lsblk_num_t ns, int pos)
+{
+    if (ns.n == -1) {
+        return;
+    }
+    if (canton_for_lsblk(c1).v != canton_for_lsblk(ns).v) {
+        return;
+    }
+    int ina1 = get_lsblk_ina3221(c1);
+    int ina2 = get_lsblk_ina3221(ns);
+    if ((ina1 == ina2) || (ina2 == 0xFF)) {
+        _add_trig(rett, tag_end_lsblk, pos);
+    }
+}
 
 lsblk_num_t next_lsblk_and_reserve(int tidx, train_ctrl_t *tvars, lsblk_num_t sblknum, uint8_t left, int8_t *palternate)
 {
@@ -121,12 +141,14 @@ int lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int 
     if (!left) {
         tlen = tconf->trainlen_right_cm*10;
         lmax = c1len - (tvars->_curposmm - tvars->beginposmm);
-        _add_trig(tidx, tvars, tag_end_lsblk, tvars->beginposmm+c1len);
+        // add trig done at end
+        //_add_trig(rett, tidx, tvars, tag_end_lsblk, tvars->beginposmm+c1len);
     } else {
         // left
         tlen = tconf->trainlen_left_cm*10;
         lmax = tvars->_curposmm - tvars->beginposmm;
-        _add_trig(tidx, tvars, tag_end_lsblk, tvars->beginposmm);
+        // add trig done at end
+        //_add_trig(rett, tidx, tvars, tag_end_lsblk, tvars->beginposmm);
     }
     
     /*
@@ -164,6 +186,8 @@ int lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int 
     int clen = lmax;
     int rc = 0;
     lsblk_num_t cs = tvars->c1_sblk;
+    int first = 1;
+    lsblk_num_t nextc1 = {.n=-1};
     for (;;) {
         if (flen>maxflen) break;
         if (rlen<=0) break; // done, enough space
@@ -173,10 +197,10 @@ int lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int 
         if (ns.n == -1) {
             //set trig and return flags
             if (rlen>=margin_stop_len_mm) {
-                _add_trig(tidx, tvars, a ? tag_stop_blk_wait:tag_stop_eot, flen+tvars->beginposmm); //XXX
+                _add_trig(rett, a ? tag_stop_blk_wait:tag_stop_eot, flen+tvars->beginposmm); //XXX
                 
                 if (rlen>=brake_len_mm+margin_stop_len_mm) {
-                    _add_trig(tidx, tvars, tag_brake, flen+tvars->beginposmm);//XXX
+                    _add_trig(rett, tag_brake, flen+tvars->beginposmm);//XXX
                 } else {
                     rc = brake_len_mm+margin_stop_len_mm-rlen;
                 }
@@ -188,9 +212,20 @@ int lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int 
             
             break;
         }
+        if (first) {
+            nextc1 = ns;
+            first = 0;
+        }
         rlen = rlen - clen;
         flen = flen + clen;
         clen = get_lsblk_len_cm(ns, NULL);
+    }
+    
+    if (!left) {
+        _add_endlsblk_trig(rett, tvars->c1_sblk, nextc1, tvars->beginposmm+c1len);
+    } else {
+        // left
+        _add_endlsblk_trig(rett, tvars->c1_sblk, nextc1, tvars->beginposmm);
     }
     
     return 0;

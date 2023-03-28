@@ -13,7 +13,7 @@
 #include "topology.h"
 #include "occupency.h"
 #include "ctrlLT.h"
-#include "longtrain.h"
+#include "longtrain4.h"
 #include "trig_tags.h"
 
 #include "TestLongTrainSupport.h"

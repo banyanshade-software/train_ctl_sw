@@ -163,6 +163,8 @@ int lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int 
 
      */
     int maxmargin = brake_len_mm+margin_stop_len_mm; // XXX to fix
+    if (margin_c2_len_mm>maxmargin) maxmargin = margin_c2_len_mm;
+    
     int tflen = (left ? tconf->trainlen_left_cm : tconf->trainlen_right_cm) * 10;
     int maxflen = tflen+maxmargin;
 
@@ -189,8 +191,12 @@ int lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int 
     int first = 1;
     lsblk_num_t nextc1 = {.n=-1};
     for (;;) {
-        if (flen>maxflen) break;
-        if (rlen<=0) break; // done, enough space
+        if (flen>maxflen) {
+            break;
+        }
+        if (rlen<=0) {
+            break; // done, enough space
+        }
         //get and reserve next_lsblk
         int8_t a;
         lsblk_num_t ns = next_lsblk_and_reserve(tidx, tvars, cs, left, &a);
@@ -211,14 +217,20 @@ int lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int 
             }
             
             break;
+        } else {
+            if (canton_for_lsblk(cs).v != canton_for_lsblk(ns).v) {
+                printf("resc2");
+            }
         }
+    
         if (first) {
             nextc1 = ns;
             first = 0;
         }
         rlen = rlen - clen;
         flen = flen + clen;
-        clen = get_lsblk_len_cm(ns, NULL);
+        clen = 10*get_lsblk_len_cm(ns, NULL);
+        cs = ns;
     }
     
     if (!left) {
@@ -228,7 +240,7 @@ int lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int 
         _add_endlsblk_trig(rett, tvars->c1_sblk, nextc1, tvars->beginposmm);
     }
     
-    return 0;
+    return rc;
 }
 
 int lt4_check_back(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int left, rettrigs_t *rett)

@@ -231,7 +231,9 @@ int lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int 
                 int trgbase =  totallen + alen - tflen;
                 int trg = trgbase-margin_c2_len_mm;
                 if (trg > posloco) {
-                    _add_trig(rett, tag_reserve_c2,  tvars->beginposmm +trg);
+                    if (trg<=c1len) {
+                        _add_trig(rett, tag_reserve_c2,  tvars->beginposmm +trg);
+                    }
                 } else {
                     rett->res_c2 = 1;
                 }
@@ -239,7 +241,9 @@ int lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int 
                 trgbase = totallen + alen;
                 trg = trgbase-margin_c2_len_mm;
                 if (trg > posloco) {
-                    _add_trig(rett, tag_need_c2,  tvars->beginposmm +trg);
+                    if (trg<=c1len) {
+                        _add_trig(rett, tag_need_c2,  tvars->beginposmm +trg);
+                    }
                 } else {
                     rett->power_c2 = 1;
                 }
@@ -252,7 +256,7 @@ int lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int 
            
         }
         int trg = totallen-tflen;
-        if (trg>poshead && trg<=c1len) {
+        if (trg>posloco && trg<=c1len) {
             // ----L xxxxxxx|xx-----|
             //                ^poshead
             _add_trig(rett, tag_chkocc, tvars->beginposmm +trg);

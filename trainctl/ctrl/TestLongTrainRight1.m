@@ -414,7 +414,8 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     rc = lt4_get_trigs(0, &tvars, tconf, 0, &rettrigs);
     //rc = ctrl3_check_front_sblks(0, &tvars, tconf, 0, &rettrigs);
     XCTAssert(rc==0);
-    const rettrigs_t expt4 = {0, 0, 1, 0, 5, { {beg+20, tag_chkocc},  {beg+300,tag_stop_eot}, {beg+140, tag_brake}, {beg+400, tag_end_lsblk}, {beg+300, tag_need_c2}}};
+    // XXX should not have need_c2 AND stop_eot ?!!
+    const rettrigs_t expt4 = {0, 0, 1, 0, 5, {   {beg+300, tag_need_c2}, {beg+300,tag_stop_eot}, {beg+20, tag_chkocc}, {beg+140, tag_brake}, {beg+400, tag_end_lsblk}, }};
     XCTAssert(!cmptrigs(&rettrigs, &expt4));
 
     // (D1) advance to first trig

@@ -202,11 +202,11 @@ int lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int 
         lsblk_num_t ns = next_lsblk_and_reserve(tidx, tvars, cs, left, &a);
         if (ns.n == -1) {
             //set trig and return flags
-            if (rlen>=margin_stop_len_mm) {
-                _add_trig(rett, a ? tag_stop_blk_wait:tag_stop_eot, flen+tvars->beginposmm); //XXX
+            if (rlen>margin_stop_len_mm) {
+                _add_trig(rett, a ? tag_stop_blk_wait:tag_stop_eot, flen+tvars->beginposmm-margin_stop_len_mm); //XXX
                 
-                if (rlen>=brake_len_mm+margin_stop_len_mm) {
-                    _add_trig(rett, tag_brake, flen+tvars->beginposmm);//XXX
+                if (rlen>brake_len_mm+margin_stop_len_mm) {
+                    _add_trig(rett, tag_brake, flen+tvars->beginposmm-(brake_len_mm+margin_stop_len_mm));//XXX
                 } else {
                     rc = brake_len_mm+margin_stop_len_mm-rlen;
                 }
@@ -219,7 +219,12 @@ int lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int 
             break;
         } else {
             if (canton_for_lsblk(cs).v != canton_for_lsblk(ns).v) {
-                printf("resc2");
+                if (rlen>margin_c2_len_mm) {
+                    _add_trig(rett, tag_reserve_c2, flen+tvars->beginposmm-margin_c2_len_mm);
+                } else {
+                    rett->res_c2 = 1;
+                }
+                // loco advance for power_c2 if (lmax-flen>)
             }
         }
     

@@ -202,16 +202,16 @@ int lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int 
         //do we reach eot or blk wait ?
         if (ns.n == -1) {
             //set trig and return flags
-            int trgbase = tvars->beginposmm + totallen + alen - tflen;
+            int trgbase = totallen + alen - tflen;
             int trg = trgbase-margin_stop_len_mm;
             if (trg > posloco) {
-                if (trg<=tvars->beginposmm+c1len) {
-                    _add_trig(rett, a ? tag_stop_blk_wait:tag_stop_eot, trg);
+                if (trg <= c1len) {
+                    _add_trig(rett, a ? tag_stop_blk_wait:tag_stop_eot, tvars->beginposmm+trg);
                 }
                 trg = trgbase-margin_stop_len_mm - brake_len_mm;
                 if (trg > posloco) {
-                    if (trg<=tvars->beginposmm+c1len) {
-                        _add_trig(rett, tag_brake, trg);
+                    if (trg<=c1len) {
+                        _add_trig(rett, tag_brake, tvars->beginposmm+trg);
                     }
                 } else {
                     // pos+margin_stop_len_mm <= totallen
@@ -228,18 +228,18 @@ int lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int 
             if (canton_for_lsblk(cs).v != canton_for_lsblk(ns).v) {
                 // ...------------||----
                 //   x
-                int trgbase = tvars->beginposmm + totallen + alen - tflen;
+                int trgbase =  totallen + alen - tflen;
                 int trg = trgbase-margin_c2_len_mm;
                 if (trg > posloco) {
-                    _add_trig(rett, tag_reserve_c2,  trg);
+                    _add_trig(rett, tag_reserve_c2,  tvars->beginposmm +trg);
                 } else {
                     rett->res_c2 = 1;
                 }
                 // loco advance for power_c2 if (lmax-flen>)
-                trgbase = tvars->beginposmm + totallen + alen;
+                trgbase = totallen + alen;
                 trg = trgbase-margin_c2_len_mm;
                 if (trg > posloco) {
-                    _add_trig(rett, tag_need_c2,  trg);
+                    _add_trig(rett, tag_need_c2,  tvars->beginposmm +trg);
                 } else {
                     rett->power_c2 = 1;
                 }
@@ -251,11 +251,11 @@ int lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int 
             first = 0;
            
         }
-        int trg = tvars->beginposmm +totallen-tflen;
-        if (trg>poshead && trg<=tvars->beginposmm+c1len) {
+        int trg = totallen-tflen;
+        if (trg>poshead && trg<=c1len) {
             // ----L xxxxxxx|xx-----|
             //                ^poshead
-            _add_trig(rett, tag_chkocc, trg);
+            _add_trig(rett, tag_chkocc, tvars->beginposmm +trg);
         }
         if (advancemm>maxadvancefortrig) {
             break;

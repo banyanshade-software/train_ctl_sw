@@ -135,18 +135,18 @@ int lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int 
          set trig tag_end_lsblk at beginpos
 
      */
-    int lmax, tlen;
+    int maxadvancefortrig, tlen;
     lsblk_num_t c1 = tvars->c1_sblk;
     int c1len = 10*get_lsblk_len_cm(c1, NULL);
     if (!left) {
         tlen = tconf->trainlen_right_cm*10;
-        lmax = c1len - (tvars->_curposmm - tvars->beginposmm);
+        maxadvancefortrig = c1len - (tvars->_curposmm - tvars->beginposmm);
         // add trig done at end
         //_add_trig(rett, tidx, tvars, tag_end_lsblk, tvars->beginposmm+c1len);
     } else {
         // left
         tlen = tconf->trainlen_left_cm*10;
-        lmax = tvars->_curposmm - tvars->beginposmm;
+        maxadvancefortrig = tvars->_curposmm - tvars->beginposmm;
         // add trig done at end
         //_add_trig(rett, tidx, tvars, tag_end_lsblk, tvars->beginposmm);
     }
@@ -183,32 +183,39 @@ int lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int 
                  Flen = flen + clen
          clen = len(next_sblk)
      */
-    int flen = 0;
-    int rlen = maxflen;
-    int clen = lmax;
+    //int rlen = maxflen;
+    int clen = maxadvancefortrig;
+    int alen = c1len;
+    int totallen = 0;//c1len;
     int rc = 0;
+    const int posloco = tvars->_curposmm - tvars->beginposmm; // curposmm, without beginposmm
+    const int poshead = left ? posloco-tflen : posloco+tflen;
+    int advancemm = 0;
     lsblk_num_t cs = tvars->c1_sblk;
     int first = 1;
     lsblk_num_t nextc1 = {.n=-1};
     for (;;) {
-        if (flen>maxflen) {
-            break;
-        }
-        if (rlen<=0) {
-            break; // done, enough space
-        }
-        //get and reserve next_lsblk
+        // see what happens between advancemm and advancemm+clen
         int8_t a;
         lsblk_num_t ns = next_lsblk_and_reserve(tidx, tvars, cs, left, &a);
+        
+        //do we reach eot or blk wait ?
         if (ns.n == -1) {
             //set trig and return flags
-            if (rlen>margin_stop_len_mm) {
-                _add_trig(rett, a ? tag_stop_blk_wait:tag_stop_eot, flen+tvars->beginposmm-margin_stop_len_mm); //XXX
-                
-                if (rlen>brake_len_mm+margin_stop_len_mm) {
-                    _add_trig(rett, tag_brake, flen+tvars->beginposmm-(brake_len_mm+margin_stop_len_mm));//XXX
+            int trgbase = tvars->beginposmm + totallen + alen - tflen;
+            int trg = trgbase-margin_stop_len_mm;
+            if (trg > posloco) {
+                if (trg<=tvars->beginposmm+c1len) {
+                    _add_trig(rett, a ? tag_stop_blk_wait:tag_stop_eot, trg);
+                }
+                trg = trgbase-margin_stop_len_mm - brake_len_mm;
+                if (trg > posloco) {
+                    if (trg<=tvars->beginposmm+c1len) {
+                        _add_trig(rett, tag_brake, trg);
+                    }
                 } else {
-                    rc = brake_len_mm+margin_stop_len_mm-rlen;
+                    // pos+margin_stop_len_mm <= totallen
+                    rc = totallen - margin_stop_len_mm - poshead; //brake_len_mm+margin_stop_len_mm-rlen;
                 }
             } else {
                 rc = -1;
@@ -219,22 +226,44 @@ int lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int 
             break;
         } else {
             if (canton_for_lsblk(cs).v != canton_for_lsblk(ns).v) {
-                if (rlen>margin_c2_len_mm) {
-                    _add_trig(rett, tag_reserve_c2, flen+tvars->beginposmm-margin_c2_len_mm);
+                // ...------------||----
+                //   x
+                int trgbase = tvars->beginposmm + totallen + alen - tflen;
+                int trg = trgbase-margin_c2_len_mm;
+                if (trg > posloco) {
+                    _add_trig(rett, tag_reserve_c2,  trg);
                 } else {
                     rett->res_c2 = 1;
                 }
                 // loco advance for power_c2 if (lmax-flen>)
+                trgbase = tvars->beginposmm + totallen + alen;
+                trg = trgbase-margin_c2_len_mm;
+                if (trg > posloco) {
+                    _add_trig(rett, tag_need_c2,  trg);
+                } else {
+                    rett->power_c2 = 1;
+                }
             }
         }
     
         if (first) {
             nextc1 = ns;
             first = 0;
+           
         }
-        rlen = rlen - clen;
-        flen = flen + clen;
+        int trg = tvars->beginposmm +totallen-tflen;
+        if (trg>poshead && trg<=tvars->beginposmm+c1len) {
+            // ----L xxxxxxx|xx-----|
+            //                ^poshead
+            _add_trig(rett, tag_chkocc, trg);
+        }
+        if (advancemm>maxadvancefortrig) {
+            break;
+        }
+        advancemm += clen;
+        totallen += alen;
         clen = 10*get_lsblk_len_cm(ns, NULL);
+        alen = clen;
         cs = ns;
     }
     

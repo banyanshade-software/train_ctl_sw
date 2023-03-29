@@ -289,12 +289,12 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
 
 - (void) testC2pow1
 {
-    [self  checkC2powerRight:0 cpos:0];
+    [self  checkC2powerRight:0 cpos:2];
 }
 
 - (void) testC2pow2
 {
-    [self  checkC2powerRight:1000 cpos:0];
+    [self  checkC2powerRight:1000 cpos:2];
 }
 
 - (void) testC2pow3
@@ -322,7 +322,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     rc = lt4_get_trigs(0, &tvars, tconf, 0, &rettrigs);
     //rc = ctrl3_check_front_sblks(0, &tvars, tconf, 0, &rettrigs);
     XCTAssert(rc==0);
-    const rettrigs_t expt1 = { 0, 0, 0, 0, 5, {{220 + bmm, tag_chkocc}, {120+bmm,tag_reserve_c2},  {340+bmm, tag_brake}, {400+bmm, tag_end_lsblk}, {300+bmm, tag_need_c2}}};
+    const rettrigs_t expt1 = { 0, 0, 0, 0, 5, { {120+bmm,tag_reserve_c2}, {300+bmm, tag_need_c2},  {220 + bmm, tag_chkocc}, {340+bmm, tag_brake}, {400+bmm, tag_end_lsblk}}};
     XCTAssert(!cmptrigs(&rettrigs, &expt1));
 }
 

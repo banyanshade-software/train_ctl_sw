@@ -250,18 +250,19 @@ int lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int 
             }
         }
     
-        if (first) {
-            nextc1 = ns;
-            first = 0;
-           
-        }
+        
         int trg = totallen-tflen;
         if (trg>posloco && trg<=c1len) {
             // ----L xxxxxxx|xx-----|
             //                ^poshead
             _add_trig(rett, tag_chkocc, tvars->beginposmm +trg);
         }
-        if (advancemm>maxadvancefortrig) {
+        if (first) {
+            nextc1 = ns;
+            first = 0;
+           
+        }
+        if (advancemm>maxadvancefortrig+maxmargin) {
             break;
         }
         advancemm += clen;

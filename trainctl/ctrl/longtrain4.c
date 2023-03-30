@@ -122,6 +122,17 @@ lsblk_num_t next_lsblk_and_reserve(int tidx, train_ctrl_t *tvars, lsblk_num_t sb
 
 
 
+static int is_not_powered(int tidx, train_ctrl_t *tvars, xblkaddr_t ncanton)
+{
+    if (tvars->can1_xaddr.v == ncanton.v) return 0;
+    if (tvars->can2_xaddr.v == ncanton.v) return 0;
+    if (tvars->canOld_xaddr.v == ncanton.v) {
+        return 0;
+    }
+    return 1;
+}
+
+
 int lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int left,  rettrigs_t *rett)
 {
     /*
@@ -248,21 +259,23 @@ int lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int 
                         }
                     }
                 }
-                // loco advance for power_c2 if (lmax-flen>)
-                trgbase = totallen + alen;
-                trg = trgbase-margin_c2_len_mm;
-                if (trg > posloco) {
-                    if (trg<=c1len) {
-                        _add_trig(rett, tag_need_c2,  tvars->beginposmm +trg);
-                        if (tvars->pow_c2_future.v == 0xFF) {
-                            tvars->pow_c2_future = ncanton;
+                // loco advance for power_c2
+                if (is_not_powered(tidx, tvars, ncanton)) {
+                    trgbase = totallen + alen;
+                    trg = trgbase-margin_c2_len_mm;
+                    if (trg > posloco) {
+                        if (trg<=c1len) {
+                            _add_trig(rett, tag_need_c2,  tvars->beginposmm +trg);
+                            if (tvars->pow_c2_future.v == 0xFF) {
+                                tvars->pow_c2_future = ncanton;
+                            }
                         }
-                    }
-                } else {
-                    if (trgbase> posloco) {
-                        rett->power_c2 = 1;
-                        if (tvars->pow_c2_future.v == 0xFF) {
-                            tvars->pow_c2_future = ncanton;
+                    } else {
+                        if (trgbase> posloco) {
+                            rett->power_c2 = 1;
+                            if (tvars->pow_c2_future.v == 0xFF) {
+                                tvars->pow_c2_future = ncanton;
+                            }
                         }
                     }
                 }

@@ -194,6 +194,7 @@ int lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int 
     lsblk_num_t cs = tvars->c1_sblk;
     int first = 1;
     lsblk_num_t nextc1 = {.n=-1};
+    int needchok = 1;
     for (;;) {
         // see what happens between advancemm and advancemm+clen
         int8_t a;
@@ -252,10 +253,11 @@ int lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int 
     
         
         int trg = totallen-tflen;
-        if (trg>posloco && trg<=c1len) {
+        if (needchok && trg>posloco && trg<=c1len) {
             // ----L xxxxxxx|xx-----|
             //                ^poshead
             _add_trig(rett, tag_chkocc, tvars->beginposmm +trg);
+            needchok=0;
         }
         if (first) {
             nextc1 = ns;

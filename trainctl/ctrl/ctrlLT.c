@@ -114,7 +114,7 @@ void ctrl3_init_train(int tidx, train_ctrl_t *tvars, lsblk_num_t sblk, int posmm
     tvars->c1c2dir_changed = 0;
     tvars->can2_xaddr.v = 0xFF;
     tvars->canOld_xaddr.v = 0xFF;
-    tvars->tmp_c2_future.v = 0xFF;
+    //tvars->tmp_c2_future.v = 0xFF;
     tvars->pow_c2_future.v = 0xFF;
     tvars->res_c2_future.v = 0xFF;
     tvars->can1_xaddr = canton_for_lsblk(sblk);

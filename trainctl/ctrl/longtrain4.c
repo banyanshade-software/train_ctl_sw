@@ -227,7 +227,8 @@ int lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int 
             done = 1;
             //break;
         } else {
-            if (canton_for_lsblk(cs).v != canton_for_lsblk(ns).v) {
+            xblkaddr_t ncanton = canton_for_lsblk(ns);
+            if (canton_for_lsblk(cs).v != ncanton.v) {
                 // ...------------||----
                 //   x
                 int trgbase =  totallen + alen - tflen;
@@ -235,9 +236,17 @@ int lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int 
                 if (trg > posloco) {
                     if (trg<=c1len) {
                         _add_trig(rett, tag_reserve_c2,  tvars->beginposmm +trg);
+                        if (tvars->res_c2_future.v == 0xFF) {
+                            tvars->res_c2_future = ncanton;
+                        }
                     }
                 } else {
-                    if (trgbase>posloco) rett->res_c2 = 1;
+                    if (trgbase>posloco) {
+                        rett->res_c2 = 1;
+                        if (tvars->res_c2_future.v == 0xFF) {
+                            tvars->res_c2_future = ncanton;
+                        }
+                    }
                 }
                 // loco advance for power_c2 if (lmax-flen>)
                 trgbase = totallen + alen;
@@ -245,9 +254,15 @@ int lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int 
                 if (trg > posloco) {
                     if (trg<=c1len) {
                         _add_trig(rett, tag_need_c2,  tvars->beginposmm +trg);
+                        if (tvars->pow_c2_future.v == 0xFF) {
+                            tvars->pow_c2_future = ncanton;
+                        }
                     }
                 } else {
                     rett->power_c2 = 1;
+                    if (tvars->pow_c2_future.v == 0xFF) {
+                        tvars->pow_c2_future = ncanton;
+                    }
                 }
             }
         }

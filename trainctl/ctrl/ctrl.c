@@ -231,7 +231,8 @@ static void _ctrl_init(int normalmode)
             // 172, 170, 160, 150
             // 175, 190, 220, 250, 260
             // ok : 350, 300, 280, 270, 265, 262, 261
-            ctrl3_init_train(0, &trctl[0], s5, 260, 1);
+            //ctrl3_init_train(0, &trctl[0], s5, 260, 1);
+            ctrl3_init_train(0, &trctl[0], s0, 260, 1);
             simu_set_train(0, trctl[0].c1_sblk.n, trctl[0]._curposmm);
             ctrl_set_mode(0, train_manual);
 

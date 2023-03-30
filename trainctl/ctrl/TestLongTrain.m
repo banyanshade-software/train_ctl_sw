@@ -230,7 +230,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
    
 }
 
-- (void) testProgressRight
+- (void) testProgressRight // KO20230330
 {
     tconf->trainlen_left_cm = 0;
     tconf->trainlen_right_cm = 48;
@@ -518,7 +518,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
 
 
 
-- (void) testProgressLeft
+- (void) testProgressLeft // KO20230330
 {
     tconf->trainlen_left_cm = 20;
     tconf->trainlen_right_cm = 8;

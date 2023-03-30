@@ -216,7 +216,7 @@ int lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int 
                     }
                 } else {
                     // pos+margin_stop_len_mm <= totallen
-                    rc = totallen - margin_stop_len_mm - poshead; //brake_len_mm+margin_stop_len_mm-rlen;
+                    rc = brake_len_mm+trg-posloco;
                 }
             } else {
                 rc = -1;

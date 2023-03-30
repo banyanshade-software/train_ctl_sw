@@ -211,7 +211,16 @@ static lsblk_num_t s14 = {14};
     [self checkBrake:0 d:40];
 }
 
-
+/*
+   b14 (700)   |b15 (30) | b16 (20) | b17 (20) ||
+         | 120 stop len                      || 120-30-20-20
+         | 50  |
+    |brk |          brake_len_mm=160
+   stop when head at 700-50 = 650   --> loco at 500
+   brake          at 650-160 = 490  --> loco at 340
+ at 340 rc=160
+ at 650 rc=stop
+ */
 - (void)testCheckBrake34
 {
     [self checkBrake:0 d:34];

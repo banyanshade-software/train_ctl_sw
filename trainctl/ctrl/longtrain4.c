@@ -259,9 +259,11 @@ int lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int 
                         }
                     }
                 } else {
-                    rett->power_c2 = 1;
-                    if (tvars->pow_c2_future.v == 0xFF) {
-                        tvars->pow_c2_future = ncanton;
+                    if (trgbase> posloco) {
+                        rett->power_c2 = 1;
+                        if (tvars->pow_c2_future.v == 0xFF) {
+                            tvars->pow_c2_future = ncanton;
+                        }
                     }
                 }
             }

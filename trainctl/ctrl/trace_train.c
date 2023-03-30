@@ -48,6 +48,7 @@ typedef struct {
     uint8_t oldc1;
     uint8_t c1;
     uint8_t c2;
+    uint8_t pow2future;
 } __attribute__((packed)) train_trace_tick_record_t;
 
 typedef struct {
@@ -150,6 +151,7 @@ void _trace_train_postick(uint32_t tick, int tidx, train_ctrl_t *tvars)
     rec->tickrec.c1 = tvars->can1_xaddr.v;
     rec->tickrec.c2 = tvars->can2_xaddr.v;
     rec->tickrec.oldc1 = tvars->canOld_xaddr.v;
+    rec->tickrec.pow2future = tvars->pow_c2_future.v;
 
     if (lrec && (lrec->kind == trace_kind_tick)) {
         if (!memcmp(&lrec->tickrec, &rec->tickrec, sizeof(train_trace_tick_record_t))) {
@@ -298,7 +300,7 @@ static void _trace_train_dump(train_trace_record_t *records, int numitem, int st
         f = 0;
         switch (rec->kind) {
             case trace_kind_tick:
-                sprintf(line, "%s%2d %6.6d%s      state=%s%-9s%s dir=%d sblk=%d spd=%3d dspd=%3d pos=%d from %d -- pow (%d) %d %d%s",
+                sprintf(line, "%s%2d %6.6d%s      state=%s%-9s%s dir=%d sblk=%d spd=%3d dspd=%3d pos=%d from %d -- pow (%d) %d %d (fut %d)%s",
                        _ds, idx, rec->tick, _eds,
                        _ss, state_name(rec->tickrec.state), _ess,
                        rec->tickrec.sdir,
@@ -310,6 +312,7 @@ static void _trace_train_dump(train_trace_record_t *records, int numitem, int st
                        rec->tickrec.oldc1,
                        rec->tickrec.c1,
                        rec->tickrec.c2,
+                       rec->tickrec.pow2future,
 					   _cr);
                 break;
             case trace_kind_trig:

@@ -195,6 +195,7 @@ int lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int 
     int first = 1;
     lsblk_num_t nextc1 = {.n=-1};
     int needchok = 1;
+    int done = 0;
     for (;;) {
         // see what happens between advancemm and advancemm+clen
         int8_t a;
@@ -223,8 +224,8 @@ int lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int 
                 if (a) rett->isocc = 1;
                 else   rett->isoet = 1;
             }
-            
-            break;
+            done = 1;
+            //break;
         } else {
             if (canton_for_lsblk(cs).v != canton_for_lsblk(ns).v) {
                 // ...------------||----
@@ -236,7 +237,7 @@ int lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int 
                         _add_trig(rett, tag_reserve_c2,  tvars->beginposmm +trg);
                     }
                 } else {
-                    rett->res_c2 = 1;
+                    if (trgbase>posloco) rett->res_c2 = 1;
                 }
                 // loco advance for power_c2 if (lmax-flen>)
                 trgbase = totallen + alen;
@@ -252,7 +253,7 @@ int lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int 
         }
     
         
-        int trg = totallen-tflen;
+        int trg = totallen+alen-tflen;
         if (needchok && trg>posloco && trg<=c1len) {
             // ----L xxxxxxx|xx-----|
             //                ^poshead
@@ -264,6 +265,8 @@ int lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int 
             first = 0;
            
         }
+        if (done) break;
+
         if (advancemm>maxadvancefortrig+maxmargin) {
             break;
         }

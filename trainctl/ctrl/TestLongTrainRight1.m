@@ -322,7 +322,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     rc = lt4_get_trigs(0, &tvars, tconf, 0, &rettrigs);
     //rc = ctrl3_check_front_sblks(0, &tvars, tconf, 0, &rettrigs);
     XCTAssert(rc==0);
-    const rettrigs_t expt1 = { 0, 0, 0, 0, 5, { {120+bmm,tag_reserve_c2}, {300+bmm, tag_need_c2},  {220 + bmm, tag_chkocc}, {340+bmm, tag_brake}, {400+bmm, tag_end_lsblk}}};
+    const rettrigs_t expt1 = { 0, 0, 0, 0, 5, { {220 + bmm, tag_chkocc}, {120+bmm,tag_reserve_c2}, {300+bmm, tag_need_c2},   {340+bmm, tag_brake}, {400+bmm, tag_end_lsblk}}};
     XCTAssert(!cmptrigs(&rettrigs, &expt1));
 }
 
@@ -415,7 +415,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     //rc = ctrl3_check_front_sblks(0, &tvars, tconf, 0, &rettrigs);
     XCTAssert(rc==0);
     // XXX should not have need_c2 AND stop_eot ?!!
-    const rettrigs_t expt4 = {0, 0, 1, 0, 5, {   {beg+300, tag_need_c2}, {beg+300,tag_stop_eot}, {beg+20, tag_chkocc}, {beg+140, tag_brake}, {beg+400, tag_end_lsblk}, }};
+    const rettrigs_t expt4 = {0, 0, 1, 0, 5, {   {beg+20, tag_chkocc}, {beg+300, tag_need_c2}, {beg+300,tag_stop_eot},    {beg+140, tag_brake}, {beg+400, tag_end_lsblk}, }};
     XCTAssert(!cmptrigs(&rettrigs, &expt4));
 
     // (D1) advance to first trig
@@ -425,7 +425,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     memset(&rettrigs, 0, sizeof(rettrigs_t));
     rc = lt4_get_trigs(0, &tvars, tconf, 0, &rettrigs);
     //rc = ctrl3_check_front_sblks(0, &tvars, tconf, 0, &rettrigs);
-    const rettrigs_t expt5 = {0, 0, 1, 0, 5, { {beg+100+20, tag_chkocc},  {beg+300,tag_stop_eot}, {beg+140, tag_brake}, {beg+400, tag_end_lsblk}, {beg+300, tag_need_c2}}};
+    const rettrigs_t expt5 = {0, 0, 1, 0, 5, { {beg+300, tag_need_c2},   {beg+100+20, tag_chkocc},  {beg+300,tag_stop_eot}, {beg+140, tag_brake}, {beg+400, tag_end_lsblk}, }};
     XCTAssert(!cmptrigs(&rettrigs, &expt5));
 
     
@@ -440,7 +440,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     rc = lt4_get_trigs(0, &tvars, tconf, 0, &rettrigs);
     //rc = ctrl3_check_front_sblks(0, &tvars, tconf, 0, &rettrigs);
     XCTAssert(rc==0);
-    const rettrigs_t expt4b = {0, 0, 1, 0, 5, { {20, tag_chkocc},    {300,tag_stop_eot}, {140, tag_brake}, {400, tag_end_lsblk}, {300, tag_need_c2}}};
+    const rettrigs_t expt4b = {0, 0, 1, 0, 5, { {20, tag_chkocc},  {300, tag_need_c2},   {300,tag_stop_eot}, {140, tag_brake}, {400, tag_end_lsblk}, }};
     XCTAssert(!cmptrigs(&rettrigs, &expt4b));
     
     

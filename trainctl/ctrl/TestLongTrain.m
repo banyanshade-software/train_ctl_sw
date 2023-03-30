@@ -184,7 +184,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     //rc = ctrl3_check_front_sblks(0, &tvars, tconf, 0, &rettrigs);
     int rc = lt4_get_trigs(0, &tvars, tconf, 0, &rettrigs);
     XCTAssert(rc==0);
-    const rettrigs_t expt1 = { 0, 0,  0, 0, 3,{{870, tag_chkocc}, {670, tag_reserve_c2}, {700,tag_need_c2}}};
+    const rettrigs_t expt1 = { 0, 0,  0, 0, 3, {{700,tag_need_c2}, {670, tag_reserve_c2}, {870, tag_chkocc}}};
     XCTAssert(!cmptrigs(&rettrigs, &expt1));
     
     
@@ -202,7 +202,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     //rc = ctrl3_check_front_sblks(0, &tvars, tconf, 0, &rettrigs);
     XCTAssert(rc>0);
     XCTAssert(rc==150);
-    const rettrigs_t expt2 = { 0, 0, 0, 0, 3, { {870, tag_chkocc}, {750,tag_stop_blk_wait}, {700, tag_need_c2}}};
+    const rettrigs_t expt2 = { 0, 0, 0, 0, 3, {  {700, tag_need_c2}, {750,tag_stop_blk_wait}, {870, tag_chkocc}}};
     XCTAssert(!cmptrigs(&rettrigs, &expt2));
     
     tvars._curposmm = 600+10;
@@ -213,7 +213,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     //rc = ctrl3_check_front_sblks(0, &tvars, tconf, 0, &rettrigs);
     XCTAssert(rc>0);
     XCTAssert(rc==140);
-    const rettrigs_t expt3 = {0, 0, 0, 0, 3, { {870, tag_chkocc},  {750,tag_stop_blk_wait}, {700, tag_need_c2}}};
+    const rettrigs_t expt3 = {0, 0, 0, 0, 3, {{700, tag_need_c2}, {750,tag_stop_blk_wait}, {870, tag_chkocc},  }};
     XCTAssert(!cmptrigs(&rettrigs, &expt3));
     
     tvars._curposmm = 600+160;

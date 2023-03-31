@@ -200,6 +200,9 @@ int lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int 
     
 #define _AFTER_LOCO(_trg)       (left ? ((_trg)<posloco) : ((_trg)>posloco) )
 #define _BEFORE_C1END(_trg)     (left ? ((_trg)>=0)      : ((_trg)<=c1len)  )
+
+#define _END_SBLK               (left ? (totallen) : (totallen+alen))
+#define _BEFORE_END_SBLK(_m)    (left ? (_END_SBLK+(_m)) : (_END_SBLK-(_m)) )
     
     for (;;) {
         // see what happens between advancemm and advancemm+clen
@@ -209,13 +212,13 @@ int lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int 
         //do we reach eot or blk wait ?
         if (ns.n == -1) {
             //set trig and return flags
-            int trgbase = totallen + alen - train_fwd_len;
+            int trgbase = _BEFORE_END_SBLK(train_fwd_len); //totallen + alen - train_fwd_len;
             int trg = _pose_sub(trgbase, margin_stop_len_mm, left); // trgbase-margin_stop_len_mm;
             if (_AFTER_LOCO(trg)) { // (trg > posloco) {
                 if (_BEFORE_C1END(trg)) { //trg <= c1len) {
                     _add_trig(rett, a ? tag_stop_blk_wait:tag_stop_eot, tvars->beginposmm+trg);
                 }
-                trg = trgbase-margin_stop_len_mm - brake_len_mm;
+                trg = _pose_sub(trgbase, margin_stop_len_mm+brake_len_mm, left); // trgbase-margin_stop_len_mm - brake_len_mm;
                 if (_AFTER_LOCO(trg)) { //(trg > posloco) {
                     if (_BEFORE_C1END(trg)) { //trg <= c1len) {
                         _add_trig(rett, tag_brake, tvars->beginposmm+trg);
@@ -236,7 +239,7 @@ int lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int 
             if (canton_for_lsblk(cs).v != ncanton.v) {
                 // ...------------||----
                 //   x
-                int trgbase = _pose_sub(totallen+alen, train_fwd_len, left); //totallen + alen - train_fwd_len;
+                int trgbase = _BEFORE_END_SBLK(train_fwd_len);  //totallen + alen - train_fwd_len;
                 int trg = _pose_sub(trgbase, margin_c2_len_mm, left); //trgbase-margin_c2_len_mm;
                 if (_AFTER_LOCO(trg)) { //(trg > posloco) {
                     if (_BEFORE_C1END(trg)) { //trg <= c1len) {
@@ -255,7 +258,7 @@ int lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int 
                 }
                 // loco advance for power_c2
                 if (is_not_powered(tidx, tvars, ncanton)) {
-                    trgbase = totallen + alen;
+                    trgbase = _BEFORE_END_SBLK(0); // totallen + alen;
                     trg = _pose_sub(trgbase, margin_c2_len_mm, left); //trg = trgbase-margin_c2_len_mm;
                     if (_AFTER_LOCO(trg)) { //trg > posloco) {
                         if (_BEFORE_C1END(trg)) { //trg <= c1len) {
@@ -277,7 +280,7 @@ int lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int 
         }
     
         
-        int trg = _pose_sub(totallen+alen, train_fwd_len, left); // totallen+alen-train_fwd_len;
+        int trg = _BEFORE_END_SBLK(train_fwd_len); // totallen+alen-train_fwd_len;
         //if (needchok && trg>posloco && trg<=c1len) {
         if (needchok && _AFTER_LOCO(trg) && _BEFORE_C1END(trg)) {
             // ----L xxxxxxx|xx-----|
@@ -288,7 +291,6 @@ int lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int 
         if (first) {
             nextc1 = ns;
             first = 0;
-           
         }
         if (done) break;
 

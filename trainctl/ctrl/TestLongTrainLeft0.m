@@ -86,13 +86,21 @@ static lsblk_num_t s14 = {14};
     tvars.beginposmm = beg;
     tvars._curposmm = 600+beg;
     
+    /*   b18  b19  b20     b22
+        | 20 | 20 | 30  | 700           |....
+                              xxxxL(100)
+                              150
+        | 20 + 20 + 30  +                       (70)
+                        +  (210)                brake at 210+150 = 360
+                        +  (50)                 stop at 50+150 = 200
+     */
     //ctrl3_get_next_sblks(0, &tvars, tconf);
     //XCTAssert(tvars.leftcars.numlsblk == 0);
     //XCTAssert(tvars.leftcars.rlen_mm == 10*(70-10-15)); //45
    
     rettrigs_t rettrigs = {0};
     //rc = ctrl3_check_front_sblks(0, &tvars, tconf, 1, &rettrigs);
-    rc = lt4_get_trigs(0, &tvars, tconf, 0, &rettrigs);
+    rc = lt4_get_trigs(0, &tvars, tconf, 1, &rettrigs);
     XCTAssert(rc==0);
     const rettrigs_t expt1 = { 0, 0, 0, 0, 4, {{150+beg, tag_chkocc}, {200+beg,tag_stop_eot}, {360+beg, tag_brake}, {0+beg,tag_end_lsblk}, {0,0}}};
     XCTAssert(!cmptrigs(&rettrigs, &expt1));

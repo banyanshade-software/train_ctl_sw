@@ -191,7 +191,16 @@ int lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int 
     for (;;) {
         // see what happens between advancemm and advancemm+clen
         int8_t a;
-        lsblk_num_t ns = next_lsblk_and_reserve(tidx, tvars, cs, left, &a, poshead+maxmargin>totallen+alen);
+        int r;
+        if (tvars->_sdir) {
+            r = poshead+maxmargin>totallen+alen;
+            if ((left &&(tvars->_sdir>0)) || (!left && (tvars->_sdir<0))) {
+                FatalError("BadDir", "bad dir lt4_get_trigs", Error_Abort);
+            }
+        } else {
+            r = poshead>totallen+alen;
+        }
+        lsblk_num_t ns = next_lsblk_and_reserve(tidx, tvars, cs, left, &a, r);
         
         //do we reach eot or blk wait ?
         if (ns.n == -1) {

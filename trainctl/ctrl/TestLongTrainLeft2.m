@@ -74,7 +74,13 @@ static const xtrnaddr_t to3 = { .v = 3};
 - (void) testLeft2
 {
     int rc;
-    
+    /*
+                   b28-----\
+     | b25    |     b26     | b27       |
+     | 400    |  400        | -400        |0
+                                 xxxL -50
+                                 150
+     */
     //ctrl3_get_next_sblks(0, &tvars, tconf);
     //XCTAssert(tvars.leftcars.numlsblk == 0);
     //XCTAssert(tvars.leftcars.rlen_mm == 400-50-150);
@@ -84,7 +90,7 @@ static const xtrnaddr_t to3 = { .v = 3};
     rc = lt4_get_trigs(0, &tvars, tconf, 1, &rettrigs);
     XCTAssert(rc==0);
     //XCTAssert(rc==10*(cp-15+7-12));
-    const rettrigs_t expt1 = { 0, 0, 0, 0, 2, {{-400+150, tag_chkocc}, {-400,tag_end_lsblk}, {0,0}, {0,0}}};
+    const rettrigs_t expt1 = { 0, 0, 1, 0, 2, {{-400+200, tag_need_c2}, {-400+150, tag_chkocc}, {0,0}, {0,0}}};
     XCTAssert(!cmptrigs(&rettrigs, &expt1));
 }
 

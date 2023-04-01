@@ -111,7 +111,7 @@ static const xtrnaddr_t to1 = { .v = 1};
     //{80, 90, 24, 90, 0},
     //{80, 00, 44, 1485, 1025},
     //{80, F0, C3, 1, 2}
-    EXPMSG_ITRIG({.from=MA1_CONTROL(), .to=MA3_UI_CTC, .cmd=CMD_TN_RESER_NOTIF, .v1=1, .v2=0},
+    EXPMSG_ITRIG(/*{.from=MA1_CONTROL(), .to=MA3_UI_CTC, .cmd=CMD_TN_RESER_NOTIF, .v1=1, .v2=0},*/
            {.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_C4, .subc=0x55,       .vb0=1, .vb1=0xFF, .vb2=0xFF, .vb3=0xFF},
            {.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_TARGET_SPEED, .v1=90, .v2=0},
            {.to=MA0_CANTON(0), .subc=1, .from=MA1_CTRL(0), .cmd=CMD_POSE_SET_TRIG, .va16=1485, .vcu8=tag_chkocc, .vb8=1},
@@ -187,7 +187,7 @@ static const xtrnaddr_t to1 = { .v = 1};
     XCTAssert(tvars._desired_signed_speed == 90);
     NSString *s = dump_msgbuf(0);
     NSLog(@"...%@", s); //.{80, F0, C3, 3, 2}
-    EXPMSG({.from=MA1_CONTROL(), .to=MA3_UI_CTC, .cmd=CMD_TN_RESER_NOTIF, .v1=1, .v2=0},
+    EXPMSG(/*{.from=MA1_CONTROL(), .to=MA3_UI_CTC, .cmd=CMD_TN_RESER_NOTIF, .v1=1, .v2=0},*/
            {.to=MA3_UI_GEN,      .from=MA1_CTRL(0), .cmd=CMD_TRSTATE_NOTIF,    .v1=train_state_blkwait, .v2=train_state_station});
 }
 

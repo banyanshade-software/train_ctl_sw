@@ -146,6 +146,14 @@ static int is_not_powered(int tidx, train_ctrl_t *tvars, xblkaddr_t ncanton)
 
 int lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int left,  rettrigs_t *rett)
 {
+    int stopped = 0;
+    if (tvars->_sdir) {
+        if ((left &&(tvars->_sdir>0)) || (!left && (tvars->_sdir<0))) {
+            FatalError("BadDir", "bad dir lt4_get_trigs", Error_Abort);
+        }
+    } else {
+        stopped = 1;
+    }
     
     int maxadvancefortrig;
     lsblk_num_t c1 = tvars->c1_sblk;
@@ -193,12 +201,12 @@ int lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int 
         int8_t a;
         int r;
         if (tvars->_sdir) {
-            r = poshead+maxmargin>totallen+alen;
+            r = poshead+maxmargin > totallen+alen;
             if ((left &&(tvars->_sdir>0)) || (!left && (tvars->_sdir<0))) {
                 FatalError("BadDir", "bad dir lt4_get_trigs", Error_Abort);
             }
         } else {
-            r = poshead>totallen+alen;
+            r = poshead > totallen+alen;
         }
         lsblk_num_t ns = next_lsblk_and_reserve(tidx, tvars, cs, left, &a, r);
         
@@ -232,6 +240,9 @@ int lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int 
             // reserve ns if train is on it
             if (poshead>totallen+alen) {
                 occupency_set_occupied_car(ncanton, tidx, ns, tvars->_sdir);
+                if (!left) {
+                    //tvars->last_right = ns;
+                }
             } else {
                 
             }
@@ -291,8 +302,10 @@ int lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int 
             nextc1 = ns;
             first = 0;
         }
-        if (done) break;
-
+        if (done) {
+            break;
+        }
+        
         if (advancemm>maxadvancefortrig+maxmargin) {
             break;
         }

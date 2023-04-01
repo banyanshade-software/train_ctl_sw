@@ -118,6 +118,7 @@ void ctrl3_init_train(int tidx, train_ctrl_t *tvars, lsblk_num_t sblk, int posmm
     tvars->pow_c2_future.v = 0xFF;
     tvars->res_c2_future.v = 0xFF;
     tvars->can1_xaddr = canton_for_lsblk(sblk);
+    tvars->freelsblk.n = -1;
     
     if (on) turn_train_on(tidx, tvars);
 

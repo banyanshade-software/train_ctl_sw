@@ -89,8 +89,11 @@ static void _add_endlsblk_trig(train_ctrl_t *tvars, int left, int c1len,  rettri
     }
 }
 
-lsblk_num_t next_lsblk_and_reserve(int tidx, train_ctrl_t *tvars, lsblk_num_t sblknum, uint8_t left, int8_t *palternate)
+lsblk_num_t next_lsblk_and_reserve(int tidx, train_ctrl_t *tvars, lsblk_num_t sblknum, uint8_t left, int8_t *palternate, uint8_t doreserve)
 {
+    if (doreserve) {
+        printf("debug");
+    }
     if (palternate)  *palternate = 0;
     int back = 0;
     if ((tvars->_sdir<0) && !left) back = 1;
@@ -105,11 +108,13 @@ lsblk_num_t next_lsblk_and_reserve(int tidx, train_ctrl_t *tvars, lsblk_num_t sb
     if (!back) {
         int kt = occupency_turnout_reservedby(tn);
         if (kt == -1) {
-            int rc = occupency_turnout_reserve(tn, tidx);
-            if (rc) {
-                // cant reserve
-                a.n = -1;
-                return a;
+            if (doreserve) {
+                int rc = occupency_turnout_reserve(tn, tidx);
+                if (rc) {
+                    // cant reserve
+                    a.n = -1;
+                    return a;
+                }
             }
         } else if (kt != tidx) {
             a.n = -1;
@@ -159,7 +164,8 @@ int lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int 
     int train_fwd_len = (left ? tconf->trainlen_left_cm : tconf->trainlen_right_cm) * 10;
     //int maxflen = train_fwd_len+maxmargin;
 
- 
+    occupency_set_occupied(canton_for_lsblk(c1), tidx, c1, tvars->_sdir);
+
     
     int clen = maxadvancefortrig;
     int alen = c1len;
@@ -185,7 +191,7 @@ int lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int 
     for (;;) {
         // see what happens between advancemm and advancemm+clen
         int8_t a;
-        lsblk_num_t ns = next_lsblk_and_reserve(tidx, tvars, cs, left, &a);
+        lsblk_num_t ns = next_lsblk_and_reserve(tidx, tvars, cs, left, &a, poshead+maxmargin>totallen+alen);
         
         //do we reach eot or blk wait ?
         if (ns.n == -1) {
@@ -214,6 +220,12 @@ int lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int 
             //break;
         } else {
             xblkaddr_t ncanton = canton_for_lsblk(ns);
+            // reserve ns if train is on it
+            if (poshead>totallen+alen) {
+                occupency_set_occupied_car(ncanton, tidx, ns, tvars->_sdir);
+            } else {
+                
+            }
             if (canton_for_lsblk(cs).v != ncanton.v) {
                 // ...------------||----
                 //   x

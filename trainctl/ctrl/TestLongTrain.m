@@ -544,7 +544,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     rettrigs_t rettrigs = {0};
     int rc = lt4_get_trigs(0, &tvars, tconf, 1, &rettrigs);
     XCTAssert(rc==0);
-    const rettrigs_t expt1 = {0, 0, 0, 1, 2, { {200, tag_chkocc}, {400, tag_reserve_c2}, {0,0}}};
+    const rettrigs_t expt1 = {0, 0, 0, 1, 2, {  {400, tag_reserve_c2},{200, tag_chkocc}, {0,0}}};
     XCTAssert(!cmptrigs(&rettrigs, &expt1));
     
     // ------------------------

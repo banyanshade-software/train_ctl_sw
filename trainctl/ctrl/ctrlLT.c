@@ -880,6 +880,8 @@ static void freeback(int tidx, train_ctrl_t *tvars)
         tvars->freelsblk.n = -1;
     }
 }
+
+
 static int _train_check_dir(int tidx, train_ctrl_t *tvars, int sdir, rettrigs_t *rett)
 {
     if (!sdir) {

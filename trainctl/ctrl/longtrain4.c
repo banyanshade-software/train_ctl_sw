@@ -59,18 +59,22 @@ static const int margin_c2_len_mm = 200;
 
  */
 
-static void _add_trig(rettrigs_t *rett, pose_trig_tag_t tag, int pos)
+static void _add_trig(train_ctrl_t *tvars, int left, int c1len, rettrigs_t *rett, pose_trig_tag_t tag, int pos)
 {
     if (rett->ntrig>=NUMTRIGS) {
         FatalError("ntrg", "too many trigs", Error_Abort);
         return;
     }
-    rett->trigs[rett->ntrig].posmm = pos;
+    if (!left) {
+        rett->trigs[rett->ntrig].posmm = pos+tvars->beginposmm;
+    } else {
+        rett->trigs[rett->ntrig].posmm = c1len-pos+tvars->beginposmm;
+    }
     rett->trigs[rett->ntrig].tag = tag;
     rett->ntrig++;
 }
 
-static void _add_endlsblk_trig(rettrigs_t *rett, lsblk_num_t c1, lsblk_num_t ns, int pos)
+static void _add_endlsblk_trig(train_ctrl_t *tvars, int left, int c1len,  rettrigs_t *rett, lsblk_num_t c1, lsblk_num_t ns, int pos)
 {
     if (ns.n == -1) {
         return;
@@ -81,7 +85,7 @@ static void _add_endlsblk_trig(rettrigs_t *rett, lsblk_num_t c1, lsblk_num_t ns,
     int ina1 = get_lsblk_ina3221(c1);
     int ina2 = get_lsblk_ina3221(ns);
     if ((ina1 == ina2) || (ina2 == 0xFF)) {
-        _add_trig(rett, tag_end_lsblk, pos);
+        _add_trig(tvars, left, c1len, rett, tag_end_lsblk, pos);
     }
 }
 
@@ -134,7 +138,7 @@ static int is_not_powered(int tidx, train_ctrl_t *tvars, xblkaddr_t ncanton)
 
 static int _pose_sub(int val, int valsub, int left)
 {
-    if (!left) {
+    if (1 || !left) {
         return val-valsub;
     } else {
         return val+valsub;
@@ -188,9 +192,10 @@ int lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int 
     int alen = c1len;
     int totallen = 0;//c1len;
     int rc = 0;
-    const int posloco = tvars->_curposmm - tvars->beginposmm; // curposmm, without beginposmm
+    const int posloco = left ? (c1len - tvars->_curposmm + tvars->beginposmm) : ( tvars->_curposmm - tvars->beginposmm); // curposmm, without beginposmm
     //const int poshead = left ? posloco-train_fwd_len : posloco+train_fwd_len;
-    const int poshead = _pose_sub(posloco, -train_fwd_len, left);
+    //const int poshead = _pose_sub(posloco, -train_fwd_len, left);
+    const int poshead = posloco + train_fwd_len; // _pose_sub(posloco, -train_fwd_len, left);
     int advancemm = 0;
     lsblk_num_t cs = tvars->c1_sblk;
     int first = 1;
@@ -198,11 +203,11 @@ int lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int 
     int needchok = 1;
     int done = 0;
     
-#define _AFTER_LOCO(_trg)       (left ? ((_trg)<posloco) : ((_trg)>posloco) )
-#define _BEFORE_C1END(_trg)     (left ? ((_trg)>=0)      : ((_trg)<=c1len)  )
+#define _AFTER_LOCO(_trg)       (0 ? ((_trg)<posloco) : ((_trg)>posloco) )
+#define _BEFORE_C1END(_trg)     (0 ? ((_trg)>=0)      : ((_trg)<=c1len)  )
 
-#define _END_SBLK               (left ? (totallen) : (totallen+alen))
-#define _BEFORE_END_SBLK(_m)    (left ? (_END_SBLK+(_m)) : (_END_SBLK-(_m)) )
+#define _END_SBLK               (0 ? (totallen) : (totallen+alen))
+#define _BEFORE_END_SBLK(_m)    (0 ? (_END_SBLK+(_m)) : (_END_SBLK-(_m)) )
     
     for (;;) {
         // see what happens between advancemm and advancemm+clen
@@ -216,12 +221,12 @@ int lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int 
             int trg = _pose_sub(trgbase, margin_stop_len_mm, left); // trgbase-margin_stop_len_mm;
             if (_AFTER_LOCO(trg)) { // (trg > posloco) {
                 if (_BEFORE_C1END(trg)) { //trg <= c1len) {
-                    _add_trig(rett, a ? tag_stop_blk_wait:tag_stop_eot, tvars->beginposmm+trg);
+                    _add_trig(tvars, left, c1len, rett, a ? tag_stop_blk_wait:tag_stop_eot, trg);
                 }
                 trg = _pose_sub(trgbase, margin_stop_len_mm+brake_len_mm, left); // trgbase-margin_stop_len_mm - brake_len_mm;
                 if (_AFTER_LOCO(trg)) { //(trg > posloco) {
                     if (_BEFORE_C1END(trg)) { //trg <= c1len) {
-                        _add_trig(rett, tag_brake, tvars->beginposmm+trg);
+                        _add_trig(tvars, left, c1len, rett, tag_brake, trg);
                     }
                 } else {
                     // pos+margin_stop_len_mm <= totallen
@@ -243,7 +248,7 @@ int lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int 
                 int trg = _pose_sub(trgbase, margin_c2_len_mm, left); //trgbase-margin_c2_len_mm;
                 if (_AFTER_LOCO(trg)) { //(trg > posloco) {
                     if (_BEFORE_C1END(trg)) { //trg <= c1len) {
-                        _add_trig(rett, tag_reserve_c2,  tvars->beginposmm +trg);
+                        _add_trig(tvars, left, c1len, rett, tag_reserve_c2,  trg);
                         if (tvars->res_c2_future.v == 0xFF) {
                             tvars->res_c2_future = ncanton;
                         }
@@ -262,7 +267,7 @@ int lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int 
                     trg = _pose_sub(trgbase, margin_c2_len_mm, left); //trg = trgbase-margin_c2_len_mm;
                     if (_AFTER_LOCO(trg)) { //trg > posloco) {
                         if (_BEFORE_C1END(trg)) { //trg <= c1len) {
-                            _add_trig(rett, tag_need_c2,  tvars->beginposmm +trg);
+                            _add_trig(tvars, left, c1len, rett, tag_need_c2,  trg);
                             if (tvars->pow_c2_future.v == 0xFF) {
                                 tvars->pow_c2_future = ncanton;
                             }
@@ -285,7 +290,7 @@ int lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int 
         if (needchok && _AFTER_LOCO(trg) && _BEFORE_C1END(trg)) {
             // ----L xxxxxxx|xx-----|
             //                ^poshead
-            _add_trig(rett, tag_chkocc, tvars->beginposmm +trg);
+            _add_trig(tvars, left, c1len, rett, tag_chkocc, trg);
             needchok=0;
         }
         if (first) {
@@ -304,11 +309,11 @@ int lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int 
         cs = ns;
     }
     
-    if (!left) {
-        _add_endlsblk_trig(rett, tvars->c1_sblk, nextc1, tvars->beginposmm+c1len);
+    if (1 || !left) {
+        _add_endlsblk_trig(tvars, left, c1len, rett, tvars->c1_sblk, nextc1, c1len);
     } else {
         // left
-        _add_endlsblk_trig(rett, tvars->c1_sblk, nextc1, tvars->beginposmm);
+        _add_endlsblk_trig(tvars, left, c1len, rett, tvars->c1_sblk, nextc1, 0);
     }
     
     return rc;

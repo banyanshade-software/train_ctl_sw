@@ -81,7 +81,7 @@ static const xtrnaddr_t to3 = { .v = 3};
    
     rettrigs_t rettrigs = {0};
     //rc = ctrl3_check_front_sblks(0, &tvars, tconf, 1, &rettrigs);
-    rc = lt4_get_trigs(0, &tvars, tconf, 0, &rettrigs);
+    rc = lt4_get_trigs(0, &tvars, tconf, 1, &rettrigs);
     XCTAssert(rc==0);
     //XCTAssert(rc==10*(cp-15+7-12));
     const rettrigs_t expt1 = { 0, 0, 0, 0, 2, {{-400+150, tag_chkocc}, {-400,tag_end_lsblk}, {0,0}, {0,0}}};

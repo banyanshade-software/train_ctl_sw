@@ -143,8 +143,17 @@ static int is_not_powered(int tidx, train_ctrl_t *tvars, xblkaddr_t ncanton)
 
 
 
+int lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf,  rettrigs_t *rett)
+{
+    if (!tvars->_sdir) {
+        return 0;
+    }
+    
+    _lt4_get_trigs(tidx, tvars, tconf, (tvars->_sdir<0) ? 0 : 1, rett, 1);
+    return _lt4_get_trigs(tidx, tvars, tconf, (tvars->_sdir<0) ? 1 : 0, rett, 0);
+}
 
-int lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int left,  rettrigs_t *rett)
+int _lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int left,  rettrigs_t *rett, int checkfreeback)
 {
     int stopped = 0;
     if (tvars->_sdir) {
@@ -212,76 +221,80 @@ int lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int 
         
         //do we reach eot or blk wait ?
         if (ns.n == -1) {
-            //set trig and return flags
-            int trgbase = _BEFORE_END_SBLK(train_fwd_len); //totallen + alen - train_fwd_len;
-            int trg = trgbase - margin_stop_len_mm; // trgbase-margin_stop_len_mm;
-            if (_AFTER_LOCO(trg)) { // (trg > posloco) {
-                if (_BEFORE_C1END(trg)) { //trg <= c1len) {
-                    _add_trig(tvars, left, c1len, rett, a ? tag_stop_blk_wait:tag_stop_eot, trg);
-                }
-                trg = trgbase-margin_stop_len_mm - brake_len_mm;
-                if (_AFTER_LOCO(trg)) { //(trg > posloco) {
+            if (!checkfreeback) {
+                //set trig and return flags
+                int trgbase = _BEFORE_END_SBLK(train_fwd_len); //totallen + alen - train_fwd_len;
+                int trg = trgbase - margin_stop_len_mm; // trgbase-margin_stop_len_mm;
+                if (_AFTER_LOCO(trg)) { // (trg > posloco) {
                     if (_BEFORE_C1END(trg)) { //trg <= c1len) {
-                        _add_trig(tvars, left, c1len, rett, tag_brake, trg);
+                        _add_trig(tvars, left, c1len, rett, a ? tag_stop_blk_wait:tag_stop_eot, trg);
+                    }
+                    trg = trgbase-margin_stop_len_mm - brake_len_mm;
+                    if (_AFTER_LOCO(trg)) { //(trg > posloco) {
+                        if (_BEFORE_C1END(trg)) { //trg <= c1len) {
+                            _add_trig(tvars, left, c1len, rett, tag_brake, trg);
+                        }
+                    } else {
+                        // pos+margin_stop_len_mm <= totallen
+                        rc = brake_len_mm+trg-posloco;
                     }
                 } else {
-                    // pos+margin_stop_len_mm <= totallen
-                    rc = brake_len_mm+trg-posloco;
+                    rc = -1;
+                    if (a) rett->isocc = 1;
+                    else   rett->isoet = 1;
                 }
-            } else {
-                rc = -1;
-                if (a) rett->isocc = 1;
-                else   rett->isoet = 1;
             }
             done = 1;
             //break;
         } else {
             xblkaddr_t ncanton = canton_for_lsblk(ns);
-            // reserve ns if train is on it
-            if (poshead>totallen+alen) {
-                occupency_set_occupied_car(ncanton, tidx, ns, tvars->_sdir);
-                if (!left) {
-                    //tvars->last_right = ns;
-                }
-            } else {
-                
-            }
-            if (canton_for_lsblk(cs).v != ncanton.v) {
-                // ...------------||----
-                //   x
-                int trgbase = _BEFORE_END_SBLK(train_fwd_len);  //totallen + alen - train_fwd_len;
-                int trg = trgbase-margin_c2_len_mm; //trgbase-margin_c2_len_mm;
-                if (_AFTER_LOCO(trg)) { //(trg > posloco) {
-                    if (_BEFORE_C1END(trg)) { //trg <= c1len) {
-                        _add_trig(tvars, left, c1len, rett, tag_reserve_c2,  trg);
-                        if (tvars->res_c2_future.v == 0xFF) {
-                            tvars->res_c2_future = ncanton;
-                        }
+            if (!checkfreeback) {
+                // reserve ns if train is on it
+                if (poshead>totallen+alen) {
+                    occupency_set_occupied_car(ncanton, tidx, ns, tvars->_sdir);
+                    if (!left) {
+                        //tvars->last_right = ns;
                     }
                 } else {
-                    if (_AFTER_LOCO(trgbase)) { //(trgbase>posloco) {
-                        rett->res_c2 = 1;
-                        if (tvars->res_c2_future.v == 0xFF) {
-                            tvars->res_c2_future = ncanton;
-                        }
-                    }
+                    
                 }
-                // loco advance for power_c2
-                if (is_not_powered(tidx, tvars, ncanton)) {
-                    trgbase = _BEFORE_END_SBLK(0); // totallen + alen;
-                    trg = trgbase-margin_c2_len_mm; //trg = trgbase-margin_c2_len_mm;
-                    if (_AFTER_LOCO(trg)) { //trg > posloco) {
+                if (canton_for_lsblk(cs).v != ncanton.v) {
+                    // ...------------||----
+                    //   x
+                    int trgbase = _BEFORE_END_SBLK(train_fwd_len);  //totallen + alen - train_fwd_len;
+                    int trg = trgbase-margin_c2_len_mm; //trgbase-margin_c2_len_mm;
+                    if (_AFTER_LOCO(trg)) { //(trg > posloco) {
                         if (_BEFORE_C1END(trg)) { //trg <= c1len) {
-                            _add_trig(tvars, left, c1len, rett, tag_need_c2,  trg);
-                            if (tvars->pow_c2_future.v == 0xFF) {
-                                tvars->pow_c2_future = ncanton;
+                            _add_trig(tvars, left, c1len, rett, tag_reserve_c2,  trg);
+                            if (tvars->res_c2_future.v == 0xFF) {
+                                tvars->res_c2_future = ncanton;
                             }
                         }
                     } else {
-                        if (_AFTER_LOCO(trgbase)) { //trgbase> posloco) {
-                            rett->power_c2 = 1;
-                            if (tvars->pow_c2_future.v == 0xFF) {
-                                tvars->pow_c2_future = ncanton;
+                        if (_AFTER_LOCO(trgbase)) { //(trgbase>posloco) {
+                            rett->res_c2 = 1;
+                            if (tvars->res_c2_future.v == 0xFF) {
+                                tvars->res_c2_future = ncanton;
+                            }
+                        }
+                    }
+                    // loco advance for power_c2
+                    if (is_not_powered(tidx, tvars, ncanton)) {
+                        trgbase = _BEFORE_END_SBLK(0); // totallen + alen;
+                        trg = trgbase-margin_c2_len_mm; //trg = trgbase-margin_c2_len_mm;
+                        if (_AFTER_LOCO(trg)) { //trg > posloco) {
+                            if (_BEFORE_C1END(trg)) { //trg <= c1len) {
+                                _add_trig(tvars, left, c1len, rett, tag_need_c2,  trg);
+                                if (tvars->pow_c2_future.v == 0xFF) {
+                                    tvars->pow_c2_future = ncanton;
+                                }
+                            }
+                        } else {
+                            if (_AFTER_LOCO(trgbase)) { //trgbase> posloco) {
+                                rett->power_c2 = 1;
+                                if (tvars->pow_c2_future.v == 0xFF) {
+                                    tvars->pow_c2_future = ncanton;
+                                }
                             }
                         }
                     }
@@ -316,8 +329,9 @@ int lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int 
         cs = ns;
     }
     
-    _add_endlsblk_trig(tvars, left, c1len, rett, tvars->c1_sblk, nextc1, c1len);
-    
+    if (!checkfreeback) {
+        _add_endlsblk_trig(tvars, left, c1len, rett, tvars->c1_sblk, nextc1, c1len);
+    }
     return rc;
 }
 

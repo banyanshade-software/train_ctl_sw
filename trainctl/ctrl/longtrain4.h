@@ -25,7 +25,9 @@ typedef struct {
     struct sttrig trigs[NUMTRIGS];
 } rettrigs_t;
 
-int lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int left,  rettrigs_t *rett);
+int lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf,  rettrigs_t *rett);
+
+int _lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int left,  rettrigs_t *rett, int checkfreeback);
 
 
 int lt4_check_back(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int left, rettrigs_t *rett);

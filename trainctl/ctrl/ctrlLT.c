@@ -167,9 +167,9 @@ void turn_train_on(int tidx, train_ctrl_t *tvars)
     // lt4_get_trigs() only to reserve block, rett is ignored
     rettrigs_t rett = {0};
     rett.ntrig = 0;
-    lt4_get_trigs(tidx, tvars, conf, 0, &rett);
+    _lt4_get_trigs(tidx, tvars, conf, 0, &rett, 0);
     rett.ntrig = 0;
-    lt4_get_trigs(tidx, tvars, conf, 1, &rett);
+    _lt4_get_trigs(tidx, tvars, conf, 1, &rett, 0);
 
     _set_state(tidx, tvars, train_state_station);
 
@@ -891,7 +891,7 @@ static int _train_check_dir(int tidx, train_ctrl_t *tvars, int sdir, rettrigs_t 
     freeback(tidx, tvars);
     
     const conf_train_t *conf = conf_train_get(tidx);
-    int rc2 =  lt4_get_trigs(tidx, tvars, conf,  (sdir<0) ? 1 : 0,  rett);
+    int rc2 =  lt4_get_trigs(tidx, tvars, conf,   rett);
 
     
     freeback(tidx, tvars);

@@ -91,8 +91,8 @@ static lsblk_num_t s14 = {14};
     //XCTAssert(tvars.rightcars.rlen_mm == 10*(70-10-15)); //45
    
     rettrigs_t rettrigs = {0};
-    //rc = ctrl3_check_front_sblks(0, &tvars, tconf, 0, &rettrigs);
-    rc = lt4_get_trigs(0, &tvars, tconf, 0, &rettrigs);
+    //rc = ctrl3_check_front_sblks(0, &tvars, tconf, 0, &rettrigs, 0);
+    rc = _lt4_get_trigs(0, &tvars, tconf, 0, &rettrigs, 0);
     XCTAssert(rc==0);
     const rettrigs_t expt1 = { 0, 0, 0, 0, 4, {{550+beg, tag_chkocc}, {500+beg,tag_stop_eot}, {340+beg, tag_brake}, {700+beg,tag_end_lsblk}, {0,0}}};
     XCTAssert(!cmptrigs(&rettrigs, &expt1));
@@ -165,7 +165,7 @@ static lsblk_num_t s14 = {14};
     int leftlen = 30-(tconf->trainlen_left_cm*10-posmm);
     rettrigs_t rettrigs = {0};
     //rc = ctrl3_check_back_sblks(0, &tvars, tconf, 0, &rettrigs);
-    rc = lt4_get_trigs(0, &tvars, tconf, 0, &rettrigs);
+    rc = _lt4_get_trigs(0, &tvars, tconf, 0, &rettrigs, 0);
     XCTAssert(rc==0);
     const rettrigs_t expt1 = { 0, 0, 0, 0, 1, {{posmm+beg+30-leftlen, tag_free_back}, {0,0}}};
     XCTAssert(!cmptrigs(&rettrigs, &expt1));
@@ -199,7 +199,7 @@ static lsblk_num_t s14 = {14};
     XCTAssert(tvars.leftcars.rlen_mm == posmm-120);*/
     rettrigs_t rettrigs = {0};
     //rc = ctrl3_check_back_sblks(0, &tvars, tconf, 0, &rettrigs);
-    rc = lt4_get_trigs(0, &tvars, tconf, 0, &rettrigs);
+    rc = _lt4_get_trigs(0, &tvars, tconf, 0, &rettrigs, 0);
 
     XCTAssert(rc==0);
     const rettrigs_t expt1 = { 0, 0, 0, 0, 0, {{0,0}, {0,0}}};
@@ -276,7 +276,7 @@ static lsblk_num_t s14 = {14};
    
     rettrigs_t rettrigs = {0};
     //rc = ctrl3_check_front_sblks(0, &tvars, tconf, 0, &rettrigs);
-    rc = lt4_get_trigs(0, &tvars, tconf, 0, &rettrigs);
+    rc = _lt4_get_trigs(0, &tvars, tconf, 0, &rettrigs, 0);
     XCTAssert(rc>0);
     XCTAssert(rc==10*(16-(cp-49+15)));
     const rettrigs_t expt1 = { 0, 0, 0, 0, 3, {{550+beg, tag_chkocc}, {500+beg,tag_stop_eot}, {700+beg,tag_end_lsblk}, {0,0}, {0,0}}};
@@ -329,7 +329,7 @@ static lsblk_num_t s14 = {14};
    
     rettrigs_t rettrigs = {0};
     //rc = ctrl3_check_front_sblks(0, &tvars, tconf, 0, &rettrigs);
-    rc = lt4_get_trigs(0, &tvars, tconf, 0, &rettrigs);
+    rc = _lt4_get_trigs(0, &tvars, tconf, 0, &rettrigs, 0);
     XCTAssert(rc==0);
     const rettrigs_t expt1 = { 0, 0, 0, 0, 4, {{550+beg, tag_chkocc}, {500+beg,tag_stop_eot}, {340+beg, tag_brake}, {700+beg,tag_end_lsblk}, {0,0}, {0,0}}};
     XCTAssert(!cmptrigs(&rettrigs, &expt1));
@@ -373,7 +373,7 @@ static lsblk_num_t s14 = {14};
     }*/
     rettrigs_t rettrigs = {0};
     //rc = ctrl3_check_front_sblks(0, &tvars, tconf, 0, &rettrigs);
-    rc = lt4_get_trigs(0, &tvars, tconf, 0, &rettrigs);
+    rc = _lt4_get_trigs(0, &tvars, tconf, 0, &rettrigs, 0);
     XCTAssert(rc<0);
     if (b) {
         const rettrigs_t expt1 = { 1, 0, 0, 0, 2, {{580+beg, tag_chkocc},  {700+beg,tag_end_lsblk}, {0,0}, {0,0}}};

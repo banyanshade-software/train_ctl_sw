@@ -319,7 +319,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     //XCTAssert(tvars.rightcars.rlen_mm == 10*(40-18-cpos));
    
     rettrigs_t rettrigs = {0};
-    rc = lt4_get_trigs(0, &tvars, tconf, 0, &rettrigs);
+    rc = _lt4_get_trigs(0, &tvars, tconf, 0, &rettrigs, 0);
     //rc = ctrl3_check_front_sblks(0, &tvars, tconf, 0, &rettrigs);
     XCTAssert(rc==0);
     const rettrigs_t expt1 = { 0, 0, 0, 0, 5, { {220 + bmm, tag_chkocc}, {120+bmm,tag_reserve_c2}, {300+bmm, tag_need_c2},   {340+bmm, tag_brake}, {400+bmm, tag_end_lsblk}}};
@@ -347,8 +347,8 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     //XCTAssert(tvars.rightcars.rlen_mm == 10*(40+10-18-cpos));
    
     rettrigs_t rettrigs = {0};
-    //rc = ctrl3_check_front_sblks(0, &tvars, tconf, 0, &rettrigs);
-    rc = lt4_get_trigs(0, &tvars, tconf, 0, &rettrigs);
+    //rc = ctrl3_check_front_sblks(0, &tvars, tconf, 0, &rettrigs, 0);
+    rc = _lt4_get_trigs(0, &tvars, tconf, 0, &rettrigs, 0);
 
     XCTAssert(rc==0);
     const rettrigs_t expt1 = { 0, 0, 1, 1, 3, {{320 + bmm, tag_chkocc}, {340+bmm, tag_brake},  {400+bmm, tag_end_lsblk}}};
@@ -386,8 +386,8 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     //XCTAssert(tvars.rightcars.rlen_mm == 20);
    
     rettrigs_t rettrigs = {0};
-    rc = lt4_get_trigs(0, &tvars, tconf, 0, &rettrigs);
-    //rc = ctrl3_check_front_sblks(0, &tvars, tconf, 0, &rettrigs);
+    rc = _lt4_get_trigs(0, &tvars, tconf, 0, &rettrigs, 0);
+    //rc = ctrl3_check_front_sblks(0, &tvars, tconf, 0, &rettrigs, 0);
     XCTAssert(rc==0);
     const rettrigs_t expt1 = { 0, 0, 0, 0, 2, {{220+bmm, tag_chkocc}, {520+bmm, tag_reserve_c2}, {0,0}}};
     XCTAssert(!cmptrigs(&rettrigs, &expt1));
@@ -398,7 +398,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     //XCTAssert(tvars.rightcars.rlen_mm == 400);
     memset(&rettrigs, 0, sizeof(rettrigs_t));
     //rc = ctrl3_check_front_sblks(0, &tvars, tconf, 0, &rettrigs);
-    rc = lt4_get_trigs(0, &tvars, tconf, 0, &rettrigs);
+    rc = _lt4_get_trigs(0, &tvars, tconf, 0, &rettrigs, 0);
     XCTAssert(rc==0);
     const rettrigs_t expt3 = {0, 0, 0, 0, 1, { {520+bmm, tag_reserve_c2},  {0,0}, {0, 0}}};
     XCTAssert(!cmptrigs(&rettrigs, &expt3));
@@ -411,7 +411,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     //ctrl3_get_next_sblks(0, &tvars, tconf);
     //XCTAssert(tvars.rightcars.rlen_mm == 20);
     memset(&rettrigs, 0, sizeof(rettrigs_t));
-    rc = lt4_get_trigs(0, &tvars, tconf, 0, &rettrigs);
+    rc = _lt4_get_trigs(0, &tvars, tconf, 0, &rettrigs, 0);
     //rc = ctrl3_check_front_sblks(0, &tvars, tconf, 0, &rettrigs);
     XCTAssert(rc==0);
     // XXX should not have need_c2 AND stop_eot ?!!
@@ -423,7 +423,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     //ctrl3_get_next_sblks(0, &tvars, tconf);
     //XCTAssert(tvars.rightcars.rlen_mm == 100);
     memset(&rettrigs, 0, sizeof(rettrigs_t));
-    rc = lt4_get_trigs(0, &tvars, tconf, 0, &rettrigs);
+    rc = _lt4_get_trigs(0, &tvars, tconf, 0, &rettrigs, 0);
     //rc = ctrl3_check_front_sblks(0, &tvars, tconf, 0, &rettrigs);
     const rettrigs_t expt5 = {0, 0, 1, 0, 5, { {beg+300, tag_need_c2},   {beg+100+20, tag_chkocc},  {beg+300,tag_stop_eot}, {beg+140, tag_brake}, {beg+400, tag_end_lsblk}, }};
     XCTAssert(!cmptrigs(&rettrigs, &expt5));
@@ -437,7 +437,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     //ctrl3_get_next_sblks(0, &tvars, tconf);
     //XCTAssert(tvars.rightcars.rlen_mm == 20);
     memset(&rettrigs, 0, sizeof(rettrigs_t));
-    rc = lt4_get_trigs(0, &tvars, tconf, 0, &rettrigs);
+    rc = _lt4_get_trigs(0, &tvars, tconf, 0, &rettrigs, 0);
     //rc = ctrl3_check_front_sblks(0, &tvars, tconf, 0, &rettrigs);
     XCTAssert(rc==0);
     const rettrigs_t expt4b = {0, 0, 1, 0, 5, { {20, tag_chkocc},  {300, tag_need_c2},   {300,tag_stop_eot}, {140, tag_brake}, {400, tag_end_lsblk}, }};
@@ -467,7 +467,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     
         
     rettrigs_t rettrigs = {0};
-    rc = ctrl3_check_front_sblks(0, &tvars, tconf, 0, &rettrigs);
+    rc = ctrl3_check_front_sblks(0, &tvars, tconf, 0, &rettrigs, 0);
     XCTAssert(rc==0);
     const rettrigs_t expt1 = {0, 0, { {87, tag_chkocc}, {0, 0}, {0,0}}};
     XCTAssert(!memcmp(&rettrigs, &expt1, sizeof(rettrigs_t)));
@@ -479,7 +479,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     XCTAssert(!rc);
     XCTAssert(tvars.rightcars.rlen_cm == 90-87+45-48+54); // 54
 
-    rc = ctrl3_check_front_sblks(0, &tvars, tconf, 0, &rettrigs);
+    rc = ctrl3_check_front_sblks(0, &tvars, tconf, 0, &rettrigs, 0);
     XCTAssert(rc==0);
     const rettrigs_t expt2 = {0, 0, { {0, 0}, {0, 0}, {0,0}}};
     // no trig until c1 changes
@@ -496,7 +496,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     XCTAssert(!rc);
     XCTAssert(tvars.rightcars.rlen_cm == 51); // 27
     
-    rc = ctrl3_check_front_sblks(0, &tvars, tconf, 0, &rettrigs);
+    rc = ctrl3_check_front_sblks(0, &tvars, tconf, 0, &rettrigs, 0);
     XCTAssert(rc==0);
     // rlen = 51 at start of c1
     // -> 51-12(margin) -> stop
@@ -509,7 +509,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     rc = ctrl3_update_front_sblks(0, &tvars, tconf, 0);
     XCTAssert(!rc);
     XCTAssert(tvars.rightcars.rlen_cm == 28); // 16+12
-    rc = ctrl3_check_front_sblks(0, &tvars, tconf, 0, &rettrigs);
+    rc = ctrl3_check_front_sblks(0, &tvars, tconf, 0, &rettrigs, 0);
     XCTAssert(rc==16);
     // rlen = 51 at start of c1
     // -> 51-12(margin) -> stop
@@ -522,7 +522,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     rc = ctrl3_update_front_sblks(0, &tvars, tconf, 0);
     XCTAssert(!rc);
     XCTAssert(tvars.rightcars.rlen_cm == 12); // 16+12
-    rc = ctrl3_check_front_sblks(0, &tvars, tconf, 0, &rettrigs);
+    rc = ctrl3_check_front_sblks(0, &tvars, tconf, 0, &rettrigs, 0);
     XCTAssert(rc<0);
     // rlen = 51 at start of c1
     // -> 51-12(margin) -> stop
@@ -551,7 +551,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     
         
     rettrigs_t rettrigs = {0};
-    rc = ctrl3_check_front_sblks(0, &tvars, tconf, 0, &rettrigs);
+    rc = ctrl3_check_front_sblks(0, &tvars, tconf, 0, &rettrigs, 0);
     XCTAssert(rc==0);
     const rettrigs_t expt1 = {0, 0, { {87, tag_chkocc}, {0, 0}, {0, 0}}};
     XCTAssert(!memcmp(&rettrigs, &expt1, sizeof(rettrigs_t)));
@@ -575,7 +575,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     
         
     rettrigs_t rettrigs = {0};
-    rc = ctrl3_check_front_sblks(0, &tvars, tconf, 0, &rettrigs);
+    rc = ctrl3_check_front_sblks(0, &tvars, tconf, 0, &rettrigs, 0);
     XCTAssert(rc==13);
     const rettrigs_t expt1 = {0, 0, { {87, tag_chkocc}, {0, 0}, {75, tag_stop_blk_wait}}};
     XCTAssert(!memcmp(&rettrigs, &expt1, sizeof(rettrigs_t)));

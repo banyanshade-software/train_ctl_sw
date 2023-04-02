@@ -258,43 +258,46 @@ int _lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int
                 } else {
                     
                 }
-                if (canton_for_lsblk(cs).v != ncanton.v) {
-                    // ...------------||----
-                    //   x
-                    int trgbase = _BEFORE_END_SBLK(train_fwd_len);  //totallen + alen - train_fwd_len;
-                    int trg = trgbase-margin_c2_len_mm; //trgbase-margin_c2_len_mm;
-                    if (_AFTER_LOCO(trg)) { //(trg > posloco) {
+            }
+            if (canton_for_lsblk(cs).v != ncanton.v) {
+                if (checkfreeback) {
+                    printf("debug");
+                }
+                // ...------------||----
+                //   x
+                int trgbase = _BEFORE_END_SBLK(train_fwd_len);  //totallen + alen - train_fwd_len;
+                int trg = trgbase-margin_c2_len_mm; //trgbase-margin_c2_len_mm;
+                if (_AFTER_LOCO(trg)) { //(trg > posloco) {
+                    if (_BEFORE_C1END(trg)) { //trg <= c1len) {
+                        _add_trig(tvars, left, c1len, rett, tag_reserve_c2,  trg);
+                        if (tvars->res_c2_future.v == 0xFF) {
+                            tvars->res_c2_future = ncanton;
+                        }
+                    }
+                } else {
+                    if (_AFTER_LOCO(trgbase)) { //(trgbase>posloco) {
+                        rett->res_c2 = 1;
+                        if (tvars->res_c2_future.v == 0xFF) {
+                            tvars->res_c2_future = ncanton;
+                        }
+                    }
+                }
+                // loco advance for power_c2
+                if (is_not_powered(tidx, tvars, ncanton)) {
+                    trgbase = _BEFORE_END_SBLK(0); // totallen + alen;
+                    trg = trgbase-margin_c2_len_mm; //trg = trgbase-margin_c2_len_mm;
+                    if (_AFTER_LOCO(trg)) { //trg > posloco) {
                         if (_BEFORE_C1END(trg)) { //trg <= c1len) {
-                            _add_trig(tvars, left, c1len, rett, tag_reserve_c2,  trg);
-                            if (tvars->res_c2_future.v == 0xFF) {
-                                tvars->res_c2_future = ncanton;
+                            _add_trig(tvars, left, c1len, rett, tag_need_c2,  trg);
+                            if (tvars->pow_c2_future.v == 0xFF) {
+                                tvars->pow_c2_future = ncanton;
                             }
                         }
                     } else {
-                        if (_AFTER_LOCO(trgbase)) { //(trgbase>posloco) {
-                            rett->res_c2 = 1;
-                            if (tvars->res_c2_future.v == 0xFF) {
-                                tvars->res_c2_future = ncanton;
-                            }
-                        }
-                    }
-                    // loco advance for power_c2
-                    if (is_not_powered(tidx, tvars, ncanton)) {
-                        trgbase = _BEFORE_END_SBLK(0); // totallen + alen;
-                        trg = trgbase-margin_c2_len_mm; //trg = trgbase-margin_c2_len_mm;
-                        if (_AFTER_LOCO(trg)) { //trg > posloco) {
-                            if (_BEFORE_C1END(trg)) { //trg <= c1len) {
-                                _add_trig(tvars, left, c1len, rett, tag_need_c2,  trg);
-                                if (tvars->pow_c2_future.v == 0xFF) {
-                                    tvars->pow_c2_future = ncanton;
-                                }
-                            }
-                        } else {
-                            if (_AFTER_LOCO(trgbase)) { //trgbase> posloco) {
-                                rett->power_c2 = 1;
-                                if (tvars->pow_c2_future.v == 0xFF) {
-                                    tvars->pow_c2_future = ncanton;
-                                }
+                        if (_AFTER_LOCO(trgbase)) { //trgbase> posloco) {
+                            rett->power_c2 = 1;
+                            if (tvars->pow_c2_future.v == 0xFF) {
+                                tvars->pow_c2_future = ncanton;
                             }
                         }
                     }

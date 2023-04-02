@@ -58,7 +58,7 @@ static const xtrnaddr_t to3 = { .v = 3};
     
     tvars.beginposmm = -400;
     tvars._curposmm = -50;
-    
+    tvars._sdir = -1;
     NSLog(@"init done");
     
 }

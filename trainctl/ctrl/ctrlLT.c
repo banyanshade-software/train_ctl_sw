@@ -496,6 +496,7 @@ void ctrl3_pose_triggered(int tidx, train_ctrl_t *tvars, pose_trig_tag_t trigtag
                     xblkaddr_t b = canton_for_lsblk(ns);
                     if (b.v != tvars->can1_xaddr.v) {
                         itm_debug2(DBG_ERR|DBG_CTRL, "end/badc1", tidx, tvars->c1_sblk.n);
+                        goto handled;
                         break;
                     }
                    
@@ -891,7 +892,7 @@ static int _train_check_dir(int tidx, train_ctrl_t *tvars, int sdir, rettrigs_t 
     freeback(tidx, tvars);
     
     const conf_train_t *conf = conf_train_get(tidx);
-    int rc2 =  lt4_get_trigs(tidx, tvars, conf,   rett);
+    int rc2 =  lt4_get_trigs(tidx, (sdir<0) ? 1: 0, tvars, conf,   rett);
 
     
     freeback(tidx, tvars);

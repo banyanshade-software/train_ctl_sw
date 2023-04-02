@@ -145,14 +145,12 @@ static int is_not_powered(int tidx, train_ctrl_t *tvars, xblkaddr_t ncanton)
 
 
 
-int lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf,  rettrigs_t *rett)
+int lt4_get_trigs(int tidx, int left, train_ctrl_t *tvars, const conf_train_t *tconf,  rettrigs_t *rett)
 {
-    if (!tvars->_sdir) {
-        return 0;
-    }
     
-    _lt4_get_trigs(tidx, tvars, tconf, (tvars->_sdir<0) ? 0 : 1, rett, 1);
-    return _lt4_get_trigs(tidx, tvars, tconf, (tvars->_sdir<0) ? 1 : 0, rett, 0);
+    
+    _lt4_get_trigs(tidx, tvars, tconf, !left, rett, 1);
+    return _lt4_get_trigs(tidx, tvars, tconf, left, rett, 0);
 }
 
 int _lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int left,  rettrigs_t *rett, int checkfreeback)
@@ -318,14 +316,15 @@ int _lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int
             }
         }
     
-        
-        int trg = _BEFORE_END_SBLK(train_fwd_len); // totallen+alen-train_fwd_len;
-        //if (needchok && trg>posloco && trg<=c1len) {
-        if (needchok && _AFTER_LOCO(trg) && _BEFORE_C1END(trg)) {
-            // ----L xxxxxxx|xx-----|
-            //                ^poshead
-            _add_trig(tvars, left, c1len, rett, tag_chkocc, trg);
-            needchok=0;
+        if (!checkfreeback) {
+            int trg = _BEFORE_END_SBLK(train_fwd_len); // totallen+alen-train_fwd_len;
+            //if (needchok && trg>posloco && trg<=c1len) {
+            if (needchok && _AFTER_LOCO(trg) && _BEFORE_C1END(trg)) {
+                // ----L xxxxxxx|xx-----|
+                //                ^poshead
+                _add_trig(tvars, left, c1len, rett, tag_chkocc, trg);
+                needchok=0;
+            }
         }
         if (first) {
             nextc1 = ns;

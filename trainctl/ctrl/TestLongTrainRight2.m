@@ -102,7 +102,7 @@ static const xblkaddr_t c2 = {.v = 2};
     int rc;
     // freeback at 130+margin(100) = 230
     rettrigs_t rettrigs = {0};
-    rc = lt4_get_trigs(0, &tvars, tconf, &rettrigs);
+    rc = lt4_get_trigs(0, 0, &tvars, tconf, &rettrigs);
     XCTAssert(rc==0);
     const rettrigs_t expt1 = { 0, 0, 1, 0, 4, { {230, tag_free_back}, {200, tag_need_c2}, {230,tag_chkocc}, {350,tag_brake}}};
     XCTAssert(!cmptrigs(&rettrigs, &expt1));

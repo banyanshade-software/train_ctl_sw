@@ -167,7 +167,7 @@ static lsblk_num_t s14 = {14};
     rettrigs_t rettrigs = {0};
     //rc = ctrl3_check_back_sblks(0, &tvars, tconf, 0, &rettrigs);
     //rc = _lt4_get_trigs(0, &tvars, tconf, 0, &rettrigs, 0);
-    rc = lt4_get_trigs(0, &tvars, tconf, &rettrigs);
+    rc = lt4_get_trigs(0, 0, &tvars, tconf, &rettrigs);
     XCTAssert(rc==0);
     const rettrigs_t expt1 = { 0, 0, 0, 0, 1, {{posmm+beg+30-leftlen, tag_free_back}, {0,0}}};
     XCTAssert(!cmptrigs(&rettrigs, &expt1));

@@ -70,7 +70,7 @@ static xtrnaddr_t reverse_tn_index(int tridx)
 //static volatile uint8_t  lockedby[MAX_TOTAL_TURNOUTS]; // XXX TODO this should be total number of turnouts
 //static volatile uint32_t turnoutvals = 0; // bit field
 
-uint8_t _topology_or_occupency_changed = 0;
+uint16_t _topology_or_occupency_changed = 0;
 
 
 int topology_set_turnout(xtrnaddr_t turnout, enum topo_turnout_state v, int numtrain)

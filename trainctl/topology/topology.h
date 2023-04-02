@@ -15,14 +15,18 @@
 
 #include "../msg/trainmsg.h"
 
-extern uint8_t _topology_or_occupency_changed;
+extern uint16_t _topology_or_occupency_changed;
 #ifndef _UNUSED_
 #define _UNUSED_ __attribute__((unused))
 #endif
 
-static inline void topology_updated(_UNUSED_ int trainnum)
+static inline void topology_updated(int trainnum)
 {
-    _topology_or_occupency_changed = 1;
+    uint8_t v;
+    if (trainnum < 0) v= 15;
+    else if (trainnum>14) return;
+    
+    _topology_or_occupency_changed |= (1<<v);
 }
 
 /*

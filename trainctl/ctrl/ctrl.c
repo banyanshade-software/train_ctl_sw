@@ -300,13 +300,17 @@ static void ctrl_tick(uint32_t tick, _UNUSED_ uint32_t dt)
     //check_timers(tick);
     
     
-    uint8_t occ = _topology_or_occupency_changed;
+    uint16_t occ = _topology_or_occupency_changed;
     _topology_or_occupency_changed = 0;
     
     if (occ) {
         itm_debug1(DBG_CTRL, "ct/occ", 0);
     }
+    if (!occ) return;
+    
     for (int tidx = 0; tidx<NUM_TRAINS; tidx++) {
+        uint16_t v = ~(1<<tidx);
+        if (0==(occ & v)) continue;
         train_ctrl_t *tvars = &trctl[tidx];
         trace_train_postick(tick, tidx, tvars);
         if (occ) ctrl3_occupency_updated(tidx, tvars);

@@ -5334,8 +5334,8 @@
             filePath = "../../trainctl/ctrl/longtrain4.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "223"
-            endingLineNumber = "223"
+            startingLineNumber = "231"
+            endingLineNumber = "231"
             landmarkName = "_lt4_get_trigs(tidx, tvars, tconf, left, rett, checkfreeback)"
             landmarkType = "9">
          </BreakpointContent>
@@ -5366,8 +5366,8 @@
             filePath = "../../trainctl/ctrl/longtrain4.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "187"
-            endingLineNumber = "187"
+            startingLineNumber = "195"
+            endingLineNumber = "195"
             landmarkName = "_lt4_get_trigs(tidx, tvars, tconf, left, rett, checkfreeback)"
             landmarkType = "9">
          </BreakpointContent>
@@ -5382,8 +5382,8 @@
             filePath = "../../trainctl/ctrl/longtrain4.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "69"
-            endingLineNumber = "69"
+            startingLineNumber = "71"
+            endingLineNumber = "71"
             landmarkName = "_add_trig(tvars, left, c1len, rett, tag, pos)"
             landmarkType = "9">
          </BreakpointContent>
@@ -5476,8 +5476,8 @@
             filePath = "../../trainctl/ctrl/longtrain4.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "293"
-            endingLineNumber = "293"
+            startingLineNumber = "305"
+            endingLineNumber = "305"
             landmarkName = "_lt4_get_trigs(tidx, tvars, tconf, left, rett, checkfreeback)"
             landmarkType = "9">
          </BreakpointContent>
@@ -5492,8 +5492,8 @@
             filePath = "../../trainctl/ctrl/longtrain4.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "199"
-            endingLineNumber = "199"
+            startingLineNumber = "207"
+            endingLineNumber = "207"
             landmarkName = "_lt4_get_trigs(tidx, tvars, tconf, left, rett, checkfreeback)"
             landmarkType = "9">
          </BreakpointContent>
@@ -5524,8 +5524,8 @@
             filePath = "../../trainctl/ctrl/longtrain4.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "322"
-            endingLineNumber = "322"
+            startingLineNumber = "335"
+            endingLineNumber = "335"
             landmarkName = "_lt4_get_trigs(tidx, tvars, tconf, left, rett, checkfreeback)"
             landmarkType = "9">
          </BreakpointContent>
@@ -5540,8 +5540,8 @@
             filePath = "../../trainctl/ctrl/longtrain4.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "218"
-            endingLineNumber = "218"
+            startingLineNumber = "226"
+            endingLineNumber = "226"
             landmarkName = "_lt4_get_trigs(tidx, tvars, tconf, left, rett, checkfreeback)"
             landmarkType = "9">
          </BreakpointContent>
@@ -5556,8 +5556,8 @@
             filePath = "../../trainctl/ctrl/longtrain4.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "229"
-            endingLineNumber = "229"
+            startingLineNumber = "237"
+            endingLineNumber = "237"
             landmarkName = "_lt4_get_trigs(tidx, tvars, tconf, left, rett, checkfreeback)"
             landmarkType = "9">
          </BreakpointContent>
@@ -5572,8 +5572,8 @@
             filePath = "../../trainctl/ctrl/longtrain4.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "266"
-            endingLineNumber = "266"
+            startingLineNumber = "278"
+            endingLineNumber = "278"
             landmarkName = "_lt4_get_trigs(tidx, tvars, tconf, left, rett, checkfreeback)"
             landmarkType = "9">
          </BreakpointContent>
@@ -5588,8 +5588,8 @@
             filePath = "../../trainctl/ctrl/longtrain4.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "298"
-            endingLineNumber = "298"
+            startingLineNumber = "310"
+            endingLineNumber = "310"
             landmarkName = "_lt4_get_trigs(tidx, tvars, tconf, left, rett, checkfreeback)"
             landmarkType = "9">
          </BreakpointContent>
@@ -5604,8 +5604,8 @@
             filePath = "../../trainctl/ctrl/longtrain4.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "315"
-            endingLineNumber = "315"
+            startingLineNumber = "328"
+            endingLineNumber = "328"
             landmarkName = "_lt4_get_trigs(tidx, tvars, tconf, left, rett, checkfreeback)"
             landmarkType = "9">
          </BreakpointContent>
@@ -5620,8 +5620,8 @@
             filePath = "../../trainctl/ctrl/longtrain4.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "252"
-            endingLineNumber = "252"
+            startingLineNumber = "260"
+            endingLineNumber = "260"
             landmarkName = "_lt4_get_trigs(tidx, tvars, tconf, left, rett, checkfreeback)"
             landmarkType = "9">
          </BreakpointContent>
@@ -5640,68 +5640,6 @@
             endingLineNumber = "355"
             landmarkName = "-checkC2powerRightB:cpos:"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "70419928-BD8A-407E-8100-85B625A8946B - d0d8ee348c32be39"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "-[TestLongTrainRight1 checkC2powerRightB:cpos:]"
-                  moduleName = "trainLPctlTests"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/danielbraun/devel/train/sw/trainctl/ctrl/TestLongTrainRight1.m"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "355"
-                  endingLineNumber = "355"
-                  offsetFromSymbolStart = "939">
-               </Location>
-               <Location
-                  uuid = "70419928-BD8A-407E-8100-85B625A8946B - d0d8ee348c32be39"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "-[TestLongTrainRight1 checkC2powerRightB:cpos:]"
-                  moduleName = "trainLPctlTests"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/danielbraun/devel/train/sw/trainctl/ctrl/TestLongTrainRight1.m"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "355"
-                  endingLineNumber = "355"
-                  offsetFromSymbolStart = "2250">
-               </Location>
-               <Location
-                  uuid = "70419928-BD8A-407E-8100-85B625A8946B - d0d8ee348c32be39"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "-[TestLongTrainRight1 checkC2powerRightB:cpos:]"
-                  moduleName = "trainLPctlTests"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/danielbraun/devel/train/sw/trainctl/ctrl/TestLongTrainRight1.m"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "355"
-                  endingLineNumber = "355"
-                  offsetFromSymbolStart = "2293">
-               </Location>
-               <Location
-                  uuid = "70419928-BD8A-407E-8100-85B625A8946B - d0d8ee348c32be39"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "-[TestLongTrainRight1 checkC2powerRightB:cpos:]"
-                  moduleName = "trainLPctlTests"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/danielbraun/devel/train/sw/trainctl/ctrl/TestLongTrainRight1.m"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "355"
-                  endingLineNumber = "355"
-                  offsetFromSymbolStart = "2395">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -5968,68 +5906,6 @@
             endingLineNumber = "429"
             landmarkName = "-checkFrontRight:"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "F05101F5-69CF-4750-8EC5-BFC1938DFC39 - f01b169957c20091"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "-[TestLongTrainRight1 checkFrontRight:]"
-                  moduleName = "trainLPctlTests"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/danielbraun/devel/train/sw/trainctl/ctrl/TestLongTrainRight1.m"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "429"
-                  endingLineNumber = "429"
-                  offsetFromSymbolStart = "9008">
-               </Location>
-               <Location
-                  uuid = "F05101F5-69CF-4750-8EC5-BFC1938DFC39 - f01b169957c20091"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "-[TestLongTrainRight1 checkFrontRight:]"
-                  moduleName = "trainLPctlTests"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/danielbraun/devel/train/sw/trainctl/ctrl/TestLongTrainRight1.m"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "429"
-                  endingLineNumber = "429"
-                  offsetFromSymbolStart = "10349">
-               </Location>
-               <Location
-                  uuid = "F05101F5-69CF-4750-8EC5-BFC1938DFC39 - f01b169957c20091"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "-[TestLongTrainRight1 checkFrontRight:]"
-                  moduleName = "trainLPctlTests"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/danielbraun/devel/train/sw/trainctl/ctrl/TestLongTrainRight1.m"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "429"
-                  endingLineNumber = "429"
-                  offsetFromSymbolStart = "10900">
-               </Location>
-               <Location
-                  uuid = "F05101F5-69CF-4750-8EC5-BFC1938DFC39 - f01b169957c20091"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "-[TestLongTrainRight1 checkFrontRight:]"
-                  moduleName = "trainLPctlTests"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/danielbraun/devel/train/sw/trainctl/ctrl/TestLongTrainRight1.m"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "429"
-                  endingLineNumber = "429"
-                  offsetFromSymbolStart = "11002">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -6046,68 +5922,6 @@
             endingLineNumber = "99"
             landmarkName = "-chkRight:"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "1271A676-1479-4905-A988-115F2C1182BD - b4e00d1b73410aba"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "-[TestLongTrainRight0 chkRight:]"
-                  moduleName = "trainLPctlTests"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/danielbraun/devel/train/sw/trainctl/ctrl/TestLongTrainRight0.m"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "99"
-                  endingLineNumber = "99"
-                  offsetFromSymbolStart = "988">
-               </Location>
-               <Location
-                  uuid = "1271A676-1479-4905-A988-115F2C1182BD - b4e00d1b73410aba"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "-[TestLongTrainRight0 chkRight:]"
-                  moduleName = "trainLPctlTests"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/danielbraun/devel/train/sw/trainctl/ctrl/TestLongTrainRight0.m"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "99"
-                  endingLineNumber = "99"
-                  offsetFromSymbolStart = "2299">
-               </Location>
-               <Location
-                  uuid = "1271A676-1479-4905-A988-115F2C1182BD - b4e00d1b73410aba"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "-[TestLongTrainRight0 chkRight:]"
-                  moduleName = "trainLPctlTests"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/danielbraun/devel/train/sw/trainctl/ctrl/TestLongTrainRight0.m"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "99"
-                  endingLineNumber = "99"
-                  offsetFromSymbolStart = "2342">
-               </Location>
-               <Location
-                  uuid = "1271A676-1479-4905-A988-115F2C1182BD - b4e00d1b73410aba"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "-[TestLongTrainRight0 chkRight:]"
-                  moduleName = "trainLPctlTests"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/danielbraun/devel/train/sw/trainctl/ctrl/TestLongTrainRight0.m"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "99"
-                  endingLineNumber = "99"
-                  offsetFromSymbolStart = "2444">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -6292,8 +6106,8 @@
             filePath = "../../trainctl/ctrl/longtrain4.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "215"
-            endingLineNumber = "215"
+            startingLineNumber = "223"
+            endingLineNumber = "223"
             landmarkName = "_lt4_get_trigs(tidx, tvars, tconf, left, rett, checkfreeback)"
             landmarkType = "9">
          </BreakpointContent>
@@ -6308,8 +6122,8 @@
             filePath = "../../trainctl/ctrl/longtrain4.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "313"
-            endingLineNumber = "313"
+            startingLineNumber = "326"
+            endingLineNumber = "326"
             landmarkName = "_lt4_get_trigs(tidx, tvars, tconf, left, rett, checkfreeback)"
             landmarkType = "9">
          </BreakpointContent>
@@ -6340,8 +6154,8 @@
             filePath = "../../trainctl/ctrl/longtrain4.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "222"
-            endingLineNumber = "222"
+            startingLineNumber = "230"
+            endingLineNumber = "230"
             landmarkName = "_lt4_get_trigs(tidx, tvars, tconf, left, rett, checkfreeback)"
             landmarkType = "9">
          </BreakpointContent>
@@ -6358,8 +6172,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "109"
             endingLineNumber = "109"
-            landmarkName = "TestLongTrain"
-            landmarkType = "3">
+            landmarkName = "-test_chk_front_right"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -6372,8 +6186,8 @@
             filePath = "../../trainctl/ctrl/longtrain4.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "302"
-            endingLineNumber = "302"
+            startingLineNumber = "314"
+            endingLineNumber = "314"
             landmarkName = "_lt4_get_trigs(tidx, tvars, tconf, left, rett, checkfreeback)"
             landmarkType = "9">
          </BreakpointContent>
@@ -6390,8 +6204,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "115"
             endingLineNumber = "115"
-            landmarkName = "TestLongTrain"
-            landmarkType = "3">
+            landmarkName = "-test_chk_front_right"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -6406,8 +6220,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "130"
             endingLineNumber = "130"
-            landmarkName = "TestLongTrain"
-            landmarkType = "3">
+            landmarkName = "-test_chk_front_right"
+            landmarkType = "7">
             <Locations>
                <Location
                   uuid = "E3DBA8BE-C6CD-44CF-A158-58D72E6B3434 - 143cbc237cd4a9ff"
@@ -6484,8 +6298,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "125"
             endingLineNumber = "125"
-            landmarkName = "TestLongTrain"
-            landmarkType = "3">
+            landmarkName = "-test_chk_front_right"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -6500,8 +6314,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "141"
             endingLineNumber = "141"
-            landmarkName = "TestLongTrain"
-            landmarkType = "3">
+            landmarkName = "-test_chk_front_right"
+            landmarkType = "7">
             <Locations>
                <Location
                   uuid = "10AE994D-0EFE-4CC9-BA3E-270073A7E587 - 143cbc237cd4a890"
@@ -6578,8 +6392,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "152"
             endingLineNumber = "152"
-            landmarkName = "TestLongTrain"
-            landmarkType = "3">
+            landmarkName = "-test_chk_front_right"
+            landmarkType = "7">
             <Locations>
                <Location
                   uuid = "17D3B733-8EBC-485D-AB4C-5AB7B2C3F1F6 - 143cbc237cd4ab05"
@@ -6658,68 +6472,6 @@
             endingLineNumber = "444"
             landmarkName = "-checkFrontRight:"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "0D73D392-493C-4B89-8C1D-2329A77140AF - f01b169957c206e2"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "-[TestLongTrainRight1 checkFrontRight:]"
-                  moduleName = "trainLPctlTests"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/danielbraun/devel/train/sw/trainctl/ctrl/TestLongTrainRight1.m"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "444"
-                  endingLineNumber = "444"
-                  offsetFromSymbolStart = "11905">
-               </Location>
-               <Location
-                  uuid = "0D73D392-493C-4B89-8C1D-2329A77140AF - f01b169957c206e2"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "-[TestLongTrainRight1 checkFrontRight:]"
-                  moduleName = "trainLPctlTests"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/danielbraun/devel/train/sw/trainctl/ctrl/TestLongTrainRight1.m"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "444"
-                  endingLineNumber = "444"
-                  offsetFromSymbolStart = "13246">
-               </Location>
-               <Location
-                  uuid = "0D73D392-493C-4B89-8C1D-2329A77140AF - f01b169957c206e2"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "-[TestLongTrainRight1 checkFrontRight:]"
-                  moduleName = "trainLPctlTests"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/danielbraun/devel/train/sw/trainctl/ctrl/TestLongTrainRight1.m"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "444"
-                  endingLineNumber = "444"
-                  offsetFromSymbolStart = "13289">
-               </Location>
-               <Location
-                  uuid = "0D73D392-493C-4B89-8C1D-2329A77140AF - f01b169957c206e2"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "-[TestLongTrainRight1 checkFrontRight:]"
-                  moduleName = "trainLPctlTests"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/danielbraun/devel/train/sw/trainctl/ctrl/TestLongTrainRight1.m"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "444"
-                  endingLineNumber = "444"
-                  offsetFromSymbolStart = "13391">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -6734,7 +6486,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "179"
             endingLineNumber = "179"
-            landmarkName = "-test_chk_front_right"
+            landmarkName = "-testProgressRight"
             landmarkType = "7">
             <Locations>
                <Location
@@ -6812,7 +6564,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "193"
             endingLineNumber = "193"
-            landmarkName = "-test_chk_front_right"
+            landmarkName = "-testProgressRight"
             landmarkType = "7">
             <Locations>
                <Location
@@ -6890,7 +6642,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "216"
             endingLineNumber = "216"
-            landmarkName = "-test_chk_front_right"
+            landmarkName = "-testProgressRight"
             landmarkType = "7">
             <Locations>
                <Location
@@ -6968,7 +6720,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "226"
             endingLineNumber = "226"
-            landmarkName = "-test_chk_front_right"
+            landmarkName = "-testProgressRight"
             landmarkType = "7">
             <Locations>
                <Location
@@ -7046,7 +6798,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "231"
             endingLineNumber = "231"
-            landmarkName = "-test_chk_front_right"
+            landmarkName = "-testProgressRight"
             landmarkType = "7">
             <Locations>
                <Location
@@ -7124,7 +6876,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "299"
             endingLineNumber = "299"
-            landmarkName = "-testProgressRight"
+            landmarkName = "-testStartOccTurnout"
             landmarkType = "7">
             <Locations>
                <Location
@@ -7202,7 +6954,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "375"
             endingLineNumber = "375"
-            landmarkName = "-testStartOccTurnout"
+            landmarkName = "-testProgressRight2"
             landmarkType = "7">
             <Locations>
                <Location
@@ -7280,7 +7032,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "386"
             endingLineNumber = "386"
-            landmarkName = "-testStartNoOccTurnout2"
+            landmarkName = "-testProgressRight2"
             landmarkType = "7">
             <Locations>
                <Location
@@ -7358,7 +7110,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "396"
             endingLineNumber = "396"
-            landmarkName = "-testStartNoOccTurnout2"
+            landmarkName = "-testProgressRight2"
             landmarkType = "7">
             <Locations>
                <Location
@@ -7575,8 +7327,8 @@
             filePath = "../../trainctl/ctrl/longtrain4.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "257"
-            endingLineNumber = "257"
+            startingLineNumber = "265"
+            endingLineNumber = "265"
             landmarkName = "_lt4_get_trigs(tidx, tvars, tconf, left, rett, checkfreeback)"
             landmarkType = "9">
          </BreakpointContent>
@@ -7623,8 +7375,8 @@
             filePath = "../../trainctl/ctrl/longtrain4.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "288"
-            endingLineNumber = "288"
+            startingLineNumber = "300"
+            endingLineNumber = "300"
             landmarkName = "_lt4_get_trigs(tidx, tvars, tconf, left, rett, checkfreeback)"
             landmarkType = "9">
          </BreakpointContent>
@@ -7639,8 +7391,8 @@
             filePath = "../../trainctl/ctrl/longtrain4.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "280"
-            endingLineNumber = "280"
+            startingLineNumber = "292"
+            endingLineNumber = "292"
             landmarkName = "_lt4_get_trigs(tidx, tvars, tconf, left, rett, checkfreeback)"
             landmarkType = "9">
          </BreakpointContent>
@@ -7655,8 +7407,8 @@
             filePath = "../../trainctl/ctrl/longtrain4.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "287"
-            endingLineNumber = "287"
+            startingLineNumber = "299"
+            endingLineNumber = "299"
             landmarkName = "_lt4_get_trigs(tidx, tvars, tconf, left, rett, checkfreeback)"
             landmarkType = "9">
          </BreakpointContent>
@@ -7671,8 +7423,8 @@
             filePath = "../../trainctl/ctrl/longtrain4.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "139"
-            endingLineNumber = "139"
+            startingLineNumber = "141"
+            endingLineNumber = "141"
             landmarkName = "is_not_powered(tidx, tvars, ncanton)"
             landmarkType = "9">
          </BreakpointContent>
@@ -7689,8 +7441,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "440"
             endingLineNumber = "440"
-            landmarkName = "TestLongTrain"
-            landmarkType = "3">
+            landmarkName = "-testProgressLeft"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -7719,8 +7471,8 @@
             filePath = "../../trainctl/ctrl/longtrain4.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "216"
-            endingLineNumber = "216"
+            startingLineNumber = "224"
+            endingLineNumber = "224"
             landmarkName = "_lt4_get_trigs(tidx, tvars, tconf, left, rett, checkfreeback)"
             landmarkType = "9">
          </BreakpointContent>
@@ -7751,8 +7503,8 @@
             filePath = "../../trainctl/ctrl/longtrain4.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "182"
-            endingLineNumber = "182"
+            startingLineNumber = "190"
+            endingLineNumber = "190"
             landmarkName = "_lt4_get_trigs(tidx, tvars, tconf, left, rett, checkfreeback)"
             landmarkType = "9">
          </BreakpointContent>
@@ -7767,8 +7519,8 @@
             filePath = "../../trainctl/ctrl/longtrain4.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "71"
-            endingLineNumber = "71"
+            startingLineNumber = "73"
+            endingLineNumber = "73"
             landmarkName = "_add_trig(tvars, left, c1len, rett, tag, pos)"
             landmarkType = "9">
          </BreakpointContent>
@@ -7783,8 +7535,8 @@
             filePath = "../../trainctl/ctrl/longtrain4.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "88"
-            endingLineNumber = "88"
+            startingLineNumber = "90"
+            endingLineNumber = "90"
             landmarkName = "_add_endlsblk_trig(tvars, left, c1len, rett, c1, ns, pos)"
             landmarkType = "9">
          </BreakpointContent>
@@ -7815,8 +7567,8 @@
             filePath = "../../trainctl/ctrl/longtrain4.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "211"
-            endingLineNumber = "211"
+            startingLineNumber = "219"
+            endingLineNumber = "219"
             landmarkName = "_lt4_get_trigs(tidx, tvars, tconf, left, rett, checkfreeback)"
             landmarkType = "9">
          </BreakpointContent>
@@ -7831,8 +7583,8 @@
             filePath = "../../trainctl/ctrl/longtrain4.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "241"
-            endingLineNumber = "241"
+            startingLineNumber = "249"
+            endingLineNumber = "249"
             landmarkName = "_lt4_get_trigs(tidx, tvars, tconf, left, rett, checkfreeback)"
             landmarkType = "9">
          </BreakpointContent>
@@ -7847,8 +7599,8 @@
             filePath = "../../trainctl/ctrl/longtrain4.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "242"
-            endingLineNumber = "242"
+            startingLineNumber = "250"
+            endingLineNumber = "250"
             landmarkName = "_lt4_get_trigs(tidx, tvars, tconf, left, rett, checkfreeback)"
             landmarkType = "9">
          </BreakpointContent>
@@ -7863,8 +7615,8 @@
             filePath = "../../trainctl/ctrl/longtrain4.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "95"
-            endingLineNumber = "95"
+            startingLineNumber = "97"
+            endingLineNumber = "97"
             landmarkName = "next_lsblk_and_reserve(tidx, tvars, sblknum, left, palternate, doreserve)"
             landmarkType = "9">
          </BreakpointContent>
@@ -7879,8 +7631,8 @@
             filePath = "../../trainctl/ctrl/longtrain4.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "112"
-            endingLineNumber = "112"
+            startingLineNumber = "114"
+            endingLineNumber = "114"
             landmarkName = "next_lsblk_and_reserve(tidx, tvars, sblknum, left, palternate, doreserve)"
             landmarkType = "9">
          </BreakpointContent>
@@ -8331,8 +8083,8 @@
             filePath = "../../trainctl/ctrl/longtrain4.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "309"
-            endingLineNumber = "309"
+            startingLineNumber = "322"
+            endingLineNumber = "322"
             landmarkName = "_lt4_get_trigs(tidx, tvars, tconf, left, rett, checkfreeback)"
             landmarkType = "9">
          </BreakpointContent>
@@ -8357,15 +8109,189 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "8C1F1466-6D55-40C8-9679-3F431F08E0D7"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../../trainctl/ctrl/longtrain4.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "264"
-            endingLineNumber = "264"
+            startingLineNumber = "272"
+            endingLineNumber = "272"
             landmarkName = "_lt4_get_trigs(tidx, tvars, tconf, left, rett, checkfreeback)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "F10C71F0-983E-4F11-A1FB-E05CA5667D0F"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../trainctl/ctrl/TestLongTrainRight2.m"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "89"
+            endingLineNumber = "89"
+            landmarkName = "-testRightNoBack1"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "DF073AD1-C967-4A32-96E9-D11ED7221FBD"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../trainctl/ctrl/TestLongTrainRight2.m"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "107"
+            endingLineNumber = "107"
+            landmarkName = "-testRightBack1"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "017B1D18-2D61-4387-B5A8-B0FFFCA3B35D"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../trainctl/ctrl/TestLongTrainRight2.m"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "94"
+            endingLineNumber = "94"
+            landmarkName = "-testRightNoBack1"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "017B1D18-2D61-4387-B5A8-B0FFFCA3B35D - 83a2722f75bf3260"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "-[TestLongTrainRight2 testRightNoBack1]"
+                  moduleName = "trainLPctlTests"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/danielbraun/devel/train/sw/trainctl/ctrl/TestLongTrainRight2.m"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "94"
+                  endingLineNumber = "94"
+                  offsetFromSymbolStart = "1994">
+               </Location>
+               <Location
+                  uuid = "017B1D18-2D61-4387-B5A8-B0FFFCA3B35D - 83a2722f75bf3260"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "-[TestLongTrainRight2 testRightNoBack1]"
+                  moduleName = "trainLPctlTests"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/danielbraun/devel/train/sw/trainctl/ctrl/TestLongTrainRight2.m"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "94"
+                  endingLineNumber = "94"
+                  offsetFromSymbolStart = "3315">
+               </Location>
+               <Location
+                  uuid = "017B1D18-2D61-4387-B5A8-B0FFFCA3B35D - 83a2722f75bf3260"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "-[TestLongTrainRight2 testRightNoBack1]"
+                  moduleName = "trainLPctlTests"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/danielbraun/devel/train/sw/trainctl/ctrl/TestLongTrainRight2.m"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "94"
+                  endingLineNumber = "94"
+                  offsetFromSymbolStart = "3711">
+               </Location>
+               <Location
+                  uuid = "017B1D18-2D61-4387-B5A8-B0FFFCA3B35D - 83a2722f75bf3260"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "-[TestLongTrainRight2 testRightNoBack1]"
+                  moduleName = "trainLPctlTests"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/danielbraun/devel/train/sw/trainctl/ctrl/TestLongTrainRight2.m"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "94"
+                  endingLineNumber = "94"
+                  offsetFromSymbolStart = "3813">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "C1F245BD-F33A-4FAC-B155-DD575608E061"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../trainctl/ctrl/TestLongTrainRight2.m"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "105"
+            endingLineNumber = "105"
+            landmarkName = "-testRightBack1"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "64B91569-9396-4B28-8206-3D6BFEB16A3E"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../trainctl/ctrl/TestLongTrainSupport.m"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "70"
+            endingLineNumber = "70"
+            landmarkName = "FatalError(shortsmsg, longmsg, errcode)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "989E8EB9-4F72-49E6-A502-164D20AC5477"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../trainctl/ctrl/TestLongTrainSupport.m"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "58"
+            endingLineNumber = "58"
+            landmarkName = "dump_msg(mq, n)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "D79A2125-069D-4375-BE7E-C68006A450AC"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../trainctl/ctrl/TestLongTrainSupport.m"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "54"
+            endingLineNumber = "54"
+            landmarkName = "Error_Handler()"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>

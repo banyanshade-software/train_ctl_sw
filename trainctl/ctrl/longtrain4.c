@@ -133,7 +133,7 @@ lsblk_num_t next_lsblk_and_reserve(int tidx, train_ctrl_t *tvars, lsblk_num_t sb
 
 
 
-static int is_not_powered(int tidx, train_ctrl_t *tvars, xblkaddr_t ncanton)
+static int is_not_powered(_UNUSED_ int tidx, train_ctrl_t *tvars, xblkaddr_t ncanton)
 {
     if (tvars->can1_xaddr.v == ncanton.v) return 0;
     if (tvars->can2_xaddr.v == ncanton.v) return 0;

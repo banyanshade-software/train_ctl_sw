@@ -66,7 +66,7 @@ static uint32_t pose_convert_to_mm( const conf_train_t *tconf, int32_t poseval);
 // -----------------------------------------------------------------
 
 
-static int  _lock_train_occupency(int tidx, train_ctrl_t *tvars);
+//static int  _lock_train_occupency(int tidx, train_ctrl_t *tvars);
 static void _release_all_blocks(int tidx, train_ctrl_t *tvars);
 
 // -----------------------------------------------------------------
@@ -438,7 +438,7 @@ static void _reserve_c2(int tidx, train_ctrl_t *tvars);
 static void _set_and_power_c2(int tidx, train_ctrl_t *tvars);
 
 
-static void _update_c1changed(int tidx, train_ctrl_t *tvars,  _UNUSED_ const conf_train_t *tconf, int left)
+static void _update_c1changed(int tidx, train_ctrl_t *tvars,  _UNUSED_ const conf_train_t *tconf)
 {
     occupency_set_occupied(tvars->can1_xaddr, tidx, tvars->c1_sblk, tvars->_sdir);
     if (tvars->_mode == train_auto) {
@@ -504,7 +504,7 @@ void ctrl3_pose_triggered(int tidx, train_ctrl_t *tvars, pose_trig_tag_t trigtag
                     tvars->c1_sblk = ns;
                     tvars->canMeasureOnSblk = 0;
                     tvars->beginposmm = tvars->_curposmm; // TODO adjust for trig delay
-                    _update_c1changed(tidx, tvars, conf_train_get(tidx), tvars->_sdir<0 ? 1 : 0);
+                    _update_c1changed(tidx, tvars, conf_train_get(tidx));
                     _updated_while_running(tidx, tvars);
                     goto handled;
                     break;
@@ -667,7 +667,7 @@ void ctrl3_evt_entered_new_lsblk_same_canton(int tidx, train_ctrl_t *tvars, lsbl
     tvars->c1_sblk = sblk;
     tvars->beginposmm = tvars->_curposmm;
     tvars->canMeasureOnSblk = 1;
-    _update_c1changed(tidx, tvars, conf_train_get(tidx), tvars->_sdir<0 ? 1 : 0);
+    _update_c1changed(tidx, tvars, conf_train_get(tidx));
     _updated_while_running(tidx, tvars);
     if (tvars->c1c2dir_changed) {
     	_sendlow_c1c2_dir(tidx, tvars);
@@ -729,7 +729,7 @@ void ctrl3_evt_entered_c2(int tidx, train_ctrl_t *tvars, uint8_t from_bemf)
     tvars->_curposmm = 0;
     tvars->canMeasureOnCanton = tvars->canMeasureOnSblk = 1;
 
-    _update_c1changed(tidx, tvars, conf_train_get(tidx), tvars->_sdir<0 ? 1 : 0);
+    _update_c1changed(tidx, tvars, conf_train_get(tidx));
     _updated_while_running(tidx, tvars);
     if (tvars->c1c2dir_changed) {
         _sendlow_c1c2_dir(tidx, tvars);

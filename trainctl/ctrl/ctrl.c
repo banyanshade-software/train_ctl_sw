@@ -306,24 +306,25 @@ static void ctrl_tick(uint32_t tick, _UNUSED_ uint32_t dt)
     if (occ) {
         itm_debug1(DBG_CTRL, "ct/occ", 0);
     }
-    if (!occ) return;
-    
-    for (int tidx = 0; tidx<NUM_TRAINS; tidx++) {
-        uint16_t v = ~(1<<tidx);
-        if (0==(occ & v)) continue;
-        train_ctrl_t *tvars = &trctl[tidx];
-        trace_train_postick(tick, tidx, tvars);
-        if (occ) ctrl3_occupency_updated(tidx, tvars);
+    if (occ) {
         
-        /*
-        train_oldctrl_t *otvars = &otrctl[tidx];
-        const conf_train_t *tconf = conf_train_get(tidx);
-        if (!tconf->enabled) continue;
-        if (tvars->_mode == train_notrunning) continue;
-        if ((0)) ctrl2_tick_process(tidx, otvars, tconf, occ); // xxxxxx
-         */
+        for (int tidx = 0; tidx<NUM_TRAINS; tidx++) {
+            uint16_t v = ~(1<<tidx);
+            if (0==(occ & v)) continue;
+            train_ctrl_t *tvars = &trctl[tidx];
+            trace_train_postick(tick, tidx, tvars);
+            if (occ) ctrl3_occupency_updated(tidx, tvars);
+            
+            /*
+             train_oldctrl_t *otvars = &otrctl[tidx];
+             const conf_train_t *tconf = conf_train_get(tidx);
+             if (!tconf->enabled) continue;
+             if (tvars->_mode == train_notrunning) continue;
+             if ((0)) ctrl2_tick_process(tidx, otvars, tconf, occ); // xxxxxx
+             */
+        }
+        
     }
-    
     if (Oam_Ready) ctc_periodic_refresh(tick);
 }
 // ----------------------------------------------------------------------------

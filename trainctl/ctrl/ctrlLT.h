@@ -45,8 +45,8 @@ typedef struct {
     //xblkaddr_t  tmp_c2_future; // temporary c2, will be store in either pow_c2_future or res_c2_future
     xblkaddr_t  pow_c2_future;
     xblkaddr_t  res_c2_future;
-    lsblk_num_t freelsblk;      // temporary, lsblk on back of train to be released
-
+    xblkaddr_t freecanton;
+    lsblk_num_t sblkfreed;
     uint8_t c1c2dir_changed:1;
     //uint8_t measure_pose_percm:1;
     uint8_t c1c2:1;

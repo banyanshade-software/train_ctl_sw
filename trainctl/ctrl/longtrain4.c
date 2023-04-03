@@ -265,13 +265,21 @@ int _lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int
                     
                 }
             }
+            if (checkfreeback) {
+                int trg = _BEFORE_END_SBLK(train_fwd_len);
+                trg = trg - margin_c2free_len_mm;
+                if ((trg>=0) && (trg<=posloco)) {
+                    _add_trig(tvars, left, c1len, rett, tag_free_back, trg);
+                    tvars->sblkfreed = ns;
+                    if (canton_for_lsblk(cs).v != ncanton.v) {
+                        tvars->freecanton = ncanton;
+                    }
+                } else if (trg>posloco) {
+                    itm_debug2(DBG_CTRL, "free?", tidx, ncanton.v);
+                }
+            }
             if (canton_for_lsblk(cs).v != ncanton.v) {
                 if (checkfreeback) {
-                    int trg = _BEFORE_END_SBLK(train_fwd_len);
-                    trg = trg - margin_c2free_len_mm;
-                    if ((trg>=0) && (trg<=posloco)) {
-                        _add_trig(tvars, left, c1len, rett, tag_free_back, trg);
-                    }
                 } else {
                     // ...------------||----
                     //   x
@@ -350,7 +358,3 @@ int _lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int
     return rc;
 }
 
-int lt4_check_back(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int left, rettrigs_t *rett)
-{
-    return 0;
-}

@@ -118,7 +118,8 @@ void ctrl3_init_train(int tidx, train_ctrl_t *tvars, lsblk_num_t sblk, int posmm
     tvars->pow_c2_future.v = 0xFF;
     tvars->res_c2_future.v = 0xFF;
     tvars->can1_xaddr = canton_for_lsblk(sblk);
-    tvars->freelsblk.n = -1;
+    tvars->freecanton.v = 0xFF;
+    tvars->sblkfreed.n = -1;
     
     if (on) turn_train_on(tidx, tvars);
 
@@ -730,7 +731,10 @@ void ctrl3_evt_entered_c2(int tidx, train_ctrl_t *tvars, uint8_t from_bemf)
 
     _update_c1changed(tidx, tvars, conf_train_get(tidx), tvars->_sdir<0 ? 1 : 0);
     _updated_while_running(tidx, tvars);
-    
+    if (tvars->c1c2dir_changed) {
+        _sendlow_c1c2_dir(tidx, tvars);
+        
+    }
     if (from_bemf && ignore_ina_pres()) {
         //ctrl_set_timer(tidx, tvars, TLEAVE_C1, TLEAVE_C1_VALUE);
     } else {
@@ -863,22 +867,32 @@ int __from_check_dir = 0; // XXX remove this is for debug
 
 static void freeback(int tidx, train_ctrl_t *tvars)
 {
-    if (tvars->freelsblk.n != -1) {
+    if (tvars->freecanton.v != 0xFF) {
         // XXX remove me. For debug, test on canton is enough
-        if (tvars->freelsblk.n == tvars->c1_sblk.n) {
-            printf("ho bizarre ca");
+        if (tvars->freecanton.v == tvars->can1_xaddr.v) {
+            FatalError("FreC1", "free c1?", Error_Other);
+            return;
         }
-        xblkaddr_t fc = canton_for_lsblk(tvars->freelsblk);
+        if (tvars->freecanton.v == tvars->can2_xaddr.v) {
+            FatalError("FreC2", "free c2?", Error_Other);
+            return;
+        }
+        if (tvars->freecanton.v == tvars->canOld_xaddr.v) {
+            itm_debug2(DBG_CTRL, "free old", tidx, tvars->freecanton.v);
+            _evt_leaved_c1old(tidx, tvars);
+        }
+        
+
+        trace_train_free(ctrl_tasklet.last_tick, tidx, tvars->sblkfreed.n, tvars->freecanton.v);
+        set_block_addr_occupency(tvars->freecanton, BLK_OCC_FREE, tidx, snone);
+
+        tvars->freecanton.v = 0xFF;
+    }
+    if (tvars->sblkfreed.n != -1) {
         if (tvars->_mode == train_auto) {
-            c3auto_freeback(tidx, tvars->freelsblk);
+            c3auto_freeback(tidx, tvars->sblkfreed);
         }
-        if (fc.v != tvars->can1_xaddr.v) {
-            trace_train_free(ctrl_tasklet.last_tick, tidx, tvars->freelsblk.n, fc.v);
-            set_block_addr_occupency(fc, BLK_OCC_FREE, tidx, snone);
-        } else {
-            trace_train_free(ctrl_tasklet.last_tick, tidx, tvars->freelsblk.n, -1);
-        }
-        tvars->freelsblk.n = -1;
+        tvars->sblkfreed.n = -1;
     }
 }
 
@@ -904,7 +918,7 @@ static int _train_check_dir(int tidx, train_ctrl_t *tvars, int sdir, rettrigs_t 
             FatalError("FSMb", "rcneg unk", Error_FSM_ShouldEotOcc);
         }
     } else {
-        lt4_check_back(tidx, tvars, conf_train_get(tidx), (sdir<0) ? 1 : 0, rett);
+        //lt4_check_back(tidx, tvars, conf_train_get(tidx), (sdir<0) ? 1 : 0, rett);
     }
     itm_debug3(DBG_CTRL, "rc2", tidx, rc2, tvars->_state);
     

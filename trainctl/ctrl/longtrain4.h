@@ -30,6 +30,5 @@ int lt4_get_trigs(int tidx, int left, train_ctrl_t *tvars, const conf_train_t *t
 int _lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int left,  rettrigs_t *rett, int checkfreeback);
 
 
-int lt4_check_back(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int left, rettrigs_t *rett);
 
 #endif /* longtrain4_h */

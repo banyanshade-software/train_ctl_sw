@@ -54,8 +54,9 @@ static const xtrnaddr_t to1 = { .v = 1};
     occupency_clear();
     mqf_clear(&from_ctrl);
     memset(&tvars, 0, sizeof(tvars));
-    topology_set_turnout(to0, topo_tn_straight, -1);
-    topology_set_turnout(to1, topo_tn_turn, -1);
+    int chg;
+    topology_set_turnout(to0, topo_tn_straight, -1, &chg);
+    topology_set_turnout(to1, topo_tn_turn, -1, &chg);
 
 
     tvars._mode = train_manual;
@@ -176,7 +177,8 @@ static const xtrnaddr_t to1 = { .v = 1};
 }
 
 - (void)testStartRightOcc {
-    topology_set_turnout(to1, topo_tn_straight, -1);
+    int chg;
+    topology_set_turnout(to1, topo_tn_straight, -1, &chg);
     tconf->trainlen_left_cm = 0;
     tconf->trainlen_right_cm = 40;
     tvars._curposmm = 30;
@@ -220,7 +222,8 @@ static const xtrnaddr_t to1 = { .v = 1};
 
 - (void)testStartRightOccThenOk
 {
-    topology_set_turnout(to1, topo_tn_straight, -1);
+    int chg;
+    topology_set_turnout(to1, topo_tn_straight, -1, &chg);
     tconf->trainlen_left_cm = 0;
     tconf->trainlen_right_cm = 40;
     tvars._curposmm = 30;
@@ -236,7 +239,8 @@ static const xtrnaddr_t to1 = { .v = 1};
 
     // train is blk wait on turn out 1, change turnout 1
     // and it should start
-    topology_set_turnout(to1, topo_tn_turn, -1);
+ 
+    topology_set_turnout(to1, topo_tn_turn, -1, &chg);
     ctrl3_occupency_updated(0, &tvars);
     
     XCTAssert(tvars._state == train_state_running);

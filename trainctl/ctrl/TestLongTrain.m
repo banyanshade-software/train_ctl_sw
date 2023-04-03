@@ -51,8 +51,9 @@ static const xtrnaddr_t to1 = { .v = 1};
     occupency_clear();
     mqf_clear(&from_ctrl);
     memset(&tvars, 0, sizeof(tvars));
-    topology_set_turnout(to0, topo_tn_straight, -1);
-    topology_set_turnout(to1, topo_tn_turn, -1);
+    int chg;
+    topology_set_turnout(to0, topo_tn_straight, -1, &chg);
+    topology_set_turnout(to1, topo_tn_turn, -1, &chg);
 
 
     tvars._mode = train_manual;
@@ -84,8 +85,9 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     tconf->trainlen_left_cm = 0;
     tconf->trainlen_right_cm = 48;
     occupency_clear();
-    topology_set_turnout(to0, topo_tn_turn, -1);
-    topology_set_turnout(to1, topo_tn_turn, -1);
+    int chg;
+    topology_set_turnout(to0, topo_tn_turn, -1, &chg);
+    topology_set_turnout(to1, topo_tn_turn, -1, &chg);
 
     ctrl3_init_train(0, &tvars, stwo, 600,  1); // s2 90cm
     //tvars._curposmm = 600;             //   ---- reste 30cm sur s2 et 48-30=18 sur s1 (45cm)
@@ -112,7 +114,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     XCTAssert(!cmptrigs(&rettrigs, &expt1));
     
     
-    topology_set_turnout(to1, 0, -1);
+    topology_set_turnout(to1, 0, -1, &chg);
     
     /*memset(&tvars.rightcars, 0xFF, sizeof(tvars.rightcars));
     memset(&tvars.leftcars, 0xFF, sizeof(tvars.leftcars));
@@ -159,8 +161,9 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     tconf->trainlen_left_cm = 0;
     tconf->trainlen_right_cm = 48;
     occupency_clear();
-    topology_set_turnout(to0, 1, -1);
-    topology_set_turnout(to1, 1, -1);
+    int chg;
+    topology_set_turnout(to0, 1, -1, &chg);
+    topology_set_turnout(to1, 1, -1, &chg);
     ctrl3_init_train(0, &tvars, stwo, 600, 1); // s2 90cm
     //tvars._curposmm = 600;             //   ---- reste 30cm sur s2 et 48-30=18 sur s1 (45cm)
     /*ctrl3_get_next_sblks(0, &tvars, tconf);
@@ -252,9 +255,10 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     tconf->trainlen_left_cm = 0;
     tconf->trainlen_right_cm = 48;
     occupency_clear();
-    topology_set_turnout(to0, 1, -1);
+    int chg;
+    topology_set_turnout(to0, 1, -1, &chg);
     // same than previous, but to1 disallowed going forward
-    topology_set_turnout(to1, 1, -1);
+    topology_set_turnout(to1, 1, -1, &chg);
     ctrl3_init_train(0, &tvars, stwo, 620, 1); // s2 90cm
     //tvars._curposmm = 620;
     /*ctrl3_get_next_sblks(0, &tvars, tconf);
@@ -278,9 +282,10 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     tconf->trainlen_left_cm = 0;
     tconf->trainlen_right_cm = 48;
     occupency_clear();
-    topology_set_turnout(to0, 1, -1);
+    int chg;
+    topology_set_turnout(to0, 1, -1, &chg);
     // same than previous, but to1 disallowed going forward
-    topology_set_turnout(to1, 0, -1);
+    topology_set_turnout(to1, 0, -1, &chg);
     ctrl3_init_train(0, &tvars, stwo, 620, 1); // s2 90cm
     //tvars._curposmm = 620;
     /*ctrl3_get_next_sblks(0, &tvars, tconf);
@@ -306,9 +311,10 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     tconf->trainlen_left_cm = 0;
     tconf->trainlen_right_cm = 48;
     occupency_clear();
-    topology_set_turnout(to0, 1, -1);
+    int chg;
+    topology_set_turnout(to0, 1, -1, &chg);
     // same than previous, but to1 disallowed going forward
-    topology_set_turnout(to1, 1, -1);
+    topology_set_turnout(to1, 1, -1, &chg);
     ctrl3_init_train(0, &tvars, stwo, 750, 1); // s2 90cm
     //tvars._curposmm = 750;
     /*ctrl3_get_next_sblks(0, &tvars, tconf);
@@ -330,9 +336,10 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     tconf->trainlen_left_cm = 0;
     tconf->trainlen_right_cm = 48;
     occupency_clear();
-    topology_set_turnout(to0, 1, -1);
+    int chg;
+    topology_set_turnout(to0, 1, -1, &chg);
     // same than previous, but to1 disallowed going forward
-    topology_set_turnout(to1, 0, -1);
+    topology_set_turnout(to1, 0, -1, &chg);
     ctrl3_init_train(0, &tvars, stwo, 750, 1); // s2 90cm
     //tvars._curposmm = 750;
     /*ctrl3_get_next_sblks(0, &tvars, tconf);
@@ -355,9 +362,10 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     tconf->trainlen_left_cm = 0;
     tconf->trainlen_right_cm = 48;
     occupency_clear();
-    topology_set_turnout(to0, 1, -1);
+    int chg;
+    topology_set_turnout(to0, 1, -1, &chg);
     // same than previous, but to1 disallowed going forward
-    topology_set_turnout(to1, 0, -1);
+    topology_set_turnout(to1, 0, -1, &chg);
     ctrl3_init_train(0, &tvars, stwo, 600, 1); // s2 90cm
     //tvars._curposmm = 600;             //   ---- reste 30cm sur s2 et 48-30=18 sur s1 (45cm)
     /*ctrl3_get_next_sblks(0, &tvars, tconf);
@@ -396,7 +404,7 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     XCTAssert(!cmptrigs(&rettrigs, &expt2));
 
     // change to1 to normal
-    topology_set_turnout(to1, 1, -1);
+    topology_set_turnout(to1, 1, -1, &chg);
     /*rc = ctrl3_update_front_sblks(0, &tvars, tconf, 0);
     XCTAssert(!rc);*/
     memset(&rettrigs, 0, sizeof(rettrigs_t));
@@ -418,8 +426,9 @@ static int check_lsblk_array(const lsblk_num_t *res, const int *exp, int n)
     tconf->trainlen_left_cm = 20;
     tconf->trainlen_right_cm = 8;
     occupency_clear();
-    topology_set_turnout(to0, topo_tn_turn, -1);
-    topology_set_turnout(to1, topo_tn_turn, -1);
+    int chg;
+    topology_set_turnout(to0, topo_tn_turn, -1, &chg);
+    topology_set_turnout(to1, topo_tn_turn, -1, &chg);
     ctrl3_init_train(0, &tvars, sone, (45-4)*10, 1); // s1 45cm
     //tvars._curposmm = (45-4)*10;
     // 20cm sur s1, reste 45-4-20 = 21

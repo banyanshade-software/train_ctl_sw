@@ -737,12 +737,15 @@ int ctrl_set_turnout(xtrnaddr_t tn, enum topo_turnout_state v, int train)
     if (tn.isdoor) {
         val = topo_tn_moving;
     }
-	int rc = topology_set_turnout(tn, val, train);
+    int chg;
+	int rc = topology_set_turnout(tn, val, train, &chg);
     if (rc) {
     	itm_debug3(DBG_CTRL|DBG_TURNOUT, "tn busy", train, tn.v, rc);
     	return rc;
     }
-    
+    if (!chg) {
+        return 0;
+    }
     msg_64_t m = {0};
     if (tn.isdoor) {
         // send to servo
@@ -793,7 +796,8 @@ static void set_door_ack(xtrnaddr_t tn, enum topo_turnout_state v)
         return;
     }
     
-    int rc = topology_set_turnout(tn, v, -1);
+    int chg;
+    int rc = topology_set_turnout(tn, v, -1, &chg);
     if (rc) {
         itm_debug2(DBG_CTRL|DBG_TURNOUT, "tn bsy-d", tn.v, rc);
         return;

@@ -139,26 +139,34 @@ static int _set_occupied(xblkaddr_t blkaddr, uint8_t trnum, lsblk_num_t lsb, int
             return -1;
         } else {
             if (!car) {
-                co->occ = occupied(sdir);
-                co->trnum = trnum;
-                co->lsblk = lsb;
-                topology_updated(trnum);
-                chg = 1;
+                uint8_t occ = occupied(sdir);
+                if ((occ != co->occ) || (trnum != co->trnum) || (lsb.n != co->lsblk.n)) {
+                    co->occ = occupied(sdir);
+                    co->trnum = trnum;
+                    co->lsblk = lsb;
+                    topology_updated(trnum);
+                    chg = 1;
+                }
             } else {
                 if ((co->lsblk.n == lsb.n) && (co->occ != BLK_OCC_CARS)) {
-                    co->occ = BLK_OCC_CARS;
-                    chg = 1;
+                    if (co->occ != BLK_OCC_CARS) {
+                        co->occ = BLK_OCC_CARS;
+                        chg = 1;
+                    }
                 } else {
                     itm_debug3(DBG_CTRL|DBG_ERR, "not handeled?", trnum, co->occ, lsb.n);
                 }
             }
         }
     } else {
-        co->occ = car ? BLK_OCC_CARS : occupied(sdir);
-        co->trnum = trnum;
-        co->lsblk = lsb;
-        topology_updated(trnum);
-        chg = 1;
+        uint8_t occ = car ? BLK_OCC_CARS : occupied(sdir);
+        if ((co->occ != occ) || (co->trnum != trnum) || (co->lsblk.n != lsb.n)) {
+            co->occ = occ;
+            co->trnum = trnum;
+            co->lsblk = lsb;
+            topology_updated(trnum);
+            chg = 1;
+        }
     }
     if (chg) {
         notif_blk_occup_chg(blkaddr, co);

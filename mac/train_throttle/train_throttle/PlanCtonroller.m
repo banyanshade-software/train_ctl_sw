@@ -65,7 +65,7 @@
         if (0==row) {
             tcellCtrl[row].trainNum = 0;
             tcellCtrl[row].spd      = 72;
-            tcellCtrl[row].targetLSBLK = 23;
+            tcellCtrl[row].targetLSBLK = 9;
         }
     }
     //result.autoresizingMask = NSViewHeightSizable ;

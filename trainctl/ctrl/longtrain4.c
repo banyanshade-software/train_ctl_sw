@@ -94,7 +94,7 @@ static void _add_endlsblk_trig(train_ctrl_t *tvars, int left, int c1len,  rettri
 lsblk_num_t next_lsblk_and_reserve(int tidx, train_ctrl_t *tvars, lsblk_num_t sblknum, uint8_t left, int8_t *palternate, uint8_t doreserve)
 {
     if (doreserve) {
-        printf("debug");
+        //printf("debug");
     }
     if (palternate)  *palternate = 0;
     int back = 0;

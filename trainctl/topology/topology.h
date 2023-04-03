@@ -105,7 +105,7 @@ enum topo_turnout_state {
     topo_tn_moving = -2
 };
 
-int topology_set_turnout(xtrnaddr_t tn,  enum topo_turnout_state v, int numtrain);
+int topology_set_turnout(xtrnaddr_t tn,  enum topo_turnout_state v, int numtrain, int *chg);
 enum topo_turnout_state  topology_get_turnout(xtrnaddr_t tn);
 
 

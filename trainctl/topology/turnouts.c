@@ -73,8 +73,9 @@ static xtrnaddr_t reverse_tn_index(int tridx)
 uint16_t _topology_or_occupency_changed = 0;
 
 
-int topology_set_turnout(xtrnaddr_t turnout, enum topo_turnout_state v, int numtrain)
+int topology_set_turnout(xtrnaddr_t turnout, enum topo_turnout_state v, int numtrain, int *pchg)
 {
+    *pchg = 0;
 	if (turnout.v == 0xFF) return -1;
 
     int tnidx = tn_index(turnout);
@@ -87,10 +88,13 @@ int topology_set_turnout(xtrnaddr_t turnout, enum topo_turnout_state v, int numt
 		if (rc) {
 			return -1;
 		}
+        *pchg = 1;
 	}
-	turnout_st[tnidx].st = v;
-    topology_updated(numtrain);
-	
+    if (v != turnout_st[tnidx].st) {
+        turnout_st[tnidx].st = v;
+        topology_updated(numtrain);
+        *pchg = 1;
+    }
     
 	itm_debug2(DBG_TURNOUT, "tt", turnout.v, topology_get_turnout(turnout));
 	return 0;

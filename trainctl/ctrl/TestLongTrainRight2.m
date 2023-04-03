@@ -43,7 +43,8 @@ static const xblkaddr_t c2 = {.v = 2};
     notify_occupency_change = 0;
     ctrl_flag_notify_speed = 0;
     occupency_clear();
-    topology_set_turnout(to3, topo_tn_straight, -1);
+    int chg;
+    topology_set_turnout(to3, topo_tn_straight, -1, &chg);
     mqf_clear(&from_ctrl);
     memset(&tvars, 0, sizeof(tvars));
     

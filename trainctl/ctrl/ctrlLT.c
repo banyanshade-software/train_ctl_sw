@@ -480,6 +480,7 @@ void ctrl3_pose_triggered(int tidx, train_ctrl_t *tvars, pose_trig_tag_t trigtag
         case train_state_end_of_track0:
         case train_state_end_of_track:
         case train_state_station:
+            itm_debug3(DBG_ERR, "ign trig", tidx, tvars->_state, trigtag);
             //ignore
             goto handled;
             break;
@@ -602,13 +603,13 @@ void ctrl3_occupency_updated(int tidx, train_ctrl_t *tvars)
                 int spd = tvars->_desired_signed_speed;
                 _set_speed(tidx, tvars, 0, 1, 0);
                 _set_speed(tidx, tvars, spd, 0, 0);
-                _set_state(tidx, tvars, train_state_blkwait);
+                _set_state(tidx, tvars, train_state_blkwait0);
                 return;
             }
             if (rett.isoet) {
                 FatalError("FSMe", "run to eot", Error_FSM_RunToEot);
                 _set_speed(tidx, tvars, 0, 1, 0);
-                _set_state(tidx, tvars, train_state_end_of_track);
+                _set_state(tidx, tvars, train_state_end_of_track0);
                 return;
             }
             // otherwise ignore, update trigs (not needed)
@@ -773,14 +774,14 @@ static void _updated_while_running(int tidx, train_ctrl_t *tvars)
         rc = _train_check_dir(tidx, tvars, tvars->_sdir, &rett);
         rc = _train_check_dir(tidx, tvars, tvars->_sdir, &rett);
         _set_speed(tidx, tvars, 0, 1, rc);
-        _set_state(tidx, tvars, train_state_end_of_track);
+        _set_state(tidx, tvars, train_state_end_of_track0);
         return;
     }
     if (rett.isocc) {
         int spd = tvars->_desired_signed_speed;
         _set_speed(tidx, tvars, 0, 1, 0);
         _set_speed(tidx, tvars, spd, 0, 0);
-        _set_state(tidx, tvars, train_state_blkwait);
+        _set_state(tidx, tvars, train_state_blkwait0);
         return;
     }
     if (rc<0) FatalError("FSMd", "setdir", Error_FSM_ChkNeg1);

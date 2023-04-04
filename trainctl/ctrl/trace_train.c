@@ -153,6 +153,7 @@ void _trace_train_postick(uint32_t tick, int tidx, train_ctrl_t *tvars)
     rec->tickrec.oldc1 = tvars->canOld_xaddr.v;
     rec->tickrec.pow2future = tvars->pow_c2_future.v;
 
+    
     if (lrec && (lrec->kind == trace_kind_tick)) {
         if (!memcmp(&lrec->tickrec, &rec->tickrec, sizeof(train_trace_tick_record_t))) {
             cancel_rec(tidx);

@@ -203,6 +203,7 @@ int _lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int
     int first = 1;
     lsblk_num_t nextc1 = {.n=-1};
     int needchok = 1;
+    int needfreeback = 1;
     int done = 0;
     
 #define _AFTER_LOCO(_trg)       ((_trg)>posloco)
@@ -268,17 +269,18 @@ int _lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int
             if (checkfreeback) {
                 int trg = _BEFORE_END_SBLK(train_fwd_len);
                 trg = trg - margin_c2free_len_mm;
-                if ((trg>=0) && (trg<=posloco)) {
+                if ((trg>=0) && (trg<=posloco) && needfreeback) {
                     _add_trig(tvars, left, c1len, rett, tag_free_back, trg);
+                    needfreeback=0;
                     
                 } else if (trg>posloco) {
-                    itm_debug2(DBG_CTRL, "free?", tidx, ncanton.v);
+                    itm_debug3(DBG_CTRL, "free!", tidx, ns.n, ncanton.v);
                     tvars->sblkfreed = ns;
                     if (canton_for_lsblk(cs).v != ncanton.v) {
                         tvars->freecanton = ncanton;
                     }
                 } else {
-                    itm_debug3(DBG_CTRL, "nofree", tidx, trg, posloco);
+                    //itm_debug3(DBG_CTRL, "nofree", tidx, trg, posloco);
                 }
             }
             if (canton_for_lsblk(cs).v != ncanton.v) {

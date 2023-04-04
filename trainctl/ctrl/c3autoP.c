@@ -35,6 +35,7 @@ typedef char compile_assert_c3[(sizeof(cauto_path_items_t) == 2) ? 1 : -1];
 typedef struct st_path {
     uint16_t cidx;
     int8_t spd;
+    uint8_t delay;
     cauto_path_items_t path[C3AUTO_NUM_PATH_ITEM];
 } cauto_vars_t;
 
@@ -112,6 +113,11 @@ void c3auto_station(int tidx)
         itm_debug2(DBG_AUTO|DBG_ERR, "station?", tidx, c3avar[tidx].spd);
         return;
     }
+    c3avar[tidx].delay = 100;
+}
+
+static void _c3auto_station_delayexpired(int tidx)
+{
     int idx = c3avar[tidx].cidx;
     if (!c3avar[tidx].path[idx].t && !c3avar[tidx].path[idx+1].t) {
         int d1 = SIGNOF0(c3avar[tidx].path[idx].val);
@@ -121,6 +127,15 @@ void c3auto_station(int tidx)
             c3avar[tidx].cidx++;
             _update_sblk(tidx, idx+1);
         }
+    }
+}
+
+void c3auto_tick(int tidx)
+{
+    if (!c3avar[tidx].delay) return;
+    c3avar[tidx].delay --;
+    if (!c3avar[tidx].delay) {
+        _c3auto_station_delayexpired(tidx);
     }
 }
 void c3auto_set_turnout(int tidx, xtrnaddr_t tn)

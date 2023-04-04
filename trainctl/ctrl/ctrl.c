@@ -24,6 +24,7 @@
 
 #include "ctrlLT.h"
 
+#include "c3autoP.h"
 
 #include "detectP.h"
 
@@ -100,6 +101,7 @@ tasklet_t ctrl_tasklet = { .def = &ctrl_tdef, .init_done = 0, .queue=&to_ctrl};
 
 // ------------------------------------------------------
 static void normal_process_msg(msg_64_t *m);
+static void _handle_delayed_spd(int tidx, train_ctrl_t *tvars);
 
 
 msg_handler_t msg_handler_selector(runmode_t m)
@@ -308,6 +310,11 @@ static void ctrl_tick(uint32_t tick, _UNUSED_ uint32_t dt)
     }
     for (int tidx = 0; tidx<NUM_TRAINS; tidx++) {
         train_ctrl_t *tvars = &trctl[tidx];
+        
+        if (tvars->_mode == train_auto) {
+            c3auto_tick(tidx);
+            _handle_delayed_spd(tidx, tvars);
+        }
         trace_train_postick(tick, tidx, tvars);
         
         uint16_t v = ~(1<<tidx);
@@ -506,6 +513,20 @@ void ctrl_delayed_set_desired_spd(int tidx, int spd)
      */
 }
 
+static void _handle_delayed_spd(int tidx, train_ctrl_t *tvars)
+{
+    if (tvars->has_delayed_spd) {
+        tvars->has_delayed_spd = 0;
+        int8_t spd = tvars->delayed_spd;
+        if (spd) {
+            ctrl3_upcmd_set_desired_speed(tidx, tvars, spd);
+        } else {
+            ctrl3_upcmd_set_desired_speed_zero(tidx, tvars);
+        }
+    }
+}
+
+
 static void normal_process_msg(msg_64_t *m)
 {
     // -----------------------------------------
@@ -622,15 +643,7 @@ static void normal_process_msg(msg_64_t *m)
         if (tvars->c1c2dir_changed) {
         	FatalError("c1c2", "unhandled c1c2", Error_Abort);
         }
-        if (tvars->has_delayed_spd) {
-            tvars->has_delayed_spd = 0;
-            int8_t spd = tvars->delayed_spd;
-            if (spd) {
-                ctrl3_upcmd_set_desired_speed(tidx, tvars, spd);
-            } else {
-                ctrl3_upcmd_set_desired_speed_zero(tidx, tvars);
-            }
-        }
+        _handle_delayed_spd(tidx, tvars);
     } else {
         itm_debug1(DBG_MSG|DBG_CTRL, "bad msg", m->to);
     }

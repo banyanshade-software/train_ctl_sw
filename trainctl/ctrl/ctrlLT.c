@@ -292,6 +292,7 @@ void ctrl3_upcmd_set_desired_speed(int tidx, train_ctrl_t *tvars, int16_t desire
     //int is_occ = 0;
     int rc = 0;
     if (!desired_speed) FatalError("DSpd", "FSM desspd",  Error_FSM_DSpd);
+   
     int sdir = SIGNOF0(desired_speed);
     rettrigs_t rett = {0};
     switch (tvars->_state) {
@@ -1144,7 +1145,22 @@ static void _set_state(int tidx, train_ctrl_t *tvars, train_state_t newstate)
     if (newstate != train_state_running) {
         tvars->canMeasureOnCanton = tvars->canMeasureOnSblk = 0;
     }
-    
+    // release block on stop
+    switch (newstate) {
+        default:
+            break;
+        case train_state_blkwait:
+        case train_state_end_of_track:
+        case train_state_station:
+            itm_debug3(DBG_CTRL, "freestp", tidx, tvars->_state, tvars->_sdir);
+            const conf_train_t *tconf = conf_train_get(tidx);
+            rettrigs_t rett = {0};
+            _lt4_get_trigs(tidx, tvars, tconf, 0, &rett, 1);
+            freeback(tidx, tvars);
+            _lt4_get_trigs(tidx, tvars, tconf, 1, &rett, 1);
+            freeback(tidx, tvars);
+            break;
+    }
     //  sanity check
     switch (newstate) {
         case train_state_blkwait:

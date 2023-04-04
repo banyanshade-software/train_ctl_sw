@@ -224,7 +224,12 @@ int _lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int
         } else {
             r = poshead > totallen+alen;
         }
-        lsblk_num_t ns = next_lsblk_and_reserve(tidx, tvars, cs, left, &a, r);
+        lsblk_num_t ns;
+        if (checkfreeback) {
+            ns = next_lsblk(cs, left, &a);
+        } else {
+            ns = next_lsblk_and_reserve(tidx, tvars, cs, left, &a, r);
+        }
         
         //do we reach eot or blk wait ?
         if (ns.n == -1) {

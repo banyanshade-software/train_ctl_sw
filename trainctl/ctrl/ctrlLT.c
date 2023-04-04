@@ -480,6 +480,15 @@ void ctrl3_pose_triggered(int tidx, train_ctrl_t *tvars, pose_trig_tag_t trigtag
         case train_state_end_of_track0:
         case train_state_end_of_track:
         case train_state_station:
+            switch (trigtag) {
+                case tag_free_back:
+                    itm_debug2(DBG_CTRL, "ign/freeb", tidx, tvars->_state);
+                    goto handled;
+                    break;
+                    
+                default:
+                    break;
+            }
             itm_debug3(DBG_ERR, "ign trig", tidx, tvars->_state, trigtag);
             //ignore
             goto handled;

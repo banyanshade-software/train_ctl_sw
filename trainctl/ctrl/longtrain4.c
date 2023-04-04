@@ -270,12 +270,15 @@ int _lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int
                 trg = trg - margin_c2free_len_mm;
                 if ((trg>=0) && (trg<=posloco)) {
                     _add_trig(tvars, left, c1len, rett, tag_free_back, trg);
+                    
+                } else if (trg>posloco) {
+                    itm_debug2(DBG_CTRL, "free?", tidx, ncanton.v);
                     tvars->sblkfreed = ns;
                     if (canton_for_lsblk(cs).v != ncanton.v) {
                         tvars->freecanton = ncanton;
                     }
-                } else if (trg>posloco) {
-                    itm_debug2(DBG_CTRL, "free?", tidx, ncanton.v);
+                } else {
+                    itm_debug3(DBG_CTRL, "nofree", tidx, trg, posloco);
                 }
             }
             if (canton_for_lsblk(cs).v != ncanton.v) {

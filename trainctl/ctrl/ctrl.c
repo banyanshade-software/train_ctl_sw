@@ -548,6 +548,9 @@ static void normal_process_msg(msg_64_t *m)
         //extern uint8_t Auto1ByteCode[]; // XXX temp hack
         switch (m->cmd) {
             case CMD_MDRIVE_SPEED_DIR: {
+                if (tvars->_mode == train_auto) {
+                    ctrl_set_mode(tidx, train_manual);
+                }
                 int16_t spd = m->v2*m->v1u;
                 if (spd) {
                     ctrl3_upcmd_set_desired_speed(tidx, tvars, spd);

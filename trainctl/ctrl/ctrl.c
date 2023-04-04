@@ -492,6 +492,7 @@ void ctrl_delayed_set_desired_spd(int tidx, int spd)
 {
     train_ctrl_t *tvars = &trctl[tidx];
     if (tvars->has_delayed_spd) {
+        if (tvars->delayed_spd == spd) return;
         FatalError("dely", "has_delayed_spd already set", Error_Abort);
     }
     tvars->has_delayed_spd = 1;

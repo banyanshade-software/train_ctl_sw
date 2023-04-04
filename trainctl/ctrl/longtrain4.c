@@ -278,7 +278,7 @@ int _lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int
                     _add_trig(tvars, left, c1len, rett, tag_free_back, trg);
                     needfreeback=0;
                     
-                } else if (trg>posloco) {
+                } else if ((trg>posloco) && (tvars->sblkfreed.n == -1)) {
                     itm_debug3(DBG_CTRL, "free!", tidx, ns.n, ncanton.v);
                     tvars->sblkfreed = ns;
                     if (canton_for_lsblk(cs).v != ncanton.v) {

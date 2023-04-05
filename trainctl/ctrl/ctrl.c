@@ -244,12 +244,13 @@ static void _ctrl_init(int normalmode)
             */
 			//ctrl2_init_train(0, &otrctl[0], s2);
 #else
-            ctrl3_init_train(0, &trctl[0], s5, 300, 1);
+            ctrl3_init_train(0, &trctl[0], s0, 260, 1);
+            //ctrl3_init_train(0, &trctl[0], s5, 300, 1);
             ctrl_set_mode(0, train_manual);
-            ctrl3_init_train(1, &trctl[1], s8, 400, 1);
+            /*ctrl3_init_train(1, &trctl[1], s8, 400, 1);
             ctrl_set_mode(1, train_manual);
             ctrl3_init_train(2, &trctl[2], s7, 200, 1);
-            ctrl_set_mode(2, train_manual);
+            ctrl_set_mode(2, train_manual);*/
 #endif
 
 			
@@ -402,6 +403,7 @@ static void sub_presence_changed(_UNUSED_ uint8_t from_addr,  uint8_t lsegnum,  
             continue;
         }
         if (p) {
+            
             trace_train_ina3221(ctrl_tasklet.last_tick, tidx, lsegnum, 1);
             if ((0)) {
             } else if (is_s2 && !is_s1 && !is_c2) {
@@ -567,6 +569,10 @@ static void normal_process_msg(msg_64_t *m)
         int tidx = MA1_TRAIN(m->to);
         //train_oldctrl_t *otvar = &otrctl[tidx];
         train_ctrl_t *tvars = &trctl[tidx];
+
+        if (tvars->c1c2dir_changed) {
+        	FatalError("c1C2", "pend c1c2", Error_Abort);
+        }
         //extern uint8_t Auto1ByteCode[]; // XXX temp hack
         switch (m->cmd) {
             case CMD_MDRIVE_SPEED_DIR: {

@@ -87,6 +87,7 @@ static void _add_endlsblk_trig(train_ctrl_t *tvars, int left, int c1len,  rettri
     int ina1 = get_lsblk_ina3221(c1);
     int ina2 = get_lsblk_ina3221(ns);
     if ((ina1 == ina2) || (ina2 == 0xFF)) {
+    	itm_debug3(DBG_CTRL, "trg end", c1.n, ns.n, pos);
         _add_trig(tvars, left, c1len, rett, tag_end_lsblk, pos);
     }
 }

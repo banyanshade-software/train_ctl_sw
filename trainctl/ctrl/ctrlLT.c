@@ -209,8 +209,11 @@ void ctrl3_set_mode(int tidx, train_ctrl_t *tvar, train_mode_t mode)
   
 }
 
+static const int adjust_pose = 0;
+
 static void _adjust_posemm(int tidx, train_ctrl_t *tvars, int expmm, int measmm)
 {
+    if (!adjust_pose) return;
     if (!measmm) return;
     const conf_train_t *tconf = conf_train_get(tidx);
     conf_train_t *wconf = (conf_train_t *)tconf; // writable
@@ -224,7 +227,7 @@ static void _adjust_posemm(int tidx, train_ctrl_t *tvars, int expmm, int measmm)
     fact100 = 100+(fact100/n);
     wconf->pose_per_cm = pose*fact100/100;
     if ((1)) {
-        int np = spdctl_get_lastpose(tidx, tvars->can1_xaddr);
+        int np = tvars->_curposmm; // spdctl_get_lastpose(tidx, tvars->can1_xaddr);
         int nmm = pose_convert_to_mm(tconf, np*10);
         itm_debug3(DBG_CTRL, "poserr<", tidx, measmm, expmm);
         itm_debug3(DBG_CTRL, "poserr>", tidx, nmm, expmm);
@@ -242,7 +245,7 @@ static void _adjust_posemm(int tidx, train_ctrl_t *tvars, int expmm, int measmm)
 static void adjust_measure_lens1(int tidx, train_ctrl_t *tvars)
 {
     int8_t steep = 0;
-    int np = spdctl_get_lastpose(tidx, tvars->can1_xaddr); // TODO only ok because same node
+    int np = tvars->_curposmm; // spdctl_get_lastpose(tidx, tvars->can1_xaddr); // TODO only ok because same node
     const conf_train_t *tconf = conf_train_get(tidx);
     int nmm = pose_convert_to_mm(tconf, np*10);
     int l = get_lsblk_len_cm(tvars->c1_sblk, &steep);
@@ -253,7 +256,7 @@ static void adjust_measure_lens1(int tidx, train_ctrl_t *tvars)
 
 static void adjust_measure_ends1fromc1(int tidx, train_ctrl_t *tvars)
 {
-    int np = spdctl_get_lastpose(tidx, tvars->can1_xaddr); // TODO only ok because same node
+    int np = tvars->_curposmm; //spdctl_get_lastpose(tidx, tvars->can1_xaddr); // TODO only ok because same node
     const conf_train_t *tconf = conf_train_get(tidx);
     int nmm = pose_convert_to_mm(tconf, np*10);
     lsblk_num_t s = tvars->c1_sblk;
@@ -666,6 +669,10 @@ void ctrl3_evt_entered_new_lsblk_same_canton(int tidx, train_ctrl_t *tvars, lsbl
 		itm_debug3(DBG_ERR|DBG_CTRL, "nsblk/bs", tidx, tvars->_state, sblk.n);
 		return;
 	}
+	int32_t np = spdctl_get_lastpose(tidx, tvars->can1_xaddr);
+	itm_debug3(DBG_CTRL, "nsblk/sam", tidx, tvars->_curposmm, np);
+    tvars->_curposmm = np;
+
     // ina detect train entered new lsblk
     if (!jumped) {
         if (tvars->canMeasureOnSblk) {
@@ -676,17 +683,26 @@ void ctrl3_evt_entered_new_lsblk_same_canton(int tidx, train_ctrl_t *tvars, lsbl
         }
     }
     tvars->c1_sblk = sblk;
-    tvars->beginposmm = tvars->_curposmm;
+    if (tvars->_sdir>0) {
+        tvars->beginposmm = tvars->_curposmm;
+    } else {
+        tvars->beginposmm = tvars->_curposmm - get_lsblk_len_cm(sblk, NULL)*10;
+    }
     tvars->canMeasureOnSblk = 1;
     _update_c1changed(tidx, tvars, conf_train_get(tidx));
     _updated_while_running(tidx, tvars);
     if (tvars->c1c2dir_changed) {
+    	itm_debug1(DBG_CTRL, "sam/dir", tidx);
     	_sendlow_c1c2_dir(tidx, tvars);
     }
 }
 
 void ctrl3_evt_entered_new_lsblk_c2_canton(int tidx, train_ctrl_t *tvars, _UNUSED_ lsblk_num_t sblk)
 {
+	int32_t np = spdctl_get_lastpose(tidx, tvars->can1_xaddr);
+	itm_debug3(DBG_CTRL, "nsblk/np", tidx, tvars->_curposmm, np);
+    tvars->_curposmm = spdctl_get_lastpose(tidx, tvars->can1_xaddr);
+
     if (tvars->canMeasureOnSblk) {
         adjust_measure_lens1(tidx, tvars);
         tvars->canMeasureOnSblk = 0;

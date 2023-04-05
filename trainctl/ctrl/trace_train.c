@@ -55,6 +55,7 @@ typedef struct {
     pose_trig_tag_t tag;
     int32_t oldpose;
     int32_t adjustedpose;
+    uint8_t c1;
 } __attribute__((packed)) train_trace_trig_record_t;
 
 typedef struct {
@@ -158,7 +159,7 @@ void _trace_train_postick(uint32_t tick, int tidx, train_ctrl_t *tvars)
         if (!memcmp(&lrec->tickrec, &rec->tickrec, sizeof(train_trace_tick_record_t))) {
             cancel_rec(tidx);
         } else {
-            itm_debug1(DBG_CTRL, "hop", 0);
+            //itm_debug1(DBG_CTRL, "hop", 0);
         }
     }
     
@@ -173,6 +174,7 @@ void _trace_train_trig(uint32_t tick, int tidx, _UNUSED_ train_ctrl_t *tvars, po
     rec->trigrec.tag = tag;
     rec->trigrec.oldpose = oldpos;
     rec->trigrec.adjustedpose = adjutedpos;
+    rec->trigrec.c1 = tvars->c1_sblk.n;
 }
 
 
@@ -325,10 +327,11 @@ static void _trace_train_dump(train_trace_record_t *records, int numitem, int st
 					   _cr);
                 break;
             case trace_kind_trig_set:
-                sprintf(line, "%2d %6.6d --set  %-9s pos=%d%s",
+                sprintf(line, "%2d %6.6d --set  %-9s pos=%d (sblk %d)%s",
                        idx, rec->tick,
                        trig_name(rec->trigrec.tag),
                        rec->trigrec.adjustedpose,
+                        rec->trigrec.c1,
 					   _cr);
                 break;
             case trace_kind_free:

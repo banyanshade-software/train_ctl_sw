@@ -27,6 +27,7 @@
 #include "longtrain4.h"
 
 
+#ifdef UNIT_TEST
 
 static const int brake_len_mm = 160;
 static const int margin_stop_len_mm = 120;
@@ -34,6 +35,15 @@ static const int margin_c2res_len_mm = 200;
 static const int margin_c2pow_len_mm = 200;
 static const int margin_c2free_len_mm = 100;
 
+#else
+
+static const int brake_len_mm = 160;
+static const int margin_stop_len_mm = 120;
+static const int margin_c2res_len_mm = 300;
+static const int margin_c2pow_len_mm = 300;
+static const int margin_c2free_len_mm = 100;
+
+#endif
 
 /*
  

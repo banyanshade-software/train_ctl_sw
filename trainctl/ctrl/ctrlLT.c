@@ -209,7 +209,7 @@ void ctrl3_set_mode(int tidx, train_ctrl_t *tvar, train_mode_t mode)
   
 }
 
-static const int adjust_pose = 0;
+static const int adjust_pose = 1;
 
 static void _adjust_posemm(int tidx, train_ctrl_t *tvars, int expmm, int measmm)
 {
@@ -297,6 +297,9 @@ void ctrl3_upcmd_set_desired_speed(int tidx, train_ctrl_t *tvars, int16_t desire
     if (!desired_speed) FatalError("DSpd", "FSM desspd",  Error_FSM_DSpd);
    
     int sdir = SIGNOF0(desired_speed);
+    if ((sdir<0) &&  (tvars->_state==train_state_station)){
+        itm_debug1(DBG_CTRL, "bh", tidx);
+    }
     rettrigs_t rett = {0};
     switch (tvars->_state) {
         case train_state_off:
@@ -992,7 +995,7 @@ static void _apply_trigs(int tidx, train_ctrl_t *tvars, const rettrigs_t *rett)
     // get min pose (right) or max pose (left)
     int min=0;
     int n = 0;
-    for (int i=0; i<NUMTRIGS;i++) {
+    for (int i=0; i<rett->ntrig;i++) {
         if (!rett->trigs[i].tag) continue;
         if (!n) min = rett->trigs[i].posmm;
         else {
@@ -1003,18 +1006,27 @@ static void _apply_trigs(int tidx, train_ctrl_t *tvars, const rettrigs_t *rett)
             }
         }
     }
-    
-    for (int i=0; i<NUMTRIGS;i++) {
+    int nt=0; int ns=0;
+    for (int i=0; i<rett->ntrig;i++) {
         if (!rett->trigs[i].tag) continue;
+        int ignore = 0;
         if (tvars->_sdir >= 0) {
-            if (rett->trigs[i].posmm > min+MARGIN_TRIG) continue;
+            if (rett->trigs[i].posmm > min+MARGIN_TRIG) ignore=1;
         } else {
-            if (rett->trigs[i].posmm < min-MARGIN_TRIG) continue;
+            if (rett->trigs[i].posmm < min-MARGIN_TRIG) ignore=1;
         }
-        _set_one_trig(tidx, conf, i, tvars->_sdir, tvars->can1_xaddr ,
+        if (!ignore) {
+            ns++;
+            _set_one_trig(tidx, conf, i, tvars->_sdir, tvars->can1_xaddr ,
                       pose_convert_from_mm(conf, rett->trigs[i].posmm),
                       rett->trigs[i].tag);
-        trace_train_trig_set(ctrl_tasklet.last_tick, tidx, tvars, rett->trigs[i].tag, rett->trigs[i].posmm);
+        }
+        nt++;
+        trace_train_trig_set(ctrl_tasklet.last_tick, tidx, tvars, rett->trigs[i].tag, rett->trigs[i].posmm, ignore);
+    }
+    // sanity check
+    if (nt && !ns) {
+        FatalError("NoTr", "no trig selected", Error_Other);
     }
 }
 

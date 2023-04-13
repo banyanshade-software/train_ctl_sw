@@ -148,11 +148,12 @@ static int _set_occupied(xblkaddr_t blkaddr, uint8_t trnum, lsblk_num_t lsb, int
                     chg = 1;
                 }
             } else {
-                if ((co->lsblk.n == lsb.n) && (co->occ != BLK_OCC_CARS)) {
+                if ((co->lsblk.n != lsb.n) || (co->occ != BLK_OCC_CARS)) {
                     if (co->occ != BLK_OCC_CARS) {
                         co->occ = BLK_OCC_CARS;
                         chg = 1;
                     }
+
                 } else {
                     itm_debug3(DBG_CTRL|DBG_ERR, "not handeled?", trnum, co->occ, lsb.n);
                 }

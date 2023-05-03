@@ -407,7 +407,12 @@ static void sub_presence_changed(_UNUSED_ uint8_t from_addr,  uint8_t lsegnum,  
             trace_train_ina3221(ctrl_tasklet.last_tick, tidx, lsegnum, 1);
             if ((0)) {
             } else if (is_s2 && !is_s1 && !is_c2) {
-                ctrl3_evt_entered_new_lsblk_same_canton(tidx, tvar, n2, 0);
+                if (is_c1) {
+                    ctrl3_evt_entered_new_lsblk_same_canton(tidx, tvar, n2, 0);
+                } else {
+                    itm_debug3(DBG_ERR|DBG_CTRL, "c2 not set", tidx, n2.n, tvar->can2_xaddr.v);
+                    ctrl3_evt_entered_new_lsblk_c2_canton(tidx, tvar, n2);
+                }
             } else if (is_s2 && !is_s1 && is_c2) {
                 ctrl3_evt_entered_new_lsblk_c2_canton(tidx, tvar, n2);
             } else if (is_c1 && is_s1) {

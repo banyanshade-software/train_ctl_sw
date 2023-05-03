@@ -74,6 +74,15 @@ typedef struct {
     int8_t inaon;
 } __attribute__((packed)) train_trace_ina_record_t;
 
+
+typedef struct {
+    lsblk_num_t c1lblk;
+    lsblk_num_t oldc1;
+    uint32_t curposmm;
+    uint8_t org;
+} __attribute__((packed)) train_trace_setc1_record_t;
+
+
 typedef enum {
     trace_kind_tick = 1,
     trace_kind_trig,
@@ -81,6 +90,7 @@ typedef enum {
     trace_kind_free,
     trace_kind_simu,
     trace_kind_ina,
+    trace_kind_setc1,
 } __attribute__((packed)) trace_rec_kind_t;
 
 typedef struct {
@@ -92,8 +102,11 @@ typedef struct {
         train_trace_free_record_t freerec;
         train_trace_simu_record_t simurec;
         train_trace_ina_record_t  inarec;
-    } __attribute__((packed));;
+        train_trace_setc1_record_t setc1rec;
+    } __attribute__((packed));
 } __attribute__((packed)) train_trace_record_t;
+
+
 
 #define NUM_TRACE_ITEM 100
 
@@ -164,6 +177,18 @@ void _trace_train_postick(uint32_t tick, int tidx, train_ctrl_t *tvars)
         }
     }
     
+}
+
+void _trace_train_setc1(uint32_t tick, int tidx, train_ctrl_t *tvars, lsblk_num_t newc1, int org)
+{
+    train_trace_record_t *rec = get_newrec(tidx);
+    if (!rec) return;
+    rec->tick = tick;
+    rec->kind = trace_kind_setc1;
+    rec->setc1rec.c1lblk = newc1;
+    rec->setc1rec.oldc1 = tvars->c1_sblk;
+    rec->setc1rec.curposmm = tvars->_curposmm;
+    rec->setc1rec.org = org;
 }
 
 void _trace_train_trig(uint32_t tick, int tidx, _UNUSED_ train_ctrl_t *tvars, pose_trig_tag_t tag, int32_t oldpos, int32_t adjutedpos)
@@ -285,6 +310,17 @@ void trace_train_dumpbuf(void *buf, int numbytes)
     _trace_train_dump((train_trace_record_t *)buf, numbytes/sizeof(train_trace_record_t), 0, 1);
 }
 
+static const char *_c1orgstr(int org)
+{
+    switch (org) {
+        case 0: return "trig";
+        case 1: return "ina";
+        case 2: return "evtc2";
+        default:
+            return "???";
+            break;
+    }
+}
 static void _trace_train_dump(train_trace_record_t *records, int numitem, int startidx, int h)
 {
     int f = 1;
@@ -356,6 +392,13 @@ static void _trace_train_dump(train_trace_record_t *records, int numitem, int st
                         rec->inarec.inanum,
                         rec->inarec.inaon ? "ON" : "off",
                         _eds,
+                        _cr);
+                break;
+            case trace_kind_setc1:
+                sprintf(line, "%2d %6.6d setc1 %d->%d pos=%d org=%s%s",
+                        idx, rec->tick,
+                        rec->setc1rec.oldc1.n, rec->setc1rec.c1lblk.n,
+                        rec->setc1rec.curposmm, _c1orgstr(rec->setc1rec.org),
                         _cr);
             default:
                 break;

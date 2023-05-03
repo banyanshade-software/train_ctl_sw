@@ -41,6 +41,13 @@ static inline void trace_train_trig_set(uint32_t tick, int tidx, train_ctrl_t *t
     _trace_train_trig_set(tick, tidx, tvars, tag, pos, ignore);
 }
 
+void _trace_train_setc1(uint32_t tick, int tidx, train_ctrl_t *tvars, lsblk_num_t newc1, int org);
+static inline void trace_train_setc1(uint32_t tick, int tidx, train_ctrl_t *tvars, lsblk_num_t newc1, int org)
+{
+    if (!trace_train_enable) return;
+    _trace_train_setc1(tick, tidx, tvars, newc1, org);
+}
+
 void _trace_train_free(uint32_t tick, int tidx, int sblk, int canton);
 static inline void trace_train_free(uint32_t tick, int tidx, int sblk, int canton)
 {

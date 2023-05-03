@@ -517,10 +517,11 @@ void ctrl3_pose_triggered(int tidx, train_ctrl_t *tvars, pose_trig_tag_t trigtag
                         goto handled;
                         break;
                     }
-                   
-                    tvars->c1_sblk = ns;
+                    
                     tvars->canMeasureOnSblk = 0;
                     tvars->beginposmm = tvars->_curposmm; // TODO adjust for trig delay
+                    trace_train_setc1(ctrl_tasklet.last_tick, tidx, tvars, ns, 0);
+                    tvars->c1_sblk = ns;
                     _update_c1changed(tidx, tvars, conf_train_get(tidx));
                     _updated_while_running(tidx, tvars);
                     goto handled;
@@ -685,12 +686,15 @@ void ctrl3_evt_entered_new_lsblk_same_canton(int tidx, train_ctrl_t *tvars, lsbl
             tvars->canMeasureOnCanton = 0;
         }
     }
-    tvars->c1_sblk = sblk;
+    
     if (tvars->_sdir>0) {
         tvars->beginposmm = tvars->_curposmm;
     } else {
         tvars->beginposmm = tvars->_curposmm - get_lsblk_len_cm(sblk, NULL)*10;
     }
+    trace_train_setc1(ctrl_tasklet.last_tick, tidx, tvars, sblk, 1);
+    tvars->c1_sblk = sblk;
+    
     tvars->canMeasureOnSblk = 1;
     _update_c1changed(tidx, tvars, conf_train_get(tidx));
     _updated_while_running(tidx, tvars);
@@ -749,7 +753,11 @@ void ctrl3_evt_entered_c2(int tidx, train_ctrl_t *tvars, uint8_t from_bemf)
     /*if (2 == tvars->can1_xaddr.v) { // XXX Hardcoded for now
         tvars->measure_pose_percm = 1;
     }*/
-    tvars->c1_sblk = first_lsblk_with_canton(tvars->can1_xaddr, tvars->c1_sblk);
+    
+    lsblk_num_t ns = first_lsblk_with_canton(tvars->can1_xaddr, tvars->c1_sblk);
+    trace_train_setc1(ctrl_tasklet.last_tick, tidx, tvars, ns, 2);
+    tvars->c1_sblk = ns;
+
     if (tvars->_sdir >= 0) {
         tvars->beginposmm = 0;
     } else {

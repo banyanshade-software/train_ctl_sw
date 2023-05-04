@@ -18,6 +18,7 @@ typedef enum {
     board_switcher = 16,
     board_dispatcher = 32,
     board_ui = 48,
+    board_G4slv1 = 64,
 
     // special case
     board_unit_test = 240,

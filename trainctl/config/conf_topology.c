@@ -36,6 +36,21 @@
 
 
 
+#ifdef TRN_BOARD_G4SLV1
+
+unsigned int conf_topology_num_entries(void)
+{
+    return 0; // 0 
+}
+
+static conf_topology_t conf_topology[0] = {
+};
+
+#endif // TRN_BOARD_G4SLV1
+
+
+
+
 #ifdef TRN_BOARD_UNIT_TEST
 
 unsigned int conf_topology_num_entries(void)

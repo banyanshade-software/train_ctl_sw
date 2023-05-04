@@ -21,6 +21,21 @@
 
 
 
+#ifdef TRN_BOARD_G4SLV1
+
+unsigned int conf_turnout_num_entries(void)
+{
+    return 0; // 0 
+}
+
+static conf_turnout_t conf_turnout[0] = {
+};
+
+#endif // TRN_BOARD_G4SLV1
+
+
+
+
 #ifdef TRN_BOARD_UNIT_TEST
 
 unsigned int conf_turnout_num_entries(void)

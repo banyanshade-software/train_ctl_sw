@@ -44,7 +44,6 @@ trainctl/oscillo \
 trainctl/spdctl \
 trainctl/stm32 \
 trainctl/stm32/ina3221 \
-trainctl/stm32/w25qxx \
 trainctl/topology \
 trainctl/trkpln \
 trainctl/utils \

@@ -12,7 +12,6 @@ RM := rm -rf
 -include trainctl/utils/subdir.mk
 -include trainctl/trkpln/subdir.mk
 -include trainctl/topology/subdir.mk
--include trainctl/stm32/w25qxx/subdir.mk
 -include trainctl/stm32/ina3221/subdir.mk
 -include trainctl/stm32/subdir.mk
 -include trainctl/spdctl/subdir.mk

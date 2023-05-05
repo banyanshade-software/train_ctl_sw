@@ -164,7 +164,7 @@
 
 // -----------------------------------------
 
-#if defined(TRN_BOARD_GSLV1)
+#if defined(TRN_BOARD_G4SLV1)
 #define STM32_G4
 #define STM32G4
 
@@ -178,7 +178,7 @@
 #define BOARD_HAS_TOPOLOGY
 #define BOARD_HAS_USB
 //#define BOARD_HAS_USB_HOST
-#define BOARD_HAS_FLASH
+//#define BOARD_HAS_FLASH
 #define BOARD_CAN_BE_MASTER
 
 #define BOARD_HAS_CAN

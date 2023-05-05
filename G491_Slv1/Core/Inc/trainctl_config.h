@@ -8,7 +8,8 @@
 #ifndef INC_TRAINCTL_CONFIG_H_
 #define INC_TRAINCTL_CONFIG_H_
 
-#define TRN_BOARD_GSLV1
+#define TRN_BOARD_G4SLV1
+
 //#define TRN_BOARD_MAINV0
 //#define TRN_BOARD_MAIN_ZERO		// same as main but nothing installed
 //#define TRN_BOARD_DISPATCHER

@@ -9,7 +9,7 @@
 #include "main.h"
 
 #ifndef BOARD_HAS_FLASH
-#error BOARD_HAS_FLASH is not defined but oam_flash.c included in build
+#error BOARD_HAS_FLASH is not defined but spi1_swo_trace.c included in build
 #endif
 
 #include "../oam/oam_flash.h"

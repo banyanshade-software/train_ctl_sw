@@ -13,13 +13,19 @@
 //#include "oscillo.h"
 #include "../misc.h"
 
-#ifdef STM32_F4
+#if defined(STM32F4)
 #include "stm32f4xx_hal.h"
-#include "stm32f4xx_hal_tim.h"
-#else
+
+#elif defined(STM32G4)
+#include "stm32g4xx_hal.h"
+
+#elif defined(STM32F1)
 #include "stm32f1xx_hal.h"
-#include "stm32f1xx_hal_tim.h"
+
+#else
+#error no board hal
 #endif
+
 
 #ifndef BOARD_HAS_OSCILLO
 #error oscillo requires BOARD_HAS_OSCILLO, remove from build

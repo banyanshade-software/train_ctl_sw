@@ -55,7 +55,7 @@ const conf_led_t *conf_led_get(int num);
 
 
 #ifdef TRN_BOARD_G4SLV1
-#define NUM_LEDS 0 // 0 
+#define NUM_LEDS 1 // 1 
 #endif // TRN_BOARD_G4SLV1
 
 

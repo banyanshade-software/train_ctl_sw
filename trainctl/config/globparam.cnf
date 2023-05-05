@@ -9,4 +9,5 @@ config globparam {
 } num = (mainV0) 1
       = (mainV04) 1
       = (simu) 1
+      = (G4slv1) 1 # TODO remove this
       = (default) 0;

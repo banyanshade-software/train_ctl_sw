@@ -13,6 +13,7 @@ config utest {
 } num = (mainV0) 1
       = (simu) 1
       = (dispatcher) 1          # TODO
+      = (G4slv1) 1          
       = (unit_test) 1
       = (default) 1;
 

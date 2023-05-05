@@ -25,10 +25,16 @@
 
 unsigned int conf_globparam_num_entries(void)
 {
-    return 0; // 0 
+    return 1; // 1 
 }
 
-static conf_globparam_t conf_globparam[0] = {
+static conf_globparam_t conf_globparam[1] = {
+  {     // 0
+     .pwmfreq = 100,
+     .test_mode = 0,
+     .oscillo = 0,
+     .ignoreIna3221 = 0,
+  }
 };
 
 #endif // TRN_BOARD_G4SLV1

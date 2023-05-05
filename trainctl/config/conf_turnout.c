@@ -25,10 +25,38 @@
 
 unsigned int conf_turnout_num_entries(void)
 {
-    return 0; // 0 
+    return 4; // 4 
 }
 
-static conf_turnout_t conf_turnout[0] = {
+static conf_turnout_t conf_turnout[4] = {
+  {     // 0
+     .cmd_portA = NULL,
+     .cmd_portB = NULL,
+     .pinA = 0,
+     .pinB = 0,
+     .reverse = 0,
+  },
+  {     // 1
+     .cmd_portA = NULL,
+     .cmd_portB = NULL,
+     .pinA = 0,
+     .pinB = 0,
+     .reverse = 0,
+  },
+  {     // 2
+     .cmd_portA = NULL,
+     .cmd_portB = NULL,
+     .pinA = 0,
+     .pinB = 0,
+     .reverse = 0,
+  },
+  {     // 3
+     .cmd_portA = NULL,
+     .cmd_portB = NULL,
+     .pinA = 0,
+     .pinB = 0,
+     .reverse = 0,
+  }
 };
 
 #endif // TRN_BOARD_G4SLV1

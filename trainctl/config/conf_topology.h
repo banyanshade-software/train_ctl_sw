@@ -46,7 +46,7 @@ const conf_topology_t *conf_topology_get(int num);
 
 
 #ifdef TRN_BOARD_G4SLV1
-#define NUM_TOPOLOGYS 0 // 0 
+#define NUM_TOPOLOGYS 32 // 32 
 #endif // TRN_BOARD_G4SLV1
 
 

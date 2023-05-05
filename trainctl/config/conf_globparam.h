@@ -31,7 +31,7 @@ const conf_globparam_t *conf_globparam_get(int num);
 
 
 #ifdef TRN_BOARD_G4SLV1
-#define NUM_GLOBPARAMS 0 // 0 
+#define NUM_GLOBPARAMS 1 // 1 
 #endif // TRN_BOARD_G4SLV1
 
 

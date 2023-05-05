@@ -32,14 +32,11 @@ trainctl/IHM \
 trainctl/config/_str \
 trainctl/config \
 trainctl/ctrl \
-trainctl/gen/config_gen \
-trainctl/gen/msgdef_gen \
 trainctl/leds \
 trainctl/low \
 trainctl \
 trainctl/msg \
 trainctl/oam \
-trainctl/obsolete \
 trainctl/oscillo \
 trainctl/spdctl \
 trainctl/stm32 \

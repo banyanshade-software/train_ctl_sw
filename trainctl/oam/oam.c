@@ -31,6 +31,11 @@
 #include "../config/conf_globparam.propag.h"
 #include "../config/conf_utest.propag.h"
 
+
+#ifdef STM32G4
+#include "stm32g4xx_ll_utils.h"
+#endif
+
 int OAM_NeedsReschedule = 0;
 
 
@@ -922,9 +927,15 @@ uint32_t oam_getDeviceUniqueId(void)
 {
 #ifndef TRAIN_SIMU
 	/* Read MCU Id, 32-bit access */
+#ifdef STM32G4
+	uint32_t id0 = LL_GetUID_Word0(); // HAL_GetUIDw0();
+	uint32_t id1 = LL_GetUID_Word1(); // AL_GetUIDw1();
+	uint32_t id2 = LL_GetUID_Word2(); // HAL_GetUIDw2();
+#else
 	uint32_t id0 = HAL_GetUIDw0();
 	uint32_t id1 = HAL_GetUIDw1();
 	uint32_t id2 = HAL_GetUIDw2();
+#endif
 
 	// stm32 gets a uniq 96 bits id, but this is too large for a msg64_t
 	// so we need to reduce it to 32 bits (or at least 64)

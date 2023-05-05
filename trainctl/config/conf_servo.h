@@ -44,7 +44,7 @@ typedef void *GPIO_TypeDef;
 
 typedef struct conf_servo {
     GPIO_TypeDef *port_power;
-    uint16_t pin_power;
+    int16_t pin_power;
     int8_t pwm_timer_num;
     int8_t pwm_timer_ch;
     int8_t direction;
@@ -61,7 +61,7 @@ const conf_servo_t *conf_servo_get(int num);
 
 
 #ifdef TRN_BOARD_G4SLV1
-#define NUM_SERVOS 0 // 0 
+#define NUM_SERVOS 1 // 1 
 #endif // TRN_BOARD_G4SLV1
 
 

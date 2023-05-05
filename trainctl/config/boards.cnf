@@ -8,6 +8,7 @@ config boards {
         = (default) 0;
 } num = (mainV0) 16
       = (mainV04) 16
+      = (G4slv1) 1 # TODO remove this
       = (default) 0;
 
 

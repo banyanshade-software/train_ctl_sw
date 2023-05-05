@@ -34,7 +34,7 @@ config turnout {
       = (simu) 4
       = (unit_test) 4
       = (dispatcher) 0          # TODO
-      = (G4slv1) 0          # TODO
+      = (G4slv1) 4          # TODO
       = (switcher) 8
       = (default) 0;
 

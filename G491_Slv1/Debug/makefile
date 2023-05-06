@@ -25,7 +25,7 @@ RM := rm -rf
 -include trainctl/config/subdir.mk
 -include trainctl/IHM/subdir.mk
 -include trainctl/subdir.mk
--include Middlewares/Third_Party/FreeRTOS/Source/portable/MemMang/subdir.mk
+-include stm32dev/disp_tft/subdir.mk
 -include Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F/subdir.mk
 -include Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS/subdir.mk
 -include Middlewares/Third_Party/FreeRTOS/Source/subdir.mk

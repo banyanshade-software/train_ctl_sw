@@ -43,6 +43,11 @@
 #ifdef BOARD_HAS_FDCAN
 // TODO #warning  not yet handled
 
+void CAN_Tasklet(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_ uint32_t dt)
+{
+
+}
+
 #else
 /*
  * error here on CAN_HandleTypeDef probably due to CAN is not activated in  ioc

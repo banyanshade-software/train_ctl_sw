@@ -48,7 +48,13 @@ extern ADC_HandleTypeDef hadc2;
 extern TIM_HandleTypeDef htim1;
 extern TIM_HandleTypeDef htim2;
 extern TIM_HandleTypeDef htim3;
+#ifdef STM32_G4
+extern TIM_HandleTypeDef htim6;
+#define OSCTIM htim6
+#else
 extern TIM_HandleTypeDef htim5;
+#define OSCTIM htim5
+#endif
 extern TIM_HandleTypeDef htim8;
 
 
@@ -139,14 +145,14 @@ static void oscillo_start(void)
 	oscillo_index = 0;
 	oscillo_run = 1;
 	itm_debug1(DBG_TIM, "osc start", 0);
-	HAL_TIM_Base_Start_IT(&htim5);
+	HAL_TIM_Base_Start_IT(&OSCTIM);
 }
 
 void oscillo_end(void)
 {
 	oscillo_run = 0;
 	oscillo_index = 0;
-	HAL_TIM_Base_Stop(&htim5);
+	HAL_TIM_Base_Stop(&OSCTIM);
 	HAL_ADC_Stop_DMA(&hadc2);
 	itm_debug1(DBG_TIM, "osc end", 0);
 	oscillo_did_end = 1;

@@ -340,7 +340,9 @@ static tasklet_t *ctrlTasklets[] = {
 #endif
 #ifdef BOARD_HAS_CTRL
 		&ctrl_tasklet,
+#ifndef BOARD_HAS_USB
 		&stattx_tasklet,
+#endif
 #endif
 
 #ifdef BOARD_HAS_CAN

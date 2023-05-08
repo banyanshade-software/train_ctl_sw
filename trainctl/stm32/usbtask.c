@@ -10,22 +10,49 @@
 #include "cmsis_os.h"
 #include "trainctl_config.h"
 
-#ifndef BOARD_HAS_USB
-#error board has no usb, remove from build
-#endif
+
+#if defined(BOARD_HAS_USB)
 
 #include "usbd_cdc_if.h"
 #include "usb_device.h"
 
+#elif defined (BOARD_HAS_LPUART)
+#else
+#error board has no usb, remove from build
+#endif
+
 #include "../trainctl_iface.h"
-//#include "../txrxcmd.h"
 #include "../misc.h"
 
-#ifdef STM32_F4
+
+
+#if defined(STM32F4)
 #include "stm32f4xx_hal.h"
-#else
+#include "stm32f4xx_hal_gpio.h"
+
+#elif defined(STM32G4)
+#include "stm32g4xx_hal.h"
+#include "stm32g4xx_hal_gpio.h"
+
+#elif defined(STM32F1)
 #include "stm32f1xx_hal.h"
+#include "stm32f1xx_hal_gpio.h"
+
+#else
+#error no board hal
 #endif
+
+#ifdef BOARD_HAS_LPUART
+#if defined(STM32_G4)
+#include "stm32g4xx_ll_dma.h"
+#include "stm32g4xx_ll_gpio.h"
+#include "stm32g4xx_ll_lpuart.h"
+
+#else
+#error only tested for G4
+#endif
+#endif // BOARD_HAS_LPUART
+
 
 
 #include "../msg/trainmsg.h"
@@ -36,11 +63,12 @@
 #include "../msg/msgrecord.h"
 
 #include "main.h"
-#include "stm32f4xx_hal_gpio.h"
 
+#if defined(BOARD_HAS_USB)
 extern USBD_HandleTypeDef hUsbDeviceFS;
-
-
+#elif defined(BOARD_HAS_LPUART)
+extern UART_HandleTypeDef hlpuart1;
+#endif
 
 // ------------------------------------------------------
 static void stat_poll(uint32_t t, uint32_t dt);
@@ -60,9 +88,18 @@ static const tasklet_def_t stattx_tdef = {
 tasklet_t stattx_tasklet = { .def = &stattx_tdef, .init_done = 0, .queue=NULL};
 
 
+static void USB_UART_Init(void);
+
+static void _send_bytes(const uint8_t *b, int len);
+
+extern osThreadId usbTaskHandle;
+
+
+// ------------------------------------------------------
+// USB specific
 // ------------------------------------------------------
 
-
+#ifdef BOARD_HAS_USB
 static void Force_USB_Enumerate(void)
 {
 	// https://stackoverflow.com/questions/20195175/stm32f107-usb-re-enumerate#20197455
@@ -79,21 +116,7 @@ static void Force_USB_Enumerate(void)
 #endif
 }
 
-void StartUsbTask(_UNUSED_ const void *argument)
-{
-	Force_USB_Enumerate();
-	MX_USB_DEVICE_Init();
-	//CDC_Init_FS();
-	//USBD_CDC_Init()
-	for (;;) {
-		osDelay(10);
-		USB_Tasklet(0, 0, 0);
-	}
-}
 
-static void USB_Init(void)
-{
-}
 
 int8_t impl_CDC_Receive_FS(uint8_t* Buf, uint32_t *Len)
 {
@@ -143,10 +166,132 @@ static void _send_bytes(const uint8_t *b, int len)
 	}
 }
 
+void StartUsbTask(_UNUSED_ const void *argument)
+{
+	Force_USB_Enumerate();
+	MX_USB_DEVICE_Init();
+	//CDC_Init_FS();
+	//USBD_CDC_Init()
+	for (;;) {
+		osDelay(10);
+		USB_Tasklet(0, 0, 0);
+	}
+}
+#endif
 
-// ---------------------------------------------------------------------------------------------------
 
 
+
+// ------------------------------------------------------
+// UART specific
+// ------------------------------------------------------
+
+#ifdef BOARD_HAS_LPUART
+
+
+extern DMA_HandleTypeDef hdma_lpuart1_rx;
+extern DMA_HandleTypeDef hdma_lpuart1_tx;
+
+static void _start_rx(void);
+
+void StartUsbTask(_UNUSED_ const void *argument)
+{
+	_start_rx();
+	for (;;) {
+		osDelay(10);
+		USB_Tasklet(0, 0, 0);
+	}
+}
+
+static uint8_t txbuf[128];
+volatile uint8_t txonprogress = 0;
+
+static uint8_t rxbuf[(8+1)*2]; // msg_64 + framing
+
+
+static void _start_rx(void)
+{
+	//HAL_UART_Receive_DMA(&hlpuart1, rxbuf, 2*sizeof(msg_64_t));
+	HAL_StatusTypeDef rc = UART_Start_Receive_IT(&hlpuart1, rxbuf, sizeof(rxbuf));
+	if (rc != HAL_OK) {
+		itm_debug2(DBG_USB|DBG_ERR, "Ustrt", rc, hlpuart1.ErrorCode);
+	}
+
+}
+
+static void _send_bytes(const uint8_t *b, int len)
+{
+	if ((len<=0) || (len>(int)sizeof(txbuf))) {
+		FatalError("sndbyt", "bad len for _send_bytes", Error_Other);
+	}
+	while (txonprogress) {
+		uint32_t notif = 0;
+		xTaskNotifyWait(0, 0xFFFFFFFF, &notif, portMAX_DELAY);
+	}
+ 	memcpy(txbuf, b, len);
+ 	txonprogress = 1;
+	HAL_StatusTypeDef rc = HAL_UART_Transmit_DMA(&hlpuart1, txbuf, len);
+	if (rc != HAL_OK) {
+		itm_debug1(DBG_USB|DBG_ERR, "TxErr", rc);
+	 	txonprogress = 0;
+		return;
+	}
+
+}
+
+//void HAL_UART_TxHalfCpltCallback(UART_HandleTypeDef *huart);
+void HAL_UART_TxCpltCallback(_UNUSED_ UART_HandleTypeDef *huart)
+{
+	txonprogress = 0;
+	BaseType_t higher=0;
+	xTaskNotifyFromISR(usbTaskHandle, NOTIF_UART_TX, eSetBits, &higher);
+	portYIELD_FROM_ISR(higher);
+}
+/*
+void HAL_UART_RxHalfCpltCallback(_UNUSED_ UART_HandleTypeDef *huart)
+{
+}
+*/
+
+void HAL_UART_RxCpltCallback(_UNUSED_ UART_HandleTypeDef *huart)
+{
+	itm_debug1(DBG_USB, "RxCplt", 0);
+}
+void HAL_UARTEx_RxEventCallback(_UNUSED_ UART_HandleTypeDef *huart, _UNUSED_ uint16_t Size)
+{
+	itm_debug1(DBG_USB, "RxEvent", Size);
+}
+void HAL_UART_ErrorCallback(_UNUSED_ UART_HandleTypeDef *huart)
+{
+	itm_debug1(DBG_USB, "RxErr", huart->ErrorCode);
+	if (__HAL_UART_GET_FLAG(huart, UART_FLAG_PE) != RESET) {
+		__HAL_UART_CLEAR_FLAG(huart, UART_CLEAR_PEF); /* Clear PE flag */
+	} else if (__HAL_UART_GET_FLAG(huart, UART_FLAG_FE) != RESET) {
+		__HAL_UART_CLEAR_FLAG(huart, UART_CLEAR_FEF); /* Clear FE flag */
+	} else if (__HAL_UART_GET_FLAG(huart, UART_FLAG_NE) != RESET) {
+		__HAL_UART_CLEAR_FLAG(huart, UART_CLEAR_NEF); /* Clear NE flag */
+	} else if (__HAL_UART_GET_FLAG(huart, UART_FLAG_ORE) != RESET) {
+		__HAL_UART_CLEAR_FLAG(huart, UART_CLEAR_OREF); /* Clear ORE flag */
+	}
+	_start_rx();
+}
+
+
+// htim8
+
+#endif
+
+
+
+
+// ------------------------------------------------------
+// generic part, both usb and uart
+// ------------------------------------------------------
+
+
+static void USB_UART_Init(void)
+{
+}
 __weak void frame_send_oscillo(_UNUSED_ void(*cb)(const uint8_t *d, int l))
 {
 }
@@ -175,7 +320,7 @@ static volatile enum special_txmode sending_longframe = txnormal;
 void USB_Tasklet(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_ uint32_t dt)
 {
 	if (!initdone) {
-		USB_Init();
+		USB_UART_Init();
 	}
 	static uint8_t buf[9];
 	for (;;) {

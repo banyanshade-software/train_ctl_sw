@@ -209,10 +209,12 @@ LFMQUEUE_DEF_H(from_canbus, msg_64_t)
 #endif
 
 
-#ifdef BOARD_HAS_USB
+#if defined(BOARD_HAS_USB) || defined(BOARD_HAS_LPUART)
 LFMQUEUE_DEF_H(to_usb, msg_64_t)
 LFMQUEUE_DEF_H(from_usb, msg_64_t)
 #endif
+
+
 
 
 #ifdef BOARD_HAS_TURNOUTS

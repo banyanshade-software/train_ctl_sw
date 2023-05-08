@@ -24,4 +24,6 @@
 
 #define NOTIF_SYSTICK		0x00000080
 
+#define NOTIF_UART_TX		0x00000100
+
 #endif /* MSG_NOTIF_H_ */

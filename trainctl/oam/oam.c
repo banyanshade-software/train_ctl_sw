@@ -976,6 +976,7 @@ static void customOam(msg_64_t *m)
 
 static void handle_slave_tick(uint32_t tick, _UNUSED_ uint32_t dt)
 {
+	if ((1)) return; //XXX remove
 	int tbc = 200;
 	switch (slvState) {
 	case oam_slv_bcast: tbc = 200; break;

@@ -30,7 +30,7 @@
 #ifndef BOARD_HAS_OSCILLO
 #error oscillo requires BOARD_HAS_OSCILLO, remove from build
 #endif
-#ifndef BOARD_HAS_USB
+#if !defined(BOARD_HAS_USB) && !defined(BOARD_HAS_LPUART)
 #error oscillo requires BOARD_HAS_USB, remove from build
 #endif
 
@@ -49,8 +49,8 @@ extern TIM_HandleTypeDef htim1;
 extern TIM_HandleTypeDef htim2;
 extern TIM_HandleTypeDef htim3;
 #ifdef STM32_G4
-extern TIM_HandleTypeDef htim6;
-#define OSCTIM htim6
+extern TIM_HandleTypeDef htim17;
+#define OSCTIM htim17
 #else
 extern TIM_HandleTypeDef htim5;
 #define OSCTIM htim5

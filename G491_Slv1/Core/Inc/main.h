@@ -70,12 +70,12 @@ void Error_Handler(void);
 #define PWM_2_0_GPIO_Port GPIOA
 #define LD2_Pin GPIO_PIN_5
 #define LD2_GPIO_Port GPIOA
-#define PWM_2_1_Pin GPIO_PIN_6
-#define PWM_2_1_GPIO_Port GPIOA
 #define PWM_3_0_Pin GPIO_PIN_0
 #define PWM_3_0_GPIO_Port GPIOB
 #define PWM_3_1_Pin GPIO_PIN_1
 #define PWM_3_1_GPIO_Port GPIOB
+#define PWM_2_1_Pin GPIO_PIN_6
+#define PWM_2_1_GPIO_Port GPIOC
 #define PWM_0_0_Pin GPIO_PIN_8
 #define PWM_0_0_GPIO_Port GPIOA
 #define PWM_0_1_Pin GPIO_PIN_9

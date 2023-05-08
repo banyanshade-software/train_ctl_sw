@@ -110,8 +110,8 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="config/conf_utestloc.c|gen|obsolete|stm32/usbtask.c|stm32/spi1_swo_trace.c|stm32/w25qxx|oam/oam_flash.c|uitrack/uitrack.c|trkpln/trkplan.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="trainctl"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="stm32dev"/>
+						<entry excluding="config/conf_utestloc.c|gen|obsolete|stm32/spi1_swo_trace.c|stm32/w25qxx|oam/oam_flash.c|uitrack/uitrack.c|trkpln/trkplan.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="trainctl"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Core"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Middlewares"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Drivers"/>
@@ -224,8 +224,8 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="config/conf_utestloc.c|gen|obsolete|stm32/usbtask.c|stm32/spi1_swo_trace.c|stm32/w25qxx|oam/oam_flash.c|uitrack/uitrack.c|trkpln/trkplan.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="trainctl"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="stm32dev"/>
+						<entry excluding="config/conf_utestloc.c|gen|obsolete|stm32/spi1_swo_trace.c|stm32/w25qxx|oam/oam_flash.c|uitrack/uitrack.c|trkpln/trkplan.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="trainctl"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Core"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Middlewares"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Drivers"/>

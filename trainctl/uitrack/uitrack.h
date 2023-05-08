@@ -9,7 +9,7 @@
 #ifndef uitrack_h
 #define uitrack_h
 
-#include "topology/topology.h"
+#include "../topology/topology.h"
 
 void uitrack_run_tick(uint32_t notif_flags, uint32_t tick, uint32_t dt);
 

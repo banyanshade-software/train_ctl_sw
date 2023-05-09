@@ -230,7 +230,12 @@ static void _send_bytes(const uint8_t *b, int len)
 	}
  	memcpy(txbuf, b, len);
  	txonprogress = 1;
-	HAL_StatusTypeDef rc = HAL_UART_Transmit_DMA(&hlpuart1, txbuf, len);
+ 	HAL_StatusTypeDef rc;
+ 	if ((0)) {
+ 		rc = HAL_UART_Transmit_DMA(&hlpuart1, (const uint8_t *)"hello world---", 12);
+ 	} else {
+ 		rc = HAL_UART_Transmit_DMA(&hlpuart1, txbuf, len);
+ 	}
 	if (rc != HAL_OK) {
 		itm_debug1(DBG_USB|DBG_ERR, "TxErr", rc);
 	 	txonprogress = 0;

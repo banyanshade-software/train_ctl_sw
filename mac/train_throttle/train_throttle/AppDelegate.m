@@ -6,6 +6,7 @@
 //  Copyright © 2020 Daniel BRAUN. All rights reserved.
 //
 
+#include <termios.h>
 #import "AppDelegate.h"
 
 #import "train_simu.h"
@@ -1131,7 +1132,25 @@ static const char *knownDev[] = {
         [self performSelector:@selector(openUsb) withObject:nil afterDelay:1.0];
         return;
     }
-
+    if ((1)) {
+        int baudrate = 115200;
+        struct termios toptions;
+        if (tcgetattr(fd, &toptions) < 0) {
+            perror("init_serialport: Couldn't get term attributes");
+            NSLog(@"cant stty");
+            close(fd);
+            return;
+        }
+        cfsetispeed(&toptions, baudrate);
+        cfsetospeed(&toptions, baudrate);
+        
+        if( tcsetattr(fd, TCSANOW, &toptions) < 0) {
+            perror("init_serialport: Couldn't set term attributes");
+            NSLog(@"cant stty");
+            close(fd);
+            return;
+        }
+    }
     usb = [[NSFileHandle alloc]initWithFileDescriptor:fd closeOnDealloc:YES];
     //[usb readInBackgroundAndNotify];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(readUsbTty:) name:NSFileHandleDataAvailableNotification  object:usb];

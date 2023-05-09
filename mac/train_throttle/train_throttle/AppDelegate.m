@@ -1103,23 +1103,26 @@ int conf_servo_fieldnum(const char *str);
 
 #pragma mark -
 
-#define USBTTY1 "/dev/cu.usbmodem6D94487754571"
-#define USBTTY2 "/dev/cu.usbmodem376A356634381"
-#define USBTTY3 "/dev/cu.usbmodem3158378430391"
+
+static const char *knownDev[] = {
+"/dev/cu.usbmodem6D94487754571",
+"/dev/cu.usbmodem376A356634381",
+"/dev/cu.usbmodem3158378430391",
+"/dev/cu.usbmodem14403",
+    NULL
+};
 
 - (void) openUsb
 {
     if ((_linkok == LINK_SIMUHI) || (_linkok == LINK_SIMULOW)) return;
+    
+    if (!knownDev[retry]) retry=0;
+    const char *dev = knownDev[retry];
     retry++;
-    const char *dev = USBTTY1;
-    switch (retry%3) {
-        default:
-        case 0: dev=USBTTY1; break;
-        case 1: dev=USBTTY2; break;
-        case 2: dev=USBTTY3; break;
-    }
+    
     int fd = open(dev, O_RDWR|O_NOCTTY);
     if (fd<0) {
+        NSLog(@"open %s : %d %s\n", dev, errno, strerror(errno));
         self.linkok = NO;
         usb = nil;
         if (errno != ENOENT) {

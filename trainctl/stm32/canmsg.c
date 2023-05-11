@@ -39,12 +39,30 @@
 
 #include "canmsg.h"
 
+static int local_msg_process(msg_64_t *m, int localmsg);
+
+static runmode_t run_mode = 0;
+static int need_reconf_filter = 0;
+
 
 #ifdef BOARD_HAS_FDCAN
 // TODO #warning  not yet handled
 
 void CAN_Tasklet(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_ uint32_t dt)
 {
+	for (;;) {
+		msg_64_t m;
+		int rc = mqf_read_to_canbus_loc(&m);
+		if (rc) break;
+		local_msg_process(&m, 2);
+	}
+	// read and forward to_canbus msg
+	for (;;) {
+			msg_64_t m;
+			int rc = mqf_read_to_canbus(&m);
+			if (rc) break;
+	}
+	//send_messages_if_any();
 
 }
 
@@ -65,9 +83,6 @@ void CAN_Tasklet(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_
 
 extern CAN_HANDLE CAN_DEVICE;
 
-static runmode_t run_mode = 0;
-static int local_msg_process(msg_64_t *m, int localmsg);
-
 /*
  *
  *
@@ -78,7 +93,6 @@ static int local_msg_process(msg_64_t *m, int localmsg);
  * ABOM
  */
 
-static int need_reconf_filter = 0;
 
 static void can_init(void)
 {
@@ -639,6 +653,10 @@ void CAN_Tasklet(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_
 #endif
 }
 
+
+#endif // BOARD_HAS_FDCAN not yet handled
+
+
 // returns non zero if message shall be skipped
 static int local_msg_process(msg_64_t *m, _UNUSED_ int loc)
 {
@@ -660,7 +678,3 @@ static int local_msg_process(msg_64_t *m, _UNUSED_ int loc)
 		return 0;
 	}
 }
-
-#endif // BOARD_HAS_FDCAN not yet handled
-
-

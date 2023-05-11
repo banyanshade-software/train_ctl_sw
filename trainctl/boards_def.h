@@ -179,8 +179,8 @@
 //#define BOARD_HAS_USB
 #define BOARD_HAS_LPUART
 //#define BOARD_HAS_USB_HOST
-//#define BOARD_HAS_FLASH
-//#define BOARD_CAN_BE_MASTER
+#define BOARD_HAS_FLASH
+#define BOARD_CAN_BE_MASTER
 
 #define BOARD_HAS_CAN
 #define BOARD_HAS_FDCAN

@@ -284,7 +284,7 @@ void HAL_UART_RxCpltCallback(_UNUSED_ UART_HandleTypeDef *huart)
 		// normal frame, aligned
 		msg_64_t m;
 		memcpy(&m, rxbuf+1, 8);
-		//itm_debug1(DBG_USB, "msg8", m.cmd);
+		itm_debug1(DBG_USB, "msg8", m.cmd);
 		mqf_write_from_usb(&m);
 	} else {
 		// frame is unaligned

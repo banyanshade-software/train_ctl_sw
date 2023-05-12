@@ -36,6 +36,21 @@ static conf_utestloc_t conf_utestloc[0] = {
 
 
 
+#ifdef TRN_BOARD_G4MASTER1
+
+unsigned int conf_utestloc_num_entries(void)
+{
+    return 0; // 0 
+}
+
+static conf_utestloc_t conf_utestloc[0] = {
+};
+
+#endif // TRN_BOARD_G4MASTER1
+
+
+
+
 #ifdef TRN_BOARD_UNIT_TEST
 
 unsigned int conf_utestloc_num_entries(void)

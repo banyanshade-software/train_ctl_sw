@@ -56,7 +56,7 @@ config topology {
       = (mainV04) 64
       = (simu) 64
       = (unit_test) 32
-      = (G4slv1) 32 # TODO remove this
+      = (G4master1) 64 
       = (default) 0;
 
 

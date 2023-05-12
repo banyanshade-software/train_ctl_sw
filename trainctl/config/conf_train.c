@@ -27,10 +27,25 @@
 
 unsigned int conf_train_num_entries(void)
 {
-    return 4; // 4 
+    return 0; // 0 
 }
 
-static conf_train_t conf_train[4] = {
+static conf_train_t conf_train[0] = {
+};
+
+#endif // TRN_BOARD_G4SLV1
+
+
+
+
+#ifdef TRN_BOARD_G4MASTER1
+
+unsigned int conf_train_num_entries(void)
+{
+    return 8; // 8 
+}
+
+static conf_train_t conf_train[8] = {
   {     // 0
      .pidctl = {
      .kP = 500,
@@ -134,10 +149,114 @@ static conf_train_t conf_train[4] = {
      .pose_per_cm = 500,
      .trainlen_left_cm = 10,
      .trainlen_right_cm = 10,
+  },
+  {     // 4
+     .pidctl = {
+     .kP = 500,
+     .kI = 100,
+     .kD = 500,
+     },
+     .inertia = {
+     .dec = 120,
+     .acc = 120,
+     },
+     .volt_policy = vpolicy_normal,
+     .enabled = 0,
+     .enable_inertia = 0,
+     .enable_pid = 1,
+     .fix_bemf = 0,
+     .en_spd2pow = 0,
+     .reversed = 0,
+     .min_power = 0,
+     .notify_pose = 0,
+     .bemfIIR = 0,
+     .postIIR = 0,
+     .slipping = 120,
+     .pose_per_cm = 500,
+     .trainlen_left_cm = 10,
+     .trainlen_right_cm = 10,
+  },
+  {     // 5
+     .pidctl = {
+     .kP = 500,
+     .kI = 100,
+     .kD = 500,
+     },
+     .inertia = {
+     .dec = 120,
+     .acc = 120,
+     },
+     .volt_policy = vpolicy_normal,
+     .enabled = 0,
+     .enable_inertia = 0,
+     .enable_pid = 1,
+     .fix_bemf = 0,
+     .en_spd2pow = 0,
+     .reversed = 0,
+     .min_power = 0,
+     .notify_pose = 0,
+     .bemfIIR = 0,
+     .postIIR = 0,
+     .slipping = 120,
+     .pose_per_cm = 500,
+     .trainlen_left_cm = 10,
+     .trainlen_right_cm = 10,
+  },
+  {     // 6
+     .pidctl = {
+     .kP = 500,
+     .kI = 100,
+     .kD = 500,
+     },
+     .inertia = {
+     .dec = 120,
+     .acc = 120,
+     },
+     .volt_policy = vpolicy_normal,
+     .enabled = 0,
+     .enable_inertia = 0,
+     .enable_pid = 1,
+     .fix_bemf = 0,
+     .en_spd2pow = 0,
+     .reversed = 0,
+     .min_power = 0,
+     .notify_pose = 0,
+     .bemfIIR = 0,
+     .postIIR = 0,
+     .slipping = 120,
+     .pose_per_cm = 500,
+     .trainlen_left_cm = 10,
+     .trainlen_right_cm = 10,
+  },
+  {     // 7
+     .pidctl = {
+     .kP = 500,
+     .kI = 100,
+     .kD = 500,
+     },
+     .inertia = {
+     .dec = 120,
+     .acc = 120,
+     },
+     .volt_policy = vpolicy_normal,
+     .enabled = 0,
+     .enable_inertia = 0,
+     .enable_pid = 1,
+     .fix_bemf = 0,
+     .en_spd2pow = 0,
+     .reversed = 0,
+     .min_power = 0,
+     .notify_pose = 0,
+     .bemfIIR = 0,
+     .postIIR = 0,
+     .slipping = 120,
+     .pose_per_cm = 500,
+     .trainlen_left_cm = 10,
+     .trainlen_right_cm = 10,
   }
 };
 
-#endif // TRN_BOARD_G4SLV1
+#endif // TRN_BOARD_G4MASTER1
 
 
 

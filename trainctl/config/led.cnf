@@ -26,6 +26,7 @@ config led {
       = (switcher) 6
       = (dispatcher) 0          # TODO
       = (G4slv1) 1              # TODO
+      = (G4master1) 1              # TODO
       = (default) 0;
 
 table lpin_mainV0 

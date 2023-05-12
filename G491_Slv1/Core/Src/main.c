@@ -87,15 +87,9 @@ osStaticThreadDef_t ina3221TaskControlBlock;
 osThreadId ledTaskHandle;
 uint32_t ledTaskBuffer[ 128 ];
 osStaticThreadDef_t ledTaskControlBlock;
-osThreadId oscilloHandle;
-uint32_t oscilloTaskBuffer[ 128 ];
-osStaticThreadDef_t oscilloTaskControlBlock;
 osThreadId oamTaskHandle;
 uint32_t oamTaskBuffer[ 256 ];
 osStaticThreadDef_t oamTaskControlBlock;
-osThreadId usbTaskHandle;
-uint32_t usbTaskBuffer[ 128 ];
-osStaticThreadDef_t usbTaskControlBlock;
 /* USER CODE BEGIN PV */
 
 /* USER CODE END PV */
@@ -121,9 +115,7 @@ void StartUiTask(void const * argument);
 extern void StartCtrlTask(void const * argument);
 extern void ina3221_task_start(void const * argument);
 extern void start_led_task(void const * argument);
-extern void StartOscillo(void const * argument);
 extern void StartOamTask(void const * argument);
-extern void StartUsbTask(void const * argument);
 
 /* USER CODE BEGIN PFP */
 
@@ -217,17 +209,9 @@ int main(void)
   osThreadStaticDef(ledTask, start_led_task, osPriorityRealtime, 0, 128, ledTaskBuffer, &ledTaskControlBlock);
   ledTaskHandle = osThreadCreate(osThread(ledTask), NULL);
 
-  /* definition and creation of oscillo */
-  osThreadStaticDef(oscillo, StartOscillo, osPriorityNormal, 0, 128, oscilloTaskBuffer, &oscilloTaskControlBlock);
-  oscilloHandle = osThreadCreate(osThread(oscillo), NULL);
-
   /* definition and creation of oamTask */
   osThreadStaticDef(oamTask, StartOamTask, osPriorityLow, 0, 256, oamTaskBuffer, &oamTaskControlBlock);
   oamTaskHandle = osThreadCreate(osThread(oamTask), NULL);
-
-  /* definition and creation of usbTask */
-  osThreadStaticDef(usbTask, StartUsbTask, osPriorityLow, 0, 128, usbTaskBuffer, &usbTaskControlBlock);
-  usbTaskHandle = osThreadCreate(osThread(usbTask), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */

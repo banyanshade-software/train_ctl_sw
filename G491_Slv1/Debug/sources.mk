@@ -28,20 +28,14 @@ Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS \
 Middlewares/Third_Party/FreeRTOS/Source \
 Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F \
 stm32dev/disp_tft \
-trainctl/IHM \
 trainctl/config/_str \
 trainctl/config \
-trainctl/ctrl \
 trainctl/leds \
 trainctl/low \
 trainctl \
 trainctl/msg \
 trainctl/oam \
-trainctl/oscillo \
-trainctl/spdctl \
 trainctl/stm32 \
 trainctl/stm32/ina3221 \
-trainctl/topology \
-trainctl/trkpln \
 trainctl/utils \
 

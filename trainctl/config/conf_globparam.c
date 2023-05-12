@@ -25,6 +25,21 @@
 
 unsigned int conf_globparam_num_entries(void)
 {
+    return 0; // 0 
+}
+
+static conf_globparam_t conf_globparam[0] = {
+};
+
+#endif // TRN_BOARD_G4SLV1
+
+
+
+
+#ifdef TRN_BOARD_G4MASTER1
+
+unsigned int conf_globparam_num_entries(void)
+{
     return 1; // 1 
 }
 
@@ -37,7 +52,7 @@ static conf_globparam_t conf_globparam[1] = {
   }
 };
 
-#endif // TRN_BOARD_G4SLV1
+#endif // TRN_BOARD_G4MASTER1
 
 
 

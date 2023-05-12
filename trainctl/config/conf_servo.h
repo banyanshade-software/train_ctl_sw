@@ -66,6 +66,12 @@ const conf_servo_t *conf_servo_get(int num);
 
 
 
+#ifdef TRN_BOARD_G4MASTER1
+#define NUM_SERVOS 1 // 1 
+#endif // TRN_BOARD_G4MASTER1
+
+
+
 #ifdef TRN_BOARD_UNIT_TEST
 #define NUM_SERVOS 4 // 4 
 #endif // TRN_BOARD_UNIT_TEST

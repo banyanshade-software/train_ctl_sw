@@ -164,7 +164,7 @@
 
 // -----------------------------------------
 
-#if defined(TRN_BOARD_G4SLV1)
+#if defined(TRN_BOARD_G4MASTER1)
 #define STM32_G4
 #define STM32G4
 
@@ -211,10 +211,64 @@
 
 #define CAN_DEVICE hfdcan1
 
-// -----------------------------------------
 
 
 #endif // TRN_BOARD_GSLV1
+
+// -----------------------------------------
+
+#if defined(TRN_BOARD_G4SLV1)
+#define STM32_G4
+#define STM32G4
+
+#define BOARD_NUMBER 0
+
+#define BOARD_HAS_CANTON
+#define BOARD_HAS_TURNOUTS
+#define BOARD_HAS_SERVOS
+#define BOARD_HAS_INA3221
+//#define BOARD_HAS_CTRL
+//#define BOARD_HAS_TOPOLOGY
+//#define BOARD_HAS_USB
+#define BOARD_HAS_LPUART
+//#define BOARD_HAS_USB_HOST
+//#define BOARD_HAS_FLASH
+//#define BOARD_CAN_BE_MASTER
+
+#define BOARD_HAS_CAN
+#define BOARD_HAS_FDCAN
+//#define BOARD_HAS_IHM
+//#define BOARD_HAS_ROTARY_ENCODER
+//#define BOARD_HAS_TWO_BUTTONS
+
+//#define BOARD_HAS_UI_GEN
+//#define BOARD_HAS_UI_CTC
+#define BOARD_HAS_LED
+//#define BOARD_HAS_TRKPLN
+//#define BOARD_HAS_OSCILLO
+
+#define SSD1306_I2C_PORTS_DECL extern I2C_HandleTypeDef hi2c3
+#define SSD1306_I2C_PORTS { &hi2c3 }
+#define INA3221_I2C_PORT (hi2c1)
+
+/*
+ * number of local block per board
+ * NUM_LOCAL_CANTONS_HW : really configured blocked (used for ADC)
+ * NUM_LOCAL_CANTONS_SW : max available in software
+ */
+//#define NUM_LOCAL_CANTONS_HW 6
+//#define NUM_LOCAL_CANTONS_SW 8
+
+
+//#define NUM_LOCAL_TURNOUTS 8
+
+#define CAN_DEVICE hfdcan1
+
+
+
+#endif // TRN_BOARD_GSLV1
+
+// -----------------------------------------
 // -----------------------------------------
 
 #ifdef TRN_BOARD_DISPATCHER

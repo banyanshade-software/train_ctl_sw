@@ -54,8 +54,14 @@ const conf_train_t *conf_train_get(int num);
 
 
 #ifdef TRN_BOARD_G4SLV1
-#define NUM_TRAINS 4 // 4 
+#define NUM_TRAINS 0 // 0 
 #endif // TRN_BOARD_G4SLV1
+
+
+
+#ifdef TRN_BOARD_G4MASTER1
+#define NUM_TRAINS 8 // 8 
+#endif // TRN_BOARD_G4MASTER1
 
 
 

@@ -25,6 +25,21 @@
 
 unsigned int conf_boards_num_entries(void)
 {
+    return 0; // 0 
+}
+
+static conf_boards_t conf_boards[0] = {
+};
+
+#endif // TRN_BOARD_G4SLV1
+
+
+
+
+#ifdef TRN_BOARD_G4MASTER1
+
+unsigned int conf_boards_num_entries(void)
+{
     return 1; // 1 
 }
 
@@ -37,7 +52,7 @@ static conf_boards_t conf_boards[1] = {
   }
 };
 
-#endif // TRN_BOARD_G4SLV1
+#endif // TRN_BOARD_G4MASTER1
 
 
 

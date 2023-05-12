@@ -8,6 +8,7 @@
 #ifndef INC_TRAINCTL_CONFIG_H_
 #define INC_TRAINCTL_CONFIG_H_
 
+//#define TRN_BOARD_G4MASTER1
 #define TRN_BOARD_G4SLV1
 
 //#define TRN_BOARD_MAINV0
@@ -18,3 +19,5 @@
 #include "boards_def.h"
 
 #endif /* INC_TRAINCTL_CONFIG_H_ */
+
+// oscillo_trigger_start

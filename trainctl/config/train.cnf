@@ -112,7 +112,7 @@ config train {
 } num = (mainV0) 8
       = (mainV04) 8
       = (simu) 4
-      = (G4slv1) 4 // TODO remove
+      = (G4master1) 8
       = (unit_test) 4
       = (default) 0;
 

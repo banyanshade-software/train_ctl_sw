@@ -96,6 +96,81 @@ static conf_canton_t conf_canton[4] = {
 
 
 
+#ifdef TRN_BOARD_G4MASTER1
+
+unsigned int conf_canton_num_entries(void)
+{
+    return 4; // 4 
+}
+
+static conf_canton_t conf_canton[4] = {
+  {     // 0
+     .volts_cv = { 1000, 770, 621,  538, 451, 413, 379, 355},
+     .volt_port_b0 = GPIOE,
+     .volt_b0 = GPIO_PIN_4,
+     .volt_port_b1 = GPIOE,
+     .volt_b1 = GPIO_PIN_6,
+     .volt_port_b2 = GPIOE,
+     .volt_b2 = GPIO_PIN_7,
+     .pwm_timer_num = 1,
+     .ch0 = TIM_CHANNEL_1,
+     .ch1 = TIM_CHANNEL_2,
+     .notif_bemf = 0,
+     .reverse = 0,
+     .reverse_bemf = 1,
+  },
+  {     // 1
+     .volts_cv = { 1000, 770, 621,  538, 451, 413, 379, 355},
+     .volt_port_b0 = GPIOE,
+     .volt_b0 = GPIO_PIN_5,
+     .volt_port_b1 = GPIOE,
+     .volt_b1 = GPIO_PIN_3,
+     .volt_port_b2 = GPIOE,
+     .volt_b2 = GPIO_PIN_2,
+     .pwm_timer_num = 1,
+     .ch0 = TIM_CHANNEL_3,
+     .ch1 = TIM_CHANNEL_4,
+     .notif_bemf = 0,
+     .reverse = 0,
+     .reverse_bemf = 1,
+  },
+  {     // 2
+     .volts_cv = { 1000, 770, 621,  538, 451, 413, 379, 355},
+     .volt_port_b0 = GPIOB,
+     .volt_b0 = GPIO_PIN_12,
+     .volt_port_b1 = GPIOB,
+     .volt_b1 = GPIO_PIN_13,
+     .volt_port_b2 = GPIOB,
+     .volt_b2 = GPIO_PIN_14,
+     .pwm_timer_num = 2,
+     .ch0 = TIM_CHANNEL_3,
+     .ch1 = TIM_CHANNEL_4,
+     .notif_bemf = 0,
+     .reverse = 0,
+     .reverse_bemf = 1,
+  },
+  {     // 3
+     .volts_cv = { 1000, 770, 621,  538, 451, 413, 379, 355},
+     .volt_port_b0 = GPIOD,
+     .volt_b0 = GPIO_PIN_5,
+     .volt_port_b1 = GPIOD,
+     .volt_b1 = GPIO_PIN_6,
+     .volt_port_b2 = GPIOD,
+     .volt_b2 = GPIO_PIN_7,
+     .pwm_timer_num = 3,
+     .ch0 = TIM_CHANNEL_1,
+     .ch1 = TIM_CHANNEL_2,
+     .notif_bemf = 0,
+     .reverse = 0,
+     .reverse_bemf = 1,
+  }
+};
+
+#endif // TRN_BOARD_G4MASTER1
+
+
+
+
 #ifdef TRN_BOARD_UNIT_TEST
 
 unsigned int conf_canton_num_entries(void)

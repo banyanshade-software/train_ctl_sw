@@ -14,6 +14,7 @@ config utest {
       = (simu) 1
       = (dispatcher) 1          # TODO
       = (G4slv1) 1          
+      = (G4master1) 1          
       = (unit_test) 1
       = (default) 1;
 

@@ -47,6 +47,32 @@ static conf_servo_t conf_servo[1] = {
 
 
 
+#ifdef TRN_BOARD_G4MASTER1
+
+unsigned int conf_servo_num_entries(void)
+{
+    return 1; // 1 
+}
+
+static conf_servo_t conf_servo[1] = {
+  {     // 0
+     .port_power = GPIOD,
+     .pin_power = -1,
+     .pwm_timer_num = 4,
+     .pwm_timer_ch = TIM_CHANNEL_1,
+     .direction = 0,
+     .min = 2300,
+     .max = 7230,
+     .spd = 80,
+     .pos0 = 5000,
+  }
+};
+
+#endif // TRN_BOARD_G4MASTER1
+
+
+
+
 #ifdef TRN_BOARD_UNIT_TEST
 
 unsigned int conf_servo_num_entries(void)

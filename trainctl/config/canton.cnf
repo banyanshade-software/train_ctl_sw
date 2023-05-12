@@ -27,33 +27,39 @@ config canton {
 		= (mainV0:*) table(vpin_mainV0, p0)
 		= (mainV04:*) table(vpin_mainV04, p0)
         = (G4slv1:*) table(vpin_G4slv1, p0)
+        = (G4master1:*) table(vpin_G4master1, p0)
 		= (default) NULL;
 	const uint16_t volt_b0
 		= (mainV0:*) table(vpin_mainV0, b0)
 		= (mainV04:*) table(vpin_mainV04, b0)
         = (G4slv1:*) table(vpin_G4slv1, b0)
+        = (G4master1:*) table(vpin_G4master1, b0)
 		= (default) 0;
 
 	const GPIO_TypeDef *volt_port_b1
 		= (mainV0:*) table(vpin_mainV0, p1)
 		= (mainV04:*) table(vpin_mainV04, p1)
         = (G4slv1:*) table(vpin_G4slv1, p1)
+        = (G4master1:*) table(vpin_G4master1, p1)
 		= (default) NULL;
 	const uint16_t volt_b1
 		= (mainV0:*) table(vpin_mainV0, b1)
 		= (mainV04:*) table(vpin_mainV04, b1)
         = (G4slv1:*) table(vpin_G4slv1, b1)
+        = (G4master1:*) table(vpin_G4master1, b1)
 		= (default) 0;
 
 	const GPIO_TypeDef *volt_port_b2
 		= (mainV0:*) table(vpin_mainV0, p2)
 		= (mainV04:*) table(vpin_mainV04, p2)
         = (G4slv1:*) table(vpin_G4slv1, p2)
+        = (G4master1:*) table(vpin_G4master1, p2)
 		= (default) NULL;
 	const uint16_t volt_b2
 		= (mainV0:*) table(vpin_mainV0, b2)
 		= (mainV04:*) table(vpin_mainV04, b2)
         = (G4slv1:*) table(vpin_G4slv1, b2)
+        = (G4master1:*) table(vpin_G4master1, b2)
 		= (default) 0;
 
     const  uint8_t pwm_timer_num // 1.. index in CantonTimerHandles
@@ -61,6 +67,7 @@ config canton {
         = (mainV0:*) table(vpin_mainV0,tim)
         = (mainV04:*) table(vpin_mainV04,tim)
         = (G4slv1:*) table(vpin_G4slv1, tim)
+        = (G4master1:*) table(vpin_G4master1, tim)
         = (default) 0;
 
     const uint32_t ch0
@@ -68,6 +75,7 @@ config canton {
         = (mainV0:*) table(vpin_mainV0, ch0)
         = (mainV04:*) table(vpin_mainV04, ch0)
         = (G4slv1:*) table(vpin_G4slv1, ch0)
+        = (G4master1:*) table(vpin_G4master1, ch0)
         = (default) 0;
 
     const uint32_t ch1
@@ -75,6 +83,7 @@ config canton {
         = (mainV0:*) table(vpin_mainV0, ch1)
         = (mainV04:*) table(vpin_mainV04, ch1)
         = (G4slv1:*) table(vpin_G4slv1, ch1)
+        = (G4master1:*) table(vpin_G4master1, ch1)
         = (default) 0;
 
     const uint8_t notif_bemf:1
@@ -92,6 +101,7 @@ config canton {
       = (unit_test) 6
       = (dispatcher) 1
       = (G4slv1) 4
+      = (G4master1) 4
       = (default) 0;
 
 table vpin_mainV0 
@@ -123,6 +133,16 @@ table vpin_G4slv1
     ( GPIOD, GPIO_PIN_4,        GPIOD, GPIO_PIN_3,  GPIOD, GPIO_PIN_2,      3, TIM_CHANNEL_3, TIM_CHANNEL_4)    // 4 CT4
     ( GPIOD, GPIO_PIN_11,       GPIOD, GPIO_PIN_10, GPIOD, GPIO_PIN_9,      4, TIM_CHANNEL_3, TIM_CHANNEL_4)    // 4 CT5
 ;
+table vpin_G4master1
+    ( p0,    b0,                p1,    b1,          p2,    b2,              tim, ch0, ch1)
+    ( GPIOE, GPIO_PIN_4,        GPIOE, GPIO_PIN_6,  GPIOE, GPIO_PIN_7,      1, TIM_CHANNEL_1, TIM_CHANNEL_2)    // 0 CT0
+    ( GPIOE, GPIO_PIN_5,        GPIOE, GPIO_PIN_3,  GPIOE, GPIO_PIN_2,      1, TIM_CHANNEL_3, TIM_CHANNEL_4)    // 1 CT1
+    ( GPIOB, GPIO_PIN_12,       GPIOB, GPIO_PIN_13, GPIOB, GPIO_PIN_14,     2, TIM_CHANNEL_3, TIM_CHANNEL_4)    // 2 CT2
+    ( GPIOD, GPIO_PIN_5,        GPIOD, GPIO_PIN_6,  GPIOD, GPIO_PIN_7,      3, TIM_CHANNEL_1, TIM_CHANNEL_2)    // 3 CT3
+    ( GPIOD, GPIO_PIN_4,        GPIOD, GPIO_PIN_3,  GPIOD, GPIO_PIN_2,      3, TIM_CHANNEL_3, TIM_CHANNEL_4)    // 4 CT4
+    ( GPIOD, GPIO_PIN_11,       GPIOD, GPIO_PIN_10, GPIOD, GPIO_PIN_9,      4, TIM_CHANNEL_3, TIM_CHANNEL_4)    // 4 CT5
+;
+
 
 
 attrib canton h_code {

@@ -60,6 +60,12 @@ const conf_led_t *conf_led_get(int num);
 
 
 
+#ifdef TRN_BOARD_G4MASTER1
+#define NUM_LEDS 1 // 1 
+#endif // TRN_BOARD_G4MASTER1
+
+
+
 #ifdef TRN_BOARD_UNIT_TEST
 #define NUM_LEDS 3 // 3 
 #endif // TRN_BOARD_UNIT_TEST

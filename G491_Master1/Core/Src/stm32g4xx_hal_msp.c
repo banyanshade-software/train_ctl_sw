@@ -127,13 +127,12 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef* hadc)
     PC0     ------> ADC1_IN6
     PC1     ------> ADC1_IN7
     PC2     ------> ADC1_IN8
-    PC3     ------> ADC1_IN9
     PA0     ------> ADC1_IN1
     PA1     ------> ADC1_IN2
     PB11     ------> ADC1_IN14
     PB14     ------> ADC1_IN5
     */
-    GPIO_InitStruct.Pin = GPIO_PIN_0|GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_3;
+    GPIO_InitStruct.Pin = GPIO_PIN_0|GPIO_PIN_1|GPIO_PIN_2;
     GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
@@ -231,13 +230,12 @@ void HAL_ADC_MspDeInit(ADC_HandleTypeDef* hadc)
     PC0     ------> ADC1_IN6
     PC1     ------> ADC1_IN7
     PC2     ------> ADC1_IN8
-    PC3     ------> ADC1_IN9
     PA0     ------> ADC1_IN1
     PA1     ------> ADC1_IN2
     PB11     ------> ADC1_IN14
     PB14     ------> ADC1_IN5
     */
-    HAL_GPIO_DeInit(GPIOC, GPIO_PIN_0|GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_3);
+    HAL_GPIO_DeInit(GPIOC, GPIO_PIN_0|GPIO_PIN_1|GPIO_PIN_2);
 
     HAL_GPIO_DeInit(GPIOA, GPIO_PIN_0|GPIO_PIN_1);
 
@@ -795,12 +793,9 @@ void HAL_TIM_MspPostInit(TIM_HandleTypeDef* htim)
   /* USER CODE END TIM3_MspPostInit 0 */
 
     __HAL_RCC_GPIOA_CLK_ENABLE();
-    __HAL_RCC_GPIOB_CLK_ENABLE();
     __HAL_RCC_GPIOC_CLK_ENABLE();
     /**TIM3 GPIO Configuration
     PA4     ------> TIM3_CH2
-    PB0     ------> TIM3_CH3
-    PB1     ------> TIM3_CH4
     PC6     ------> TIM3_CH1
     */
     GPIO_InitStruct.Pin = PWM_2_0_Pin;
@@ -809,13 +804,6 @@ void HAL_TIM_MspPostInit(TIM_HandleTypeDef* htim)
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
     GPIO_InitStruct.Alternate = GPIO_AF2_TIM3;
     HAL_GPIO_Init(PWM_2_0_GPIO_Port, &GPIO_InitStruct);
-
-    GPIO_InitStruct.Pin = PWM_3_0_Pin|PWM_3_1_Pin;
-    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-    GPIO_InitStruct.Pull = GPIO_NOPULL;
-    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-    GPIO_InitStruct.Alternate = GPIO_AF2_TIM3;
-    HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
     GPIO_InitStruct.Pin = PWM_2_1_Pin;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;

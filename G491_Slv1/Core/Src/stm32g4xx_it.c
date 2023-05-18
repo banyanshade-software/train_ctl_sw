@@ -56,8 +56,6 @@
 
 /* External variables --------------------------------------------------------*/
 extern DMA_HandleTypeDef hdma_adc1;
-extern DMA_HandleTypeDef hdma_lpuart1_tx;
-extern UART_HandleTypeDef hlpuart1;
 extern TIM_HandleTypeDef htim1;
 extern TIM_HandleTypeDef htim8;
 extern TIM_HandleTypeDef htim17;
@@ -180,20 +178,6 @@ void DMA1_Channel1_IRQHandler(void)
 }
 
 /**
-  * @brief This function handles DMA1 channel2 global interrupt.
-  */
-void DMA1_Channel2_IRQHandler(void)
-{
-  /* USER CODE BEGIN DMA1_Channel2_IRQn 0 */
-
-  /* USER CODE END DMA1_Channel2_IRQn 0 */
-  HAL_DMA_IRQHandler(&hdma_lpuart1_tx);
-  /* USER CODE BEGIN DMA1_Channel2_IRQn 1 */
-
-  /* USER CODE END DMA1_Channel2_IRQn 1 */
-}
-
-/**
   * @brief This function handles TIM1 update interrupt and TIM16 global interrupt.
   */
 void TIM1_UP_TIM16_IRQHandler(void)
@@ -262,20 +246,6 @@ void TIM7_IRQHandler(void)
   /* USER CODE BEGIN TIM7_IRQn 1 */
 
   /* USER CODE END TIM7_IRQn 1 */
-}
-
-/**
-  * @brief This function handles LPUART1 global interrupt.
-  */
-void LPUART1_IRQHandler(void)
-{
-  /* USER CODE BEGIN LPUART1_IRQn 0 */
-
-  /* USER CODE END LPUART1_IRQn 0 */
-  HAL_UART_IRQHandler(&hlpuart1);
-  /* USER CODE BEGIN LPUART1_IRQn 1 */
-
-  /* USER CODE END LPUART1_IRQn 1 */
 }
 
 /* USER CODE BEGIN 1 */

@@ -38,8 +38,8 @@ uint8_t bemf_test_all = 0;
 #define NUM_TRIGS 5
 typedef struct {
     int32_t posval;
-    int8_t dir;
-    uint8_t postag;
+    int8_t  trigdir;
+    uint8_t posnum;
     uint8_t sender;
     //uint8_t postag2;
 } bemf_trig_t;
@@ -142,9 +142,9 @@ static void _clear_trig(canton_bemf_t *cvars)
 {
     for (int pi=0; pi<NUM_TRIGS; pi++) {
         cvars->trigs[pi].posval = 0;
-        cvars->trigs[pi].postag = 0;
+        cvars->trigs[pi].posnum = 0;
         cvars->trigs[pi].sender = 0;
-        cvars->trigs[pi].dir = 0;
+        cvars->trigs[pi].trigdir = 0;
     }
 }
 
@@ -157,21 +157,21 @@ static int _add_trig(canton_bemf_t *cvars, uint8_t from, int32_t posval, uint8_t
     }
     for (int pi=0; pi<NUM_TRIGS; pi++) {
         if (cvars->trigs[pi].posval == posval) {
-            if (cvars->trigs[pi].postag == posetag) {
+            if (cvars->trigs[pi].posnum == posetag) {
                 itm_debug2(DBG_ERR|DBG_POSEC, "dup trig", posval, posetag);
-                cvars->trigs[pi].dir = dir;
+                cvars->trigs[pi].trigdir = dir;
                 cvars->trigs[pi].sender = from;
                 return -1; // ignore it
             }
             // same poseval but different tag ; not  an error here,
             // but for now it could be a bug in ctrlP.c
-            itm_debug3(DBG_ERR|DBG_POSEC, "same trig", posval, cvars->trigs[pi].postag, posetag);
+            itm_debug3(DBG_ERR|DBG_POSEC, "same trig", posval, cvars->trigs[pi].posnum, posetag);
         }
-        if (cvars->trigs[pi].postag) continue;
+        if (cvars->trigs[pi].trigdir) continue;
         itm_debug3(DBG_POSEC, "add pi", pi, posetag, posval);
         cvars->trigs[pi].posval = posval;
-        cvars->trigs[pi].dir = dir;
-        cvars->trigs[pi].postag = posetag;
+        cvars->trigs[pi].trigdir = dir;
+        cvars->trigs[pi].posnum = posetag;
         cvars->trigs[pi].sender = from;
         return pi;
      }
@@ -377,8 +377,8 @@ static void process_adc(volatile adc_result_t *buf, _UNUSED_ uint32_t deltaticks
                 // check in reverse order, so that oldest trig
                 // is fired first
                 ptrig = NULL;
-                if (!cvars->trigs[ti].postag) continue;
-                if (cvars->trigs[ti].dir>0) {
+                if (!cvars->trigs[ti].trigdir) continue;
+                if (cvars->trigs[ti].trigdir>0) {
                     // pose is incrementing
                     if (cvars->pose > cvars->trigs[ti].posval) {
                         itm_debug3(DBG_POSEC|DBG_POSE, "TRIG>", ti, cvars->pose, cvars->trigs[ti].posval);
@@ -395,11 +395,12 @@ static void process_adc(volatile adc_result_t *buf, _UNUSED_ uint32_t deltaticks
                     m.to = ptrig->sender;
                     m.cmd = CMD_POSE_TRIGGERED;
                     m.va16 = cvars->pose/100;
-                    m.vcu8 = ptrig->postag;
-                    m.vb8 = ptrig->dir;
+                    m.vcu8 = ptrig->posnum;
+                    m.vb8 = ptrig->trigdir;
                     mqf_write(&from_canton, &m);
                     // clear pose trigger
-                    ptrig->postag = 0;
+                    ptrig->posnum = 0;
+                    ptrig->trigdir = 0;
                 }
                 
             }

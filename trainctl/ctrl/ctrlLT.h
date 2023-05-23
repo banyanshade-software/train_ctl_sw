@@ -28,6 +28,13 @@ typedef enum {
 
 extern uint8_t ctrl_flag_notify_speed ;
 
+typedef struct {
+    uint8_t num;
+    uint8_t postag;
+    lsblk_num_t sblk;
+    uint8_t done:1;
+} trig_pend_t;
+#define NUM_PEND_TRIGS 6
 
 typedef struct {
     train_mode_t    _mode;
@@ -65,7 +72,10 @@ typedef struct {
     //
     int32_t _curposmm;
     int32_t beginposmm; // left side ofl sblk,  either 0, or -len
-
+    
+    trig_pend_t pendTrigs[NUM_PEND_TRIGS];
+    uint8_t trigNs;
+    uint8_t trigSlt;
 } train_ctrl_t;
 
 
@@ -120,7 +130,7 @@ void ctrl3_stop_detected(int tidx, train_ctrl_t *tvars);
 /// @param trigtag  trigger tag
 /// @param ca_addr canton triggering action (trigger will be ignored if not current canton)
 /// @param cposd10 current position,  in pose unit divided by 10
-void ctrl3_pose_triggered(int tidx, train_ctrl_t *tvars, pose_trig_tag_t trigtag, xblkaddr_t ca_addr, int16_t cposd10);
+void ctrl3_pose_triggered(int tidx, train_ctrl_t *tvars, uint8_t trigsn, xblkaddr_t ca_addr, int16_t cposd10);
 
 
 /// ctrl3_occupency_updated

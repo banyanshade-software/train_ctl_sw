@@ -305,6 +305,7 @@ void ctrl3_upcmd_set_desired_speed(int tidx, train_ctrl_t *tvars, int16_t desire
         case train_state_off:
             return;
         case train_state_station:
+            tvars->purgeTrigs = 1;
 station:
             rc = _train_check_dir(tidx, tvars, sdir, &rett);
             if (rett.isoet) {
@@ -455,18 +456,29 @@ static void _update_c1changed(int tidx, train_ctrl_t *tvars,  _UNUSED_ const con
 
 
 
-static pose_trig_tag_t seqToTag(train_ctrl_t *tvars, uint8_t trigsn)
+static pose_trig_tag_t seqToTag(train_ctrl_t *tvars, uint8_t trigsn, int *ignc)
 {
     pose_trig_tag_t ret = tag_invalid;
+    *ignc = 0;
     
     for (int i=0; i<NUM_PEND_TRIGS; i++) {
         if (tvars->pendTrigs[i].num != trigsn) continue;
-        if (!tvars->pendTrigs[i].postag) continue;
-        if (tvars->pendTrigs[i].sblk.n != tvars->c1_sblk.n) continue;
-        if (tvars->pendTrigs[i].done) continue;
+        if (!tvars->pendTrigs[i].postag) {
+            *ignc = 1;
+            return tag_invalid;
+        }
+        if (tvars->pendTrigs[i].sblk.n != tvars->c1_sblk.n) {
+            *ignc = 2;
+            return tag_invalid;
+        }
+        if (tvars->pendTrigs[i].done) {
+            *ignc = 3;
+            return tag_invalid;
+        }
         tvars->pendTrigs[i].done = 1;
         return tvars->pendTrigs[i].postag;
     }
+    *ignc = 4;
     return ret;
 }
 static int seqForTrig(train_ctrl_t *tvars, uint32_t pose, uint8_t tag)
@@ -489,24 +501,39 @@ static int seqForTrig(train_ctrl_t *tvars, uint32_t pose, uint8_t tag)
     tvars->pendTrigs[idx].num = sn;
     tvars->pendTrigs[idx].postag = tag;
     tvars->pendTrigs[idx].sblk = tvars->c1_sblk;
+    tvars->pendTrigs[idx].done = 0;
+    if (sn==10) {
+        printf("bh");
+    }
     return sn;
     
     //return -1;
+}
+
+static void seqPurgeTrigs(train_ctrl_t *tvars)
+{
+    for (int i=0; i<NUM_PEND_TRIGS; i++) {
+        tvars->pendTrigs[i].num = 0;
+        tvars->pendTrigs[i].postag = 0;
+        tvars->pendTrigs[i].done = 0;
+        tvars->pendTrigs[i].sblk.n = -1;
+    }
 }
 
 
 void ctrl3_pose_triggered(int tidx, train_ctrl_t *tvars, uint8_t trigsn, xblkaddr_t ca_addr, int16_t cposd10)
 {
     itm_debug3(DBG_CTRL|DBG_POSEC, "POSEtrg", tidx, ca_addr.v, cposd10);
-
-    pose_trig_tag_t trigtag = seqToTag(tvars, trigsn);
+    int ignc;
+    pose_trig_tag_t trigtag = seqToTag(tvars, trigsn, &ignc);
     if (!trigtag) {
         itm_debug2(DBG_CTRL, "bad tsn", tidx, trigsn);
+        trace_train_trig(ctrl_tasklet.last_tick, tidx, tvars, trigsn, trigtag, tvars->_curposmm, -1, ignc);
         return;
     }
     if (ca_addr.v != tvars->can1_xaddr.v) {
         itm_debug3(DBG_ERR|DBG_POSEC|DBG_CTRL, "ptrg bad", tidx, ca_addr.v, tvars->can1_xaddr.v);
-        trace_train_trig(ctrl_tasklet.last_tick, tidx, tvars, trigtag, tvars->_curposmm, -1);
+        trace_train_trig(ctrl_tasklet.last_tick, tidx, tvars, trigsn, trigtag, tvars->_curposmm, -1, ignc);
         return;
     }
     
@@ -523,7 +550,7 @@ void ctrl3_pose_triggered(int tidx, train_ctrl_t *tvars, uint8_t trigsn, xblkadd
         }
     }
     itm_debug3(DBG_POSE|DBG_CTRL, "curposmm", tidx, tvars->_curposmm, trigtag);
-    trace_train_trig(ctrl_tasklet.last_tick, tidx, tvars, trigtag, oldpos, tvars->_curposmm);
+    trace_train_trig(ctrl_tasklet.last_tick, tidx, tvars, trigsn,trigtag, oldpos, tvars->_curposmm, 0);
     //int rc;
     
     switch (tvars->_state) {
@@ -1013,7 +1040,7 @@ static int _train_check_dir(int tidx, train_ctrl_t *tvars, int sdir, rettrigs_t 
 
 
 
-static void _set_one_trig(int numtrain, train_ctrl_t *tvars, const conf_train_t *tconf, int num, int8_t dir,  xblkaddr_t canaddr, int32_t pose, uint8_t tag)
+static void _set_one_trig(int numtrain, train_ctrl_t *tvars, const conf_train_t *tconf, int num, int8_t dir,  xblkaddr_t canaddr, int32_t pose, uint8_t tag, int *pseq)
 {
     itm_debug3(DBG_CTRL, "set posetr", numtrain, tag, pose);
     if (!tag) {
@@ -1024,10 +1051,14 @@ static void _set_one_trig(int numtrain, train_ctrl_t *tvars, const conf_train_t 
         itm_debug2(DBG_ERR|DBG_POSEC, "no dir", numtrain, tag);
         FatalError("NODI", "no dir", Error_CtrlBadPose);
     }
+    if (tvars->purgeTrigs) {
+        seqPurgeTrigs(tvars);
+    }
     int seq = seqForTrig(tvars, pose, tag);
     if (seq<0) {
         FatalError("NOTN", "no trig seq", Error_CtrlBadPose);
     }
+    *pseq = seq;
     if (abs(pose)>32000*10) {
         itm_debug3(DBG_ERR|DBG_POSEC, "toobig", numtrain, tag, pose);
     }
@@ -1040,8 +1071,9 @@ static void _set_one_trig(int numtrain, train_ctrl_t *tvars, const conf_train_t 
     if (tconf->reversed)  m.va16 = -pose/10;
     else m.va16 = pose/10;
     m.vcu8 = (uint8_t) seq;
-    if ((0)) {
+    if (tvars->purgeTrigs) {
         if (!num) m.vcu8 |= 0x80;
+        tvars->purgeTrigs = 0;
     }
     m.vb8 = dir;
     itm_debug3(DBG_CTRL|DBG_POSEC, "S_TRIG", numtrain, tag, dir);
@@ -1077,14 +1109,15 @@ static void _apply_trigs(int tidx, train_ctrl_t *tvars, const rettrigs_t *rett)
         } else {
             if (rett->trigs[i].posmm < min-MARGIN_TRIG) ignore=1;
         }
+        int seq = 0;
         if (!ignore) {
             ns++;
             _set_one_trig(tidx, tvars, conf, i, tvars->_sdir, tvars->can1_xaddr ,
                       pose_convert_from_mm(conf, rett->trigs[i].posmm),
-                      rett->trigs[i].tag);
+                      rett->trigs[i].tag, &seq);
         }
         nt++;
-        trace_train_trig_set(ctrl_tasklet.last_tick, tidx, tvars, rett->trigs[i].tag, rett->trigs[i].posmm, ignore);
+        trace_train_trig_set(ctrl_tasklet.last_tick, tidx, tvars, seq, rett->trigs[i].tag, rett->trigs[i].posmm, ignore);
     }
     // sanity check
     if (nt && !ns) {

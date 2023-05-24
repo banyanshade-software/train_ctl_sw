@@ -59,7 +59,7 @@ typedef struct {
     uint8_t c1c2:1;
     uint8_t off_requested:1;
     uint8_t has_delayed_spd:1;
-    
+    uint8_t purgeTrigs:1;
     int8_t delayed_spd;
     //
     // #longtrain

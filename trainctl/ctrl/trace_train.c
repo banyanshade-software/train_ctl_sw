@@ -57,6 +57,7 @@ typedef struct {
     int32_t adjustedpose;
     uint8_t c1;
     uint8_t ignore;
+    uint8_t sn;
 } __attribute__((packed)) train_trace_trig_record_t;
 
 typedef struct {
@@ -191,7 +192,7 @@ void _trace_train_setc1(uint32_t tick, int tidx, train_ctrl_t *tvars, lsblk_num_
     rec->setc1rec.org = org;
 }
 
-void _trace_train_trig(uint32_t tick, int tidx, _UNUSED_ train_ctrl_t *tvars, pose_trig_tag_t tag, int32_t oldpos, int32_t adjutedpos)
+void _trace_train_trig(uint32_t tick, int tidx, _UNUSED_ train_ctrl_t *tvars, uint8_t sn, pose_trig_tag_t tag, int32_t oldpos, int32_t adjutedpos, int ignc)
 {
     train_trace_record_t *rec = get_newrec(tidx);
     if (!rec) return;
@@ -201,10 +202,12 @@ void _trace_train_trig(uint32_t tick, int tidx, _UNUSED_ train_ctrl_t *tvars, po
     rec->trigrec.oldpose = oldpos;
     rec->trigrec.adjustedpose = adjutedpos;
     rec->trigrec.c1 = tvars->c1_sblk.n;
+    rec->trigrec.ignore = ignc;
+    rec->trigrec.sn = sn;
 }
 
 
-void _trace_train_trig_set(uint32_t tick, int tidx, _UNUSED_ train_ctrl_t *tvars, pose_trig_tag_t tag, int32_t pos, int ignore)
+void _trace_train_trig_set(uint32_t tick, int tidx, _UNUSED_ train_ctrl_t *tvars, uint8_t sn, pose_trig_tag_t tag, int32_t pos, int ignore)
 {
     train_trace_record_t *rec = get_newrec(tidx);
     if (!rec) return;
@@ -212,6 +215,7 @@ void _trace_train_trig_set(uint32_t tick, int tidx, _UNUSED_ train_ctrl_t *tvars
     rec->kind = trace_kind_trig_set;
     rec->trigrec.tag = tag;
     rec->trigrec.adjustedpose = pos;
+    rec->trigrec.sn = sn;
     rec->trigrec.ignore = ignore ? 1 : 0;
 }
 
@@ -321,6 +325,20 @@ static const char *_c1orgstr(int org)
             break;
     }
 }
+
+static const char *trig_ignore_cause(int ignc)
+{
+    switch (ignc) {
+        case 1: return "bad postag";
+        case 2: return "wrong sblk";
+        case 3: return "already done";
+        case 4: return "not found";
+            
+        default:
+            return "???";
+            break;
+    }
+}
 static void _trace_train_dump(train_trace_record_t *records, int numitem, int startidx, int h)
 {
     int f = 1;
@@ -357,17 +375,30 @@ static void _trace_train_dump(train_trace_record_t *records, int numitem, int st
 					   _cr);
                 break;
             case trace_kind_trig:
-                sprintf(line, "%2d %6.6d TRIG   %-9s pos=%d->%d%s",
-                       idx, rec->tick,
-                       trig_name(rec->trigrec.tag),
-                       rec->trigrec.oldpose,
-                       rec->trigrec.adjustedpose,
-					   _cr);
+                if (rec->trigrec.ignore) {
+                    sprintf(line, "%2d %6.6d ign trig sn=%d   %-9s pos=%d->%d (%s)%s",
+                            idx, rec->tick,
+                            rec->trigrec.sn,
+                            trig_name(rec->trigrec.tag),
+                            rec->trigrec.oldpose,
+                            rec->trigrec.adjustedpose,
+                            trig_ignore_cause(rec->trigrec.ignore),
+                            _cr);
+                } else {
+                    sprintf(line, "%2d %6.6d TRIG   sn=%d %-9s pos=%d->%d%s",
+                            idx, rec->tick,
+                            rec->trigrec.sn,
+                            trig_name(rec->trigrec.tag),
+                            rec->trigrec.oldpose,
+                            rec->trigrec.adjustedpose,
+                            _cr);
+                }
                 break;
             case trace_kind_trig_set:
-                sprintf(line, "%2d %6.6d %sset  %-9s pos=%d (sblk %d)%s",
+                sprintf(line, "%2d %6.6d %sset  sn=%d %-9s pos=%d (sblk %d)%s",
                        idx, rec->tick,
                         rec->trigrec.ignore ? "--" : "++",
+                        rec->trigrec.sn,
                        trig_name(rec->trigrec.tag),
                        rec->trigrec.adjustedpose,
                         rec->trigrec.c1,

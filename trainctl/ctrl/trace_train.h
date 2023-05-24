@@ -27,18 +27,18 @@ static inline void trace_train_postick(uint32_t tick, int tidx, train_ctrl_t *tv
 }
 
 
-void _trace_train_trig(uint32_t tick, int tidx, train_ctrl_t *tvars, pose_trig_tag_t tag, int32_t oldpos, int32_t adjutedpos);
-static inline void trace_train_trig(uint32_t tick, int tidx, train_ctrl_t *tvars, pose_trig_tag_t tag, int32_t oldpos, int32_t adjutedpos)
+void _trace_train_trig(uint32_t tick, int tidx, train_ctrl_t *tvars, uint8_t sn, pose_trig_tag_t tag, int32_t oldpos, int32_t adjutedpos, int ign);
+static inline void trace_train_trig(uint32_t tick, int tidx, train_ctrl_t *tvars, uint8_t sn, pose_trig_tag_t tag, int32_t oldpos, int32_t adjutedpos, int ign)
 {
     if (!trace_train_enable) return;
-    _trace_train_trig(tick, tidx, tvars, tag, oldpos, adjutedpos);
+    _trace_train_trig(tick, tidx, tvars, sn, tag, oldpos, adjutedpos, ign);
 }
 
-void _trace_train_trig_set(uint32_t tick, int tidx, train_ctrl_t *tvars, pose_trig_tag_t tag, int32_t pos, int ignore);
-static inline void trace_train_trig_set(uint32_t tick, int tidx, train_ctrl_t *tvars, pose_trig_tag_t tag, int32_t pos, int ignore)
+void _trace_train_trig_set(uint32_t tick, int tidx, train_ctrl_t *tvars,  uint8_t sn, pose_trig_tag_t tag, int32_t pos, int ignore);
+static inline void trace_train_trig_set(uint32_t tick, int tidx, train_ctrl_t *tvars, uint8_t sn,  pose_trig_tag_t tag, int32_t pos, int ignore)
 {
     if (!trace_train_enable) return;
-    _trace_train_trig_set(tick, tidx, tvars, tag, pos, ignore);
+    _trace_train_trig_set(tick, tidx, tvars, sn, tag, pos, ignore);
 }
 
 void _trace_train_setc1(uint32_t tick, int tidx, train_ctrl_t *tvars, lsblk_num_t newc1, int org);

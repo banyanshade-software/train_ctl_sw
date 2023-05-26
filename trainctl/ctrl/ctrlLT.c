@@ -593,7 +593,14 @@ void ctrl3_pose_triggered(int tidx, train_ctrl_t *tvars, uint8_t trigsn, xblkadd
                     }
                     
                     tvars->canMeasureOnSblk = 0;
-                    tvars->beginposmm = tvars->_curposmm; // TODO adjust for trig delay
+                    if (tvars->_sdir>=0) {
+                        tvars->beginposmm = tvars->_curposmm; // TODO adjust for trig delay
+                    } else if (tvars->_sdir) {
+                        int32_t slen = get_lsblk_len_cm(ns, NULL)*10;
+                        tvars->beginposmm = tvars->_curposmm - slen; // TODO adjust for trig delay
+                    } else {
+                        FatalError("dir0", "sdir 0 on trig", Error_Other);
+                    }
                     trace_train_setc1(ctrl_tasklet.last_tick, tidx, tvars, ns, 0);
                     tvars->c1_sblk = ns;
                     _update_c1changed(tidx, tvars, conf_train_get(tidx));

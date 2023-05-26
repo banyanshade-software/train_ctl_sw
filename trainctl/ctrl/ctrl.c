@@ -225,7 +225,8 @@ static void _ctrl_init(int normalmode)
 		const _UNUSED_ lsblk_num_t s5 = {5};
 		const _UNUSED_ lsblk_num_t s3 = {3};
 		const _UNUSED_ lsblk_num_t s7 = {7};
-		const _UNUSED_ lsblk_num_t s8 = {8};
+        const _UNUSED_ lsblk_num_t s8 = {8};
+        const _UNUSED_ lsblk_num_t s9 = {9};
 		if ((1)) {
 #ifdef TRAIN_SIMU
             void simu_set_train(int tidx, int sblk, int posmm); // SimTrain.m
@@ -234,7 +235,9 @@ static void _ctrl_init(int normalmode)
             // 175, 190, 220, 250, 260
             // ok : 350, 300, 280, 270, 265, 262, 261
             //ctrl3_init_train(0, &trctl[0], s5, 260, 1);
-            ctrl3_init_train(0, &trctl[0], s0, 260, 1);
+            //ctrl3_init_train(0, &trctl[0], s0, 260, 1);
+            //ctrl3_init_train(0, &trctl[0], s9, 260, 1);
+            ctrl3_init_train(0, &trctl[0], s7, 10, 1);
             simu_set_train(0, trctl[0].c1_sblk.n, trctl[0]._curposmm);
             ctrl_set_mode(0, train_manual);
 

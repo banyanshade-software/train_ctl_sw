@@ -60,7 +60,11 @@
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                                 <connections>
-                                    <binding destination="bjd-KT-eAM" name="value" keyPath="targetLSBLK" id="YQ6-TR-GSe"/>
+                                    <binding destination="bjd-KT-eAM" name="value" keyPath="targetLSBLK" id="bmb-si-lJ6">
+                                        <dictionary key="options">
+                                            <bool key="NSValidatesImmediately" value="YES"/>
+                                        </dictionary>
+                                    </binding>
                                 </connections>
                             </textField>
                             <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Idv-nl-z7z">
@@ -78,7 +82,11 @@
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                                 <connections>
-                                    <binding destination="bjd-KT-eAM" name="value" keyPath="delay" id="9uq-BJ-ncW"/>
+                                    <binding destination="bjd-KT-eAM" name="value" keyPath="delay" id="vTt-ZU-AFY">
+                                        <dictionary key="options">
+                                            <bool key="NSValidatesImmediately" value="YES"/>
+                                        </dictionary>
+                                    </binding>
                                 </connections>
                             </textField>
                             <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="wNq-Ru-0i6">
@@ -96,7 +104,11 @@
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                                 <connections>
-                                    <binding destination="bjd-KT-eAM" name="value" keyPath="spd" id="ERP-Dj-1EY"/>
+                                    <binding destination="bjd-KT-eAM" name="value" keyPath="spd" id="PlU-DN-9Mx">
+                                        <dictionary key="options">
+                                            <bool key="NSValidatesImmediately" value="YES"/>
+                                        </dictionary>
+                                    </binding>
                                 </connections>
                             </textField>
                             <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="CxK-pp-vzS">
@@ -114,7 +126,11 @@
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                                 <connections>
-                                    <binding destination="bjd-KT-eAM" name="value" keyPath="trainNum" id="uSs-03-Wsu"/>
+                                    <binding destination="bjd-KT-eAM" name="value" keyPath="trainNum" id="CKZ-aZ-CVI">
+                                        <dictionary key="options">
+                                            <bool key="NSValidatesImmediately" value="YES"/>
+                                        </dictionary>
+                                    </binding>
                                 </connections>
                             </textField>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="MFQ-7P-CjU">

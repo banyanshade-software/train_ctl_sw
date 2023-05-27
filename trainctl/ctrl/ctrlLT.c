@@ -167,11 +167,12 @@ void turn_train_on(int tidx, train_ctrl_t *tvars)
     const conf_train_t *conf = conf_train_get(tidx);
     // lt4_get_trigs() only to reserve block, rett is ignored
     rettrigs_t rett = {0};
-    rett.ntrig = 0;
-    _lt4_get_trigs(tidx, tvars, conf, 0, &rett, 0);
-    rett.ntrig = 0;
-    _lt4_get_trigs(tidx, tvars, conf, 1, &rett, 0);
-
+    if ((0)) {
+        rett.ntrig = 0;
+        _lt4_get_trigs(tidx, tvars, conf, 0, &rett, 0);
+        rett.ntrig = 0;
+        _lt4_get_trigs(tidx, tvars, conf, 1, &rett, 0);
+    }
     _set_state(tidx, tvars, train_state_station);
 
     /*
@@ -227,7 +228,7 @@ static void _adjust_posemm(int tidx, train_ctrl_t *tvars, int expmm, int measmm)
     fact100 = 100+(fact100/n);
     wconf->pose_per_cm = pose*fact100/100;
     if ((1)) {
-        int np = tvars->_curposmm; // spdctl_get_lastpose(tidx, tvars->can1_xaddr);
+        int np = tvars->_curposmm;
         int nmm = pose_convert_to_mm(tconf, np*10);
         itm_debug3(DBG_CTRL, "poserr<", tidx, measmm, expmm);
         itm_debug3(DBG_CTRL, "poserr>", tidx, nmm, expmm);
@@ -245,7 +246,7 @@ static void _adjust_posemm(int tidx, train_ctrl_t *tvars, int expmm, int measmm)
 static void adjust_measure_lens1(int tidx, train_ctrl_t *tvars)
 {
     int8_t steep = 0;
-    int np = tvars->_curposmm; // spdctl_get_lastpose(tidx, tvars->can1_xaddr); // TODO only ok because same node
+    int np = tvars->_curposmm;  // TODO only ok because same node
     const conf_train_t *tconf = conf_train_get(tidx);
     int nmm = pose_convert_to_mm(tconf, np*10);
     int l = get_lsblk_len_cm(tvars->c1_sblk, &steep);
@@ -256,7 +257,7 @@ static void adjust_measure_lens1(int tidx, train_ctrl_t *tvars)
 
 static void adjust_measure_ends1fromc1(int tidx, train_ctrl_t *tvars)
 {
-    int np = tvars->_curposmm; //spdctl_get_lastpose(tidx, tvars->can1_xaddr); // TODO only ok because same node
+    int np = tvars->_curposmm;  // TODO only ok because same node
     const conf_train_t *tconf = conf_train_get(tidx);
     int nmm = pose_convert_to_mm(tconf, np*10);
     lsblk_num_t s = tvars->c1_sblk;
@@ -545,8 +546,6 @@ void ctrl3_pose_triggered(int tidx, train_ctrl_t *tvars, uint8_t trigsn, xblkadd
         int nmm = pose_convert_to_mm(tconf, np*10);
         if (abs(nmm - tvars->_curposmm)>5) {
         	itm_debug3(DBG_ERR|DBG_CTRL, "pose?", tidx, tvars->_curposmm, nmm);
-            //printf("%d / %d\n", tvars->_curposmm, nmm);
-           //int np2 = spdctl_get_lastpose(tidx, tvars->can1_xaddr);
         }
     }
     itm_debug3(DBG_POSE|DBG_CTRL, "curposmm", tidx, tvars->_curposmm, trigtag);
@@ -754,9 +753,11 @@ void ctrl3_evt_entered_new_lsblk_same_canton(int tidx, train_ctrl_t *tvars, lsbl
 		itm_debug3(DBG_ERR|DBG_CTRL, "nsblk/bs", tidx, tvars->_state, sblk.n);
 		return;
 	}
+    const conf_train_t *tconf = conf_train_get(tidx);
 	int32_t np = spdctl_get_lastpose(tidx, tvars->can1_xaddr);
-	itm_debug3(DBG_CTRL, "nsblk/sam", tidx, tvars->_curposmm, np);
-    tvars->_curposmm = np;
+    int nmm = pose_convert_to_mm(tconf, np*10);
+    itm_debug3(DBG_CTRL, "nsblk/sam", tidx, tvars->_curposmm, nmm);
+    tvars->_curposmm = nmm;
 
     // ina detect train entered new lsblk
     if (!jumped) {
@@ -788,8 +789,10 @@ void ctrl3_evt_entered_new_lsblk_same_canton(int tidx, train_ctrl_t *tvars, lsbl
 void ctrl3_evt_entered_new_lsblk_c2_canton(int tidx, train_ctrl_t *tvars, _UNUSED_ lsblk_num_t sblk)
 {
 	int32_t np = spdctl_get_lastpose(tidx, tvars->can1_xaddr);
-	itm_debug3(DBG_CTRL, "nsblk/np", tidx, tvars->_curposmm, np);
-    tvars->_curposmm = spdctl_get_lastpose(tidx, tvars->can1_xaddr);
+    const conf_train_t *tconf = conf_train_get(tidx);
+    int nmm = pose_convert_to_mm(tconf, np*10);
+	itm_debug3(DBG_CTRL, "nsblk/np", tidx, tvars->_curposmm, nmm);
+    tvars->_curposmm = nmm;
 
     if (tvars->canMeasureOnSblk) {
         adjust_measure_lens1(tidx, tvars);

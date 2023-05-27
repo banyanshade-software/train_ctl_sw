@@ -143,8 +143,11 @@ void c3auto_set_turnout(int tidx, xtrnaddr_t tn)
     int idx = c3avar[tidx].cidx;
     for (;;idx++) {
         if (is_eop(&c3avar[tidx].path[idx])) {
-            FatalError("notn", "TN not found in path", Error_AutoNoTN);
-            ctrl_set_mode(tidx, train_manual);
+            if ((0)) {
+                FatalError("notn", "TN not found in path", Error_AutoNoTN);
+                ctrl_set_mode(tidx, train_manual);
+            }
+            itm_debug2(DBG_AUTO, "TN not found in path", tidx, tn.v);
             return;
         }
 

@@ -79,8 +79,12 @@ void c3auto_set_s1(int tidx, lsblk_num_t s1)
         }
 
         if (is_eop(&c3avar[tidx].path[idx])) {
-            FatalError("nos1", "S1 not found in path", Error_AutoNoS1);
-            ctrl_set_mode(tidx, train_manual);
+            if ((0)) {
+                FatalError("nos1", "S1 not found in path", Error_AutoNoS1);
+                ctrl_set_mode(tidx, train_manual);
+            } else {
+                itm_debug2(DBG_ERR|DBG_AUTO, "S1 not in path", tidx, s1.n);
+            }
             return;
         }
     }
@@ -147,7 +151,7 @@ void c3auto_set_turnout(int tidx, xtrnaddr_t tn)
                 FatalError("notn", "TN not found in path", Error_AutoNoTN);
                 ctrl_set_mode(tidx, train_manual);
             }
-            itm_debug2(DBG_AUTO, "TN not found in path", tidx, tn.v);
+            itm_debug2(DBG_ERR|DBG_AUTO, "TN not in path", tidx, tn.v);
             return;
         }
 

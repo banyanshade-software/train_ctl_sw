@@ -72,6 +72,7 @@ enum fatal_error_code {
     Error_FSM_NotImplemented,
     Error_FSM_BadFut2,
     Error_FSM_BadFut2b,
+    Error_FSM_BadFut2c,
     Error_FSM_Sanity1,
     Error_FSM_Sanity2,
     Error_FSM_Sanity3,

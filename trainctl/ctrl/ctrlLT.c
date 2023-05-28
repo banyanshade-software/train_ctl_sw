@@ -446,6 +446,7 @@ void ctrl3_stop_detected(int tidx, train_ctrl_t *tvars)
 static void _reserve_c2(int tidx, train_ctrl_t *tvars);
 static void _reserve_c2_fut(int tidx, train_ctrl_t *tvars, xblkaddr_t fut);
 static void _set_and_power_c2(int tidx, train_ctrl_t *tvars);
+static void _set_and_power_c2_fut(int tidx, train_ctrl_t *tvars, xblkaddr_t fut);
 
 
 static void _update_c1changed(int tidx, train_ctrl_t *tvars,  _UNUSED_ const conf_train_t *tconf)
@@ -647,7 +648,7 @@ void ctrl3_pose_triggered(int tidx, train_ctrl_t *tvars, uint8_t trigsn, xblkadd
                     break;
                 case tag_need_c2:
                     itm_debug2(DBG_CTRL, "trg nc2", tidx, tvars->c1_sblk.n);
-                    _set_and_power_c2(tidx, tvars);
+                    _set_and_power_c2_fut(tidx, tvars, fut);
                     goto handled;
                     break;
                 case tag_reserve_c2:
@@ -1103,6 +1104,11 @@ static void _apply_trigs(int tidx, train_ctrl_t *tvars, const rettrigs_t *rett)
     // get min pose (right) or max pose (left)
     int min=0;
     int n = 0;
+    /*if ((1)) {
+        if (rett->ntrig>=4) {
+            itm_debug1(DBG_CTRL, "hop", rett->ntrig);
+        }
+    }*/
     for (int i=0; i<rett->ntrig;i++) {
         if (!rett->trigs[i].tag) continue;
         if (!n) min = rett->trigs[i].posmm;
@@ -1113,6 +1119,7 @@ static void _apply_trigs(int tidx, train_ctrl_t *tvars, const rettrigs_t *rett)
                 if (rett->trigs[i].posmm > min) min = rett->trigs[i].posmm;
             }
         }
+        n++;
     }
     int nt=0; int ns=0;
     for (int i=0; i<rett->ntrig;i++) {
@@ -1374,24 +1381,29 @@ static void _set_state(int tidx, train_ctrl_t *tvars, train_state_t newstate)
 
 static void _set_and_power_c2(int tidx, train_ctrl_t *tvars)
 {
-    //if (tvars->c1c2) {
-    //    tvars->canOld_xaddr.v = 0xFF;
-    //}
+    xblkaddr_t fut = tvars->pow_c2_future;
+    tvars->pow_c2_future.v = 0xFF;
+    _set_and_power_c2_fut(tidx, tvars, fut);
+}
+static void _set_and_power_c2_fut(int tidx, train_ctrl_t *tvars, xblkaddr_t fut)
+{
+    if (fut.v == 0xFF) {
+        FatalError("FUt2", "bad future c2", Error_FSM_BadFut2c);
+    }
+    if (fut.v == tvars->can1_xaddr.v) {
+        FatalError("FUt2", "bad future c2", Error_FSM_BadFut2b);
+    }
     if (tvars->can2_xaddr.v != 0xFF) {
-        if (tvars->can2_xaddr.v != tvars->pow_c2_future.v) {
+        if (tvars->can2_xaddr.v != fut.v) {
             // need to power new c2, but previous c1c2 transition not yet done
             // keep pow_c2_future unchanged, it will be powered by ctrl3_evt_leaved_c1
             // XXX but is ctrl3_evt_leaved_c1 called ??
+            tvars->pow_c2_future = fut;
             return;
-            //FatalError("FUT2", "bad future c2", Error_FSM_BadFut2);
         }
         return;
     }
-    if (tvars->pow_c2_future.v == tvars->can1_xaddr.v) {
-        FatalError("FUt2", "bad future c2", Error_FSM_BadFut2b);
-    }
-    tvars->can2_xaddr = tvars->pow_c2_future;
-    tvars->pow_c2_future.v = 0xFF;
+    tvars->can2_xaddr = fut;
     tvars->c1c2dir_changed = 1;
     _sendlow_c1c2_dir(tidx, tvars);
 }

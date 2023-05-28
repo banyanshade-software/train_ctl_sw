@@ -84,6 +84,9 @@ static void _add_trig(train_ctrl_t *tvars, int left, int c1len, rettrigs_t *rett
     }
     rett->trigs[rett->ntrig].tag = tag;
     rett->ntrig++;
+    if ((tag==tag_reserve_c2) && (tvars->res_c2_future.v == 0xFF)) {
+        itm_debug1(DBG_ERR|DBG_CTRL, "no fut c2", pos);
+    }
 }
 
 static void _add_endlsblk_trig(train_ctrl_t *tvars, int left, int c1len,  rettrigs_t *rett, lsblk_num_t c1, lsblk_num_t ns, int pos)
@@ -308,10 +311,10 @@ int _lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int
                     int trg = trgbase-margin_c2res_len_mm; //trgbase-margin_c2_len_mm;
                     if (_AFTER_LOCO(trg)) { //(trg > posloco) {
                         if (_BEFORE_C1END(trg)) { //trg <= c1len) {
-                            _add_trig(tvars, left, c1len, rett, tag_reserve_c2,  trg);
                             if (tvars->res_c2_future.v == 0xFF) {
                                 tvars->res_c2_future = ncanton;
                             }
+                            _add_trig(tvars, left, c1len, rett, tag_reserve_c2,  trg);
                         }
                     } else {
                         if (_AFTER_LOCO(trgbase)) { //(trgbase>posloco) {

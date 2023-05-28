@@ -60,9 +60,9 @@
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                                 <connections>
-                                    <binding destination="bjd-KT-eAM" name="value" keyPath="targetLSBLK" id="bmb-si-lJ6">
+                                    <binding destination="bjd-KT-eAM" name="value" keyPath="targetLSBLK" id="0Dv-FO-ame">
                                         <dictionary key="options">
-                                            <bool key="NSValidatesImmediately" value="YES"/>
+                                            <bool key="NSContinuouslyUpdatesValue" value="YES"/>
                                         </dictionary>
                                     </binding>
                                 </connections>
@@ -82,9 +82,9 @@
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                                 <connections>
-                                    <binding destination="bjd-KT-eAM" name="value" keyPath="delay" id="vTt-ZU-AFY">
+                                    <binding destination="bjd-KT-eAM" name="value" keyPath="delay" id="2XB-kv-B7y">
                                         <dictionary key="options">
-                                            <bool key="NSValidatesImmediately" value="YES"/>
+                                            <bool key="NSContinuouslyUpdatesValue" value="YES"/>
                                         </dictionary>
                                     </binding>
                                 </connections>
@@ -104,9 +104,9 @@
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                                 <connections>
-                                    <binding destination="bjd-KT-eAM" name="value" keyPath="spd" id="PlU-DN-9Mx">
+                                    <binding destination="bjd-KT-eAM" name="value" keyPath="spd" id="7cl-FX-Cim">
                                         <dictionary key="options">
-                                            <bool key="NSValidatesImmediately" value="YES"/>
+                                            <bool key="NSContinuouslyUpdatesValue" value="YES"/>
                                         </dictionary>
                                     </binding>
                                 </connections>
@@ -126,9 +126,9 @@
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                                 <connections>
-                                    <binding destination="bjd-KT-eAM" name="value" keyPath="trainNum" id="CKZ-aZ-CVI">
+                                    <binding destination="bjd-KT-eAM" name="value" keyPath="trainNum" id="kIw-te-8Bu">
                                         <dictionary key="options">
-                                            <bool key="NSValidatesImmediately" value="YES"/>
+                                            <bool key="NSContinuouslyUpdatesValue" value="YES"/>
                                         </dictionary>
                                     </binding>
                                 </connections>

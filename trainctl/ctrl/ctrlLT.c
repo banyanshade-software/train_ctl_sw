@@ -485,7 +485,7 @@ static pose_trig_tag_t seqToTag(train_ctrl_t *tvars, uint8_t trigsn, int *ignc, 
     *ignc = 4;
     return ret;
 }
-static int seqForTrig(train_ctrl_t *tvars, uint32_t pose, uint8_t tag, uint8_t fut)
+static int seqForTrig(train_ctrl_t *tvars, _UNUSED_ uint32_t pose, uint8_t tag, uint8_t fut)
 {
     // already stored ?
     for (int i=0; i<NUM_PEND_TRIGS; i++) {
@@ -1420,7 +1420,8 @@ static void _reserve_c2(int tidx, train_ctrl_t *tvars)
     set_block_addr_occupency(tvars->res_c2_future, BLK_OCC_C2, tidx, ns);
     tvars->res_c2_future.v = 0xFF;
 }
-static void _reserve_c2_fut(int tidx, train_ctrl_t *tvars, xblkaddr_t fut)
+
+static void _reserve_c2_fut(int tidx, _UNUSED_ train_ctrl_t *tvars, xblkaddr_t fut)
 {
     lsblk_num_t ns = {-1};
     set_block_addr_occupency(fut, BLK_OCC_C2, tidx, ns);

@@ -170,6 +170,7 @@
 							<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.floatabi.251298639.1036657667.494621437" name="Floating-point ABI" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.floatabi.251298639.1036657667"/>
 							<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.target_board.1270203511.1724623050.929634364" name="Board" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.target_board.1270203511.1724623050"/>
 							<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.defaults.1704307142.473098359.594979140" name="Defaults" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.defaults.1704307142.473098359"/>
+							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.ELF" id="com.st.stm32cube.ide.mcu.gnu.managedbuild.targetplatform" isAbstract="false" osList="all" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.targetplatform"/>
 							<tool id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.assembler.635598759" name="MCU GCC Assembler" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.assembler.1955481816">
 								<inputType id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.assembler.input.232679456" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.assembler.input"/>
 							</tool>
@@ -225,6 +226,9 @@
 						</toolChain>
 					</folderInfo>
 					<fileInfo id="com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.debug.2127587642.1798667181" name="LedTest.m" rcbsApplicability="disable" resourcePath="trainctl/leds/LedTest.m" toolsToInvoke=""/>
+					<fileInfo id="com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.debug.2127587642.169724777" name="oam_fake_flash_ram.c" rcbsApplicability="disable" resourcePath="trainctl/oam/oam_fake_flash_ram.c" toolsToInvoke="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.1988516445.2051367391">
+						<tool id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.1988516445.2051367391" name="MCU GCC Compiler" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.1988516445"/>
+					</fileInfo>
 					<fileInfo id="com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.debug.2127587642.267580848" name="trkplan.h" rcbsApplicability="disable" resourcePath="trainctl/trkpln/trkplan.h" toolsToInvoke=""/>
 					<sourceEntries>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Core"/>
@@ -232,7 +236,7 @@
 						<entry excluding="Third_Party/FreeRTOS/Source/portable/MemMang" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Middlewares"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="USB_DEVICE"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="stm32dev"/>
-						<entry excluding="gen|trkpln/trkplan.h|trkpln/trkplan.c|low/servo.h|low/servo.c|uitrack|txrxcmd.c|stm32/txrxtask.c|config/_str|railconfig.c|config_gen|leds/LedTest.m|stm32/taskauto.h|stm32/taskauto.c|obsolete" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="trainctl"/>
+						<entry excluding="oam/oam_fake_flash_ram.c|gen|trkpln/trkplan.h|trkpln/trkplan.c|low/servo.h|low/servo.c|uitrack|txrxcmd.c|stm32/txrxtask.c|config/_str|railconfig.c|config_gen|leds/LedTest.m|stm32/taskauto.h|stm32/taskauto.c|obsolete" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="trainctl"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -331,6 +335,7 @@
 							<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.floatabi.1592230725.736299439" name="Floating-point ABI" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.floatabi.1592230725"/>
 							<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.target_board.542231059.186464969" name="Board" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.target_board.542231059"/>
 							<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.defaults.1177912918.1609356901" name="Defaults" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.defaults.1177912918"/>
+							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.ELF" id="com.st.stm32cube.ide.mcu.gnu.managedbuild.targetplatform" isAbstract="false" osList="all" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.targetplatform"/>
 							<tool id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.assembler.187121052" name="MCU GCC Assembler" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.assembler.665905422">
 								<inputType id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.assembler.input.875096335" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.assembler.input"/>
 							</tool>
@@ -350,13 +355,16 @@
 							<tool id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.objcopy.symbolsrec.117239837" name="MCU Output Converter Motorola S-rec with symbols" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.objcopy.symbolsrec.201010921"/>
 						</toolChain>
 					</folderInfo>
+					<fileInfo id="com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.release.1788962927.1059213502" name="oam_fake_flash_ram.c" rcbsApplicability="disable" resourcePath="trainctl/oam/oam_fake_flash_ram.c" toolsToInvoke="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.722663308.917433314">
+						<tool id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.722663308.917433314" name="MCU GCC Compiler" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.722663308"/>
+					</fileInfo>
 					<sourceEntries>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Core"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Drivers"/>
 						<entry excluding="Third_Party/FreeRTOS/Source/portable/MemMang" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Middlewares"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="USB_DEVICE"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="stm32dev"/>
-						<entry excluding="gen|uitrack|txrxcmd.c|stm32/txrxtask.c|config/_str|railconfig.c|config_gen|obsolete|stm32/taskauto.h|stm32/taskauto.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="trainctl"/>
+						<entry excluding="oam/oam_fake_flash_ram.c|gen|uitrack|txrxcmd.c|stm32/txrxtask.c|config/_str|railconfig.c|config_gen|obsolete|stm32/taskauto.h|stm32/taskauto.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="trainctl"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>

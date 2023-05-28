@@ -208,7 +208,7 @@ void _trace_train_trig(uint32_t tick, int tidx, _UNUSED_ train_ctrl_t *tvars, ui
 }
 
 
-void _trace_train_trig_set(uint32_t tick, int tidx, _UNUSED_ train_ctrl_t *tvars, uint8_t sn, pose_trig_tag_t tag, int32_t pos, int ignore)
+void _trace_train_trig_set(uint32_t tick, int tidx, _UNUSED_ train_ctrl_t *tvars, uint8_t sn, pose_trig_tag_t tag, int32_t pos, uint8_t fut, int ignore)
 {
     train_trace_record_t *rec = get_newrec(tidx);
     if (!rec) return;
@@ -218,8 +218,8 @@ void _trace_train_trig_set(uint32_t tick, int tidx, _UNUSED_ train_ctrl_t *tvars
     rec->trigrec.adjustedpose = pos;
     rec->trigrec.sn = sn;
     rec->trigrec.ignore = ignore ? 1 : 0;
-    rec->trigrec.futc2 = tvars->res_c2_future.v;
-    if ((tag_reserve_c2 == tag) && (0xFF==tvars->res_c2_future.v)) {
+    rec->trigrec.futc2 = fut;
+    if ((tag_reserve_c2 == tag) && (0xFF==fut)) {
         abort();
     }
 }

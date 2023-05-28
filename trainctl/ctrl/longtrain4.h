@@ -15,6 +15,7 @@
 struct sttrig {
     int16_t posmm;
     int8_t tag;
+    uint8_t fut;
 };
 typedef struct {
     uint8_t isoet:1;

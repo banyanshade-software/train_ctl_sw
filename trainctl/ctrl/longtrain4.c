@@ -71,7 +71,7 @@ static const int margin_c2free_len_mm = 100;
 
  */
 
-static void _add_trig(train_ctrl_t *tvars, int left, int c1len, rettrigs_t *rett, pose_trig_tag_t tag, int pos)
+static void _add_trig(train_ctrl_t *tvars, int left, int c1len, rettrigs_t *rett, pose_trig_tag_t tag, int pos, uint8_t fut)
 {
     if (rett->ntrig>=NUMTRIGS) {
         FatalError("ntrg", "too many trigs", Error_Abort);
@@ -83,8 +83,9 @@ static void _add_trig(train_ctrl_t *tvars, int left, int c1len, rettrigs_t *rett
         rett->trigs[rett->ntrig].posmm = c1len-pos+tvars->beginposmm;
     }
     rett->trigs[rett->ntrig].tag = tag;
+    rett->trigs[rett->ntrig].fut = fut;
     rett->ntrig++;
-    if ((tag==tag_reserve_c2) && (tvars->res_c2_future.v == 0xFF)) {
+    if ((tag==tag_reserve_c2) && (fut==0xFF)) /*(tvars->res_c2_future.v == 0xFF))*/ {
         itm_debug1(DBG_ERR|DBG_CTRL, "no fut c2", pos);
     }
 }
@@ -101,7 +102,7 @@ static void _add_endlsblk_trig(train_ctrl_t *tvars, int left, int c1len,  rettri
     int ina2 = get_lsblk_ina3221(ns);
     if ((ina1 == ina2) || (ina2 == 0xFF)) {
     	itm_debug3(DBG_CTRL, "trg end", c1.n, ns.n, pos);
-        _add_trig(tvars, left, c1len, rett, tag_end_lsblk, pos);
+        _add_trig(tvars, left, c1len, rett, tag_end_lsblk, pos, 0xFF);
     }
 }
 
@@ -253,12 +254,12 @@ int _lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int
                 int trg = trgbase - margin_stop_len_mm; // trgbase-margin_stop_len_mm;
                 if (_AFTER_LOCO(trg)) { // (trg > posloco) {
                     if (_BEFORE_C1END(trg)) { //trg <= c1len) {
-                        _add_trig(tvars, left, c1len, rett, a ? tag_stop_blk_wait:tag_stop_eot, trg);
+                        _add_trig(tvars, left, c1len, rett, a ? tag_stop_blk_wait:tag_stop_eot, trg, 0xFF);
                     }
                     trg = trgbase-margin_stop_len_mm - brake_len_mm;
                     if (_AFTER_LOCO(trg)) { //(trg > posloco) {
                         if (_BEFORE_C1END(trg)) { //trg <= c1len) {
-                            _add_trig(tvars, left, c1len, rett, tag_brake, trg);
+                            _add_trig(tvars, left, c1len, rett, tag_brake, trg, 0xFF);
                         }
                     } else {
                         // pos+margin_stop_len_mm <= totallen
@@ -289,7 +290,7 @@ int _lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int
                 int trg = _BEFORE_END_SBLK(train_fwd_len);
                 trg = trg - margin_c2free_len_mm;
                 if ((trg>=0) && (trg<=posloco) && needfreeback) {
-                    _add_trig(tvars, left, c1len, rett, tag_free_back, trg);
+                    _add_trig(tvars, left, c1len, rett, tag_free_back, trg, 0xFF);
                     needfreeback=0;
                     
                 } else if ((trg>posloco) && (tvars->sblkfreed.n == -1)) {
@@ -311,13 +312,12 @@ int _lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int
                     int trg = trgbase-margin_c2res_len_mm; //trgbase-margin_c2_len_mm;
                     if (_AFTER_LOCO(trg)) { //(trg > posloco) {
                         if (_BEFORE_C1END(trg)) { //trg <= c1len) {
-                            if (tvars->res_c2_future.v == 0xFF) {
-                                tvars->res_c2_future = ncanton;
-                            }
-                            _add_trig(tvars, left, c1len, rett, tag_reserve_c2,  trg);
+                            itm_debug2(DBG_CTRL, "tresc2", tidx, ncanton.v);
+                            _add_trig(tvars, left, c1len, rett, tag_reserve_c2,  trg, ncanton.v);
                         }
                     } else {
                         if (_AFTER_LOCO(trgbase)) { //(trgbase>posloco) {
+                            itm_debug2(DBG_CTRL, "iresc2", tidx, ncanton.v);
                             rett->res_c2 = 1;
                             if (tvars->res_c2_future.v == 0xFF) {
                                 tvars->res_c2_future = ncanton;
@@ -330,9 +330,11 @@ int _lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int
                         trg = trgbase-margin_c2pow_len_mm; //trg = trgbase-margin_c2_len_mm;
                         if (_AFTER_LOCO(trg)) { //trg > posloco) {
                             if (_BEFORE_C1END(trg)) { //trg <= c1len) {
-                                _add_trig(tvars, left, c1len, rett, tag_need_c2,  trg);
+                                _add_trig(tvars, left, c1len, rett, tag_need_c2,  trg, ncanton.v);
                                 if (tvars->pow_c2_future.v == 0xFF) {
                                     tvars->pow_c2_future = ncanton;
+                                } else {
+                                    itm_debug3(DBG_CTRL|DBG_ERR, "c2set", tidx, tvars->pow_c2_future.v, ncanton.v);
                                 }
                             }
                         } else {
@@ -340,6 +342,8 @@ int _lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int
                                 rett->power_c2 = 1;
                                 if (tvars->pow_c2_future.v == 0xFF) {
                                     tvars->pow_c2_future = ncanton;
+                                } else {
+                                    itm_debug3(DBG_CTRL|DBG_ERR, "c2set", tidx, tvars->pow_c2_future.v, ncanton.v);
                                 }
                             }
                         }
@@ -354,7 +358,7 @@ int _lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int
             if (needchok && _AFTER_LOCO(trg) && _BEFORE_C1END(trg)) {
                 // ----L xxxxxxx|xx-----|
                 //                ^poshead
-                _add_trig(tvars, left, c1len, rett, tag_chkocc, trg);
+                _add_trig(tvars, left, c1len, rett, tag_chkocc, trg, 0xFF);
                 needchok=0;
             }
         }

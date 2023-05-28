@@ -32,8 +32,10 @@ typedef struct {
     uint8_t num;
     uint8_t postag;
     lsblk_num_t sblk;
+    uint8_t futc2;
     uint8_t done:1;
 } trig_pend_t;
+
 #define NUM_PEND_TRIGS 6
 
 typedef struct {

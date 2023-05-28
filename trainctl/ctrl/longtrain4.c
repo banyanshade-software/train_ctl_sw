@@ -331,18 +331,13 @@ int _lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int
                         if (_AFTER_LOCO(trg)) { //trg > posloco) {
                             if (_BEFORE_C1END(trg)) { //trg <= c1len) {
                                 _add_trig(tvars, left, c1len, rett, tag_need_c2,  trg, ncanton.v);
-                                if (tvars->pow_c2_future.v == 0xFF) {
-                                    tvars->pow_c2_future = ncanton;
-                                } else {
-                                    itm_debug3(DBG_CTRL|DBG_ERR, "c2set", tidx, tvars->pow_c2_future.v, ncanton.v);
-                                }
                             }
                         } else {
                             if (_AFTER_LOCO(trgbase)) { //trgbase> posloco) {
                                 rett->power_c2 = 1;
                                 if (tvars->pow_c2_future.v == 0xFF) {
                                     tvars->pow_c2_future = ncanton;
-                                } else {
+                                } else if (tvars->pow_c2_future.v != ncanton.v) {
                                     itm_debug3(DBG_CTRL|DBG_ERR, "c2set", tidx, tvars->pow_c2_future.v, ncanton.v);
                                 }
                             }

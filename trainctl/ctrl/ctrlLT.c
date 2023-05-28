@@ -649,10 +649,12 @@ void ctrl3_pose_triggered(int tidx, train_ctrl_t *tvars, uint8_t trigsn, xblkadd
                 case tag_need_c2:
                     itm_debug2(DBG_CTRL, "trg nc2", tidx, tvars->c1_sblk.n);
                     _set_and_power_c2_fut(tidx, tvars, fut);
+                    _updated_while_running(tidx, tvars);
                     goto handled;
                     break;
                 case tag_reserve_c2:
                     _reserve_c2_fut(tidx, tvars, fut);
+                    _updated_while_running(tidx, tvars);
                     goto handled;
                     break;
                 
@@ -845,6 +847,10 @@ void ctrl3_evt_entered_c2(int tidx, train_ctrl_t *tvars, uint8_t from_bemf)
     
     lsblk_num_t ns = first_lsblk_with_canton(tvars->can1_xaddr, tvars->c1_sblk);
     trace_train_setc1(ctrl_tasklet.last_tick, tidx, tvars, ns, 2);
+    if (ns.n==-1) {
+        FatalError("Nos1", "no s1 for can1", Error_CtrlNoS1);
+        return;
+    }
     tvars->c1_sblk = ns;
 
     if (tvars->_sdir >= 0) {

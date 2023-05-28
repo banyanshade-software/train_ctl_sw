@@ -58,6 +58,7 @@ typedef struct {
     uint8_t c1;
     uint8_t ignore;
     uint8_t sn;
+    uint8_t futc2;
 } __attribute__((packed)) train_trace_trig_record_t;
 
 typedef struct {
@@ -217,6 +218,10 @@ void _trace_train_trig_set(uint32_t tick, int tidx, _UNUSED_ train_ctrl_t *tvars
     rec->trigrec.adjustedpose = pos;
     rec->trigrec.sn = sn;
     rec->trigrec.ignore = ignore ? 1 : 0;
+    rec->trigrec.futc2 = tvars->res_c2_future.v;
+    if ((tag_reserve_c2 == tag) && (0xFF==tvars->res_c2_future.v)) {
+        abort();
+    }
 }
 
 void _trace_train_free(uint32_t tick, int tidx, int sblk, int canton)
@@ -395,13 +400,14 @@ static void _trace_train_dump(train_trace_record_t *records, int numitem, int st
                 }
                 break;
             case trace_kind_trig_set:
-                sprintf(line, "%2d %6.6d %sset  sn=%d %-9s pos=%d (sblk %d)%s",
-                       idx, rec->tick,
+                sprintf(line, "%2d %6.6d %sset  sn=%d %-9s pos=%d (sblk %d) (fut %d)%s",
+                        idx, rec->tick,
                         rec->trigrec.ignore ? "--" : "++",
                         rec->trigrec.sn,
-                       trig_name(rec->trigrec.tag),
-                       rec->trigrec.adjustedpose,
+                        trig_name(rec->trigrec.tag),
+                        rec->trigrec.adjustedpose,
                         rec->trigrec.c1,
+                        rec->trigrec.futc2,
 					   _cr);
                 break;
             case trace_kind_free:

@@ -42,7 +42,7 @@ const screen_t ihm_screen_train_auto = {
 
 
 const screen_t ihm_screen_train_manual = {
-		.layout = LAYOUT_AUTO,
+		.layout = LAYOUT_MANUAL,
 		.handle_trainmode = _handle_normal_trainmode,
 		.button_a_screen = &ihm_screen_master,
 };

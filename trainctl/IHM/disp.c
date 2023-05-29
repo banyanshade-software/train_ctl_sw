@@ -366,7 +366,7 @@ static const char *ui_strings[] = {
 /* 35*/		"CAN:",
 /* 36*/		"/!\\ Fatal",
 
-/* 37 */ 	"Master",
+/* 37 */ 	"Master LT4",
 /* 38 */	"Slave",
 /* 39 */	"mV10 C",
 /* 40 */	"Wait...",

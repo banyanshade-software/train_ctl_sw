@@ -180,6 +180,7 @@ void Error_Handler(void);
 #define TURN1A_GPIO_Port GPIOE
 #define TURN1B_Pin GPIO_PIN_1
 #define TURN1B_GPIO_Port GPIOE
+
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */

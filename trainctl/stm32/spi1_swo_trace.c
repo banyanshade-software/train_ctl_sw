@@ -13,6 +13,7 @@
 #endif
 
 #include "../oam/oam_flash.h"
+#include "../oam/oam_error.h"
 
 #ifndef SPI_RESET_CRC
 #warning no SPI defined

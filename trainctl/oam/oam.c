@@ -672,6 +672,8 @@ static int _handle_msg_slave(msg_64_t *m)
 	unsigned int confbrd;
 	int32_t v;
 	uint64_t enc;*/
+	itm_debug2(DBG_OAM, "om_slv", m->cmd, m->v1);
+
     switch (m->cmd) {
         case CMD_PARAM_PROPAG:
             if (oam_isMaster()) {
@@ -709,7 +711,6 @@ static int _handle_msg_slave(msg_64_t *m)
             default:
                 itm_debug3(DBG_OAM, "BNUM/slvst", slvState, m->subc, oam_localBoardNum());
             }
-
             if (m->subc != 0xFF) {
                 oam_localBoardNum_set(m->subc);
                 slvState = oam_slv_ok;

@@ -939,6 +939,7 @@ static void _evt_leaved_c1old(int tidx, train_ctrl_t *tvars)
     }
     
     tvars->c1c2 = 0;
+    
     tvars->canOld_xaddr.v = 0xFF;
     tvars->c1c2dir_changed = 1;
     _sendlow_c1c2_dir(tidx, tvars);
@@ -1302,6 +1303,12 @@ static void _set_state(int tidx, train_ctrl_t *tvars, train_state_t newstate)
         case train_state_blkwait:
         case train_state_end_of_track:
         case train_state_station:
+            if (tvars->canOld_xaddr.v != 0xFF) {
+                itm_debug2(DBG_ERR|DBG_CTRL, "st/co", tidx, tvars->canOld_xaddr.v);
+            }
+            if (tvars->can2_xaddr.v != 0xFF) {
+                itm_debug2(DBG_ERR|DBG_CTRL, "st/c2", tidx, tvars->can2_xaddr.v);
+            }
             itm_debug3(DBG_CTRL, "freestp", tidx, tvars->_state, tvars->_sdir);
             const conf_train_t *tconf = conf_train_get(tidx);
             rettrigs_t rett = {0};
@@ -1312,6 +1319,34 @@ static void _set_state(int tidx, train_ctrl_t *tvars, train_state_t newstate)
             break;
     }
     //  sanity check
+    if ((1)) {
+        // check curposmm coherency
+        if (tvars->_curposmm<tvars->beginposmm) {
+            FatalError("cmm1", "curpos before begin", Error_Other);
+        } else {
+            int32_t c1len = 10*get_lsblk_len_cm(tvars->c1_sblk, NULL);
+            if (tvars->_curposmm>tvars->beginposmm+c1len) {
+                FatalError("cmm2", "curpos after c1len", Error_Other);
+            }
+        }
+    }
+    if ((1)) {
+        // check c2 and cold are occupied by us
+        if (tvars->canOld_xaddr.v != 0xFF) {
+            uint8_t trn;
+            uint8_t occ = occupency_block_addr_info(tvars->canOld_xaddr, &trn, NULL);
+            if ((trn != tidx) || (occ != BLK_OCC_LOCO_LEFT)) {
+                itm_debug3(DBG_ERR|DBG_CTRL, "sa/co", tidx, tvars->canOld_xaddr.v, occ);
+            }
+        }
+        if (tvars->can2_xaddr.v != 0xFF) {
+            uint8_t trn;
+            uint8_t occ = occupency_block_addr_info(tvars->can2_xaddr, &trn, NULL);
+            if ((trn != tidx) || (occ != BLK_OCC_C2)) {
+                itm_debug2(DBG_ERR|DBG_CTRL, "sa/c2", tidx, tvars->can2_xaddr.v);
+            }
+        }
+    }
     switch (newstate) {
         case train_state_blkwait:
         case train_state_blkwait0:

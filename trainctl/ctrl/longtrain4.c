@@ -188,7 +188,13 @@ int _lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int
         // left
         maxadvancefortrig = tvars->_curposmm - tvars->beginposmm;
     }
-    
+    if (!left && (maxadvancefortrig<=0)) {
+        itm_debug3(DBG_ERR|DBG_CTRL, "neg max", tvars->_curposmm, tvars->beginposmm, c1len);
+        if (maxadvancefortrig<-10) {
+            itm_debug2(DBG_ERR|DBG_CTRL, "big neg", tidx, maxadvancefortrig);
+        }
+        //FatalError("adv0", "maxadvancefortrig", Error_Other);
+    }
     
     int maxmargin;
     if (!checkfreeback) {

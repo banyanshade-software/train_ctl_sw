@@ -928,9 +928,11 @@ static void _updated_while_running(int tidx, train_ctrl_t *tvars)
 
 static void _evt_leaved_c1old(int tidx, train_ctrl_t *tvars)
 {
-    itm_debug3(DBG_CTRL|DBG_POSE, "evt_left_c2", tidx, tvars->_state, tvars->can1_xaddr.v);
+    itm_debug3(DBG_CTRL|DBG_POSE, "_evt_leaved_c1old", tidx, tvars->_state, tvars->can1_xaddr.v);
     if (tvars->_state != train_state_running) {
         itm_debug2(DBG_CTRL|DBG_ERR, "leav_c1/bs", tidx, tvars->_state);
+        tvars->c1c2 = 0;
+        tvars->canOld_xaddr.v = 0xFF;
         return;
     }
     if (!tvars->c1c2) {
@@ -1316,6 +1318,15 @@ static void _set_state(int tidx, train_ctrl_t *tvars, train_state_t newstate)
             freeback(tidx, tvars);
             _lt4_get_trigs(tidx, tvars, tconf, 1, &rett, 1);
             freeback(tidx, tvars);
+            if (tvars->canOld_xaddr.v != 0xFF) {
+                //tvars->freecanton = tvars->canOld_xaddr;
+                //freeback(tidx, tvars);
+                tvars->canOld_xaddr.v = 0xFF;
+                tvars->c1c2 = 0;
+            }
+            if (tvars->can2_xaddr.v != 0xFF) {
+                tvars->can2_xaddr.v = 0xFF;
+            }
             break;
     }
     //  sanity check
@@ -1335,14 +1346,14 @@ static void _set_state(int tidx, train_ctrl_t *tvars, train_state_t newstate)
         if (tvars->canOld_xaddr.v != 0xFF) {
             uint8_t trn;
             uint8_t occ = occupency_block_addr_info(tvars->canOld_xaddr, &trn, NULL);
-            if ((trn != tidx) || (occ != BLK_OCC_LOCO_LEFT)) {
+            if ((trn != tidx) || ((occ != BLK_OCC_LOCO_LEFT) && (occ != BLK_OCC_LOCO_RIGHT))) {
                 itm_debug3(DBG_ERR|DBG_CTRL, "sa/co", tidx, tvars->canOld_xaddr.v, occ);
             }
         }
         if (tvars->can2_xaddr.v != 0xFF) {
             uint8_t trn;
             uint8_t occ = occupency_block_addr_info(tvars->can2_xaddr, &trn, NULL);
-            if ((trn != tidx) || (occ != BLK_OCC_C2)) {
+            if ((trn != tidx) || ((occ != BLK_OCC_C2) && (occ!=BLK_OCC_CARS))) {
                 itm_debug2(DBG_ERR|DBG_CTRL, "sa/c2", tidx, tvars->can2_xaddr.v);
             }
         }

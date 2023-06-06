@@ -18,6 +18,16 @@
 			<key>orderHint</key>
 			<integer>0</integer>
 		</dict>
+		<key>trainLPctlTests copy.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>4</integer>
+		</dict>
+		<key>trainSpdctlTests.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>4</integer>
+		</dict>
 		<key>train_lowTests 1.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
@@ -38,12 +48,12 @@
 		<key>trainctlTests copy.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>2</integer>
+			<integer>4</integer>
 		</dict>
 		<key>trainctlTests.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>0</integer>
+			<integer>2</integer>
 		</dict>
 	</dict>
 	<key>SuppressBuildableAutocreation</key>

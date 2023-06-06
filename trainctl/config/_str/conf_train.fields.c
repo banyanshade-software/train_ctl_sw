@@ -51,10 +51,10 @@ int conf_train_fieldnum(const char *str)
          return conf_numfield_train_slipping;
     } else if (!strcmp(str, "pose_per_cm")) {
          return conf_numfield_train_pose_per_cm;
-    } else if (!strcmp(str, "trainlen_left")) {
-         return conf_numfield_train_trainlen_left;
-    } else if (!strcmp(str, "trainlen_right")) {
-         return conf_numfield_train_trainlen_right;
+    } else if (!strcmp(str, "trainlen_left_cm")) {
+         return conf_numfield_train_trainlen_left_cm;
+    } else if (!strcmp(str, "trainlen_right_cm")) {
+         return conf_numfield_train_trainlen_right_cm;
     }
     return -1;
 }
@@ -90,10 +90,10 @@ const char *conf_train_fieldname(int f)
          return "slipping";
     } else if (f == conf_numfield_train_pose_per_cm) {
          return "pose_per_cm";
-    } else if (f == conf_numfield_train_trainlen_left) {
-         return "trainlen_left";
-    } else if (f == conf_numfield_train_trainlen_right) {
-         return "trainlen_right";
+    } else if (f == conf_numfield_train_trainlen_left_cm) {
+         return "trainlen_left_cm";
+    } else if (f == conf_numfield_train_trainlen_right_cm) {
+         return "trainlen_right_cm";
     }
     return NULL;
 }

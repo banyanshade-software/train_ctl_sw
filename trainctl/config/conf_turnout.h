@@ -18,15 +18,28 @@
 
 
 
+
 #ifndef TRAIN_SIMU
-#ifdef STM32_F4
+
+#if defined(STM32F4)
 #include "stm32f4xx_hal.h"
-#else
+
+#elif defined(STM32G4)
+#include "stm32g4xx_hal.h"
+
+#elif defined(STM32F1)
 #include "stm32f1xx_hal.h"
+
+#else
+#error no board hal
 #endif
+
+
 #else
 typedef void *GPIO_TypeDef;
 #endif
+
+
 
 
 
@@ -44,8 +57,20 @@ const conf_turnout_t *conf_turnout_get(int num);
 
 
 
+#ifdef TRN_BOARD_G4SLV1
+#define NUM_TURNOUTS 4 // 4 
+#endif // TRN_BOARD_G4SLV1
+
+
+
+#ifdef TRN_BOARD_G4MASTER1
+#define NUM_TURNOUTS 4 // 4 
+#endif // TRN_BOARD_G4MASTER1
+
+
+
 #ifdef TRN_BOARD_UNIT_TEST
-#define NUM_TURNOUTS 0 // 0 
+#define NUM_TURNOUTS 4 // 4 
 #endif // TRN_BOARD_UNIT_TEST
 
 

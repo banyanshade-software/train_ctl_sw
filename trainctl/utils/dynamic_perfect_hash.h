@@ -9,15 +9,21 @@
 #ifndef dynamic_perfect_hash_h
 #define dynamic_perfect_hash_h
 
+#ifndef _UNUSED_
+#define _UNUSED_
+#endif
+
 typedef struct {
     uint8_t p0;
     uint8_t p1;
     uint8_t p2;
     uint8_t p3;
+    // ---
+    int maxN0;
 } dph64_def_t;
 
 
-
+#define DPH_NPASS 1
 
 static inline uint8_t rotateLeft8(uint8_t x, int n)
 {
@@ -31,9 +37,21 @@ static inline uint16_t rotateLeft16(uint16_t x, int n)
 
 // 256->64 hash function
 
+static inline void dph64_register(_UNUSED_ dph64_def_t *dph, _UNUSED_ int npass, _UNUSED_ uint8_t v8, _UNUSED_ int numhash)
+{
+   
+    
+}
 
 static inline uint8_t dph64_hash(dph64_def_t *dph, uint8_t v8, int mod)
 {
+    uint16_t v = (uint16_t)v8;
+    uint16_t h1 = ((dph->p2+1) * v + dph->p1) % (dph->p0+100);
+    //uint16_t h2 = v % mod;
+    //uint16_t h3 = (v + dph->p0) / mod;;
+    uint16_t h = h1; //+h2+h3;
+    return h%mod;
+#if 0
     //if (!dph->p0) return 0; // for tests
     // return (a*K) >> (w-m)
     
@@ -116,6 +134,7 @@ static inline uint8_t dph64_hash(dph64_def_t *dph, uint8_t v8, int mod)
     //h ^= (v<<3)+dph->p2;
     h = h ^ (h >>8) ^((h*0x1339)>>11);
 #endif
+#endif
 }
 
 static inline void dph64_start(dph64_def_t *dph)
@@ -125,10 +144,10 @@ static inline void dph64_start(dph64_def_t *dph)
     dph->p2 = 0;
     dph->p3 = 0;
 }
-#define MAX_P0  15
-#define MAX_P1  16
-#define MAX_P2  100
-#define MAX_P3  7
+#define MAX_P0  255
+#define MAX_P1  255
+#define MAX_P2  255
+#define MAX_P3  1
 
 static inline int dph64_next(dph64_def_t *dph)
 {

@@ -14,6 +14,15 @@
 //#include "ctrlP.h"
 #include "../low/servo.h"
 
+
+#ifndef UNIT_TEST
+#error UNIT_TEST  should be defined for unit tests
+#endif
+#ifndef TRN_BOARD_SIMU
+//#error TRN_BOARD_SIMU not defined, expect bad config
+#endif
+
+
 @interface TestServo : XCTestCase
 
 @end
@@ -145,7 +154,27 @@ int oam_localBoardNum(void)
     XCTAssert(0==errorhandler, "Error_Handler");
 }
 
-- (void)testServo
+- (void)testServo1
+{
+    msg_64_t m = {0};
+    m.from = MA3_UI_CTC;
+    m.to = MA0_SERVO(oam_localBoardNum());
+    m.cmd = CMD_SERVO_SET;
+    m.subc = 0;
+    m.v1u = 2200;
+    m.v2u = 0;
+    mqf_write(&to_servo, &m);
+    for (int i = 0; i<1000; i++) {
+        SimuTick += 10;
+        tasklet_run(&servo_tasklet, SimuTick);
+    }
+    NSString *s = dump_msgbuf(0);
+    // UT config is 2300-7230
+    EXPMSG({.to=MA3_UI_CTC,   .from=MA0_SERVO(1), .subc=0, .cmd=CMD_SERVO_ACK, .v1u=2300});
+}
+
+
+- (void)testServo2
 {
     msg_64_t m = {0};
     m.from = MA3_UI_CTC;
@@ -159,12 +188,28 @@ int oam_localBoardNum(void)
         SimuTick += 10;
         tasklet_run(&servo_tasklet, SimuTick);
     }
-    NSString *s = dump_msgbuf(0);
+    NSString *s = dump_msgbuf(0);(void)s;
     EXPMSG({.to=MA3_UI_CTC,   .from=MA0_SERVO(1), .subc=0, .cmd=CMD_SERVO_ACK, .v1u=4000});
-
-
 }
 
+
+- (void)testServo3
+{
+    msg_64_t m = {0};
+    m.from = MA3_UI_CTC;
+    m.to = MA0_SERVO(oam_localBoardNum());
+    m.cmd = CMD_SERVO_SET;
+    m.subc = 0;
+    m.v1u = 9000;
+    m.v2u = 0;
+    mqf_write(&to_servo, &m);
+    for (int i = 0; i<1000; i++) {
+        SimuTick += 10;
+        tasklet_run(&servo_tasklet, SimuTick);
+    }
+    NSString *s = dump_msgbuf(0); (void) s;
+    EXPMSG({.to=MA3_UI_CTC,   .from=MA0_SERVO(1), .subc=0, .cmd=CMD_SERVO_ACK, .v1u=7230});
+}
 
 @end
 

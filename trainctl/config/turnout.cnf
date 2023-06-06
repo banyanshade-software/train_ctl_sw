@@ -32,7 +32,10 @@ config turnout {
 } num = (mainV0) 3
       = (mainV04) 6
       = (simu) 4
+      = (unit_test) 4
       = (dispatcher) 0          # TODO
+      = (G4slv1) 4          # TODO
+      = (G4master1) 4          # TODO
       = (switcher) 8
       = (default) 0;
 
@@ -69,15 +72,28 @@ table tpin_switcher
 attrib turnout h_code {
 
 
+
 #ifndef TRAIN_SIMU
-#ifdef STM32_F4
+
+#if defined(STM32F4)
 #include "stm32f4xx_hal.h"
-#else
+
+#elif defined(STM32G4)
+#include "stm32g4xx_hal.h"
+
+#elif defined(STM32F1)
 #include "stm32f1xx_hal.h"
+
+#else
+#error no board hal
 #endif
+
+
 #else
 typedef void *GPIO_TypeDef;
 #endif
+
+
 
 }
 

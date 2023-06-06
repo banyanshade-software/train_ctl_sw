@@ -1,0 +1,134 @@
+#
+
+
+%prefix "msgdef"
+
+%value "msg_node_t *"
+%auxil "system_t *"
+
+%header {
+#include <stdio.h>
+#include <stdlib.h>
+#include "system.h"
+}
+
+%source{
+#define PCC_ERROR(auxil) system__handle_syntax_error(auxil, SYNTAX_ERROR_UNKNOWN, range__void()) /* <-- caused by incompleteness of the grammar */
+#define PCC_GETCHAR(auxil) system__read_source_file(auxil)
+#define PCC_MALLOC(auxil, size) system__allocate_memory(auxil, size)
+#define PCC_REALLOC(auxil, ptr, size) system__reallocate_memory(auxil, ptr, size)
+#define PCC_FREE(auxil, ptr) system__deallocate_memory(auxil, ptr)
+ 
+static const char *dbg_str[] = { "EVAL_", "MATCH", "ABAND" };
+
+#define PCC_DEBUG(auxil, event, rule, level, pos, buffer, length) do {\
+     if ((0)) fprintf(stdout, "%*s%s %s @%d [%.*s]\n", (int)(level * 2), "", dbg_str[event], rule, (int)pos, (int)length,  buffer); fflush(stdout); \
+} while(0)
+
+
+}
+
+msgdef
+    <- l:linelist _ end_of_file
+    { $$ = l; }
+
+linelist
+    <- l:line _ n:msgdef 
+        { if (l) {
+            $$ = l;
+            $$->next = n;
+          } else {
+            $$ = n;
+          }
+        }
+     / l:line
+        { $$ = l; }
+
+line
+    <-
+       _ '#' ( !EOL . )* EOL
+     / _ kw_start _ v:integer _ (c:comment)? _ EOL
+        { $$ = create_msg_node(auxil, MSG_NODE_START); 
+          $$->value = v->value;
+          $$->comment = c ? c->string : NULL;
+        }
+     / _ m:identifier _ t:type  _ (c:comment)? EOL
+        { $$ = create_msg_node(auxil, MSG_NODE_MSG); 
+          $$->string = m->string;
+          $$->comment = c ? c->string : NULL;
+          $$->typef = t->typef;
+          $$->typev = t->typev;
+          $$->types = t->types;
+        }
+     / _ c:comment EOL 
+     / _ EOL
+
+type 
+    <-
+        'void'      { $$ = create_msg_node(auxil, MSG_NODE_TYPE); $$->typef = TYPE_V32; $$->typev = 0; $$->types = 0; }
+     /  'b4'        { $$ = create_msg_node(auxil, MSG_NODE_TYPE); $$->typef = TYPE_B4;  $$->typev = 4; $$->types = 0;}
+     /  'val40'     { $$ = create_msg_node(auxil, MSG_NODE_TYPE); $$->typef = TYPE_V40; $$->typev = 1; $$->types = 0;}
+     /  'v16,v8,v8u'{ $$ = create_msg_node(auxil, MSG_NODE_TYPE); $$->typef = TYPE_VCU; $$->typev = 3; $$->types = 0;}
+     /  'tbd'       { $$ = create_msg_node(auxil, MSG_NODE_TYPE); $$->typef = TYPE_V32; $$->typev = 0; $$->types = 0;}
+     /  'v1u,v2u'   { $$ = create_msg_node(auxil, MSG_NODE_TYPE); $$->typef = TYPE_V16; $$->typev = 2; $$->types = 0;}
+     /  'v1u,v2'    { $$ = create_msg_node(auxil, MSG_NODE_TYPE); $$->typef = TYPE_V16; $$->typev = 2; $$->types = 2;}
+     /  'v1,v2u'    { $$ = create_msg_node(auxil, MSG_NODE_TYPE); $$->typef = TYPE_V16; $$->typev = 2; $$->types = 1;}
+     /  'v1,v2'     { $$ = create_msg_node(auxil, MSG_NODE_TYPE); $$->typef = TYPE_V16; $$->typev = 2; $$->types = 3;}
+     /  'v1u'       { $$ = create_msg_node(auxil, MSG_NODE_TYPE); $$->typef = TYPE_V16; $$->typev = 1; $$->types = 0;}
+     /  'v1'        { $$ = create_msg_node(auxil, MSG_NODE_TYPE); $$->typef = TYPE_V16; $$->typev = 1; $$->types = 1;}
+     /  'v32u'      { $$ = create_msg_node(auxil, MSG_NODE_TYPE); $$->typef = TYPE_V32; $$->typev = 1; $$->types = 0;}
+     /  'v32'       { $$ = create_msg_node(auxil, MSG_NODE_TYPE); $$->typef = TYPE_V32; $$->typev = 1; $$->types = 1;}
+
+comment
+    <-
+       _ '//' ( !EOL . )* &EOL
+    {
+        $$ = create_msg_node_text(auxil, MSG_NODE_COMMENT, range__new($0s, $0e));
+    }
+
+
+
+O <- [0-7]
+D <- [0-9]
+X <- [0-9a-fA-F]
+L <- [a-zA-Z_]
+
+integer
+   <- '0'[xX]X+
+    {
+        $$ = create_msg_node_intstr(auxil, MSG_NODE_INT, range__new($0s, $0e), 16);
+    }
+    / '0'O+
+    {
+        $$ = create_msg_node_intstr(auxil, MSG_NODE_INT, range__new($0s, $0e), 8);
+    }
+    / !'0' D+
+    {
+        $$ = create_msg_node_intstr(auxil, MSG_NODE_INT, range__new($0s, $0e), 10);
+    }
+    / D !D
+    {
+        $$ = create_msg_node_intstr(auxil, MSG_NODE_INT, range__new($0s, $0e), 10);
+    }
+    / '-'D+
+    {
+        $$ = create_msg_node_intstr(auxil, MSG_NODE_INT, range__new($0s, $0e), 10);
+    }
+
+
+identifier
+   <- !keyword L(L/D)*
+    {
+        $$ = create_msg_node_text(auxil, MSG_NODE_IDENT, range__new($0s, $0e));
+    }
+
+keyword
+   <- kw_start
+
+
+kw_start       <- 'start'  !(L/D)
+
+EOL    <- '\n' / '\r\n' / '\r' 
+_      <- [ \t]*
+
+end_of_file <- !.

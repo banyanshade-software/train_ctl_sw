@@ -36,8 +36,10 @@ void oam_flash_init(void)
 	}
 	// PageSize = 256, PageCount = 8192, SectorSize = 4096, SectorCount = 512, BlockSize = 65536, BlockCount = 32, CapacityInKiloByte = 2048,
 #ifndef TRAIN_SIMU
+#if 0
 	itm_debug3(DBG_OAM, "FLASH s", w25qxx.PageSize, w25qxx.SectorSize, w25qxx.BlockSize);
 	itm_debug3(DBG_OAM, "FLASH c", w25qxx.PageCount, w25qxx.SectorCount, w25qxx.BlockCount);
+#endif
 #endif
 
 
@@ -107,7 +109,17 @@ void oam_flash_init(void)
  */
 
 // blocks store (1,2 and 8,9) starts with magic + configuration generation
-
+#ifndef STM32G4
+#define BLOCK_MAIN_B 	1
+#define BLOCK_LOCAL_B	2
+#define BLOCK_MAIN		8
+#define BLOCK_LOCAL		9
+#else
+#define BLOCK_MAIN_B 	1
+#define BLOCK_LOCAL_B	2
+#define BLOCK_MAIN		3
+#define BLOCK_LOCAL		4
+#endif
 
 
 static uint16_t currentGeneration = 0;
@@ -202,10 +214,10 @@ void oam_flash_erase(void)
 
 static void check_store_init(int force)
 {
-	check_block(1, CONF_STORE_MAGIC, &blk_bup0_str);
-	check_block(2, CONF_LOCAL_MAGIC, (blk_desc_t *)&blk_bup0_loc);
-	check_block(8, CONF_STORE_MAGIC, &blk_n1_str);
-	check_block(9, CONF_LOCAL_MAGIC, (blk_desc_t *)&blk_n1_loc);
+	check_block(BLOCK_MAIN_B,  CONF_STORE_MAGIC, &blk_bup0_str);
+	check_block(BLOCK_LOCAL_B, CONF_LOCAL_MAGIC, (blk_desc_t *)&blk_bup0_loc);
+	check_block(BLOCK_MAIN,    CONF_STORE_MAGIC, &blk_n1_str);
+	check_block(BLOCK_LOCAL,   CONF_LOCAL_MAGIC, (blk_desc_t *)&blk_n1_loc);
 
 	currentGeneration = 0;
 	if ((blk_bup0_str.valid) && (blk_bup0_str.gen > currentGeneration)) currentGeneration = blk_bup0_str.gen;
@@ -216,10 +228,10 @@ static void check_store_init(int force)
 
 	if (!force) return;
     itm_debug1(DBG_OAM, "fl gen", currentGeneration);
-	if (!blk_bup0_str.valid)    format_store_block(1,  CONF_STORE_MAGIC, &blk_bup0_str, 1);
-	if (!blk_bup0_loc.b.valid)  format_store_block(2,  CONF_LOCAL_MAGIC, (blk_desc_t *) &blk_bup0_loc, 1);
-	if (!blk_n1_str.valid)      format_store_block(8,  CONF_STORE_MAGIC, &blk_n1_str, 1);
-	if (!blk_n1_loc.b.valid)    format_store_block(9,  CONF_LOCAL_MAGIC, (blk_desc_t *)&blk_n1_loc, 1);
+	if (!blk_bup0_str.valid)    format_store_block(BLOCK_MAIN_B,  CONF_STORE_MAGIC, &blk_bup0_str, 1);
+	if (!blk_bup0_loc.b.valid)  format_store_block(BLOCK_LOCAL_B, CONF_LOCAL_MAGIC, (blk_desc_t *) &blk_bup0_loc, 1);
+	if (!blk_n1_str.valid)      format_store_block(BLOCK_MAIN,    CONF_STORE_MAGIC, &blk_n1_str, 1);
+	if (!blk_n1_loc.b.valid)    format_store_block(BLOCK_LOCAL,    CONF_LOCAL_MAGIC, (blk_desc_t *)&blk_n1_loc, 1);
     
     
 }
@@ -230,6 +242,7 @@ static void check_block(int blocknum, uint32_t magic, blk_desc_t *blkdesc)
 	W25qxx_ReadPage(pagebuf.b, W25qxx_BlockToPage(blocknum), 0, sizeof(pagebuf));
 	if (pagebuf.w[0] != magic) {
 		itm_debug3(DBG_OAM, "mgic not found", blocknum, pagebuf.w[0], magic);
+		blkdesc->valid = 0;
 		return;
 	}
     itm_debug1(DBG_OAM, "magic ok", blocknum);

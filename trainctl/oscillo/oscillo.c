@@ -13,18 +13,24 @@
 //#include "oscillo.h"
 #include "../misc.h"
 
-#ifdef STM32_F4
+#if defined(STM32F4)
 #include "stm32f4xx_hal.h"
-#include "stm32f4xx_hal_tim.h"
-#else
+
+#elif defined(STM32G4)
+#include "stm32g4xx_hal.h"
+
+#elif defined(STM32F1)
 #include "stm32f1xx_hal.h"
-#include "stm32f1xx_hal_tim.h"
+
+#else
+#error no board hal
 #endif
+
 
 #ifndef BOARD_HAS_OSCILLO
 #error oscillo requires BOARD_HAS_OSCILLO, remove from build
 #endif
-#ifndef BOARD_HAS_USB
+#if !defined(BOARD_HAS_USB) && !defined(BOARD_HAS_LPUART)
 #error oscillo requires BOARD_HAS_USB, remove from build
 #endif
 
@@ -42,7 +48,13 @@ extern ADC_HandleTypeDef hadc2;
 extern TIM_HandleTypeDef htim1;
 extern TIM_HandleTypeDef htim2;
 extern TIM_HandleTypeDef htim3;
+#ifdef STM32_G4
+extern TIM_HandleTypeDef htim17;
+#define OSCTIM htim17
+#else
 extern TIM_HandleTypeDef htim5;
+#define OSCTIM htim5
+#endif
 extern TIM_HandleTypeDef htim8;
 
 
@@ -133,14 +145,14 @@ static void oscillo_start(void)
 	oscillo_index = 0;
 	oscillo_run = 1;
 	itm_debug1(DBG_TIM, "osc start", 0);
-	HAL_TIM_Base_Start_IT(&htim5);
+	HAL_TIM_Base_Start_IT(&OSCTIM);
 }
 
 void oscillo_end(void)
 {
 	oscillo_run = 0;
 	oscillo_index = 0;
-	HAL_TIM_Base_Stop(&htim5);
+	HAL_TIM_Base_Stop(&OSCTIM);
 	HAL_ADC_Stop_DMA(&hadc2);
 	itm_debug1(DBG_TIM, "osc end", 0);
 	oscillo_did_end = 1;

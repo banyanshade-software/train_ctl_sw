@@ -2,40 +2,70 @@
 config servo {
 	const GPIO_TypeDef *port_power
 		= (switcher:*) table(servosw, power_port)
+		= (unit_test) table(utservo, power_port)
+		= (G4slv1) table(g4servo, power_port)
+		= (G4master1) table(g4servoM, power_port)
 		= (default) NULL;
-	const uint16_t pin_power
+	const int16_t pin_power
 		= (switcher:*) table(servosw, power_pin)
+		= (unit_test) table(utservo, power_pin)
+		= (G4slv1) table(g4servo, power_pin)
+		= (G4master1) table(g4servoM, power_pin)
 		= (default) 0;
     const int8_t pwm_timer_num
         = (switcher:*) table(servosw, tim)
+		= (unit_test) table(utservo, tim)
+		= (G4slv1) table(g4servo, tim)
+		= (G4master1) table(g4servoM, tim)
         = (simu) table(servosw, tim)
         = (default) -1;
     const int8_t pwm_timer_ch
         = (switcher:*) table(servosw, ch)
         = (simu) table(servosw, ch)
+		= (unit_test) table(utservo, ch)
+		= (G4slv1) table(g4servo, ch)
+		= (G4master1) table(g4servoM, ch)
         = (default) 0;
     user int8_t direction
         = (switcher:*) table(servosw, dir)
         = (simu) table(servosw, dir)
+		= (unit_test) table(utservo, dir)
+		= (G4slv1) table(g4servo, dir)
+		= (G4master1) table(g4servoM, dir)
         = (default) 0;
     user uint16_t min
         = (switcher:*) table(servosw, min)
-        = (simu:*) table(servosw, min)
+        = (simu) table(servosw, min)
+		= (unit_test) table(utservo, min)
+		= (G4slv1) table(g4servo, min)
+		= (G4master1) table(g4servoM, min)
         = (default) 0;
     user uint16_t max
         = (switcher:*) table(servosw, max)
-        = (simu:*) table(servosw, max)
+        = (simu) table(servosw, max)
+		= (unit_test) table(utservo, max)
+		= (G4slv1) table(g4servo, max)
+		= (G4master1) table(g4servoM, max)
         = (default) 0;
     user uint16_t spd
         = (switcher:*) table(servosw, spd)
         = (simu) table(servosw, spd)
+		= (unit_test) table(utservo, spd)
+		= (G4slv1) table(g4servo, spd)
+		= (G4master1) table(g4servoM, spd)
         = (default) 0;
     user uint16_t pos0
         = (switcher:*) table(servosw, pos0)
         = (simu) table(servosw, pos0)
+		= (unit_test) table(utservo, pos0)
+		= (G4slv1) table(g4servo, pos0)
+		= (G4master1) table(g4servoM, pos0)
         = (default) 0;
 } num = (switcher) 2
       = (simu) 2
+      = (unit_test) 4
+      = (G4slv1) 1
+      = (G4master1) 1
       = (default) 0;
 
 table servosw
@@ -44,19 +74,46 @@ table servosw
     ( GPIOD,             -1,      4, TIM_CHANNEL_2,    2300,   7230,     80,     5000,    0)
 ;
 
+table utservo 
+	( power_port, power_pin,    tim,            ch,     min,    max,    spd,    pos0,    dir)
+    ( GPIOD,             -1,      4, TIM_CHANNEL_1,    2300,   7230,     80,     5000,    0)
+    ( GPIOD,             -1,      4, TIM_CHANNEL_2,    2300,   7230,     80,     5000,    0)
+    ( GPIOD,             -1,      4, TIM_CHANNEL_3,    2300,   7230,     80,     5000,    0)
+    ( GPIOD,             -1,      4, TIM_CHANNEL_4,    2300,   7230,     80,     5000,    0)
+;
+table g4servo 
+	( power_port, power_pin,    tim,            ch,     min,    max,    spd,    pos0,    dir)
+    ( GPIOD,             -1,      4, TIM_CHANNEL_1,    2300,   7230,     80,     5000,    0)
+;
+table g4servoM 
+	( power_port, power_pin,    tim,            ch,     min,    max,    spd,    pos0,    dir)
+    ( GPIOD,             -1,      4, TIM_CHANNEL_1,    2300,   7230,     80,     5000,    0)
+;
 
 attrib servo h_code {
 
 
 #ifndef TRAIN_SIMU
-#ifdef STM32_F4
+
+#if defined(STM32F4)
 #include "stm32f4xx_hal.h"
-#else
+
+#elif defined(STM32G4)
+#include "stm32g4xx_hal.h"
+
+#elif defined(STM32F1)
 #include "stm32f1xx_hal.h"
+
+#else
+#error no board hal
 #endif
+
+
 #else
 typedef void *GPIO_TypeDef;
 #endif
+
+
 
 }
 

@@ -16,6 +16,8 @@ enum fatal_error_code {
 	Error_None = 0,
 	Error_Stack,
 	Error_Other,		// Error_Handler
+    Error_Abort,      // replace abort()
+	Error_NotImpl,
 	Error_Check,
 	Error_NoC2s,
 	Error_WrongC1,
@@ -23,7 +25,8 @@ enum fatal_error_code {
 	Error_CtrlTimerNum,
 	Error_CtrlTSpeed,
 	Error_CtrlNoDir,
-	Error_CtrlNoC1,
+    Error_CtrlNoC1,
+    Error_CtrlNoS1,
 	Error_CtrlNoC1l,
 	Error_CtrlBadPose,
 	Error_DetectBadNum,
@@ -51,12 +54,41 @@ enum fatal_error_code {
 	Error_NumBnum2,
 	Error_NoFlash,
 	Error_FlashRentered,
-
+    
 	Error_CAN_Rx_Overrun0,
 	Error_CAN_Rx_Overrun1,
 
 	Error_PlannerTooManyBlocks,
     Error_Hash,
+    
+    Error_FSM_Nothandled,
+    Error_FSM_DSpd,
+    Error_FSM_SignDir,
+    Error_FSM_NoDir,
+    Error_FSM_ShouldEotOcc,
+    Error_FSM_ChkNeg1,
+    Error_FSM_ChkNeg2,
+    Error_FSM_RunToEot,
+    Error_FSM_BlkToEot,
+    Error_FSM_C1C2Zero,
+    Error_FSM_NotImplemented,
+    Error_FSM_BadFut2,
+    Error_FSM_BadFut2b,
+    Error_FSM_BadFut2c,
+    Error_FSM_Sanity1,
+    Error_FSM_Sanity2,
+    Error_FSM_Sanity3,
+    Error_FSM_Sanity4,
+    Error_FSM_Sanity5,
+    Error_FSM_Sanity6,
+    Error_FSM_Sanity7,
+    Error_FSM_Sanity8,
+    Error_FSM_Sanity9,
+    Error_Lsblk_Invalid,
+    Error_NextSblk,
+
+    Error_AutoNoS1,
+    Error_AutoNoTN,
 };
 
 

@@ -50,7 +50,7 @@
                                 <constraints>
                                     <constraint firstAttribute="width" constant="48" id="5eO-CR-WLT"/>
                                 </constraints>
-                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" drawsBackground="YES" id="DUn-Re-oV3">
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" continuous="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" title="23" drawsBackground="YES" id="DUn-Re-oV3">
                                     <numberFormatter key="formatter" formatterBehavior="custom10_4" usesGroupingSeparator="NO" formatWidth="-1" groupingSize="0" minimumIntegerDigits="1" maximumIntegerDigits="3" id="WQk-wP-C9T">
                                         <real key="minimum" value="0.0"/>
                                         <real key="maximum" value="32"/>
@@ -60,7 +60,11 @@
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                                 <connections>
-                                    <binding destination="bjd-KT-eAM" name="value" keyPath="targetLSBLK" id="YQ6-TR-GSe"/>
+                                    <binding destination="bjd-KT-eAM" name="value" keyPath="targetLSBLK" id="0Dv-FO-ame">
+                                        <dictionary key="options">
+                                            <bool key="NSContinuouslyUpdatesValue" value="YES"/>
+                                        </dictionary>
+                                    </binding>
                                 </connections>
                             </textField>
                             <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Idv-nl-z7z">
@@ -68,7 +72,7 @@
                                 <constraints>
                                     <constraint firstAttribute="width" constant="48" id="f6X-cD-8qA"/>
                                 </constraints>
-                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" drawsBackground="YES" id="vLW-GD-8Jt">
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" continuous="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" drawsBackground="YES" id="vLW-GD-8Jt">
                                     <numberFormatter key="formatter" formatterBehavior="custom10_4" positiveFormat="#,##0.00" negativeFormat="-#,##0.00" allowsFloats="NO" usesGroupingSeparator="NO" formatWidth="-1" minimumIntegerDigits="1" maximumIntegerDigits="3" decimalSeparator="," groupingSeparator=" " id="qK4-jn-djQ">
                                         <real key="minimum" value="0.0"/>
                                         <real key="maximum" value="999"/>
@@ -78,7 +82,11 @@
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                                 <connections>
-                                    <binding destination="bjd-KT-eAM" name="value" keyPath="delay" id="9uq-BJ-ncW"/>
+                                    <binding destination="bjd-KT-eAM" name="value" keyPath="delay" id="2XB-kv-B7y">
+                                        <dictionary key="options">
+                                            <bool key="NSContinuouslyUpdatesValue" value="YES"/>
+                                        </dictionary>
+                                    </binding>
                                 </connections>
                             </textField>
                             <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="wNq-Ru-0i6">
@@ -86,7 +94,7 @@
                                 <constraints>
                                     <constraint firstAttribute="width" constant="48" id="FaM-Nx-AlJ"/>
                                 </constraints>
-                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" drawsBackground="YES" id="G4x-6S-hyQ">
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" continuous="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" title="80" drawsBackground="YES" id="G4x-6S-hyQ">
                                     <numberFormatter key="formatter" formatterBehavior="custom10_4" positiveFormat="#,##0.00" negativeFormat="-#,##0.00" allowsFloats="NO" usesGroupingSeparator="NO" formatWidth="-1" minimumIntegerDigits="1" maximumIntegerDigits="3" decimalSeparator="," groupingSeparator=" " id="PKf-k9-rvR">
                                         <real key="minimum" value="0.0"/>
                                         <real key="maximum" value="999"/>
@@ -96,7 +104,11 @@
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                                 <connections>
-                                    <binding destination="bjd-KT-eAM" name="value" keyPath="spd" id="ERP-Dj-1EY"/>
+                                    <binding destination="bjd-KT-eAM" name="value" keyPath="spd" id="7cl-FX-Cim">
+                                        <dictionary key="options">
+                                            <bool key="NSContinuouslyUpdatesValue" value="YES"/>
+                                        </dictionary>
+                                    </binding>
                                 </connections>
                             </textField>
                             <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="CxK-pp-vzS">
@@ -104,7 +116,7 @@
                                 <constraints>
                                     <constraint firstAttribute="width" constant="48" id="GhW-PY-55n"/>
                                 </constraints>
-                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" title="0" drawsBackground="YES" id="gwF-uI-7Jp">
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" continuous="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" title="0" drawsBackground="YES" id="gwF-uI-7Jp">
                                     <numberFormatter key="formatter" formatterBehavior="custom10_4" usesGroupingSeparator="NO" formatWidth="-1" groupingSize="0" minimumIntegerDigits="1" maximumIntegerDigits="3" id="LiV-mH-e0H">
                                         <real key="minimum" value="0.0"/>
                                         <real key="maximum" value="32"/>
@@ -114,7 +126,11 @@
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                                 <connections>
-                                    <binding destination="bjd-KT-eAM" name="value" keyPath="trainNum" id="uSs-03-Wsu"/>
+                                    <binding destination="bjd-KT-eAM" name="value" keyPath="trainNum" id="kIw-te-8Bu">
+                                        <dictionary key="options">
+                                            <bool key="NSContinuouslyUpdatesValue" value="YES"/>
+                                        </dictionary>
+                                    </binding>
                                 </connections>
                             </textField>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="MFQ-7P-CjU">

@@ -8,11 +8,26 @@
 #ifndef TOPOLOGY_TOPOLOGY_H_
 #define TOPOLOGY_TOPOLOGY_H_
 
+#ifndef TOPOLOGY_SVG
+#include "misc.h"
+#endif
+
 
 #include "../msg/trainmsg.h"
 
-extern uint8_t topology_or_occupency_changed;
+extern uint16_t _topology_or_occupency_changed;
+#ifndef _UNUSED_
+#define _UNUSED_ __attribute__((unused))
+#endif
 
+static inline void topology_updated(int trainnum)
+{
+    uint8_t v;
+    if (trainnum < 0) v= 15;
+    else if (trainnum>14) return;
+    
+    _topology_or_occupency_changed |= (1<<v);
+}
 
 /*
 Cantons (Blocks), share common electrical power, and therefore there can be only one train on a given block
@@ -60,7 +75,7 @@ void next_lsblk_nums(lsblk_num_t blknum, uint8_t left, lsblk_num_t *pb1, lsblk_n
 /// @param left 0=right, 1=left
 /// @param palternate will be set to 1 if different turnout postion may lead to a route
 
-lsblk_num_t next_lsblk(lsblk_num_t blknum, uint8_t left, uint8_t *palternate);
+lsblk_num_t next_lsblk(lsblk_num_t blknum, uint8_t left, int8_t *palternate);
 
 // ---------------------------------------------------------------------
 
@@ -74,7 +89,7 @@ lsblk_num_t any_lsblk_with_canton(xblkaddr_t ca);
 // ---------------------------------------------------------------------
 
 //int get_blk_len(int blknum);
-int get_lsblk_len(lsblk_num_t num, int8_t *psteep);
+int get_lsblk_len_cm(lsblk_num_t num, int8_t *psteep);
 
 // ---------------------------------------------------------------------
 
@@ -90,7 +105,7 @@ enum topo_turnout_state {
     topo_tn_moving = -2
 };
 
-int topology_set_turnout(xtrnaddr_t tn,  enum topo_turnout_state v, int numtrain);
+int topology_set_turnout(xtrnaddr_t tn,  enum topo_turnout_state v, int numtrain, int *chg);
 enum topo_turnout_state  topology_get_turnout(xtrnaddr_t tn);
 
 

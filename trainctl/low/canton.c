@@ -37,11 +37,23 @@
 #include "canton_bemf.h"
 #include "../msg/tasklet.h"
 #ifndef TRAIN_SIMU
-#ifdef STM32_F4
+
+
+#if defined(STM32F4)
 #include "stm32f4xx_hal.h"
-#else
+
+#elif defined(STM32G4)
+#include "stm32g4xx_hal.h"
+
+#elif defined(STM32F1)
 #include "stm32f1xx_hal.h"
+
+#else
+#error no board hal
 #endif
+
+
+
 #else
 #include "train_simu.h"
 #endif
@@ -124,10 +136,10 @@ static canton_vars_t canton_vars[NUM_CANTONS]={0};
 // ------------------------------------------------------
 
 const stat_val_t statval_canton[] = {
-#ifndef REDUCE_STAT
+//#ifndef REDUCE_STAT
         { canton_vars, offsetof(canton_vars_t, cur_dir) ,       1     _P("C#_dir")},
         { canton_vars, offsetof(canton_vars_t, cur_voltidx) ,   1     _P("C#_vidx")},
-#endif
+//#endif
         { canton_vars, offsetof(canton_vars_t, cur_pwm_duty) ,  2     _P("C#_pwm")},
         
         { NULL, sizeof(canton_vars_t), 0  _P(NULL)}
@@ -179,7 +191,7 @@ static void canton_enter_runmode(runmode_t m)
 
 static void handle_canton_cmd(int cidx, msg_64_t *m)
 {
-	if ((m->cmd == CMD_BEMF_OFF) || (m->cmd==CMD_BEMF_ON)) {
+	if ((m->cmd == CMD_BEMF_OFF) || (m->cmd==CMD_BEMF_ON) || (m->cmd==CMD_POSE_SET_TRIG)) {
 		itm_debug1(DBG_LOWCTRL, "msg-bemf", m->to);
 		bemf_msg(m);
 		return;

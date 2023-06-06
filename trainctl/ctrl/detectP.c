@@ -14,6 +14,8 @@
 #include "../topology/occupency.h"
 
 #include "ctrl.h"
+#if 0 // unmaintained
+
 #include "ctrlP.h"
 #include "detectP.h"
 #include "../utils/measval.h"
@@ -180,13 +182,13 @@ void analyse_bemf_final(void)
             int trnum = altrnum;
             altrnum++;
             //...
-            train_ctrl_t *tvar = ctrl_get_tvar(trnum);
+            train_oldctrl_t *tvar = ctrl_get_tvar(trnum);
             ctrl2_init_train(trnum, tvar, sblk);
             ctrl2_set_mode(trnum, tvar, train_manual);
             
             // set occupency
         	//xblkaddr_t bn = {.v=cnum};
-            set_block_addr_occupency(bnum, BLK_OCC_STOP, trnum, sblk);
+            set_block_addr_occupency(bnum, BLK_OCC_LOCO_STOP, trnum, sblk);
             
             // train params
             const conf_train_t *tconf = conf_train_get(trnum);
@@ -377,3 +379,22 @@ void detect2_process_msg(msg_64_t *m)
 0421487@q/6/3/255
  */
 
+#else  // unmaintained
+
+
+void detect2_init(void)
+{
+    
+}
+
+void detect2_process_tick(_UNUSED_ uint32_t tick)
+{
+    
+}
+void detect2_process_msg(_UNUSED_ msg_64_t *m)
+{
+    
+}
+
+
+#endif // unmaintained

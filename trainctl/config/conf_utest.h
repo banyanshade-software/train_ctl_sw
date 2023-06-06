@@ -33,6 +33,18 @@ const conf_utest_t *conf_utest_get(int num);
 
 
 
+#ifdef TRN_BOARD_G4SLV1
+#define NUM_UTESTS 1 // 1 
+#endif // TRN_BOARD_G4SLV1
+
+
+
+#ifdef TRN_BOARD_G4MASTER1
+#define NUM_UTESTS 1 // 1 
+#endif // TRN_BOARD_G4MASTER1
+
+
+
 #ifdef TRN_BOARD_UNIT_TEST
 #define NUM_UTESTS 1 // 1 
 #endif // TRN_BOARD_UNIT_TEST

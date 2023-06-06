@@ -19,20 +19,32 @@
 
 
 #ifndef TRAIN_SIMU
-#ifdef STM32_F4
+
+#if defined(STM32F4)
 #include "stm32f4xx_hal.h"
-#else
+
+#elif defined(STM32G4)
+#include "stm32g4xx_hal.h"
+
+#elif defined(STM32F1)
 #include "stm32f1xx_hal.h"
+
+#else
+#error no board hal
 #endif
+
+
 #else
 typedef void *GPIO_TypeDef;
 #endif
 
 
 
+
+
 typedef struct conf_servo {
     GPIO_TypeDef *port_power;
-    uint16_t pin_power;
+    int16_t pin_power;
     int8_t pwm_timer_num;
     int8_t pwm_timer_ch;
     int8_t direction;
@@ -48,8 +60,20 @@ const conf_servo_t *conf_servo_get(int num);
 
 
 
+#ifdef TRN_BOARD_G4SLV1
+#define NUM_SERVOS 1 // 1 
+#endif // TRN_BOARD_G4SLV1
+
+
+
+#ifdef TRN_BOARD_G4MASTER1
+#define NUM_SERVOS 1 // 1 
+#endif // TRN_BOARD_G4MASTER1
+
+
+
 #ifdef TRN_BOARD_UNIT_TEST
-#define NUM_SERVOS 0 // 0 
+#define NUM_SERVOS 4 // 4 
 #endif // TRN_BOARD_UNIT_TEST
 
 
@@ -95,7 +119,7 @@ const conf_servo_t *conf_servo_get(int num);
 #endif // TRN_BOARD_SIMU
 
 
-#define MAX_SERVOS 2
+#define MAX_SERVOS 4
 
 
 

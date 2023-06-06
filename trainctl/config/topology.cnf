@@ -25,24 +25,38 @@ typedef struct {
 */
 
 config topology {
-    user uint8_t canton_addr                    = (default) table(topo,canton);
-    user uint8_t ina_segnum                      = (default) table(topo,ina);
+    user uint8_t canton_addr                    = (default) table(topo,canton) 
+                                                =  (unit_test) table(ut, canton);
+    user uint8_t ina_segnum                     = (default) table(topo,ina)    
+                                                =  (unit_test) table(ut, ina);
     
-    user int8_t steep                           = (default) table(topo,stp);
-    user uint8_t length_cm                      = (default) table(topo,len);
+    user int8_t steep                           = (default) table(topo,stp)    
+                                                =  (unit_test) table(ut, stp);
+    user uint8_t length_cm                      = (default) table(topo,len)    
+                                                =  (unit_test) table(ut, len);
     
-    user int8_t left1                           = (default) table(topo,l1);
-    user int8_t left2                           = (default) table(topo,l2);
-    user uint8_t ltn                            = (default) table(topo,ltn); 
-    user int8_t right1                          = (default) table(topo,r1);
-    user int8_t right2                          = (default) table(topo,r2);
-    user uint8_t rtn                            = (default) table(topo,rtn);
+    user int8_t left1                           = (default) table(topo,l1)     
+                                                =  (unit_test) table(ut, l1);
+    user int8_t left2                           = (default) table(topo,l2)     
+                                                =  (unit_test) table(ut, l2);
+    user uint8_t ltn                            = (default) table(topo,ltn)    
+                                                =  (unit_test) table(ut, ltn); 
+    user int8_t right1                          = (default) table(topo,r1)     
+                                                =  (unit_test) table(ut, r1);
+    user int8_t right2                          = (default) table(topo,r2)     
+                                                =  (unit_test) table(ut, r2);
+    user uint8_t rtn                            = (default) table(topo,rtn)    
+                                                =  (unit_test) table(ut, rtn);
 
-    user int p0 = (default) table(topo,p0);
-    disk coord_t points[4] = (default) table(topo, pts);
+    user int p0                                 = (default) table(topo,p0)
+                                                =  (unit_test) table(ut, p0) ;
+    disk coord_t points[4]                      = (unit_test) table(ut, pts) 
+                                                =  (default) table(topo, pts);
 } num = (mainV0) 64
       = (mainV04) 64
       = (simu) 64
+      = (unit_test) 32
+      = (G4master1) 64 
       = (default) 0;
 
 
@@ -56,10 +70,10 @@ table topo
 /* 5 */ ( CNUM(0, 2),     7,   0,    47,     6,     4,     3,       -1,   -1, 0xFF,      0,  {{L0+6,15}, {L0+6,17}, {L0+5,18}, {L0+1,18}})
 
 /* 6 */ ( CNUM(0, 1),     3,  -1,    72,    -1,     7,     2,        5,   -1,    3,      0,  {{L0+7,4}, {L0+7,8}, {L0+6,10}, {L0+6,14}})
-/* 7 */ ( CNUM(0, 1),     4,   0,    70,    -1,    -1,  0xFF,        8,    6,    2,      0,  {{L0+1,1}, {L0+5,1}, {L0+6,2}, {L0+6,3}})
+/* 7 */ ( CNUM(0, 1),     4,   0,    50,    -1,    -1,  0xFF,        8,    6,    2,      0,  {{L0+1,1}, {L0+5,1}, {L0+6,2}, {L0+6,3}})
 
 /* 8 */ ( CNUM(0, 4),    10,   0,    50,     7,    -1,     2,        9,   -1, 0xFF,      0,  {{L0+6,4}, {L0+6,7}, _VP, _VP})
-/* 9*/  ( CNUM(0, 4),   10,   0,    60,     8,    -1,  0xFF,       10,   -1, 0xFF,      2,  {{L0+6,7}, {L0+6,8}, {L0+7,10} ,{L0+7, 14} })
+/* 9*/  ( CNUM(0, 4),    10,   0,    50,     8,    -1,  0xFF,       10,   -1, 0xFF,      2,  {{L0+6,7}, {L0+6,8}, {L0+7,10} ,{L0+7, 14} })
 /* 10*/ ( FUTURE_CANTON, 0xFF, 0,    60,     9,    -1,  0xFF,       -1,   -1, 0xFF,      0,  {{L0+7,14}, {L0+7,18}, {L0+6,19}, {L0+1, 19} })
 
 /* 11*/ ( CNUM(0, 0),     1,   0,    12,    -1,     2,     4,       -1,   21,   11,      0,  {{L0+3,6}, {L0+3,7}, _VP, _VP })
@@ -68,23 +82,61 @@ table topo
 /* 13*/ ( CNUM(0, 3),     9,   0,    7,    12,    15,     6,       14,   -1,    7,      0,  {{L0+2,14}, {L0+1, 15}, _VP, _VP })
 /* 14*/ ( CNUM(0, 3),     9,   0,    7,    13,    16,     7,       23,   -1,  144,      0,  {{L0+0,16}, {L0+0, 17}, _VP, _VP })
 
-/* 15*/ ( FUTURE_CANTON, 0xFF, 0,    20,    21,    -1,    10,       -1,  -1,     6,      0,  {{L0+2,10}, {L0+2, 13}, _VP, _VP })
-/* 16*/ ( FUTURE_CANTON, 0xFF, 0,    20,    17,    19,     8,       -1,  14,     7,      0,  {{L0+0,14}, {L0+0, 15}, _VP, _VP })
+/* 15*/ ( FUTURE_CANTON,    0xFF,   0,    20,    21,    -1,    10,       -1,  -1,     6,      0,  {{L0+2,10}, {L0+2, 13}, _VP, _VP })
+/* 16*/ ( FUTURE_CANTON,    0xFF,   0,    20,    17,    19,     8,       -1,  14,     7,      0,  {{L0+0,14}, {L0+0, 15}, _VP, _VP })
 
-/* 17*/ ( FUTURE_CANTON, 0xFF, 0,    20,    18,    20,     9,       16,  -1,     8,      0,  {{L0+0, 12}, {L0+0, 13}, _VP, _VP })
-/* 18*/ ( FUTURE_CANTON, 0xFF, 0,    20,    -1,    -1,  0xFF,       17,  -1,     9,      0,  {{L0+0, 4}, {L0+0, 11}, _VP, _VP})
+/* 17*/ ( FUTURE_CANTON,    0xFF,   0,    20,    18,    20,     9,       16,  -1,     8,      0,  {{L0+0, 12}, {L0+0, 13}, _VP, _VP })
+/* 18*/ ( FUTURE_CANTON,    0xFF,   0,    20,    -1,    -1,  0xFF,       17,  -1,     9,      0,  {{L0+0, 4}, {L0+0, 11}, _VP, _VP})
 
-/* 19*/ ( FUTURE_CANTON, 0xFF, 0,    20,    -1,    -1,  0xFF,      -1,  16,     8,      0,  {{L0-1,4}, {L0-1, 13}, _VP, _VP})
-/* 20*/ ( FUTURE_CANTON, 0xFF, 0,    20,    -1,    21,    10,      -1,  17,     9,      0,  {{L0+1,10}, {L0+1, 11}, _VP, _VP})
+/* 19*/ ( FUTURE_CANTON,    0xFF,   0,    20,    -1,    -1,  0xFF,      -1,  16,     8,      0,  {{L0-1,4}, {L0-1, 13}, _VP, _VP})
+/* 20*/ ( FUTURE_CANTON,    0xFF,   0,    20,    -1,    21,    10,      -1,  17,     9,      0,  {{L0+1,10}, {L0+1, 11}, _VP, _VP})
 
-/*21*/  ( FUTURE_CANTON, 0xFF, 0,    20,    22,    11,    11,      20,  15,    10,      0,  {{L0+2,8}, {L0+2, 9}, _VP, _VP})
-/*22*/  ( FUTURE_CANTON, 0xFF, 0,    20,    -1,    -1,  0xFF,      21,  -1,    11,      0,  {{L0+2,4}, {L0+2, 7}, _VP, _VP})
+/*21*/  ( FUTURE_CANTON,    0xFF,   0,    20,    22,    11,    11,      20,  15,    10,      0,  {{L0+2,8}, {L0+2, 9}, _VP, _VP})
+/*22*/  ( FUTURE_CANTON,    0xFF,   0,    20,    -1,    -1,  0xFF,      21,  -1,    11,      0,  {{L0+2,4}, {L0+2, 7}, _VP, _VP})
 
-/*23*/  ( CNUM(0, 4),    10,   0,    5,   14,    -1,     144,      -1,  -1,   0xFF,    0,   {{L0+0,18}, {L0+0, 19}, _VP, _VP })
+/*23*/  ( CNUM(0, 4),    10,   0,    15,     14,    -1,  144,       -1,  -1,   0xFF,    0,   {{L0+0,18}, {L0+0, 19}, _VP, _VP })
 
 
 /*-1*/  (FUTURE_CANTON,     0xFF,   0,      0,   -1,    -1,  0xFF,      -1,  -1,  0xFF,      0,  {_VP, _VP, _VP, _VP})
 ;
+
+table ut
+        (canton,        ina,  stp,  len,    l1,    l2,   ltn,       r1,   r2,  rtn,      p0,  pts)
+/* 0 */ ( CNUM(0, 0),   0xFF,   0,   98,    -1,   -1,    0xFF,       1,   -1,    0,      2,  {{1,3}, {4,3},{5,4},{5,8}})
+/* 1 */ ( CNUM(0, 1),   0xFF,   0,   45,     0,    2,    0,         -1,    3,    1,      0,  {{5,9}, {5,12}, _VP, _VP})
+/* 2 */ ( CNUM(0, 2),   0xFF,   0,   90,    -1 ,  -1, 0xFF,         -1,    1,    0,      2,  {{1,4}, {3,4}, {4,5}, {4,8}})
+/* 3 */ ( CNUM(0, 3),   0xFF,   0,   54,     4,    1,    1,         -1,   -1, 0xFF,      0,  {{6,13}, {6,15}, {5,16}, {1,16}})
+/* 4 */ ( CNUM(0, 3),   0xFF,  -1,   80,    -1,    5,    2,          3,   -1,    1,      0,  {{7,4}, {7,8}, {6,10}, {6,12}})
+/* 5 */ ( CNUM(0, 3),   0xFF,   0,   58,    -1,   -1, 0xFF,          6,    4,    2,      0,  {{1,2}, {5,2}, {6,3}, _VP})
+/* 6 */ ( CNUM(0, 3),   0xFF,   0,   36,     5,   -1,    2,          7,   -1, 0xFF,      0,  {{6,4}, {6,6}, _VP, _VP})
+/* 7*/  ( FUTURE_CANTON, 0xFF,   0,  60,     6,   -1, 0xFF,          8,   -1, 0xFF,      3,  {{6,6}, {6,8}, {7,10} ,{7, 14}} )
+/* 8*/  ( FUTURE_CANTON, 0xFF,   0,  60,     7,   -1, 0xFF,         -1,   -1, 0xFF,      1,  {{7,14}, {7,16}, {6,17}, {1, 17}})
+/* 9*/  ( CNUM(0,4),    1,      0,   60,    -1,   -1, 0xFF,         10,   -1, 0xFF,      1,  {{9,0}, {9,4}, _VP, _VP})
+/*10*/  ( CNUM(0,4),    2,      0,   40,     9,   -1, 0xFF,         11,   -1, 0xFF,      1,  {{9,4}, {9,6}, _VP, _VP})
+/*11*/  ( CNUM(0,4),    2,      0,   10,    10,   -1, 0xFF,         12,   -1, 0xFF,      1,  {{9,6}, {9,8}, _VP, _VP})
+/*12*/  ( CNUM(0,5),    3,      0,   30,    11,   -1, 0xFF,         -1,   -1, 0xFF,      1,  {{9,8}, {9,11}, _VP, _VP})
+/*13*/  ( CNUM(0,6),    4,      0,    3,    -1,   -1, 0xFF,         14,   -1, 0xFF,      1,  {{10,0}, {10,1}, _VP, _VP})
+/*14*/  ( CNUM(0,6),    4,      0,    70,   13,   -1, 0xFF,         15,   -1, 0xFF,      1,  {{10,1}, {10,8}, _VP, _VP})
+/*15*/  ( CNUM(0,6),    4,      0,    3,   14,   -1, 0xFF,         16,   -1, 0xFF,      1,  {{10,8}, {10,9}, _VP, _VP})
+/*16*/  ( CNUM(0,6),    4,      0,    2,   15,   -1, 0xFF,         17,   -1, 0xFF,      1,  {{10,9}, {10,10}, _VP, _VP})
+/*17*/  ( CNUM(0,6),    4,      0,    2,   16,   -1, 0xFF,         -1,   -1, 0xFF,      1,  {{10,10}, {10,11}, _VP, _VP})
+
+/*18*/  ( CNUM(0,6),    4,      0,    2,   -1,   -1, 0xFF,         19,   -1, 0xFF,      1,  {{11,0}, {11,2}, _VP, _VP})
+/*19*/  ( CNUM(0,6),    4,      0,    2,   18,   -1, 0xFF,         20,   -1, 0xFF,      1,  {{11,2}, {11,4}, _VP, _VP})
+/*20*/  ( CNUM(0,6),    4,      0,    3,   19,   -1, 0xFF,         21,   -1, 0xFF,      1,  {{11,4}, {11,6}, _VP, _VP})
+/*21*/  ( CNUM(0,6),    4,      0,   70,   20,   -1, 0xFF,         22,   -1, 0xFF,      1,  {{11,6}, {11,10}, _VP, _VP})
+/*22*/  ( CNUM(0,6),    4,      0,    3,   21,   -1, 0xFF,         -1,   -1, 0xFF,      1,  {{11,10}, {11,12}, _VP, _VP})
+ 
+/*23*/  ( FUTURE_CANTON, 0xFF,   0,  60,    -1,   -1, 0xFF,         -1,   -1, 0xFF,      1,  {{6,6}, {6,8}, {7,10} ,{7, 14}} )
+/*24*/  ( FUTURE_CANTON, 0xFF,   0,  60,    -1,   -1, 0xFF,         -1,   -1, 0xFF,      1,  {{6,6}, {6,8}, {7,10} ,{7, 14}} )
+
+
+/*25*/  ( CNUM(0,0), 0xFF,      0,    40,   -1,   -1, 0xFF,         26,   -1, 0xFF,      1,  {{11,10}, {11,12}, _VP, _VP})
+/*26*/  ( CNUM(0,1), 0xFF,      0,    40,   25,   -1, 0xFF,         27,   -1, 0xFF,      1,  {{11,10}, {11,12}, _VP, _VP})
+/*27*/  ( CNUM(0,2), 0xFF,      0,    40,   26,   28,    3,         -1,   -1, 0xFF,      1,  {{11,10}, {11,12}, _VP, _VP})
+/*28*/  ( CNUM(0,2), 0xFF,      0,    40,   -1,   -1, 0xFF,         -1,    27, 3,        1,  {{11,10}, {11,12}, _VP, _VP})
+;
+
 
 attrib topology h_code {
 

@@ -15,11 +15,22 @@
 #include "misc.h"
 #ifndef TRAIN_SIMU
 #include "main.h"
-#ifdef STM32_F4
+
+
+#if defined(STM32F4)
 #include "stm32f4xx_hal.h"
-#else
+
+#elif defined(STM32G4)
+#include "stm32g4xx_hal.h"
+
+#elif defined(STM32F1)
 #include "stm32f1xx_hal.h"
+
+#else
+#error no board hal
 #endif
+
+
 #include "cmsis_os.h"
 #endif
 #include <string.h>
@@ -37,6 +48,20 @@
 void flash_led(void)
 {
 #ifndef TRAIN_SIMU
+
+#ifndef BOARD_LED_GPIO_Port
+#ifdef  LD2_GPIO_Port
+#define BOARD_LED_GPIO_Port LD2_GPIO_Port
+#endif
+#endif
+
+
+#ifndef BOARD_LED_Pin
+#ifdef  LD2_Pin
+#define BOARD_LED_Pin LD2_Pin
+#endif
+#endif
+
 	HAL_GPIO_TogglePin(BOARD_LED_GPIO_Port,BOARD_LED_Pin);
 	//HAL_GPIO_TogglePin(GPIOC,GPIO_PIN_13);
 #endif

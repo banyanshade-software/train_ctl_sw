@@ -19,6 +19,8 @@
 #include <stdint.h>
 #include <stdlib.h>
 
+#define _UNUSED_ __attribute__((unused))
+
 
 #ifndef TRAIN_SIMU
 #include "cmsis_os.h"
@@ -33,7 +35,6 @@ void flash_led(void);
 
 #define INCLUDE_CALIB 0
 
-#define _UNUSED_ __attribute__((unused))
 
 
 

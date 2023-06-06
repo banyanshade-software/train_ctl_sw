@@ -31,6 +31,11 @@
 #include "../config/conf_globparam.propag.h"
 #include "../config/conf_utest.propag.h"
 
+
+#ifdef STM32G4
+#include "stm32g4xx_ll_utils.h"
+#endif
+
 int OAM_NeedsReschedule = 0;
 
 
@@ -223,7 +228,7 @@ static void OAM_Init(void)
         //uint32_t myid = oam_getDeviceUniqueId();
         //int myboard = boardIdToBoardNum(myid);
     
-        msg_64_t m;
+        msg_64_t m = {0};
         m.from = MA3_BROADCAST;
         m.to = MA2_LOCAL_BCAST;
         m.cmd = CMD_SETRUN_MODE;
@@ -248,7 +253,7 @@ static void OAM_change_mode(runmode_t run_mode)
 
 static void _bcast_normal(void)
 {
-	msg_64_t m;
+    msg_64_t m = {0};
 	m.from = MA3_BROADCAST;
 	m.to = MA3_BROADCAST;
 	m.cmd = CMD_SETRUN_MODE;
@@ -276,7 +281,7 @@ void OAM_Tasklet(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_
 		//int myboard = boardIdToBoardNum(myid);
     
 		first = 0;
-		msg_64_t m;
+        msg_64_t m = {0};
 		m.from = MA3_BROADCAST;
 		m.to = MA2_LOCAL_BCAST;
 		m.cmd = CMD_SETRUN_MODE;
@@ -923,9 +928,15 @@ uint32_t oam_getDeviceUniqueId(void)
 {
 #ifndef TRAIN_SIMU
 	/* Read MCU Id, 32-bit access */
+#ifdef STM32G4
+	uint32_t id0 = LL_GetUID_Word0(); // HAL_GetUIDw0();
+	uint32_t id1 = LL_GetUID_Word1(); // AL_GetUIDw1();
+	uint32_t id2 = LL_GetUID_Word2(); // HAL_GetUIDw2();
+#else
 	uint32_t id0 = HAL_GetUIDw0();
 	uint32_t id1 = HAL_GetUIDw1();
 	uint32_t id2 = HAL_GetUIDw2();
+#endif
 
 	// stm32 gets a uniq 96 bits id, but this is too large for a msg64_t
 	// so we need to reduce it to 32 bits (or at least 64)
@@ -966,6 +977,7 @@ static void customOam(msg_64_t *m)
 
 static void handle_slave_tick(uint32_t tick, _UNUSED_ uint32_t dt)
 {
+	if ((1)) return; //XXX remove
 	int tbc = 200;
 	switch (slvState) {
 	case oam_slv_bcast: tbc = 200; break;
@@ -1070,7 +1082,7 @@ static void handle_master_tick(_UNUSED_ uint32_t tick, _UNUSED_ uint32_t dt)
 	if (tick>lbsc+tempo) {
 		lbsc = tick;
 		static int cnt = 0;
-		if (initial && (cnt>100)) {
+		if (initial && (cnt>10)) {
 			initial=0;
 			_bcast_normal();
 			return;

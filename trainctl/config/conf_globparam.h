@@ -30,6 +30,18 @@ const conf_globparam_t *conf_globparam_get(int num);
 
 
 
+#ifdef TRN_BOARD_G4SLV1
+#define NUM_GLOBPARAMS 0 // 0 
+#endif // TRN_BOARD_G4SLV1
+
+
+
+#ifdef TRN_BOARD_G4MASTER1
+#define NUM_GLOBPARAMS 1 // 1 
+#endif // TRN_BOARD_G4MASTER1
+
+
+
 #ifdef TRN_BOARD_UNIT_TEST
 #define NUM_GLOBPARAMS 0 // 0 
 #endif // TRN_BOARD_UNIT_TEST

@@ -55,41 +55,47 @@ static int tn_index(xtrnaddr_t tn)
 	return v;
 }
 
+static xtrnaddr_t reverse_tn_index(int tridx)
+{
+    xtrnaddr_t tn;
+    for (int i=0; i<0xFF; i++) {
+        tn.v = i;
+        int t = tn_index(tn);
+        if (t==tridx) return tn;
+    }
+    tn.v = 0xFF;
+    return tn;
+}
 
 //static volatile uint8_t  lockedby[MAX_TOTAL_TURNOUTS]; // XXX TODO this should be total number of turnouts
 //static volatile uint32_t turnoutvals = 0; // bit field
 
-uint8_t topology_or_occupency_changed = 0;
+uint16_t _topology_or_occupency_changed = 0;
 
-int topology_set_turnout(xtrnaddr_t turnout, enum topo_turnout_state v, int numtrain)
+
+int topology_set_turnout(xtrnaddr_t turnout, enum topo_turnout_state v, int numtrain, int *pchg)
 {
+    *pchg = 0;
 	if (turnout.v == 0xFF) return -1;
 
     int tnidx = tn_index(turnout);
 
-    if (tnidx >= MAX_TOTAL_TURNOUTS) return -1;
-
+    if (tnidx >= MAX_TOTAL_TURNOUTS) {
+        return -1;
+    }
 	if (numtrain>=0) {
 		int rc = occupency_turnout_reserve(turnout, numtrain);
 		if (rc) {
 			return -1;
 		}
+        *pchg = 1;
 	}
-	turnout_st[tnidx].st = v;
-    topology_or_occupency_changed = 1;
-	/*
-    if (!d) {
-        if (v) {
-            __sync_fetch_and_or(&turnoutvals, (1ULL<<turnout.v));
-        } else {
-            __sync_fetch_and_and(&turnoutvals, ~(1ULL<<turnout.v));
-        }
-        topology_or_occupency_changed = 1;
-    } else {
-        abort();
+    if (v != turnout_st[tnidx].st) {
+        turnout_st[tnidx].st = v;
+        topology_updated(numtrain);
+        *pchg = 1;
     }
-    */
-
+    
 	itm_debug2(DBG_TURNOUT, "tt", turnout.v, topology_get_turnout(turnout));
 	return 0;
 }
@@ -180,6 +186,7 @@ void alloc_turnouts(void)
 
 void occupency_clear_turnouts(void)
 {
+    memset(turnout_st, 0, sizeof(turnout_st));
 	for (int i=0; i<MAX_TOTAL_TURNOUTS; i++) {
 		turnout_st[i].lockby = 0xF;
 	}
@@ -197,20 +204,31 @@ static  void _notify_chg_owner(xtrnaddr_t turnout, uint8_t numtrain)
     mqf_write_from_ctrl(&m);
 }
 
+int  occupency_turnout_reservedby(xtrnaddr_t turnout)
+{
+    int tnidx = tn_index(turnout);
+    if (tnidx >= MAX_TOTAL_TURNOUTS) return -1;
+    int v = turnout_st[tnidx].lockby;
+    if (v==0xF) return -1;
+    return (int)v;
+}
 
 int occupency_turnout_reserve(xtrnaddr_t turnout, int8_t numtrain)
 {
     //int d = turnout.isdoor;
     int tnidx = tn_index(turnout);
 
-	if (tnidx >= MAX_TOTAL_TURNOUTS) return -1;
-
+    if (tnidx >= MAX_TOTAL_TURNOUTS) {
+        return -1;
+    }
 
 	itm_debug3(DBG_CTRL, "res.to", turnout.v, numtrain, turnout_st[tnidx].lockby);
 
 	if (numtrain>=0) {
 		uint8_t old = turnout_st[tnidx].lockby;
-		if (old == numtrain) return 0;
+        if (old == numtrain) {
+            return 0;
+        }
 		if (old != 0xF) {
             itm_debug3(DBG_ERR, "res.to.f", turnout.v, numtrain, turnout_st[tnidx].lockby);
             return -1;
@@ -285,6 +303,22 @@ void occupency_turnout_release_for_train_canton(int train, xblkaddr_t canton)
 	    }
 }
 
+void occupency_turnout_release_for_train(int train)
+{
+    // release reservation for any turnout reserved by a given train
+    if (train<0) FatalError("OccTrn", "bad train num", Error_OccTrn);
+
+    for (int tnidx=0; tnidx<MAX_TOTAL_TURNOUTS; tnidx++) {
+        if (turnout_st[tnidx].lockby == train) {
+            int l = turnout_st[tnidx].lockby;
+            turnout_st[tnidx].lockby = 0xF;
+            if (l != 0xF) {
+                xtrnaddr_t turnout = reverse_tn_index(tnidx);
+                _notify_chg_owner(turnout, -1);
+            }
+        }
+    }
+}
 /*	for (int tn = 0; tn<MAX_TOTAL_TURNOUTS; tn++) {
 		if (lockedby[tn] != train) continue;
 		xblkaddr_t ca1, ca2, ca3;

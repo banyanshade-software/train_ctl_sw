@@ -59,66 +59,9 @@
 
 #define FUTURE_CANTON 0xFF
 
-/*
- * current set up :
- * ina0 on C2 (B2 and B3)
- * ina1 on C1 (B1, B4)
- * ina2 on C0 (B0)
- */
-
-#if 0
-// before topology.cnf
-
-static const topo_lsblk_t _Topology[] = {
-#ifdef UNIT_TEST
-//#error he
-    // layout 5 segs
-    //          canton         ina    steep  len      l1    l2    tn       r1   r2   tn      graph pt
-    /* 0 */ { CNUM(0, 0), 	0xFF,   0, 98,    -1,   -1, 0xFF,       1,  -1,    0       _PTS(2, {1,3}, {4,3},{5,4},{5,8})},
-    /* 1 */ { CNUM(0, 1),	0xFF,   0, 45,     0,    2,    0,      -1,   3,    1       _PTS(0, {5,9}, {5,12}, _VP, _VP)},
-    /* 2 */ { CNUM(0, 2), 	0xFF,   0, 90,    -1 ,  -1, 0xFF,      -1,   1,    0       _PTS(2, {1,4}, {3,4}, {4,5}, {4,8})},
-    /* 3 */ { CNUM(0, 3),  	0xFF,   0, 54, 	4,    1,    1,      -1,  -1, 0xFF          _PTS(0, {6,13}, {6,15}, {5,16}, {1,16})},
-    /* 4 */ { CNUM(0, 3),  	0xFF,  -1, 80,   -1,   5,     2,       3,  -1,    1        _PTS(0, {7,4}, {7,8}, {6,10}, {6,12})},
-    /* 5 */ { CNUM(0, 3),  	0xFF,   0, 58,   -1,  -1,  0xFF,       6,   4,    2        _PTS(0, {1,2}, {5,2}, {6,3}, _VP)},
-    /* 6 */ { CNUM(0, 3),  	0xFF,   0, 36,    5,   -1,    2,       7, -1, 0xFF         _PTS(0, {6,4}, {6,6}, _VP, _VP)},
-    /* 7*/  { FUTURE_CANTON,    0xFF,   0, 60,    6,  -1,  0xFF,       8,   -1, 0xFF       _PTS(3, {6,6}, {6,8}, {7,10} ,{7, 14}) },
-    /* 8*/  { FUTURE_CANTON,    0xFF,   0, 60,    7,  -1,  0xFF,       -1,  -1, 0xFF       _PTS(1, {7,14}, {7,16}, {6,17}, {1, 17})}
-#else
-    	//          canton    ina    steep  len      l1    l2    tn       r1   r2   tn      graph pt
-       /* 0 */ { CNUM(0, 0),     2,   0, 	98,    -1,   -1, 0xFF,       1,  -1,    0    _PTS(2, {L0+1,2}, {L0+4,2}, {L0+5,3}, {L0+5,9})},
-       /* 1 */ { CNUM(0, 1),     1,   0, 	23,     0,    3,    0,       4,  12 ,   5    _PTS(0, {L0+5,10}, {L0+5,11}, _VP, _VP)},
-       /* 2 */ { CNUM(0, 2),     0,   0, 	70,    -1 ,  -1, 0xFF,       3,  11,    4    _PTS(2, {L0+1,3}, {L0+3,3}, {L0+4,4}, {L0+4,5})},
-       /* 3 */ { CNUM(0, 2),     0,   0, 	20,     2,   -1,    4,      -1,   1,    0    _PTS(0, {L0+4,6}, {L0+4, 9}, _VP, _VP)},
-       /* 4 */ { CNUM(0, 1),     1,   0, 	22,     1,   -1,    5,      -1,   5,    1    _PTS(0, {L0+5, 12}, {L0+5, 14}, _VP, _VP)},
-       
-       /* 5 */ { CNUM(0, 3),  0xFF,   0, 	54,     6,    4,    1,      -1,   -1, 0xFF   _PTS(0, {L0+6,15}, {L0+6,17}, {L0+5,18}, {L0+1,18})},
-       /* 6 */ { CNUM(0, 3),  0xFF,  -1, 	80,   -1,    7,     2,       5,   -1,    1   _PTS(0, {L0+7,4}, {L0+7,8}, {L0+6,10}, {L0+6,14})},
-       /* 7 */ { CNUM(0, 3),  0xFF,   0, 	58,   -1,  -1,   0xFF,       8,    6,    2   _PTS(0, {L0+1,1}, {L0+5,1}, {L0+6,2}, {L0+6,3})},
-       /* 8 */ { CNUM(0, 3),  0xFF,   0, 	36,    7,   -1,     2,       9,   -1, 0xFF   _PTS(0, {L0+6,4}, {L0+6,6}, _VP, _VP)},
-       /* 9*/  { FUTURE_CANTON, 0xFF, 0, 	60,    8,  -1,   0xFF,       10,  -1, 0xFF   _PTS(3, {L0+6,6}, {L0+6,8}, {L0+7,10} ,{L0+7, 14}) },
-       /* 10*/ { FUTURE_CANTON, 0xFF, 0, 	60,    9,  -1,   0xFF,       -1,  -1, 0xFF   _PTS(0, {L0+7,14}, {L0+7,18}, {L0+6,19}, {L0+1, 19}) },
-                                                      
-       /* 11*/ { FUTURE_CANTON,    0xFF,   0, 20,    -1,  2,      4,       -1,  21,   11   _PTS(0, {L0+3,6}, {L0+3,7}, _VP, _VP) },
-       /* 12*/ { FUTURE_CANTON,    0xFF,   0, 20,    -1,  1,      5,       13,  -1,    6   _PTS(0, {L0+4,12}, {L0+3, 13}, _VP, _VP) },
-       /* 13*/ { FUTURE_CANTON,    0xFF,   0, 20,    12, 15,      6,       14,  -1,    7   _PTS(0, {L0+2,14}, {L0+1, 15}, _VP, _VP) },
-       /* 14*/ { FUTURE_CANTON,    0xFF,   0, 20,    13, 16,      7,       -1,  -1, 0xFF   _PTS(0, {L0+0,16}, {L0-1, 17}, _VP, _VP) },
-    
-       /* 15*/ { FUTURE_CANTON,    0xFF,   0, 20,    21, -1,    10,       -1,  -1,    6   _PTS(0, {L0+2,10}, {L0+2, 13}, _VP, _VP) },
-       /* 16*/ { FUTURE_CANTON,    0xFF,   0, 20,    17, 19,     8,       -1,  14,    7    _PTS(0, {L0+0,14}, {L0+0, 15}, _VP, _VP) },
-    
-       /* 17*/ { FUTURE_CANTON,    0xFF,   0, 20,    18, 20,      9,       16,  -1,    8   _PTS(0, {L0+0, 12}, {L0+0, 13}, _VP, _VP) },
-       /* 18*/ { FUTURE_CANTON,    0xFF,   0, 20,    -1, -1,   0xFF,       17,  -1,    9   _PTS(0, {L0+0, 4}, {L0+0, 11}, _VP, _VP)},
-    
-       /* 19*/ { FUTURE_CANTON,    0xFF,   0, 20,    -1, -1,   0xFF,       -1,  16,    8   _PTS(0, {L0-1,4}, {L0-1, 13}, _VP, _VP)},
-       /* 20*/ { FUTURE_CANTON,    0xFF,   0, 20,    -1, 21,     10,       -1,  17,    9   _PTS(0, {L0+1,10}, {L0+1, 11}, _VP, _VP)},
-    
-       /*21*/  { FUTURE_CANTON,    0xFF,   0, 20,    22, 11,    11,       20,  15,   10   _PTS(0, {L0+2,8}, {L0+2, 9}, _VP, _VP)},
-       /*22*/  { FUTURE_CANTON,    0xFF,   0, 20,    -1, -1,  0xFF,       21,  -1,   11   _PTS(0, {L0+2,4}, {L0+2, 7}, _VP, _VP)}
-
+#ifdef TOPOLOGY_SVG
+#define FatalError(_m,_l,_e) do { abort(); } while(0)
 #endif
-    
-};
-#endif // obsolete before topology.cnf
 
 /*
 unsigned int conf_topology_num_entries(void);
@@ -127,6 +70,22 @@ const conf_topology_t *conf_topology_get(int num);
 
 static  const topo_lsblk_t *_Topology = NULL;
 static  int _numTopology = 0;
+
+#ifdef UNIT_TEST_____ // now in topology.cnf
+static const topo_lsblk_t _Topology1[] = {
+        // layout 5 segs
+        //          canton         ina    steep  len      l1    l2    tn       r1   r2   tn      graph pt
+        /* 0 */ { MA_CANTON(0, 0),  0xFF,   0, 98,    -1,   -1, 0xFF,       1,  -1,    0       _PTS(2, {1,3}, {4,3},{5,4},{5,8})},
+        /* 1 */ { MA_CANTON(0, 1),  0xFF,   0, 45,     0,    2,    0,      -1,   3,    1       _PTS(0, {5,9}, {5,12}, _VP, _VP)},
+        /* 2 */ { MA_CANTON(0, 2),  0xFF,   0, 90,    -1 ,  -1, 0xFF,      -1,   1,    0       _PTS(2, {1,4}, {3,4}, {4,5}, {4,8})},
+        /* 3 */ { MA_CANTON(0, 3),  0xFF,   0, 54,     4,    1,    1,      -1,  -1, 0xFF          _PTS(0, {6,13}, {6,15}, {5,16}, {1,16})},
+        /* 4 */ { MA_CANTON(0, 3),  0xFF,  -1, 80,   -1,   5,     2,       3,  -1,    1        _PTS(0, {7,4}, {7,8}, {6,10}, {6,12})},
+        /* 5 */ { MA_CANTON(0, 3),  0xFF,   0, 58,   -1,  -1,  0xFF,       6,   4,    2        _PTS(0, {1,2}, {5,2}, {6,3}, _VP)},
+        /* 6 */ { MA_CANTON(0, 3),  0xFF,   0, 36,    5,   -1,    2,       7, -1, 0xFF         _PTS(0, {6,4}, {6,6}, _VP, _VP)},
+        /* 7*/  { FUTURE_CANTON,    0xFF,   0, 60,    6,  -1,  0xFF,       8,   -1, 0xFF       _PTS(3, {6,6}, {6,8}, {7,10} ,{7, 14}) },
+        /* 8*/  { FUTURE_CANTON,    0xFF,   0, 60,    7,  -1,  0xFF,       -1,  -1, 0xFF       _PTS(1, {7,14}, {7,16}, {6,17}, {1, 17})}
+};
+#endif
 
 static void _readTopology(void)
 {
@@ -147,10 +106,15 @@ static inline  int numTopology(void)
     return _numTopology;
 }
 
+
 static inline const topo_lsblk_t *Topology(lsblk_num_t blknum)
 {
 	if (!_Topology) _readTopology();
+    if ((blknum.n<0) || (blknum.n >=_numTopology)) {
+        FatalError("Tphi", "bad lsblk for topo", Error_Lsblk_Invalid);
+    }
     return &_Topology[blknum.n];
+
 }
 
 const topo_lsblk_t *topology_get_sblkd(int lsblk)
@@ -181,8 +145,9 @@ void next_lsblk_nums(lsblk_num_t blknum, uint8_t left, lsblk_num_t *pb1, lsblk_n
     pb2->n = -1;
     tn->v = -1;
     if (blknum.n<0) {
-        abort();
-        return;
+    	itm_debug1(DBG_ERR|DBG_CTRL, "next_lsblk_nums", 0);
+    	FatalError("ABRT", "next_lsblk_nums", Error_Abort);
+    	return;
     }
 
     if (left) {
@@ -208,7 +173,7 @@ void next_lsblk_nums(lsblk_num_t blknum, uint8_t left, lsblk_num_t *pb1, lsblk_n
     // if (*tn  == 0xFF) tn  = -1;
 }
 
-int get_lsblk_len(lsblk_num_t blknum, int8_t *psteep)
+int get_lsblk_len_cm(lsblk_num_t blknum, int8_t *psteep)
 {
     const topo_lsblk_t *t = Topology(blknum);
     if (psteep) *psteep = t->steep;
@@ -216,7 +181,15 @@ int get_lsblk_len(lsblk_num_t blknum, int8_t *psteep)
 	
 }
 
-lsblk_num_t next_lsblk(lsblk_num_t blknum, uint8_t left, uint8_t *palternate)
+#ifdef TOPOLOGY_SVG
+enum topo_turnout_state  topology_get_turnout(xtrnaddr_t tn)
+{
+    return topo_tn_straight;
+}
+#endif
+
+
+lsblk_num_t next_lsblk(lsblk_num_t blknum, uint8_t left, int8_t *palternate)
 {
     if (palternate) *palternate = 0;
     if (blknum.n == -1) return blknum;
@@ -238,7 +211,6 @@ lsblk_num_t next_lsblk(lsblk_num_t blknum, uint8_t left, uint8_t *palternate)
     //if ((a.n<0) && (b.n<0)) return a; // end of track
     return a;
 }
-
 
 xblkaddr_t canton_for_lsblk(lsblk_num_t n)
 {

@@ -34,9 +34,15 @@ LFMQUEUE_DEF_C(to_ctrl, msg_64_t,         16, 0)
 LFMQUEUE_DEF_C(from_ctrl, msg_64_t,     32, 0)
 #endif
 
-#ifdef BOARD_HAS_USB
+#if defined(BOARD_HAS_USB) || defined(BOARD_HAS_LPUART)
 LFMQUEUE_DEF_C(to_usb, msg_64_t, 			8, 1)
 LFMQUEUE_DEF_C(from_usb, msg_64_t,			16, 1)
+#endif
+
+
+#ifdef BOARD_HAS_LPUART
+LFMQUEUE_DEF_C(to_usart, msg_64_t, 			8, 1)
+LFMQUEUE_DEF_C(from_usart, msg_64_t,		16, 1)
 #endif
 
 #ifdef BOARD_HAS_IHM
@@ -103,9 +109,11 @@ static const qdef_t qdefs[] = {
     {&from_canbus, &to_canbus,  	1, 0},
     {NULL,   &to_canbus_loc,    	0, 0},
 #endif
-#ifdef BOARD_HAS_USB
+#if defined(BOARD_HAS_USB) || defined(BOARD_HAS_LPUART)
     {&from_usb, &to_usb,        	1, 1},
 #endif
+
+
     
 #ifdef BOARD_HAS_TURNOUTS
     {&from_turnout, &to_turnout,    0, 0},
@@ -216,10 +224,9 @@ static int  _local_disptach(msg_64_t *m, mqf_t *dont_send_to, uint8_t allow_loop
         if (MA2_UI_LOCAL == m->to) dest = &to_ui;
 #endif
         if (MA2_OAM_LOCAL == m->to) dest = &to_oam;
-#ifdef BOARD_HAS_USB
+#if defined(BOARD_HAS_USB) || defined(BOARD_HAS_LPUART)
         if (MA2_USB_LOCAL== m->to) dest = &to_usb;
 #endif
-
 
     } else if (MA3_IS_GLOB_ADDR(m->to)) {
     	if (MA3_UI_GEN == m->to) {
@@ -327,7 +334,7 @@ static void dispatch_m64(msg_64_t *m, int f)
     	return;
     }
     ok = 0;
-#ifdef BOARD_HAS_USB
+#if defined(BOARD_HAS_USB) || defined(BOARD_HAS_LPUART)
     if ((MA3_UI_GEN == m->to) || (MA3_UI_CTC == m->to)) {
         if (qdefs[f].from != &from_usb) {
             mqf_write(&to_usb, m);

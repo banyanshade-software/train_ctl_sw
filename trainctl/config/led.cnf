@@ -22,8 +22,11 @@ config led {
 } num = (mainV0) 3
       = (mainV04) 5
       = (simu) 3
+      = (unit_test) 3
       = (switcher) 6
       = (dispatcher) 0          # TODO
+      = (G4slv1) 1              # TODO
+      = (G4master1) 1              # TODO
       = (default) 0;
 
 table lpin_mainV0 
@@ -54,14 +57,26 @@ attrib led h_code {
 
 
 #ifndef TRAIN_SIMU
-#ifdef STM32_F4
+
+#if defined(STM32F4)
 #include "stm32f4xx_hal.h"
-#else
+
+#elif defined(STM32G4)
+#include "stm32g4xx_hal.h"
+
+#elif defined(STM32F1)
 #include "stm32f1xx_hal.h"
+
+#else
+#error no board hal
 #endif
+
+
 #else
 typedef void *GPIO_TypeDef;
 #endif
+
+
 
 }
 

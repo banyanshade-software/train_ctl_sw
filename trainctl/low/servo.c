@@ -20,11 +20,23 @@
 #include "../msg/tasklet.h"
 
 #ifndef TRAIN_SIMU
-#ifdef STM32_F4
+
+
+#if defined(STM32F4)
 #include "stm32f4xx_hal.h"
-#else
+
+#elif defined(STM32G4)
+#include "stm32g4xx_hal.h"
+
+#elif defined(STM32F1)
 #include "stm32f1xx_hal.h"
+
+#else
+#error no board hal
 #endif
+
+
+
 #else
 #include "train_simu.h"
 #endif
@@ -120,6 +132,9 @@ static void _servo_setpos(const conf_servo_t *conf, uint16_t pos)
 	case TIM_CHANNEL_4:
 		tim->Instance->CCR4 = t;
 		break;
+	default:
+		itm_debug1(DBG_ERR, "led tim",0);
+		break;
 	}
 #endif
 }
@@ -189,11 +204,11 @@ static void servo_init(void)
 #endif
 }
 
-static void servo_enter_runmode(runmode_t m)
+static void servo_enter_runmode(_UNUSED_ runmode_t m)
 {
 
 }
-static void process_servo_tick(uint32_t tick, uint32_t dt)
+static void process_servo_tick(_UNUSED_ uint32_t tick, _UNUSED_ uint32_t dt)
 {
 	//itm_debug1(DBG_SERVO, "servt", dt);
 	for (int i=0; i < NUM_SERVOS; i++) {
@@ -281,6 +296,9 @@ static void servo_set(servo_var_t *var, const conf_servo_t *conf, uint16_t v, ui
 static void process_servo_cmd(msg_64_t *m)
 {
 	switch(m->cmd) {
+	default:
+		itm_debug1(DBG_ERR|DBG_SERVO, "bad cmd", m->cmd);
+		break;
 	case CMD_SERVO_SET:
 		itm_debug3(DBG_SERVO, "set", m->subc, m->v1u, m->v2u);
 		if (m->subc > NUM_SERVOS) break;

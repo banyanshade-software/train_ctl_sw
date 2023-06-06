@@ -6,6 +6,7 @@
 //  Copyright © 2020 Daniel BRAUN. All rights reserved.
 //
 
+#include <termios.h>
 #import "AppDelegate.h"
 
 #import "train_simu.h"
@@ -41,9 +42,11 @@
 #include "msgrecord.h"
 #include "planner.h"
 #include "servo.h"
+#include "trace_train.h"
 
 #import "AppDelegateP.h"
 
+#define BEMF_MULTIPLICATOR (1.0)
 
 uint16_t dummy[3];
 
@@ -139,6 +142,7 @@ typedef void (^respblk_t)(void);
     // avoid exception in KVC
     BOOL processingStatFrame;
     BOOL undefinedKey;
+    NSMutableSet *unhandled_key;
 }
 
 @property (weak) IBOutlet NSWindow *window;
@@ -167,6 +171,7 @@ typedef void (^respblk_t)(void);
     self.shunting = 0;
     self.transmit = 0;
     self.linkok = 0;
+    self.trainTraceAttribStr = [[NSAttributedString alloc]init];
     nparam = 0;
     [self forAllParamsDo:^(NSControl *c){
         c.enabled = NO;
@@ -179,14 +184,8 @@ typedef void (^respblk_t)(void);
     
      
     _trainParamWin.hidesOnDeactivate = YES;
-    //_trainParamWin.mainWindow
-    //_trainParamWin.excludedFromWindowsMenu = YES;
-    NSApplication *app = [aNotification object];
-    id m = [NSApp windowsMenu];
     
-    // for debug
-    //[self getParams]; //XXX XXX
-    //[self startBLE];
+    self.selectedPanel = @"ctc";
     [self openUsb];
     
     
@@ -1105,23 +1104,26 @@ int conf_servo_fieldnum(const char *str);
 
 #pragma mark -
 
-#define USBTTY1 "/dev/cu.usbmodem6D94487754571"
-#define USBTTY2 "/dev/cu.usbmodem376A356634381"
-#define USBTTY3 "/dev/cu.usbmodem3158378430391"
+
+static const char *knownDev[] = {
+"/dev/cu.usbmodem6D94487754571",
+"/dev/cu.usbmodem376A356634381",
+"/dev/cu.usbmodem3158378430391",
+"/dev/cu.usbmodem14403",
+    NULL
+};
 
 - (void) openUsb
 {
     if ((_linkok == LINK_SIMUHI) || (_linkok == LINK_SIMULOW)) return;
+    
+    if (!knownDev[retry]) retry=0;
+    const char *dev = knownDev[retry];
     retry++;
-    const char *dev = USBTTY1;
-    switch (retry%3) {
-        default:
-        case 0: dev=USBTTY1; break;
-        case 1: dev=USBTTY2; break;
-        case 2: dev=USBTTY3; break;
-    }
+    
     int fd = open(dev, O_RDWR|O_NOCTTY);
     if (fd<0) {
+        NSLog(@"open %s : %d %s\n", dev, errno, strerror(errno));
         self.linkok = NO;
         usb = nil;
         if (errno != ENOENT) {
@@ -1130,7 +1132,25 @@ int conf_servo_fieldnum(const char *str);
         [self performSelector:@selector(openUsb) withObject:nil afterDelay:1.0];
         return;
     }
-
+    if ((1)) {
+        int baudrate = 115200;
+        struct termios toptions;
+        if (tcgetattr(fd, &toptions) < 0) {
+            perror("init_serialport: Couldn't get term attributes");
+            NSLog(@"cant stty");
+            close(fd);
+            return;
+        }
+        cfsetispeed(&toptions, baudrate);
+        cfsetospeed(&toptions, baudrate);
+        
+        if( tcsetattr(fd, TCSANOW, &toptions) < 0) {
+            perror("init_serialport: Couldn't set term attributes");
+            NSLog(@"cant stty");
+            close(fd);
+            return;
+        }
+    }
     usb = [[NSFileHandle alloc]initWithFileDescriptor:fd closeOnDealloc:YES];
     //[usb readInBackgroundAndNotify];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(readUsbTty:) name:NSFileHandleDataAvailableNotification  object:usb];
@@ -1179,7 +1199,7 @@ int conf_servo_fieldnum(const char *str);
 {
     NSData *d;
     @try {
-            d = [usb availableData];
+        d = [usb availableData];
     } @catch (NSException *exception) {
         NSLog(@"exception %@", exception);
         d = nil;
@@ -1310,6 +1330,9 @@ int conf_servo_fieldnum(const char *str);
             break;
         case 'M':
             [self processMsgRecordFrame:frm];
+            break;
+        case 'K':
+            [self processTraceFrame:frm];
             break;
         default:
             NSLog(@"unknown frame type %c", frmtype);
@@ -1656,7 +1679,65 @@ static int frm_unescape(uint8_t *buf, int len)
 #endif // OLD_FRAMING
 
 
+- (BOOL) processStatValInfo:(stat_iterator_t *)step value:(int32_t)v validx:(int)validx
+{
+    off_t offset; int len;
+    int idx=-1;
+    const char *name = NULL;
 
+    get_val_info(step, &offset, &len, &idx, &name);
+    
+    if (!name) {
+        NSLog(@"no stat name");
+        return NO;
+    }
+    
+    NSString *key = nil;
+
+    if (!unhandled_key) unhandled_key = [[NSMutableSet alloc]initWithCapacity:20];
+    NSString *nkey;
+    
+    NSString *m = [NSString stringWithUTF8String:name];
+    key = m;
+    key = [NSString stringWithFormat:m, idx];
+    
+    NSString *sidx = [NSString stringWithFormat:@"%d", idx];
+    nkey= [key stringByReplacingOccurrencesOfString:@"#" withString:sidx];
+   
+    if ([key isEqualToString:@"T#_pid_sum_e"]) {
+        v = v/1000;
+    }
+    NSNumber *nsv = @(v);
+
+    if ([key hasPrefix:@"C#_"]) {
+        [cantons_value setValue:nsv forKey:nkey];
+    } else if ([key hasPrefix:@"T#_"]) {
+        [trains_value setValue:nsv forKey:nkey];
+    }
+    if (![unhandled_key containsObject:nkey]) {
+        //NSLog(@"---- %@\n", key);
+        processingStatFrame = YES;
+        undefinedKey = NO;
+        [self setValue:nsv forKey:nkey];
+        if (undefinedKey) {
+            [unhandled_key addObject:nkey];
+        }
+        processingStatFrame = NO;
+    }
+    if (_recordState == 1) {
+        if (!recordItems) recordItems=[[NSMutableDictionary alloc]init];
+        
+        if (nkey) [recordItems setObject:@(validx) forKey:nkey];
+        NSString *s = [NSString stringWithFormat:@"%@, ", nkey ? nkey : @"_"];
+        [recordFile writeData:[s dataUsingEncoding:NSUTF8StringEncoding]];
+    } else if (_recordState) {
+        NSString *s;
+        s = [NSString stringWithFormat:@"%d, ", v];
+        [recordFile writeData:[s dataUsingEncoding:NSUTF8StringEncoding]];
+    }
+    return YES;
+
+}
 
 
 - (void) setValue:(id)value forUndefinedKey:(NSString *)key
@@ -1688,20 +1769,25 @@ static int frm_unescape(uint8_t *buf, int len)
     int validx;
     for (validx=0,rc = stat_iterator_reset(&step); !rc; rc = stat_iterator_next(&step), validx++) {
         int32_t v = *ptr++;
-        off_t offset; int len;
-        int idx=-1;
-        const char *name = NULL;
+        
 
-        get_val_info(&step, &offset, &len, &idx, &name);
         
         if (nval<0) {
             NSLog(@"short stat frame");
             goto done;
         }
+        BOOL ok = [self processStatValInfo:&step value:v validx:validx];
+        if (!ok) continue;
+        
+#if 0
+        off_t offset; int len;
+        int idx=-1;
+        const char *name = NULL;
+        get_val_info(&step, &offset, &len, &idx, &name);
+        
         //if (!strcmp(name, "C#_pwm")) NSLog(@"stat : '%s'[%d] = %d\n", name ? name : "_", idx, v);
         NSString *key = nil;
 
-        static NSMutableSet *unhandled_key = nil;
         if (!unhandled_key) unhandled_key = [[NSMutableSet alloc]initWithCapacity:20];
         NSString *nkey;
 
@@ -1716,7 +1802,9 @@ static int frm_unescape(uint8_t *buf, int len)
         
         NSString *sidx = [NSString stringWithFormat:@"%d", idx];
         nkey= [key stringByReplacingOccurrencesOfString:@"#" withString:sidx];
-        
+        /*if ([key isEqualToString:@"C#_pwm"]) {
+            NSLog(@"%@: %@ : %d\n", key, nkey, v);
+        }*/
         if ([key isEqualToString:@"T#_pid_sum_e"]) {
             v = v/1000;
         }
@@ -1757,6 +1845,7 @@ static int frm_unescape(uint8_t *buf, int len)
             s = [NSString stringWithFormat:@"%d, ", v];
             [recordFile writeData:[s dataUsingEncoding:NSUTF8StringEncoding]];
         }
+#endif
     }
 done:
     if (_recordState) {
@@ -1985,6 +2074,32 @@ volatile int oscillo_canton_of_interest = 0;
 
 #pragma mark -
 
+//static NSMutableAttributedString *tracestr = nil;
+static NSMutableString *tracestr;
+void __trace_train_append_line(char *s)
+{
+    if (!tracestr) {
+        abort();
+    } else {
+        [tracestr appendString:[NSString stringWithUTF8String:s]];
+    }
+}
+
+- (void) processTraceFrame:(NSData *)dta
+{
+    NSUInteger len = [dta length];
+    if (len<8) return; // no recorded msg
+    void *records = (msgrecord_t *) [dta bytes];
+    tracestr = [[NSMutableString alloc]initWithUTF8String:"<style>body {font-family: \"Courier New\"}</style><body><br>\n"];
+    trace_train_dumpbuf(records, (int)len);
+    NSData *d = [tracestr dataUsingEncoding:NSUTF8StringEncoding];
+    self.trainTraceAttribStr = [[NSAttributedString alloc]initWithHTML:d documentAttributes:nil];
+    tracestr = nil;
+    self.selectedPanel = @"trace";
+    
+}
+#pragma mark -
+
 - (void) frameResponse
 {
     NSLog(@"response : SN=%d rc=%d plen=%d\n", frm.seqnum, frm.retcode, frm.pidx);
@@ -2116,8 +2231,31 @@ uint32_t SimuTick = 0;
     uint32_t mt = SimuTick;
 #endif
    
+    // process stat
+    // (no frame stat in simu mode, 
+    if ((1)) {
+        
+        cantons_value = [[NSMutableDictionary alloc]initWithCapacity:25];
+        trains_value = [[NSMutableDictionary alloc]initWithCapacity:25];
 
+        stat_iterator_t step;
+        int eos = stat_iterator_reset(&step);
+        int validx = 0;
+        for (;!eos; eos=stat_iterator_next(&step), validx++) {
+            int done;
+            int32_t v = stat_val_get(&step, &done);
+            if (done) break;
+            [self processStatValInfo:&step value:v validx:validx];
+        }
+        [self.cantonTableView reloadData];
+        [self.trainTableView reloadData];
+        if (_recordState) {
+            [recordFile writeData:[@"\n" dataUsingEncoding:NSUTF8StringEncoding]];
+            _recordState = 2;
+        }
+    }
     
+    // process ADC
     for (int i =0; i<2; i++) {
 #if NEW_ADC_AVG
         memset((void*)&(adc_result[i]), 0, sizeof(adc_result));
@@ -2130,7 +2268,9 @@ uint32_t SimuTick = 0;
     [_simTrain0 computeTrainsAfter:mdt sinceStart:mt];
     for (int nc = 0; nc < NUM_CANTONS; nc++) {
         double bemf = [_simTrain0 bemfForCantonNum:nc];
+        bemf *= BEMF_MULTIPLICATOR;
         int bemfi = -(bemf/4.545) * 3.3 *4096;
+        
 #if NEW_ADC_AVG
         //adc_result[0].meas[nc].vA = (bemfi>0) ? 0 : -bemfi;
         //adc_result[0].meas[nc].vB = (bemfi>0) ? bemfi : 0;
@@ -2144,15 +2284,15 @@ uint32_t SimuTick = 0;
 
     int notif = NOTIF_NEW_ADC_1;
    
-    bemf_tick(notif,        mt, mdt);
-    msgsrv_tick(notif,      mt, mdt);
-    tasklet_run(&OAM_tasklet, mt);
-    tasklet_run(&spdctl_tasklet, mt);
-    tasklet_run(&canton_tasklet, mt);
+    bemf_tick(notif,         mt, mdt);
+    msgsrv_tick(notif,       mt, mdt);
+    tasklet_run(&OAM_tasklet,     mt);
+    tasklet_run(&spdctl_tasklet,  mt);
+    tasklet_run(&canton_tasklet,  mt);
     tasklet_run(&turnout_tasklet, mt);
-    tasklet_run(&servo_tasklet, mt);
-    tasklet_run(&ctrl_tasklet,  mt);
-    tasklet_run(&planner_tasklet,  mt);
+    tasklet_run(&servo_tasklet,   mt);
+    tasklet_run(&ctrl_tasklet,    mt);
+    tasklet_run(&planner_tasklet, mt);
     /*
     //OAM_Tasklet(notif, mt, mdt);
     spdctl_run_tick(notif,  mt, mdt);
@@ -2189,6 +2329,14 @@ uint32_t SimuTick = 0;
 }
 
 
+void simu_set_train(int tidx, int sblk, int posmm)
+{
+    [theDelegate simu_set_train:tidx sblk:sblk posmm:posmm];
+}
+- (void) simu_set_train:(int)tidx sblk:(int)sblk posmm:(int)posmm
+{
+    [_simTrain0 setTrain:tidx sblk:sblk posmm:posmm];
+}
 void train_simu_canton_volt(int numcanton, int voltidx, int vlt100)
 {
     [theDelegate simuSetVoltCanton:numcanton voltidx:voltidx vlt100:vlt100];
@@ -2473,7 +2621,7 @@ void notif_target_bemf(const train_config_t *cnf, train_vars_t *vars, int32_t va
 
        @"inertia": @[@"tick", @"T0_ine_t", @"T0_ine_c", @"T1_ine_t", @"T1_ine_c"],
        @"pose"   : @[@"tick", @"T0_spd_curspeed", @"T0_bemf_mv", @"T0_ctrl_dir", @"T0_pose", @"T0_pose_trig1",@"T0_pose_trig2", @"T0_curposmm", @"T0_beginposmm"],
-       @"pose2"   : @[@"tick", @"T0_spd_curspeed", @"T0_bemf_mv", @"T0_ctrl_dir", @"T0_curposmm", @"T0_beginposmm"],
+       @"pose2"   : @[@"tick", @"T0_spd_curspeed", @"T0_bemf_mv", @"T0_ctrl_dir", @"T0_ctrl_curposmm", @"T0_ctrl_beginposmm"],
        @"INA3221"   : @[ @"tick", @"ina0", @"ina1", @"ina2", @"T0_bemf_mv" ],
     };
     NSString *k = nil;
@@ -2796,6 +2944,41 @@ didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic
     [self sendMsg64:m];
 }
 
+- (void) traceTrain:(int)tr
+{
+    if (_linkok == LINK_SIMULOW) {
+        tracestr = [[NSMutableString alloc]initWithUTF8String:"<style>body {font-family: \"Courier New\"}</style><body><br>\n"];
+        trace_train_dumphtml(tr);
+        NSString *s = [_simTrain0 htmlSimuStateForTrain:tr];
+        if (s) [tracestr appendString:s];
+        NSData *d = [tracestr dataUsingEncoding:NSUTF8StringEncoding];
+        self.trainTraceAttribStr = [[NSAttributedString alloc]initWithHTML:d documentAttributes:nil];
+        tracestr = nil;
+        self.selectedPanel = @"trace";
+    } else {
+        msg_64_t m = {0};
+        m.to = MA2_USB_LOCAL;
+        m.from = MA3_UI_GEN; //(UISUB_USB);
+        m.cmd = CMD_USB_TRACETRAIN;
+        m.v1 = tr;
+        [self sendMsg64:m];
+    }
+}
+- (IBAction) traceTrain0:(id)sender
+{
+    [self traceTrain:0];
+}
+
+- (IBAction) traceTrain1:(id)sender
+{
+    [self traceTrain:1];
+}
+
+- (IBAction) traceTrain2:(id)sender
+{
+    [self traceTrain:2];
+}
+
 #pragma mark -
 
 
@@ -2823,6 +3006,10 @@ void impl_uitrack_change_tn_reserv(int tn, int train)
 
 
 
+
+- (void)userContentController:(nonnull WKUserContentController *)userContentController didReceiveScriptMessage:(nonnull WKScriptMessage *)message {
+    
+}
 
 @end
 

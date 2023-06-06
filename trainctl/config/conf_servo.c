@@ -21,14 +21,110 @@
 
 
 
+#ifdef TRN_BOARD_G4SLV1
+
+unsigned int conf_servo_num_entries(void)
+{
+    return 1; // 1 
+}
+
+static conf_servo_t conf_servo[1] = {
+  {     // 0
+     .port_power = GPIOD,
+     .pin_power = -1,
+     .pwm_timer_num = 4,
+     .pwm_timer_ch = TIM_CHANNEL_1,
+     .direction = 0,
+     .min = 2300,
+     .max = 7230,
+     .spd = 80,
+     .pos0 = 5000,
+  }
+};
+
+#endif // TRN_BOARD_G4SLV1
+
+
+
+
+#ifdef TRN_BOARD_G4MASTER1
+
+unsigned int conf_servo_num_entries(void)
+{
+    return 1; // 1 
+}
+
+static conf_servo_t conf_servo[1] = {
+  {     // 0
+     .port_power = GPIOD,
+     .pin_power = -1,
+     .pwm_timer_num = 4,
+     .pwm_timer_ch = TIM_CHANNEL_1,
+     .direction = 0,
+     .min = 2300,
+     .max = 7230,
+     .spd = 80,
+     .pos0 = 5000,
+  }
+};
+
+#endif // TRN_BOARD_G4MASTER1
+
+
+
+
 #ifdef TRN_BOARD_UNIT_TEST
 
 unsigned int conf_servo_num_entries(void)
 {
-    return 0; // 0 
+    return 4; // 4 
 }
 
-static conf_servo_t conf_servo[0] = {
+static conf_servo_t conf_servo[4] = {
+  {     // 0
+     .port_power = GPIOD,
+     .pin_power = -1,
+     .pwm_timer_num = 4,
+     .pwm_timer_ch = TIM_CHANNEL_1,
+     .direction = 0,
+     .min = 2300,
+     .max = 7230,
+     .spd = 80,
+     .pos0 = 5000,
+  },
+  {     // 1
+     .port_power = GPIOD,
+     .pin_power = -1,
+     .pwm_timer_num = 4,
+     .pwm_timer_ch = TIM_CHANNEL_2,
+     .direction = 0,
+     .min = 2300,
+     .max = 7230,
+     .spd = 80,
+     .pos0 = 5000,
+  },
+  {     // 2
+     .port_power = GPIOD,
+     .pin_power = -1,
+     .pwm_timer_num = 4,
+     .pwm_timer_ch = TIM_CHANNEL_3,
+     .direction = 0,
+     .min = 2300,
+     .max = 7230,
+     .spd = 80,
+     .pos0 = 5000,
+  },
+  {     // 3
+     .port_power = GPIOD,
+     .pin_power = -1,
+     .pwm_timer_num = 4,
+     .pwm_timer_ch = TIM_CHANNEL_4,
+     .direction = 0,
+     .min = 2300,
+     .max = 7230,
+     .spd = 80,
+     .pos0 = 5000,
+  }
 };
 
 #endif // TRN_BOARD_UNIT_TEST

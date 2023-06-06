@@ -51,7 +51,7 @@
 #include "../utils/adc_mean.h"
 #endif
 
-#ifdef BOARD_HAS_USB
+#if defined(BOARD_HAS_USB) || defined(BOARD_HAS_LPUART)
 #include "usbtask.h"
 #endif
 #ifdef BOARD_HAS_SERVOS
@@ -146,7 +146,8 @@ void StartCtrlTask(_UNUSED_ void const *argument)
 
 	if (sizeof(train_adc_buf) != sizeof(uint16_t)*NUM_CANTONS*8) FatalError("sizeof", "adc buf", Error_Sizeof);
 	if (adc_nsmpl != NUM_CANTONS*2*4) FatalError("sizeof", "adc buf", Error_Sizeof);
-	if (NUM_CANTONS != 6) FatalError("sizeof", "adc buf", Error_Sizeof);
+
+	//if (NUM_CANTONS != 6) FatalError("sizeof", "adc buf", Error_Sizeof);
 
 
 
@@ -340,7 +341,9 @@ static tasklet_t *ctrlTasklets[] = {
 #endif
 #ifdef BOARD_HAS_CTRL
 		&ctrl_tasklet,
+#ifndef BOARD_HAS_USB
 		&stattx_tasklet,
+#endif
 #endif
 
 #ifdef BOARD_HAS_CAN
@@ -380,6 +383,7 @@ static void run_task_ctrl(void)
 
 		uint32_t notif = 0;
 #ifdef BOARD_HAS_CANTON
+		itm_debug1(DBG_LOWCTRL|DBG_TIM, "-wait c", 0);
 		xTaskNotifyWait(0, 0xFFFFFFFF, &notif, portMAX_DELAY);
 		if ((1)) {
 			int n = 0;
@@ -547,7 +551,7 @@ void HAL_ADC_ConvCpltCallback(_UNUSED_ ADC_HandleTypeDef* hadc)
 		return;
 	}
 	oscillo_evtadc = 2;
-	if ((0)) itm_debug1(DBG_TIM, "conv/f", HAL_GetTick());
+	if ((1)) itm_debug1(DBG_TIM, "conv/f", HAL_GetTick());
 	BaseType_t higher=0;
 	xTaskNotifyFromISR(ctrlTaskHandle, NOTIF_NEW_ADC_2, eSetBits, &higher);
 	portYIELD_FROM_ISR(higher);
@@ -566,7 +570,7 @@ void HAL_ADC_ConvHalfCpltCallback(_UNUSED_ ADC_HandleTypeDef* hadc)
 	}
 	oscillo_evtadc = 1;
 	BaseType_t higher=0;
-	if ((0)) itm_debug1(DBG_TIM, "conv/h", HAL_GetTick());
+	if ((1)) itm_debug1(DBG_TIM, "conv/h", HAL_GetTick());
 	xTaskNotifyFromISR(ctrlTaskHandle, NOTIF_NEW_ADC_1, eSetBits, &higher);
 	portYIELD_FROM_ISR(higher);
 }

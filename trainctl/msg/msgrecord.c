@@ -9,6 +9,7 @@
 #include "../misc.h"
 #include "trainmsg.h"
 #include "msgrecord.h"
+#include "trainmsgstr.h"
 
 //#define MSGRECORD_NUMREC 0		// define to 0 to disable recording
 #define MSGRECORD_NUMREC 512
@@ -76,11 +77,65 @@ void frame_send_recordmsg(void(*cb)(const uint8_t *d, int l))
 		cb((uint8_t *)r, sizeof(msgrecord_t));
 		idx = (idx + 1) % (MSGRECORD_NUMREC);
 	}
-	endidx = 0;
-	startidx = 0;
+	//endidx = 0;
+	//startidx = 0;
 	disable_record = 0;
 }
+#ifdef TRAIN_SIMU
 
+
+const char *addrname(uint8_t a)
+{
+    static char r[32];
+    if ((0)) {
+    } else if (MA1_IS_CTRL(a)) {
+        sprintf(r, "MA1_CTRL(%d)",   a & 0xF);
+    } else if (MA1_IS_SPDCTL(a)) {
+        sprintf(r, "MA1_SPDCTL(%d)", a & 0xF);
+    } else if (MA0_IS_CANTON(a)) {
+        sprintf(r, "MA0_CANTON(%d)", a & 0xF);
+    } else {
+        sprintf(r, "%2.2X", a);
+    }
+    return r;
+}
+
+static void dumpastext(const uint8_t *d, int l)
+{
+    msgrecord_t *r = (msgrecord_t *)d;
+    printf("{%d, %u, {", r->dir, r->ts);
+    printf(".from=0x%s, ", addrname(r->m.from));
+    printf(".to=0x%s, ", addrname(r->m.to));
+    printf(".subc=%d, .cmd=%s, ",
+           r->m.subc, traincmd_name(r->m.cmd));
+    msg_type_t f = traincmd_format(r->m.cmd);
+    switch (f) {
+        case CMD_TYPE_V32:
+            printf(".v32=%d", r->m.v32);
+            break;
+        case CMD_TYPE_B4:
+            printf(".vb0=%d,.vb1=%d,.vb2=%d,.vb3=%d",
+                   r->m.vb0, r->m.vb1, r->m.vb2, r->m.vb3);
+            break;
+        case CMD_TYPE_V40:
+            printf(".val40=%llX", r->m.val40);
+            break;
+        case CMD_TYPE_VCU:
+            printf(".v16=%d, .vb8=%d, .vcu8=%d", r->m.va16, r->m.vb8, r->m.vcu8);
+            break;
+        case CMD_TYPE_V16:
+            printf(".v1=%d, .v2=%d", r->m.v1, r->m.v2);
+            break;
+        default:
+            break;
+    }
+    printf("}},\n");
+}
+void record_msg_dump(void)
+{
+    frame_send_recordmsg(dumpastext);
+}
+#endif
 #else
 // disabled
 

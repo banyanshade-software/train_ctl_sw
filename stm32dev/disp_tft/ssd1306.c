@@ -8,21 +8,26 @@
 SSD1306_I2C_PORTS_DECL;
 static  I2C_HandleTypeDef *ssd1306_i2c_port[MAX_DISPLAY] = SSD1306_I2C_PORTS;
 static const uint8_t ssd1306_i2C_addr[MAX_DISPLAY] = SSD1306_I2C_ADDRS;
+static uint8_t ssd1306_notpresent[MAX_DISPLAY] = {0};
 
 static void ssd1306_Reset(uint8_t devnum) {
-	(void) devnum; // unused
-    /* for I2C - do nothing */
+
+	HAL_StatusTypeDef res = HAL_I2C_IsDeviceReady(ssd1306_i2c_port[devnum], ssd1306_i2C_addr[devnum], 1, 10);
+    if (res == HAL_OK) {
+    	return;
+    }
+    ssd1306_notpresent[devnum]=1;
 }
 
 // Send a byte to the command register
 static void ssd1306_WriteCommand(uint8_t devnum, uint8_t byte) {
-	// TODO devnum
+	if (ssd1306_notpresent[devnum]) return;
     HAL_I2C_Mem_Write(ssd1306_i2c_port[devnum], ssd1306_i2C_addr[devnum], 0x00, 1, &byte, 1, HAL_MAX_DELAY);
 }
 
 // Send data
 static void ssd1306_WriteData(uint8_t devnum, uint8_t* buffer, size_t buff_size) {
-	// TODO devnum
+	if (ssd1306_notpresent[devnum]) return;
     HAL_I2C_Mem_Write(ssd1306_i2c_port[devnum], ssd1306_i2C_addr[devnum], 0x40, 1, buffer, buff_size, HAL_MAX_DELAY);
 }
 

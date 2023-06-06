@@ -30,8 +30,8 @@ int32_t conf_train_default_value(unsigned int numinst, unsigned int numfield, un
 #define conf_numfield_train_postIIR 		11
 #define conf_numfield_train_slipping 		12
 #define conf_numfield_train_pose_per_cm 		13
-#define conf_numfield_train_trainlen_left 		14
-#define conf_numfield_train_trainlen_right 		15
+#define conf_numfield_train_trainlen_left_cm 		14
+#define conf_numfield_train_trainlen_right_cm 		15
 
 
 void *conf_train_ptr(void);

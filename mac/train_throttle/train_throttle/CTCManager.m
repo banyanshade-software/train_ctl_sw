@@ -126,7 +126,10 @@ static int _dim(int col, int dim)
                     ts, s ? 8 : 1, tt, t ? 8: 1];
     [_ctoWebView evaluateJavaScript:js completionHandler:^(id v, NSError *err) {
         if (err) {
-            NSLog(@"js error : %@\n", err);
+            NSLog(@"turnout js error : %@\n", err);
+            /*
+             normally occurs for future turnouts
+             */
         }
     }];
 
@@ -138,7 +141,7 @@ static int _dim(int col, int dim)
     NSString *circle = [NSString stringWithFormat:@"c%d", tn];
     NSString *col = (train>=0) ? [self colorForTrain:train dim:0] : @"darkgray";
     NSString *js = [NSString stringWithFormat:@"el=document.getElementById('%@'); el.style.stroke=\"%@\";  el.style['stroke-width']=\"%dpx\";",
-                    circle, col , train==0xFF ? 1 : 2];
+                    circle, col , train==0xFF ? 1 : 4];
     [_ctoWebView evaluateJavaScript:js completionHandler:^(id v, NSError *err) {
            if (err) {
                NSLog(@"js error : %@\n", err);
@@ -159,10 +162,11 @@ static int _dim(int col, int dim)
     if (v==BLK_OCC_FREE) col = @"darkgray";
     else {
         switch (v) {
-            case BLK_OCC_STOP:  d=1; strn = [strn stringByAppendingString:@"--)"]; break;
-            case BLK_OCC_C2:    d=2; strn = [strn stringByAppendingString:@"..)"]; break;
-            case BLK_OCC_LEFT:  d=0; strn = [strn stringByAppendingString:@" <)"]; break;
-            case BLK_OCC_RIGHT: d=0; strn = [strn stringByAppendingString:@" >)"]; break;
+            case BLK_OCC_LOCO_STOP: d=1; strn = [strn stringByAppendingString:@"--)"]; break;
+            case BLK_OCC_C2:        d=2; strn = [strn stringByAppendingString:@"..)"]; break;
+            case BLK_OCC_LOCO_LEFT: d=0; strn = [strn stringByAppendingString:@" <)"]; break;
+            case BLK_OCC_LOCO_RIGHT:d=0; strn = [strn stringByAppendingString:@" >)"]; break;
+            case BLK_OCC_CARS:  d=0; strn = [strn stringByAppendingString:@"~~)"]; break;
             default:
                 strn = [strn stringByAppendingString:@")"];
                 d = 5;

@@ -21,14 +21,69 @@
 
 
 
+#ifdef TRN_BOARD_G4SLV1
+
+unsigned int conf_led_num_entries(void)
+{
+    return 1; // 1 
+}
+
+static conf_led_t conf_led[1] = {
+  {     // 0
+     .port_led = NULL,
+     .pin_led = 0,
+     .defprog = 0,
+  }
+};
+
+#endif // TRN_BOARD_G4SLV1
+
+
+
+
+#ifdef TRN_BOARD_G4MASTER1
+
+unsigned int conf_led_num_entries(void)
+{
+    return 1; // 1 
+}
+
+static conf_led_t conf_led[1] = {
+  {     // 0
+     .port_led = NULL,
+     .pin_led = 0,
+     .defprog = 0,
+  }
+};
+
+#endif // TRN_BOARD_G4MASTER1
+
+
+
+
 #ifdef TRN_BOARD_UNIT_TEST
 
 unsigned int conf_led_num_entries(void)
 {
-    return 0; // 0 
+    return 3; // 3 
 }
 
-static conf_led_t conf_led[0] = {
+static conf_led_t conf_led[3] = {
+  {     // 0
+     .port_led = NULL,
+     .pin_led = 0,
+     .defprog = 0,
+  },
+  {     // 1
+     .port_led = NULL,
+     .pin_led = 0,
+     .defprog = 0,
+  },
+  {     // 2
+     .port_led = NULL,
+     .pin_led = 0,
+     .defprog = 0,
+  }
 };
 
 #endif // TRN_BOARD_UNIT_TEST

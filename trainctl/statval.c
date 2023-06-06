@@ -35,7 +35,6 @@ typedef struct {
     int numtrain; // or canton
 } meta_stat_t;
 
-
 const stat_val_t statval_glob[] = {
     { &gtick, 0,           sizeof(uint32_t)   _P("tick")},
     { NULL,  0, 0 _P(NULL)}

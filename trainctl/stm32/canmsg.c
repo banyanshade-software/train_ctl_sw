@@ -18,22 +18,70 @@
 #error BOARD_HAS_CAN not defined, remove this file from build
 #endif
 
-#ifdef STM32_F4
+
+
+#if defined(STM32F4)
 #include "stm32f4xx_hal.h"
-#else
+
+#elif defined(STM32G4)
+#include "stm32g4xx_hal.h"
+
+#elif defined(STM32F1)
 #include "stm32f1xx_hal.h"
+
+#else
+#error no board hal
 #endif
+
+
+
 #include "../msg/trainmsg.h"
 
 #include "canmsg.h"
 
+static int local_msg_process(msg_64_t *m, int localmsg);
+
+static runmode_t run_mode = 0;
+static int need_reconf_filter = 0;
+
+
+#ifdef BOARD_HAS_FDCAN
+// TODO #warning  not yet handled
+
+void CAN_Tasklet(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_ uint32_t dt)
+{
+	for (;;) {
+		msg_64_t m;
+		int rc = mqf_read_to_canbus_loc(&m);
+		if (rc) break;
+		local_msg_process(&m, 2);
+	}
+	// read and forward to_canbus msg
+	for (;;) {
+			msg_64_t m;
+			int rc = mqf_read_to_canbus(&m);
+			if (rc) break;
+	}
+	//send_messages_if_any();
+
+}
+
+#else
 /*
  * error here on CAN_HandleTypeDef probably due to CAN is not activated in  ioc
  */
-extern CAN_HandleTypeDef CAN_DEVICE;
+#ifdef BOARD_HAS_FDCAN
+#define CAN_HANDLE  FDCAN_HandleTypeDef
+#define HAL_CAN_Start(_x) 		HAL_FDCAN_Start(_x)
+#define HAL_CAN_Stop(_x)		HAL_FDCAN_Stop(_x)
 
-static runmode_t run_mode = 0;
-static int local_msg_process(msg_64_t *m, int localmsg);
+#define HAL_CAN_GetTxMailboxesFreeLevel 	HAL_FDCAN_GetTxMailboxesFreeLevel
+#define HAL_CAN_TxMailbox0CompleteCallback 	HAL_FDCAN_TxMailbox0CompleteCallback
+#else
+#define CAN_HANDLE  CAN_HandleTypeDef
+#endif
+
+extern CAN_HANDLE CAN_DEVICE;
 
 /*
  *
@@ -45,7 +93,6 @@ static int local_msg_process(msg_64_t *m, int localmsg);
  * ABOM
  */
 
-static int need_reconf_filter = 0;
 
 static void can_init(void)
 {
@@ -78,6 +125,29 @@ static void can_init(void)
 	/* Activate CAN RX notification (interrupts)
 	 * unclear for now which notifications are really needed
 	 */
+#ifdef BOARD_HAS_FDCAN
+	if (HAL_FDCAN_ActivateNotification(&CAN_DEVICE,
+				 FDCAN_IT_RX_FIFO0_NEW_MESSAGE // CAN_IT_RX_FIFO0_MSG_PENDING
+				|FDCAN_IT_RX_FIFO0_FULL
+				//|FDCAN_IT_RX_FIFO0_OVERRUN
+				|FDCAN_IT_RX_FIFO1_NEW_MESSAGE
+
+				| FDCAN_IT_TX_COMPLETE | FDCAN_IT_TX_FIFO_EMPTY | FDCAN_IT_BUS_OFF
+				| FDCAN_IT_ARB_PROTOCOL_ERROR | FDCAN_IT_DATA_PROTOCOL_ERROR
+				| FDCAN_IT_ERROR_PASSIVE | FDCAN_IT_ERROR_WARNING
+
+				//|FDCAN_IT_TX_MAILBOX_EMPTY
+			    //|FDCAN_IT_WAKEUP
+				//|FDCAN_IT_ERROR_WARNING
+				//|FDCAN_IT_ERROR_PASSIVE
+				//|FDCAN_IT_BUSOFF
+				//|FDCAN_IT_LAST_ERROR_CODE
+				//|FDCAN_IT_ERROR
+				, 0xFFFFFFFF) != HAL_OK) {
+			/* Notification Error */
+			FatalError("CANact", "CAN act notif failed", Error_CanActNotif);
+		}
+#else
 	if (HAL_CAN_ActivateNotification(&CAN_DEVICE,
 			 CAN_IT_RX_FIFO0_MSG_PENDING
 			|CAN_IT_RX_FIFO0_FULL
@@ -93,6 +163,7 @@ static void can_init(void)
 		/* Notification Error */
 		FatalError("CANact", "CAN act notif failed", Error_CanActNotif);
 	}
+#endif
 
 
 }
@@ -269,7 +340,7 @@ static void bh(void)
   *         the configuration information for the specified CAN.
   * @retval None
   */
-void HAL_CAN_TxMailbox0CompleteCallback(CAN_HandleTypeDef *hcan)
+void HAL_CAN_TxMailbox0CompleteCallback(CAN_HANDLE *hcan)
 {
   /* Prevent unused argument(s) compilation warning */
   UNUSED(hcan);
@@ -352,6 +423,15 @@ void HAL_CAN_TxMailbox2AbortCallback(CAN_HandleTypeDef *hcan)
 
 }
 
+
+#ifdef BOARD_HAS_FDCAN
+void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef* hfdcan, uint32_t RxFifo0ITs) {
+    if (RxFifo0ITs & FDCAN_IT_RX_FIFO0_NEW_MESSAGE) {
+        prv_read_can_received_msg(hfdcan, FDCAN_RX_FIFO0, RxFifo0ITs);
+    }
+}
+
+#else
 /**
   * @brief  Rx FIFO 0 message pending callback.
   * @param  hcan pointer to a CAN_HandleTypeDef structure that contains
@@ -413,6 +493,7 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
   if (!rc) mqf_write_from_canbus(&m);
 
 }
+#endif
 
 void  HAL_CAN_TxCpltCallback(CAN_HandleTypeDef* hcan)
 {
@@ -574,6 +655,10 @@ void CAN_Tasklet(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_
 #endif
 }
 
+
+#endif // BOARD_HAS_FDCAN not yet handled
+
+
 // returns non zero if message shall be skipped
 static int local_msg_process(msg_64_t *m, _UNUSED_ int loc)
 {
@@ -595,6 +680,3 @@ static int local_msg_process(msg_64_t *m, _UNUSED_ int loc)
 		return 0;
 	}
 }
-
-
-

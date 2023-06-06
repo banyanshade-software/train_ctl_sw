@@ -9,16 +9,18 @@
 #ifndef cautoP_h
 #define cautoP_h
 
+
+#if 0 // to be refactor
 int cauto_update_turnouts(int tidx, lsblk_num_t cur, uint8_t left, uint8_t next);
 
 
-void cauto_c1_updated(int tidx, train_ctrl_t *tvars);
-void cauto_check_start(int tidx, train_ctrl_t *tvars);
-void cauto_had_stop(int tidx, train_ctrl_t *tvars);
-lsblk_num_t cauto_peek_next_lsblk(int tidx, train_ctrl_t *tvars, uint8_t left, int nstep);
-void cauto_had_trigU1(int tidx, train_ctrl_t *tvars);
-void cauto_had_timer(int tidx, train_ctrl_t *tvars);
-void cauto_end_tick(int tidx, train_ctrl_t *tvars);
+void cauto_c1_updated(int tidx, train_oldctrl_t *tvars);
+void cauto_check_start(int tidx, train_oldctrl_t *tvars);
+void cauto_had_stop(int tidx, train_oldctrl_t *tvars);
+lsblk_num_t cauto_peek_next_lsblk(int tidx, train_oldctrl_t *tvars, uint8_t left, int nstep);
+void cauto_had_trigU1(int tidx, train_oldctrl_t *tvars);
+void cauto_had_timer(int tidx, train_oldctrl_t *tvars);
+void cauto_end_tick(int tidx, train_oldctrl_t *tvars);
 
 
 
@@ -79,4 +81,5 @@ void cauto_end_tick(int tidx, train_ctrl_t *tvars);
 
 #define _ARX_CLR_EVENT 0x01
 
+#endif // to be refactor
 #endif /* cautoP_h */

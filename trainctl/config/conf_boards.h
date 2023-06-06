@@ -22,7 +22,11 @@ typedef enum {
     board_switcher = 16,
     board_dispatcher = 32,
     board_ui = 48,
+    board_G4slv1 = 64,
+    board_G4master1 = 70,
 
+    // special case
+    board_unit_test = 240,
     // will be removed
     board_mainV0  = 250,
 } board_type_t;
@@ -38,6 +42,18 @@ typedef struct conf_boards {
 
 unsigned int conf_boards_num_entries(void);
 const conf_boards_t *conf_boards_get(int num);
+
+
+
+#ifdef TRN_BOARD_G4SLV1
+#define NUM_BOARDSS 0 // 0 
+#endif // TRN_BOARD_G4SLV1
+
+
+
+#ifdef TRN_BOARD_G4MASTER1
+#define NUM_BOARDSS 1 // 1 
+#endif // TRN_BOARD_G4MASTER1
 
 
 

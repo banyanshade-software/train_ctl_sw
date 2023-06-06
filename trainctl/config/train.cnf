@@ -100,11 +100,11 @@ config train {
         = (all:0) 310
         = (default) 500;
 
-    user uint8_t trainlen_left
+    user uint8_t trainlen_left_cm
         = (default) 10
         = (all:0) 6
         = (all:1) 15;
-    user uint8_t trainlen_right
+    user uint8_t trainlen_right_cm
         = (default) 10
         = (all:0) 18
         = (all:1) 2;
@@ -112,6 +112,8 @@ config train {
 } num = (mainV0) 8
       = (mainV04) 8
       = (simu) 4
+      = (G4master1) 8
+      = (unit_test) 4
       = (default) 0;
 
 

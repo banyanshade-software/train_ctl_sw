@@ -6,9 +6,10 @@ config boards {
     user uint8_t  master:1      
         = (mainV04:0) 1
         = (default) 0;
-} num = (mainV0) 16
-      = (mainV04) 16
-      = (default) 0;
+} num = (mainV0)    16
+      = (mainV04)   16
+      = (G4master1) 1
+      = (default)   0;
 
 
 attrib boards h_code {
@@ -18,7 +19,11 @@ typedef enum {
     board_switcher = 16,
     board_dispatcher = 32,
     board_ui = 48,
+    board_G4slv1 = 64,
+    board_G4master1 = 70,
 
+    // special case
+    board_unit_test = 240,
     // will be removed
     board_mainV0  = 250,
 } board_type_t;

@@ -17,6 +17,10 @@
 
 @end
 
+void FatalError( const char *short4lettersmsg, _UNUSED_ const char *longmsg, _UNUSED_ enum fatal_error_code errcode)
+{
+    abort();
+}
 @implementation TestFlashStore
 
 uint32_t SimuTick = 0;
@@ -95,6 +99,10 @@ void Error_Handler(void)
     const conf_utestloc_t *loc0 = conf_utestloc_get(0);
     const conf_utestloc_t *loc1 = conf_utestloc_get(1);
     const conf_utestloc_t *loc2 = conf_utestloc_get(2);
+    if (!loc0 || !loc1 || !loc2) {
+        XCTAssert(loc0 && loc1 && loc2);
+        return;
+    }
     XCTAssert(loc0->fixed == 42);
     XCTAssert(loc2->fixed == 42);
     XCTAssert(loc0->alpha == 1000);
@@ -132,6 +140,10 @@ void Error_Handler(void)
     const conf_utestloc_t *loc0 = conf_utestloc_get(0);
     const conf_utestloc_t *loc1 = conf_utestloc_get(1);
     const conf_utestloc_t *loc2 = conf_utestloc_get(2);
+    if (!loc0 || !loc1 || !loc2) {
+        XCTAssert(loc0 && loc1 && loc2);
+        return;
+    }
     //XCTAssert(loc0->fixed == 42);
     int32_t v;
     

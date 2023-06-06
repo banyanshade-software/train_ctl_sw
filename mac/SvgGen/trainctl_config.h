@@ -4,6 +4,7 @@
 #define INC_TRAINCTL_CONFIG_H_
 
 #define TRN_BOARD_MAINV04
+//#define TRN_BOARD_UNIT_TEST
 //#define TRN_BOARD_MAINV0
 //#define TRN_BOARD_MAIN_ZERO        // same as main but nothing installed
 //#define TRN_BOARD_DISPATCHER

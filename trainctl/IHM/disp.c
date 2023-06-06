@@ -19,13 +19,23 @@
 #endif
 
 #ifndef TRAIN_SIMU
-#ifdef STM32_F4
+
+
+#if defined(STM32F4)
 #include "stm32f4xx_hal.h"
-#include "stm32f4xx_hal_tim.h"
-#else
+
+#elif defined(STM32G4)
+#include "stm32g4xx_hal.h"
+
+#elif defined(STM32F1)
 #include "stm32f1xx_hal.h"
-//#error not tested
+
+#else
+#error no board hal
 #endif
+
+
+
 #else
 #error should not be used in simu
 #include "train_simu.h"
@@ -43,13 +53,19 @@
 #endif
 
 
-
-#ifdef STM32_F4
+#if defined(STM32F4)
 #include "stm32f4xx_hal.h"
-#else
+
+#elif defined(STM32G4)
+#include "stm32g4xx_hal.h"
+
+#elif defined(STM32F1)
 #include "stm32f1xx_hal.h"
-//#error bin non
+
+#else
+#error no board hal
 #endif
+
 
 #include "../../stm32dev/disp_tft/ssd1306.h"
 #include "ihm_messages.h"
@@ -350,7 +366,7 @@ static const char *ui_strings[] = {
 /* 35*/		"CAN:",
 /* 36*/		"/!\\ Fatal",
 
-/* 37 */ 	"Master",
+/* 37 */ 	"Master LT4",
 /* 38 */	"Slave",
 /* 39 */	"mV10 C",
 /* 40 */	"Wait...",

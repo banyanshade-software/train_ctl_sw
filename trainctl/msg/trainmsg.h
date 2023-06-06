@@ -161,9 +161,9 @@ typedef union {
                                 int16_t v2;
                             };
                             struct { // CMD_POSE_SET_TRIG
-                            	int16_t va16;
-                            	int8_t vb8;
-                            	uint8_t vcu8;
+                                int16_t va16;
+                                int8_t vb8;
+                                uint8_t vcu8;
                             };
                             uint8_t vbytes[4];
                             struct {
@@ -209,10 +209,12 @@ LFMQUEUE_DEF_H(from_canbus, msg_64_t)
 #endif
 
 
-#ifdef BOARD_HAS_USB
+#if defined(BOARD_HAS_USB) || defined(BOARD_HAS_LPUART)
 LFMQUEUE_DEF_H(to_usb, msg_64_t)
 LFMQUEUE_DEF_H(from_usb, msg_64_t)
 #endif
+
+
 
 
 #ifdef BOARD_HAS_TURNOUTS

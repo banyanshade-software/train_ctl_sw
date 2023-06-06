@@ -43,8 +43,8 @@ typedef struct conf_train {
     uint8_t postIIR;
     uint8_t slipping;
     uint16_t pose_per_cm;
-    uint8_t trainlen_left;
-    uint8_t trainlen_right;
+    uint8_t trainlen_left_cm;
+    uint8_t trainlen_right_cm;
 } conf_train_t;
 
 
@@ -53,8 +53,20 @@ const conf_train_t *conf_train_get(int num);
 
 
 
-#ifdef TRN_BOARD_UNIT_TEST
+#ifdef TRN_BOARD_G4SLV1
 #define NUM_TRAINS 0 // 0 
+#endif // TRN_BOARD_G4SLV1
+
+
+
+#ifdef TRN_BOARD_G4MASTER1
+#define NUM_TRAINS 8 // 8 
+#endif // TRN_BOARD_G4MASTER1
+
+
+
+#ifdef TRN_BOARD_UNIT_TEST
+#define NUM_TRAINS 4 // 4 
 #endif // TRN_BOARD_UNIT_TEST
 
 

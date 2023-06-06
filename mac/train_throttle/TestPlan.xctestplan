@@ -1,0 +1,58 @@
+{
+  "configurations" : [
+    {
+      "id" : "60C5D3D0-66A1-4BDD-A798-7E6F387406EC",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:train_throttle.xcodeproj",
+        "identifier" : "1BD15795281122AC00CFFA00",
+        "name" : "flashStoreTests"
+      }
+    },
+    {
+      "skippedTests" : [
+        "TestHash"
+      ],
+      "target" : {
+        "containerPath" : "container:train_throttle.xcodeproj",
+        "identifier" : "1BF56FB92917CCC000073409",
+        "name" : "train_lowTests"
+      }
+    },
+    {
+      "skippedTests" : [
+        "TestCtrlP"
+      ],
+      "target" : {
+        "containerPath" : "container:train_throttle.xcodeproj",
+        "identifier" : "1BC9030B2720AD250087CEA7",
+        "name" : "trainctlTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:train_throttle.xcodeproj",
+        "identifier" : "1B26885D2951201600E31486",
+        "name" : "trainLPctlTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:train_throttle.xcodeproj",
+        "identifier" : "1B7B5E2629767A1E00955045",
+        "name" : "trainSpdctlTests"
+      }
+    }
+  ],
+  "version" : 1
+}

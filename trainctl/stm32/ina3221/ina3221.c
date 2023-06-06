@@ -7,13 +7,26 @@
 
 #include "../../misc.h"
 
-#ifdef STM32_F4
+
+
+
+
+#if defined(STM32F4)
 #include "stm32f4xx_hal.h"
 #include "stm32f4xx_hal_gpio.h"
-#else
+
+#elif defined(STM32G4)
+#include "stm32g4xx_hal.h"
+#include "stm32g4xx_hal_gpio.h"
+
+#elif defined(STM32F1)
 #include "stm32f1xx_hal.h"
 #include "stm32f1xx_hal_gpio.h"
+
+#else
+#error no board hal
 #endif
+
 
 #include "cmsis_os.h"
 
@@ -63,12 +76,15 @@ const stat_val_t statval_ina3221[] = {
 #error hu?
 #endif
 
-extern volatile int oscillo_trigger_start;
+
 
 static void bkpoint(int loc, int err)
 {
 	itm_debug2(DBG_ERR|DBG_INA3221, "INA ERR", loc, err);
+#ifdef BOARD_HAS_OSCILLO
+	extern volatile int oscillo_trigger_start;
 	oscillo_trigger_start = 200;
+#endif
 }
 
 

@@ -448,12 +448,12 @@ static void sub_presence_changed(_UNUSED_ uint8_t from_addr,  uint8_t lsegnum,  
             	    m.v1 = tidx;
                     mqf_write_from_ctrl(&m);
             	} else {
-            		FatalError("bSub2", "bad subc2", Error_Abort);
+            		FatalError("bSub2", "bad subc2", Error_CtrlBadSubc2);
             	}
             } else if (is_c2) {
                 itm_debug2(DBG_ERR|DBG_CTRL, "sub/c2", tidx, lsegnum);
             } else {
-            	FatalError("bSubc", "bad subc", Error_Abort);
+            	FatalError("bSubc", "bad subc", Error_CtrlBadSubc);
             }
         
         } else {
@@ -514,7 +514,7 @@ void ctrl_delayed_set_desired_spd(int tidx, int spd)
     train_ctrl_t *tvars = &trctl[tidx];
     if (tvars->has_delayed_spd) {
         if (tvars->delayed_spd == spd) return;
-        FatalError("dely", "has_delayed_spd already set", Error_Abort);
+        FatalError("dely", "has_delayed_spd already set", Error_CtrlDelaySet);
     }
     tvars->has_delayed_spd = 1;
     tvars->delayed_spd = spd;
@@ -552,42 +552,49 @@ static void normal_process_msg(msg_64_t *m)
         	// TODO : board
             turnout.v = m->v1u;
             ctrl_set_turnout(turnout, topo_tn_straight, -1);
-            break;
+            goto handled;
         case CMD_TURNOUT_HI_B:
             turnout.v = m->v1u;
             ctrl_set_turnout(turnout, topo_tn_turn, -1);
-            break;
+            goto handled;
         case CMD_TURNOUT_HI_TOG:
             turnout.v = m->v1u;
             enum topo_turnout_state s = topology_get_turnout(turnout);
             if (s != topo_tn_moving) {
                 ctrl_set_turnout(turnout, s ? topo_tn_straight : topo_tn_turn, -1);
             }
-            break;
+            goto handled;
         case CMD_SERVO_ACK:
             itm_debug2(DBG_CTRL, "servAck", m->subc, m->v1u);
-            break;
+            goto handled;
         case CMD_SERVODOOR_ACK:
             itm_debug2(DBG_CTRL|DBG_SERVO, "servDAck", m->subc, m->v1u);
             turnout.turnout = m->subc;
             turnout.board = MA0_BOARD(m->from);
             turnout.isdoor = 1;
             set_door_ack(turnout, (enum topo_turnout_state)m->v1u);
-            break;
+            goto handled;
     }
     // -----------------------------------------
     if (MA1_IS_CTRL(m->to)) {
         //if (test_mode) continue;
-        int tidx = MA1_TRAIN(m->to);
-        //train_oldctrl_t *otvar = &otrctl[tidx];
-        train_ctrl_t *tvars = &trctl[tidx];
+        unsigned int tidx = MA1_TRAIN(m->to);
+        itm_debug3(DBG_CTRL, "CMD", tidx, m->cmd, m->from);
 
-        if (tvars->c1c2dir_changed) {
-        	FatalError("c1C2", "pend c1c2", Error_Abort);
+        train_ctrl_t *tvars = NULL;
+        if (tidx != 0xF) {
+        	tvars = &trctl[tidx];
+        	if (tidx >= NUM_TRAINS) {
+        		FatalError("Tx", "bad num train", Error_CtrlBadTidxSupNum);
+        		return;
+        	}
         }
-        //extern uint8_t Auto1ByteCode[]; // XXX temp hack
+        if ((tidx != 15) && (tvars->c1c2dir_changed)) {
+        	FatalError("c1C2", "pend c1c2", Error_Ctrl_PendC1C2);
+        }
         switch (m->cmd) {
             case CMD_MDRIVE_SPEED_DIR: {
+            	if (!tvars) FatalError("Tvar", "Tvar not set", Error_CtrlBadTidx);
                 if (tvars->_mode == train_auto) {
                     ctrl_set_mode(tidx, train_manual);
                 }
@@ -603,9 +610,11 @@ static void normal_process_msg(msg_64_t *m)
                 
                 
         case CMD_SET_TRAIN_MODE:
+        	if (!tvars) FatalError("Tvar", "Tvar not set", Error_CtrlBadTidx);
             ctrl_set_mode(m->v1u, m->v2u);
             break;
         case CMD_START_AUTO:
+        	if (!tvars) FatalError("Tvar", "Tvar not set", Error_CtrlBadTidx);
             switch (m->v1u) {
                 case 1:
                     ctrl_set_mode(tidx, train_manual); // make sure it is restarted if already auto
@@ -623,9 +632,11 @@ static void normal_process_msg(msg_64_t *m)
             notify_presence_changed(m->from, m->subc, m->v1u, m->v2u);
             if (ignore_ina_pres()) break;
             sub_presence_changed(m->from, m->subc, m->v1u, m->v2);
-            break;
+            // no valid tidx here
+            goto handled;
     
         case CMD_BEMF_DETECT_ON_C2: {
+        	if (!tvars) FatalError("Tvar", "Tvar not set", Error_CtrlBadTidx);
             itm_debug2(DBG_CTRL,"BEMF/C2", tidx,  m->v1u);
             if (m->v1u != tvars->can2_xaddr.v) {
                 itm_debug3(DBG_CTRL, "not c2", tidx, m->v1u, tvars->can2_xaddr.v);
@@ -643,6 +654,7 @@ static void normal_process_msg(msg_64_t *m)
         }
            
         case CMD_POSE_TRIGGERED:
+        	if (!tvars) FatalError("Tvar", "Tvar not set", Error_CtrlBadTidx);
             itm_debug3(DBG_POSEC, "Trig", m->v1u, m->v2u, m->subc);
             //trace_train_trig(ctrl_tasklet.last_tick, tidx, tvars, (pose_trig_tag_t)m->vcu8, m->va16);
             xblkaddr_t tb = FROM_CANTON(*m);
@@ -651,6 +663,7 @@ static void normal_process_msg(msg_64_t *m)
             ctrl3_pose_triggered(tidx, tvars, m->vcu8, tb, m->va16);
             break;
         case CMD_STOP_DETECTED:
+        	if (!tvars) FatalError("Tvar", "Tvar not set", Error_CtrlBadTidx);
             //ctrl2_evt_stop_detected(tidx, otvar, NULL, m->v32);
             ctrl3_stop_detected(tidx, tvars);
             break;
@@ -658,12 +671,18 @@ static void normal_process_msg(msg_64_t *m)
             break;
 
         }
+        if (15==tidx) {
+            FatalError("t15", "tidx invalid", Error_CtrlBadTidx);
+        }
         if (tvars->c1c2dir_changed) {
-        	FatalError("c1c2", "unhandled c1c2", Error_Abort);
+        	FatalError("c1c2", "unhandled c1c2", Error_Ctrl_PendC1C2b);
         }
         _handle_delayed_spd(tidx, tvars);
     } else {
         itm_debug1(DBG_MSG|DBG_CTRL, "bad msg", m->to);
+    }
+handled:
+    if ((0)) {
     }
 }
 
@@ -763,7 +782,7 @@ int ctrl_set_turnout(xtrnaddr_t tn, enum topo_turnout_state v, int train)
 	itm_debug2(DBG_CTRL|DBG_TURNOUT, "TURN", tn.v, v);
     if (tn.v == 0xFF) {
     	itm_debug1(DBG_ERR|DBG_CTRL, "bad tn", train);
-    	FatalError("TNf", "bad tn", Error_Abort);
+    	FatalError("TNf", "bad tn", Error_Ctrl_BadTurnoutNum);
     }
 
 
@@ -822,7 +841,7 @@ static void set_door_ack(xtrnaddr_t tn, enum topo_turnout_state v)
     itm_debug2(DBG_CTRL|DBG_TURNOUT, "DACK", tn.v, v);
     if (tn.v == 0xFF) {
     	itm_debug1(DBG_ERR|DBG_CTRL, "bad dack", 0);
-    	FatalError("DACK", "bad tn", Error_Abort);
+    	FatalError("DACK", "bad tn", Error_Ctrl_BadTurnoutNum2);
     }
 
     if (!tn.isdoor) {

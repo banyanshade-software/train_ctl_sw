@@ -125,6 +125,7 @@
 
 #define 	CODE_TIM4_CNT		0x88
 #define 	CODE_FATAL			0x89
+#define 	CODE_FATAL_N		0x8A
 #define 	CODE_PROFILE		0x8F
 
 // followed by 1 byte, index to reg table, where a 8 or 16bit value is read
@@ -241,7 +242,7 @@ static const uint8_t layout_testcan[] = {
 };
 
 static const uint8_t layout_fatal[] = {
-		CODE_ZONE_STATUS, CODE_STR|36,
+		CODE_ZONE_STATUS, CODE_STR|36, CODE_FATAL_N,
 		CODE_ZONE_TEXT1, CODE_FATAL,
 		CODE_END
 };
@@ -364,7 +365,7 @@ static const char *ui_strings[] = {
 /*34*/		"Hz",
 
 /* 35*/		"CAN:",
-/* 36*/		"/!\\ Fatal",
+/* 36*/		"! Fatal ",
 
 /* 37 */ 	"Master LT4",
 /* 38 */	"Slave",
@@ -413,6 +414,7 @@ static void write_bargraph(uint8_t devnum, int16_t v, int16_t min, int16_t max);
 static void write_sbargraph(uint8_t devnum, int16_t v, int16_t min, int16_t max);
 
 __weak const char *_fatal = NULL;
+__weak enum fatal_error_code _fatal_code = 0;
 
 void disp_layout(int devnum)
 {
@@ -560,6 +562,10 @@ void disp_layout(int devnum)
 		case CODE_FATAL:
 			if (_fatal) ssd1306_WriteString(devnum,_fatal, *curfont, White);
 			else        ssd1306_WriteString(devnum,"---", *curfont, White);
+			break;
+		case CODE_FATAL_N:
+			ssd1306_WriteChar(devnum, 'F', *curfont, White);
+			write_unum(devnum, (int16_t) _fatal_code, curfont);
 			break;
 		case CODE_DIR:
 			i+=1;

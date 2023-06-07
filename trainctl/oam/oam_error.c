@@ -14,6 +14,7 @@
 #include "../low/turnout.h"
 
 const char *_fatal = NULL;
+enum fatal_error_code _fatal_code = Error_None;
 
 __weak void local_ui_fatal(void)
 {
@@ -21,10 +22,11 @@ __weak void local_ui_fatal(void)
 }
 
 #ifndef TRAIN_SIMU
-void FatalError( const char *short4lettersmsg, _UNUSED_ const char *longmsg, _UNUSED_ enum fatal_error_code errcode)
+void FatalError( const char *short4lettersmsg, _UNUSED_ const char *longmsg,  enum fatal_error_code errcode)
 {
 	if (!_fatal) {
 		_fatal = short4lettersmsg;
+		_fatal_code = errcode;
 #ifdef BOARD_HAS_TURNOUTS
 		TurnoutEmergencyStop();
 #endif

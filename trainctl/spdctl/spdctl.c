@@ -224,7 +224,7 @@ int16_t spdctl_get_lastpose(int tidx, xblkaddr_t b)
 {
     USE_TRAIN(tidx);
     if (b.v != tvars->Cx[0].v) {
-        FatalError("Spd C1", "bad C1 in spdctl_get_lastpose", Error_Abort);
+        FatalError("Spd C1", "bad C1 in spdctl_get_lastpose", Error_Spd_badc1);
         return 0;
     }
     int16_t v = tvars->lastposed10;
@@ -654,6 +654,7 @@ static void train_periodic_control(int numtrain, _UNUSED_ uint32_t dt)
         if (abs(target_with_brake)<15) {
             target_with_brake = 0;
         }
+    	itm_debug2(DBG_SPDCTL, "target/b", numtrain, target_with_brake);
     }
 
     // inertia before PID
@@ -685,7 +686,7 @@ static void train_periodic_control(int numtrain, _UNUSED_ uint32_t dt)
     if (tconf->enable_pid) {
     	if (target_with_brake) {
     		if ((punch_start) && (tvars->pidvars.stopped)) {
-    			itm_debug2(DBG_PID, "punch", numtrain, target_with_brake);
+    			itm_debug2(DBG_PID|DBG_SPDCTL, "punch", numtrain, target_with_brake);
     			target_with_brake=100;
     		}
             tvars->pidvars.stopped = 0;

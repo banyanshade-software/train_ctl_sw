@@ -210,7 +210,7 @@ void ctrl3_set_mode(int tidx, train_ctrl_t *tvar, train_mode_t mode)
   
 }
 
-static const int adjust_pose = 1;
+static const int adjust_pose = 0;
 
 static void _adjust_posemm(int tidx, train_ctrl_t *tvars, int expmm, int measmm)
 {
@@ -603,7 +603,7 @@ void ctrl3_pose_triggered(int tidx, train_ctrl_t *tvars, uint8_t trigsn, xblkadd
                         int32_t slen = get_lsblk_len_cm(ns, NULL)*10;
                         tvars->beginposmm = tvars->_curposmm - slen; // TODO adjust for trig delay
                     } else {
-                        FatalError("dir0", "sdir 0 on trig", Error_Other);
+                        FatalError("dir0", "sdir 0 on trig", Error_CtrlDir0Trig);
                     }
                     trace_train_setc1(ctrl_tasklet.last_tick, tidx, tvars, ns, 0);
                     tvars->c1_sblk = ns;
@@ -836,6 +836,7 @@ void ctrl3_evt_entered_c2(int tidx, train_ctrl_t *tvars, uint8_t from_bemf)
     tvars->can1_xaddr = tvars->can2_xaddr;
     tvars->can2_xaddr.v = 0xFF;
     tvars->c1c2dir_changed = 1;
+    itm_debug1(DBG_CTRL, "c1c2 b", tidx);
     if (tvars->pow_c2_future.v != 0xFF) {
         _set_and_power_c2(tidx, tvars); // this will also call _sendlow_c1c2_dir
     } else {
@@ -944,6 +945,7 @@ static void _evt_leaved_c1old(int tidx, train_ctrl_t *tvars)
     
     tvars->canOld_xaddr.v = 0xFF;
     tvars->c1c2dir_changed = 1;
+    itm_debug1(DBG_CTRL, "c1c2 a", tidx);
     _sendlow_c1c2_dir(tidx, tvars);
 
     if (tvars->pow_c2_future.v != 0xFF) {
@@ -1006,11 +1008,11 @@ static void freeback(int tidx, train_ctrl_t *tvars)
     if (tvars->freecanton.v != 0xFF) {
         // XXX remove me. For debug, test on canton is enough
         if (tvars->freecanton.v == tvars->can1_xaddr.v) {
-            FatalError("FreC1", "free c1?", Error_Other);
+            FatalError("FreC1", "free c1?", Error_CtrlFreeC1);
             return;
         }
         if (tvars->freecanton.v == tvars->can2_xaddr.v) {
-            FatalError("FreC2", "free c2?", Error_Other);
+            FatalError("FreC2", "free c2?", Error_CtrlFreeC2);
             return;
         }
         if (tvars->freecanton.v == tvars->canOld_xaddr.v) {
@@ -1151,7 +1153,7 @@ static void _apply_trigs(int tidx, train_ctrl_t *tvars, const rettrigs_t *rett)
     }
     // sanity check
     if (nt && !ns) {
-        FatalError("NoTr", "no trig selected", Error_Other);
+        FatalError("NoTr", "no trig selected", Error_CtrlNoTrig);
     }
 }
 
@@ -1162,6 +1164,7 @@ static void _set_dir(int tidx, train_ctrl_t *tvars, int sdir)
     if (tvars->_sdir == sdir) return;
     tvars->_sdir = sdir;
     tvars->c1c2dir_changed = 1;
+    itm_debug1(DBG_CTRL, "c1c2 c", tidx);
     occupency_set_occupied(tvars->can1_xaddr, tidx, tvars->c1_sblk, tvars->_sdir);
 }
 static void _update_spd_limit(_UNUSED_ int tidx, train_ctrl_t *tvars, _UNUSED_ int sdir)
@@ -1229,6 +1232,9 @@ static void _apply_speed(int tidx, train_ctrl_t *tvars)
     
     if (tvars->_target_unisgned_speed == spd) {
         // dont send if same value
+        if (tvars->c1c2dir_changed) {
+            itm_debug3(DBG_CTRL, "c1c2 N", tidx, spd, tvars->c1c2dir_changed);
+        }
         return;
     }
     tvars->_target_unisgned_speed = spd;
@@ -1265,6 +1271,7 @@ static void _sendlow_c1c2_dir(int tidx, train_ctrl_t *tvars)
         FatalError("FSMc", "c1c2dirchanged 0", Error_FSM_C1C2Zero);
         return;
     }
+    itm_debug1(DBG_CTRL, "c1c2dir", tidx);
     tvars->c1c2dir_changed = 0;
     msg_64_t m = {0};
     m.from = MA1_CTRL(tidx);
@@ -1333,11 +1340,11 @@ static void _set_state(int tidx, train_ctrl_t *tvars, train_state_t newstate)
     if ((1)) {
         // check curposmm coherency
         if (tvars->_curposmm<tvars->beginposmm) {
-            FatalError("cmm1", "curpos before begin", Error_Other);
+            FatalError("cmm1", "curpos before begin", Error_CtrlSanCurPosLow);
         } else {
             int32_t c1len = 10*get_lsblk_len_cm(tvars->c1_sblk, NULL);
             if (tvars->_curposmm>tvars->beginposmm+c1len) {
-                FatalError("cmm2", "curpos after c1len", Error_Other);
+                FatalError("cmm2", "curpos after c1len", Error_CtrlSanCurPosHigh);
             }
         }
     }
@@ -1457,6 +1464,7 @@ static void _set_and_power_c2_fut(int tidx, train_ctrl_t *tvars, xblkaddr_t fut)
     }
     tvars->can2_xaddr = fut;
     tvars->c1c2dir_changed = 1;
+    itm_debug1(DBG_CTRL, "c1c2 d", tidx);
     _sendlow_c1c2_dir(tidx, tvars);
 }
 

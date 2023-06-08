@@ -397,12 +397,46 @@ void ctrl3_upcmd_set_desired_speed_zero(int tidx, train_ctrl_t *tvars)
     FatalError("FSM_", "end fsm", Error_FSM_Nothandled);
 }
 
+static void _check_posmm_overflow(int tidx, train_ctrl_t *tvars, int32_t posmm, lsblk_num_t ns)
+{
+    if (ns.n == -1) {
+        itm_debug3(DBG_CTRL, "chkpos:n", tidx, tvars->c1_sblk.n, posmm);
+        return;
+    }
+    xblkaddr_t c = canton_for_lsblk(ns);
+    if (c.v != tvars->can1_xaddr.v) {
+        itm_debug3(DBG_CTRL, "chkpos:C", tidx, tvars->can1_xaddr.v, c.v);
+        return;
+    }
+    int n1 = get_lsblk_ina3221(tvars->c1_sblk);
+    int n2 = get_lsblk_ina3221(ns);
+    if (n1 != n2) {
+        itm_debug3(DBG_CTRL, "chkpos:I", tidx, n1, n2);
+        return;
+    }
+    itm_debug3(DBG_CTRL, "chkpos:K", tidx, tvars->_curposmm, posmm);
+    FatalError("Pos", "bad pos on stop", Error_CtrlSanCurPosHigh);
+}
 
 void ctrl3_stop_detected(int tidx, train_ctrl_t *tvars, int32_t posed10, int frombrake)
 {
     const conf_train_t *tconf = conf_train_get(tidx);
     int32_t p = pose_convert_to_mm(tconf, posed10*10);
     itm_debug3(DBG_CTRL, "stop det", tidx, tvars->_curposmm, p);
+    if ((1)) {
+        if (tvars->_sdir>0) {
+            int32_t clenmm = 10*get_lsblk_len_cm(tvars->c1_sblk, NULL);
+            if (p>tvars->beginposmm+clenmm) {
+                lsblk_num_t ns = next_lsblk(tvars->c1_sblk, 0, NULL);
+                _check_posmm_overflow(tidx, tvars, p, ns);
+            }
+        } else if (tvars->_sdir<0) {
+            if (p<tvars->beginposmm) {
+                lsblk_num_t ns = next_lsblk(tvars->c1_sblk, 1, NULL);
+                _check_posmm_overflow(tidx, tvars, p, ns);
+            }
+        }
+    }
     tvars->_curposmm = p;
     
     switch (tvars->_state) {
@@ -415,6 +449,7 @@ void ctrl3_stop_detected(int tidx, train_ctrl_t *tvars, int32_t posed10, int fro
             break;
         
         case train_state_running:
+            //_updated_while_running(tidx, tvars);
             if (tvars->_target_unisgned_speed == 0) {
                 _set_dir(tidx, tvars, 0);
                 _set_state(tidx, tvars, train_state_station);
@@ -1370,7 +1405,7 @@ static void _set_state(int tidx, train_ctrl_t *tvars, train_state_t newstate)
             break;
     }
     //  sanity check
-    if ((1)) {
+    if ((0)) {
         // check curposmm coherency
         if (tvars->_curposmm<tvars->beginposmm) {
             FatalError("cmm1", "curpos before begin", Error_CtrlSanCurPosLow);

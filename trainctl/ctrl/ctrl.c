@@ -665,7 +665,7 @@ static void normal_process_msg(msg_64_t *m)
         case CMD_STOP_DETECTED:
         	if (!tvars) FatalError("Tvar", "Tvar not set", Error_CtrlBadTidx);
             //ctrl2_evt_stop_detected(tidx, otvar, NULL, m->v32);
-            ctrl3_stop_detected(tidx, tvars);
+            ctrl3_stop_detected(tidx, tvars, m->v32, m->subc);
             break;
         default:
             break;

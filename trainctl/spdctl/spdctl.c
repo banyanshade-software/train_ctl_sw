@@ -611,13 +611,17 @@ static int pose_add_trig(train_vars_t *tvars, int16_t tag, int32_t pose)
 
 void send_train_stopped(int numtrain, train_vars_t *tvars)
 {
-    tvars->brake = 0;
+    
     msg_64_t m = {0};
     m.from = MA1_SPDCTL(numtrain);
     m.to = MA1_CTRL(numtrain);
     m.cmd = CMD_STOP_DETECTED;
+    m.subc = tvars->brake;
     m.v32 = tvars->lastposed10; // XXX TODO scale ?
     mqf_write_from_spdctl(&m);
+    
+    tvars->brake = 0;
+    tvars->target_speed = 0;
 }
 
 #define punch_start 1
@@ -686,13 +690,13 @@ static void train_periodic_control(int numtrain, _UNUSED_ uint32_t dt)
     if (tconf->enable_pid) {
     	if (target_with_brake) {
     		if ((punch_start) && (tvars->pidvars.stopped)) {
-    			itm_debug2(DBG_PID|DBG_SPDCTL, "punch", numtrain, target_with_brake);
+    			itm_debug3(DBG_PID|DBG_SPDCTL, "punch", numtrain, target_with_brake, tvars->brake);
     			target_with_brake=100;
     		}
             tvars->pidvars.stopped = 0;
     	}
         if (!tvars->pidvars.stopped && (target_with_brake == 0) && (abs(tvars->bemf_mv)<100)) {
-    		itm_debug1(DBG_PID, "stop", numtrain);
+    		itm_debug1(DBG_PID|DBG_SPDCTL, "stop", numtrain);
 			pidctl_reset(&tconf->pidctl, &tvars->pidvars);
 			debug_info('T', numtrain, "STOP_PID", 0,0, 0);
 			tvars->pidvars.stopped = 1;

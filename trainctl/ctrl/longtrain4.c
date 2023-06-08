@@ -258,6 +258,16 @@ int _lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int
                     } else {
                         // pos+margin_stop_len_mm <= totallen
                         rc = brake_len_mm+trg-posloco;
+                        /*if (tvars->brake_for_eot||tvars->brake_for_blkwait) {
+                            FatalError("BrkS", "brake reason already set", Error_CtrlAlreadyBrake);
+                        }*/
+                        if (a) {
+                            tvars->brake_for_blkwait = 1;
+                            tvars->brake_for_eot = 0;
+                        } else {
+                            tvars->brake_for_blkwait = 0;
+                            tvars->brake_for_eot = 1;
+                        }
                     }
                 } else {
                     rc = -1;

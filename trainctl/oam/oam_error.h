@@ -46,7 +46,9 @@ enum fatal_error_code {
 	Error_Ctrl_BadTurnoutNum,
 	Error_Ctrl_BadTurnoutNum2,
 	Error_Ctrl_TooManyTrigs,
-
+    Error_CtrlUnknownBrake,
+    Error_CtrlBadBrake,
+    Error_CtrlAlreadyBrake,
 	Error_Spd_badc1,
 
 	Error_Topology_BlkNum,

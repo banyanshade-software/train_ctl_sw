@@ -398,8 +398,13 @@ void ctrl3_upcmd_set_desired_speed_zero(int tidx, train_ctrl_t *tvars)
 }
 
 
-void ctrl3_stop_detected(int tidx, train_ctrl_t *tvars)
+void ctrl3_stop_detected(int tidx, train_ctrl_t *tvars, int32_t posed10, int frombrake)
 {
+    const conf_train_t *tconf = conf_train_get(tidx);
+    int32_t p = pose_convert_to_mm(tconf, posed10*10);
+    itm_debug3(DBG_CTRL, "stop det", tidx, tvars->_curposmm, p);
+    tvars->_curposmm = p;
+    
     switch (tvars->_state) {
         case train_state_off:
             break;
@@ -413,7 +418,32 @@ void ctrl3_stop_detected(int tidx, train_ctrl_t *tvars)
             if (tvars->_target_unisgned_speed == 0) {
                 _set_dir(tidx, tvars, 0);
                 _set_state(tidx, tvars, train_state_station);
+            } else if (frombrake) {
+                if (tvars->brake_for_eot && tvars->brake_for_blkwait) {
+                    FatalError("Brk2", "both eot and blk for brake", Error_CtrlBadBrake);
+                }
+                itm_debug3(DBG_CTRL, "stop from brk", tidx, tvars->brake_for_eot, tvars->brake_for_blkwait);
+                if (tvars->brake_for_eot) {
+                    _set_speed(tidx, tvars, 0, 1, 0);
+                    _set_dir(tidx, tvars, 0);
+                    _set_state(tidx, tvars, train_state_station);
+                } else if (tvars->brake_for_blkwait) {
+                    if (tvars->_desired_signed_speed) {
+                        int spd = tvars->_desired_signed_speed;
+                        _set_speed(tidx, tvars, 0, 1, 0);
+                        _set_speed(tidx, tvars, spd, 0, 0);
+                        _set_state(tidx, tvars, train_state_blkwait);
+                    } else {
+                        itm_debug1(DBG_ERR|DBG_CTRL, "brk_w_0", tidx);
+                        _set_dir(tidx, tvars, 0);
+                        _set_state(tidx, tvars, train_state_station);
+                    }
+                } else {
+                    FatalError("Brk?", "unknown brake cause", Error_CtrlUnknownBrake);
+                }
             }
+            tvars->brake_for_eot = 0;
+            tvars->brake_for_blkwait = 0;
             break;
             
         case train_state_blkwait0:
@@ -1209,6 +1239,9 @@ static void _set_speed(int tidx, train_ctrl_t *tvars, int signed_speed, int appl
         m.v32 = 0;
         mqf_write_from_ctrl(&m);
         tvars->brake = 0;
+    } else {
+        tvars->brake_for_eot = 0;
+        tvars->brake_for_blkwait = 0;
     }
 }
 

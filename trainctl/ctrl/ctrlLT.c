@@ -43,7 +43,7 @@ uint8_t ctrl_flag_notify_speed = 1;
 // -----------------------------------------------------------------
 
 static int _train_check_dir(int tidx, train_ctrl_t *tvars, int sdir, rettrigs_t *rett);
-static void _apply_trigs(int tidx, train_ctrl_t *tvars, const rettrigs_t *rett);
+static void _apply_trigs(int tidx, train_ctrl_t *tvars,  rettrigs_t *rett);
 
 // -----------------------------------------------------------------
 
@@ -550,12 +550,13 @@ static pose_trig_tag_t seqToTag(train_ctrl_t *tvars, uint8_t trigsn, int *ignc, 
     *ignc = 4;
     return ret;
 }
-static int seqForTrig(train_ctrl_t *tvars, _UNUSED_ uint32_t pose, uint8_t tag, uint8_t fut)
+static int seqForTrig(train_ctrl_t *tvars, _UNUSED_ uint32_t pose, uint8_t tag, uint8_t fut, int *pold)
 {
     // already stored ?
     for (int i=0; i<NUM_PEND_TRIGS; i++) {
         if (tvars->pendTrigs[i].postag != tag) continue;
         if (tvars->pendTrigs[i].sblk.n != tvars->c1_sblk.n) continue;
+        *pold = (tvars->pendTrigs[i].done) ? 2 : 1;
         return tvars->pendTrigs[i].num;
     }
     if (!tvars->trigNs) tvars->trigNs=1;
@@ -1131,7 +1132,7 @@ static int _train_check_dir(int tidx, train_ctrl_t *tvars, int sdir, rettrigs_t 
 
 
 
-static void _set_one_trig(int numtrain, train_ctrl_t *tvars, const conf_train_t *tconf, int num, int8_t dir,  xblkaddr_t canaddr, int32_t pose, uint8_t tag, int *pseq, uint8_t fut)
+static inline void _set_one_trig(int numtrain, train_ctrl_t *tvars, const conf_train_t *tconf, int num, int8_t dir,  xblkaddr_t canaddr, int32_t pose, uint8_t tag, int *pseq, uint8_t fut, int *pold)
 {
     itm_debug3(DBG_CTRL, "set posetr", numtrain, tag, pose);
     if (!tag) {
@@ -1145,7 +1146,8 @@ static void _set_one_trig(int numtrain, train_ctrl_t *tvars, const conf_train_t 
     if (tvars->purgeTrigs) {
         seqPurgeTrigs(tvars);
     }
-    int seq = seqForTrig(tvars, pose, tag, fut);
+    int seq = seqForTrig(tvars, pose, tag, fut, pold);
+    if (*pold == 2) return;
     if (seq<0) {
         FatalError("NOTN", "no trig seq", Error_CtrlBadPose);
     }
@@ -1173,51 +1175,67 @@ static void _set_one_trig(int numtrain, train_ctrl_t *tvars, const conf_train_t 
 
 
 #define MARGIN_TRIG 150
+static inline int trig_cmp(const struct sttrig a, const struct sttrig b, int left)
+{
+    
+    if (left) {
+        if (a.posmm < b.posmm) return 1;
+    } else {
+        if (a.posmm > b.posmm) return 1;
+    }
+    return 0;
+}
 
-static void _apply_trigs(int tidx, train_ctrl_t *tvars, const rettrigs_t *rett)
+static void _apply_trigs(int tidx, train_ctrl_t *tvars, rettrigs_t *rett)
 {
     const conf_train_t *conf = conf_train_get(tidx);
-    // get min pose (right) or max pose (left)
-    int min=0;
-    int n = 0;
-    /*if ((1)) {
-        if (rett->ntrig>=4) {
-            itm_debug1(DBG_CTRL, "hop", rett->ntrig);
+    // sort trigs
+    // using insersion sort
+    // https://books.google.fr/books?id=kse_7qbWbjsC&pg=PA116&redir_esc=y#v=onepage&q&f=false
+
+    const int left = (tvars->_sdir<0) ? 1 : 0;
+    
+    for (int i=1; i<rett->ntrig; i++) {
+        struct sttrig t = rett->trigs[i];
+        int j;
+        for (j=i; j>0 && trig_cmp(rett->trigs[j-1], t, left); j--) {
+            rett->trigs[j] = rett->trigs[j-1];
         }
-    }*/
-    for (int i=0; i<rett->ntrig;i++) {
-        if (!rett->trigs[i].tag) continue;
-        if (!n) min = rett->trigs[i].posmm;
-        else {
-            if (tvars->_sdir >= 0) {
-                if (rett->trigs[i].posmm < min) min = rett->trigs[i].posmm;
-            } else {
-                if (rett->trigs[i].posmm > min) min = rett->trigs[i].posmm;
-            }
-        }
-        n++;
+        rett->trigs[j] = t;
     }
-    int nt=0; int ns=0;
+
+    
+    int numtrig=0; int numset=0; int numnewset=0;
+    int min = 0;
+    int ignore = 0;
     for (int i=0; i<rett->ntrig;i++) {
         if (!rett->trigs[i].tag) continue;
-        int ignore = 0;
-        if (tvars->_sdir >= 0) {
-            if (rett->trigs[i].posmm > min+MARGIN_TRIG) ignore=1;
-        } else {
-            if (rett->trigs[i].posmm < min-MARGIN_TRIG) ignore=1;
+        if (numnewset) {
+            if (tvars->_sdir >= 0) {
+                if (rett->trigs[i].posmm > min+MARGIN_TRIG) ignore=1;
+            } else {
+                if (rett->trigs[i].posmm < min-MARGIN_TRIG) ignore=1;
+            }
         }
         int seq = 0;
         if (!ignore) {
-            ns++;
+            numset++;
+            int old = 0;
             _set_one_trig(tidx, tvars, conf, i, tvars->_sdir, tvars->can1_xaddr ,
                       pose_convert_from_mm(conf, rett->trigs[i].posmm),
-                      rett->trigs[i].tag, &seq, rett->trigs[i].fut);
+                      rett->trigs[i].tag, &seq, rett->trigs[i].fut, &old);
+            if (old<2) {
+                if (!numnewset) {
+                    min = rett->trigs[i].posmm;
+                }
+                numnewset++;
+            }
         }
-        nt++;
+        numtrig++;
         trace_train_trig_set(ctrl_tasklet.last_tick, tidx, tvars, seq, rett->trigs[i].tag, rett->trigs[i].posmm, rett->trigs[i].fut, ignore);
     }
     // sanity check
-    if (nt && !ns) {
+    if (numtrig && !numset) {
         FatalError("NoTr", "no trig selected", Error_CtrlNoTrig);
     }
 }

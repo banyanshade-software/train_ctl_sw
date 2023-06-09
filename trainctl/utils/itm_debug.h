@@ -35,7 +35,7 @@ extern uint32_t debug_flags;
 #define DBG_CAN     (1UL<<20)
 #define DBG_OAM     (1UL<<21)
 #define DBG_SERVO   (1UL<<22)
-
+#define DBG_BRAKE   (1UL<<23)
 #define DBG_ERR		(1UL<<31)
 
 

@@ -60,8 +60,8 @@ static void _sendlow_c1c2_dir(int tidx, train_ctrl_t *tvars);
 // -----------------------------------------------------------------
 
 
-static uint32_t pose_convert_from_mm(const conf_train_t *tconf, int32_t mm);
-static uint32_t pose_convert_to_mm( const conf_train_t *tconf, int32_t poseval);
+static int32_t pose_convert_from_mm(const conf_train_t *tconf, int32_t mm);
+static int32_t pose_convert_to_mm( const conf_train_t *tconf, int32_t poseval);
 
 // -----------------------------------------------------------------
 
@@ -1278,6 +1278,7 @@ static void _set_speed(int tidx, train_ctrl_t *tvars, int signed_speed, int appl
     
     if (brakerc>0) {
         // start brake
+        itm_debug3(DBG_BRAKE, "BRAKE:on", tidx, brakerc, tvars->_state);
         int sdir = tvars->_sdir;
         const conf_train_t *conf = conf_train_get(tidx);
         int32_t stopposmm = ctrl3_getcurpossmm(tvars, conf_train_get(tidx), (sdir<0)) + brakerc*sdir;
@@ -1291,6 +1292,7 @@ static void _set_speed(int tidx, train_ctrl_t *tvars, int signed_speed, int appl
         mqf_write_from_ctrl(&m);
     } else  if (tvars->brake) {
         // clear brake
+        itm_debug3(DBG_BRAKE, "BRAKE:off", tidx, brakerc, tvars->_state);
         msg_64_t m = {0};
         m.from = MA1_CTRL(tidx);
         m.to = MA1_SPDCTL(tidx);
@@ -1592,18 +1594,18 @@ static uint8_t brake_maxspd(int distmm)
     return (distmm>100) ? 100:distmm;
 }
 */
-static uint32_t pose_convert_from_mm(const conf_train_t *tconf, int32_t mm);
-static uint32_t pose_convert_to_mm( const conf_train_t *tconf, int32_t poseval);
+static int32_t pose_convert_from_mm(const conf_train_t *tconf, int32_t mm);
+static int32_t pose_convert_to_mm( const conf_train_t *tconf, int32_t poseval);
 
 
 
-static uint32_t pose_convert_to_mm( const conf_train_t *tconf, int32_t poseval)
+static int32_t pose_convert_to_mm( const conf_train_t *tconf, int32_t poseval)
 {
     int32_t mm = poseval*10/tconf->pose_per_cm;
     return mm;
 }
 
-static uint32_t pose_convert_from_mm(const conf_train_t *tconf, int32_t mm)
+static int32_t pose_convert_from_mm(const conf_train_t *tconf, int32_t mm)
 {
     int32_t pv = mm * tconf->pose_per_cm / 10;
     return pv;

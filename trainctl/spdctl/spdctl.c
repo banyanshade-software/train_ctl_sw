@@ -362,10 +362,12 @@ static void spdctl_handle_msg(msg_64_t *m)
         case CMD_BRAKE:
                 if (m->subc) {
                     tvars->brake = 1;
-                    tvars->stopposed10 = m->v32;
+                    tvars->stopposed10 = (int16_t) m->v32;
                     tvars->startbreakd10 = tvars->lastposed10;
                     tvars->spdbrake = tvars->target_speed;
+                    itm_debug3(DBG_BRAKE, "BRAK", tidx, tvars->startbreakd10, tvars->stopposed10);
                 } else {
+                    itm_debug1(DBG_BRAKE, "BRAK:off", tidx);
                     tvars->brake = 0;
                     tvars->stopposed10 = 0;
                 }
@@ -647,6 +649,7 @@ static void train_periodic_control(int numtrain, _UNUSED_ uint32_t dt)
     	// XXX possible div0 here
     	int32_t k1000;
     	if (tvars->stopposed10 != tvars->startbreakd10) {
+            itm_debug3(DBG_BRAKE, "trg:k1000", tvars->lastposed10, tvars->startbreakd10, tvars->stopposed10);
     		k1000 = (1000*(tvars->stopposed10-tvars->lastposed10))/(tvars->stopposed10 - tvars->startbreakd10);
     	} else {
     		k1000 = 0;
@@ -658,7 +661,7 @@ static void train_periodic_control(int numtrain, _UNUSED_ uint32_t dt)
         if (abs(target_with_brake)<15) {
             target_with_brake = 0;
         }
-    	itm_debug2(DBG_SPDCTL, "target/b", numtrain, target_with_brake);
+    	itm_debug3(DBG_BRAKE, "trg:brak", numtrain, k1000, target_with_brake);
     }
 
     // inertia before PID

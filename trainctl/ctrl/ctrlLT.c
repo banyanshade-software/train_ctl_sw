@@ -397,25 +397,26 @@ void ctrl3_upcmd_set_desired_speed_zero(int tidx, train_ctrl_t *tvars)
     FatalError("FSM_", "end fsm", Error_FSM_Nothandled);
 }
 
-static void _check_posmm_overflow(int tidx, train_ctrl_t *tvars, int32_t posmm, lsblk_num_t ns)
+static int _check_posmm_overflow(int tidx, train_ctrl_t *tvars, int32_t posmm, lsblk_num_t ns)
 {
     if (ns.n == -1) {
         itm_debug3(DBG_CTRL, "chkpos:n", tidx, tvars->c1_sblk.n, posmm);
-        return;
+        return 1;
     }
     xblkaddr_t c = canton_for_lsblk(ns);
     if (c.v != tvars->can1_xaddr.v) {
         itm_debug3(DBG_CTRL, "chkpos:C", tidx, tvars->can1_xaddr.v, c.v);
-        return;
+        return 1;
     }
     int n1 = get_lsblk_ina3221(tvars->c1_sblk);
     int n2 = get_lsblk_ina3221(ns);
     if (n1 != n2) {
         itm_debug3(DBG_CTRL, "chkpos:I", tidx, n1, n2);
-        return;
+        return 1;
     }
     itm_debug3(DBG_CTRL, "chkpos:K", tidx, tvars->_curposmm, posmm);
     FatalError("Pos", "bad pos on stop", Error_CtrlSanCurPosHigh);
+    return 0;
 }
 
 void ctrl3_stop_detected(int tidx, train_ctrl_t *tvars, int32_t posed10, int frombrake)
@@ -428,12 +429,16 @@ void ctrl3_stop_detected(int tidx, train_ctrl_t *tvars, int32_t posed10, int fro
             int32_t clenmm = 10*get_lsblk_len_cm(tvars->c1_sblk, NULL);
             if (p>tvars->beginposmm+clenmm) {
                 lsblk_num_t ns = next_lsblk(tvars->c1_sblk, 0, NULL);
-                _check_posmm_overflow(tidx, tvars, p, ns);
+                if (_check_posmm_overflow(tidx, tvars, p, ns)) {
+                    p = tvars->beginposmm+clenmm-1;
+                }
             }
         } else if (tvars->_sdir<0) {
             if (p<tvars->beginposmm) {
                 lsblk_num_t ns = next_lsblk(tvars->c1_sblk, 1, NULL);
-                _check_posmm_overflow(tidx, tvars, p, ns);
+                if (_check_posmm_overflow(tidx, tvars, p, ns)) {
+                    p = tvars->beginposmm;
+                }
             }
         }
     }
@@ -782,6 +787,7 @@ void ctrl3_occupency_updated(int tidx, train_ctrl_t *tvars)
                 _set_state(tidx, tvars, train_state_end_of_track0);
                 return;
             }
+            _check_c2(tidx, tvars, &rett);
             // otherwise ignore, update trigs (not needed)
             //_apply_trigs(tidx, tvars, &rett);
             return;
@@ -805,6 +811,7 @@ void ctrl3_occupency_updated(int tidx, train_ctrl_t *tvars)
             }
             if (rc<0) FatalError("FSMd", "setdir", Error_FSM_ChkNeg2);
             // train exit blkwait condition and can start
+            _check_c2(tidx, tvars, &rett);
             _update_spd_limit(tidx, tvars, tvars->_sdir);
             _set_speed(tidx, tvars, tvars->_desired_signed_speed, 1, rc);
             _apply_trigs(tidx, tvars, &rett);

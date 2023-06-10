@@ -565,6 +565,7 @@ static int seqForTrig(train_ctrl_t *tvars, _UNUSED_ uint32_t pose, uint8_t tag, 
         return tvars->pendTrigs[i].num;
     }
     if (!tvars->trigNs) tvars->trigNs=1;
+    if (128==tvars->trigNs) tvars->trigNs=1;
     int sn = tvars->trigNs;
     if (tvars->trigSlt == NUM_PEND_TRIGS) tvars->trigSlt=0;
     int idx = tvars->trigSlt;
@@ -578,9 +579,9 @@ static int seqForTrig(train_ctrl_t *tvars, _UNUSED_ uint32_t pose, uint8_t tag, 
     tvars->pendTrigs[idx].sblk = tvars->c1_sblk;
     tvars->pendTrigs[idx].futc2 = fut;
     tvars->pendTrigs[idx].done = 0;
-    if (sn==10) {
+    /*if (sn==127) {
         printf("bh");
-    }
+    }*/
     return sn;
     
     //return -1;
@@ -1156,7 +1157,9 @@ static inline void _set_one_trig(int numtrain, train_ctrl_t *tvars, const conf_t
     int seq = seqForTrig(tvars, pose, tag, fut, pold);
     if (*pold == 2) return;
     if (seq<0) {
-        FatalError("NOTN", "no trig seq", Error_CtrlBadPose);
+        FatalError("NOTN", "no trig seq", Error_CtrlNoTrigSeq);
+    } else if (seq>0x7F) {
+        FatalError("S128", "bad seqnum", Error_CtrlBadTrigSeq);
     }
     *pseq = seq;
     if (abs(pose)>32000*10) {

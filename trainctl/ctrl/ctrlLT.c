@@ -443,7 +443,8 @@ void ctrl3_stop_detected(int tidx, train_ctrl_t *tvars, int32_t posed10, int fro
         }
     }
     tvars->_curposmm = p;
-    
+    tvars->purgeTrigs = 1;
+
     switch (tvars->_state) {
         case train_state_off:
             break;
@@ -1394,12 +1395,18 @@ static void _sendlow_c1c2_dir(int tidx, train_ctrl_t *tvars)
 
     mqf_write_from_ctrl(&m);
 }
+static void bh(void)
+{
+}
 
 static void _set_state(int tidx, train_ctrl_t *tvars, train_state_t newstate)
 {
     if (tvars->_state == newstate) return;
     train_state_t oldstate = tvars->_state;
     tvars->_state = newstate;
+    if (newstate == train_state_blkwait) {
+        bh();
+    }
     if (newstate != train_state_running) {
         tvars->canMeasureOnCanton = tvars->canMeasureOnSblk = 0;
     }

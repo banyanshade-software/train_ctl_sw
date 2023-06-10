@@ -69,8 +69,8 @@ static conf_train_t conf_train[8] = {
      .postIIR = 0,
      .slipping = 120,
      .pose_per_cm = 450,
-     .trainlen_left_cm = 6,
-     .trainlen_right_cm = 18,
+     .trainlen_left_cm = 1,
+     .trainlen_right_cm = 1,
   },
   {     // 1
      .pidctl = {
@@ -292,8 +292,8 @@ static conf_train_t conf_train[4] = {
      .postIIR = 0,
      .slipping = 120,
      .pose_per_cm = 450,
-     .trainlen_left_cm = 6,
-     .trainlen_right_cm = 18,
+     .trainlen_left_cm = 1,
+     .trainlen_right_cm = 1,
   },
   {     // 1
      .pidctl = {
@@ -426,8 +426,8 @@ static conf_train_t conf_train[8] = {
      .postIIR = 0,
      .slipping = 120,
      .pose_per_cm = 450,
-     .trainlen_left_cm = 6,
-     .trainlen_right_cm = 18,
+     .trainlen_left_cm = 1,
+     .trainlen_right_cm = 1,
   },
   {     // 1
      .pidctl = {
@@ -649,8 +649,8 @@ static conf_train_t conf_train[8] = {
      .postIIR = 0,
      .slipping = 120,
      .pose_per_cm = 450,
-     .trainlen_left_cm = 6,
-     .trainlen_right_cm = 18,
+     .trainlen_left_cm = 1,
+     .trainlen_right_cm = 1,
   },
   {     // 1
      .pidctl = {
@@ -917,8 +917,8 @@ static conf_train_t conf_train[4] = {
      .postIIR = 0,
      .slipping = 120,
      .pose_per_cm = 450,
-     .trainlen_left_cm = 6,
-     .trainlen_right_cm = 18,
+     .trainlen_left_cm = 1,
+     .trainlen_right_cm = 1,
   },
   {     // 1
      .pidctl = {

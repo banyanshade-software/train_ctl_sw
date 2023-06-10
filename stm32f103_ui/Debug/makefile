@@ -13,6 +13,8 @@ RM := rm -rf
 -include trainctl/stm32/subdir.mk
 -include trainctl/oam/subdir.mk
 -include trainctl/msg/subdir.mk
+-include trainctl/gen/msgdef_gen/subdir.mk
+-include trainctl/gen/config_gen/subdir.mk
 -include trainctl/config/_str/subdir.mk
 -include trainctl/config/subdir.mk
 -include trainctl/IHM/subdir.mk

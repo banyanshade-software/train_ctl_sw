@@ -35,6 +35,8 @@ stm32dev/disp_tft \
 trainctl/IHM \
 trainctl/config/_str \
 trainctl/config \
+trainctl/gen/config_gen \
+trainctl/gen/msgdef_gen \
 trainctl \
 trainctl/msg \
 trainctl/oam \

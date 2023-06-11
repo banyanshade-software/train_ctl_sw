@@ -203,6 +203,7 @@ static void spdctl_reset(void)
 	for (int  i = 0; i<NUM_TRAINS; i++) {
         trspc_vars[i].dirbits = 0;
         for (int k=0; k<4; k++) trspc_vars[i].Cx[k].v = 0xFF;
+        trspc_vars[i].pidvars.stopped = 1;
 		//trspc_vars[i].C1x.v = 0xFF;
 		//trspc_vars[i].C2x.v = 0xFF;
 	}

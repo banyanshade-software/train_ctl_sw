@@ -241,8 +241,6 @@ static void _adjust_posemm(int tidx, train_ctrl_t *tvars, int expmm, int measmm)
     fact100 = 100+(fact100/n);
     wconf->pose_per_cm = pose*fact100/100;
     if ((1)) {
-        //int np = tvars->_curposmm;
-        //int nmm = pose_convert_to_mm(tconf, np*10);
         itm_debug3(DBG_CTRL|DBG_ADJ, "poserr<", tidx, measmm, expmm);
         itm_debug3(DBG_CTRL|DBG_ADJ, "poserr>", tidx, fact100o, fact100);
         itm_debug3(DBG_CTRL|DBG_ADJ, "adjpcm", tidx, pose, wconf->pose_per_cm);

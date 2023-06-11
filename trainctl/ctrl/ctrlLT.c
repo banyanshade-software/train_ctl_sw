@@ -241,7 +241,7 @@ static void _adjust_posemm(int tidx, train_ctrl_t *tvars, int expmm, int measmm)
     fact100 = 100+(fact100/n);
     wconf->pose_per_cm = pose*fact100/100;
     if ((1)) {
-        int np = tvars->_curposmm;
+        //int np = tvars->_curposmm;
         //int nmm = pose_convert_to_mm(tconf, np*10);
         itm_debug3(DBG_CTRL|DBG_ADJ, "poserr<", tidx, measmm, expmm);
         itm_debug3(DBG_CTRL|DBG_ADJ, "poserr>", tidx, fact100o, fact100);
@@ -260,7 +260,7 @@ static void adjust_measure_lens1(int tidx, train_ctrl_t *tvars)
 {
     int8_t steep = 0;
     int nmm = tvars->_curposmm;  // TODO only ok because same node
-    const conf_train_t *tconf = conf_train_get(tidx);
+    //const conf_train_t *tconf = conf_train_get(tidx);
     int l = get_lsblk_len_cm(tvars->c1_sblk, &steep);
     if (adjust_on_steep && steep) return;
     _adjust_posemm(tidx, tvars, l*10, nmm-tvars->beginposmm);
@@ -270,7 +270,7 @@ static void adjust_measure_lens1(int tidx, train_ctrl_t *tvars)
 static void adjust_measure_ends1fromc1(int tidx, train_ctrl_t *tvars)
 {
     int np = tvars->_curposmm;
-    const conf_train_t *tconf = conf_train_get(tidx);
+    //const conf_train_t *tconf = conf_train_get(tidx);
     //int nmm = pose_convert_to_mm(tconf, np*10);
     lsblk_num_t s = tvars->c1_sblk;
     int8_t steep = 0;

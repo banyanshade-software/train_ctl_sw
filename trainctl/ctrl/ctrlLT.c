@@ -1097,7 +1097,12 @@ static void freeback(int tidx, train_ctrl_t *tvars)
             return;
         }
         if (tvars->freecanton.v == tvars->can2_xaddr.v) {
-            FatalError("FreC2", "free c2?", Error_CtrlFreeC2);
+        	if (tvars->_state == train_state_running) {
+        		FatalError("FreC2", "free c2?", Error_CtrlFreeC2);
+        	} else {
+        		itm_debug3(DBG_ERR|DBG_CTRL, "free c2", tidx, tvars->_state, tvars->freecanton.v);
+
+        	}
             return;
         }
         if (tvars->freecanton.v == tvars->canOld_xaddr.v) {
@@ -1181,15 +1186,19 @@ static inline void _set_one_trig(int numtrain, train_ctrl_t *tvars, const conf_t
     //m.to =  MA_TRAIN_SC(numtrain);
     TO_CANTON(m, canaddr);
     m.cmd = CMD_POSE_SET_TRIG;
-    //const conf_train_t *tconf = conf_train_get(numtrain);
-    if (tconf->reversed)  m.va16 = -pose/10;
-    else m.va16 = pose/10;
+    //const conf_train_t *tconf = conf_train_get(numtrain)
+
+    // reverse handling done by pose_convert_from_mm
+    //if (tconf->reversed)  m.va16 = -pose/10;
+    //else
+    m.va16 = pose/10;
     m.vcu8 = (uint8_t) seq;
     if (tvars->purgeTrigs) {
         if (!num) m.vcu8 |= 0x80;
         tvars->purgeTrigs = 0;
     }
     m.vb8 = dir;
+    if (tconf->reversed) m.vb8 = -dir;
     itm_debug3(DBG_CTRL|DBG_POSEC, "S_TRIG", numtrain, tag, dir);
     mqf_write_from_ctrl(&m);
 }
@@ -1432,6 +1441,7 @@ static void _set_state(int tidx, train_ctrl_t *tvars, train_state_t newstate)
             }
             if (tvars->can2_xaddr.v != 0xFF) {
                 itm_debug2(DBG_ERR|DBG_CTRL, "st/c2", tidx, tvars->can2_xaddr.v);
+                tvars->can2_xaddr.v = 0xFF;
             }
             itm_debug3(DBG_CTRL, "freestp", tidx, tvars->_state, tvars->_sdir);
             const conf_train_t *tconf = conf_train_get(tidx);
@@ -1446,9 +1456,7 @@ static void _set_state(int tidx, train_ctrl_t *tvars, train_state_t newstate)
                 tvars->canOld_xaddr.v = 0xFF;
                 tvars->c1c2 = 0;
             }
-            if (tvars->can2_xaddr.v != 0xFF) {
-                tvars->can2_xaddr.v = 0xFF;
-            }
+
             break;
     }
     //  sanity check
@@ -1621,12 +1629,20 @@ static int32_t pose_convert_to_mm( const conf_train_t *tconf, int32_t poseval);
 
 static int32_t pose_convert_to_mm( const conf_train_t *tconf, int32_t poseval)
 {
+   
     int32_t mm = poseval*10/tconf->pose_per_cm;
+    if (tconf->reversed) {
+        //itm_debug2(DBG_ERR, "bh", poseval, mm);
+        mm = -mm;
+    }
     return mm;
 }
 
 static int32_t pose_convert_from_mm(const conf_train_t *tconf, int32_t mm)
 {
+    if (tconf->reversed) {
+        mm = -mm;
+    }
     int32_t pv = mm * tconf->pose_per_cm / 10;
     return pv;
 }

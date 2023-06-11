@@ -19,6 +19,7 @@
 
 #include "../topology/topologyP.h"
 #include "../topology/occupency.h"
+#include "../config/conf_canton.h"
 
 static void refresh_ctc_turnout(xtrnaddr_t tn)
 {

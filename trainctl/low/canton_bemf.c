@@ -148,34 +148,35 @@ static void _clear_trig(canton_bemf_t *cvars)
     }
 }
 
-static int _add_trig(canton_bemf_t *cvars, uint8_t from, int32_t posval, uint8_t posetag, int8_t dir)
+static int _add_trig(canton_bemf_t *cvars, uint8_t from, int32_t posval, uint8_t posnumsn, int8_t dir)
 {
-    itm_debug3(DBG_POSEC, "set trg", posetag, dir, posval);
+    itm_debug3(DBG_POSEC, "set trg", posnumsn, dir, posval);
     if (!posval) {
-        itm_debug1(DBG_ERR|DBG_POSEC, "nul trig", posetag);
+        itm_debug1(DBG_ERR|DBG_POSEC, "nul trig", posnumsn);
         posval = 1; // 0 means no trigger
     }
     for (int pi=0; pi<NUM_TRIGS; pi++) {
-        if (cvars->trigs[pi].posval == posval) {
-            if (cvars->trigs[pi].posnum == posetag) {
-                itm_debug2(DBG_ERR|DBG_POSEC, "dup trig", posval, posetag);
+        if (cvars->trigs[pi].posnum == posnumsn) {
+            if (cvars->trigs[pi].posval == posval) {
+                itm_debug2(DBG_ERR|DBG_POSEC, "dup trig", posval, posnumsn);
                 cvars->trigs[pi].trigdir = dir;
                 cvars->trigs[pi].sender = from;
                 return -1; // ignore it
             }
             // same poseval but different tag ; not  an error here,
             // but for now it could be a bug in ctrlP.c
-            itm_debug3(DBG_ERR|DBG_POSEC, "same trig", posval, cvars->trigs[pi].posnum, posetag);
+            itm_debug3(DBG_ERR|DBG_POSEC, "same trig", posval, cvars->trigs[pi].posnum, posnumsn);
+
         }
         if (cvars->trigs[pi].trigdir) continue;
-        itm_debug3(DBG_POSEC, "add pi", pi, posetag, posval);
+        itm_debug3(DBG_POSEC, "add pi", pi, posnumsn, posval);
         cvars->trigs[pi].posval = posval;
         cvars->trigs[pi].trigdir = dir;
-        cvars->trigs[pi].posnum = posetag;
+        cvars->trigs[pi].posnum = posnumsn;
         cvars->trigs[pi].sender = from;
         return pi;
      }
-     itm_debug1(DBG_ERR|DBG_POSEC, "NO TRIG", posetag);
+     itm_debug1(DBG_ERR|DBG_POSEC, "NO TRIG", posnumsn);
      FatalError("NOTR", "no trig", Error_CtrlBadPose);
      return -1;
 }

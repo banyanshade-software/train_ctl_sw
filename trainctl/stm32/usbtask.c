@@ -224,7 +224,7 @@ static void _send_bytes(const uint8_t *b, int len)
 	//if ((1)) return; //XXX
 
 	if ((len<=0) || (len>(int)sizeof(txbuf))) {
-		FatalError("sndbyt", "bad len for _send_bytes", Error_Other);
+		FatalError("sndbyt", "bad len for _send_bytes", Error_Uart_Len);
 	}
 	while (txonprogress) {
 		uint32_t notif = 0;

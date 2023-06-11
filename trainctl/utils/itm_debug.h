@@ -26,7 +26,6 @@ extern uint32_t debug_flags;
 #define DBG_ADC 	(1UL<<12)
 #define DBG_POSE	(1UL<<13)
 #define DBG_POSEC	(1UL<<14)
-//#define DBG_CTRLHI	(1UL<<15)
 #define DBG_TRKPLN	(1UL<<15)
 #define DBG_USB		(1UL<<16)
 #define DBG_LED     (1UL<<17)
@@ -35,7 +34,8 @@ extern uint32_t debug_flags;
 #define DBG_CAN     (1UL<<20)
 #define DBG_OAM     (1UL<<21)
 #define DBG_SERVO   (1UL<<22)
-
+#define DBG_BRAKE   (1UL<<23)
+#define DBG_ADJ     (1UL<<24)
 #define DBG_ERR		(1UL<<31)
 
 

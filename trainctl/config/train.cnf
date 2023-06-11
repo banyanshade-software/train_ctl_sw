@@ -102,11 +102,11 @@ config train {
 
     user uint8_t trainlen_left_cm
         = (default) 10
-        = (all:0) 6
+        = (all:0) 1
         = (all:1) 15;
     user uint8_t trainlen_right_cm
         = (default) 10
-        = (all:0) 18
+        = (all:0) 1
         = (all:1) 2;
     
 } num = (mainV0) 8

@@ -146,7 +146,7 @@ void next_lsblk_nums(lsblk_num_t blknum, uint8_t left, lsblk_num_t *pb1, lsblk_n
     tn->v = -1;
     if (blknum.n<0) {
     	itm_debug1(DBG_ERR|DBG_CTRL, "next_lsblk_nums", 0);
-    	FatalError("ABRT", "next_lsblk_nums", Error_Abort);
+    	FatalError("ABRT", "next_lsblk_nums", Error_Topology_BlkNum);
     	return;
     }
 

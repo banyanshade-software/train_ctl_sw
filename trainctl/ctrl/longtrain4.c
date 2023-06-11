@@ -74,7 +74,7 @@ static const int margin_c2free_len_mm = 100;
 static void _add_trig(train_ctrl_t *tvars, int left, int c1len, rettrigs_t *rett, pose_trig_tag_t tag, int pos, uint8_t fut)
 {
     if (rett->ntrig>=NUMTRIGS) {
-        FatalError("ntrg", "too many trigs", Error_Abort);
+        FatalError("ntrg", "too many trigs", Error_Ctrl_TooManyTrigs);
         return;
     }
     if (!left) {
@@ -170,15 +170,6 @@ int lt4_get_trigs(int tidx, int left, train_ctrl_t *tvars, const conf_train_t *t
 
 int _lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int left,  rettrigs_t *rett, int checkfreeback)
 {
-    /*int stopped = 0;
-    if (tvars->_sdir) {
-        if ((left &&(tvars->_sdir>0)) || (!left && (tvars->_sdir<0))) {
-            FatalError("BadDir", "bad dir lt4_get_trigs", Error_Abort);
-        }
-    } else {
-        stopped = 1;
-    }*/
-    
     int maxadvancefortrig;
     lsblk_num_t c1 = tvars->c1_sblk;
     int c1len = 10*get_lsblk_len_cm(c1, NULL);
@@ -239,9 +230,6 @@ int _lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int
         int r;
         if (tvars->_sdir) {
             r = poshead+maxmargin > totallen+alen;
-            /*if ((left &&(tvars->_sdir>0)) || (!left && (tvars->_sdir<0))) {
-                FatalError("BadDir", "bad dir lt4_get_trigs", Error_Abort);
-            }*/
         } else {
             r = poshead > totallen+alen;
         }
@@ -270,6 +258,16 @@ int _lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int
                     } else {
                         // pos+margin_stop_len_mm <= totallen
                         rc = brake_len_mm+trg-posloco;
+                        /*if (tvars->brake_for_eot||tvars->brake_for_blkwait) {
+                            FatalError("BrkS", "brake reason already set", Error_CtrlAlreadyBrake);
+                        }*/
+                        if (a) {
+                            tvars->brake_for_blkwait = 1;
+                            tvars->brake_for_eot = 0;
+                        } else {
+                            tvars->brake_for_blkwait = 0;
+                            tvars->brake_for_eot = 1;
+                        }
                     }
                 } else {
                     rc = -1;

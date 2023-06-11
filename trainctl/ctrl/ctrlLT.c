@@ -43,7 +43,7 @@ uint8_t ctrl_flag_notify_speed = 1;
 // -----------------------------------------------------------------
 
 static int _train_check_dir(int tidx, train_ctrl_t *tvars, int sdir, rettrigs_t *rett);
-static void _apply_trigs(int tidx, train_ctrl_t *tvars, const rettrigs_t *rett);
+static void _apply_trigs(int tidx, train_ctrl_t *tvars,  rettrigs_t *rett);
 
 // -----------------------------------------------------------------
 
@@ -60,8 +60,8 @@ static void _sendlow_c1c2_dir(int tidx, train_ctrl_t *tvars);
 // -----------------------------------------------------------------
 
 
-static uint32_t pose_convert_from_mm(const conf_train_t *tconf, int32_t mm);
-static uint32_t pose_convert_to_mm( const conf_train_t *tconf, int32_t poseval);
+static int32_t pose_convert_from_mm(const conf_train_t *tconf, int32_t mm);
+static int32_t pose_convert_to_mm( const conf_train_t *tconf, int32_t poseval);
 
 // -----------------------------------------------------------------
 
@@ -210,7 +210,9 @@ void ctrl3_set_mode(int tidx, train_ctrl_t *tvar, train_mode_t mode)
   
 }
 
-static const int adjust_pose = 1;
+static const int adjust_pose = 1;    // (1) set to 0 to completely disable adjustment
+static const int adjust_dryrun = 0;  // (0) set to 1 for dryrun (display adjust)
+static int adjust_on_steep = 0;     // (0)
 
 static void _adjust_posemm(int tidx, train_ctrl_t *tvars, int expmm, int measmm)
 {
@@ -220,19 +222,30 @@ static void _adjust_posemm(int tidx, train_ctrl_t *tvars, int expmm, int measmm)
     conf_train_t *wconf = (conf_train_t *)tconf; // writable
     int pose = tconf->pose_per_cm;
     int n = tvars->num_pos_adjust;
+    
+    
+    int fact100o = (measmm*100)/expmm;
+    
+    if (adjust_dryrun) {
+    	itm_debug3(DBG_ADJ, "ADJc", tidx, pose, tvars->_sdir);
+    	itm_debug3(DBG_ADJ, "ADJe", tidx, expmm, measmm);
+        itm_debug3(DBG_ADJ, "ADJm", tidx, fact100o, pose*fact100o/100);
+        return;
+    }
+    
+    int fact100 = fact100o-100;
     if (n<0xFF) tvars->num_pos_adjust++;
     if (n>20) n = 20;
     if (n<2) n=2;
     
-    int fact100 = (measmm*100)/expmm-100;
     fact100 = 100+(fact100/n);
     wconf->pose_per_cm = pose*fact100/100;
     if ((1)) {
         int np = tvars->_curposmm;
-        int nmm = pose_convert_to_mm(tconf, np*10);
-        itm_debug3(DBG_CTRL, "poserr<", tidx, measmm, expmm);
-        itm_debug3(DBG_CTRL, "poserr>", tidx, nmm, expmm);
-        itm_debug3(DBG_CTRL, "adjpcm", tidx, pose, wconf->pose_per_cm);
+        //int nmm = pose_convert_to_mm(tconf, np*10);
+        itm_debug3(DBG_CTRL|DBG_ADJ, "poserr<", tidx, measmm, expmm);
+        itm_debug3(DBG_CTRL|DBG_ADJ, "poserr>", tidx, fact100o, fact100);
+        itm_debug3(DBG_CTRL|DBG_ADJ, "adjpcm", tidx, pose, wconf->pose_per_cm);
     }
     /*
     tvars->_curposmm = pose_convert_to_mm(tconf, cposd10*10);
@@ -246,20 +259,19 @@ static void _adjust_posemm(int tidx, train_ctrl_t *tvars, int expmm, int measmm)
 static void adjust_measure_lens1(int tidx, train_ctrl_t *tvars)
 {
     int8_t steep = 0;
-    int np = tvars->_curposmm;  // TODO only ok because same node
+    int nmm = tvars->_curposmm;  // TODO only ok because same node
     const conf_train_t *tconf = conf_train_get(tidx);
-    int nmm = pose_convert_to_mm(tconf, np*10);
     int l = get_lsblk_len_cm(tvars->c1_sblk, &steep);
-    if (steep) return;
+    if (adjust_on_steep && steep) return;
     _adjust_posemm(tidx, tvars, l*10, nmm-tvars->beginposmm);
 }
 
 
 static void adjust_measure_ends1fromc1(int tidx, train_ctrl_t *tvars)
 {
-    int np = tvars->_curposmm;  // TODO only ok because same node
+    int np = tvars->_curposmm;
     const conf_train_t *tconf = conf_train_get(tidx);
-    int nmm = pose_convert_to_mm(tconf, np*10);
+    //int nmm = pose_convert_to_mm(tconf, np*10);
     lsblk_num_t s = tvars->c1_sblk;
     int8_t steep = 0;
     int l = 0;
@@ -285,7 +297,7 @@ static void adjust_measure_ends1fromc1(int tidx, train_ctrl_t *tvars)
             }
         }
         if (othercanton || (s.n == -1) || (canton_for_lsblk(s).v != tvars->can1_xaddr.v)) {
-            _adjust_posemm(tidx, tvars, l*10, nmm);
+            _adjust_posemm(tidx, tvars, l*10, np);
             return;
         }
     }
@@ -397,9 +409,54 @@ void ctrl3_upcmd_set_desired_speed_zero(int tidx, train_ctrl_t *tvars)
     FatalError("FSM_", "end fsm", Error_FSM_Nothandled);
 }
 
-
-void ctrl3_stop_detected(int tidx, train_ctrl_t *tvars)
+static int _check_posmm_overflow(int tidx, train_ctrl_t *tvars, int32_t posmm, lsblk_num_t ns)
 {
+    if (ns.n == -1) {
+        itm_debug3(DBG_CTRL, "chkpos:n", tidx, tvars->c1_sblk.n, posmm);
+        return 1;
+    }
+    xblkaddr_t c = canton_for_lsblk(ns);
+    if (c.v != tvars->can1_xaddr.v) {
+        itm_debug3(DBG_CTRL, "chkpos:C", tidx, tvars->can1_xaddr.v, c.v);
+        return 1;
+    }
+    int n1 = get_lsblk_ina3221(tvars->c1_sblk);
+    int n2 = get_lsblk_ina3221(ns);
+    if (n1 != n2) {
+        itm_debug3(DBG_CTRL, "chkpos:I", tidx, n1, n2);
+        return 1;
+    }
+    itm_debug3(DBG_CTRL, "chkpos:K", tidx, tvars->_curposmm, posmm);
+    FatalError("Pos", "bad pos on stop", Error_CtrlSanCurPosHigh);
+    return 0;
+}
+
+void ctrl3_stop_detected(int tidx, train_ctrl_t *tvars, int32_t posed10, int frombrake)
+{
+    const conf_train_t *tconf = conf_train_get(tidx);
+    int32_t p = pose_convert_to_mm(tconf, posed10*10);
+    itm_debug3(DBG_CTRL, "stop det", tidx, tvars->_curposmm, p);
+    if ((1)) {
+        if (tvars->_sdir>0) {
+            int32_t clenmm = 10*get_lsblk_len_cm(tvars->c1_sblk, NULL);
+            if (p>tvars->beginposmm+clenmm) {
+                lsblk_num_t ns = next_lsblk(tvars->c1_sblk, 0, NULL);
+                if (_check_posmm_overflow(tidx, tvars, p, ns)) {
+                    p = tvars->beginposmm+clenmm-1;
+                }
+            }
+        } else if (tvars->_sdir<0) {
+            if (p<tvars->beginposmm) {
+                lsblk_num_t ns = next_lsblk(tvars->c1_sblk, 1, NULL);
+                if (_check_posmm_overflow(tidx, tvars, p, ns)) {
+                    p = tvars->beginposmm;
+                }
+            }
+        }
+    }
+    tvars->_curposmm = p;
+    tvars->purgeTrigs = 1;
+
     switch (tvars->_state) {
         case train_state_off:
             break;
@@ -410,10 +467,36 @@ void ctrl3_stop_detected(int tidx, train_ctrl_t *tvars)
             break;
         
         case train_state_running:
+            //_updated_while_running(tidx, tvars);
             if (tvars->_target_unisgned_speed == 0) {
                 _set_dir(tidx, tvars, 0);
                 _set_state(tidx, tvars, train_state_station);
+            } else if (frombrake) {
+                if (tvars->brake_for_eot && tvars->brake_for_blkwait) {
+                    FatalError("Brk2", "both eot and blk for brake", Error_CtrlBadBrake);
+                }
+                itm_debug3(DBG_CTRL, "stop from brk", tidx, tvars->brake_for_eot, tvars->brake_for_blkwait);
+                if (tvars->brake_for_eot) {
+                    _set_speed(tidx, tvars, 0, 1, 0);
+                    _set_dir(tidx, tvars, 0);
+                    _set_state(tidx, tvars, train_state_station);
+                } else if (tvars->brake_for_blkwait) {
+                    if (tvars->_desired_signed_speed) {
+                        int spd = tvars->_desired_signed_speed;
+                        _set_speed(tidx, tvars, 0, 1, 0);
+                        _set_speed(tidx, tvars, spd, 0, 0);
+                        _set_state(tidx, tvars, train_state_blkwait);
+                    } else {
+                        itm_debug1(DBG_ERR|DBG_CTRL, "brk_w_0", tidx);
+                        _set_dir(tidx, tvars, 0);
+                        _set_state(tidx, tvars, train_state_station);
+                    }
+                } else {
+                    FatalError("Brk?", "unknown brake cause", Error_CtrlUnknownBrake);
+                }
             }
+            tvars->brake_for_eot = 0;
+            tvars->brake_for_blkwait = 0;
             break;
             
         case train_state_blkwait0:
@@ -485,15 +568,17 @@ static pose_trig_tag_t seqToTag(train_ctrl_t *tvars, uint8_t trigsn, int *ignc, 
     *ignc = 4;
     return ret;
 }
-static int seqForTrig(train_ctrl_t *tvars, _UNUSED_ uint32_t pose, uint8_t tag, uint8_t fut)
+static int seqForTrig(train_ctrl_t *tvars, _UNUSED_ uint32_t pose, uint8_t tag, uint8_t fut, int *pold)
 {
     // already stored ?
     for (int i=0; i<NUM_PEND_TRIGS; i++) {
         if (tvars->pendTrigs[i].postag != tag) continue;
         if (tvars->pendTrigs[i].sblk.n != tvars->c1_sblk.n) continue;
+        *pold = (tvars->pendTrigs[i].done) ? 2 : 1;
         return tvars->pendTrigs[i].num;
     }
     if (!tvars->trigNs) tvars->trigNs=1;
+    if (128==tvars->trigNs) tvars->trigNs=1;
     int sn = tvars->trigNs;
     if (tvars->trigSlt == NUM_PEND_TRIGS) tvars->trigSlt=0;
     int idx = tvars->trigSlt;
@@ -507,9 +592,9 @@ static int seqForTrig(train_ctrl_t *tvars, _UNUSED_ uint32_t pose, uint8_t tag, 
     tvars->pendTrigs[idx].sblk = tvars->c1_sblk;
     tvars->pendTrigs[idx].futc2 = fut;
     tvars->pendTrigs[idx].done = 0;
-    if (sn==10) {
+    /*if (sn==127) {
         printf("bh");
-    }
+    }*/
     return sn;
     
     //return -1;
@@ -603,7 +688,7 @@ void ctrl3_pose_triggered(int tidx, train_ctrl_t *tvars, uint8_t trigsn, xblkadd
                         int32_t slen = get_lsblk_len_cm(ns, NULL)*10;
                         tvars->beginposmm = tvars->_curposmm - slen; // TODO adjust for trig delay
                     } else {
-                        FatalError("dir0", "sdir 0 on trig", Error_Other);
+                        FatalError("dir0", "sdir 0 on trig", Error_CtrlDir0Trig);
                     }
                     trace_train_setc1(ctrl_tasklet.last_tick, tidx, tvars, ns, 0);
                     tvars->c1_sblk = ns;
@@ -716,6 +801,7 @@ void ctrl3_occupency_updated(int tidx, train_ctrl_t *tvars)
                 _set_state(tidx, tvars, train_state_end_of_track0);
                 return;
             }
+            _check_c2(tidx, tvars, &rett);
             // otherwise ignore, update trigs (not needed)
             //_apply_trigs(tidx, tvars, &rett);
             return;
@@ -739,6 +825,7 @@ void ctrl3_occupency_updated(int tidx, train_ctrl_t *tvars)
             }
             if (rc<0) FatalError("FSMd", "setdir", Error_FSM_ChkNeg2);
             // train exit blkwait condition and can start
+            _check_c2(tidx, tvars, &rett);
             _update_spd_limit(tidx, tvars, tvars->_sdir);
             _set_speed(tidx, tvars, tvars->_desired_signed_speed, 1, rc);
             _apply_trigs(tidx, tvars, &rett);
@@ -836,6 +923,7 @@ void ctrl3_evt_entered_c2(int tidx, train_ctrl_t *tvars, uint8_t from_bemf)
     tvars->can1_xaddr = tvars->can2_xaddr;
     tvars->can2_xaddr.v = 0xFF;
     tvars->c1c2dir_changed = 1;
+    itm_debug1(DBG_CTRL, "c1c2 b", tidx);
     if (tvars->pow_c2_future.v != 0xFF) {
         _set_and_power_c2(tidx, tvars); // this will also call _sendlow_c1c2_dir
     } else {
@@ -944,6 +1032,7 @@ static void _evt_leaved_c1old(int tidx, train_ctrl_t *tvars)
     
     tvars->canOld_xaddr.v = 0xFF;
     tvars->c1c2dir_changed = 1;
+    itm_debug1(DBG_CTRL, "c1c2 a", tidx);
     _sendlow_c1c2_dir(tidx, tvars);
 
     if (tvars->pow_c2_future.v != 0xFF) {
@@ -1006,11 +1095,11 @@ static void freeback(int tidx, train_ctrl_t *tvars)
     if (tvars->freecanton.v != 0xFF) {
         // XXX remove me. For debug, test on canton is enough
         if (tvars->freecanton.v == tvars->can1_xaddr.v) {
-            FatalError("FreC1", "free c1?", Error_Other);
+            FatalError("FreC1", "free c1?", Error_CtrlFreeC1);
             return;
         }
         if (tvars->freecanton.v == tvars->can2_xaddr.v) {
-            FatalError("FreC2", "free c2?", Error_Other);
+            FatalError("FreC2", "free c2?", Error_CtrlFreeC2);
             return;
         }
         if (tvars->freecanton.v == tvars->canOld_xaddr.v) {
@@ -1064,7 +1153,7 @@ static int _train_check_dir(int tidx, train_ctrl_t *tvars, int sdir, rettrigs_t 
 
 
 
-static void _set_one_trig(int numtrain, train_ctrl_t *tvars, const conf_train_t *tconf, int num, int8_t dir,  xblkaddr_t canaddr, int32_t pose, uint8_t tag, int *pseq, uint8_t fut)
+static inline void _set_one_trig(int numtrain, train_ctrl_t *tvars, const conf_train_t *tconf, int num, int8_t dir,  xblkaddr_t canaddr, int32_t pose, uint8_t tag, int *pseq, uint8_t fut, int *pold)
 {
     itm_debug3(DBG_CTRL, "set posetr", numtrain, tag, pose);
     if (!tag) {
@@ -1078,9 +1167,12 @@ static void _set_one_trig(int numtrain, train_ctrl_t *tvars, const conf_train_t 
     if (tvars->purgeTrigs) {
         seqPurgeTrigs(tvars);
     }
-    int seq = seqForTrig(tvars, pose, tag, fut);
+    int seq = seqForTrig(tvars, pose, tag, fut, pold);
+    if (*pold == 2) return;
     if (seq<0) {
-        FatalError("NOTN", "no trig seq", Error_CtrlBadPose);
+        FatalError("NOTN", "no trig seq", Error_CtrlNoTrigSeq);
+    } else if (seq>0x7F) {
+        FatalError("S128", "bad seqnum", Error_CtrlBadTrigSeq);
     }
     *pseq = seq;
     if (abs(pose)>32000*10) {
@@ -1106,52 +1198,68 @@ static void _set_one_trig(int numtrain, train_ctrl_t *tvars, const conf_train_t 
 
 
 #define MARGIN_TRIG 150
+static inline int trig_cmp(const struct sttrig a, const struct sttrig b, int left)
+{
+    
+    if (left) {
+        if (a.posmm < b.posmm) return 1;
+    } else {
+        if (a.posmm > b.posmm) return 1;
+    }
+    return 0;
+}
 
-static void _apply_trigs(int tidx, train_ctrl_t *tvars, const rettrigs_t *rett)
+static void _apply_trigs(int tidx, train_ctrl_t *tvars, rettrigs_t *rett)
 {
     const conf_train_t *conf = conf_train_get(tidx);
-    // get min pose (right) or max pose (left)
-    int min=0;
-    int n = 0;
-    /*if ((1)) {
-        if (rett->ntrig>=4) {
-            itm_debug1(DBG_CTRL, "hop", rett->ntrig);
+    // sort trigs
+    // using insersion sort
+    // https://books.google.fr/books?id=kse_7qbWbjsC&pg=PA116&redir_esc=y#v=onepage&q&f=false
+
+    const int left = (tvars->_sdir<0) ? 1 : 0;
+    
+    for (int i=1; i<rett->ntrig; i++) {
+        struct sttrig t = rett->trigs[i];
+        int j;
+        for (j=i; j>0 && trig_cmp(rett->trigs[j-1], t, left); j--) {
+            rett->trigs[j] = rett->trigs[j-1];
         }
-    }*/
-    for (int i=0; i<rett->ntrig;i++) {
-        if (!rett->trigs[i].tag) continue;
-        if (!n) min = rett->trigs[i].posmm;
-        else {
-            if (tvars->_sdir >= 0) {
-                if (rett->trigs[i].posmm < min) min = rett->trigs[i].posmm;
-            } else {
-                if (rett->trigs[i].posmm > min) min = rett->trigs[i].posmm;
-            }
-        }
-        n++;
+        rett->trigs[j] = t;
     }
-    int nt=0; int ns=0;
+
+    
+    int numtrig=0; int numset=0; int numnewset=0;
+    int min = 0;
+    int ignore = 0;
     for (int i=0; i<rett->ntrig;i++) {
         if (!rett->trigs[i].tag) continue;
-        int ignore = 0;
-        if (tvars->_sdir >= 0) {
-            if (rett->trigs[i].posmm > min+MARGIN_TRIG) ignore=1;
-        } else {
-            if (rett->trigs[i].posmm < min-MARGIN_TRIG) ignore=1;
+        if (numnewset) {
+            if (tvars->_sdir >= 0) {
+                if (rett->trigs[i].posmm > min+MARGIN_TRIG) ignore=1;
+            } else {
+                if (rett->trigs[i].posmm < min-MARGIN_TRIG) ignore=1;
+            }
         }
         int seq = 0;
         if (!ignore) {
-            ns++;
+            numset++;
+            int old = 0;
             _set_one_trig(tidx, tvars, conf, i, tvars->_sdir, tvars->can1_xaddr ,
                       pose_convert_from_mm(conf, rett->trigs[i].posmm),
-                      rett->trigs[i].tag, &seq, rett->trigs[i].fut);
+                      rett->trigs[i].tag, &seq, rett->trigs[i].fut, &old);
+            if (old<2) {
+                if (!numnewset) {
+                    min = rett->trigs[i].posmm;
+                }
+                numnewset++;
+            }
         }
-        nt++;
+        numtrig++;
         trace_train_trig_set(ctrl_tasklet.last_tick, tidx, tvars, seq, rett->trigs[i].tag, rett->trigs[i].posmm, rett->trigs[i].fut, ignore);
     }
     // sanity check
-    if (nt && !ns) {
-        FatalError("NoTr", "no trig selected", Error_Other);
+    if (numtrig && !numset) {
+        FatalError("NoTr", "no trig selected", Error_CtrlNoTrig);
     }
 }
 
@@ -1162,6 +1270,7 @@ static void _set_dir(int tidx, train_ctrl_t *tvars, int sdir)
     if (tvars->_sdir == sdir) return;
     tvars->_sdir = sdir;
     tvars->c1c2dir_changed = 1;
+    itm_debug1(DBG_CTRL, "c1c2 c", tidx);
     occupency_set_occupied(tvars->can1_xaddr, tidx, tvars->c1_sblk, tvars->_sdir);
 }
 static void _update_spd_limit(_UNUSED_ int tidx, train_ctrl_t *tvars, _UNUSED_ int sdir)
@@ -1185,6 +1294,7 @@ static void _set_speed(int tidx, train_ctrl_t *tvars, int signed_speed, int appl
     
     if (brakerc>0) {
         // start brake
+        itm_debug3(DBG_BRAKE, "BRAKE:on", tidx, brakerc, tvars->_state);
         int sdir = tvars->_sdir;
         const conf_train_t *conf = conf_train_get(tidx);
         int32_t stopposmm = ctrl3_getcurpossmm(tvars, conf_train_get(tidx), (sdir<0)) + brakerc*sdir;
@@ -1198,6 +1308,7 @@ static void _set_speed(int tidx, train_ctrl_t *tvars, int signed_speed, int appl
         mqf_write_from_ctrl(&m);
     } else  if (tvars->brake) {
         // clear brake
+        itm_debug3(DBG_BRAKE, "BRAKE:off", tidx, brakerc, tvars->_state);
         msg_64_t m = {0};
         m.from = MA1_CTRL(tidx);
         m.to = MA1_SPDCTL(tidx);
@@ -1206,6 +1317,9 @@ static void _set_speed(int tidx, train_ctrl_t *tvars, int signed_speed, int appl
         m.v32 = 0;
         mqf_write_from_ctrl(&m);
         tvars->brake = 0;
+    } else {
+        tvars->brake_for_eot = 0;
+        tvars->brake_for_blkwait = 0;
     }
 }
 
@@ -1229,6 +1343,9 @@ static void _apply_speed(int tidx, train_ctrl_t *tvars)
     
     if (tvars->_target_unisgned_speed == spd) {
         // dont send if same value
+        if (tvars->c1c2dir_changed) {
+            itm_debug3(DBG_CTRL, "c1c2 N", tidx, spd, tvars->c1c2dir_changed);
+        }
         return;
     }
     tvars->_target_unisgned_speed = spd;
@@ -1265,6 +1382,7 @@ static void _sendlow_c1c2_dir(int tidx, train_ctrl_t *tvars)
         FatalError("FSMc", "c1c2dirchanged 0", Error_FSM_C1C2Zero);
         return;
     }
+    itm_debug1(DBG_CTRL, "c1c2dir", tidx);
     tvars->c1c2dir_changed = 0;
     msg_64_t m = {0};
     m.from = MA1_CTRL(tidx);
@@ -1289,12 +1407,18 @@ static void _sendlow_c1c2_dir(int tidx, train_ctrl_t *tvars)
 
     mqf_write_from_ctrl(&m);
 }
+static void bh(void)
+{
+}
 
 static void _set_state(int tidx, train_ctrl_t *tvars, train_state_t newstate)
 {
     if (tvars->_state == newstate) return;
     train_state_t oldstate = tvars->_state;
     tvars->_state = newstate;
+    if (newstate == train_state_blkwait) {
+        bh();
+    }
     if (newstate != train_state_running) {
         tvars->canMeasureOnCanton = tvars->canMeasureOnSblk = 0;
     }
@@ -1330,14 +1454,14 @@ static void _set_state(int tidx, train_ctrl_t *tvars, train_state_t newstate)
             break;
     }
     //  sanity check
-    if ((1)) {
+    if ((0)) {
         // check curposmm coherency
         if (tvars->_curposmm<tvars->beginposmm) {
-            FatalError("cmm1", "curpos before begin", Error_Other);
+            FatalError("cmm1", "curpos before begin", Error_CtrlSanCurPosLow);
         } else {
             int32_t c1len = 10*get_lsblk_len_cm(tvars->c1_sblk, NULL);
             if (tvars->_curposmm>tvars->beginposmm+c1len) {
-                FatalError("cmm2", "curpos after c1len", Error_Other);
+                FatalError("cmm2", "curpos after c1len", Error_CtrlSanCurPosHigh);
             }
         }
     }
@@ -1457,6 +1581,7 @@ static void _set_and_power_c2_fut(int tidx, train_ctrl_t *tvars, xblkaddr_t fut)
     }
     tvars->can2_xaddr = fut;
     tvars->c1c2dir_changed = 1;
+    itm_debug1(DBG_CTRL, "c1c2 d", tidx);
     _sendlow_c1c2_dir(tidx, tvars);
 }
 
@@ -1491,18 +1616,18 @@ static uint8_t brake_maxspd(int distmm)
     return (distmm>100) ? 100:distmm;
 }
 */
-static uint32_t pose_convert_from_mm(const conf_train_t *tconf, int32_t mm);
-static uint32_t pose_convert_to_mm( const conf_train_t *tconf, int32_t poseval);
+static int32_t pose_convert_from_mm(const conf_train_t *tconf, int32_t mm);
+static int32_t pose_convert_to_mm( const conf_train_t *tconf, int32_t poseval);
 
 
 
-static uint32_t pose_convert_to_mm( const conf_train_t *tconf, int32_t poseval)
+static int32_t pose_convert_to_mm( const conf_train_t *tconf, int32_t poseval)
 {
     int32_t mm = poseval*10/tconf->pose_per_cm;
     return mm;
 }
 
-static uint32_t pose_convert_from_mm(const conf_train_t *tconf, int32_t mm)
+static int32_t pose_convert_from_mm(const conf_train_t *tconf, int32_t mm)
 {
     int32_t pv = mm * tconf->pose_per_cm / 10;
     return pv;

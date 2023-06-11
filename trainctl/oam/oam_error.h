@@ -22,13 +22,39 @@ enum fatal_error_code {
 	Error_NoC2s,
 	Error_WrongC1,
 	Error_Slipping,
+
 	Error_CtrlTimerNum,
 	Error_CtrlTSpeed,
 	Error_CtrlNoDir,
+	Error_CtrlDir0Trig,
     Error_CtrlNoC1,
     Error_CtrlNoS1,
 	Error_CtrlNoC1l,
 	Error_CtrlBadPose,
+	Error_CtrlBadTidxSupNum,
+	Error_CtrlBadTidx,
+	Error_CtrlFreeC1,
+	Error_CtrlFreeC2,
+    Error_CtrlNoTrig,
+    Error_CtrlNoTrigSeq,
+    Error_CtrlBadTrigSeq,
+	Error_CtrlSanCurPosLow,
+	Error_CtrlSanCurPosHigh,
+	Error_CtrlBadSubc2,
+	Error_CtrlBadSubc,
+	Error_CtrlDelaySet,
+	Error_Ctrl_PendC1C2,
+	Error_Ctrl_PendC1C2b,
+	Error_Ctrl_BadTurnoutNum,
+	Error_Ctrl_BadTurnoutNum2,
+	Error_Ctrl_TooManyTrigs,
+    Error_CtrlUnknownBrake,
+    Error_CtrlBadBrake,
+    Error_CtrlAlreadyBrake,
+	Error_Spd_badc1,
+
+	Error_Topology_BlkNum,
+
 	Error_DetectBadNum,
 	Error_Ledc,
 	Error_LEdn,
@@ -88,6 +114,13 @@ enum fatal_error_code {
 
     Error_AutoNoS1,
     Error_AutoNoTN,
+	Error_AutoSetS1,
+
+	Error_Uart_Len,
+
+	Error_Planner_NotFoud,
+	Error_Planner_NotFoud2,
+
 };
 
 

@@ -62,6 +62,9 @@ typedef struct {
     uint8_t off_requested:1;
     uint8_t has_delayed_spd:1;
     uint8_t purgeTrigs:1;
+    uint8_t brake_for_eot:1;
+    uint8_t brake_for_blkwait:1;
+    
     int8_t delayed_spd;
     //
     // #longtrain
@@ -121,7 +124,9 @@ void ctrl3_upcmd_set_desired_speed_zero(int tidx, train_ctrl_t *tvars);
 /// by spdctl
 /// @param tidx trian index
 /// @param tvars train ctrl vars
-void ctrl3_stop_detected(int tidx, train_ctrl_t *tvars);
+/// @param posed10 position of stop in pose/10 units
+/// @param frombrake true if stopped was caused from braking
+void ctrl3_stop_detected(int tidx, train_ctrl_t *tvars, int32_t posed10, int frombrake);
 
 
 

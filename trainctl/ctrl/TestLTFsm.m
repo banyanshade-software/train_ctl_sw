@@ -80,7 +80,7 @@ static const xtrnaddr_t to1 = { .v = 1};
 {
     XCTAssert(tvars._state == train_state_station);
     
-    ctrl3_stop_detected(0, &tvars);
+    ctrl3_stop_detected(0, &tvars, tvars._curposmm, 0);
     XCTAssert(tvars._state == train_state_station);
 
     ctrl3_upcmd_set_desired_speed_zero(0, &tvars);
@@ -206,7 +206,7 @@ static const xtrnaddr_t to1 = { .v = 1};
     NSLog(@"...%@", s); // {80, 90, 24, 0, 0}
     EXPMSG({.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_TARGET_SPEED, .v1=0, .v2=0});
 
-    ctrl3_stop_detected(0, &tvars);
+    ctrl3_stop_detected(0, &tvars, tvars._curposmm,  0);
     XCTAssert(tvars._state == train_state_station);
     XCTAssert(tvars._sdir == 0);
     XCTAssert(tvars._target_unisgned_speed == 0);
@@ -296,7 +296,7 @@ static const xtrnaddr_t to1 = { .v = 1};
     XCTAssert(tvars._desired_signed_speed == 0);
     EXPMSG({.to=MA1_SPDCTL(0),   .from=MA1_CTRL(0), .cmd=CMD_SET_TARGET_SPEED, .v1=0, .v2=0});
 
-    ctrl3_stop_detected(0, &tvars);
+    ctrl3_stop_detected(0, &tvars, tvars._curposmm, 0);
     XCTAssert(tvars._state == train_state_station);
     XCTAssert(tvars._sdir == 0);
     XCTAssert(tvars._target_unisgned_speed == 0);
@@ -315,7 +315,7 @@ static const xtrnaddr_t to1 = { .v = 1};
 {
     XCTAssert(tvars._state == train_state_station);
     
-    ctrl3_stop_detected(0, &tvars);
+    ctrl3_stop_detected(0, &tvars, tvars._curposmm, 0);
     XCTAssert(tvars._state == train_state_station);
 
     ctrl3_upcmd_set_desired_speed_zero(0, &tvars);
@@ -346,7 +346,7 @@ static const xtrnaddr_t to1 = { .v = 1};
     
     XCTAssert(tvars._state == train_state_station);
     
-    ctrl3_stop_detected(0, &tvars);
+    ctrl3_stop_detected(0, &tvars, tvars._curposmm, 0);
     XCTAssert(tvars._state == train_state_station);
 
     ctrl3_upcmd_set_desired_speed_zero(0, &tvars);

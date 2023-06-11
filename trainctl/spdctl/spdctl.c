@@ -224,7 +224,7 @@ int16_t spdctl_get_lastpose(int tidx, xblkaddr_t b)
 {
     USE_TRAIN(tidx);
     if (b.v != tvars->Cx[0].v) {
-        FatalError("Spd C1", "bad C1 in spdctl_get_lastpose", Error_Abort);
+        FatalError("Spd C1", "bad C1 in spdctl_get_lastpose", Error_Spd_badc1);
         return 0;
     }
     int16_t v = tvars->lastposed10;
@@ -362,10 +362,12 @@ static void spdctl_handle_msg(msg_64_t *m)
         case CMD_BRAKE:
                 if (m->subc) {
                     tvars->brake = 1;
-                    tvars->stopposed10 = m->v32;
+                    tvars->stopposed10 = (int16_t) m->v32;
                     tvars->startbreakd10 = tvars->lastposed10;
                     tvars->spdbrake = tvars->target_speed;
+                    itm_debug3(DBG_BRAKE, "BRAK", tidx, tvars->startbreakd10, tvars->stopposed10);
                 } else {
+                    itm_debug1(DBG_BRAKE, "BRAK:off", tidx);
                     tvars->brake = 0;
                     tvars->stopposed10 = 0;
                 }
@@ -611,13 +613,17 @@ static int pose_add_trig(train_vars_t *tvars, int16_t tag, int32_t pose)
 
 void send_train_stopped(int numtrain, train_vars_t *tvars)
 {
-    tvars->brake = 0;
+    
     msg_64_t m = {0};
     m.from = MA1_SPDCTL(numtrain);
     m.to = MA1_CTRL(numtrain);
     m.cmd = CMD_STOP_DETECTED;
+    m.subc = tvars->brake;
     m.v32 = tvars->lastposed10; // XXX TODO scale ?
     mqf_write_from_spdctl(&m);
+    
+    tvars->brake = 0;
+    tvars->target_speed = 0;
 }
 
 #define punch_start 1
@@ -643,6 +649,7 @@ static void train_periodic_control(int numtrain, _UNUSED_ uint32_t dt)
     	// XXX possible div0 here
     	int32_t k1000;
     	if (tvars->stopposed10 != tvars->startbreakd10) {
+            itm_debug3(DBG_BRAKE, "trg:k1000", tvars->lastposed10, tvars->startbreakd10, tvars->stopposed10);
     		k1000 = (1000*(tvars->stopposed10-tvars->lastposed10))/(tvars->stopposed10 - tvars->startbreakd10);
     	} else {
     		k1000 = 0;
@@ -654,6 +661,7 @@ static void train_periodic_control(int numtrain, _UNUSED_ uint32_t dt)
         if (abs(target_with_brake)<15) {
             target_with_brake = 0;
         }
+    	itm_debug3(DBG_BRAKE, "trg:brak", numtrain, k1000, target_with_brake);
     }
 
     // inertia before PID
@@ -685,13 +693,13 @@ static void train_periodic_control(int numtrain, _UNUSED_ uint32_t dt)
     if (tconf->enable_pid) {
     	if (target_with_brake) {
     		if ((punch_start) && (tvars->pidvars.stopped)) {
-    			itm_debug2(DBG_PID, "punch", numtrain, target_with_brake);
+    			itm_debug3(DBG_PID|DBG_SPDCTL, "punch", numtrain, target_with_brake, tvars->brake);
     			target_with_brake=100;
     		}
             tvars->pidvars.stopped = 0;
     	}
         if (!tvars->pidvars.stopped && (target_with_brake == 0) && (abs(tvars->bemf_mv)<100)) {
-    		itm_debug1(DBG_PID, "stop", numtrain);
+    		itm_debug1(DBG_PID|DBG_SPDCTL, "stop", numtrain);
 			pidctl_reset(&tconf->pidctl, &tvars->pidvars);
 			debug_info('T', numtrain, "STOP_PID", 0,0, 0);
 			tvars->pidvars.stopped = 1;

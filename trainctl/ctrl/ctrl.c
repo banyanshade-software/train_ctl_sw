@@ -574,6 +574,10 @@ static void normal_process_msg(msg_64_t *m)
             turnout.isdoor = 1;
             set_door_ack(turnout, (enum topo_turnout_state)m->v1u);
             goto handled;
+
+        case CMD_SET_TRAIN_MODE:
+        	ctrl_set_mode(m->v1u, m->v2u);
+            goto handled;
     }
     // -----------------------------------------
     if (MA1_IS_CTRL(m->to)) {
@@ -588,6 +592,9 @@ static void normal_process_msg(msg_64_t *m)
         		FatalError("Tx", "bad num train", Error_CtrlBadTidxSupNum);
         		return;
         	}
+        }
+        if (tvars && (tvars->_mode == train_notrunning)) {
+        	return;
         }
         if ((tidx != 15) && (tvars->c1c2dir_changed)) {
         	FatalError("c1C2", "pend c1c2", Error_Ctrl_PendC1C2);
@@ -609,10 +616,7 @@ static void normal_process_msg(msg_64_t *m)
 
                 
                 
-        case CMD_SET_TRAIN_MODE:
-        	if (!tvars) FatalError("Tvar", "Tvar not set", Error_CtrlBadTidx);
-            ctrl_set_mode(m->v1u, m->v2u);
-            break;
+
         case CMD_START_AUTO:
         	if (!tvars) FatalError("Tvar", "Tvar not set", Error_CtrlBadTidx);
             switch (m->v1u) {

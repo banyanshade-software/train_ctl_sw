@@ -18,6 +18,7 @@
 #include "ctc_periodic_refresh.h"
 
 #include "../topology/topologyP.h"
+#include "../topology/occupency.h"
 
 static void refresh_ctc_turnout(xtrnaddr_t tn)
 {
@@ -33,12 +34,37 @@ static void refresh_ctc_turnout(xtrnaddr_t tn)
 }
 
 
+static void occupency_periodic_refresh(void)
+{
+    static int n=0;
+    int nc = conf_canton_num_entries();
+    
+    xblkaddr_t b;
+    b.v = n;
+    uint8_t train;
+    uint8_t sblk;
+    int occ = occupency_block_addr_info(b, &train, &sblk);
+    
+    msg_64_t m = {0};
+    m.from = MA1_CONTROL();
+    m.to = MA3_UI_CTC;
+    m.cmd = CMD_BLK_CHG_NOTIF;
+    m.vbytes[0] = b.v;
+    m.vbytes[1] = occ;
+    m.vbytes[2] = train;
+    m.vbytes[3] = sblk;
+    mqf_write_from_ctrl(&m);
+    
+    n++;
+    if (n>= nc) n = 0;
+}
 void ctc_periodic_refresh(uint32_t tick)
 {
     static uint32_t ltick = 0;
     if (tick-ltick<300) return;
     ltick = tick;
     
+    occupency_periodic_refresh();
     static int c = 0;
     static int l = 0;
     int n = topology_num_sblkd();

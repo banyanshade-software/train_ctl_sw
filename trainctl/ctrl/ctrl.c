@@ -540,6 +540,7 @@ static void _handle_delayed_spd(int tidx, train_ctrl_t *tvars)
 }
 
 
+
 static void normal_process_msg(msg_64_t *m)
 {
     // -----------------------------------------
@@ -915,4 +916,11 @@ void ctrl2_send_led(uint8_t led_num, uint8_t prog_num)
 
 
 
+void ctrl_set_brake_on_back(int tidx, int lsblknum)
+{
+    train_ctrl_t *tvars = &trctl[tidx];
+    lsblk_num_t ns;
+    ns.n = lsblknum;
+    ctrl3_set_brake_on_back(tidx, tvars, ns);
+}
 

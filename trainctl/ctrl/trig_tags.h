@@ -26,6 +26,8 @@ typedef enum pose_trig_tag {
     
     tag_chkocc,     // rightcars will go into new segment, rightcars and leftcars need to be updated
     tag_brake,      // should start braking
+    tag_brake_user, // brake triggered by cauto. really the same than tag_brake
+                    // but we want to see it on traces
     
     tag_free_back,  // cars on the rear leaving a block
     tag_leave_canton,

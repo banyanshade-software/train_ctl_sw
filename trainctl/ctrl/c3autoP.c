@@ -36,6 +36,7 @@ typedef struct st_path {
     uint16_t cidx;
     int8_t spd;
     uint8_t delay;
+    uint8_t brake_end:1;
     cauto_path_items_t path[C3AUTO_NUM_PATH_ITEM];
 } cauto_vars_t;
 
@@ -54,11 +55,21 @@ void c3auto_start(int tidx)
     c3avar[tidx].spd = 0;
 }
 
-static void _update_sblk(int tidx, int oldidx)
+static void _update_sblk(int tidx, int oldidx, lsblk_num_t prevlsb)
 {
     int8_t spd2 = c3avar[tidx].path[oldidx].val;
     int8_t ospd = c3avar[tidx].spd;
     if (spd2 != ospd) {
+        if (!spd2) {
+            // this is eop
+            if (!is_eop(&c3avar[tidx].path[oldidx])) {
+                itm_debug3(DBG_ERR|DBG_AUTO, "eop??", tidx, c3avar[tidx].spd, c3avar[tidx].path[oldidx].sblk.n);
+            }
+            itm_debug2(DBG_AUTO, "brkeop", tidx, oldidx);
+            ctrl_set_brake_on_back(tidx, prevlsb.n);
+            c3avar[tidx].brake_end = 1;
+            return;
+        }
         if (spd2 && ospd && (SIGNOF(spd2) != SIGNOF((ospd)))) {
             // change direction
             ctrl_delayed_set_desired_spd(tidx, 0);
@@ -70,11 +81,15 @@ static void _update_sblk(int tidx, int oldidx)
 void c3auto_set_s1(int tidx, lsblk_num_t s1)
 {
     int idx = c3avar[tidx].cidx;
+    lsblk_num_t prevlsb = { .n = -1 };
     for (;;idx++) {
         if (c3avar[tidx].path[idx].t) continue;
+        if (-1 == prevlsb.n) {
+            prevlsb = c3avar[tidx].path[idx].sblk;
+        }
         if (c3avar[tidx].path[idx].sblk.n == s1.n) {
             c3avar[tidx].cidx = idx;
-            _update_sblk(tidx, idx);
+            _update_sblk(tidx, idx, prevlsb);
             return;
         }
 
@@ -112,6 +127,11 @@ void c3auto_freeback(int tidx, lsblk_num_t freelsblk)
 
 void c3auto_station(int tidx)
 {
+    if (c3avar[tidx].brake_end) {
+        itm_debug1(DBG_AUTO, "Adone", tidx);
+        ctrl_set_mode(tidx, train_manual);
+        return;
+    }
     if (c3avar[tidx].spd) {
         // not triggered by us
         itm_debug2(DBG_AUTO|DBG_ERR, "station?", tidx, c3avar[tidx].spd);
@@ -129,7 +149,7 @@ static void _c3auto_station_delayexpired(int tidx)
         if (t<0) {
             // this is direction change
             c3avar[tidx].cidx++;
-            _update_sblk(tidx, idx+1);
+            _update_sblk(tidx, idx+1, c3avar[tidx].path[idx].sblk);
         }
     }
 }

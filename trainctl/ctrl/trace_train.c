@@ -85,6 +85,11 @@ typedef struct {
 } __attribute__((packed)) train_trace_setc1_record_t;
 
 
+typedef struct {
+    int on;
+} __attribute__((packed)) train_trace_brake_record_t;
+
+
 typedef enum {
     trace_kind_tick = 1,
     trace_kind_trig,
@@ -93,6 +98,7 @@ typedef enum {
     trace_kind_simu,
     trace_kind_ina,
     trace_kind_setc1,
+    trace_kind_brake,
 } __attribute__((packed)) trace_rec_kind_t;
 
 typedef struct {
@@ -105,6 +111,7 @@ typedef struct {
         train_trace_simu_record_t simurec;
         train_trace_ina_record_t  inarec;
         train_trace_setc1_record_t setc1rec;
+        train_trace_brake_record_t brake;
     } __attribute__((packed));
 } __attribute__((packed)) train_trace_record_t;
 
@@ -244,6 +251,14 @@ void _trace_train_ina3221(uint32_t tick, int tidx, int lsegnum, int on)
     rec->inarec.inaon = on;
 }
 
+void _trace_train_brake(uint32_t tick, int tidx,  train_ctrl_t *tvars, int on)
+{
+    train_trace_record_t *rec = get_newrec(tidx);
+    if (!rec) return;
+    rec->tick = tick;
+    rec->kind = trace_kind_brake;
+    rec->brake.on = on;
+}
 
 void _trace_train_simu(uint32_t tick, int tidx, int sblk, int canton)
 {
@@ -285,6 +300,7 @@ static const char *trig_name(pose_trig_tag_t tag)
         case tag_stop_eot:      return "stop_eot";
         case tag_chkocc:        return "chkocc";
         case tag_brake:         return "brake";
+        case tag_brake_user:    return "brake_U";
         case tag_free_back:     return "free_back";
         case tag_auto_u1:       return "u1";
         case tag_leave_canton:  return "leave";
@@ -437,6 +453,13 @@ static void _trace_train_dump(train_trace_record_t *records, int numitem, int st
                         rec->setc1rec.oldc1.n, rec->setc1rec.c1lblk.n,
                         rec->setc1rec.curposmm, _c1orgstr(rec->setc1rec.org),
                         _cr);
+                break;
+            case trace_kind_brake:
+                sprintf(line, "%2d %6.6d %s%s",
+                        idx, rec->tick,
+                        rec->brake.on ? "BRAKE on" : "brake off",
+                        _cr);
+                break;
             default:
                 break;
         }

@@ -81,6 +81,9 @@ typedef struct {
     trig_pend_t pendTrigs[NUM_PEND_TRIGS];
     uint8_t trigNs;
     uint8_t trigSlt;
+    
+    // BRKFREE
+    lsblk_num_t brake_on_free;
 } train_ctrl_t;
 
 
@@ -169,5 +172,8 @@ extern int ignore_ina_pres(void);
 extern int ignore_bemf_pres(void);
 
 int32_t ctrl3_getcurpossmm(train_ctrl_t *tvars, const conf_train_t *tconf, int left);
+
+// called by c3auto (thru ctrl_set_brake_on_back)
+void ctrl3_set_brake_on_back(int tidx, train_ctrl_t *tvars, lsblk_num_t ns);
 
 #endif /* ctrlLT_h */

@@ -163,9 +163,13 @@ static int is_not_powered(_UNUSED_ int tidx, train_ctrl_t *tvars, xblkaddr_t nca
 int lt4_get_trigs(int tidx, int left, train_ctrl_t *tvars, const conf_train_t *tconf,  rettrigs_t *rett)
 {
     
-    
-    _lt4_get_trigs(tidx, tvars, tconf, !left, rett, 1);
-    return _lt4_get_trigs(tidx, tvars, tconf, left, rett, 0);
+    // BRKFREE : check rc ??
+    int rc1 = _lt4_get_trigs(tidx, tvars, tconf, !left, rett, 1);
+    int rc2 =_lt4_get_trigs(tidx, tvars, tconf, left, rett, 0);
+    if ((rc1>0) && (rc2>=0)) {
+        if (rc1<rc2) rc2 = rc1;
+    }
+    return rc2;
 }
 
 int _lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int left,  rettrigs_t *rett, int checkfreeback)
@@ -194,6 +198,10 @@ int _lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int
         if (margin_c2pow_len_mm>maxmargin) maxmargin = margin_c2pow_len_mm;
     } else {
         maxmargin = margin_c2free_len_mm;
+        // BRKFREE
+        if (tvars->brake_on_free.n != -1) {
+            maxmargin = margin_c2free_len_mm + brake_len_mm;
+        }
     }
 
     int train_fwd_len = (left ? tconf->trainlen_left_cm : tconf->trainlen_right_cm) * 10;
@@ -291,11 +299,23 @@ int _lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int
                 }
             }
             if (checkfreeback) {
+                // BRKFREE
                 int trg = _BEFORE_END_SBLK(train_fwd_len);
                 trg = trg - margin_c2free_len_mm;
                 if ((trg>=0) && (trg<=posloco) && needfreeback) {
                     _add_trig(tvars, left, c1len, rett, tag_free_back, trg, 0xFF);
                     needfreeback=0;
+                    if (ns.n == tvars->brake_on_free.n) {
+                        // BRKFREE
+                        int trgb = trg + brake_len_mm;
+                        if ((trgb>=0) && (trgb<=posloco)) {
+                            // set brake trigger
+                            _add_trig(tvars, left, c1len, rett, tag_brake_user, trgb, 0xFF);
+                        } else if (trgb>posloco) {
+                            // brake now
+                            rc = brake_len_mm+trg-posloco;
+                        }
+                    }
                     
                 } else if ((trg>posloco) && (tvars->sblkfreed.n == -1)) {
                     itm_debug3(DBG_CTRL, "free!", tidx, ns.n, ncanton.v);

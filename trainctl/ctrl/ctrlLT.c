@@ -120,6 +120,7 @@ void ctrl3_init_train(int tidx, train_ctrl_t *tvars, lsblk_num_t sblk, int posmm
     tvars->can1_xaddr = canton_for_lsblk(sblk);
     tvars->freecanton.v = 0xFF;
     tvars->sblkfreed.n = -1;
+    tvars->brake_on_free.n = -1;
     
     if (on) turn_train_on(tidx, tvars);
 
@@ -129,6 +130,7 @@ void turn_train_off(int tidx, train_ctrl_t *tvars)
 {
     tvars->canOld_xaddr.v = 0xFF;
     tvars->can2_xaddr.v = 0xFF;
+    tvars->brake_on_free.n = -1;
     tvars->c1c2 = 0;
     tvars->pow_c2_future.v = 0xFF;
     tvars->c1c2dir_changed = 1;
@@ -718,6 +720,7 @@ void ctrl3_pose_triggered(int tidx, train_ctrl_t *tvars, uint8_t trigsn, xblkadd
                
                     
                 case tag_brake:
+                case tag_brake_user:
                     //tvars->canMeasureOnCanton = tvars->canMeasureOnSblk = 0;
                     itm_debug2(DBG_CTRL, "trg brk", tidx, tvars->c1_sblk.n);
                     if (tvars->brake) {
@@ -1301,6 +1304,7 @@ static void _set_speed(int tidx, train_ctrl_t *tvars, int signed_speed, int appl
     
     if (brakerc>0) {
         // start brake
+        trace_train_brake(ctrl_tasklet.last_tick, tidx, tvars, 1);
         itm_debug3(DBG_BRAKE, "BRAKE:on", tidx, brakerc, tvars->_state);
         int sdir = tvars->_sdir;
         const conf_train_t *conf = conf_train_get(tidx);
@@ -1315,6 +1319,7 @@ static void _set_speed(int tidx, train_ctrl_t *tvars, int signed_speed, int appl
         mqf_write_from_ctrl(&m);
     } else  if (tvars->brake) {
         // clear brake
+        trace_train_brake(ctrl_tasklet.last_tick, tidx, tvars, 0);
         itm_debug3(DBG_BRAKE, "BRAKE:off", tidx, brakerc, tvars->_state);
         msg_64_t m = {0};
         m.from = MA1_CTRL(tidx);
@@ -1443,6 +1448,7 @@ static void _set_state(int tidx, train_ctrl_t *tvars, train_state_t newstate)
                 itm_debug2(DBG_ERR|DBG_CTRL, "st/c2", tidx, tvars->can2_xaddr.v);
                 tvars->can2_xaddr.v = 0xFF;
             }
+            tvars->brake_on_free.n = -1;
             itm_debug3(DBG_CTRL, "freestp", tidx, tvars->_state, tvars->_sdir);
             const conf_train_t *tconf = conf_train_get(tidx);
             rettrigs_t rett = {0};
@@ -1681,3 +1687,11 @@ static void _release_all_blocks(int tidx, _UNUSED_ train_ctrl_t *tvars)
     //FatalError("NI", "not implemented", Error_FSM_NotImplemented);
 }
 
+
+
+
+void ctrl3_set_brake_on_back(int tidx, train_ctrl_t *tvars, lsblk_num_t ns)
+{
+    // BRKFREE
+    tvars->brake_on_free = ns;
+}

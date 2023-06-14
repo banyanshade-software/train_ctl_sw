@@ -56,6 +56,13 @@ static inline void trace_train_free(uint32_t tick, int tidx, int sblk, int canto
 
 }
 
+void _trace_train_brake(uint32_t tick, int tidx,  train_ctrl_t *tvars, int on);
+static inline void trace_train_brake(uint32_t tick, int tidx,  train_ctrl_t *tvars, int on)
+{
+    if (!trace_train_enable) return;
+    _trace_train_brake(tick, tidx, tvars, on);
+
+}
 
 void _trace_train_simu(uint32_t tick, int tidx, int sblk, int canton);
 static inline void trace_train_simu(uint32_t tick, int tidx, int sblk, int canton)

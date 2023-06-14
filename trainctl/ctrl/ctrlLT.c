@@ -1695,7 +1695,7 @@ static void _release_all_blocks(int tidx, _UNUSED_ train_ctrl_t *tvars)
 
 
 
-void ctrl3_set_brake_on_back(int tidx, train_ctrl_t *tvars, lsblk_num_t ns)
+void ctrl3_set_brake_on_back(_UNUSED_ int tidx, train_ctrl_t *tvars, lsblk_num_t ns)
 {
     // BRKFREE
     tvars->brake_on_free = ns;

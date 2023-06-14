@@ -251,7 +251,7 @@ void _trace_train_ina3221(uint32_t tick, int tidx, int lsegnum, int on)
     rec->inarec.inaon = on;
 }
 
-void _trace_train_brake(uint32_t tick, int tidx,  train_ctrl_t *tvars, int on)
+void _trace_train_brake(uint32_t tick, int tidx, _UNUSED_  train_ctrl_t *tvars, int on)
 {
     train_trace_record_t *rec = get_newrec(tidx);
     if (!rec) return;

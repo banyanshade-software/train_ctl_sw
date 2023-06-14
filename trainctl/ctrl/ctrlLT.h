@@ -62,9 +62,10 @@ typedef struct {
     uint8_t off_requested:1;
     uint8_t has_delayed_spd:1;
     uint8_t purgeTrigs:1;
+    
     uint8_t brake_for_eot:1;
     uint8_t brake_for_blkwait:1;
-    
+    uint8_t brake_for_user:1;
     int8_t delayed_spd;
     //
     // #longtrain

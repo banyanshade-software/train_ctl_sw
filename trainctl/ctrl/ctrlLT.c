@@ -491,12 +491,17 @@ void ctrl3_stop_detected(int tidx, train_ctrl_t *tvars, int32_t posed10, int fro
                         _set_dir(tidx, tvars, 0);
                         _set_state(tidx, tvars, train_state_station);
                     }
+                } else if (tvars->brake_for_user) {
+                    _set_speed(tidx, tvars, 0, 1, 0);
+                    _set_dir(tidx, tvars, 0);
+                    _set_state(tidx, tvars, train_state_station);
                 } else {
                     FatalError("Brk?", "unknown brake cause", Error_CtrlUnknownBrake);
                 }
             }
             tvars->brake_for_eot = 0;
             tvars->brake_for_blkwait = 0;
+            tvars->brake_for_user = 0;
             break;
             
         case train_state_blkwait0:

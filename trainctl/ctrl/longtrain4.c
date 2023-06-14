@@ -166,7 +166,9 @@ int lt4_get_trigs(int tidx, int left, train_ctrl_t *tvars, const conf_train_t *t
     // BRKFREE : check rc ??
     int rc1 = _lt4_get_trigs(tidx, tvars, tconf, !left, rett, 1);
     int rc2 =_lt4_get_trigs(tidx, tvars, tconf, left, rett, 0);
-    if ((rc1>0) && (rc2>=0)) {
+    if ((rc1>0) && !rc2) {
+        rc2 = rc1;
+    } else if ((rc1>0) && (rc2>0)) {
         if (rc1<rc2) rc2 = rc1;
     }
     return rc2;
@@ -314,6 +316,7 @@ int _lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int
                         } else if (trgb>posloco) {
                             // brake now
                             rc = brake_len_mm+trg-posloco;
+                            tvars->brake_for_user = 1;
                         }
                     }
                     

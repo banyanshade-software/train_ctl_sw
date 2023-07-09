@@ -57,7 +57,7 @@ LFMQUEUE_DEF_C(from_ui_track, msg_64_t, 2, 0)
 
 
 #ifdef BOARD_HAS_INA3221
-LFMQUEUE_DEF_C(to_ina3221, msg_64_t, 	5, 0)
+LFMQUEUE_DEF_C(to_ina3221, msg_64_t, 	8, 0)
 LFMQUEUE_DEF_C(from_ina3221, msg_64_t, 	64,  1)
 #endif
 

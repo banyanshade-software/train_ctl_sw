@@ -14,17 +14,25 @@
 #include "../topology/occupency.h"
 
 #include "ctrl.h"
-#if 0 // unmaintained
-
-#include "ctrlP.h"
-#include "detectP.h"
-#include "../utils/measval.h"
-#include "detect_loco.h"
 
 
 #ifndef BOARD_HAS_CTRL
 #error BOARD_HAS_CTRL not defined, remove this file from build
 #endif
+
+#include "detectP.h"
+
+
+#define MEAS_DURATION  300 //tick = ms
+#define RELAX_DURATION 200
+
+#if 0 // unmaintained
+
+#include "ctrlP.h"
+#include "../utils/measval.h"
+#include "detect_loco.h"
+
+
 
 /*
  train detection
@@ -58,9 +66,6 @@ static int freqindex = 0;
 
 void set_pwm_freq(int freqhz, int crit);
 int get_pwm_freq(void);
-
-#define MEAS_DURATION  300 //tick = ms
-#define RELAX_DURATION 200
 
 
 
@@ -381,16 +386,107 @@ void detect2_process_msg(msg_64_t *m)
 
 #else  // unmaintained
 
+// -----------------------------------------------------------------
+
+static int detect_state = 0;
+static xblkaddr_t detect_canton = {.v=0xFF};
+static uint32_t detect_tick = 0;
+
+static int save_freq = 0;
+static int freqindex = 0;
+
+
+extern void set_pwm_freq(int freqhz, int crit);
+extern int get_pwm_freq(void);
+
 
 void detect2_init(void)
 {
-    
+    detect_state = 0;
+    detect_canton.v = 0xFF;
+    //detect_ltick = 0;
+    save_freq = get_pwm_freq();
 }
 
-void detect2_process_tick(_UNUSED_ uint32_t tick)
+
+
+static void _detect_finished(void)
+{
+    
+    msg_64_t m = {0};
+
+    m.cmd = CMD_UI_DETECT;
+    m.v1 = -1;
+    m.v2 = 0;
+    m.to = MA3_UI_GEN; //(UISUB_TFT);
+    mqf_write_from_ctrl(&m);
+
+    if ((1)) {
+        //osDelay(500);
+        msg_64_t m;
+        m.from = MA3_BROADCAST;
+        m.to = MA3_BROADCAST;
+        m.cmd = CMD_SETRUN_MODE;
+        m.v1u = runmode_normal;
+
+        mqf_write_from_nowhere(&m); // XXX it wont be sent to ctl
+    }
+}
+
+static void _start_detect_canton(xblkaddr_t canton);
+static void _stop_detect_canton(xblkaddr_t canton);
+
+void detect2_process_tick(_UNUSED_ uint32_t tick,  _UNUSED_ uint32_t dt)
+{
+    if (tick<6000) return;
+
+    if (0) {
+    } else if (-1 == detect_state) {
+        return;
+    } else if (0 == detect_state) {
+        detect_canton.v++;
+        lsblk_num_t lsb = any_lsblk_with_canton(detect_canton);
+
+        if (lsb.n<0) {
+            detect_state = -1;
+            _detect_finished();
+            // done for this canton
+            set_pwm_freq(save_freq, 1);
+            detect_canton.v = 0xFF;
+            return;
+
+        }
+        // start detection on new canton
+        detect_tick = tick;
+        itm_debug1(DBG_DETECT, "DETECT", detect_canton.v);
+        _start_detect_canton(detect_canton);
+        detect_state = 1;
+    }  else if (detect_state==1) {
+        if (tick >= detect_tick+MEAS_DURATION) {
+            _stop_detect_canton(detect_canton);
+            detect_tick = tick;
+            detect_state = 2;
+        }
+    } else if (detect_state==2) {
+        // relax time
+        if (tick > detect_tick + RELAX_DURATION) {
+            detect_tick = tick;
+            // start again
+            detect_state = 0;
+        }
+    }
+}
+    
+
+static void _start_detect_canton(xblkaddr_t canton)
 {
     
 }
+static void _stop_detect_canton(xblkaddr_t canton)
+{
+    
+}
+
 void detect2_process_msg(_UNUSED_ msg_64_t *m)
 {
     

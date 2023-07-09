@@ -82,6 +82,7 @@ static void ctrl_enter_runmode(runmode_t m);
 static void ctrl_tick(uint32_t tick, _UNUSED_ uint32_t dt);
 
 static msg_handler_t msg_handler_selector(runmode_t);
+static tick_handler_t tick_handler_selector(runmode_t m);
 
 static const tasklet_def_t ctrl_tdef = {
 		.init 				= ctrl_init,
@@ -92,7 +93,7 @@ static const tasklet_def_t ctrl_tdef = {
 		.default_msg_handler = NULL,
 		.default_tick_handler = ctrl_tick,
 		.msg_handler_for	=  msg_handler_selector,
-		.tick_handler_for 	= NULL,
+		.tick_handler_for 	= tick_handler_selector,
 
 		.recordmsg			= RECORD_MSG,
 
@@ -104,7 +105,7 @@ static void normal_process_msg(msg_64_t *m);
 static void _handle_delayed_spd(int tidx, train_ctrl_t *tvars);
 
 
-msg_handler_t msg_handler_selector(runmode_t m)
+static msg_handler_t msg_handler_selector(runmode_t m)
 {
     switch (m) {
         case runmode_detect2:
@@ -112,6 +113,21 @@ msg_handler_t msg_handler_selector(runmode_t m)
             break;
         case runmode_normal:
             return normal_process_msg;
+            break;
+        default:
+            return NULL;
+            break;
+    }
+}
+
+static tick_handler_t tick_handler_selector(runmode_t m)
+{
+    switch (m) {
+        case runmode_detect2:
+            return detect2_process_tick;
+            break;
+        case runmode_normal:
+            return ctrl_tick;
             break;
         default:
             return NULL;

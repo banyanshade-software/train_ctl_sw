@@ -62,6 +62,7 @@ static void _update_sblk(int tidx, int oldidx, lsblk_num_t prevlsb)
     if (spd2 != ospd) {
         if (!spd2) {
             // this is eop
+        	itm_debug2(DBG_AUTO, "Aeop", tidx, c3avar[tidx].path[oldidx].sblk.n);
             if (!is_eop(&c3avar[tidx].path[oldidx])) {
                 itm_debug3(DBG_ERR|DBG_AUTO, "eop??", tidx, c3avar[tidx].spd, c3avar[tidx].path[oldidx].sblk.n);
             }
@@ -72,6 +73,7 @@ static void _update_sblk(int tidx, int oldidx, lsblk_num_t prevlsb)
         }
         if (spd2 && ospd && (SIGNOF(spd2) != SIGNOF((ospd)))) {
             // change direction
+        	itm_debug3(DBG_AUTO, "chgdir", tidx, ospd, spd2);
             ctrl_delayed_set_desired_spd(tidx, 0);
         }
         ctrl_delayed_set_desired_spd(tidx, spd2*2);
@@ -80,6 +82,7 @@ static void _update_sblk(int tidx, int oldidx, lsblk_num_t prevlsb)
 }
 void c3auto_set_s1(int tidx, lsblk_num_t s1)
 {
+	itm_debug2(DBG_AUTO, "Ac1", tidx, s1.n);
     int idx = c3avar[tidx].cidx;
     lsblk_num_t prevlsb = { .n = -1 };
     for (;;idx++) {
@@ -108,11 +111,13 @@ void c3auto_set_s1(int tidx, lsblk_num_t s1)
 
 void c3auto_freeback(int tidx, lsblk_num_t freelsblk)
 {
+	itm_debug2(DBG_AUTO, "Afreebk", tidx, freelsblk.n);
     int idx = c3avar[tidx].cidx;
     if (!c3avar[tidx].path[idx].t && !c3avar[tidx].path[idx+1].t) {
         int d1 = SIGNOF0(c3avar[tidx].path[idx].val);
         int t =  d1 * SIGNOF0(c3avar[tidx].path[idx+1].val);
         if (t<0) {
+        	itm_debug2(DBG_AUTO, "Achg", tidx, freelsblk.n);
             // this is direction change
             lsblk_num_t prev = next_lsblk(c3avar[tidx].path[idx].sblk, (d1>0), NULL);
             if (prev.n == freelsblk.n) {

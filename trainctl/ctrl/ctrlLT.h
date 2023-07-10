@@ -138,7 +138,7 @@ void ctrl3_stop_detected(int tidx, train_ctrl_t *tvars, int32_t posed10, int fro
 /// called when spdctl detect trigger condition
 /// @param tidx train index
 /// @param tvars train ctrl vars
-/// @param trigtag  trigger tag
+/// @param trigsn  trigger sequence number
 /// @param ca_addr canton triggering action (trigger will be ignored if not current canton)
 /// @param cposd10 current position,  in pose unit divided by 10
 void ctrl3_pose_triggered(int tidx, train_ctrl_t *tvars, uint8_t trigsn, xblkaddr_t ca_addr, int16_t cposd10);

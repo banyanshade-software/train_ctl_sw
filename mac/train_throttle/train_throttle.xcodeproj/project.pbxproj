@@ -166,6 +166,7 @@
 		1BD93C6C2546FF44006C4D70 /* param.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BD93C4B2546FF42006C4D70 /* param.c */; };
 		1BD93C732546FF44006C4D70 /* train.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BD93C582546FF42006C4D70 /* train.c */; };
 		1BD93C782546FF44006C4D70 /* misc.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BD93C682546FF42006C4D70 /* misc.c */; };
+		1BE0714A2A5CACC10096A2F8 /* train_detectors.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BE071492A5CACC00096A2F8 /* train_detectors.c */; };
 		1BE8B29527418D82000A0FAD /* cautoP.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B812B3C273FA77B00924749 /* cautoP.c */; };
 		1BE8B298274191F9000A0FAD /* ledtask.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BE8B296274191F8000A0FAD /* ledtask.c */; };
 		1BEB93C72729205300508C17 /* TopologyTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B4B70A12729194F00FBDB52 /* TopologyTest.m */; };
@@ -423,6 +424,8 @@
 		1BD93C632546FF42006C4D70 /* railconfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = railconfig.h; sourceTree = "<group>"; };
 		1BD93C642546FF42006C4D70 /* trainctl_iface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = trainctl_iface.h; sourceTree = "<group>"; };
 		1BD93C682546FF42006C4D70 /* misc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = misc.c; sourceTree = "<group>"; };
+		1BE071422A5B51A40096A2F8 /* train_detectors.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = train_detectors.h; sourceTree = "<group>"; };
+		1BE071492A5CACC00096A2F8 /* train_detectors.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = train_detectors.c; sourceTree = "<group>"; };
 		1BE8B296274191F8000A0FAD /* ledtask.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ledtask.c; sourceTree = "<group>"; };
 		1BE8B297274191F8000A0FAD /* ledtask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ledtask.h; sourceTree = "<group>"; };
 		1BEAC1C927D3563A0044FFC5 /* oscillo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = oscillo.h; sourceTree = "<group>"; };
@@ -713,6 +716,8 @@
 				1B92EA2F2631A0BA00558716 /* ctrl.h */,
 				1B77BEC8274A471200BC5230 /* detectP.h */,
 				1B77BEC9274A471200BC5230 /* detectP.c */,
+				1BE071422A5B51A40096A2F8 /* train_detectors.h */,
+				1BE071492A5CACC00096A2F8 /* train_detectors.c */,
 				1BEB93CD272B325700508C17 /* ctrlP.h */,
 				1BEB93CE272B325700508C17 /* ctrlP.c */,
 				1B2688532950FCC500E31486 /* ctrlLT.h */,
@@ -1272,6 +1277,7 @@
 				1BFCA4C028E2D2E20056DE30 /* PlanCtonroller.m in Sources */,
 				1B7A2A0B262D595F004E0481 /* inertia.c in Sources */,
 				1B7D0A932815A175008EEDD4 /* oam_error.c in Sources */,
+				1BE0714A2A5CACC10096A2F8 /* train_detectors.c in Sources */,
 				1B46EE552692684F00FAC813 /* topology.c in Sources */,
 				1B7A2A02262D5948004E0481 /* turnout.c in Sources */,
 				1B76688B2925855C00E2CE96 /* ToolWindow.m in Sources */,

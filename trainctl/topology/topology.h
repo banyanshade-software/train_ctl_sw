@@ -25,6 +25,7 @@ static inline void topology_updated(int trainnum)
     uint8_t v;
     if (trainnum < 0) v= 15;
     else if (trainnum>14) return;
+    else v = trainnum;
     
     _topology_or_occupency_changed |= (1<<v);
 }

@@ -388,6 +388,10 @@ void detect2_process_msg(msg_64_t *m)
 
 // -----------------------------------------------------------------
 
+
+#include "train_detectors.h"
+
+
 static int detect_state = 0;
 static xblkaddr_t detect_canton = {.v=0xFF};
 static uint32_t detect_tick = 0;

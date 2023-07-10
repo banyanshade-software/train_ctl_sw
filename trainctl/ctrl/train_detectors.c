@@ -75,7 +75,10 @@ int detect_step_stop_pwm(xblkaddr_t detect_canton)
     mqf_write_from_ctrl(&m);
     return 0;
 }
-int detect_step_stop_inameas(xblkaddr_t detect_canton);
+int detect_step_stop_inameas(xblkaddr_t detect_canton)
+{
+    return 0;
+}
 
 
 int detect_step_stop_notify_ui(xblkaddr_t detect_canton)
@@ -91,3 +94,38 @@ int detect_step_stop_notify_ui(xblkaddr_t detect_canton)
     }
     return 0;
 }
+
+
+/* ------------------------------------------------------  */
+
+
+const train_detector_step_t _detector1_step3 = {
+    .detect_start_canton = detect_step_wait,
+    .detect_stop_canton = NULL,
+    .nextstep = NULL
+};
+const train_detector_step_t _detector1_step2 = {
+    .detect_start_canton = detect_step_stop_pwm,
+    .detect_stop_canton = detect_step_stop_pwm,
+    .nextstep = &_detector1_step3
+};
+
+const train_detector_step_t _detector1_step1 = {
+    .detect_start_canton = detect_step_start_inameas,
+    .detect_stop_canton = detect_step_stop_inameas,
+    .nextstep = &_detector1_step2
+};
+
+const train_detector_step_t _detector1_step0 = {
+    .detect_start_canton = detect_step_check_canton_exist,
+    .detect_stop_canton = NULL,
+    .nextstep = &_detector1_step1
+    
+};
+
+const train_detector_t alldetectors = {
+    .next = NULL,
+    .detect_init = NULL,
+    .detect_deinit = NULL,
+    .steps = &_detector1_step0
+};

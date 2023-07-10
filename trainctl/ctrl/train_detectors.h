@@ -29,8 +29,8 @@
 
 typedef struct st_detector_step {
     const struct st_detector_step *nextstep;
-    const int (*detect_start_canton)(xblkaddr_t);
-    const int (*detect_stop_canton)(xblkaddr_t);
+    int (*detect_start_canton)(xblkaddr_t);
+    int (*detect_stop_canton)(xblkaddr_t);
 } train_detector_step_t;
 
 typedef struct st_detector {
@@ -55,5 +55,6 @@ int detect_step_stop_notify_ui(xblkaddr_t);
 
 
 /* detectors */
+extern const train_detector_t alldetectors;
 
 #endif /* train_detector_h */

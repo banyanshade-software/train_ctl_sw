@@ -391,10 +391,19 @@ void detect2_process_msg(msg_64_t *m)
 
 #include "train_detectors.h"
 
+typedef  enum {
+    state_finished = -1,
+    state_next_detector = 0,
+    state_next_canton = 1,
+    state_next_step = 2,
+} detector_state_t;
 
-static int detect_state = 0;
+
+static detector_state_t detect_state = state_next_detector;
 static xblkaddr_t detect_canton = {.v=0xFF};
 static uint32_t detect_tick = 0;
+static const train_detector_t *detector = NULL;
+static const train_detector_step_t *detectorstep = NULL;
 
 static int save_freq = 0;
 static int freqindex = 0;
@@ -406,7 +415,7 @@ extern int get_pwm_freq(void);
 
 void detect2_init(void)
 {
-    detect_state = 0;
+    detect_state = state_next_detector;
     detect_canton.v = 0xFF;
     //detect_ltick = 0;
     save_freq = get_pwm_freq();
@@ -414,7 +423,7 @@ void detect2_init(void)
 
 
 
-static void _detect_finished(void)
+static void _detection_finished(void)
 {
     
     msg_64_t m = {0};
@@ -440,44 +449,67 @@ static void _detect_finished(void)
 static void _start_detect_canton(xblkaddr_t canton);
 static void _stop_detect_canton(xblkaddr_t canton);
 
+#define DELAY_INITIAL 100
+
 void detect2_process_tick(_UNUSED_ uint32_t tick,  _UNUSED_ uint32_t dt)
 {
     if (tick<6000) return;
 
-    if (0) {
-    } else if (-1 == detect_state) {
-        return;
-    } else if (0 == detect_state) {
-        detect_canton.v++;
-        lsblk_num_t lsb = any_lsblk_with_canton(detect_canton);
-
-        if (lsb.n<0) {
-            detect_state = -1;
-            _detect_finished();
-            // done for this canton
-            set_pwm_freq(save_freq, 1);
+    switch (detect_state) {
+        default:
+            //TODO
+            FatalError("DEst", "bad detect state", Error_Other);
+            detect_state = state_finished;
+            _detection_finished();
+            break;
+        case state_next_detector:
+            // starting / next detector
+            if (!detector) {
+                detector = &alldetectors;
+            } else {
+                detector = detector->next;
+            }
+            if (!detector) {
+                // all done
+                detect_state = state_finished;
+                _detection_finished();
+                break;
+            }
+            detectorstep = NULL;
             detect_canton.v = 0xFF;
-            return;
+            detect_state = state_next_canton;
+            detect_tick = tick;
+            break;
 
-        }
-        // start detection on new canton
-        detect_tick = tick;
-        itm_debug1(DBG_DETECT, "DETECT", detect_canton.v);
-        _start_detect_canton(detect_canton);
-        detect_state = 1;
-    }  else if (detect_state==1) {
-        if (tick >= detect_tick+MEAS_DURATION) {
-            _stop_detect_canton(detect_canton);
-            detect_tick = tick;
-            detect_state = 2;
-        }
-    } else if (detect_state==2) {
-        // relax time
-        if (tick > detect_tick + RELAX_DURATION) {
-            detect_tick = tick;
-            // start again
-            detect_state = 0;
-        }
+            
+        case state_next_canton:
+            detect_canton.v++;
+            if (0xFF == detect_canton.v) {
+                detect_state = state_next_detector;
+                break;
+            }
+            detectorstep = NULL;
+            detect_state = state_next_step;
+            break;
+            
+        case state_next_step:
+            // start canton steps
+            if (!detectorstep) {
+                detectorstep = detector->steps;
+            } else {
+                detectorstep = detectorstep->nextstep;
+            }
+            if (!detectorstep) {
+                // all step done
+                detect_state = state_next_canton;
+                break;
+            }
+            int rc = detectorstep->detect_start_canton(detect_canton);
+            if (rc<0) {
+                detect_state = state_next_canton;
+                break;
+            }
+            break;
     }
 }
     
@@ -495,6 +527,5 @@ void detect2_process_msg(_UNUSED_ msg_64_t *m)
 {
     
 }
-
 
 #endif // unmaintained

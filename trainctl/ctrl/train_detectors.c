@@ -123,9 +123,56 @@ const train_detector_step_t _detector1_step0 = {
     
 };
 
+/* ---------------------------------------------------------- */
+/* ---------------------------------------------------------- */
+/* ---------------------------------------------------------- */
+/* ---------------------------------------------------------- */
+
+#ifdef TRAIN_SIMU
+
+int detect_simu0(xblkaddr_t detect_canton)
+{
+    itm_debug1(DBG_DETECT, "DETECT0", detect_canton.v);
+    return detect_step_check_canton_exist(detect_canton);
+}
+
+int detect_simu1(xblkaddr_t detect_canton)
+{
+    itm_debug1(DBG_DETECT, "DETECT1", detect_canton.v);
+    return 0;
+}
+
+const train_detector_step_t _simu_step1 = {
+    .detect_start_canton = detect_simu1,
+    .detect_stop_canton = NULL,
+    .nextstep = &_detector1_step1
+};
+const train_detector_step_t _simu_step0 = {
+    .detect_start_canton = detect_simu0,
+    .detect_stop_canton = NULL,
+    .nextstep = &_simu_step1
+};
+
+const train_detector_t detect1 = {
+    .next = NULL,
+    .detect_init = NULL,
+    .detect_deinit = NULL,
+    .steps = &_detector1_step0
+};
+
+const train_detector_t alldetectors = {
+    .next = &detect1,
+    .detect_init = NULL,
+    .detect_deinit = NULL,
+    .steps = &_simu_step0
+};
+
+#else
+
 const train_detector_t alldetectors = {
     .next = NULL,
     .detect_init = NULL,
     .detect_deinit = NULL,
     .steps = &_detector1_step0
 };
+#endif

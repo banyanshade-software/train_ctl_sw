@@ -142,14 +142,27 @@ int detect_simu1(xblkaddr_t detect_canton)
     return 0;
 }
 
+int detect_esimu0(xblkaddr_t detect_canton)
+{
+    itm_debug1(DBG_DETECT, "END0", detect_canton.v);
+    return detect_step_check_canton_exist(detect_canton);
+}
+
+int detect_esimu1(xblkaddr_t detect_canton)
+{
+    itm_debug1(DBG_DETECT, "END1", detect_canton.v);
+    return 0;
+}
+
+
 const train_detector_step_t _simu_step1 = {
     .detect_start_canton = detect_simu1,
-    .detect_stop_canton = NULL,
+    .detect_stop_canton = detect_esimu1,
     .nextstep = &_detector1_step1
 };
 const train_detector_step_t _simu_step0 = {
     .detect_start_canton = detect_simu0,
-    .detect_stop_canton = NULL,
+    .detect_stop_canton = detect_esimu0,
     .nextstep = &_simu_step1
 };
 

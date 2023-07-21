@@ -392,10 +392,12 @@ void detect2_process_msg(msg_64_t *m)
 #include "train_detectors.h"
 
 typedef  enum {
-    state_finished = -1,
-    state_next_detector = 0,
-    state_next_canton = 1,
-    state_next_step = 2,
+    state_finished          = -1,
+    state_next_detector     = 0,
+    state_next_canton       = 1,
+    state_next_step         = 2,
+    state_wait_on           = 3,
+    state_next_stop_step    = 4,
 } detector_state_t;
 
 
@@ -492,22 +494,43 @@ void detect2_process_tick(_UNUSED_ uint32_t tick,  _UNUSED_ uint32_t dt)
             detect_state = state_next_step;
             break;
             
-        case state_next_step:
+        case state_next_step: // FALLTHRU
+        case state_next_stop_step:
             // start canton steps
             if (!detectorstep) {
                 detectorstep = detector->steps;
             } else {
                 detectorstep = detectorstep->nextstep;
             }
+            if (!detectorstep && (detect_state == state_next_step)) {
+                detect_state = state_wait_on;
+                detect_tick = tick;
+                break;
+            }
             if (!detectorstep) {
                 // all step done
                 detect_state = state_next_canton;
                 break;
             }
-            int rc = detectorstep->detect_start_canton(detect_canton);
+            int rc = 0;
+            if (detect_state == state_next_step) {
+                if (detectorstep->detect_start_canton) {
+                    rc = detectorstep->detect_start_canton(detect_canton);
+                }
+            } else {
+                if (detectorstep->detect_stop_canton) {
+                    rc = detectorstep->detect_stop_canton(detect_canton);
+                }
+            }
             if (rc<0) {
                 detect_state = state_next_canton;
                 break;
+            }
+            break;
+            
+        case state_wait_on:
+            if (tick>=detect_tick+500) {
+                detect_state = state_next_stop_step;
             }
             break;
     }

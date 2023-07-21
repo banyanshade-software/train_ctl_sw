@@ -62,6 +62,17 @@ int detect_step_wait(xblkaddr_t detect_canton)
 int detect_step_start_inameas(xblkaddr_t detect_canton)
 {
     itm_debug1(DBG_DETECT, "D-ina", detect_canton.v);
+
+    uint16_t inas = get_ina_bitfield_for_canton(detect_canton.v);
+    if (!inas) return -1;
+    int board = detect_canton.board;
+    msg_64_t m = {0};
+    m.from = MA1_CONTROL();
+    m.to = MA0_INA(board); 
+    m.cmd = CMD_START_INA_MONITOR;
+    m.v1u = inas;
+    mqf_write_from_ctrl(&m);
+    
     return 0;
 }
 

@@ -38,6 +38,7 @@ typedef struct st_detector {
     const void (*detect_init)(uint8_t p);
     const void (*detect_deinit)(void);
     const train_detector_step_t *steps;
+    const char *name; // for debug
 } train_detector_t;
 
 /* start actions step */

@@ -448,9 +448,6 @@ static void _detection_finished(void)
     }
 }
 
-static void _start_detect_canton(xblkaddr_t canton);
-static void _stop_detect_canton(xblkaddr_t canton);
-
 #define DELAY_INITIAL 100
 
 void detect2_process_tick(_UNUSED_ uint32_t tick,  _UNUSED_ uint32_t dt)
@@ -468,7 +465,6 @@ void detect2_process_tick(_UNUSED_ uint32_t tick,  _UNUSED_ uint32_t dt)
             break;
         case state_next_detector:
             // starting / next detector
-            itm_debug1(DBG_DETECT, "NEXT DET", 0);
             if (!detector) {
                 detector = &alldetectors;
             } else {
@@ -476,10 +472,13 @@ void detect2_process_tick(_UNUSED_ uint32_t tick,  _UNUSED_ uint32_t dt)
             }
             if (!detector) {
                 // all done
+                itm_debug1(DBG_DETECT, "NEXT DONE", 0);
                 detect_state = state_finished;
                 _detection_finished();
                 break;
             }
+            itm_debug1(DBG_DETECT, "NEXT DET", 0);
+            itm_debug1(DBG_DETECT, detector->name, 0);
             detectorstep = NULL;
             detect_canton.v = 0xFF;
             detect_state = state_next_canton;
@@ -541,18 +540,16 @@ void detect2_process_tick(_UNUSED_ uint32_t tick,  _UNUSED_ uint32_t dt)
 }
     
 
-static void _start_detect_canton(xblkaddr_t canton)
-{
-    
-}
-static void _stop_detect_canton(xblkaddr_t canton)
-{
-    
-}
-
 void detect2_process_msg(_UNUSED_ msg_64_t *m)
 {
-    
+    switch (m->cmd) {
+        case CMD_BEMF_NOTIF:
+            break;
+            
+        default:
+            itm_debug1(DBG_DETECT, "unhmsg", m->cmd);
+            break;
+    }
 }
 
 #endif // unmaintained

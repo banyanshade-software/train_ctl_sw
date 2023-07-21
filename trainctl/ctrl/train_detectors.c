@@ -111,7 +111,7 @@ const train_detector_step_t _detector1_step3 = {
     .nextstep = NULL
 };
 const train_detector_step_t _detector1_step2 = {
-    .detect_start_canton = detect_step_stop_pwm,
+    .detect_start_canton = detect_step_start_pwm,
     .detect_stop_canton = detect_step_stop_pwm,
     .nextstep = &_detector1_step3
 };
@@ -164,7 +164,7 @@ int detect_esimu1(xblkaddr_t detect_canton)
 const train_detector_step_t _simu_step1 = {
     .detect_start_canton = detect_simu1,
     .detect_stop_canton = detect_esimu1,
-    .nextstep = &_detector1_step1
+    .nextstep = NULL,
 };
 const train_detector_step_t _simu_step0 = {
     .detect_start_canton = detect_simu0,
@@ -176,14 +176,17 @@ const train_detector_t detect1 = {
     .next = NULL,
     .detect_init = NULL,
     .detect_deinit = NULL,
-    .steps = &_detector1_step0
+    .steps = &_detector1_step0,
+    .name = "INA_DET",
+    
 };
 
 const train_detector_t alldetectors = {
     .next = &detect1,
     .detect_init = NULL,
     .detect_deinit = NULL,
-    .steps = &_simu_step0
+    .steps = &_simu_step0,
+    .name = "SIMU",
 };
 
 #else

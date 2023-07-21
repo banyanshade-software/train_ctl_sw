@@ -25,6 +25,7 @@ int detect_step_check_canton_exist(xblkaddr_t detect_canton)
 
 int detect_step_notify_ui(xblkaddr_t detect_canton)
 {
+    itm_debug1(DBG_DETECT, "D-gui", detect_canton.v);
     if ((1)) {
         msg_64_t m = {0};
         
@@ -49,16 +50,18 @@ static void _start_canton(xblkaddr_t detect_canton, uint8_t method, uint16_t par
 }
 int detect_step_start_pwm(xblkaddr_t  detect_canton)
 {
+    itm_debug1(DBG_DETECT, "D-pwm", detect_canton.v);
     _start_canton(detect_canton, 0, 20);
     return 0;
 }
 int detect_step_wait(xblkaddr_t detect_canton)
 {
-    
+    itm_debug1(DBG_DETECT, "D-wait", detect_canton.v);
     return 0;
 }
 int detect_step_start_inameas(xblkaddr_t detect_canton)
 {
+    itm_debug1(DBG_DETECT, "D-ina", detect_canton.v);
     return 0;
 }
 
@@ -67,6 +70,7 @@ int detect_step_start_inameas(xblkaddr_t detect_canton)
 /* stop actions steps */
 int detect_step_stop_pwm(xblkaddr_t detect_canton)
 {
+    itm_debug1(DBG_DETECT, "O-pwm", detect_canton.v);
     msg_64_t m = {0};
     TO_CANTON(m, detect_canton);
     //m.to = detect_canton; //MA_CANTON(0, canton);
@@ -77,12 +81,14 @@ int detect_step_stop_pwm(xblkaddr_t detect_canton)
 }
 int detect_step_stop_inameas(xblkaddr_t detect_canton)
 {
+    itm_debug1(DBG_DETECT, "O-ina", detect_canton.v);
     return 0;
 }
 
 
 int detect_step_stop_notify_ui(xblkaddr_t detect_canton)
 {
+    itm_debug1(DBG_DETECT, "O-gui", detect_canton.v);
     if ((1)) {
         msg_64_t m = {0};
         

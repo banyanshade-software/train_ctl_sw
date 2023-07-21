@@ -458,6 +458,8 @@ void detect2_process_tick(_UNUSED_ uint32_t tick,  _UNUSED_ uint32_t dt)
     if (tick<6000) return;
 
     switch (detect_state) {
+        case state_finished:
+            break;
         default:
             //TODO
             FatalError("DEst", "bad detect state", Error_Other);
@@ -466,6 +468,7 @@ void detect2_process_tick(_UNUSED_ uint32_t tick,  _UNUSED_ uint32_t dt)
             break;
         case state_next_detector:
             // starting / next detector
+            itm_debug1(DBG_DETECT, "NEXT DET", 0);
             if (!detector) {
                 detector = &alldetectors;
             } else {
@@ -490,6 +493,7 @@ void detect2_process_tick(_UNUSED_ uint32_t tick,  _UNUSED_ uint32_t dt)
                 detect_state = state_next_detector;
                 break;
             }
+            itm_debug1(DBG_DETECT, "next C", detect_canton.v);
             detectorstep = NULL;
             detect_state = state_next_step;
             break;

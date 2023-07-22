@@ -2303,6 +2303,7 @@ uint32_t SimuTick = 0;
     ctrl_run_tick(notif,    mt, mdt);
      */
     uitrack_run_tick(notif, mt, mdt);
+    ina_simu_tick(notif, mt, mdt);
 }
 
 - (void) usbTimer

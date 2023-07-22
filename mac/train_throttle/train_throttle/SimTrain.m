@@ -216,3 +216,32 @@
 
 @end
 
+/*
+ for simu, we run msg read loop, just to avoid ina msg queue to be full, and
+ for ina based detection
+ */
+
+static uint16_t ina_detect_bitfield = 0;
+
+void ina_simu_tick(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_ uint32_t dt)
+{
+    for (;;) {
+        msg_64_t m;
+        int rc = mqf_read_to_ina3221(&m);
+        if (rc) break;
+        switch (m.cmd) {
+            case CMD_START_INA_MONITOR:
+                itm_debug1(DBG_DETECT, "START monitor", m.v1u);
+                ina_detect_bitfield = m.v1u;
+                break;
+                
+            case CMD_SETRUN_MODE:
+                ina_detect_bitfield = 0;
+                break;
+                
+            default:
+                itm_debug1(DBG_DETECT, "msg", m.cmd);
+                break;
+        }
+    }
+}

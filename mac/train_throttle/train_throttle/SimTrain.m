@@ -107,6 +107,9 @@
     mqf_write_from_usb(&m);
 }
 
+
+static uint16_t ina_detect_bitfield = 0;
+
 - (void) computeTrainsAfter:(uint32_t)ellapsed sinceStart:(uint32_t)ts
 {
     //if (ellapsed<20) {
@@ -119,6 +122,22 @@
         if (s1[tn].n < 0) continue;
         //int cn = c1[tn];
         
+        // handle detection
+        if (ina_detect_bitfield) {
+            uint8_t ina = get_lsblk_ina3221(s1[tn]);
+            if (ina_detect_bitfield & (1U<<ina)) {
+                // detected
+                msg_64_t m = {0};
+                m.from = MA0_INA(oam_localBoardNum());
+                m.to = MA1_CONTROL();
+                m.cmd = CMD_INA_REPORT;
+                m.subc = ina;
+                m.v1 = 1; // not realistic
+                mqf_write_from_ina3221(&m);
+            }
+            // assume train doesn't move during detection
+            return;
+        }
         // update pos
         positioncm[tn] += speed[tn]*ellapsed/1000;
         //int get_lsblk_len(lsblk_num_t num);
@@ -221,7 +240,6 @@
  for ina based detection
  */
 
-static uint16_t ina_detect_bitfield = 0;
 
 void ina_simu_tick(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_ uint32_t dt)
 {

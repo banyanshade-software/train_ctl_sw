@@ -546,6 +546,18 @@ void detect2_process_msg(_UNUSED_ msg_64_t *m)
         case CMD_BEMF_NOTIF:
             break;
             
+        case CMD_DETECTION_REPORT:
+            switch (detect_state) {
+                case state_wait_on:
+                case state_next_step:
+                    itm_debug1(DBG_DETECT, "FOUND", m->subc);
+                    break;
+                    
+                default: //ignore report
+                    itm_debug1(DBG_DETECT, "ignore report", m->subc);
+                    break;
+            }
+            break;
         default:
             itm_debug1(DBG_DETECT, "unhmsg", m->cmd);
             break;

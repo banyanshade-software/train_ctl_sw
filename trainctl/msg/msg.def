@@ -43,7 +43,7 @@ start 0x80 // 100 xxxxx
     CMD_START_DETECT_TRAIN v1u	// [detect2] ctrl->canton v1u=pwm, v2u=type			start train detection
     CMD_STOP_DETECT_TRAIN  void	// [detect2] ctrl->canton 					stop train detection
 	CMD_START_INA_MONITOR  v1u  // [detect2] ctrl->ina3221					start monitoring current
-	CMD_INA_REPORT  	   v1	// [detect2] ina3221->ctrl					report measured current
+	CMD_DETECTION_REPORT    v1,v2	// [detect2] ina3221,bemf...->ctrl			report presence detection
     CMD_UI_DETECT          v1,v2u // [detect2] ctrl->ui						detection info
     
 	CMD_SERVO_SET	    v1u,v2u	// any -> servo  subc=servn v1u=pos v2u=spd_or_0

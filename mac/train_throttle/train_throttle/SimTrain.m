@@ -130,7 +130,7 @@ static uint16_t ina_detect_bitfield = 0;
                 msg_64_t m = {0};
                 m.from = MA0_INA(oam_localBoardNum());
                 m.to = MA1_CONTROL();
-                m.cmd = CMD_INA_REPORT;
+                m.cmd = CMD_DETECTION_REPORT;
                 m.subc = ina;
                 m.v1 = 1; // not realistic
                 mqf_write_from_ina3221(&m);

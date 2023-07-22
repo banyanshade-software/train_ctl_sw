@@ -34,7 +34,7 @@ const char *traincmd_name(uint8_t cmd)
 	case CMD_START_DETECT_TRAIN: return "CMD_START_DETECT_TRAIN";
 	case CMD_STOP_DETECT_TRAIN: return "CMD_STOP_DETECT_TRAIN";
 	case CMD_START_INA_MONITOR: return "CMD_START_INA_MONITOR";
-	case CMD_INA_REPORT      : return "CMD_INA_REPORT";
+	case CMD_DETECTION_REPORT: return "CMD_DETECTION_REPORT";
 	case CMD_UI_DETECT       : return "CMD_UI_DETECT";
 	case CMD_SERVO_SET       : return "CMD_SERVO_SET";
 	case CMD_SERVO_ACK       : return "CMD_SERVO_ACK";
@@ -115,7 +115,7 @@ msg_type_t traincmd_format(uint8_t cmd)
 	case CMD_START_DETECT_TRAIN: return CMD_TYPE_V16;
 	case CMD_STOP_DETECT_TRAIN: return CMD_TYPE_V32;
 	case CMD_START_INA_MONITOR: return CMD_TYPE_V16;
-	case CMD_INA_REPORT      : return CMD_TYPE_V16;
+	case CMD_DETECTION_REPORT: return CMD_TYPE_V16;
 	case CMD_UI_DETECT       : return CMD_TYPE_V16;
 	case CMD_SERVO_SET       : return CMD_TYPE_V16;
 	case CMD_SERVO_ACK       : return CMD_TYPE_V16;

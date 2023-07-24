@@ -72,7 +72,7 @@ typedef enum {
 	CMD_NOTIF_PRES                , // 0xe1 (225) // ctrl -> ui							    ina based presence on sblk (bitfield)
 	CMD_TIM_SYNC_ACK              , // 0xe2 (226) //                                          slave->master ack synchro
 	CMD_LED_RUN                   , // 0xe3 (227) // auto,ui->led		v1u=lednum v2u=prg		run led program
-	CMD_INA3221_REPORT            , // 0xe4 (228) // ina->ui (debug)
+	CMD_INA3221_UI_REPORT         , // 0xe4 (228) // ina->ui (debug)
 	CMD_VOFF_NOTIF                , // 0xe5 (229) // canton->ui (debug)						used if NOTIF_VOFF=1
 	CMD_INA3221_VAL1              , // 0xe6 (230) 
 	CMD_NOTIF_SPEED               , // 0xe7 (231) // spdctl->ui	(debug)

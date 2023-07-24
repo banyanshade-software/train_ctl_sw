@@ -81,7 +81,7 @@ start 0xE0  // 111 xxxxx  Debug and misc low prio
 	CMD_NOTIF_PRES		   tbd     // ctrl -> ui							    ina based presence on sblk (bitfield)
     CMD_TIM_SYNC_ACK       void      //                                          slave->master ack synchro
     CMD_LED_RUN		       v1u,v2u  // auto,ui->led		v1u=lednum v2u=prg		run led program
-    CMD_INA3221_REPORT	   b4      // ina->ui (debug)
+    CMD_INA3221_UI_REPORT	   b4      // ina->ui (debug)
     CMD_VOFF_NOTIF		   v1,v2     // canton->ui (debug)						used if NOTIF_VOFF=1
     CMD_INA3221_VAL1       tbd
     CMD_NOTIF_SPEED	       v1       // spdctl->ui	(debug)

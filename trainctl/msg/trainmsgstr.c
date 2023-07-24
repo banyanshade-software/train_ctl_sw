@@ -61,7 +61,7 @@ const char *traincmd_name(uint8_t cmd)
 	case CMD_NOTIF_PRES      : return "CMD_NOTIF_PRES";
 	case CMD_TIM_SYNC_ACK    : return "CMD_TIM_SYNC_ACK";
 	case CMD_LED_RUN         : return "CMD_LED_RUN";
-	case CMD_INA3221_REPORT  : return "CMD_INA3221_REPORT";
+	case CMD_INA3221_UI_REPORT: return "CMD_INA3221_UI_REPORT";
 	case CMD_VOFF_NOTIF      : return "CMD_VOFF_NOTIF";
 	case CMD_INA3221_VAL1    : return "CMD_INA3221_VAL1";
 	case CMD_NOTIF_SPEED     : return "CMD_NOTIF_SPEED";
@@ -142,7 +142,7 @@ msg_type_t traincmd_format(uint8_t cmd)
 	case CMD_NOTIF_PRES      : return CMD_TYPE_V32;
 	case CMD_TIM_SYNC_ACK    : return CMD_TYPE_V32;
 	case CMD_LED_RUN         : return CMD_TYPE_V16;
-	case CMD_INA3221_REPORT  : return CMD_TYPE_B4;
+	case CMD_INA3221_UI_REPORT: return CMD_TYPE_B4;
 	case CMD_VOFF_NOTIF      : return CMD_TYPE_V16;
 	case CMD_INA3221_VAL1    : return CMD_TYPE_V32;
 	case CMD_NOTIF_SPEED     : return CMD_TYPE_V16;

@@ -484,7 +484,7 @@ static void _read_complete(_UNUSED_ int err)
 			if (0 == (detect2_monitor & (1<<i))) continue;
 			m.from = MA0_INA(oam_localBoardNum());
 			m.to = MA1_CONTROL();
-			m.cmd = CMD_INA_REPORT;
+			m.cmd = CMD_DETECTION_REPORT;
 			m.subc = i;
 			m.v1 = ina_svalues[i];
 			if ((0)) itm_debug2(DBG_DETECT, "report", i, ina_svalues[i]);
@@ -522,7 +522,7 @@ static void _read_complete(_UNUSED_ int err)
 				if ((1)) v[7] = cnt;
 				m.from = MA0_INA(oam_localBoardNum());
 				m.to = MA3_UI_GEN;
-				m.cmd = CMD_INA3221_REPORT;
+				m.cmd = CMD_INA3221_UI_REPORT;
 				m.v32u = (uint32_t) v;
 				mqf_write_from_ina3221(&m);
 			}

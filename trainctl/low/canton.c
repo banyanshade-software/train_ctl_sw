@@ -251,7 +251,7 @@ static void handle_msg_detect2(msg_64_t *m)
     int cidx = m->subc; // MA_GET_CANTON_NUM(m->to);
     const conf_canton_t *cconf = conf_canton_get(cidx);
     canton_vars_t *cvars = &canton_vars[cidx];
-    uint16_t detect_type = 0;
+    _UNUSED_ uint16_t detect_type = 0;
     
     switch (m->cmd) {
         case CMD_START_DETECT_TRAIN:

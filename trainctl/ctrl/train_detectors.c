@@ -11,7 +11,7 @@
 #include "misc.h"
 #include "../msg/trainmsg.h"
 #include "train_detectors.h"
-
+#include "../topology/topology.h"
 
 /* start actions step */
 int detect_step_check_canton_exist(xblkaddr_t detect_canton)

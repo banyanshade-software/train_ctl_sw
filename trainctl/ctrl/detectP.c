@@ -408,7 +408,7 @@ static const train_detector_t *detector = NULL;
 static const train_detector_step_t *detectorstep = NULL;
 
 static int save_freq = 0;
-static int freqindex = 0;
+//static int freqindex = 0;
 
 
 extern void set_pwm_freq(int freqhz, int crit);

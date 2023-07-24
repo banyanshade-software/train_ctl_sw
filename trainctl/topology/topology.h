@@ -122,6 +122,10 @@ uint16_t get_ina_bitfield_for_canton(int cnum); // XXX TODO not ok for multiboar
 
 xblkaddr_t get_canton_for_ina(int ina);
 
+lsblk_num_t get_lsblk_for_ina(int ina);
+
+void get_lsblk_and_canton_for_ina(int ina, lsblk_num_t *plsblk, xblkaddr_t *pcan);
+
 // get lsblk associated with a given ina3221
 // several lsblk may share the same ina3221 (using POSE only between these lsblk)
 

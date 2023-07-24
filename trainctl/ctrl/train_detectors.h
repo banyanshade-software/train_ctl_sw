@@ -35,12 +35,19 @@ typedef struct st_detector_step {
 
 typedef struct st_detector {
     const struct st_detector *next;
-    void (*const detect_init)(uint8_t p);
+    // init and deinit called when starting/ending detector
+    void (*const detect_init)(uint8_t p); // parameter unused, 0
     void (*const detect_deinit)(void);
+    // parse handles CMD_DETECTION_REPORT
+    int (*const detect_parse)(msg_64_t *m);
+    // ...
     const train_detector_step_t *steps;
     const char *name; // for debug
 } train_detector_t;
 
+
+#if 0
+// now all private
 /* start actions step */
 int detect_step_check_canton_exist(xblkaddr_t);
 int detect_step_notify_ui(xblkaddr_t);
@@ -53,7 +60,7 @@ int detect_step_stop_pwm(xblkaddr_t);
 int detect_step_stop_pwm(xblkaddr_t);
 int detect_step_stop_inameas(xblkaddr_t);
 int detect_step_stop_notify_ui(xblkaddr_t);
-
+#endif
 
 /* detectors */
 extern const train_detector_t alldetectors;

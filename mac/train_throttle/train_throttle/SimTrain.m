@@ -134,6 +134,8 @@ static uint16_t ina_detect_bitfield = 0;
                 m.subc = ina;
                 m.v1 = 1; // not realistic
                 mqf_write_from_ina3221(&m);
+                // clear bit in ina_detect_bitfield so detection is performed once only
+                ina_detect_bitfield &= ~(1U<<ina);
             }
             // assume train doesn't move during detection
             return;

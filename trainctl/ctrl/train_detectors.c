@@ -13,8 +13,30 @@
 #include "train_detectors.h"
 #include "../topology/topology.h"
 
+
+/* parser */
+static _UNUSED_ int nil_detect_parse(_UNUSED_ msg_64_t *m)
+{
+    return 0;
+}
+
+static int detect_ina_parser(msg_64_t *m)
+{
+    if (!MA0_IS_INA(m->from)) {
+        return -1;
+    }
+    _UNUSED_ uint8_t brd = MA0_BOARD(m->from);
+    uint8_t ina = m->subc;
+    lsblk_num_t lsb;
+    xblkaddr_t canton;
+    get_lsblk_and_canton_for_ina(ina, &lsb, &canton);
+    m->subc = lsb.n;
+    m->vb0 = canton.v;
+    m->vb1 = m->vb2 = m->vb3 = 0;
+    return 0;
+}
 /* start actions step */
-int detect_step_check_canton_exist(xblkaddr_t detect_canton)
+static int detect_step_check_canton_exist(xblkaddr_t detect_canton)
 {
     lsblk_num_t lsb = any_lsblk_with_canton(detect_canton);
     if (lsb.n<0) {
@@ -23,7 +45,7 @@ int detect_step_check_canton_exist(xblkaddr_t detect_canton)
     return 0;
 }
 
-int detect_step_notify_ui(xblkaddr_t detect_canton)
+static _UNUSED_ int detect_step_notify_ui(xblkaddr_t detect_canton)
 {
     itm_debug1(DBG_DETECT, "D-gui", detect_canton.v);
     if ((1)) {
@@ -54,12 +76,12 @@ int detect_step_start_pwm(xblkaddr_t  detect_canton)
     _start_canton(detect_canton, 0, 20);
     return 0;
 }
-int detect_step_wait(xblkaddr_t detect_canton)
+static int detect_step_wait(xblkaddr_t detect_canton)
 {
     itm_debug1(DBG_DETECT, "D-wait", detect_canton.v);
     return 0;
 }
-int detect_step_start_inameas(xblkaddr_t detect_canton)
+static int detect_step_start_inameas(xblkaddr_t detect_canton)
 {
     itm_debug1(DBG_DETECT, "D-ina", detect_canton.v);
 
@@ -80,7 +102,7 @@ int detect_step_start_inameas(xblkaddr_t detect_canton)
 
 
 /* stop actions steps */
-int detect_step_stop_pwm(xblkaddr_t detect_canton)
+static int detect_step_stop_pwm(xblkaddr_t detect_canton)
 {
     itm_debug1(DBG_DETECT, "O-pwm", detect_canton.v);
     msg_64_t m = {0};
@@ -91,7 +113,8 @@ int detect_step_stop_pwm(xblkaddr_t detect_canton)
     mqf_write_from_ctrl(&m);
     return 0;
 }
-int detect_step_stop_inameas(xblkaddr_t detect_canton)
+
+static _UNUSED_ int detect_step_stop_inameas(xblkaddr_t detect_canton)
 {
     itm_debug1(DBG_DETECT, "O-ina", detect_canton.v);
     
@@ -109,7 +132,7 @@ int detect_step_stop_inameas(xblkaddr_t detect_canton)
 }
 
 
-int detect_step_stop_notify_ui(xblkaddr_t detect_canton)
+static _UNUSED_ int detect_step_stop_notify_ui(xblkaddr_t detect_canton)
 {
     itm_debug1(DBG_DETECT, "O-gui", detect_canton.v);
     if ((1)) {
@@ -128,24 +151,24 @@ int detect_step_stop_notify_ui(xblkaddr_t detect_canton)
 /* ------------------------------------------------------  */
 
 
-const train_detector_step_t _detector1_step3 = {
+static const train_detector_step_t _detector1_step3 = {
     .detect_start_canton = detect_step_wait,
     .detect_stop_canton = NULL,
     .nextstep = NULL
 };
-const train_detector_step_t _detector1_step2 = {
+static const train_detector_step_t _detector1_step2 = {
     .detect_start_canton = detect_step_start_pwm,
     .detect_stop_canton = detect_step_stop_pwm,
     .nextstep = &_detector1_step3
 };
 
-const train_detector_step_t _detector1_step1 = {
+static const train_detector_step_t _detector1_step1 = {
     .detect_start_canton = detect_step_start_inameas,
     .detect_stop_canton = detect_step_stop_inameas,
     .nextstep = &_detector1_step2
 };
 
-const train_detector_step_t _detector1_step0 = {
+static const train_detector_step_t _detector1_step0 = {
     .detect_start_canton = detect_step_check_canton_exist,
     .detect_stop_canton = NULL,
     .nextstep = &_detector1_step1
@@ -159,46 +182,56 @@ const train_detector_step_t _detector1_step0 = {
 
 #ifdef TRAIN_SIMU
 
-int detect_simu0(xblkaddr_t detect_canton)
+static void detect_simu_init(uint8_t p)
+{
+    itm_debug1(DBG_DETECT, "+++ SIMU", p);
+}
+static void detect_simu_deinit(void)
+{
+    itm_debug1(DBG_DETECT, "--- SIMU", 0);
+}
+
+static int detect_simu0(xblkaddr_t detect_canton)
 {
     itm_debug1(DBG_DETECT, "DETECT0", detect_canton.v);
     return detect_step_check_canton_exist(detect_canton);
 }
 
-int detect_simu1(xblkaddr_t detect_canton)
+static int detect_simu1(xblkaddr_t detect_canton)
 {
     itm_debug1(DBG_DETECT, "DETECT1", detect_canton.v);
     return 0;
 }
 
-int detect_esimu0(xblkaddr_t detect_canton)
+static int detect_esimu0(xblkaddr_t detect_canton)
 {
     itm_debug1(DBG_DETECT, "END0", detect_canton.v);
     return detect_step_check_canton_exist(detect_canton);
 }
 
-int detect_esimu1(xblkaddr_t detect_canton)
+static int detect_esimu1(xblkaddr_t detect_canton)
 {
     itm_debug1(DBG_DETECT, "END1", detect_canton.v);
     return 0;
 }
 
 
-const train_detector_step_t _simu_step1 = {
+static const train_detector_step_t _simu_step1 = {
     .detect_start_canton = detect_simu1,
     .detect_stop_canton = detect_esimu1,
     .nextstep = NULL,
 };
-const train_detector_step_t _simu_step0 = {
+static const train_detector_step_t _simu_step0 = {
     .detect_start_canton = detect_simu0,
     .detect_stop_canton = detect_esimu0,
     .nextstep = &_simu_step1
 };
 
-const train_detector_t detect1 = {
+static const train_detector_t detect1 = {
     .next = NULL,
     .detect_init = NULL,
     .detect_deinit = NULL,
+    .detect_parse = detect_ina_parser,
     .steps = &_detector1_step0,
     .name = "INA_DET",
     
@@ -206,8 +239,9 @@ const train_detector_t detect1 = {
 
 const train_detector_t alldetectors = {
     .next = &detect1,
-    .detect_init = NULL,
-    .detect_deinit = NULL,
+    .detect_init = detect_simu_init,
+    .detect_deinit = detect_simu_deinit,
+    .detect_parse = nil_detect_parse,
     .steps = &_simu_step0,
     .name = "SIMU",
 };
@@ -218,6 +252,7 @@ const train_detector_t alldetectors = {
     .next = NULL,
     .detect_init = NULL,
     .detect_deinit = NULL,
+    .detect_parse = detect_ina_parser,
     .steps = &_detector1_step0
 };
 #endif

@@ -142,6 +142,9 @@ volatile int16_t oscillo_ina1;
 volatile int16_t oscillo_ina2;
 
 static uint16_t detect2_monitor = 0;
+static uint16_t detect2_mode = 0;
+
+static int8_t presence[INA3221_NUM_VALS] = {0};
 
 void ina3221_task_start(_UNUSED_ void *argument)
 {
@@ -190,6 +193,7 @@ static void run_ina_task(void)
 					run_mode = m.v1u;
 					itm_debug1(DBG_INA3221, "INA:mode", run_mode);
 					testerAddr = m.from;
+					memset(presence, 0, sizeof(presence));
 				}
 				continue;
 				break;
@@ -198,8 +202,10 @@ static void run_ina_task(void)
 					itm_debug1(DBG_ERR|DBG_INA3221, "bad rmode", run_mode);
 					continue;
 				}
-				itm_debug1(DBG_DETECT|DBG_INA3221, "detect2 ina", m.v1u);
+				memset(presence, 0, sizeof(presence));
+				itm_debug2(DBG_DETECT|DBG_INA3221, "detect2 ina", m.v1u, m.v2u);
 				detect2_monitor = m.v1u;
+				detect2_mode = m.v2u;
 				continue;
 			default:
 				//itm_debug2(DBG_INA3221|DBG_DETECT, "unk msg", m.cmd, run_mode);
@@ -455,7 +461,6 @@ static void _reg_read(int dev, int nreg)
 
 static void _read_complete(_UNUSED_ int err)
 {
-	static int8_t presence[INA3221_NUM_VALS] = {0};
 	itm_debug1(DBG_INA3221, "rd:cpl", 0);
 	for (int i = 0; i<INA3221_NUM_VALS; i++) {
 		ina_svalues[i] = (int16_t) __builtin_bswap16(ina_uvalues[i]);
@@ -478,19 +483,37 @@ static void _read_complete(_UNUSED_ int err)
 		m.v1 = ina_svalues[1];
 		mqf_write_from_ina3221(&m);
 		break;
+
+
 	case runmode_detect2:
 		//itm_debug1(DBG_DETECT, "rdcplD", detect2_monitor);
-		for (int i = 0; i<INA3221_NUM_VALS; i++) {
-			if (0 == (detect2_monitor & (1<<i))) continue;
-			m.from = MA0_INA(oam_localBoardNum());
-			m.to = MA1_CONTROL();
-			m.cmd = CMD_DETECTION_REPORT;
-			m.subc = i;
-			m.v1 = ina_svalues[i];
-			if ((0)) itm_debug2(DBG_DETECT, "report", i, ina_svalues[i]);
-			mqf_write_from_ina3221(&m);
+		switch (detect2_mode) {
+		case 1:
+			/* normal ina3221 presence detection, applied to detection */
+			for (int i = 0; i<INA3221_NUM_VALS; i++) {
+				if (0 == (detect2_monitor & (1<<i))) continue;
+				int p = (abs(ina_svalues[i])>1000) ? 1 : 0;
+				if (p == presence[i]) continue;
+				presence[i] = p;
+				if (!p) continue;
+
+				m.from = MA0_INA(oam_localBoardNum());
+				m.to = MA1_CONTROL();
+				m.cmd = CMD_DETECTION_REPORT;
+				m.subc = i;
+				m.v1 = ina_svalues[i];
+				if ((0)) itm_debug2(DBG_DETECT, "report", i, ina_svalues[i]);
+				mqf_write_from_ina3221(&m);
+			}
+			break;
+
+		default:
+			itm_debug2(DBG_ERR|DBG_DETECT|DBG_INA3221, "bad dmode", detect2_mode, detect2_monitor);
+			break;
 		}
 		break;
+
+
 	case runmode_normal:
 		for (int i = 0; i<INA3221_NUM_VALS; i++) {
 			if ((i<=2)) itm_debug2(DBG_INA3221, "ina val", i, ina_svalues[i]);

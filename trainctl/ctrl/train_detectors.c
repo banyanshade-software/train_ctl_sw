@@ -71,6 +71,7 @@ int detect_step_start_inameas(xblkaddr_t detect_canton)
     m.to = MA0_INA(board);
     m.cmd = CMD_START_INA_MONITOR;
     m.v1u = inas;
+    m.v2u = 1;
     mqf_write_from_ctrl(&m);
     
     return 0;
@@ -100,6 +101,7 @@ int detect_step_stop_inameas(xblkaddr_t detect_canton)
     m.to = MA0_INA(board);
     m.cmd = CMD_START_INA_MONITOR;
     m.v1u = 0; // bitfield zero to stop all monitoring
+    m.v2u = 0;
     mqf_write_from_ctrl(&m);
     
     return 0;

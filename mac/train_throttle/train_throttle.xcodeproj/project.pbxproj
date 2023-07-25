@@ -38,7 +38,6 @@
 		1B2688612951201600E31486 /* pidctl.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B7A2A0A262D5954004E0481 /* pidctl.c */; };
 		1B2688632951201600E31486 /* occupency.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BEB93C92729F10D00508C17 /* occupency.c */; };
 		1B2688652951201600E31486 /* conf_topology.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B46F7FA280752D500BAD6E8 /* conf_topology.c */; };
-		1B2688662951201600E31486 /* TopologyTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B4B70A12729194F00FBDB52 /* TopologyTest.m */; };
 		1B2688692951201600E31486 /* conf_boards.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B46F802280752D600BAD6E8 /* conf_boards.c */; };
 		1B26886A2951201600E31486 /* topology.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B46EE542692684E00FAC813 /* topology.c */; };
 		1B26886B2951201600E31486 /* conf_train.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B46F7FD280752D600BAD6E8 /* conf_train.c */; };
@@ -99,6 +98,8 @@
 		1B69246829BCBFEA00ED150F /* TestLongTrainSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B7B5E192971318000955045 /* TestLongTrainSupport.m */; };
 		1B69247729BD3C5C00ED150F /* c3autoP.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B69247629BD3C5C00ED150F /* c3autoP.c */; };
 		1B693C4427D9CFEA0063D8B6 /* detect_loco.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B693C4227D9CFEA0063D8B6 /* detect_loco.c */; };
+		1B6C98B92A6F4C71002FB6D0 /* conf_canton.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B46F7F9280752D500BAD6E8 /* conf_canton.c */; };
+		1B6C98CC2A6F9D49002FB6D0 /* TopologyTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B4B70A12729194F00FBDB52 /* TopologyTest.m */; };
 		1B702E6429CA4AFB00AEEC81 /* TestLongTrainLeft1.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B702E5C29CA4AEA00AEEC81 /* TestLongTrainLeft1.m */; };
 		1B702E7229CAD7AB00AEEC81 /* TestLongTrainLeft2.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B702E7129CAD7AB00AEEC81 /* TestLongTrainLeft2.m */; };
 		1B76688B2925855C00E2CE96 /* ToolWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B76688A2925855C00E2CE96 /* ToolWindow.m */; };
@@ -121,7 +122,6 @@
 		1B7B5E2A29767A1E00955045 /* pidctl.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B7A2A0A262D5954004E0481 /* pidctl.c */; };
 		1B7B5E2C29767A1E00955045 /* occupency.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BEB93C92729F10D00508C17 /* occupency.c */; };
 		1B7B5E2D29767A1E00955045 /* conf_topology.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B46F7FA280752D500BAD6E8 /* conf_topology.c */; };
-		1B7B5E2F29767A1E00955045 /* ctc_periodic_refresh.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B7B5E112970A50800955045 /* ctc_periodic_refresh.c */; };
 		1B7B5E3129767A1E00955045 /* longtrain.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B2688A62952439800E31486 /* longtrain.c */; };
 		1B7B5E3229767A1E00955045 /* conf_boards.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B46F802280752D600BAD6E8 /* conf_boards.c */; };
 		1B7B5E3329767A1E00955045 /* topology.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B46EE542692684E00FAC813 /* topology.c */; };
@@ -169,7 +169,6 @@
 		1BE0714A2A5CACC10096A2F8 /* train_detectors.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BE071492A5CACC00096A2F8 /* train_detectors.c */; };
 		1BE8B29527418D82000A0FAD /* cautoP.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B812B3C273FA77B00924749 /* cautoP.c */; };
 		1BE8B298274191F9000A0FAD /* ledtask.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BE8B296274191F8000A0FAD /* ledtask.c */; };
-		1BEB93C72729205300508C17 /* TopologyTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B4B70A12729194F00FBDB52 /* TopologyTest.m */; };
 		1BEB93C82729205800508C17 /* topology.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B46EE542692684E00FAC813 /* topology.c */; };
 		1BEB93CA2729F10D00508C17 /* occupency.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BEB93C92729F10D00508C17 /* occupency.c */; };
 		1BEB93CC272B317500508C17 /* occupency.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BEB93C92729F10D00508C17 /* occupency.c */; };
@@ -1123,8 +1122,8 @@
 				1B2688652951201600E31486 /* conf_topology.c in Sources */,
 				1B7B5E9D297B295C00955045 /* trainmsgstr.c in Sources */,
 				1B7B5DEB2965FFF800955045 /* TestLongTrainRight0.m in Sources */,
+				1B6C98B92A6F4C71002FB6D0 /* conf_canton.c in Sources */,
 				1B7B5E132970A50800955045 /* ctc_periodic_refresh.c in Sources */,
-				1B2688662951201600E31486 /* TopologyTest.m in Sources */,
 				1B2688A82952439800E31486 /* longtrain.c in Sources */,
 				1B5C543129D2C04600CE7052 /* longtrain4.c in Sources */,
 				1B5C544029D95D8F00CE7052 /* TestLongTrainRight2.m in Sources */,
@@ -1158,7 +1157,6 @@
 				1B7B5E94297680F600955045 /* tasklet.c in Sources */,
 				1B7B5E2D29767A1E00955045 /* conf_topology.c in Sources */,
 				1B7B5E5B29767B2700955045 /* spdctl.c in Sources */,
-				1B7B5E2F29767A1E00955045 /* ctc_periodic_refresh.c in Sources */,
 				1B7B5E3129767A1E00955045 /* longtrain.c in Sources */,
 				1B7B5E3229767A1E00955045 /* conf_boards.c in Sources */,
 				1B7B5E3329767A1E00955045 /* topology.c in Sources */,
@@ -1185,7 +1183,6 @@
 				1BEB93D0272B325700508C17 /* ctrlP.c in Sources */,
 				1B69246829BCBFEA00ED150F /* TestLongTrainSupport.m in Sources */,
 				1B8B027628EB833000FE382F /* conf_topology.c in Sources */,
-				1BEB93C72729205300508C17 /* TopologyTest.m in Sources */,
 				1B1C760027248C1500F95111 /* TestMQueue.m in Sources */,
 				1BC903182720B1920087CEA7 /* led.c in Sources */,
 				1B8B027A28EB834000FE382F /* conf_boards.c in Sources */,
@@ -1194,6 +1191,7 @@
 				1B455A272810B6F300F09E33 /* conf_train.c in Sources */,
 				1B1C75FD27245D1400F95111 /* misc.c in Sources */,
 				1B1C760127248DA800F95111 /* lf_mqueue.c in Sources */,
+				1B6C98CC2A6F9D49002FB6D0 /* TopologyTest.m in Sources */,
 				1B0ECEB427BAFC37003692B1 /* adc_mean.c in Sources */,
 				1B255145273262B30015B4FA /* TestOccupency.m in Sources */,
 				1B1C75FE27245D4E00F95111 /* itm_debug.c in Sources */,

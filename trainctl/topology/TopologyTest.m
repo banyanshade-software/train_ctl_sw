@@ -9,6 +9,8 @@
 #import <XCTest/XCTest.h>
 #include "topology.h"
 
+#include "TestLongTrainSupport.h"
+
 @interface TopologyTest : XCTestCase
 
 @end
@@ -37,5 +39,46 @@
     XCTAssert(be.n==-1);
 }
 
+- (void) testIna
+{
+    // ina 3 is on c5,  lsblk 12
+    lsblk_num_t ns = get_lsblk_for_ina(3);
+    XCTAssert(ns.n == 12);
+    xblkaddr_t b = get_canton_for_ina(3);
+    XCTAssert(b.v == 5);
+    lsblk_num_t l;
+    xblkaddr_t c;
+    get_lsblk_and_canton_for_ina(3, &l, &c);
+    XCTAssert(l.n == 12);
+    XCTAssert(c.v == 5);
+}
 
+- (void) testIna2
+{
+    // ina 4 is on c6, lsblk 13 to 22
+    lsblk_num_t ns = get_lsblk_for_ina(4);
+    XCTAssert(ns.n == 13);
+    xblkaddr_t b = get_canton_for_ina(4);
+    XCTAssert(b.v == 6);
+    lsblk_num_t l;
+    xblkaddr_t c;
+    get_lsblk_and_canton_for_ina(4, &l, &c);
+    XCTAssert(l.n == 13);
+    XCTAssert(c.v == 6);
+}
+
+
+
+- (void) testIna3
+{
+
+    uint16_t b = get_ina_bitfield_for_canton(6);
+    XCTAssert(b == (1U<<4));
+    
+    
+    b = get_ina_bitfield_for_canton(4);
+    XCTAssert(b == ((1U<<1) | (1U<<2)));
+    
+    
+}
 @end

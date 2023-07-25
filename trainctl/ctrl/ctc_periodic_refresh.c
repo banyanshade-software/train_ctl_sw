@@ -39,7 +39,6 @@ static void occupency_periodic_refresh(void)
 {
     static int n=0;
     int nc = conf_canton_num_entries();
-    
     xblkaddr_t b;
     b.v = n;
     uint8_t train;

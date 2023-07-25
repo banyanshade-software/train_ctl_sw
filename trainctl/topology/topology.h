@@ -130,4 +130,5 @@ void get_lsblk_and_canton_for_ina(int ina, lsblk_num_t *plsblk, xblkaddr_t *pcan
 // several lsblk may share the same ina3221 (using POSE only between these lsblk)
 
 // TODO
+
 #endif /* TOPOLOGY_TOPOLOGY_H_ */

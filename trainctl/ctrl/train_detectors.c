@@ -26,7 +26,9 @@ static int detect_ina_parser(msg_64_t *m)
         return -1;
     }
     _UNUSED_ uint8_t brd = MA0_BOARD(m->from);
-    uint8_t ina = m->subc;
+    ina_num_t ina;
+    ina.ina = m->subc;
+    ina.board = brd;
     lsblk_num_t lsb;
     xblkaddr_t canton;
     get_lsblk_and_canton_for_ina(ina, &lsb, &canton);

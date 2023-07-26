@@ -298,8 +298,8 @@ badmsg:
     for (int i = 0; i<n; i++) {
         // <polyline id="SBLK05" class="track CANTON3" stroke="#000000" stroke-width="5px" fill="none" points="600,320 680,320 720,280 720,120"></polyline>
         lsblk_num_t ls = {i};
-        int ina = get_lsblk_ina3221(ls); //uint8_t  get_lsblk_ina3221(lsblk_num_t num);
-        int h = (ina == hv) ? 1 : 0;
+        ina_num_t ina = get_lsblk_ina3221(ls); //uint8_t  get_lsblk_ina3221(lsblk_num_t num);
+        int h = (ina.v == hv) ? 1 : 0;
         //NSLog(@"lsblk %d ina %d -> %d", i, ina, h);
          // <polyline id="SBLK05" class="track CANTON3" stroke="#000000" stroke-width="5px" fill="none" points="600,320 680,320 720,280 720,120"></polyline>
         NSString *js = [NSString stringWithFormat:@"document.getElementById('SBLK%2.2d').style['stroke-width'] = '%s';", i, h ? "10px" : "5px"];

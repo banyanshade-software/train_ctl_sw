@@ -420,10 +420,10 @@ static int _check_posmm_overflow(int tidx, train_ctrl_t *tvars, int32_t posmm, l
         itm_debug3(DBG_CTRL, "chkpos:C", tidx, tvars->can1_xaddr.v, c.v);
         return 1;
     }
-    int n1 = get_lsblk_ina3221(tvars->c1_sblk);
-    int n2 = get_lsblk_ina3221(ns);
-    if (n1 != n2) {
-        itm_debug3(DBG_CTRL, "chkpos:I", tidx, n1, n2);
+    ina_num_t n1 = get_lsblk_ina3221(tvars->c1_sblk);
+    ina_num_t n2 = get_lsblk_ina3221(ns);
+    if (n1.v != n2.v) {
+        itm_debug3(DBG_CTRL, "chkpos:I", tidx, n1.v, n2.v);
         return 1;
     }
     itm_debug3(DBG_CTRL, "chkpos:K", tidx, tvars->_curposmm, posmm);

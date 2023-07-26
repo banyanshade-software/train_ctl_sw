@@ -368,8 +368,8 @@ static void notify_presence_changed(_UNUSED_ uint8_t from_addr,  uint8_t lsegnum
 	for (int i=0; i<n; i++) {
 		lsblk_num_t ln;
 		ln.n = i;
-		int li = get_lsblk_ina3221(ln);
-		if (li != lsegnum) continue;
+        ina_num_t li = get_lsblk_ina3221(ln);
+		if (li.v != lsegnum) continue;
 		if (i>31) break;
 		if (p) pres |= (1<<i);
 		else   pres &= ~(1<<i);
@@ -387,12 +387,13 @@ static void bh(void)
 
 }
 
-static void sub_presence_changed(_UNUSED_ uint8_t from_addr,  uint8_t lsegnum,  uint16_t p, _UNUSED_ int16_t ival)
+static void sub_presence_changed( uint8_t from_addr,  uint8_t inanum,  uint16_t p, _UNUSED_ int16_t ival)
 {
-	if (p && (4==lsegnum)) {
-		bh();
-	}
-	itm_debug3(DBG_PRES|DBG_CTRL, "PrsChg-", lsegnum, p, ival);
+    ina_num_t ina;
+    ina.board = MA0_BOARD(from_addr);
+    ina.ina = inanum;
+    
+	itm_debug3(DBG_PRES|DBG_CTRL, "PrsChg-", ina.v, p, ival);
 	// FatalError("ABRT", "sub_presence_changed", Error_Abort);
 
     // TODO : from_addr should be used for board number
@@ -404,10 +405,10 @@ static void sub_presence_changed(_UNUSED_ uint8_t from_addr,  uint8_t lsegnum,  
         uint8_t is_c1 = 0;
         uint8_t is_c2 = 0;
 
-        if ((tvar->c1_sblk.n != -1) && (lsegnum == get_lsblk_ina3221(tvar->c1_sblk))) {
+        if ((tvar->c1_sblk.n != -1) && (ina.v == get_lsblk_ina3221(tvar->c1_sblk).v)) {
             is_s1 = 1;
         }
-    	xblkaddr_t cl = get_canton_for_ina(lsegnum);
+    	xblkaddr_t cl = get_canton_for_ina(ina);
         if (tvar->can1_xaddr.v != 0xFF) {
         	if (cl.v == tvar->can1_xaddr.v) is_c1 = 1;
         }
@@ -415,7 +416,7 @@ static void sub_presence_changed(_UNUSED_ uint8_t from_addr,  uint8_t lsegnum,  
         	if (cl.v == tvar->can2_xaddr.v) is_c2 = 1;
         }
         lsblk_num_t n2 = next_lsblk(tvar->c1_sblk, tvar->_sdir<0, NULL);
-        if ((n2.n>=0) && (lsegnum == get_lsblk_ina3221(n2))) {
+        if ((n2.n>=0) && (ina.v == get_lsblk_ina3221(n2).v)) {
         	is_s2 = 1;
         }
         if (is_s1 || is_c1 || is_s2 || is_c2) {
@@ -426,7 +427,7 @@ static void sub_presence_changed(_UNUSED_ uint8_t from_addr,  uint8_t lsegnum,  
         }
         if (p) {
             
-            trace_train_ina3221(ctrl_tasklet.last_tick, tidx, lsegnum, 1);
+            trace_train_ina3221(ctrl_tasklet.last_tick, tidx, ina.v, 1);
             if ((0)) {
             } else if (is_s2 && !is_s1 && !is_c2) {
                 if (is_c1) {
@@ -448,13 +449,13 @@ static void sub_presence_changed(_UNUSED_ uint8_t from_addr,  uint8_t lsegnum,  
                     b = next_lsblk(b, tvar->_sdir<0, NULL);
                     if (b.n == -1) break;
                     if (canton_for_lsblk(b).v != tvar->can1_xaddr.v) break; // other canton, stop searching
-                    if (get_lsblk_ina3221(b) == lsegnum) {
+                    if (get_lsblk_ina3221(b).v == ina.v) {
                         // found
                         ctrl3_evt_entered_new_lsblk_same_canton(tidx, tvar, b, 1);
                         return;
                     }
                 }
-            	itm_debug3(DBG_ERR|DBG_CTRL, "badSub2", tidx, lsegnum, tvar->can1_xaddr.v);
+            	itm_debug3(DBG_ERR|DBG_CTRL, "badSub2", tidx, ina.v, tvar->can1_xaddr.v);
             	if ((1)) {
             		msg_64_t m = {0};
             		m.cmd = CMD_USB_TRACETRAIN;
@@ -466,13 +467,13 @@ static void sub_presence_changed(_UNUSED_ uint8_t from_addr,  uint8_t lsegnum,  
             		FatalError("bSub2", "bad subc2", Error_CtrlBadSubc2);
             	}
             } else if (is_c2) {
-                itm_debug2(DBG_ERR|DBG_CTRL, "sub/c2", tidx, lsegnum);
+                itm_debug2(DBG_ERR|DBG_CTRL, "sub/c2", tidx, ina.v);
             } else {
             	FatalError("bSubc", "bad subc", Error_CtrlBadSubc);
             }
         
         } else {
-            trace_train_ina3221(ctrl_tasklet.last_tick, tidx, lsegnum, 0);
+            trace_train_ina3221(ctrl_tasklet.last_tick, tidx, ina.v, 0);
         	/*if ((0)) { // XXX
         		if (is_c2) {
         			ctrl3_evt_leaved_c2(tidx, tvar);

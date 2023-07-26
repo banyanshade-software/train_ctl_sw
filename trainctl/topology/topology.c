@@ -124,9 +124,11 @@ const topo_lsblk_t *topology_get_sblkd(int lsblk)
     return Topology(n);
 }
 
-uint8_t get_lsblk_ina3221(lsblk_num_t num)
+ina_num_t get_lsblk_ina3221(lsblk_num_t num)
 {
-    return topology_get_sblkd(num.n)->ina_segnum;
+    ina_num_t r;
+    r.v = topology_get_sblkd(num.n)->ina_segnum;
+    return r;
 }
 
 
@@ -259,7 +261,7 @@ uint16_t get_ina_bitfield_for_canton(int cnum)
     return r;
 }
 
-xblkaddr_t get_canton_for_ina(int ina)
+xblkaddr_t get_canton_for_ina(ina_num_t ina)
 {
 	xblkaddr_t r;
     get_lsblk_and_canton_for_ina(ina, NULL, &r);
@@ -278,7 +280,7 @@ xblkaddr_t get_canton_for_ina(int ina)
      */
 }
 
-lsblk_num_t get_lsblk_for_ina(int ina)
+lsblk_num_t get_lsblk_for_ina(ina_num_t ina)
 {
     lsblk_num_t r;
     get_lsblk_and_canton_for_ina(ina, &r, NULL);
@@ -297,7 +299,7 @@ lsblk_num_t get_lsblk_for_ina(int ina)
      */
 }
 
-void get_lsblk_and_canton_for_ina(int ina, lsblk_num_t *plsblk, xblkaddr_t *pcan)
+void get_lsblk_and_canton_for_ina(ina_num_t ina, lsblk_num_t *plsblk, xblkaddr_t *pcan)
 {
     if (plsblk) plsblk->n = -1;
     if (pcan) pcan->v = 0xFF;
@@ -305,7 +307,7 @@ void get_lsblk_and_canton_for_ina(int ina, lsblk_num_t *plsblk, xblkaddr_t *pcan
         lsblk_num_t n;
         n.n = i;
         const topo_lsblk_t *t = Topology(n);
-        if (t->ina_segnum != ina) continue;
+        if (t->ina_segnum != ina.v) continue;
         if (plsblk) plsblk->n = i;
         if (pcan) pcan->v = t->canton_addr;
         break;

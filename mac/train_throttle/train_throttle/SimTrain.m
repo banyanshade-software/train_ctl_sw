@@ -124,18 +124,18 @@ static uint16_t ina_detect_bitfield = 0;
         
         // handle detection
         if (ina_detect_bitfield) {
-            uint8_t ina = get_lsblk_ina3221(s1[tn]);
-            if (ina_detect_bitfield & (1U<<ina)) {
+            ina_num_t ina = get_lsblk_ina3221(s1[tn]);
+            if (ina_detect_bitfield & (1U<<ina.ina)) {
                 // detected
                 msg_64_t m = {0};
                 m.from = MA0_INA(oam_localBoardNum());
                 m.to = MA1_CONTROL();
                 m.cmd = CMD_DETECTION_REPORT;
-                m.subc = ina;
+                m.subc = ina.ina;
                 m.v1 = 1; // not realistic
                 mqf_write_from_ina3221(&m);
                 // clear bit in ina_detect_bitfield so detection is performed once only
-                ina_detect_bitfield &= ~(1U<<ina);
+                ina_detect_bitfield &= ~(1U<<ina.v);
             }
             // assume train doesn't move during detection
             return;
@@ -155,15 +155,15 @@ static uint16_t ina_detect_bitfield = 0;
                 if (ns.n < 0) {
                     NSLog(@"END OF TRACK/COL !!");
                 } else {
-                    uint8_t inaold = get_lsblk_ina3221(s1[tn]);
-                    uint8_t inanew = get_lsblk_ina3221(ns);
-                    NSLog(@"switch ina %u->%u", inaold, inanew);
-                    if (inanew != inaold) {
-                        if (inaold != 0xFF) {
-                            [self inaOff:inaold train:tn];
+                    ina_num_t inaold = get_lsblk_ina3221(s1[tn]);
+                    ina_num_t inanew = get_lsblk_ina3221(ns);
+                    NSLog(@"switch ina %u->%u", inaold.v, inanew.v);
+                    if (inanew.v != inaold.v) {
+                        if (inaold.v != 0xFF) {
+                            [self inaOff:inaold.v train:tn];
                         }
-                        if (inanew != 0xFF) {
-                            [self inaOn:inanew train:tn];
+                        if (inanew.v != 0xFF) {
+                            [self inaOn:inanew.v train:tn];
                         }
                     }
                     s1[tn] = ns;    //  >>>>>>>>>>> next sblk >>>>>>>>>>>>>
@@ -183,15 +183,15 @@ static uint16_t ina_detect_bitfield = 0;
                 if (ns.n < 0) {
                     NSLog(@"END OF TRACK/COL !!");
                 } else {
-                    uint8_t inaold = get_lsblk_ina3221(s1[tn]);
-                    uint8_t inanew = get_lsblk_ina3221(ns);
+                    ina_num_t inaold = get_lsblk_ina3221(s1[tn]);
+                    ina_num_t inanew = get_lsblk_ina3221(ns);
                     NSLog(@"switch ina %u->%u", inaold, inanew);
-                    if (inanew != inaold) {
-                        if (inaold != 0xFF) {
-                            [self inaOff:inaold train:tn];
+                    if (inanew.v != inaold.v) {
+                        if (inaold.v != 0xFF) {
+                            [self inaOff:inaold.v train:tn];
                         }
-                        if (inanew != 0xFF) {
-                            [self inaOn:inanew train:tn];
+                        if (inanew.v != 0xFF) {
+                            [self inaOn:inanew.v train:tn];
                         }
                     }
                     s1[tn] = ns; // <<<<<<<<<<< next sblk <<<<<<<<<<q

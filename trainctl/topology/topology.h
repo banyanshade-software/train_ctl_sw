@@ -60,6 +60,16 @@ typedef struct {
 } lsblk_num_t;
 
 
+typedef union {
+    struct {
+        uint8_t ina:4;
+        uint8_t board:4;
+    };
+    uint8_t v;
+} ina_num_t;
+
+
+
 /// next_lsblk_nums
 /// @param blknum current lsblk
 /// @param left 0=right, 1=left
@@ -115,16 +125,16 @@ void topology_get_cantons_for_turnout(xtrnaddr_t turnout, xblkaddr_t *head, xblk
 // ---------------------------------------------------------------------
 
 // get ina3221 associated with a sblk
-uint8_t  get_lsblk_ina3221(lsblk_num_t num);
+ina_num_t  get_lsblk_ina3221(lsblk_num_t num);
 
 // for presence detection, retrive all ina3221 belonging to a canton
 uint16_t get_ina_bitfield_for_canton(int cnum); // XXX TODO not ok for multiboard
 
-xblkaddr_t get_canton_for_ina(int ina);
+xblkaddr_t get_canton_for_ina(ina_num_t ina);
 
-lsblk_num_t get_lsblk_for_ina(int ina);
+lsblk_num_t get_lsblk_for_ina(ina_num_t ina);
 
-void get_lsblk_and_canton_for_ina(int ina, lsblk_num_t *plsblk, xblkaddr_t *pcan);
+void get_lsblk_and_canton_for_ina(ina_num_t ina, lsblk_num_t *plsblk, xblkaddr_t *pcan);
 
 // get lsblk associated with a given ina3221
 // several lsblk may share the same ina3221 (using POSE only between these lsblk)

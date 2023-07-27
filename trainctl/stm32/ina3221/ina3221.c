@@ -194,6 +194,8 @@ static void run_ina_task(void)
 					itm_debug1(DBG_INA3221, "INA:mode", run_mode);
 					testerAddr = m.from;
 					memset(presence, 0, sizeof(presence));
+					// reconf on mode change
+					ina3221_init_and_configure();
 				}
 				continue;
 				break;

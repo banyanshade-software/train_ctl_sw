@@ -415,11 +415,20 @@ static int save_freq = 0;
 extern void set_pwm_freq(int freqhz, int crit);
 extern int get_pwm_freq(void);
 
+#define MAX_DETECT_TRAINS 4
+train_detector_result_t result[MAX_DETECT_TRAINS] = {0};
 
 void detect2_start(void)
 {
     detect_state = state_start; //state_next_detector;
     detect_canton.v = 0xFF;
+    
+    for (int i=0; i<MAX_DETECT_TRAINS; i++) {
+        result[i].canton.v = 0xFF;
+        result[i].lsblk.n = -1;
+        result[i].numlsblk = 0;
+        result[i].locotype = 0xFF;
+    }
     //detect_ltick = 0;
     save_freq = get_pwm_freq();
 }
@@ -554,6 +563,32 @@ static void register_found(train_detector_result_t *res)
 {
     // TODO
 	(void)res;
+    for (int i=0; i<MAX_DETECT_TRAINS; i++) {
+        if (result[i].canton.v == 0xFF) {
+            memcpy(&result[i], res, sizeof(*res));
+            return;
+        }
+        if (result[i].canton.v == res->canton.v) {
+            if (res->lsblk.n != -1) {
+                if (result[i].lsblk.n == -1) {
+                    result[i].lsblk = res->lsblk;
+                } else if (result[i].lsblk.n !=  res->lsblk.n) {
+                    result[i].lsblk = res->lsblk; // yes ?
+                }
+            }
+            if (res->numlsblk>0) {
+                if (result[i].numlsblk > res->numlsblk) {
+                    result[i].numlsblk = res->numlsblk;
+                }
+            }
+            if (res->locotype != 0xFF) {
+                result[i].locotype = res->locotype;
+            }
+            break;
+        }
+    }
+    // too many trains detected
+    itm_debug1(DBG_DETECT|DBG_ERR, "det-many", MAX_DETECT_TRAINS);
 }
 
 

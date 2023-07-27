@@ -382,7 +382,7 @@ static void notify_presence_changed(_UNUSED_ uint8_t from_addr,  uint8_t lsegnum
 	mqf_write_from_ctrl(&m);
 }
 
-static void bh(void)
+static _UNUSED_ void bh(void)
 {
 
 }

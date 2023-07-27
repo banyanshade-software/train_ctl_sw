@@ -10,14 +10,14 @@
 
 #include "misc.h"
 #include "../msg/trainmsg.h"
-#include "train_detectors.h"
 #include "../topology/topology.h"
+#include "train_detectors.h"
 
 
 /* parser */
 static _UNUSED_ int nil_detect_parse(_UNUSED_ const msg_64_t *m, train_detector_result_t *r)
 {
-    memset(r, 0, sizeof(r));
+    memset(r, 0, sizeof(*r));
     return 0;
 }
 

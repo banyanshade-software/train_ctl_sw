@@ -12,6 +12,17 @@
 #include "misc.h"
 #include "../msg/trainmsg.h"
 
+typedef struct {
+    xblkaddr_t canton;
+    lsblk_num_t lsblk;
+    uint8_t numlsblk;   // detector will know canton+ina, which correspond
+                        // to one or several lsblk
+    uint8_t locotype;   // id of locomotive, 0xFF = unknown
+    // no possibility for now to detect train length
+    //uint8_t leftcm;
+    //uint8_t rightcm;
+    
+} train_detector_result_t;
 /*
  we have several detectors, that will be run sequencially
  The first detector typically detect train presence (by applying a short
@@ -39,7 +50,7 @@ typedef struct st_detector {
     void (*const detect_init)(uint8_t p); // parameter unused, 0
     void (*const detect_deinit)(void);
     // parse handles CMD_DETECTION_REPORT
-    int (*const detect_parse)(msg_64_t *m);
+    int (*const detect_parse)(msg_64_t *m, train_detector_result_t *d);
     // ...
     const train_detector_step_t *steps;
     const char *name; // for debug

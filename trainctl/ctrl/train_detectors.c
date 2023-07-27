@@ -15,12 +15,13 @@
 
 
 /* parser */
-static _UNUSED_ int nil_detect_parse(_UNUSED_ msg_64_t *m)
+static _UNUSED_ int nil_detect_parse(_UNUSED_ const msg_64_t *m, train_detector_result_t *r)
 {
+    memset(r, 0, sizeof(r));
     return 0;
 }
 
-static int detect_ina_parser(msg_64_t *m)
+static int detect_ina_parser(const msg_64_t *m,  train_detector_result_t *r)
 {
     if (!MA0_IS_INA(m->from)) {
         return -1;
@@ -29,12 +30,19 @@ static int detect_ina_parser(msg_64_t *m)
     ina_num_t ina;
     ina.ina = m->subc;
     ina.board = brd;
-    lsblk_num_t lsb;
-    xblkaddr_t canton;
-    get_lsblk_and_canton_for_ina(ina, &lsb, &canton);
-    m->subc = lsb.n;
-    m->vb0 = canton.v;
-    m->vb1 = m->vb2 = m->vb3 = 0;
+    get_lsblk_and_canton_for_ina(ina, &(r->lsblk), &(r->canton));
+    if (r->canton.v == 0xFF) {
+        memset(r, 0, sizeof(*r));
+        return -1;
+    }
+    r->locotype = 0xFF;
+    r->numlsblk = 1;
+    lsblk_num_t n = r->lsblk;
+    for (;;) {
+        n = get_nextlsblk_with_same_ina(n);
+        if (n.n == -1) break;
+        r->numlsblk ++;
+    }
     return 0;
 }
 /* start actions step */

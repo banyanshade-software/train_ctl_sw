@@ -152,7 +152,7 @@ static void ctrl_enter_runmode(runmode_t m)
             _ctrl_init(1);
             break;
         case runmode_detect2:
-            detect2_init();
+            detect2_start();
             break;
             
     }

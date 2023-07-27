@@ -9,7 +9,7 @@
 #ifndef detectP_h
 #define detectP_h
 
-void detect2_init(void);
+void detect2_start(void);
 
 void detect2_process_tick(uint32_t tick, uint32_t dt);
 

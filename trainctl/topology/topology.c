@@ -303,7 +303,8 @@ void get_lsblk_and_canton_for_ina(ina_num_t ina, lsblk_num_t *plsblk, xblkaddr_t
 {
     if (plsblk) plsblk->n = -1;
     if (pcan) pcan->v = 0xFF;
-    for (int i=0; i<numTopology(); i++) {
+    int nt = numTopology();
+    for (int i=0; i<nt; i++) {
         lsblk_num_t n;
         n.n = i;
         const topo_lsblk_t *t = Topology(n);
@@ -312,6 +313,26 @@ void get_lsblk_and_canton_for_ina(ina_num_t ina, lsblk_num_t *plsblk, xblkaddr_t
         if (pcan) pcan->v = t->canton_addr;
         break;
     }
+}
+
+lsblk_num_t get_nextlsblk_with_same_ina(lsblk_num_t lsb)
+{
+    lsblk_num_t r;
+    r.n = -1;
+    if (lsb.n<0) return r;
+    int nt = numTopology();
+    if (lsb.n >= nt) return r;
+    const topo_lsblk_t *topo0 = Topology(lsb);
+    if (topo0->ina_segnum == 0xFF) return r;
+    for (int i=lsb.n+1; i<nt; i++) {
+        lsblk_num_t n;
+        n.n = i;
+        const topo_lsblk_t *t = Topology(n);
+        if (t->ina_segnum == topo0->ina_segnum) {
+            return n;
+        }
+    }
+    return r;
 }
 
 static inline lsblk_num_t _lsblk(int n)

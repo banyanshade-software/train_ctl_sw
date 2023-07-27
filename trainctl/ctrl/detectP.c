@@ -392,16 +392,17 @@ void detect2_process_msg(msg_64_t *m)
 #include "train_detectors.h"
 
 typedef  enum {
-    state_finished          = -1,
-    state_next_detector     = 0,
-    state_next_canton       = 1,
-    state_next_step         = 2,
-    state_wait_on           = 3,
-    state_next_stop_step    = 4,
+    state_finished          = 0,
+    state_start             = 1,
+    state_next_detector     = 2,
+    state_next_canton       = 3,
+    state_next_step         = 4,
+    state_wait_on           = 5,
+    state_next_stop_step    = 6,
 } detector_state_t;
 
 
-static detector_state_t detect_state = state_next_detector;
+static detector_state_t detect_state = state_finished;
 static xblkaddr_t detect_canton = {.v=0xFF};
 static uint32_t detect_tick = 0;
 static const train_detector_t *detector = NULL;
@@ -415,9 +416,9 @@ extern void set_pwm_freq(int freqhz, int crit);
 extern int get_pwm_freq(void);
 
 
-void detect2_init(void)
+void detect2_start(void)
 {
-    detect_state = state_next_detector;
+    detect_state = state_start; //state_next_detector;
     detect_canton.v = 0xFF;
     //detect_ltick = 0;
     save_freq = get_pwm_freq();
@@ -462,6 +463,10 @@ void detect2_process_tick(_UNUSED_ uint32_t tick,  _UNUSED_ uint32_t dt)
             FatalError("DEst", "bad detect state", Error_Other);
             detect_state = state_finished;
             _detection_finished();
+            break;
+        case state_start:
+            detector = NULL;
+            detect_state = state_next_detector;
             break;
         case state_next_detector:
             // starting / next detector
@@ -545,10 +550,10 @@ void detect2_process_tick(_UNUSED_ uint32_t tick,  _UNUSED_ uint32_t dt)
     }
 }
     
-static void register_found(msg_64_t *m)
+static void register_found(train_detector_result_t *res)
 {
     // TODO
-	(void)m;
+	(void)res;
 }
 
 
@@ -563,13 +568,14 @@ void detect2_process_msg(_UNUSED_ msg_64_t *m)
                 case state_wait_on:
                 case state_next_step:
                     itm_debug1(DBG_DETECT, "FOUND", m->subc);
-                    int rc = detector->detect_parse(m);
+                    train_detector_result_t res;
+                    int rc = detector->detect_parse(m, &res);
                     if (rc) {
                         itm_debug2(DBG_DETECT|DBG_ERR, "dtprse", m->from, m->subc);
                         break;
                     }
                     itm_debug2(DBG_DETECT, "--->", m->subc, m->vb0);
-                    register_found(m);
+                    register_found(&res);
                     break;
                     
                 default: //ignore report

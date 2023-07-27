@@ -134,6 +134,8 @@ xblkaddr_t get_canton_for_ina(ina_num_t ina);
 
 lsblk_num_t get_lsblk_for_ina(ina_num_t ina);
 
+lsblk_num_t get_nextlsblk_with_same_ina(lsblk_num_t lsb);
+
 void get_lsblk_and_canton_for_ina(ina_num_t ina, lsblk_num_t *plsblk, xblkaddr_t *pcan);
 
 // get lsblk associated with a given ina3221

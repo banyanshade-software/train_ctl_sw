@@ -422,7 +422,7 @@ void detect2_start(void)
 {
     detect_state = state_start; //state_next_detector;
     detect_canton.v = 0xFF;
-    
+    detect_tick = HAL_GetTick();
     for (int i=0; i<MAX_DETECT_TRAINS; i++) {
         result[i].canton.v = 0xFF;
         result[i].lsblk.n = -1;
@@ -475,7 +475,9 @@ void detect2_process_tick(_UNUSED_ uint32_t tick,  _UNUSED_ uint32_t dt)
             break;
         case state_start:
             detector = NULL;
-            detect_state = state_next_detector;
+            if (tick >= detect_tick+500) {
+            	detect_state = state_next_detector;
+            }
             break;
         case state_next_detector:
             // starting / next detector

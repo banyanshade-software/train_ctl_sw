@@ -171,6 +171,7 @@ static void run_ina_task(void)
 	for (;;) {
 		uint32_t notif = 0;
 		xTaskNotifyWait(0, 0xFFFFFFFF, &notif, portMAX_DELAY);
+		if ((0)) itm_debug1(DBG_INA3221|DBG_DETECT, "ina---", notif);
 		uint32_t t0 = HAL_GetTick();
 		handle_ina_notif(notif);
 		uint32_t t1 = HAL_GetTick();
@@ -191,11 +192,12 @@ static void run_ina_task(void)
 			case CMD_SETRUN_MODE:
 				if (run_mode != m.v1u) {
 					run_mode = m.v1u;
-					itm_debug1(DBG_INA3221, "INA:mode", run_mode);
+					itm_debug1(DBG_INA3221|DBG_DETECT, "INA:mode", run_mode);
 					testerAddr = m.from;
 					memset(presence, 0, sizeof(presence));
 					// reconf on mode change
 					ina3221_init_and_configure();
+					itm_debug1(DBG_INA3221|DBG_DETECT, "INA:cnfok", run_mode);
 				}
 				continue;
 				break;
@@ -322,7 +324,7 @@ static void _ina3221_configure(int a, int continuous)
     	if (rc) {
     		bkpoint(100,rc);
     	}
-    	osDelay(1000);
+    	osDelay(50);
     	//if ((1)) return;
     }
     _UNUSED_ uint16_t cnfar = ina3221_read16(a,  INA3221_REG_CONFIG);
@@ -509,6 +511,10 @@ static void _read_complete(_UNUSED_ int err)
 			}
 			break;
 
+		case 0:
+			// ignore
+			break;
+
 		default:
 			itm_debug2(DBG_ERR|DBG_DETECT|DBG_INA3221, "bad dmode", detect2_mode, detect2_monitor);
 			break;
@@ -592,12 +598,13 @@ void HAL_I2C_ErrorCallback(_UNUSED_ I2C_HandleTypeDef *hi2c)
 
 // ----------------------------------------------------------------------------------
 
+#define INA_I2C_TIMEOUT  100
 
 static uint16_t ina3221_read16(int a, int reg)
 {
 	HAL_StatusTypeDef status;
 	uint16_t w16;
-    status = HAL_I2C_Mem_Read(&INA3221_I2C_PORT, a<<1, reg, I2C_MEMADD_SIZE_8BIT, (uint8_t *)&w16, 2, HAL_MAX_DELAY);
+    status = HAL_I2C_Mem_Read(&INA3221_I2C_PORT, a<<1, reg, I2C_MEMADD_SIZE_8BIT, (uint8_t *)&w16, 2, INA_I2C_TIMEOUT);
     if (status != HAL_OK) {
     	itm_debug1(DBG_INA3221|DBG_ERR, "i2c r err", status);
     	ina3221_errors++;
@@ -614,7 +621,7 @@ static int ina3221_write16(int a, int reg, uint16_t v)
 	uint16_t w16;
 	if ((1)) w16 = __builtin_bswap16(v);
 	else w16=v;
-    status = HAL_I2C_Mem_Write(&INA3221_I2C_PORT, a<<1, reg, I2C_MEMADD_SIZE_8BIT, (uint8_t *)&w16, 2, HAL_MAX_DELAY);
+    status = HAL_I2C_Mem_Write(&INA3221_I2C_PORT, a<<1, reg, I2C_MEMADD_SIZE_8BIT, (uint8_t *)&w16, 2, INA_I2C_TIMEOUT);
     if (status != HAL_OK) {
     	itm_debug1(DBG_INA3221|DBG_ERR, "i2c w err", status);
        	ina3221_errors++;

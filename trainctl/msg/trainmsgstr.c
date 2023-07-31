@@ -114,7 +114,7 @@ msg_type_t traincmd_format(uint8_t cmd)
 	case CMD_TURNOUT_HI_TOG  : return CMD_TYPE_V16;
 	case CMD_START_DETECT_TRAIN: return CMD_TYPE_V16;
 	case CMD_STOP_DETECT_TRAIN: return CMD_TYPE_V32;
-	case CMD_START_INA_MONITOR: return CMD_TYPE_V16;
+	case CMD_START_INA_MONITOR: return CMD_TYPE_VCU;
 	case CMD_DETECTION_REPORT: return CMD_TYPE_V16;
 	case CMD_UI_DETECT       : return CMD_TYPE_V16;
 	case CMD_SERVO_SET       : return CMD_TYPE_V16;

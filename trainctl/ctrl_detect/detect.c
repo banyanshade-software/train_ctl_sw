@@ -13,14 +13,13 @@
 #include "../topology/topology.h"
 #include "../topology/occupency.h"
 
-#include "ctrl.h"
-
+#include "../ctrl/ctrl.h"
 
 #ifndef BOARD_HAS_CTRL
 #error BOARD_HAS_CTRL not defined, remove this file from build
 #endif
 
-#include "detectP.h"
+#include "detect.h"
 
 
 #define MEAS_DURATION  300 //tick = ms

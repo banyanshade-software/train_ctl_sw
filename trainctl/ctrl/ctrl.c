@@ -26,7 +26,7 @@
 
 #include "c3autoP.h"
 
-#include "detectP.h"
+#include "../ctrl_detect/detect.h"
 
 #include "../leds/led.h"
 #include "../config/conf_globparam.h"

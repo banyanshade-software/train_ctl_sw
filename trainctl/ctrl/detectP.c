@@ -405,7 +405,7 @@ typedef  enum {
 static detector_state_t detect_state = state_finished;
 static xblkaddr_t detect_canton = {.v=0xFF};
 static uint32_t detect_tick = 0;
-static const train_detector_t *detector = NULL;
+static const train_detect_cons_t *detector = NULL;
 static const train_detector_step_t *detectorstep = NULL;
 
 static int save_freq = 0;
@@ -481,8 +481,8 @@ void detect2_process_tick(_UNUSED_ uint32_t tick,  _UNUSED_ uint32_t dt)
             break;
         case state_next_detector:
             // starting / next detector
-            if (detector && detector->detect_deinit) {
-                detector->detect_deinit();
+            if (detector && detector->d->detect_deinit) {
+                detector->d->detect_deinit();
             }
             if (!detector) {
                 detector = &alldetectors;
@@ -497,9 +497,9 @@ void detect2_process_tick(_UNUSED_ uint32_t tick,  _UNUSED_ uint32_t dt)
                 break;
             }
             itm_debug1(DBG_DETECT, "NEXT DET", 0);
-            itm_debug1(DBG_DETECT, detector->name, 0);
-            if (detector->detect_init) {
-                detector->detect_init(0);
+            itm_debug1(DBG_DETECT, detector->d->name, 0);
+            if (detector->d->detect_init) {
+                detector->d->detect_init(0);
             }
             detectorstep = NULL;
             detect_canton.v = 0xFF;
@@ -523,7 +523,7 @@ void detect2_process_tick(_UNUSED_ uint32_t tick,  _UNUSED_ uint32_t dt)
         case state_next_stop_step:
             // start canton steps
             if (!detectorstep) {
-                detectorstep = detector->steps;
+                detectorstep = detector->d->steps;
             } else {
                 detectorstep = detectorstep->nextstep;
             }
@@ -606,7 +606,7 @@ void detect2_process_msg(_UNUSED_ msg_64_t *m)
                 case state_next_step:
                     itm_debug1(DBG_DETECT, "FOUND", m->subc);
                     train_detector_result_t res;
-                    int rc = detector->detect_parse(m, &res);
+                    int rc = detector->d->detect_parse(m, &res);
                     if (rc) {
                         itm_debug2(DBG_DETECT|DBG_ERR, "dtprse", m->from, m->subc);
                         break;

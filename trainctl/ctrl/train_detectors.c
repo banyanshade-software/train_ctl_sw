@@ -6,7 +6,6 @@
 //  Copyright © 2023 Daniel BRAUN. All rights reserved.
 //
 
-#include <stdio.h>
 
 #include "misc.h"
 #include "../msg/trainmsg.h"
@@ -191,6 +190,14 @@ static const train_detector_step_t _detector1_step0 = {
 /* ---------------------------------------------------------- */
 /* ---------------------------------------------------------- */
 
+const train_detector_t normal_detector = {
+    .detect_init = NULL,
+    .detect_deinit = NULL,
+    .detect_parse = detect_ina_parser,
+    .steps = &_detector1_step0
+};
+
+
 #ifdef TRAIN_SIMU
 
 static void detect_simu_init(uint8_t p)
@@ -248,8 +255,7 @@ static const train_detector_t detect1 = {
     
 };
 
-const train_detector_t alldetectors = {
-    .next = &detect1,
+const train_detector_t simu_detector = {
     .detect_init = detect_simu_init,
     .detect_deinit = detect_simu_deinit,
     .detect_parse = nil_detect_parse,
@@ -257,13 +263,21 @@ const train_detector_t alldetectors = {
     .name = "SIMU",
 };
 
+const train_detect_cons_t c1 = {
+		.d = &normal_detector,
+		.next = NULL,
+};
+const train_detect_cons_t alldetectors = {
+		.d = &simu_detector,
+		.next = &c1,
+};
 #else
 
-const train_detector_t alldetectors = {
-    .next = NULL,
-    .detect_init = NULL,
-    .detect_deinit = NULL,
-    .detect_parse = detect_ina_parser,
-    .steps = &_detector1_step0
+const train_detect_cons_t alldetectors = {
+		.d = &normal_detector,
+		.next = NULL
 };
+
 #endif
+
+

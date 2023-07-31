@@ -45,7 +45,8 @@ typedef struct st_detector_step {
 } train_detector_step_t;
 
 typedef struct st_detector {
-    const struct st_detector *next;
+    // use lisp like cons instead to have const struct
+	// const struct st_detector *next;
     // init and deinit called when starting/ending detector
     void (*const detect_init)(uint8_t p); // parameter unused, 0
     void (*const detect_deinit)(void);
@@ -55,6 +56,11 @@ typedef struct st_detector {
     const train_detector_step_t *steps;
     const char *name; // for debug
 } train_detector_t;
+
+typedef struct detect_cons {
+	const train_detector_t *d;
+	const struct detect_cons *next;
+} train_detect_cons_t;
 
 
 #if 0
@@ -74,6 +80,6 @@ int detect_step_stop_notify_ui(xblkaddr_t);
 #endif
 
 /* detectors */
-extern const train_detector_t alldetectors;
+extern const train_detect_cons_t alldetectors;
 
 #endif /* train_detector_h */

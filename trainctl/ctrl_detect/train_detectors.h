@@ -19,13 +19,14 @@ typedef struct {
     uint8_t numlsblk;   // detector will know canton+ina, which correspond
                         // to one or several lsblk
     uint8_t locotype;   // id of locomotive, 0xFF = unknown
+
     // no possibility for now to detect train length
     //uint8_t leftcm;
     //uint8_t rightcm;
     
 } train_detector_result_t;
 
-
+const train_detector_result_t *detector_result_for_canton(xblkaddr_t c);
 
 /*
  we have several detectors, that will be run sequencially

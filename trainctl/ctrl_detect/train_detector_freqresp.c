@@ -69,7 +69,9 @@ static  int detect_step_stop_inafreqmeas(xblkaddr_t detect_canton)
 int detect_step_check_detection(xblkaddr_t detect_canton)
 {
     // TODO
-	(void)detect_canton;
+	const train_detector_result_t *res = detector_result_for_canton(detect_canton);
+	if (!res) return -1;
+	if (res->canton.v == 0xFF) return -1;
     return 0;
 }
 

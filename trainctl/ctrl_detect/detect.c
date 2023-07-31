@@ -563,8 +563,6 @@ void detect2_process_tick(_UNUSED_ uint32_t tick,  _UNUSED_ uint32_t dt)
     
 static void register_found(train_detector_result_t *res)
 {
-    // TODO
-	(void)res;
     for (int i=0; i<MAX_DETECT_TRAINS; i++) {
         if (result[i].canton.v == 0xFF) {
             memcpy(&result[i], res, sizeof(*res));
@@ -594,6 +592,17 @@ static void register_found(train_detector_result_t *res)
     }
     // too many trains detected
     itm_debug1(DBG_DETECT|DBG_ERR, "det-many", MAX_DETECT_TRAINS);
+}
+
+const train_detector_result_t *detector_result_for_canton(xblkaddr_t c)
+{
+    for (int i=0; i<MAX_DETECT_TRAINS; i++) {
+        if (result[i].canton.v == 0xFF) {
+        	return NULL;
+        }
+        if (result[i].canton.v == c.v) return &result[i];
+    }
+    return NULL;
 }
 
 

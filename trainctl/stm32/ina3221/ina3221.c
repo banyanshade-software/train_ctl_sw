@@ -141,7 +141,7 @@ volatile int16_t oscillo_ina0;
 volatile int16_t oscillo_ina1;
 volatile int16_t oscillo_ina2;
 
-static uint16_t detect2_monitor = 0;
+static uint16_t detect2_bitfield = 0;
 static uint16_t detect2_mode = 0;
 
 static int8_t presence[INA3221_NUM_VALS] = {0};
@@ -214,7 +214,7 @@ static void run_ina_task(void)
 				}
 				memset(presence, 0, sizeof(presence));
 				itm_debug2(DBG_DETECT|DBG_INA3221, "detect2 ina", m.v1u, m.v2u);
-				detect2_monitor = m.va16;
+				detect2_bitfield = m.va16;
 				detect2_mode = m.vb8;
 				continue;
 			default:
@@ -507,7 +507,7 @@ static void _read_complete(_UNUSED_ int err)
 		case 1:
 			/* normal ina3221 presence detection, applied to detection */
 			for (int i = 0; i<INA3221_NUM_VALS; i++) {
-				if (0 == (detect2_monitor & (1<<i))) continue;
+				if (0 == (detect2_bitfield & (1<<i))) continue;
 				int p = (abs(ina_svalues[i])>1000) ? 1 : 0;
 				if (p == presence[i]) continue;
 				presence[i] = p;
@@ -528,7 +528,7 @@ static void _read_complete(_UNUSED_ int err)
 			break;
 
 		default:
-			itm_debug2(DBG_ERR|DBG_DETECT|DBG_INA3221, "bad dmode", detect2_mode, detect2_monitor);
+			itm_debug2(DBG_ERR|DBG_DETECT|DBG_INA3221, "bad dmode", detect2_mode, detect2_bitfield);
 			break;
 		}
 		break;

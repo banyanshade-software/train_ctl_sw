@@ -256,7 +256,9 @@ uint16_t get_ina_bitfield_for_canton(int cnum)
         const topo_lsblk_t *t = Topology(n);
         if (t->canton_addr != cnum) continue;
         if (t->ina_segnum == 0xFF) continue;
-        uint8_t s = t->ina_segnum & 0xF;
+        ina_num_t ina;
+        ina.v = t->ina_segnum;
+        uint8_t s = ina.ina;
         r |= (1 << s);
     }
     return r;

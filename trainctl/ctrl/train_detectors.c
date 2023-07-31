@@ -11,6 +11,7 @@
 #include "../msg/trainmsg.h"
 #include "../topology/topology.h"
 #include "train_detectors.h"
+#include "train_detectors_p.h"
 
 
 /* parser */
@@ -45,7 +46,7 @@ static int detect_ina_parser(const msg_64_t *m,  train_detector_result_t *r)
     return 0;
 }
 /* start actions step */
-static int detect_step_check_canton_exist(xblkaddr_t detect_canton)
+int detect_step_check_canton_exist(xblkaddr_t detect_canton)
 {
     lsblk_num_t lsb = any_lsblk_with_canton(detect_canton);
     if (lsb.n<0) {
@@ -54,7 +55,7 @@ static int detect_step_check_canton_exist(xblkaddr_t detect_canton)
     return 0;
 }
 
-static _UNUSED_ int detect_step_notify_ui(xblkaddr_t detect_canton)
+int detect_step_notify_ui(xblkaddr_t detect_canton)
 {
     itm_debug1(DBG_DETECT, "D-gui", detect_canton.v);
     if ((1)) {
@@ -85,7 +86,7 @@ int detect_step_start_pwm(xblkaddr_t  detect_canton)
     _start_canton(detect_canton, 0, 20);
     return 0;
 }
-static int detect_step_wait(xblkaddr_t detect_canton)
+int detect_step_wait(xblkaddr_t detect_canton)
 {
     itm_debug1(DBG_DETECT, "D-wait", detect_canton.v);
     return 0;
@@ -112,7 +113,7 @@ static int detect_step_start_inameas(xblkaddr_t detect_canton)
 
 
 /* stop actions steps */
-static int detect_step_stop_pwm(xblkaddr_t detect_canton)
+int detect_step_stop_pwm(xblkaddr_t detect_canton)
 {
     itm_debug1(DBG_DETECT, "O-pwm", detect_canton.v);
     msg_64_t m = {0};
@@ -138,11 +139,10 @@ static _UNUSED_ int detect_step_stop_inameas(xblkaddr_t detect_canton)
     mqf_write_from_ctrl(&m);
     
     return 0;
-    return 0;
 }
 
 
-static _UNUSED_ int detect_step_stop_notify_ui(xblkaddr_t detect_canton)
+int detect_step_stop_notify_ui(xblkaddr_t detect_canton)
 {
     itm_debug1(DBG_DETECT, "O-gui", detect_canton.v);
     if ((1)) {
@@ -166,6 +166,7 @@ static const train_detector_step_t _detector1_step3 = {
     .detect_stop_canton = NULL,
     .nextstep = NULL
 };
+
 static const train_detector_step_t _detector1_step2 = {
     .detect_start_canton = detect_step_start_pwm,
     .detect_stop_canton = detect_step_stop_pwm,

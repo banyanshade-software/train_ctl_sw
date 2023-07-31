@@ -30,8 +30,8 @@
             filePath = "../../trainctl/ctrl/ctrl.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "637"
-            endingLineNumber = "637"
+            startingLineNumber = "636"
+            endingLineNumber = "636"
             landmarkName = "normal_process_msg(m)"
             landmarkType = "9">
          </BreakpointContent>
@@ -46,8 +46,8 @@
             filePath = "../../trainctl/ctrl/ctrl.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "465"
-            endingLineNumber = "465"
+            startingLineNumber = "464"
+            endingLineNumber = "464"
             landmarkName = "sub_presence_changed(from_addr, inanum, p, ival)"
             landmarkType = "9">
          </BreakpointContent>
@@ -1003,8 +1003,8 @@
             filePath = "../../trainctl/ctrl/ctrl.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "564"
-            endingLineNumber = "564"
+            startingLineNumber = "563"
+            endingLineNumber = "563"
             landmarkName = "normal_process_msg(m)"
             landmarkType = "9">
          </BreakpointContent>
@@ -1531,8 +1531,8 @@
             filePath = "../../trainctl/ctrl/ctrl.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "660"
-            endingLineNumber = "660"
+            startingLineNumber = "659"
+            endingLineNumber = "659"
             landmarkName = "normal_process_msg(m)"
             landmarkType = "9">
          </BreakpointContent>
@@ -1547,8 +1547,8 @@
             filePath = "../../trainctl/ctrl/ctrl.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "687"
-            endingLineNumber = "687"
+            startingLineNumber = "686"
+            endingLineNumber = "686"
             landmarkName = "normal_process_msg(m)"
             landmarkType = "9">
          </BreakpointContent>
@@ -1563,9 +1563,9 @@
             filePath = "../../trainctl/ctrl/detectP.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "595"
-            endingLineNumber = "595"
-            landmarkName = "detect2_process_msg(m)"
+            startingLineNumber = "555"
+            endingLineNumber = "555"
+            landmarkName = "detect2_process_tick(tick, dt)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1611,9 +1611,9 @@
             filePath = "../../trainctl/ctrl/detectP.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "464"
-            endingLineNumber = "464"
-            landmarkName = "detect2_process_tick(tick, dt)"
+            startingLineNumber = "454"
+            endingLineNumber = "454"
+            landmarkName = "_detection_finished()"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1643,8 +1643,8 @@
             filePath = "../../trainctl/ctrl/detectP.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "556"
-            endingLineNumber = "556"
+            startingLineNumber = "542"
+            endingLineNumber = "542"
             landmarkName = "detect2_process_tick(tick, dt)"
             landmarkType = "9">
          </BreakpointContent>
@@ -1659,8 +1659,8 @@
             filePath = "../../trainctl/ctrl/detectP.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "535"
-            endingLineNumber = "535"
+            startingLineNumber = "521"
+            endingLineNumber = "521"
             landmarkName = "detect2_process_tick(tick, dt)"
             landmarkType = "9">
          </BreakpointContent>
@@ -1675,8 +1675,8 @@
             filePath = "../../trainctl/ctrl/detectP.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "529"
-            endingLineNumber = "529"
+            startingLineNumber = "515"
+            endingLineNumber = "515"
             landmarkName = "detect2_process_tick(tick, dt)"
             landmarkType = "9">
          </BreakpointContent>
@@ -1691,8 +1691,8 @@
             filePath = "../../trainctl/ctrl/detectP.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "555"
-            endingLineNumber = "555"
+            startingLineNumber = "541"
+            endingLineNumber = "541"
             landmarkName = "detect2_process_tick(tick, dt)"
             landmarkType = "9">
          </BreakpointContent>
@@ -1707,9 +1707,9 @@
             filePath = "../../trainctl/ctrl/train_detectors.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "121"
-            endingLineNumber = "121"
-            landmarkName = "detect_step_stop_pwm(detect_canton)"
+            startingLineNumber = "111"
+            endingLineNumber = "111"
+            landmarkName = "detect_step_start_inameas(detect_canton)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1723,9 +1723,9 @@
             filePath = "../../trainctl/ctrl/train_detectors.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "79"
-            endingLineNumber = "79"
-            landmarkName = "_start_canton(detect_canton, method, param)"
+            startingLineNumber = "69"
+            endingLineNumber = "69"
+            landmarkName = "detect_step_notify_ui(detect_canton)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1771,9 +1771,9 @@
             filePath = "../../trainctl/ctrl/train_detectors.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "86"
-            endingLineNumber = "86"
-            landmarkName = "detect_step_start_pwm(detect_canton)"
+            startingLineNumber = "76"
+            endingLineNumber = "76"
+            landmarkName = "_start_canton(detect_canton, method, param)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1787,8 +1787,8 @@
             filePath = "../../trainctl/ctrl/detectP.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "493"
-            endingLineNumber = "493"
+            startingLineNumber = "479"
+            endingLineNumber = "479"
             landmarkName = "detect2_process_tick(tick, dt)"
             landmarkType = "9">
          </BreakpointContent>
@@ -1803,8 +1803,8 @@
             filePath = "../../trainctl/ctrl/detectP.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "486"
-            endingLineNumber = "486"
+            startingLineNumber = "472"
+            endingLineNumber = "472"
             landmarkName = "detect2_process_tick(tick, dt)"
             landmarkType = "9">
          </BreakpointContent>
@@ -1819,8 +1819,8 @@
             filePath = "../../trainctl/ctrl/detectP.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "502"
-            endingLineNumber = "502"
+            startingLineNumber = "488"
+            endingLineNumber = "488"
             landmarkName = "detect2_process_tick(tick, dt)"
             landmarkType = "9">
          </BreakpointContent>
@@ -1835,9 +1835,9 @@
             filePath = "../../trainctl/ctrl/detectP.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "621"
-            endingLineNumber = "621"
-            landmarkName = "detect2_process_msg(m)"
+            startingLineNumber = "580"
+            endingLineNumber = "580"
+            landmarkName = "register_found(res)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1845,6 +1845,22 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "2B43283E-118B-48D2-B29F-339678AB3CB8"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../trainctl/ctrl/train_detectors.c"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "81"
+            endingLineNumber = "81"
+            landmarkName = "_start_canton(detect_canton, method, param)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "C363F77C-5FE7-4E41-B1A9-A08493F3605A"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
@@ -1860,22 +1876,6 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "C363F77C-5FE7-4E41-B1A9-A08493F3605A"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../../trainctl/ctrl/train_detectors.c"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "101"
-            endingLineNumber = "101"
-            landmarkName = "detect_step_start_inameas(detect_canton)"
-            landmarkType = "9">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
             uuid = "5206EDBC-991C-4A0B-93F5-CF7AD5CB6F3C"
             shouldBeEnabled = "No"
             ignoreCount = "0"
@@ -1883,9 +1883,9 @@
             filePath = "../../trainctl/ctrl/train_detectors.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "98"
-            endingLineNumber = "98"
-            landmarkName = "detect_step_start_inameas(detect_canton)"
+            startingLineNumber = "88"
+            endingLineNumber = "88"
+            landmarkName = "detect_step_start_pwm(detect_canton)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1899,9 +1899,9 @@
             filePath = "../../trainctl/ctrl/train_detectors.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "135"
-            endingLineNumber = "135"
-            landmarkName = "detect_step_stop_inameas(detect_canton)"
+            startingLineNumber = "125"
+            endingLineNumber = "125"
+            landmarkName = "detect_step_stop_pwm(detect_canton)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -2043,9 +2043,9 @@
             filePath = "../../trainctl/ctrl/detectP.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "616"
-            endingLineNumber = "616"
-            landmarkName = "detect2_process_msg(m)"
+            startingLineNumber = "575"
+            endingLineNumber = "575"
+            landmarkName = "register_found(res)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -2059,9 +2059,9 @@
             filePath = "../../trainctl/ctrl/detectP.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "604"
-            endingLineNumber = "604"
-            landmarkName = "detect2_process_msg(m)"
+            startingLineNumber = "564"
+            endingLineNumber = "564"
+            landmarkName = "register_found(res)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -2075,8 +2075,8 @@
             filePath = "../../trainctl/ctrl/train_detectors.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "21"
-            endingLineNumber = "21"
+            startingLineNumber = "20"
+            endingLineNumber = "20"
             landmarkName = "nil_detect_parse(m, r)"
             landmarkType = "9">
          </BreakpointContent>
@@ -2101,14 +2101,14 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "236324FA-E54D-483B-8333-E57673CC7A73"
-            shouldBeEnabled = "No"
+            shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../../trainctl/ctrl/train_detectors.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "29"
-            endingLineNumber = "29"
+            startingLineNumber = "28"
+            endingLineNumber = "28"
             landmarkName = "detect_ina_parser(m, r)"
             landmarkType = "9">
          </BreakpointContent>
@@ -2123,8 +2123,8 @@
             filePath = "../../trainctl/topology/TopologyTest.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "48"
-            endingLineNumber = "48"
+            startingLineNumber = "46"
+            endingLineNumber = "46"
             landmarkName = "-testIna"
             landmarkType = "7">
             <Locations>
@@ -2201,8 +2201,8 @@
             filePath = "../../trainctl/topology/TopologyTest.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "50"
-            endingLineNumber = "50"
+            startingLineNumber = "48"
+            endingLineNumber = "48"
             landmarkName = "-testIna"
             landmarkType = "7">
             <Locations>
@@ -2267,102 +2267,6 @@
                   offsetFromSymbolStart = "1879">
                </Location>
             </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "8BDF4D7B-88F4-47FE-8ADC-EB9A9C096180"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../../trainctl/ctrl/ctrl.c"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "408"
-            endingLineNumber = "408"
-            landmarkName = "sub_presence_changed(from_addr, inanum, p, ival)"
-            landmarkType = "9">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "E547A432-D2A4-46C2-853B-78538C5E71BF"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../../trainctl/ctrl/detectP.c"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "423"
-            endingLineNumber = "423"
-            landmarkName = "detect2_start()"
-            landmarkType = "9">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "7E1823A3-1AB6-4E98-83B3-DF729E830E07"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../../trainctl/ctrl/detectP.c"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "449"
-            endingLineNumber = "449"
-            landmarkName = "_detection_finished()"
-            landmarkType = "9">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "08B25BB3-5C79-46FB-9ED8-4F9870F26EE7"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../../trainctl/ctrl/detectP.c"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "565"
-            endingLineNumber = "565"
-            landmarkName = "register_found(res)"
-            landmarkType = "9">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "ABB33CE4-D945-47C5-9A2F-443FAD159411"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../../trainctl/ctrl/detectP.c"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "562"
-            endingLineNumber = "562"
-            landmarkName = "register_found(res)"
-            landmarkType = "9">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "6F50C1FD-D2F4-4901-950C-AF6022E158AE"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../../trainctl/ctrl/detectP.c"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "572"
-            endingLineNumber = "572"
-            landmarkName = "register_found(res)"
-            landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

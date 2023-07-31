@@ -146,6 +146,12 @@ static uint16_t detect2_mode = 0;
 
 static int8_t presence[INA3221_NUM_VALS] = {0};
 
+
+
+static int singledev = -1;
+static int singlech = -1;
+
+
 void ina3221_task_start(_UNUSED_ void *argument)
 {
 	if (DISABLE_INA3221) {
@@ -208,8 +214,8 @@ static void run_ina_task(void)
 				}
 				memset(presence, 0, sizeof(presence));
 				itm_debug2(DBG_DETECT|DBG_INA3221, "detect2 ina", m.v1u, m.v2u);
-				detect2_monitor = m.v1u;
-				detect2_mode = m.v2u;
+				detect2_monitor = m.va16;
+				detect2_mode = m.vb8;
 				continue;
 			default:
 				//itm_debug2(DBG_INA3221|DBG_DETECT, "unk msg", m.cmd, run_mode);
@@ -368,13 +374,17 @@ static void _ina3221_configure(int a, int continuous)
 void _ina3221_init(int continuous)
 {
 	if (disable_ina3221) return;
+	singledev = -1;
+	singlech = -1;
 	//I2C_Scan();
 	for (int dev = 0; dev<4; dev++) {
 		int addr = 0x40 + dev;
 	    HAL_StatusTypeDef res;
         res = HAL_I2C_IsDeviceReady(&INA3221_I2C_PORT, addr << 1, 1, 10);
         if (res == HAL_OK) {
+
         	_ina3221_configure(addr, continuous);
+
         	itm_debug2(DBG_PRES|DBG_INA3221, "INA@", dev, addr); // 0x40 0x43
         	ina3221_devices[dev]=1;
         } else {
@@ -406,9 +416,11 @@ static void ina3221_init_and_configure(void)
 
 static uint16_t ina_uvalues[INA3221_NUM_VALS] = {0}; // raw values
 
-
 static int _next_dev(int dev)
 {
+	if (singledev != -1) {
+		return singledev;
+	}
 	dev = dev+1;
 	for (;dev<=3;dev++) {
 		if (ina3221_devices[dev]) return dev;

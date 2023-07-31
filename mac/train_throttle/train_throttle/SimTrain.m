@@ -251,8 +251,8 @@ void ina_simu_tick(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSE
         if (rc) break;
         switch (m.cmd) {
             case CMD_START_INA_MONITOR:
-                itm_debug1(DBG_DETECT, "START monitor", m.v1u);
-                ina_detect_bitfield = m.v1u;
+                itm_debug1(DBG_DETECT, "START monitor", m.va16);
+                ina_detect_bitfield = m.va16;
                 break;
                 
             case CMD_SETRUN_MODE:

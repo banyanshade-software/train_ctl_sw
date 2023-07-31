@@ -248,7 +248,6 @@ static const train_detector_step_t _simu_step0 = {
 };
 
 static const train_detector_t detect1 = {
-    .next = NULL,
     .detect_init = NULL,
     .detect_deinit = NULL,
     .detect_parse = detect_ina_parser,

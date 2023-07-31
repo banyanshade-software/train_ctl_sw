@@ -14,6 +14,7 @@
 
 typedef struct {
     xblkaddr_t canton;
+    ina_num_t ina;
     lsblk_num_t lsblk;
     uint8_t numlsblk;   // detector will know canton+ina, which correspond
                         // to one or several lsblk
@@ -23,6 +24,9 @@ typedef struct {
     //uint8_t rightcm;
     
 } train_detector_result_t;
+
+
+
 /*
  we have several detectors, that will be run sequencially
  The first detector typically detect train presence (by applying a short

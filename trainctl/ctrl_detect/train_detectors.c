@@ -35,6 +35,7 @@ static int detect_ina_parser(const msg_64_t *m,  train_detector_result_t *r)
         memset(r, 0, sizeof(*r));
         return -1;
     }
+    r->ina = ina;
     r->locotype = 0xFF;
     r->numlsblk = 1;
     lsblk_num_t n = r->lsblk;

@@ -427,6 +427,7 @@ void detect2_start(void)
         result[i].lsblk.n = -1;
         result[i].numlsblk = 0;
         result[i].locotype = 0xFF;
+        result[i].ina.v    = 0xFF;
     }
     //detect_ltick = 0;
     save_freq = get_pwm_freq();
@@ -584,6 +585,9 @@ static void register_found(train_detector_result_t *res)
             }
             if (res->locotype != 0xFF) {
                 result[i].locotype = res->locotype;
+            }
+            if (res->ina.v != 0xFF) {
+            	result[i].ina = res->ina;
             }
             break;
         }

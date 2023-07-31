@@ -16,4 +16,5 @@ void detect2_process_tick(uint32_t tick, uint32_t dt);
 void detect2_process_msg(msg_64_t *m);
 
 
+
 #endif /* detectP_h */

@@ -20,14 +20,16 @@ static _UNUSED_ int nil_detect_parse(_UNUSED_ const msg_64_t *m, train_detector_
     return 0;
 }
 
+static ina_num_t ina = {.v = 0xFF};
+
 static void detect_freq_init(_UNUSED_ uint8_t p)
 {
-
+	ina.v = 0xFF;
 }
 
 static void detect_freq_deinit(void)
 {
-
+	ina.v = 0xFF;
 }
 
 
@@ -35,14 +37,16 @@ static int detect_step_start_inafreqmeas(xblkaddr_t detect_canton)
 {
     itm_debug1(DBG_DETECT, "Df-ina", detect_canton.v);
 
-    uint16_t inas = get_ina_bitfield_for_canton(detect_canton.v);
-    if (!inas) return -1;
+	if (ina.v == 0xFF) return -1;
+
     int board = detect_canton.board;
+    if (ina.board != board) return -1;
+
     msg_64_t m = {0};
     m.from = MA1_CONTROL();
     m.to = MA0_INA(board);
     m.cmd = CMD_START_INA_MONITOR;
-    m.va16 = inas;
+    m.va16 = ina.ina;
     m.vb8 = 2;
 
     mqf_write_from_ctrl(&m);
@@ -72,6 +76,8 @@ int detect_step_check_detection(xblkaddr_t detect_canton)
 	const train_detector_result_t *res = detector_result_for_canton(detect_canton);
 	if (!res) return -1;
 	if (res->canton.v == 0xFF) return -1;
+	ina = res->ina;
+	if (ina.v == 0xFF) return -1;
     return 0;
 }
 

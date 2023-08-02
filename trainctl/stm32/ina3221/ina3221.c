@@ -215,6 +215,9 @@ static void run_ina_task(void)
 				break;
 			case CMD_SETRUN_MODE:
 				if (run_mode != m.v1u) {
+					if ((m.v1u == runmode_normal) && (run_mode==runmode_detect2)) {
+						itm_debug1(DBG_DETECT, "brk here", 0);
+					}
 					run_mode = m.v1u;
 					itm_debug1(DBG_INA3221|DBG_DETECT, "INA:mode", run_mode);
 					testerAddr = m.from;
@@ -675,7 +678,7 @@ static uint16_t df_idx = 0;
 
 typedef struct {
 	uint32_t tick;
-	uint16_t val;
+	int16_t val;
 } time_val_t;
 
 #define DF_NUMVAL 512

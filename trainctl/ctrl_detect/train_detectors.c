@@ -12,6 +12,7 @@
 #include "../topology/topology.h"
 #include "train_detectors.h"
 #include "train_detectors_p.h"
+#include "train_detector_freqresp.h"
 
 
 /* parser */
@@ -273,10 +274,13 @@ const train_detect_cons_t alldetectors = {
 		.next = &c1,
 };
 #else
-
+static const train_detect_cons_t d1 = {
+		.d = &freqresp_detector,
+		.next = NULL
+};
 const train_detect_cons_t alldetectors = {
 		.d = &normal_detector,
-		.next = NULL
+		.next = &d1
 };
 
 #endif

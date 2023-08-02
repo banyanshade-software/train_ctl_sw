@@ -13,7 +13,7 @@
 #include "misc.h"
 #include "../msg/trainmsg.h"
 
-extern const train_detector_t freqdetector;
+extern const train_detector_t freqresp_detector;
 
 
 #endif /* CTRL_TRAIN_DETECTOR_FREQRESP_H_ */

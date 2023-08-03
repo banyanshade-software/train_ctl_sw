@@ -217,6 +217,7 @@ static void run_ina_task(void)
 				if (run_mode != m.v1u) {
 					if ((m.v1u == runmode_normal) && (run_mode==runmode_detect2)) {
 						itm_debug1(DBG_DETECT, "brk here", 0);
+						//p -elements unlimited -- timeval
 					}
 					run_mode = m.v1u;
 					itm_debug1(DBG_INA3221|DBG_DETECT, "INA:mode", run_mode);

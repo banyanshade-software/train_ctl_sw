@@ -85,7 +85,7 @@ static void _start_canton(xblkaddr_t detect_canton, uint8_t method, uint16_t par
 int detect_step_start_pwm(xblkaddr_t  detect_canton)
 {
     itm_debug1(DBG_DETECT, "D-pwm", detect_canton.v);
-    _start_canton(detect_canton, 0, 20);
+    _start_canton(detect_canton, 1, 20);
     return 0;
 }
 int detect_step_wait(xblkaddr_t detect_canton)

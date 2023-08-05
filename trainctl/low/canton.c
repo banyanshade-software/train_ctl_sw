@@ -35,7 +35,10 @@
 #include "../trainctl_iface.h"
 #include "canton.h"
 #include "canton_bemf.h"
+#include "cantonP.h"
 #include "../msg/tasklet.h"
+#include "canton_siggen.h"
+
 #ifndef TRAIN_SIMU
 
 
@@ -123,13 +126,6 @@ static msg_handler_t msg_handler_selector(runmode_t m)
 
 
 // ------------------------------------------------------
-
-typedef struct canton_vars {
-	int8_t cur_dir;
-	uint8_t cur_voltidx;
-	uint16_t cur_pwm_duty;
-	int32_t selected_centivolt;
-} canton_vars_t;
 
 static canton_vars_t canton_vars[NUM_CANTONS]={0};
 
@@ -257,9 +253,20 @@ static void handle_msg_detect2(msg_64_t *m)
         case CMD_START_DETECT_TRAIN:
             detect_type = m->v2u;
             canton_set_volt(cidx, cconf, cvars,  7);
-            m->cmd = CMD_BEMF_ON;
-            bemf_msg(m);
-            canton_set_pwm(cidx, cconf, cvars, 1, m->v1u); // % PWM
+            switch (detect_type) {
+            default:
+            	itm_debug1(DBG_ERR|DBG_DETECT, "bad dett", detect_type);
+            	break;
+            case 1:
+            	// normal PWM
+            	//m->cmd = CMD_BEMF_ON; // no need for bemf here
+            	//bemf_msg(m);
+            	canton_set_pwm(cidx, cconf, cvars, 1, m->v1u); // % PWM
+            	break;
+            case 2:
+            	start_signal_gen(cconf, cvars, m->v1u);
+            	break;
+            }
             break;
         case CMD_STOP_DETECT_TRAIN:
             m->cmd = CMD_BEMF_OFF;

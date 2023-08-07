@@ -13,6 +13,6 @@
 #include "cantonP.h"
 #include "../config/conf_canton.h"
 
-void start_signal_gen(const conf_canton_t *cconf, canton_vars_t *cvars, uint16_t p);
+void start_signal_gen(int cidx, const conf_canton_t *cconf, canton_vars_t *cvars, uint16_t p);
 
 #endif /* LOW_CANTON_SIGGEN_H_ */

@@ -17,4 +17,7 @@ typedef struct canton_vars {
 } canton_vars_t;
 
 
+void canton_set_pwm(int cidx, const conf_canton_t *c, canton_vars_t *v,  int8_t sdir, int duty);
+void canton_set_volt(int cn, const conf_canton_t *c, canton_vars_t *v, int voltidx);
+
 #endif /* LOW_CANTONP_H_ */

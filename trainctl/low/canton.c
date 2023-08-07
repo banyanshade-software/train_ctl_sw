@@ -148,10 +148,10 @@ const stat_val_t statval_canton[] = {
 		canton_vars_t         *cvars = &canton_vars[_idx];
 
 
-
+/*
 static void canton_set_pwm(int cn, const conf_canton_t *c, canton_vars_t *v,  int8_t dir, int duty);
 void canton_set_volt(int cn, const conf_canton_t *c, canton_vars_t *v, int voltidx);
-
+*/
 
 
 //--------------------------------------------
@@ -264,7 +264,7 @@ static void handle_msg_detect2(msg_64_t *m)
             	canton_set_pwm(cidx, cconf, cvars, 1, m->v1u); // % PWM
             	break;
             case 2:
-            	start_signal_gen(cconf, cvars, m->v1u);
+            	start_signal_gen(cidx, cconf, cvars, m->v1u);
             	break;
             }
             break;
@@ -354,7 +354,8 @@ HAL_StatusTypeDef my_HAL_TIM_PWM_Stop(TIM_HandleTypeDef *htim, uint32_t Channel)
 #define CNT_ON(_v) (_v)
 #endif
 
-static void canton_set_pwm(int cidx, const conf_canton_t *c, canton_vars_t *v,  int8_t dir, int duty)
+
+void canton_set_pwm(int cidx, const conf_canton_t *c, canton_vars_t *v,  int8_t dir, int duty)
 {
 	if (c->reverse) {
 		dir=-dir;

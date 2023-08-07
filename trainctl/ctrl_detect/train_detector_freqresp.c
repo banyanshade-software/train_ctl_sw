@@ -81,6 +81,30 @@ int detect_step_check_detection(xblkaddr_t detect_canton)
     return 0;
 }
 
+// ------------------------
+
+int detect_dirac_start(xblkaddr_t detect_canton)
+{
+	msg_64_t m = {0};
+	m.from = MA1_CONTROL();
+	TO_CANTON(m, detect_canton);
+	m.cmd = CMD_START_DETECT_TRAIN;
+	m.v2u = 2; // special method
+	m.v1u = 1; // dirac
+	mqf_write_from_ctrl(&m);
+}
+
+int detect_dirac_stop(xblkaddr_t detect_canton)
+{
+	itm_debug1(DBG_DETECT, "O-pwm", detect_canton.v);
+	msg_64_t m = {0};
+	TO_CANTON(m, detect_canton);
+	m.from = MA1_CONTROL();
+	m.cmd = CMD_STOP_DETECT_TRAIN;
+	mqf_write_from_ctrl(&m);
+	return 0;
+}
+
 
 // ------------------------
 
@@ -92,8 +116,8 @@ static const train_detector_step_t _freq_step4 = {
 
 
 static const train_detector_step_t _freq_step3 = {
-		.detect_start_canton = detect_step_start_pwm,
-		.detect_stop_canton = detect_step_stop_pwm,
+		.detect_start_canton = detect_dirac_start, //detect_step_start_pwm,
+		.detect_stop_canton = detect_dirac_stop, // detect_step_stop_pwm,
 		.nextstep = &_freq_step4
 };
 

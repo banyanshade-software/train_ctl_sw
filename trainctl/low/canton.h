@@ -102,5 +102,4 @@ int volt_index(uint16_t mili_power,
 
 #endif
 
-
 #endif /* CANTON_H_ */

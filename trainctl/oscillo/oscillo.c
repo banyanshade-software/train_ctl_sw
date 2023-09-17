@@ -47,7 +47,7 @@
 extern ADC_HandleTypeDef hadc2;
 extern TIM_HandleTypeDef htim1;
 extern TIM_HandleTypeDef htim2;
-extern TIM_HandleTypeDef htim3;
+//extern TIM_HandleTypeDef htim3;
 #ifdef STM32_G4
 extern TIM_HandleTypeDef htim17;
 #define OSCTIM htim17

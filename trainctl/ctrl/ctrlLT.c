@@ -52,7 +52,7 @@ static void _update_spd_limit(int tidx, train_ctrl_t *tvars, int sdir);
 static void _set_speed(int tidx, train_ctrl_t *tvars, int signed_speed, int applyspd, int brakerc);
 static void _set_state(int tidx, train_ctrl_t *tvars, train_state_t newstate);
 static void _apply_speed(int tidx, train_ctrl_t *tvars);
-static void _check_c2(int tidx, train_ctrl_t *tvars, rettrigs_t *rett);
+static void _check_c2(int tidx, train_ctrl_t *tvars, const rettrigs_t *rett);
 static void _updated_while_running(int tidx, train_ctrl_t *tvars);
 static void _evt_leaved_c1old(int tidx, train_ctrl_t *tvars);
 static void _sendlow_c1c2_dir(int tidx, train_ctrl_t *tvars);
@@ -72,7 +72,7 @@ static void _release_all_blocks(int tidx, train_ctrl_t *tvars);
 // -----------------------------------------------------------------
 
 
-static int32_t get_lsblk_len_cm_steep(lsblk_num_t lsbk, const conf_train_t *tconf, train_ctrl_t *tvar)
+static int32_t get_lsblk_len_cm_steep(lsblk_num_t lsbk, const conf_train_t *tconf, const train_ctrl_t *tvar)
 {
     int8_t steep = 0;
     int cm = get_lsblk_len_cm(lsbk, &steep);
@@ -677,19 +677,19 @@ void ctrl3_pose_triggered(int tidx, train_ctrl_t *tvars, uint8_t trigsn, xblkadd
                     if (ns.n == -1) {
                         itm_debug2(DBG_ERR|DBG_CTRL, "end/nxt", tidx, tvars->c1_sblk.n);
                         goto handled;
-                        break;
+                        //break;
                     }
                     xblkaddr_t b = canton_for_lsblk(ns);
                     if (b.v != tvars->can1_xaddr.v) {
                         itm_debug2(DBG_ERR|DBG_CTRL, "end/badc1", tidx, tvars->c1_sblk.n);
                         goto handled;
-                        break;
+                        //break;
                     }
                     
                     tvars->canMeasureOnSblk = 0;
-                    if (tvars->_sdir>=0) {
+                    if (tvars->_sdir > 0) {
                         tvars->beginposmm = tvars->_curposmm; // TODO adjust for trig delay
-                    } else if (tvars->_sdir) {
+                    } else if (tvars->_sdir < 0) {
                         int32_t slen = get_lsblk_len_cm(ns, NULL)*10;
                         tvars->beginposmm = tvars->_curposmm - slen; // TODO adjust for trig delay
                     } else {
@@ -765,6 +765,7 @@ void ctrl3_pose_triggered(int tidx, train_ctrl_t *tvars, uint8_t trigsn, xblkadd
                     itm_debug2(DBG_ERR|DBG_CTRL, "unh trg", tidx, tvars->c1_sblk.n);
                     break;
             }
+            break;
         default:
             break;
     }
@@ -1382,13 +1383,13 @@ static void _apply_speed(int tidx, train_ctrl_t *tvars)
     mqf_write_from_ctrl(&m);
     
     if (ctrl_flag_notify_speed) {
-        msg_64_t m = {0};
-        m.from = MA1_CTRL(tidx);
+        msg_64_t mn = {0};
+        mn.from = MA1_CTRL(tidx);
         m.to = MA3_UI_GEN; //(UISUB_TFT);
-        m.cmd = CMD_TRTSPD_NOTIF;
-        m.v1u = tvars->_target_unisgned_speed;
-        m.v2 = tvars->_sdir;
-        mqf_write_from_ctrl(&m);
+        mn.cmd = CMD_TRTSPD_NOTIF;
+        mn.v1u = tvars->_target_unisgned_speed;
+        mn.v2 = tvars->_sdir;
+        mqf_write_from_ctrl(&mn);
     }
 }
 
@@ -1615,7 +1616,7 @@ static void _reserve_c2_fut(int tidx, _UNUSED_ train_ctrl_t *tvars, xblkaddr_t f
     set_block_addr_occupency(fut, BLK_OCC_C2, tidx, ns);
 }
 
-static void _check_c2(int tidx, train_ctrl_t *tvars, rettrigs_t *rett)
+static void _check_c2(int tidx, train_ctrl_t *tvars, const rettrigs_t *rett)
 {
     if (rett->res_c2) {
         _reserve_c2(tidx, tvars);

@@ -305,7 +305,7 @@ typedef char xcompile_assert[(sizeof(xblkaddr_t) == 1) ? 0 : -1];
 
 #define FROM_CANTON(m) (_from_canton(&m))
 
-static inline xblkaddr_t _from_canton(msg_64_t *m)
+static inline xblkaddr_t _from_canton(const msg_64_t *m)
 {
 	xblkaddr_t r;
 	r.board = MA0_BOARD(m->from);

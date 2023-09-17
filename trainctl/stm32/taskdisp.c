@@ -42,7 +42,7 @@
 #include "../../stm32dev/disp_tft/ssd1306.h"
 //#include "../BLE/bletask.h"
 
-extern int num_train_periodic_control;
+//extern int num_train_periodic_control;
 
 #if 0
 #define MAX_DISP 1 // for now

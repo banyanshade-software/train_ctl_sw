@@ -411,7 +411,7 @@ static int save_freq = 0;
 //static int freqindex = 0;
 
 
-extern void set_pwm_freq(int freqhz, int crit);
+//extern void set_pwm_freq(int freqhz, int crit);
 extern int get_pwm_freq(void);
 
 #define MAX_DETECT_TRAINS 4
@@ -448,13 +448,13 @@ static void _detection_finished(void)
 
     if ((1)) {
         //osDelay(500);
-        msg_64_t m;
-        m.from = MA3_BROADCAST;
-        m.to = MA3_BROADCAST;
-        m.cmd = CMD_SETRUN_MODE;
-        m.v1u = runmode_normal;
+        msg_64_t md;
+        md.from = MA3_BROADCAST;
+        md.to = MA3_BROADCAST;
+        md.cmd = CMD_SETRUN_MODE;
+        md.v1u = runmode_normal;
 
-        mqf_write_from_nowhere(&m); // XXX it wont be sent to ctl
+        mqf_write_from_nowhere(&md); // XXX it wont be sent to ctl
     }
 }
 

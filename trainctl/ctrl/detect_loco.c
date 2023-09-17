@@ -61,6 +61,11 @@ int16_t detect_loco_find(bemf_anal_t *d)
 			besterr = err;
 		}
 	}
+	if (besti<0) {
+		itm_debug2(DBG_DETECT, "nobest", besti, besterr);
+		FatalError("nobt", "besti -1", Error_Abort);
+		return -1;
+	}
 	itm_debug3(DBG_DETECT, "best", besti, besterr, known_loco[besti].d);
 	return known_loco[besti].d;
 }

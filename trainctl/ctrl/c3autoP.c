@@ -42,7 +42,7 @@ typedef struct st_path {
 
 cauto_vars_t c3avar[MAX_TRAINS];
 
-static int is_eop(cauto_path_items_t *p)
+static int is_eop(const cauto_path_items_t *p)
 {
     if (p->t) return 0;
     if (p->val==0) return 1;

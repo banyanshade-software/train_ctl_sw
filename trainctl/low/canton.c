@@ -273,6 +273,7 @@ static void handle_msg_detect2(msg_64_t *m)
             bemf_msg(m);
             canton_set_volt(cidx, cconf, cvars,  7);
             canton_set_pwm(cidx, cconf, cvars, 0, 0);
+            break;
         default:
             break;
     }

@@ -19,30 +19,30 @@
 
 #define trace_train_enable 1
 
-void _trace_train_postick(uint32_t tick, int tidx, train_ctrl_t *tvars);
-static inline void trace_train_postick(uint32_t tick, int tidx, train_ctrl_t *tvars)
+void _trace_train_postick(uint32_t tick, int tidx, const train_ctrl_t *tvars);
+static inline void trace_train_postick(uint32_t tick, int tidx, const train_ctrl_t *tvars)
 {
     if (!trace_train_enable) return;
     _trace_train_postick(tick, tidx, tvars);
 }
 
 
-void _trace_train_trig(uint32_t tick, int tidx, train_ctrl_t *tvars, uint8_t sn, pose_trig_tag_t tag, int32_t oldpos, int32_t adjutedpos, int ign);
-static inline void trace_train_trig(uint32_t tick, int tidx, train_ctrl_t *tvars, uint8_t sn, pose_trig_tag_t tag, int32_t oldpos, int32_t adjutedpos, int ign)
+void _trace_train_trig(uint32_t tick, int tidx, const train_ctrl_t *tvars, uint8_t sn, pose_trig_tag_t tag, int32_t oldpos, int32_t adjutedpos, int ign);
+static inline void trace_train_trig(uint32_t tick, int tidx, const train_ctrl_t *tvars, uint8_t sn, pose_trig_tag_t tag, int32_t oldpos, int32_t adjutedpos, int ign)
 {
     if (!trace_train_enable) return;
     _trace_train_trig(tick, tidx, tvars, sn, tag, oldpos, adjutedpos, ign);
 }
 
-void _trace_train_trig_set(uint32_t tick, int tidx, train_ctrl_t *tvars,  uint8_t sn, pose_trig_tag_t tag, int32_t pos, uint8_t fut, int ignore);
-static inline void trace_train_trig_set(uint32_t tick, int tidx, train_ctrl_t *tvars, uint8_t sn,  pose_trig_tag_t tag, int32_t pos, uint8_t fut, int ignore)
+void _trace_train_trig_set(uint32_t tick, int tidx, const train_ctrl_t *tvars,  uint8_t sn, pose_trig_tag_t tag, int32_t pos, uint8_t fut, int ignore);
+static inline void trace_train_trig_set(uint32_t tick, int tidx, const train_ctrl_t *tvars, uint8_t sn,  pose_trig_tag_t tag, int32_t pos, uint8_t fut, int ignore)
 {
     if (!trace_train_enable) return;
     _trace_train_trig_set(tick, tidx, tvars, sn, tag, pos, fut, ignore);
 }
 
-void _trace_train_setc1(uint32_t tick, int tidx, train_ctrl_t *tvars, lsblk_num_t newc1, int org);
-static inline void trace_train_setc1(uint32_t tick, int tidx, train_ctrl_t *tvars, lsblk_num_t newc1, int org)
+void _trace_train_setc1(uint32_t tick, int tidx, const train_ctrl_t *tvars, lsblk_num_t newc1, int org);
+static inline void trace_train_setc1(uint32_t tick, int tidx, const train_ctrl_t *tvars, lsblk_num_t newc1, int org)
 {
     if (!trace_train_enable) return;
     _trace_train_setc1(tick, tidx, tvars, newc1, org);
@@ -56,8 +56,8 @@ static inline void trace_train_free(uint32_t tick, int tidx, int sblk, int canto
 
 }
 
-void _trace_train_brake(uint32_t tick, int tidx,  train_ctrl_t *tvars, int on);
-static inline void trace_train_brake(uint32_t tick, int tidx,  train_ctrl_t *tvars, int on)
+void _trace_train_brake(uint32_t tick, int tidx, const train_ctrl_t *tvars, int on);
+static inline void trace_train_brake(uint32_t tick, int tidx, const train_ctrl_t *tvars, int on)
 {
     if (!trace_train_enable) return;
     _trace_train_brake(tick, tidx, tvars, on);

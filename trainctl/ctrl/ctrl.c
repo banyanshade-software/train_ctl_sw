@@ -179,8 +179,8 @@ static void fatal(void)
 // ----------------------------------------------------------------------------
 // sub block presence handling
 
-static void sub_presence_changed(uint8_t from_addr, uint8_t segnum, uint16_t v, int16_t ival);
-static void notify_presence_changed(uint8_t from_addr, uint8_t segnum, uint16_t v, int16_t ival);
+static void sub_presence_changed(uint8_t from_addr, uint8_t inanum, uint16_t p, int16_t ival);
+static void notify_presence_changed(uint8_t from_addr, uint8_t lsegnum, uint16_t p, int16_t ival);
 
 
 // ----------------------------------------------------------------------------
@@ -618,7 +618,10 @@ static void normal_process_msg(msg_64_t *m)
         }
         switch (m->cmd) {
             case CMD_MDRIVE_SPEED_DIR: {
-            	if (!tvars) FatalError("Tvar", "Tvar not set", Error_CtrlBadTidx);
+            	if (!tvars) {
+            		FatalError("Tvar", "Tvar not set", Error_CtrlBadTidx);
+            		return;
+            	}
                 if (tvars->_mode == train_auto) {
                     ctrl_set_mode(tidx, train_manual);
                 }
@@ -657,7 +660,10 @@ static void normal_process_msg(msg_64_t *m)
             goto handled;
     
         case CMD_BEMF_DETECT_ON_C2: {
-        	if (!tvars) FatalError("Tvar", "Tvar not set", Error_CtrlBadTidx);
+        	if (!tvars) {
+        		FatalError("Tvar", "Tvar not set", Error_CtrlBadTidx);
+        		return;
+        	}
             itm_debug2(DBG_CTRL,"BEMF/C2", tidx,  m->v1u);
             if (m->v1u != tvars->can2_xaddr.v) {
                 itm_debug3(DBG_CTRL, "not c2", tidx, m->v1u, tvars->can2_xaddr.v);

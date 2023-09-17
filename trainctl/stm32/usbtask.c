@@ -92,7 +92,9 @@ static void USB_UART_Init(void);
 
 static void _send_bytes(const uint8_t *b, int len);
 
+#ifdef BOARD_HAS_LPUART
 extern osThreadId usbTaskHandle;
+#endif
 
 
 // ------------------------------------------------------
@@ -100,6 +102,7 @@ extern osThreadId usbTaskHandle;
 // ------------------------------------------------------
 
 #ifdef BOARD_HAS_USB
+
 static void Force_USB_Enumerate(void)
 {
 	// https://stackoverflow.com/questions/20195175/stm32f107-usb-re-enumerate#20197455

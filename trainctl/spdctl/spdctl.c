@@ -96,7 +96,7 @@ static void train_periodic_control(int numtrain, uint32_t dt);
 
 static volatile int stop_all = 0;
 //static int calibrating=0;
-void calibrate_periodic(uint32_t tick, uint32_t dt, uint32_t notif_Flags);
+//void calibrate_periodic(uint32_t tick, uint32_t dt, uint32_t notif_Flags);
 
 //static void highlevel_tick(void);
 
@@ -278,11 +278,11 @@ static void spdctl_handle_msg(msg_64_t *m)
                     } else if (abs(m->v1) > abs(tvars->bemf_mv)+300) {
                         itm_debug3(DBG_PRES|DBG_PRES|DBG_CTRL, "c2_hi", tidx, m->v1, tvars->bemf_mv);
                         if (tvars->c2hicnt >= 1) {
-                            msg_64_t m = {0};
-                            m.from = MA1_SPDCTL(tidx);
-                            m.to = MA1_CTRL(tidx);
-                            m.cmd = CMD_BEMF_DETECT_ON_C2;
-                            m.v1u = tvars->Cx[k].v;
+                            msg_64_t mdt = {0};
+                            mdt.from = MA1_SPDCTL(tidx);
+                            mdt.to = MA1_CTRL(tidx);
+                            mdt.cmd = CMD_BEMF_DETECT_ON_C2;
+                            mdt.v1u = tvars->Cx[k].v;
                             /* XXXXX int32_t p = tvars->position_estimate / 100;
                              if (abs(p)>0x7FFF) {
                              // TODO: problem here pose is > 16bits
@@ -290,7 +290,7 @@ static void spdctl_handle_msg(msg_64_t *m)
                              p = SIGNOF(p)*0x7FFF;
                              }
                              m.v2 = (int16_t) p;*/
-                            mqf_write_from_spdctl(&m);
+                            mqf_write_from_spdctl(&mdt);
                             
                             tvars->c2hicnt = 0;
                             tvars->c2bemf = 1;
@@ -412,7 +412,8 @@ static void spdctl_handle_msg(msg_64_t *m)
 			break;
 #endif
 		case CMD_POSE_SET_TRIG: //ctrl->canton     subc=tag v1=POSE/10   v2=dir now to CANTON
-			itm_debug1(DBG_POSEC|DBG_ERR, "should be sent to canton_bemf",0);
+			itm_debug1(DBG_POSEC|DBG_ERR, "should be sent to canton_bemf", 0);
+			break;
 			// XXX itm_debug3(DBG_POSEC, "POSE set", tidx, m->v1, tvars->subc);
 			/* XXX tvars->pose_trig0 = m->v1*10;
             if (m->subc) tvars->position_estimate = 0;

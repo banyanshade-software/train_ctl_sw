@@ -158,9 +158,9 @@ static void cancel_rec(int tidx)
     t->sidx = (t->nextidx+NUM_TRACE_ITEM-1) % NUM_TRACE_ITEM;
 }
 
-void _trace_train_postick(uint32_t tick, int tidx, train_ctrl_t *tvars)
+void _trace_train_postick(uint32_t tick, int tidx, const train_ctrl_t *tvars)
 {
-    train_trace_record_t *lrec = get_lastrec(tidx);
+    const train_trace_record_t *lrec = get_lastrec(tidx);
     train_trace_record_t *rec = get_newrec(tidx);
     if (!rec) return;
     rec->tick = tick;
@@ -188,7 +188,7 @@ void _trace_train_postick(uint32_t tick, int tidx, train_ctrl_t *tvars)
     
 }
 
-void _trace_train_setc1(uint32_t tick, int tidx, train_ctrl_t *tvars, lsblk_num_t newc1, int org)
+void _trace_train_setc1(uint32_t tick, int tidx, const train_ctrl_t *tvars, lsblk_num_t newc1, int org)
 {
     train_trace_record_t *rec = get_newrec(tidx);
     if (!rec) return;
@@ -200,7 +200,7 @@ void _trace_train_setc1(uint32_t tick, int tidx, train_ctrl_t *tvars, lsblk_num_
     rec->setc1rec.org = org;
 }
 
-void _trace_train_trig(uint32_t tick, int tidx, _UNUSED_ train_ctrl_t *tvars, uint8_t sn, pose_trig_tag_t tag, int32_t oldpos, int32_t adjutedpos, int ignc)
+void _trace_train_trig(uint32_t tick, int tidx, _UNUSED_ const train_ctrl_t *tvars, uint8_t sn, pose_trig_tag_t tag, int32_t oldpos, int32_t adjutedpos, int ignc)
 {
     train_trace_record_t *rec = get_newrec(tidx);
     if (!rec) return;
@@ -215,7 +215,7 @@ void _trace_train_trig(uint32_t tick, int tidx, _UNUSED_ train_ctrl_t *tvars, ui
 }
 
 
-void _trace_train_trig_set(uint32_t tick, int tidx, _UNUSED_ train_ctrl_t *tvars, uint8_t sn, pose_trig_tag_t tag, int32_t pos, uint8_t fut, int ignore)
+void _trace_train_trig_set(uint32_t tick, int tidx, _UNUSED_ const train_ctrl_t *tvars, uint8_t sn, pose_trig_tag_t tag, int32_t pos, uint8_t fut, int ignore)
 {
     train_trace_record_t *rec = get_newrec(tidx);
     if (!rec) return;
@@ -251,7 +251,7 @@ void _trace_train_ina3221(uint32_t tick, int tidx, int lsegnum, int on)
     rec->inarec.inaon = on;
 }
 
-void _trace_train_brake(uint32_t tick, int tidx, _UNUSED_  train_ctrl_t *tvars, int on)
+void _trace_train_brake(uint32_t tick, int tidx, _UNUSED_ const train_ctrl_t *tvars, int on)
 {
     train_trace_record_t *rec = get_newrec(tidx);
     if (!rec) return;

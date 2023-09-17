@@ -1,6 +1,6 @@
 ################################################################################
 # Automatically-generated file. Do not edit!
-# Toolchain: GNU Tools for STM32 (10.3-2021.10)
+# Toolchain: GNU Tools for STM32 (11.3.rel1)
 ################################################################################
 
 -include ../makefile.init
@@ -16,6 +16,7 @@ RM := rm -rf
 -include trainctl/msg/subdir.mk
 -include trainctl/low/subdir.mk
 -include trainctl/leds/subdir.mk
+-include trainctl/ctrl_detect/subdir.mk
 -include trainctl/config/_str/subdir.mk
 -include trainctl/config/subdir.mk
 -include trainctl/subdir.mk

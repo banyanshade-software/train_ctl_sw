@@ -35,6 +35,7 @@ static void detect_freq_deinit(void)
 
 static int detect_step_start_inafreqmeas(xblkaddr_t detect_canton)
 {
+	//return 0; // XXXX to test siggen
     itm_debug1(DBG_DETECT, "Df-ina", detect_canton.v);
 
 	if (ina.v == 0xFF) return -1;
@@ -72,7 +73,7 @@ static  int detect_step_stop_inafreqmeas(xblkaddr_t detect_canton)
 
 int detect_step_check_detection(xblkaddr_t detect_canton)
 {
-    // TODO
+	//return 0; // XXXX to test siggen
 	const train_detector_result_t *res = detector_result_for_canton(detect_canton);
 	if (!res) return -1;
 	if (res->canton.v == 0xFF) return -1;
@@ -92,6 +93,7 @@ int detect_dirac_start(xblkaddr_t detect_canton)
 	m.v2u = 2; // special method
 	m.v1u = 1; // dirac
 	mqf_write_from_ctrl(&m);
+	return 0;
 }
 
 int detect_dirac_stop(xblkaddr_t detect_canton)

@@ -56,13 +56,35 @@ static void gen_signal(int t, int nbuf)
 
 // -----------------------------------------------------------------------
 
-static void set_oneshot(int timernum, uint32_t cha, uint32_t chb);
+static void set_oneshot(int timernum, const conf_canton_t *cconf)
+{
+	TIM_HandleTypeDef *pwm_timer = CantonTimerHandles[timernum];
+	//HAL_StatusTypeDef rc = HAL_TIM_OnePulse_Init(pwm_timer, TIM_OPMODE_SINGLE);
+
+	TIM_SlaveConfigTypeDef sSlaveConfig = {0};
+	sSlaveConfig.SlaveMode = TIM_SLAVEMODE_DISABLE;
+	sSlaveConfig.InputTrigger = TIM_TS_ITR0;
+	HAL_TIM_SlaveConfigSynchro(pwm_timer, &sSlaveConfig);
+
+	// CounterMode
+	pwm_timer->Instance->CR1 &= ~(TIM_CR1_DIR | TIM_CR1_CMS);
+	pwm_timer->Instance->CR1 |= TIM_COUNTERMODE_UP;
+	/* Reset the OPM Bit */
+	pwm_timer->Instance->CR1 &= ~TIM_CR1_OPM;
+
+	  /* Configure the OPM Mode */
+	pwm_timer->Instance->CR1 |= TIM_OPMODE_SINGLE;
+
+	HAL_TIM_OnePulse_Start(pwm_timer, cconf->ch1);
+
+	//if (rc) FatalError("TIMd", "time dirac", Error_Abort);
+}
 
 void start_signal_dirac(int cidx, const conf_canton_t *cconf,  canton_vars_t *cvars)
 {
-	set_oneshot(cconf->pwm_timer_num, cconf->ch0, cconf->ch1);
 	canton_set_volt(cidx, cconf, cvars, 7);
-	canton_set_pwm(cidx, cconf, cvars, 1 /*sdir*/, 1 /*duty*/);
+	set_oneshot(cconf->pwm_timer_num, cconf);
+	//canton_set_pwm(cidx, cconf, cvars, 1 /*sdir*/, 10 /*duty*/);
 }
 
 // -----------------------------------------------------------------------

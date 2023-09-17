@@ -142,7 +142,7 @@ static int adc_nsmpl = 0;
 void StartCtrlTask(_UNUSED_ void const *argument)
 {
 #ifdef BOARD_HAS_CANTON
-	adc_nsmpl = sizeof(train_adc_buf)/sizeof(uint16_t);
+	adc_nsmpl = sizeof(train_adc_buf)/(sizeof(uint16_t));
 
 	if (sizeof(train_adc_buf) != sizeof(uint16_t)*NUM_CANTONS*8) FatalError("sizeof", "adc buf", Error_Sizeof);
 	if (adc_nsmpl != NUM_CANTONS*2*4) FatalError("sizeof", "adc buf", Error_Sizeof);
@@ -593,7 +593,7 @@ void  HAL_ADC_ErrorCallback(_UNUSED_ ADC_HandleTypeDef *hadc)
 }
 #endif
 
-// TODO move somewhere else vApplicationStackOverflowHook
+/* TODO move somewhere else vApplicationStackOverflowHook */
 void vApplicationStackOverflowHook(_UNUSED_ TaskHandle_t xTask, _UNUSED_ signed char *pcTaskName)
 {
 	itm_debug1(DBG_ERR, "STK OVF", 1);

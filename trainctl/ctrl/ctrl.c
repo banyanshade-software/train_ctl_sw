@@ -263,8 +263,8 @@ static void _ctrl_init(int normalmode)
             */
 			//ctrl2_init_train(0, &otrctl[0], s2);
 #else
-            ctrl3_init_train(0, &trctl[0], s0, 260, 1);
-            //ctrl3_init_train(0, &trctl[0], s5, 300, 1);
+            //ctrl3_init_train(0, &trctl[0], s0, 260, 1);
+            ctrl3_init_train(0, &trctl[0], s5, 300, 1);
             ctrl_set_mode(0, train_manual);
 
             ctrl3_init_train(1, &trctl[1], s9, 400, 1);

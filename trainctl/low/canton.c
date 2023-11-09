@@ -264,7 +264,9 @@ static void handle_msg_detect2(msg_64_t *m)
             	canton_set_pwm(cidx, cconf, cvars, 1, m->v1u); // % PWM
             	break;
             case 2:
+#ifndef TRAIN_SIMU
             	start_signal_gen(cidx, cconf, cvars, m->v1u);
+#endif
             	break;
             }
             break;

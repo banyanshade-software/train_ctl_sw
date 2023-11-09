@@ -280,7 +280,7 @@ void ssd1306_DrawPixel(uint8_t devnum, uint8_t x, uint8_t y, SSD1306_COLOR color
 // Font     => Font waarmee we gaan schrijven
 // color    => Black or White
 char ssd1306_WriteChar(uint8_t devnum, char ch, FontDef Font, SSD1306_COLOR color) {
-    uint32_t i, b, j;
+    uint32_t i,  j;
     
     // Check if character is valid
     if (ch < 32 || ch > 126)
@@ -296,7 +296,7 @@ char ssd1306_WriteChar(uint8_t devnum, char ch, FontDef Font, SSD1306_COLOR colo
     
     // Use the font to write
     for(i = 0; i < Font.FontHeight; i++) {
-        b = Font.data[(ch - 32) * Font.FontHeight + i];
+        int b = Font.data[(ch - 32) * Font.FontHeight + i];
         for(j = 0; j < Font.FontWidth; j++) {
             if((b << j) & 0x8000)  {
                 ssd1306_DrawPixel(devnum, SSD1306[devnum].CurrentX + j, (SSD1306[devnum].CurrentY + i), (SSD1306_COLOR) color);
@@ -369,13 +369,13 @@ void ssd1306_Line(uint8_t devnum, uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2
   int32_t signX = ((x1 < x2) ? 1 : -1);
   int32_t signY = ((y1 < y2) ? 1 : -1);
   int32_t error = deltaX - deltaY;
-  int32_t error2;
+
     
   ssd1306_DrawPixel(devnum, x2, y2, color);
     while((x1 != x2) || (y1 != y2))
     {
     ssd1306_DrawPixel(devnum, x1, y1, color);
-    error2 = error * 2;
+    int32_t error2 = error * 2;
     if(error2 > -deltaY)
     {
       error -= deltaY;
@@ -399,36 +399,36 @@ void ssd1306_Line(uint8_t devnum, uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2
   return;
 }
 //Draw polyline
-void ssd1306_Polyline(uint8_t devnum, const SSD1306_VERTEX *par_vertex, uint16_t par_size, SSD1306_COLOR color) {
-  uint16_t i;
-  if(par_vertex != 0){
-    for(i = 1; i < par_size; i++){
-      ssd1306_Line(devnum, par_vertex[i - 1].x, par_vertex[i - 1].y, par_vertex[i].x, par_vertex[i].y, color);
-    }
-  }
-  else
-  {
-    /*nothing to do*/
-  }
-  return;
+void ssd1306_Polyline(uint8_t devnum, const SSD1306_VERTEX *par_vertex, uint16_t par_size, SSD1306_COLOR color)
+{
+	if(par_vertex != 0){
+		uint16_t i;
+		for(i = 1; i < par_size; i++){
+			ssd1306_Line(devnum, par_vertex[i - 1].x, par_vertex[i - 1].y, par_vertex[i].x, par_vertex[i].y, color);
+		}
+	}
+	else
+	{
+		/*nothing to do*/
+	}
+	return;
 }
 /*Convert Degrees to Radians*/
 static float ssd1306_DegToRad(float par_deg) {
     return par_deg * 3.14 / 180.0;
 }
+
 /*Normalize degree to [0;360]*/
-static uint16_t ssd1306_NormalizeTo0_360(uint16_t par_deg) {
-  uint16_t loc_angle;
-  if(par_deg <= 360)
-  {
-    loc_angle = par_deg;
-  }
-  else
-  {
-    loc_angle = par_deg % 360;
-    loc_angle = ((par_deg != 0)?par_deg:360);
-  }
-  return loc_angle;
+static uint16_t ssd1306_NormalizeTo0_360(uint16_t par_deg)
+{
+	uint16_t loc_angle;
+	if(par_deg <= 360) {
+		loc_angle = par_deg;
+	}  else {
+		loc_angle = par_deg % 360;
+		loc_angle = ((par_deg != 0)?par_deg:360);
+	}
+	return loc_angle;
 }
 /*DrawArc. Draw angle is beginning from 4 quart of trigonometric circle (3pi/2)
  * start_angle in degree
@@ -438,11 +438,9 @@ void ssd1306_DrawArc(uint8_t devnum, uint8_t x, uint8_t y, uint8_t radius, uint1
     #define CIRCLE_APPROXIMATION_SEGMENTS 36
     float approx_degree;
     uint32_t approx_segments;
-    uint8_t xp1,xp2;
-    uint8_t yp1,yp2;
+
     uint32_t count = 0;
     uint32_t loc_sweep = 0;
-    float rad;
     
     loc_sweep = ssd1306_NormalizeTo0_360(sweep);
     
@@ -451,9 +449,9 @@ void ssd1306_DrawArc(uint8_t devnum, uint8_t x, uint8_t y, uint8_t radius, uint1
     approx_degree = loc_sweep / (float)approx_segments;
     while(count < approx_segments)
     {
-        rad = ssd1306_DegToRad(count*approx_degree);
-        xp1 = x + (int8_t)(sin(rad)*radius);
-        yp1 = y + (int8_t)(cos(rad)*radius);    
+        float rad = ssd1306_DegToRad(count*approx_degree);
+        uint8_t xp1 = x + (int8_t)(sin(rad)*radius);
+        uint8_t yp1 = y + (int8_t)(cos(rad)*radius);
         count++;
         if(count != approx_segments)
         {
@@ -463,56 +461,56 @@ void ssd1306_DrawArc(uint8_t devnum, uint8_t x, uint8_t y, uint8_t radius, uint1
         {            
             rad = ssd1306_DegToRad(loc_sweep);
         }
-        xp2 = x + (int8_t)(sin(rad)*radius);
-        yp2 = y + (int8_t)(cos(rad)*radius);    
+        uint8_t xp2 = x + (int8_t)(sin(rad)*radius);
+        uint8_t yp2 = y + (int8_t)(cos(rad)*radius);
         ssd1306_Line(devnum, xp1,yp1,xp2,yp2,color);
     }
     
     return;
 }
 //Draw circle by Bresenhem's algorithm
-void ssd1306_DrawCircle(uint8_t devnum, uint8_t par_x,uint8_t par_y,uint8_t par_r,SSD1306_COLOR par_color) {
-  int32_t x = -par_r;
-  int32_t y = 0;
-  int32_t err = 2 - 2 * par_r;
-  int32_t e2;
+void ssd1306_DrawCircle(uint8_t devnum, uint8_t par_x,uint8_t par_y,uint8_t par_r,SSD1306_COLOR par_color)
+{
+	int32_t x = -par_r;
+	int32_t y = 0;
+	int32_t err = 2 - 2 * par_r;
 
-  if (par_x >= SSD1306_WIDTH || par_y >= SSD1306_HEIGHT) {
-    return;
-  }
+	if (par_x >= SSD1306_WIDTH || par_y >= SSD1306_HEIGHT) {
+		return;
+	}
 
-    do {
-      ssd1306_DrawPixel(devnum, par_x - x, par_y + y, par_color);
-      ssd1306_DrawPixel(devnum, par_x + x, par_y + y, par_color);
-      ssd1306_DrawPixel(devnum, par_x + x, par_y - y, par_color);
-      ssd1306_DrawPixel(devnum, par_x - x, par_y - y, par_color);
-        e2 = err;
-        if (e2 <= y) {
-            y++;
-            err = err + (y * 2 + 1);
-            if(-x == y && e2 <= x) {
-              e2 = 0;
-            }
-            else
-            {
-              /*nothing to do*/
-            }
-        }
-        else
-        {
-          /*nothing to do*/
-        }
-        if(e2 > x) {
-          x++;
-          err = err + (x * 2 + 1);
-        }
-        else
-        {
-          /*nothing to do*/
-        }
-    } while(x <= 0);
+	do {
+		ssd1306_DrawPixel(devnum, par_x - x, par_y + y, par_color);
+		ssd1306_DrawPixel(devnum, par_x + x, par_y + y, par_color);
+		ssd1306_DrawPixel(devnum, par_x + x, par_y - y, par_color);
+		ssd1306_DrawPixel(devnum, par_x - x, par_y - y, par_color);
+		int32_t e2 = err;
+		if (e2 <= y) {
+			y++;
+			err = err + (y * 2 + 1);
+			if(-x == y && e2 <= x) {
+				e2 = 0;
+			}
+			else
+			{
+				/*nothing to do*/
+			}
+		}
+		else
+		{
+			/*nothing to do*/
+		}
+		if(e2 > x) {
+			x++;
+			err = err + (x * 2 + 1);
+		}
+		else
+		{
+			/*nothing to do*/
+		}
+	} while(x <= 0);
 
-    return;
+	return;
 }
 
 //Draw rectangle

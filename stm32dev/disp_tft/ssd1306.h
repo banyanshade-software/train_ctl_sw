@@ -128,7 +128,7 @@ char ssd1306_WriteNString(uint8_t devnum, const char* str, int max, FontDef Font
 void ssd1306_SetCursor(uint8_t devnum, uint8_t x, uint8_t y);
 void ssd1306_Line(uint8_t devnum, uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2, SSD1306_COLOR color);
 void ssd1306_DrawArc(uint8_t devnum, uint8_t x, uint8_t y, uint8_t radius, uint16_t start_angle, uint16_t sweep, SSD1306_COLOR color);
-void ssd1306_DrawCircle(uint8_t devnum, uint8_t par_x, uint8_t par_y, uint8_t par_r, SSD1306_COLOR color);
+void ssd1306_DrawCircle(uint8_t devnum, uint8_t par_x, uint8_t par_y, uint8_t par_r, SSD1306_COLOR par_color);
 void ssd1306_Polyline(uint8_t devnum, const SSD1306_VERTEX *par_vertex, uint16_t par_size, SSD1306_COLOR color);
 void ssd1306_DrawRectangle(uint8_t devnum, uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2, SSD1306_COLOR color);
 /**

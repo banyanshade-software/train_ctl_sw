@@ -187,8 +187,10 @@ void tim5_elapsed(void)
 	oscillo_buf[oscillo_index].valt2ch1 = HAL_GPIO_ReadPin(PWM_2_0_GPIO_Port, PWM_2_0_Pin);
 	oscillo_buf[oscillo_index].valt2ch2 = HAL_GPIO_ReadPin(PWM_2_1_GPIO_Port, PWM_2_1_Pin);
 
+#ifdef PWM_3_0_Pin
 	oscillo_buf[oscillo_index].valt2ch3 = HAL_GPIO_ReadPin(PWM_3_0_GPIO_Port, PWM_3_0_Pin);
 	oscillo_buf[oscillo_index].valt2ch4 = HAL_GPIO_ReadPin(PWM_3_1_GPIO_Port, PWM_3_1_Pin);
+#endif
 
 	oscillo_buf[oscillo_index].t0bemf = oscillo_t0bemf;
 	oscillo_buf[oscillo_index].t1bemf = oscillo_t1bemf;

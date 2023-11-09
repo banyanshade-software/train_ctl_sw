@@ -62,9 +62,12 @@ void flash_led(void)
 #endif
 #endif
 
+#ifdef BOARD_LED_Pin
 	HAL_GPIO_TogglePin(BOARD_LED_GPIO_Port,BOARD_LED_Pin);
 	//HAL_GPIO_TogglePin(GPIOC,GPIO_PIN_13);
 #endif
+
+#endif /* TRAIN_SIMU */
 }
 
 

@@ -1325,7 +1325,7 @@
                                             <rect key="frame" x="16" y="16" width="864" height="467"/>
                                             <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="OZg-2y-Fa6">
                                                 <rect key="frame" x="0.0" y="0.0" width="849" height="467"/>
-                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                <autoresizingMask key="autoresizingMask"/>
                                                 <subviews>
                                                     <textView editable="NO" importsGraphics="NO" verticallyResizable="YES" spellingCorrection="YES" smartInsertDelete="YES" id="IyY-Q7-pxk">
                                                         <rect key="frame" x="0.0" y="0.0" width="849" height="467"/>
@@ -1404,7 +1404,7 @@
                                             <rect key="frame" x="16" y="16" width="864" height="496"/>
                                             <clipView key="contentView" id="OXu-El-CJ6">
                                                 <rect key="frame" x="1" y="0.0" width="862" height="495"/>
-                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                <autoresizingMask key="autoresizingMask"/>
                                                 <subviews>
                                                     <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" headerView="71L-Yv-M5N" id="gBS-dQ-Fjb">
                                                         <rect key="frame" x="0.0" y="0.0" width="862" height="470"/>
@@ -1535,7 +1535,7 @@
                                             <rect key="frame" x="16" y="16" width="864" height="496"/>
                                             <clipView key="contentView" id="6EN-7l-fYy">
                                                 <rect key="frame" x="1" y="0.0" width="862" height="495"/>
-                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                <autoresizingMask key="autoresizingMask"/>
                                                 <subviews>
                                                     <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" headerView="ERn-BW-LhA" id="nU3-yp-xkd">
                                                         <rect key="frame" x="0.0" y="0.0" width="862" height="470"/>
@@ -2227,7 +2227,7 @@
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="109" y="138" width="1176" height="600"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1057"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1080"/>
             <view key="contentView" id="eW8-Bh-GGe">
                 <rect key="frame" x="0.0" y="0.0" width="1176" height="600"/>
                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
@@ -4069,7 +4069,7 @@
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="109" y="138" width="480" height="270"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1057"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1080"/>
             <view key="contentView" id="NAU-Et-RMZ">
                 <rect key="frame" x="0.0" y="0.0" width="480" height="270"/>
                 <autoresizingMask key="autoresizingMask"/>
@@ -4219,7 +4219,7 @@
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="196" y="213" width="140" height="542"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1057"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1080"/>
             <view key="contentView" misplaced="YES" id="1YN-oL-2Sm">
                 <rect key="frame" x="0.0" y="0.0" width="140" height="542"/>
                 <autoresizingMask key="autoresizingMask"/>
@@ -4475,7 +4475,7 @@
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="196" y="213" width="598" height="476"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1057"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1080"/>
             <view key="contentView" misplaced="YES" id="8It-jo-dDi">
                 <rect key="frame" x="0.0" y="0.0" width="598" height="476"/>
                 <autoresizingMask key="autoresizingMask"/>
@@ -5436,7 +5436,7 @@
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="196" y="213" width="536" height="758"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1057"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1080"/>
             <view key="contentView" misplaced="YES" id="Q0Y-zV-347">
                 <rect key="frame" x="0.0" y="0.0" width="536" height="758"/>
                 <autoresizingMask key="autoresizingMask"/>
@@ -6416,7 +6416,7 @@
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="196" y="213" width="480" height="270"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1057"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1080"/>
             <view key="contentView" id="Qgr-BK-iAw">
                 <rect key="frame" x="0.0" y="0.0" width="480" height="270"/>
                 <autoresizingMask key="autoresizingMask"/>
@@ -6728,6 +6728,17 @@
                 </constraints>
             </view>
             <point key="canvasLocation" x="-817" y="-671"/>
+        </window>
+        <window title="Simu" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" frameAutosaveName="" animationBehavior="default" id="bPd-6g-FB7" customClass="ToolWindow">
+            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
+            <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
+            <rect key="contentRect" x="196" y="213" width="480" height="270"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1080"/>
+            <view key="contentView" id="PLE-zO-1ZC">
+                <rect key="frame" x="0.0" y="0.0" width="480" height="270"/>
+                <autoresizingMask key="autoresizingMask"/>
+            </view>
+            <point key="canvasLocation" x="-828" y="-324"/>
         </window>
     </objects>
     <resources>

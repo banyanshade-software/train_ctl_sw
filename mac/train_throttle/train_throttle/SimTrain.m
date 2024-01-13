@@ -24,18 +24,17 @@
     double bemf[NUM_CANTONS];
     
     double speed[NUM_TRAINS];
-    double positioncm[NUM_TRAINS];
-
-    //int c1[NUM_TRAINS];
-    lsblk_num_t s1[NUM_TRAINS];
-    int cold[NUM_TRAINS];
+    
+    double _positioncm[NUM_TRAINS]; // position in current sblk
+    lsblk_num_t _s1[NUM_TRAINS]; // curresnt sblk
+    int cold[NUM_TRAINS];       // old canton
 }
 
 @synthesize speed = _speed;
 
 - (NSString *) htmlSimuStateForTrain:(int)tidx
 {
-    NSString *s = [NSString stringWithFormat:@"=== Train : %d<br>\n s1=%d pos=%.0fcm spd=%.0f<br>\n", tidx, s1[tidx].n, positioncm[tidx], speed[tidx]];
+    NSString *s = [NSString stringWithFormat:@"=== Train : %d<br>\n s1=%d pos=%.0fcm spd=%.0f<br>\n", tidx, _s1[tidx].n, _positioncm[tidx], speed[tidx]];
     for (int c=0; c<NUM_CANTONS; c++) {
         s = [s stringByAppendingFormat:@"  C%d : dir=%d vi=%.1f pwm=%.1f bemf=%.1f<br>\n", c, dir[c], volt[c], pwm[c], bemf[c] ];
     }
@@ -46,10 +45,11 @@
     self = [super init];
     if (!self) return nil;
     for (int i=0; i<NUM_TRAINS; i++) {
-        s1[i].n = -1;
         cold[i] = -1;
         speed[i] = 0;
-        positioncm[i] = 0;
+        [self setTrain:i sblk:-1 posmm:0];
+        //s1[i].n = -1;
+        //positioncm[i] = 0;
     }
     for (int i=0; i<NUM_CANTONS; i++) {
         bemf[i] = 0.0;
@@ -65,8 +65,8 @@
 
 - (void) setTrain:(int)tidx sblk:(int)sblk posmm:(int)posmm
 {
-    positioncm[tidx] = posmm/10;
-    s1[tidx].n = sblk;
+    _positioncm[tidx] = posmm/10;
+    _s1[tidx].n = sblk;
 }
 - (void)setVolt:(double)v forCantonNum:(int)numc
 {
@@ -119,12 +119,12 @@ static uint16_t ina_detect_bitfield = 0;
         bemf[i]=0.0;
     }
     for (int tn=0; tn<NUM_TRAINS; tn++) {
-        if (s1[tn].n < 0) continue;
+        if (_s1[tn].n < 0) continue;
         //int cn = c1[tn];
         
         // handle detection
         if (ina_detect_bitfield) {
-            ina_num_t ina = get_lsblk_ina3221(s1[tn]);
+            ina_num_t ina = get_lsblk_ina3221(_s1[tn]);
             if (ina_detect_bitfield & (1U<<ina.ina)) {
                 // detected
                 msg_64_t m = {0};
@@ -141,21 +141,22 @@ static uint16_t ina_detect_bitfield = 0;
             return;
         }
         // update pos
-        positioncm[tn] += speed[tn]*ellapsed/1000;
+        [self setTrain:tn sblk:_s1[tn].n posmm:_positioncm[tn]+speed[tn]*ellapsed/1000];
+        //positioncm[tn] += speed[tn]*ellapsed/1000;
         //int get_lsblk_len(lsblk_num_t num);
-        int blen = get_lsblk_len_cm(s1[tn], NULL);
+        int blen = get_lsblk_len_cm(_s1[tn], NULL);
         //NSLog(@"xxxtrain %d pos: %f len %d", tn, position[tn], get_lsblk_len(s1[tn], NULL));
-        xblkaddr_t cn = canton_for_lsblk(s1[tn]);
+        xblkaddr_t cn = canton_for_lsblk(_s1[tn]);
         NSAssert(cn.v != 0xFF, @"bad cn");
         NSAssert(cn.v<NUM_CANTONS, @"bad cn");
 
         if (dir[cn.v]>0) {
-            if (positioncm[tn]>blen) {
-                lsblk_num_t ns = next_lsblk(s1[tn], 0, NULL);
+            if (_positioncm[tn]>blen) {
+                lsblk_num_t ns = next_lsblk(_s1[tn], 0, NULL);
                 if (ns.n < 0) {
                     NSLog(@"END OF TRACK/COL !!");
                 } else {
-                    ina_num_t inaold = get_lsblk_ina3221(s1[tn]);
+                    ina_num_t inaold = get_lsblk_ina3221(_s1[tn]);
                     ina_num_t inanew = get_lsblk_ina3221(ns);
                     NSLog(@"switch ina %u->%u", inaold.v, inanew.v);
                     if (inanew.v != inaold.v) {
@@ -166,8 +167,9 @@ static uint16_t ina_detect_bitfield = 0;
                             [self inaOn:inanew.v train:tn];
                         }
                     }
-                    s1[tn] = ns;    //  >>>>>>>>>>> next sblk >>>>>>>>>>>>>
-                    positioncm[tn] = 0;
+                    [self setTrain:tn sblk:ns.n posmm:0];
+                    //s1[tn] = ns;    //  >>>>>>>>>>> next sblk >>>>>>>>>>>>>
+                    //positioncm[tn] = 0;
                     xblkaddr_t nb = canton_for_lsblk(ns);
                     _trace_train_simu(SimuTick, tn, ns.n, nb.v);
                     
@@ -178,12 +180,12 @@ static uint16_t ina_detect_bitfield = 0;
                 }
             }
         } else if (dir[cn.v]<0) {
-            if (positioncm[tn]<-blen) {
-                lsblk_num_t ns = next_lsblk(s1[tn], 1, NULL);
+            if (_positioncm[tn]<-blen) {
+                lsblk_num_t ns = next_lsblk(_s1[tn], 1, NULL);
                 if (ns.n < 0) {
                     NSLog(@"END OF TRACK/COL !!");
                 } else {
-                    ina_num_t inaold = get_lsblk_ina3221(s1[tn]);
+                    ina_num_t inaold = get_lsblk_ina3221(_s1[tn]);
                     ina_num_t inanew = get_lsblk_ina3221(ns);
                     NSLog(@"switch ina %u->%u", inaold, inanew);
                     if (inanew.v != inaold.v) {
@@ -194,8 +196,9 @@ static uint16_t ina_detect_bitfield = 0;
                             [self inaOn:inanew.v train:tn];
                         }
                     }
-                    s1[tn] = ns; // <<<<<<<<<<< next sblk <<<<<<<<<<q
-                    positioncm[tn] = 0;
+                    [self setTrain:tn sblk:ns.n posmm:0];
+                    //s1[tn] = ns; // <<<<<<<<<<< next sblk <<<<<<<<<<q
+                    //positioncm[tn] = 0;
                     xblkaddr_t nb = canton_for_lsblk(ns);
                     if (nb.v != cn.v) {
                         cold[tn] = cn.v;

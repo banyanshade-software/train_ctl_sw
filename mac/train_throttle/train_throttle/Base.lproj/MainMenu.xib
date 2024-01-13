@@ -6732,13 +6732,188 @@
         <window title="Simu" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" frameAutosaveName="" animationBehavior="default" id="bPd-6g-FB7" customClass="ToolWindow">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-            <rect key="contentRect" x="196" y="213" width="480" height="270"/>
+            <rect key="contentRect" x="196" y="213" width="268" height="188"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1080"/>
             <view key="contentView" id="PLE-zO-1ZC">
-                <rect key="frame" x="0.0" y="0.0" width="480" height="270"/>
+                <rect key="frame" x="0.0" y="0.0" width="268" height="188"/>
                 <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="7Bo-ff-agt">
+                        <rect key="frame" x="18" y="140" width="20" height="16"/>
+                        <textFieldCell key="cell" lineBreakMode="clipping" title="T0" id="vOr-zE-e91">
+                            <font key="font" usesAppearanceFont="YES"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Pbc-hJ-vDp">
+                        <rect key="frame" x="18" y="116" width="19" height="16"/>
+                        <textFieldCell key="cell" lineBreakMode="clipping" title="T1" id="Wu6-HJ-DwA">
+                            <font key="font" usesAppearanceFont="YES"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Iur-Cx-bbA">
+                        <rect key="frame" x="18" y="92" width="20" height="16"/>
+                        <textFieldCell key="cell" lineBreakMode="clipping" title="T2" id="eoD-kY-yfL">
+                            <font key="font" usesAppearanceFont="YES"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="CKz-dP-CMq">
+                        <rect key="frame" x="18" y="68" width="21" height="16"/>
+                        <textFieldCell key="cell" lineBreakMode="clipping" title="T3" id="W7d-JS-koj">
+                            <font key="font" usesAppearanceFont="YES"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="0vh-W6-kty">
+                        <rect key="frame" x="156" y="140" width="94" height="16"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="90" id="Sft-V6-bZP"/>
+                        </constraints>
+                        <textFieldCell key="cell" lineBreakMode="clipping" title="pos0" id="NKb-yf-8YJ">
+                            <font key="font" usesAppearanceFont="YES"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                        <connections>
+                            <binding destination="Voe-Tx-rLC" name="value" keyPath="simTrain0.simu_pos_0" id="Kc8-Ry-SpP"/>
+                        </connections>
+                    </textField>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="h3V-3J-yuN">
+                        <rect key="frame" x="156" y="116" width="94" height="16"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="90" id="jvd-io-yCL"/>
+                        </constraints>
+                        <textFieldCell key="cell" lineBreakMode="clipping" title="pos1" id="yag-fl-5gL">
+                            <font key="font" usesAppearanceFont="YES"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                        <connections>
+                            <binding destination="Voe-Tx-rLC" name="value" keyPath="simTrain0.simu_pos_1" id="NNh-aB-Swe"/>
+                        </connections>
+                    </textField>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Vd0-R5-SGP">
+                        <rect key="frame" x="156" y="92" width="94" height="16"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="90" id="inU-9Y-EJq"/>
+                        </constraints>
+                        <textFieldCell key="cell" lineBreakMode="clipping" title="pos2" id="tgj-Yl-Yr0">
+                            <font key="font" usesAppearanceFont="YES"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                        <connections>
+                            <binding destination="Voe-Tx-rLC" name="value" keyPath="simTrain0.simu_pos_2" id="6Ds-bS-uJe"/>
+                        </connections>
+                    </textField>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="QO7-uP-Cdq">
+                        <rect key="frame" x="50" y="68" width="94" height="16"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="90" id="eBR-H7-uCy"/>
+                        </constraints>
+                        <textFieldCell key="cell" lineBreakMode="clipping" title="sblk3" id="vlq-S6-gUJ">
+                            <font key="font" usesAppearanceFont="YES"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                        <connections>
+                            <binding destination="Voe-Tx-rLC" name="value" keyPath="simTrain0.simu_s1_3" id="uFm-yV-iC6"/>
+                        </connections>
+                    </textField>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="c3m-Td-rm1">
+                        <rect key="frame" x="156" y="68" width="94" height="16"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="90" id="ukY-Lo-6a7"/>
+                        </constraints>
+                        <textFieldCell key="cell" lineBreakMode="clipping" title="pos3" id="dvL-YD-A4M">
+                            <font key="font" usesAppearanceFont="YES"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                        <connections>
+                            <binding destination="Voe-Tx-rLC" name="value" keyPath="simTrain0.simu_pos_3" id="XDa-fB-sRZ"/>
+                        </connections>
+                    </textField>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="nN3-OP-gOh">
+                        <rect key="frame" x="50" y="140" width="94" height="16"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="90" id="v6p-5u-HxF"/>
+                        </constraints>
+                        <textFieldCell key="cell" lineBreakMode="clipping" title="sblk0" id="5Bz-d7-V1V">
+                            <font key="font" usesAppearanceFont="YES"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                        <connections>
+                            <binding destination="Voe-Tx-rLC" name="value" keyPath="simTrain0.simu_s1_0" id="7xJ-IK-c9O"/>
+                        </connections>
+                    </textField>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="pDl-B1-7ay">
+                        <rect key="frame" x="50" y="116" width="94" height="16"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="90" id="4Lq-vn-xGQ"/>
+                        </constraints>
+                        <textFieldCell key="cell" lineBreakMode="clipping" title="sblk1" id="Bcv-lm-muX">
+                            <font key="font" usesAppearanceFont="YES"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                        <connections>
+                            <binding destination="Voe-Tx-rLC" name="value" keyPath="simTrain0.simu_s1_1" id="Te3-2r-7y7"/>
+                        </connections>
+                    </textField>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="IrT-JE-68o">
+                        <rect key="frame" x="50" y="92" width="94" height="16"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="90" id="UXr-uR-S5m"/>
+                        </constraints>
+                        <textFieldCell key="cell" lineBreakMode="clipping" title="sblk2" id="c36-gG-d3y">
+                            <font key="font" usesAppearanceFont="YES"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                        <connections>
+                            <binding destination="Voe-Tx-rLC" name="value" keyPath="simTrain0.simu_s1_2" id="zfe-re-ydW"/>
+                        </connections>
+                    </textField>
+                </subviews>
+                <constraints>
+                    <constraint firstItem="Iur-Cx-bbA" firstAttribute="leading" secondItem="7Bo-ff-agt" secondAttribute="leading" id="0fm-PM-WhL"/>
+                    <constraint firstItem="QO7-uP-Cdq" firstAttribute="firstBaseline" secondItem="CKz-dP-CMq" secondAttribute="firstBaseline" id="5Um-JZ-Zwx"/>
+                    <constraint firstItem="c3m-Td-rm1" firstAttribute="firstBaseline" secondItem="CKz-dP-CMq" secondAttribute="firstBaseline" id="5lt-2t-YI2"/>
+                    <constraint firstItem="c3m-Td-rm1" firstAttribute="leading" secondItem="QO7-uP-Cdq" secondAttribute="trailing" constant="16" id="7TI-gq-xJU"/>
+                    <constraint firstItem="0vh-W6-kty" firstAttribute="leading" secondItem="nN3-OP-gOh" secondAttribute="trailing" constant="16" id="7zr-jO-Lfx"/>
+                    <constraint firstItem="Pbc-hJ-vDp" firstAttribute="top" secondItem="7Bo-ff-agt" secondAttribute="bottom" constant="8" symbolic="YES" id="96p-iR-ZxK"/>
+                    <constraint firstItem="h3V-3J-yuN" firstAttribute="firstBaseline" secondItem="Pbc-hJ-vDp" secondAttribute="firstBaseline" id="CS1-4J-Ncn"/>
+                    <constraint firstItem="Iur-Cx-bbA" firstAttribute="top" secondItem="Pbc-hJ-vDp" secondAttribute="bottom" constant="8" symbolic="YES" id="Gtm-Ve-wo3"/>
+                    <constraint firstItem="0vh-W6-kty" firstAttribute="firstBaseline" secondItem="7Bo-ff-agt" secondAttribute="firstBaseline" id="O75-Ra-v7w"/>
+                    <constraint firstItem="pDl-B1-7ay" firstAttribute="firstBaseline" secondItem="Pbc-hJ-vDp" secondAttribute="firstBaseline" id="QH1-PH-Hmx"/>
+                    <constraint firstItem="h3V-3J-yuN" firstAttribute="leading" secondItem="pDl-B1-7ay" secondAttribute="trailing" constant="16" id="U45-Bn-5EC"/>
+                    <constraint firstItem="h3V-3J-yuN" firstAttribute="leading" secondItem="0vh-W6-kty" secondAttribute="leading" id="Ui8-wV-3L3"/>
+                    <constraint firstItem="IrT-JE-68o" firstAttribute="firstBaseline" secondItem="Iur-Cx-bbA" secondAttribute="firstBaseline" id="WnY-Hl-AJq"/>
+                    <constraint firstItem="CKz-dP-CMq" firstAttribute="leading" secondItem="7Bo-ff-agt" secondAttribute="leading" id="Xnd-9m-71i"/>
+                    <constraint firstItem="Pbc-hJ-vDp" firstAttribute="leading" secondItem="7Bo-ff-agt" secondAttribute="leading" id="aPN-bm-ist"/>
+                    <constraint firstItem="7Bo-ff-agt" firstAttribute="top" secondItem="PLE-zO-1ZC" secondAttribute="top" constant="32" id="egk-Xx-Yoy"/>
+                    <constraint firstItem="Vd0-R5-SGP" firstAttribute="firstBaseline" secondItem="Iur-Cx-bbA" secondAttribute="firstBaseline" id="g1g-Hb-r5b"/>
+                    <constraint firstItem="nN3-OP-gOh" firstAttribute="firstBaseline" secondItem="7Bo-ff-agt" secondAttribute="firstBaseline" id="gNr-ND-fxH"/>
+                    <constraint firstItem="Vd0-R5-SGP" firstAttribute="leading" secondItem="IrT-JE-68o" secondAttribute="trailing" constant="16" id="h1B-ZY-jRg"/>
+                    <constraint firstItem="c3m-Td-rm1" firstAttribute="leading" secondItem="0vh-W6-kty" secondAttribute="leading" id="kbL-5T-gd3"/>
+                    <constraint firstItem="pDl-B1-7ay" firstAttribute="leading" secondItem="nN3-OP-gOh" secondAttribute="leading" id="lCQ-hQ-O22"/>
+                    <constraint firstItem="IrT-JE-68o" firstAttribute="leading" secondItem="nN3-OP-gOh" secondAttribute="leading" id="nq7-NO-qbc"/>
+                    <constraint firstItem="CKz-dP-CMq" firstAttribute="top" secondItem="Iur-Cx-bbA" secondAttribute="bottom" constant="8" symbolic="YES" id="nqI-Md-YPc"/>
+                    <constraint firstItem="Vd0-R5-SGP" firstAttribute="leading" secondItem="0vh-W6-kty" secondAttribute="leading" id="sc8-cT-PkE"/>
+                    <constraint firstItem="QO7-uP-Cdq" firstAttribute="leading" secondItem="nN3-OP-gOh" secondAttribute="leading" id="sfu-fT-oBU"/>
+                    <constraint firstItem="7Bo-ff-agt" firstAttribute="leading" secondItem="PLE-zO-1ZC" secondAttribute="leading" constant="20" symbolic="YES" id="v7a-y7-KCy"/>
+                    <constraint firstItem="nN3-OP-gOh" firstAttribute="leading" secondItem="7Bo-ff-agt" secondAttribute="trailing" constant="16" id="x0q-sB-dPo"/>
+                </constraints>
             </view>
-            <point key="canvasLocation" x="-828" y="-324"/>
+            <point key="canvasLocation" x="-934" y="-365"/>
         </window>
     </objects>
     <resources>

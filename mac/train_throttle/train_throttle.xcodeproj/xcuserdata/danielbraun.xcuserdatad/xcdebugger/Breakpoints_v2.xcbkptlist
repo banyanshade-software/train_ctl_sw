@@ -14,8 +14,8 @@
             filePath = "train_throttle/SimTrain.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "92"
-            endingLineNumber = "92"
+            startingLineNumber = "114"
+            endingLineNumber = "114"
             landmarkName = "-inaOff:train:"
             landmarkType = "7">
          </BreakpointContent>
@@ -1947,8 +1947,8 @@
             filePath = "train_throttle/SimTrain.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "257"
-            endingLineNumber = "257"
+            startingLineNumber = "280"
+            endingLineNumber = "280"
             landmarkName = "ina_simu_tick(notif_flags, tick, dt)"
             landmarkType = "9">
          </BreakpointContent>
@@ -1963,8 +1963,8 @@
             filePath = "train_throttle/SimTrain.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "251"
-            endingLineNumber = "251"
+            startingLineNumber = "274"
+            endingLineNumber = "274"
             landmarkName = "ina_simu_tick(notif_flags, tick, dt)"
             landmarkType = "9">
          </BreakpointContent>
@@ -1979,8 +1979,8 @@
             filePath = "train_throttle/SimTrain.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "267"
-            endingLineNumber = "267"
+            startingLineNumber = "290"
+            endingLineNumber = "290"
             landmarkName = "ina_simu_tick(notif_flags, tick, dt)"
             landmarkType = "9">
          </BreakpointContent>
@@ -1995,8 +1995,8 @@
             filePath = "train_throttle/SimTrain.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "266"
-            endingLineNumber = "266"
+            startingLineNumber = "289"
+            endingLineNumber = "289"
             landmarkName = "ina_simu_tick(notif_flags, tick, dt)"
             landmarkType = "9">
          </BreakpointContent>
@@ -2011,8 +2011,8 @@
             filePath = "train_throttle/SimTrain.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "122"
-            endingLineNumber = "122"
+            startingLineNumber = "144"
+            endingLineNumber = "144"
             landmarkName = "-computeTrainsAfter:sinceStart:"
             landmarkType = "7">
          </BreakpointContent>
@@ -2027,8 +2027,8 @@
             filePath = "train_throttle/SimTrain.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "130"
-            endingLineNumber = "130"
+            startingLineNumber = "152"
+            endingLineNumber = "152"
             landmarkName = "-computeTrainsAfter:sinceStart:"
             landmarkType = "7">
          </BreakpointContent>
@@ -2289,7 +2289,7 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "77CD4A52-1F50-4DA4-A90E-18F3A47342FC"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "train_throttle/SimTrain.m"
@@ -2298,6 +2298,38 @@
             startingLineNumber = "68"
             endingLineNumber = "68"
             landmarkName = "-setTrain:sblk:posmm:"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "CCEC3F99-4B88-4593-AB54-AC0ECB7D092B"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "train_throttle/SimTrain.m"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "84"
+            endingLineNumber = "84"
+            landmarkName = "-valueForKey:"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "5116C302-4546-4150-AB62-404FA01532FA"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "train_throttle/SimTrain.m"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "167"
+            endingLineNumber = "167"
+            landmarkName = "-computeTrainsAfter:sinceStart:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

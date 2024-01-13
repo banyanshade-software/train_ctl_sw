@@ -25,7 +25,7 @@
     
     double speed[NUM_TRAINS];
     
-    double _positioncm[NUM_TRAINS]; // position in current sblk
+    double _positionmm[NUM_TRAINS]; // position in current sblk
     lsblk_num_t _s1[NUM_TRAINS]; // curresnt sblk
     int cold[NUM_TRAINS];       // old canton
 }
@@ -34,7 +34,7 @@
 
 - (NSString *) htmlSimuStateForTrain:(int)tidx
 {
-    NSString *s = [NSString stringWithFormat:@"=== Train : %d<br>\n s1=%d pos=%.0fcm spd=%.0f<br>\n", tidx, _s1[tidx].n, _positioncm[tidx], speed[tidx]];
+    NSString *s = [NSString stringWithFormat:@"=== Train : %d<br>\n s1=%d pos=%.0fmm spd=%.0f<br>\n", tidx, _s1[tidx].n, _positionmm[tidx], speed[tidx]];
     for (int c=0; c<NUM_CANTONS; c++) {
         s = [s stringByAppendingFormat:@"  C%d : dir=%d vi=%.1f pwm=%.1f bemf=%.1f<br>\n", c, dir[c], volt[c], pwm[c], bemf[c] ];
     }
@@ -65,8 +65,30 @@
 
 - (void) setTrain:(int)tidx sblk:(int)sblk posmm:(int)posmm
 {
-    _positioncm[tidx] = posmm/10;
+    _positionmm[tidx] = posmm;
     _s1[tidx].n = sblk;
+    
+    NSString *k1 = [NSString stringWithFormat:@"simu_s1_%d", tidx];
+    NSString *k2 = [NSString stringWithFormat:@"simu_pos_%d", tidx];
+    [self willChangeValueForKey:k1];
+    [self willChangeValueForKey:k2];
+    [self didChangeValueForKey:k2];
+    [self didChangeValueForKey:k1];
+}
+
+- (id)valueForKey:(NSString *)key
+{
+    if ([key hasPrefix:@"simu_"]) {
+        NSArray *pa = [key componentsSeparatedByString:@"_"];
+        int n = [[pa objectAtIndex:2]intValue];
+        if (n<4) {
+            NSString *s = [pa objectAtIndex:1];
+            if ([s isEqual:@"s1"]) return [NSNumber numberWithInt:_s1[n].n];
+            if ([s isEqual:@"pos"]) return [NSNumber numberWithInt:_positionmm[n]];
+
+        }
+    }
+    return [super valueForKey:key];
 }
 - (void)setVolt:(double)v forCantonNum:(int)numc
 {
@@ -141,17 +163,18 @@ static uint16_t ina_detect_bitfield = 0;
             return;
         }
         // update pos
-        [self setTrain:tn sblk:_s1[tn].n posmm:_positioncm[tn]+speed[tn]*ellapsed/1000];
+        //NSLog(@"----- spd %f ellapsed %d s1 %d pos %f\n", speed[tn], ellapsed, _s1[tn].n, _positionmm[tn]);
+        [self setTrain:tn sblk:_s1[tn].n posmm:(_positionmm[tn]+speed[tn]*ellapsed/100)];
         //positioncm[tn] += speed[tn]*ellapsed/1000;
         //int get_lsblk_len(lsblk_num_t num);
-        int blen = get_lsblk_len_cm(_s1[tn], NULL);
+        int blenmm = get_lsblk_len_cm(_s1[tn], NULL)*10;
         //NSLog(@"xxxtrain %d pos: %f len %d", tn, position[tn], get_lsblk_len(s1[tn], NULL));
         xblkaddr_t cn = canton_for_lsblk(_s1[tn]);
         NSAssert(cn.v != 0xFF, @"bad cn");
         NSAssert(cn.v<NUM_CANTONS, @"bad cn");
 
         if (dir[cn.v]>0) {
-            if (_positioncm[tn]>blen) {
+            if (_positionmm[tn]>blenmm) {
                 lsblk_num_t ns = next_lsblk(_s1[tn], 0, NULL);
                 if (ns.n < 0) {
                     NSLog(@"END OF TRACK/COL !!");
@@ -180,14 +203,14 @@ static uint16_t ina_detect_bitfield = 0;
                 }
             }
         } else if (dir[cn.v]<0) {
-            if (_positioncm[tn]<-blen) {
+            if (_positionmm[tn]<-blenmm) {
                 lsblk_num_t ns = next_lsblk(_s1[tn], 1, NULL);
                 if (ns.n < 0) {
                     NSLog(@"END OF TRACK/COL !!");
                 } else {
                     ina_num_t inaold = get_lsblk_ina3221(_s1[tn]);
                     ina_num_t inanew = get_lsblk_ina3221(ns);
-                    NSLog(@"switch ina %u->%u", inaold, inanew);
+                    NSLog(@"switch ina %u->%u", inaold.v, inanew.v);
                     if (inanew.v != inaold.v) {
                         if (inaold.v != 0xFF) {
                             [self inaOff:inaold.v train:tn];

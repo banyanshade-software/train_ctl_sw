@@ -713,6 +713,7 @@ void ctrl3_pose_triggered(int tidx, train_ctrl_t *tvars, uint8_t trigsn, xblkadd
                     } else {
                         FatalError("dir0", "sdir 0 on trig", Error_CtrlDir0Trig);
                     }
+                    itm_debug3(DBG_POSEC|DBG_POSEADJ, "beginmm3", tidx, tvars->beginposmm, tvars->_curposmm);
                     trace_train_setc1(ctrl_tasklet.last_tick, tidx, tvars, ns, 0);
                     tvars->c1_sblk = ns;
                     _update_c1changed(tidx, tvars, conf_train_get(tidx));
@@ -893,7 +894,7 @@ void ctrl3_evt_entered_new_lsblk_same_canton(int tidx, train_ctrl_t *tvars, lsbl
     } else {
         tvars->beginposmm = tvars->_curposmm - get_lsblk_len_cm(sblk, NULL)*10;
     }
-    itm_debug3(DBG_POSEC, "beginmm", tidx, tvars->beginposmm, tvars->_curposmm);
+    itm_debug3(DBG_POSEC|DBG_POSEADJ, "beginmm1", tidx, tvars->beginposmm, tvars->_curposmm);
     trace_train_setc1(ctrl_tasklet.last_tick, tidx, tvars, sblk, 1);
     tvars->c1_sblk = sblk;
     
@@ -973,6 +974,7 @@ void ctrl3_evt_entered_c2(int tidx, train_ctrl_t *tvars, uint8_t from_bemf)
         int len = get_lsblk_len_cm_steep(tvars->c1_sblk, conf_train_get(tidx), tvars);
         tvars->beginposmm = -len*10;
     }
+    itm_debug3(DBG_POSEC|DBG_POSEADJ, "beginmm2", tidx, tvars->beginposmm, tvars->_curposmm);
     tvars->_curposmm = 0;
     tvars->canMeasureOnCanton = tvars->canMeasureOnSblk = 1;
 

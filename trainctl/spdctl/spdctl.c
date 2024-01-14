@@ -265,6 +265,7 @@ static void spdctl_handle_msg(msg_64_t *m)
                     if (!tidx) oscillo_t0bemf = m->v1;
                     else if (1==tidx) oscillo_t1bemf = m->v1;
                     itm_debug3(DBG_PID, "st bemf", tidx, m->v1, m->from);
+                    itm_debug3(DBG_POSE, "lposd10", tidx, tvars->lastposed10, m->v2);
                     tvars->lastposed10 = m->v2;
                     if (!tvars->c2bemf) tvars->bemf_mv = m->v1;
                 } else if ((k==1)||(k==2)) {

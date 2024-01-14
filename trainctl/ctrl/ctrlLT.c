@@ -212,7 +212,14 @@ void ctrl3_set_mode(int tidx, train_ctrl_t *tvar, train_mode_t mode)
   
 }
 
-static const int adjust_pose = 1;    // (1) set to 0 to completely disable adjustment
+/*
+ * currently, adjust_post MUST be deactivate
+ * otherwise, triggers are set "in the past"
+ * (beginposmm is set with unadjusted pose, while trigger is set with adjustpose)
+ * when sblk are on same canton (with different ina) this may result in trigger
+ * being set before curentposmm
+ */
+static const int adjust_pose = 0;    // (1) set to 0 to completely disable adjustment
 static const int adjust_dryrun = 0;  // (0) set to 1 for dryrun (display adjust)
 static int adjust_on_steep = 0;     // (0)
 
@@ -851,13 +858,13 @@ void ctrl3_occupency_updated(int tidx, train_ctrl_t *tvars)
 void ctrl3_evt_entered_new_lsblk_same_canton(int tidx, train_ctrl_t *tvars, lsblk_num_t sblk, int jumped)
 {
 	if (tvars->_state != train_state_running) {
-		itm_debug3(DBG_ERR|DBG_CTRL, "nsblk/bs", tidx, tvars->_state, sblk.n);
+		itm_debug3(DBG_ERR|DBG_CTRL, "nsblk-bs", tidx, tvars->_state, sblk.n);
 		return;
 	}
     const conf_train_t *tconf = conf_train_get(tidx);
 	int32_t np = spdctl_get_lastpose(tidx, tvars->can1_xaddr);
     int nmm = pose_convert_to_mm(tconf, np*10);
-    itm_debug3(DBG_CTRL, "nsblk/sam", tidx, tvars->_curposmm, nmm);
+    itm_debug3(DBG_CTRL, "nsblk-sam", tidx, tvars->_curposmm, nmm);
     tvars->_curposmm = nmm;
 
     // ina detect train entered new lsblk
@@ -875,6 +882,7 @@ void ctrl3_evt_entered_new_lsblk_same_canton(int tidx, train_ctrl_t *tvars, lsbl
     } else {
         tvars->beginposmm = tvars->_curposmm - get_lsblk_len_cm(sblk, NULL)*10;
     }
+    itm_debug3(DBG_POSEC, "beginmm", tidx, tvars->beginposmm, tvars->_curposmm);
     trace_train_setc1(ctrl_tasklet.last_tick, tidx, tvars, sblk, 1);
     tvars->c1_sblk = sblk;
     
@@ -1637,6 +1645,7 @@ static uint8_t brake_maxspd(int distmm)
 static int32_t pose_convert_from_mm(const conf_train_t *tconf, int32_t mm);
 static int32_t pose_convert_to_mm( const conf_train_t *tconf, int32_t poseval);
 
+// ---------------------------------------------
 
 
 static int32_t pose_convert_to_mm( const conf_train_t *tconf, int32_t poseval)

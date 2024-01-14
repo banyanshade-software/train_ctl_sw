@@ -74,6 +74,7 @@ typedef struct {
     uint8_t canMeasureOnCanton:1;
     
     uint8_t num_pos_adjust;
+    int32_t sumfact100;
     
     //
     int32_t _curposmm;

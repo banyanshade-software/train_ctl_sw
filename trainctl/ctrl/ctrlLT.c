@@ -71,12 +71,14 @@ static void _release_all_blocks(int tidx, train_ctrl_t *tvars);
 
 // -----------------------------------------------------------------
 
+static const int disable_steep = 1;
 
 static int32_t get_lsblk_len_cm_steep(lsblk_num_t lsbk, const conf_train_t *tconf, const train_ctrl_t *tvar)
 {
     int8_t steep = 0;
     int cm = get_lsblk_len_cm(lsbk, &steep);
     itm_debug3(DBG_CTRL|DBG_POSEC, "steep?", steep, tvar->_sdir, lsbk.n);
+    if (disable_steep) return cm;
     if (steep*tvar->_sdir > 0) {
         if (!tconf->slipping) FatalError("NSLP", "no slipping", Error_Slipping);
         int cmold = cm;
@@ -219,50 +221,59 @@ void ctrl3_set_mode(int tidx, train_ctrl_t *tvar, train_mode_t mode)
  * when sblk are on same canton (with different ina) this may result in trigger
  * being set before curentposmm
  */
-static const int adjust_pose = 0;    // (1) set to 0 to completely disable adjustment
+static const int adjust_pose = 1;    // (1) set to 0 to completely disable adjustment
 static const int adjust_dryrun = 0;  // (0) set to 1 for dryrun (display adjust)
 static int adjust_on_steep = 0;     // (0)
+static const int adjust_minmm = 60; // minimal length for adjustment
 
-static void _adjust_posemm(int tidx, train_ctrl_t *tvars, int expmm, int measmm)
+static void _adjust_posemm(int tidx, train_ctrl_t *tvars, int32_t expmm, int32_t measmm)
 {
+
     if (!adjust_pose) return;
     if (!measmm) return;
+    if (tvars->num_pos_adjust==255) return;
+    
+    if (measmm < 0) {
+        measmm = -measmm;
+    }
     const conf_train_t *tconf = conf_train_get(tidx);
-    conf_train_t *wconf = (conf_train_t *)tconf; // writable
-    int pose = tconf->pose_per_cm;
-    int n = tvars->num_pos_adjust;
+    if (expmm<adjust_minmm) return; // 6cm expected, too short for measurement
+    int32_t fact100o = (measmm*100)/expmm;
+    itm_debug3(DBG_POSEADJ, "adj?", tidx, tconf->pose_per_cm, tconf->pose_per_cm*fact100o/100);
+    tvars->num_pos_adjust++;
+    tvars->sumfact100 += fact100o;
     
-    
-    int fact100o = (measmm*100)/expmm;
-    
-    if (adjust_dryrun) {
-    	itm_debug3(DBG_ADJ, "ADJc", tidx, pose, tvars->_sdir);
-    	itm_debug3(DBG_ADJ, "ADJe", tidx, expmm, measmm);
-        itm_debug3(DBG_ADJ, "ADJm", tidx, fact100o, pose*fact100o/100);
-        return;
-    }
-    
-    int fact100 = fact100o-100;
-    if (n<0xFF) tvars->num_pos_adjust++;
-    if (n>20) n = 20;
-    if (n<2) n=2;
-    
-    fact100 = 100+(fact100/n);
-    wconf->pose_per_cm = pose*fact100/100;
-    if ((1)) {
-        itm_debug3(DBG_CTRL|DBG_ADJ, "poserr<", tidx, measmm, expmm);
-        itm_debug3(DBG_CTRL|DBG_ADJ, "poserr>", tidx, fact100o, fact100);
-        itm_debug3(DBG_CTRL|DBG_ADJ, "adjpcm", tidx, pose, wconf->pose_per_cm);
-    }
-    /*
-    tvars->_curposmm = pose_convert_to_mm(tconf, cposd10*10);
+    if ((0)) {
+        int n = tvars->num_pos_adjust;
+        conf_train_t *wconf = (conf_train_t *)tconf; // writable
+        int fact100 = fact100o-100;
+        if (n<0xFF) tvars->num_pos_adjust++;
+        if (n>20) n = 20;
+        if (n<2) n=2;
+        int pose = tconf->pose_per_cm;
 
-     int32_t mm = poseval*10/tconf->pose_per_cm;
-     return mm;
-     */
-    //tconf->pose_per_cm
+        fact100 = 100+(fact100/n);
+        wconf->pose_per_cm = pose*fact100/100;
+    }
 }
 
+static void apply_pose_adjust(int tidx, train_ctrl_t *tvars)
+{
+    if (!tvars->num_pos_adjust) goto done;
+    const conf_train_t *tconf = conf_train_get(tidx);
+    int k = 2;
+    if (tvars->num_pos_adjust>=3) k=5;
+    int f100 = tvars->sumfact100/tvars->num_pos_adjust;
+    int pose = tconf->pose_per_cm;
+    int npose = pose*f100/100;
+    int apose = (pose*(10-k)+npose*k)/10;
+    conf_train_t *wconf = (conf_train_t *)tconf; // writable
+    wconf->pose_per_cm = apose;
+    itm_debug3(DBG_POSEADJ, "ADJ app", tidx, pose, apose);
+done:
+    tvars->num_pos_adjust = 0;
+    tvars->sumfact100 = 0;
+}
 static void adjust_measure_lens1(int tidx, train_ctrl_t *tvars)
 {
     int8_t steep = 0;
@@ -1447,6 +1458,15 @@ static void _set_state(int tidx, train_ctrl_t *tvars, train_state_t newstate)
     }
     if (newstate != train_state_running) {
         tvars->canMeasureOnCanton = tvars->canMeasureOnSblk = 0;
+    }
+    // adjust pose on stop (not on blkwait)
+    switch (newstate) {
+        default:
+            break;
+        case train_state_end_of_track:
+        case train_state_station:
+            apply_pose_adjust(tidx, tvars);
+            break;
     }
     // release block on stop
     switch (newstate) {

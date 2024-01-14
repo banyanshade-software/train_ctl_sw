@@ -222,8 +222,7 @@ void ctrl3_set_mode(int tidx, train_ctrl_t *tvar, train_mode_t mode)
  * being set before curentposmm
  */
 static const int adjust_pose = 1;    // (1) set to 0 to completely disable adjustment
-static const int adjust_dryrun = 0;  // (0) set to 1 for dryrun (display adjust)
-static int adjust_on_steep = 0;     // (0)
+static int disable_adjust_on_steep = 0;     // (0)
 static const int adjust_minmm = 60; // minimal length for adjustment
 
 static void _adjust_posemm(int tidx, train_ctrl_t *tvars, int32_t expmm, int32_t measmm)
@@ -280,7 +279,7 @@ static void adjust_measure_lens1(int tidx, train_ctrl_t *tvars)
     int nmm = tvars->_curposmm;  // TODO only ok because same node
     //const conf_train_t *tconf = conf_train_get(tidx);
     int l = get_lsblk_len_cm(tvars->c1_sblk, &steep);
-    if (adjust_on_steep && steep) return;
+    if (disable_adjust_on_steep && steep) return;
     _adjust_posemm(tidx, tvars, l*10, nmm-tvars->beginposmm);
 }
 

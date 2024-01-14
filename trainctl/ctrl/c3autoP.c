@@ -74,6 +74,7 @@ static void _update_sblk(int tidx, int oldidx, lsblk_num_t prevlsb)
         if (spd2 && ospd && (SIGNOF(spd2) != SIGNOF((ospd)))) {
             // change direction
         	itm_debug3(DBG_AUTO, "chgdir", tidx, ospd, spd2);
+            c3avar[tidx].brake_end = 0;
             ctrl_delayed_set_desired_spd(tidx, 0);
         }
         ctrl_delayed_set_desired_spd(tidx, spd2*2);
@@ -117,12 +118,13 @@ void c3auto_freeback(int tidx, lsblk_num_t freelsblk)
         int d1 = SIGNOF0(c3avar[tidx].path[idx].val);
         int t =  d1 * SIGNOF0(c3avar[tidx].path[idx+1].val);
         if (t<0) {
-        	itm_debug2(DBG_AUTO, "Achg", tidx, freelsblk.n);
             // this is direction change
             lsblk_num_t prev = next_lsblk(c3avar[tidx].path[idx].sblk, (d1>0), NULL);
+            itm_debug3(DBG_AUTO, "Achg", tidx, freelsblk.n, prev.n);
             if (prev.n == freelsblk.n) {
                 // all train is now on current sblk (and next sblk)
                 // stop to go to station mode
+                c3avar[tidx].brake_end = 0;
                 ctrl_delayed_set_desired_spd(tidx, 0);
                 c3avar[tidx].spd = 0;
             }

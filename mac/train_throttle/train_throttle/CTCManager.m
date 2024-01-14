@@ -150,7 +150,7 @@ static int _dim(int col, int dim)
 }
 
 
-- (void) uitrac_change_blk:(int) blk val:(int)v train:(int)trn sblk:(int)sblk
+- (void) uitrac_change_blk:(uint8_t) blk val:(uint8_t)v train:(uint8_t)trn sblk:(uint8_t)sblk
 {
     NSString *js;
     //NSString *nblk = [NSString stringWithFormat:@"BLK%d", blk];

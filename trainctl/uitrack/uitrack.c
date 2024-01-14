@@ -21,7 +21,7 @@
 
 
 static void uitrack_reset(void);
-static void uitrack_change_blk(int blk, int v, int trn, int sblk);
+static void uitrack_change_blk(uint8_t blk, uint8_t v, uint8_t trn, uint8_t sblk);
 static void uitrack_change_tn(int tn, int v);
 static void uitrack_change_tn_reserv(int tn, int train);
 static void uitrack_change_pres(uint32_t bitfield);
@@ -33,15 +33,15 @@ void uitrack_run_tick(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, _UN
         int rc = mqf_read_to_ui_track(&m);
         if (rc) break;
         if (m.to != MA3_UI_CTC) continue;
-        int blk; int v; int trn; int sblk; //int rst;
+        uint8_t blk, v, trn, sblk;
         switch (m.cmd) {
         default:
         	break;
         case CMD_BLK_CHG_NOTIF:
         	blk = m.vbytes[0];
         	v   = m.vbytes[1];
-            trn = (int8_t) m.vbytes[2];
-        	sblk = (int8_t) m.vbytes[3];
+            trn =  m.vbytes[2];
+        	sblk = m.vbytes[3];
         	uitrack_change_blk(blk, v, trn, sblk);
         	break;
         case CMD_TN_RESER_NOTIF:
@@ -70,7 +70,7 @@ static _UNUSED_ void uitrack_reset(void)
 {
     
 }
-static void uitrack_change_blk(int blk, int v, int trn, int sblk)
+static void uitrack_change_blk(uint8_t blk, uint8_t v, uint8_t trn, uint8_t sblk)
 {
     impl_uitrack_change_blk(blk, v, trn, sblk);
 }
@@ -95,7 +95,7 @@ void  __attribute__((weak))  impl_uitrack_change_pres(_UNUSED_ uint32_t bitfield
     
 }
 
-void  __attribute__((weak))  impl_uitrack_change_blk(_UNUSED_ int blk, _UNUSED_ int v, _UNUSED_ int trn, _UNUSED_ int sblk)
+void  __attribute__((weak))  impl_uitrack_change_blk(_UNUSED_ uint8_t blk, _UNUSED_ uint8_t v, _UNUSED_ uint8_t trn, _UNUSED_ uint8_t sblk)
 {
     
 }

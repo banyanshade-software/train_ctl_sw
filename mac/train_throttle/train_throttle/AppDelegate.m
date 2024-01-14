@@ -2984,7 +2984,7 @@ didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic
 
 
 
-void impl_uitrack_change_blk(int blk, int v, int trn, int sblk)
+void impl_uitrack_change_blk(uint8_t blk, uint8_t v, uint8_t trn, uint8_t sblk)
 {
     [theDelegate.ctcManager uitrac_change_blk:blk val:v train:trn sblk:sblk];
 }

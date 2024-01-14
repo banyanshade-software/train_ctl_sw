@@ -596,22 +596,8 @@ void spdctl_run_tick(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, uint
 		train_periodic_control(i, dt);
 	}
 }
- /*
-static int pose_add_trig(train_vars_t *tvars, int16_t tag, int32_t pose)
-{
-    for (int pi=0; pi<MAX_TRIG; pi++) {
-        if (!tvars->pose_trig_tag[pi] || (tvars->pose_trig_tag[pi]==tag)) {
-            tvars->pose_trig_tag[pi] = tag;
-            tvars->pose_trig[pi] = pose;
-            return pi;
-        }
-    }
-    itm_debug1(DBG_ERR|DBG_POSEC, "NO TRIG", tag);
-    Error_Handler();
-    return -1;
-}
-  
-  */
+
+
 #endif
 
 void send_train_stopped(int numtrain, train_vars_t *tvars)

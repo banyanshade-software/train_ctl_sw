@@ -98,6 +98,13 @@ void bemf_msg(msg_64_t *m)
                     //break;
                 }
             }
+            if ((1)) {
+                int n = 0;
+                for (int i=0; i<NUM_TRIGS; i++) {
+                    if (cbvars[idx].trigs[i].trigdir) n++;
+                }
+                itm_debug2(DBG_POSEC, "settrg", idx,  n);
+            }
             add_trig(&cbvars[idx], m->from, m->va16*100, m->vcu8, m->vb8);
             break;
 	default:

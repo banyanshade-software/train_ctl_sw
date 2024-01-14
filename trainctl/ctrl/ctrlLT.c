@@ -231,7 +231,8 @@ static void _adjust_posemm(int tidx, train_ctrl_t *tvars, int32_t expmm, int32_t
     if (!adjust_pose) return;
     if (!measmm) return;
     if (tvars->num_pos_adjust==255) return;
-    
+    itm_debug3(DBG_POSEADJ, "adjm", tidx, expmm, measmm);
+
     if (measmm < 0) {
         measmm = -measmm;
     }
@@ -1233,7 +1234,7 @@ static inline void _set_one_trig(int numtrain, train_ctrl_t *tvars, const conf_t
 }
 
 
-#define MARGIN_TRIG 150
+#define MARGIN_TRIG 100
 static inline int trig_cmp(const struct sttrig a, const struct sttrig b, int left)
 {
     
@@ -1263,7 +1264,7 @@ static void _apply_trigs(int tidx, train_ctrl_t *tvars, rettrigs_t *rett)
         rett->trigs[j] = t;
     }
 
-    
+    itm_debug3(DBG_CTRL, "appltrg", tidx, tvars->can1_xaddr.v, rett->ntrig);
     int numtrig=0; int numset=0; int numnewset=0;
     int min = 0;
     int ignore = 0;
@@ -1292,6 +1293,10 @@ static void _apply_trigs(int tidx, train_ctrl_t *tvars, rettrigs_t *rett)
         }
         numtrig++;
         trace_train_trig_set(ctrl_tasklet.last_tick, tidx, tvars, seq, rett->trigs[i].tag, rett->trigs[i].posmm, rett->trigs[i].fut, ignore);
+    }
+    itm_debug3(DBG_CTRL, "TRGset", tidx, numtrig, numnewset);
+    if (numnewset>3) {
+        itm_debug3(DBG_CTRL, "many", tidx, numset, numnewset);
     }
     // sanity check
     if (numtrig && !numset) {

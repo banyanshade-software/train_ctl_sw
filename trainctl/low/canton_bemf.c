@@ -356,6 +356,7 @@ static void process_adc(volatile adc_result_t *buf, _UNUSED_ uint32_t deltaticks
         //  dt is not precise enough
         int32_t pi = (b*100)/tsktick_freqhz;
         cvars->pose += pi;
+        itm_debug3(DBG_POSE, "pose", i, pi, cvars->pose);
         
         msg_64_t m = {0};
         m.from = MA0_CANTON(oam_localBoardNum());
@@ -390,6 +391,9 @@ static void process_adc(volatile adc_result_t *buf, _UNUSED_ uint32_t deltaticks
                     if (cvars->pose < cvars->trigs[ti].posval) {
                         itm_debug3(DBG_POSEC|DBG_POSE, "TRIG<", ti, cvars->pose, cvars->trigs[ti].posval);
                         ptrig = &cvars->trigs[ti];
+                        if (abs(cvars->pose - cvars->trigs[ti].posval)>50000) {
+                            itm_debug3(DBG_ERR|DBG_POSEC, "BAD??", i, cvars->pose , cvars->trigs[ti].posval);
+                        }
                     }
                 }
                 if (ptrig) {

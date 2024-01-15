@@ -49,6 +49,8 @@
 @property (nonatomic, weak) IBOutlet NSView *paramView2;
 @property (nonatomic, weak) IBOutlet NSView *paramView3;
 @property (nonatomic, weak) IBOutlet NSView *paramView4;
+@property (nonatomic, weak) IBOutlet NSView *paramView5;
+@property (nonatomic, weak) IBOutlet NSView *paramView6;
 @property (nonatomic, weak) IBOutlet NSTableView *cantonTableView;
 @property (nonatomic, weak) IBOutlet NSTableView *trainTableView;
 

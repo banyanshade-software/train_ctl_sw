@@ -539,7 +539,9 @@ typedef void (^respblk_t)(void);
 
 - (void) forAllParamsDo:(void(^)(NSControl *))action
 {
-    [self performForChildOf:@[self.paramView1, self.paramView2, self.paramView3, self.paramView4] having:^(NSView *v) {
+    [self performForChildOf:@[self.paramView1, self.paramView2, self.paramView3, self.paramView4,
+    self.paramView5, self.paramView6]
+                     having:^(NSView *v) {
         NSString *s = v.identifier;
         if (![s isKindOfClass:[NSString class]]) return NO;
         if (![s hasPrefix:@"par_"]) return NO;
@@ -551,7 +553,8 @@ typedef void (^respblk_t)(void);
 - (void) forParams:(NSArray *)parlist do:(void(^)(NSControl *))action
 {
     NSSet *parset = [NSSet setWithArray:parlist];
-    [self performForChildOf:@[self.paramView1, self.paramView2]  having:^(NSView *v) {
+    [self performForChildOf:@[self.paramView1, self.paramView2, self.paramView3, self.paramView4,
+                              self.paramView5, self.paramView6]  having:^(NSView *v) {
         NSString *s = v.identifier;
         if (![s isKindOfClass:[NSString class]]) return NO;
         if (![s hasPrefix:@"par_"]) return NO;

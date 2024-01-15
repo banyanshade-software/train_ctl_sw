@@ -19,11 +19,12 @@
                 <outlet property="cantonTableView" destination="gBS-dQ-Fjb" id="WIS-7b-JuY"/>
                 <outlet property="ctcManager" destination="wzl-W6-NAl" id="HZ7-38-pTe"/>
                 <outlet property="logView" destination="YXl-3q-GOv" id="4k0-Qy-nvZ"/>
-                <outlet property="paramView" destination="eW8-Bh-GGe" id="Khg-Og-CnG"/>
                 <outlet property="paramView1" destination="eW8-Bh-GGe" id="lTk-ls-Laf"/>
                 <outlet property="paramView2" destination="8It-jo-dDi" id="S0o-Z3-EuN"/>
                 <outlet property="paramView3" destination="Q0Y-zV-347" id="uO9-1V-4Wh"/>
                 <outlet property="paramView4" destination="Qgr-BK-iAw" id="X0J-ep-sQ4"/>
+                <outlet property="paramView5" destination="PLE-zO-1ZC" id="9cM-Ql-KhV"/>
+                <outlet property="paramView6" destination="9IO-pd-Ul7" id="fF8-xh-ogc"/>
                 <outlet property="sliderTarget1" destination="hKn-Uc-u5t" id="m08-k7-XV7"/>
                 <outlet property="sliderTarget2" destination="bUt-k0-TMM" id="UgW-fg-usp"/>
                 <outlet property="sliderTarget3" destination="0Q4-va-RcS" id="xhF-0c-A7b"/>

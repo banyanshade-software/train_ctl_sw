@@ -22,6 +22,8 @@ typedef struct conf_globparam {
     int test_mode;
     int oscillo;
     int ignoreIna3221;
+    int enable_adjust;
+    int enable_adjust_steep;
 } conf_globparam_t;
 
 

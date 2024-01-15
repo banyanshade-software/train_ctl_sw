@@ -16,6 +16,7 @@
 
 #include "../topology/topology.h"
 #include "../topology/occupency.h"
+#include "../config/conf_globparam.h"
 
 //#include "../railconfig.h"
 #include "../config/conf_train.h"
@@ -221,14 +222,15 @@ void ctrl3_set_mode(int tidx, train_ctrl_t *tvar, train_mode_t mode)
  * when sblk are on same canton (with different ina) this may result in trigger
  * being set before curentposmm
  */
-static const int adjust_pose = 1;    // (1) set to 0 to completely disable adjustment
-static int disable_adjust_on_steep = 0;     // (0)
+//static const int adjust_pose = 1;    // (1) set to 0 to completely disable adjustment
+//static int disable_adjust_on_steep = 0;     // (0)
 static const int adjust_minmm = 60; // minimal length for adjustment
 
 static void _adjust_posemm(int tidx, train_ctrl_t *tvars, int32_t expmm, int32_t measmm)
 {
-
-    if (!adjust_pose) return;
+    if (!conf_globparam_get(0)->enable_adjust) return;
+    //if (!adjust_pose) return;
+    
     if (!measmm) return;
     if (tvars->num_pos_adjust==255) return;
     itm_debug3(DBG_POSEADJ, "adjm", tidx, expmm, measmm);
@@ -280,8 +282,10 @@ static void adjust_measure_lens1(int tidx, train_ctrl_t *tvars)
     int nmm = tvars->_curposmm;  // TODO only ok because same node
     //const conf_train_t *tconf = conf_train_get(tidx);
     int l = get_lsblk_len_cm(tvars->c1_sblk, &steep);
-    if (disable_adjust_on_steep && steep) return;
-    _adjust_posemm(tidx, tvars, l*10, nmm-tvars->beginposmm);
+    //if (disable_adjust_on_steep && steep) return;
+    if ((!steep) || conf_globparam_get(0)->enable_adjust_steep) {
+        _adjust_posemm(tidx, tvars, l*10, nmm-tvars->beginposmm);
+    }
 }
 
 

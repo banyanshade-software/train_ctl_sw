@@ -6,6 +6,8 @@ config globparam {
     user int ignoreIna3221 
             = (simu) 0
             = (default) 0;
+    user int enable_adjust = (default) 1;
+    user int enable_adjust_steep = (default) 1;
 } num = (mainV0) 1
       = (mainV04) 1
       = (simu) 1

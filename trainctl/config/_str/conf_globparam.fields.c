@@ -31,6 +31,10 @@ int conf_globparam_fieldnum(const char *str)
          return conf_numfield_globparam_oscillo;
     } else if (!strcmp(str, "ignoreIna3221")) {
          return conf_numfield_globparam_ignoreIna3221;
+    } else if (!strcmp(str, "enable_adjust")) {
+         return conf_numfield_globparam_enable_adjust;
+    } else if (!strcmp(str, "enable_adjust_steep")) {
+         return conf_numfield_globparam_enable_adjust_steep;
     }
     return -1;
 }
@@ -46,6 +50,10 @@ const char *conf_globparam_fieldname(int f)
          return "oscillo";
     } else if (f == conf_numfield_globparam_ignoreIna3221) {
          return "ignoreIna3221";
+    } else if (f == conf_numfield_globparam_enable_adjust) {
+         return "enable_adjust";
+    } else if (f == conf_numfield_globparam_enable_adjust_steep) {
+         return "enable_adjust_steep";
     }
     return NULL;
 }

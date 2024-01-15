@@ -49,6 +49,8 @@ static conf_globparam_t conf_globparam[1] = {
      .test_mode = 0,
      .oscillo = 0,
      .ignoreIna3221 = 0,
+     .enable_adjust = 1,
+     .enable_adjust_steep = 1,
   }
 };
 
@@ -100,6 +102,8 @@ static conf_globparam_t conf_globparam[1] = {
      .test_mode = 0,
      .oscillo = 0,
      .ignoreIna3221 = 0,
+     .enable_adjust = 1,
+     .enable_adjust_steep = 1,
   }
 };
 
@@ -121,6 +125,8 @@ static conf_globparam_t conf_globparam[1] = {
      .test_mode = 0,
      .oscillo = 0,
      .ignoreIna3221 = 0,
+     .enable_adjust = 1,
+     .enable_adjust_steep = 1,
   }
 };
 
@@ -187,6 +193,8 @@ static conf_globparam_t conf_globparam[1] = {
      .test_mode = 0,
      .oscillo = 0,
      .ignoreIna3221 = 0,
+     .enable_adjust = 1,
+     .enable_adjust_steep = 1,
   }
 };
 
@@ -227,6 +235,10 @@ int32_t conf_globparam_local_get(unsigned int fieldnum, unsigned int instnum)
         return c->oscillo;
     case conf_numfield_globparam_ignoreIna3221:
         return c->ignoreIna3221;
+    case conf_numfield_globparam_enable_adjust:
+        return c->enable_adjust;
+    case conf_numfield_globparam_enable_adjust_steep:
+        return c->enable_adjust_steep;
     }
     return 0;
 }
@@ -251,6 +263,12 @@ void conf_globparam_local_set(unsigned int fieldnum, unsigned int instnum, int32
         break;
     case conf_numfield_globparam_ignoreIna3221:
         c->ignoreIna3221 = v;
+        break;
+    case conf_numfield_globparam_enable_adjust:
+        c->enable_adjust = v;
+        break;
+    case conf_numfield_globparam_enable_adjust_steep:
+        c->enable_adjust_steep = v;
         break;
     }
 

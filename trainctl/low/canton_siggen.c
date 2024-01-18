@@ -82,6 +82,7 @@ static void set_oneshot(int timernum, const conf_canton_t *cconf)
 
 void start_signal_dirac(int cidx, const conf_canton_t *cconf,  canton_vars_t *cvars)
 {
+	itm_debug1(DBG_DETECT, "C/oneshot", cidx);
 	canton_set_volt(cidx, cconf, cvars, 7);
 	set_oneshot(cconf->pwm_timer_num, cconf);
 	//canton_set_pwm(cidx, cconf, cvars, 1 /*sdir*/, 10 /*duty*/);

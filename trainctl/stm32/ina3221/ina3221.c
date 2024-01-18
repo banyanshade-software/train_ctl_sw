@@ -136,7 +136,7 @@ static void handle_ina_notif_normal(uint32_t notif);
 static void handle_ina_notif_detectfreq(uint32_t notif);
 static void run_ina_task(void);
 
-static volatile uint16_t mask_en_val = 0;
+//static volatile uint16_t mask_en_val = 0;
 static 	ina_state_t state = state_idle;
 
 volatile int16_t oscillo_ina0;
@@ -235,10 +235,11 @@ static void run_ina_task(void)
 					continue;
 				}
 				memset(presence, 0, sizeof(presence));
-				itm_debug2(DBG_DETECT|DBG_INA3221, "detect2 ina", m.v1u, m.v2u);
+				itm_debug2(DBG_DETECT|DBG_INA3221, "detect2 ina", m.va16, m.vb8);
 				detect2_bitfield = m.va16;
 				detect2_mode = m.vb8;
 				if (detect2_mode == 2) {
+					// frequency mode
 					start_detectfreq_read();
 				}
 				continue;
@@ -690,6 +691,7 @@ static void start_detectfreq_read(void)
 	// mode 2 detection, detect2_bitfield is actually ina num
 	df_dev = detect2_bitfield / 3;
 	df_reg = detect2_bitfield % 3;
+	itm_debug3(DBG_DETECT, "inafreq", detect2_bitfield, df_dev, df_reg);
 	df_t0 = HAL_GetTick();
 	df_idx = 0;
 	_reg_read(df_dev, df_reg);
@@ -710,13 +712,23 @@ static void handle_ina_notif_detectfreq(uint32_t notif)
 		int16_t val = (int16_t) __builtin_bswap16(ina_uvalues[df_dev*3+df_reg]);
 		uint32_t tick = HAL_GetTick();
 		tick = tick - df_t0;
+		itm_debug3(DBG_DETECT, "inardf:", df_dev, df_reg, ina_uvalues[df_dev*3+df_reg]);
 		timeval[df_idx].tick =  (uint16_t) tick;
 		timeval[df_idx].val = val;
 		df_idx++;
 		if (df_idx < DF_NUMVAL) {
+			if ((0)) { // debug/test, read all INAs regs
+				static int c=0;
+				df_dev = (c%12)/3;
+				df_reg = c%3;
+				c++;
+			}
 			_reg_read(df_dev, df_reg);
 		} else {
 			df_complete();
+		}
+		if (df_idx==510) {
+			itm_debug1(DBG_DETECT, "break here", 0);
 		}
 	}
 	if (notif & NOTIF_INA_ERR) {
@@ -740,7 +752,9 @@ static void handle_ina_notif_detectfreq(uint32_t notif)
 
 static void df_complete(void)
 {
-
+	for (int i=0; i<DF_NUMVAL; i++) {
+		itm_debug3(DBG_DETECT, "inard", i, timeval[i].tick, timeval[i].val);
+	}
 }
 
 

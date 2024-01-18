@@ -252,6 +252,7 @@ static void handle_msg_detect2(msg_64_t *m)
     switch (m->cmd) {
         case CMD_START_DETECT_TRAIN:
             detect_type = m->v2u;
+            itm_debug3(DBG_DETECT, "C-det", cidx, detect_type, m->v1u);
             canton_set_volt(cidx, cconf, cvars,  7);
             switch (detect_type) {
             default:
@@ -265,12 +266,15 @@ static void handle_msg_detect2(msg_64_t *m)
             	break;
             case 2:
 #ifndef TRAIN_SIMU
+            	//canton_set_pwm(cidx, cconf, cvars, 1, 20); // XXX FOR TEST
+
             	start_signal_gen(cidx, cconf, cvars, m->v1u);
 #endif
             	break;
             }
             break;
         case CMD_STOP_DETECT_TRAIN:
+            itm_debug2(DBG_DETECT, "C-stpdet", cidx, detect_type);
             m->cmd = CMD_BEMF_OFF;
             bemf_msg(m);
             canton_set_volt(cidx, cconf, cvars,  7);

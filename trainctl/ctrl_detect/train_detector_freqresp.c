@@ -48,7 +48,7 @@ static int detect_step_start_inafreqmeas(xblkaddr_t detect_canton)
     m.to = MA0_INA(board);
     m.cmd = CMD_START_INA_MONITOR;
     m.va16 = ina.ina;
-    m.vb8 = 2;
+    m.vb8 = 2;  // mode freq
 
     mqf_write_from_ctrl(&m);
 
@@ -118,8 +118,11 @@ static const train_detector_step_t _freq_step4 = {
 
 
 static const train_detector_step_t _freq_step3 = {
-		.detect_start_canton = detect_dirac_start, //detect_step_start_pwm,
-		.detect_stop_canton = detect_dirac_stop, // detect_step_stop_pwm,
+		.detect_start_canton = detect_dirac_start,
+		.detect_stop_canton = detect_dirac_stop,
+		// for testing, safe pwm generator :
+		//.detect_start_canton = detect_step_start_pwm,
+		//.detect_stop_canton = detect_step_stop_pwm,
 		.nextstep = &_freq_step4
 };
 

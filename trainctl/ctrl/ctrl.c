@@ -330,7 +330,7 @@ static void ctrl_tick(uint32_t tick, _UNUSED_ uint32_t dt)
     _topology_or_occupency_changed = 0;
     
     if (occ) {
-        itm_debug1(DBG_CTRL, "ct/occ", 0);
+        itm_debug1(DBG_CTRL, "ct-occ", 0);
     }
     for (int tidx = 0; tidx<NUM_TRAINS; tidx++) {
         train_ctrl_t *tvars = &trctl[tidx];

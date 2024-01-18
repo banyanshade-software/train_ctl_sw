@@ -281,7 +281,7 @@ static void ihmmsg_testcan(msg_64_t *m)
     	break;
 
     default:
-    	itm_debug1(DBG_ERR|DBG_UI, "unhndld msg", m->cmd);
+    	itm_debug1(DBG_ERR|DBG_UI, "unhd msg1", m->cmd);
     	break;
 	}
 }
@@ -310,7 +310,7 @@ static void ihmmsg_testcanton(msg_64_t *m)
 		disp_setvar(0, 4, m->v2);		// pwm
 		break;
 	default:
-		itm_debug1(DBG_ERR|DBG_UI, "unhndld msg", m->cmd);
+		itm_debug1(DBG_ERR|DBG_UI, "unhd msg2", m->cmd);
 		break;
 	}
 }
@@ -345,7 +345,7 @@ static void ihmmsg_detect2(msg_64_t *m)
 		 */
 
 	default:
-		itm_debug1(DBG_ERR|DBG_UI, "unhndld msg", m->cmd);
+		itm_debug1(DBG_ERR|DBG_UI, "unhd msg3", m->cmd);
 		break;
 	}
 }

@@ -260,7 +260,7 @@ void set_pwm_freq(int freqhz, int crit)
 	tsktick_freqhz =  (bemf_divisor>1) ? cur_freqhz / bemf_divisor : cur_freqhz;
 
 	// not an error but we want it in the log
-	itm_debug3(DBG_ERR|DBG_CTRL, "FREQ", freqhz, ps, cur_freqhz);
+	itm_debug3(DBG_ERR|DBG_CTRL|DBG_DETECT, "FREQ", freqhz, ps, cur_freqhz);
 
 	if (crit) portENTER_CRITICAL();
 	numsampling = 0;

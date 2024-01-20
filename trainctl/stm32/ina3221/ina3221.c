@@ -39,6 +39,8 @@
 #include "../../oscillo/oscillo.h"
 #include "../../statval.h"
 
+#include "../../ctrl_detect/train_detectors_params.h"
+
 
 #ifndef BOARD_HAS_INA3221
 #error BOARD_HAS_INA3221 not defined, remove this file from build

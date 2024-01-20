@@ -12,6 +12,7 @@
 #include "../trainctl_iface.h"
 
 #include "canton_siggen.h"
+#include "../ctrl_detect/train_detectors_params.h"
 
 #define NUM_SAMPLES 32
 static uint16_t signal[2*NUM_SAMPLES];
@@ -63,29 +64,19 @@ static void do_frequencies(int cidx, _UNUSED_ int timernum,  const conf_canton_t
 	//HAL_StatusTypeDef rc = HAL_TIM_OnePulse_Init(pwm_timer, TIM_OPMODE_SINGLE);
 
 	int freqhz = get_pwm_freq();
+	static const int freqs[FREQ_NSTEPS]={250, 500, 1000, 2000, 5000, 20000, 40000};
 
-#define TFREQ(_f) do { \
-	set_pwm_freq(_f, 1); \
-	canton_set_pwm(cidx, cconf, cvars, 1, 20); \
-	osDelay(20); \
-	canton_set_pwm(cidx, cconf, cvars, 0, 0); \
-	osDelay(20); \
-} while (0)
+	itm_debug2(DBG_DETECT, "st-freqs", cidx, 0);
+	for (int i=0; i<FREQ_NSTEPS; i++) {
+		int f = freqs[i];
+		set_pwm_freq(f, 1);
+		canton_set_pwm(cidx, cconf, cvars, 1, 20);
+		osDelay(i ? FREQ_STEP_DUR : FREQ_FIRST_STEP_DUR);
+		canton_set_pwm(cidx, cconf, cvars, 0, 0);
+		osDelay(FREQ_RELAX_TIME);
+	}
 
-	//int ms = 1*1000/freqhz;
-	itm_debug2(DBG_DETECT, "st-oneshot", cidx, 0);
-
-	TFREQ(250);
-	TFREQ(500);
-	TFREQ(1000);
-	TFREQ(2000);
-	TFREQ(5000);
-	TFREQ(10000);
-	TFREQ(20000);
-
-	canton_set_pwm(cidx, cconf, cvars, 0, 0); \
-
-	itm_debug1(DBG_DETECT, "end-onesh", cidx);
+	itm_debug1(DBG_DETECT, "end-freqs", cidx);
 	set_pwm_freq(freqhz, 0); \
 
 #if 0

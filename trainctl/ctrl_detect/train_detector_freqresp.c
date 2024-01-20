@@ -12,7 +12,7 @@
 #include "../topology/topology.h"
 #include "train_detectors.h"
 #include "train_detectors_p.h"
-
+#include "train_detectors_params.h"
 
 static _UNUSED_ int nil_detect_parse(_UNUSED_ const msg_64_t *m, train_detector_result_t *r)
 {

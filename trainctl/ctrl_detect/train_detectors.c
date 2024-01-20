@@ -105,7 +105,7 @@ static int detect_step_start_inameas(xblkaddr_t detect_canton)
     m.to = MA0_INA(board);
     m.cmd = CMD_START_INA_MONITOR;
     m.va16 = inas;
-    m.vb8 = 1;
+    m.vb8 = 1; // mode std
 
     mqf_write_from_ctrl(&m);
     
@@ -274,6 +274,8 @@ const train_detect_cons_t alldetectors = {
 		.next = &c1,
 };
 #else
+#if 0
+
 static const train_detect_cons_t d1 = {
 		.d = &freqresp_detector,
 		.next = NULL
@@ -282,7 +284,12 @@ const train_detect_cons_t alldetectors = {
 		.d = &normal_detector,
 		.next = &d1
 };
-
+#else
+const train_detect_cons_t alldetectors = {
+		.d = &freqresp_detector,
+		.next = NULL
+};
+#endif
 #endif
 
 

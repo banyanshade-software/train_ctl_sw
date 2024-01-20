@@ -150,11 +150,22 @@ void detect2_process_tick(_UNUSED_ uint32_t tick,  _UNUSED_ uint32_t dt)
 
             
         case state_next_canton:
-            detect_canton.v++;
-            if (0xFF == detect_canton.v) {
-                detect_state = state_next_detector;
-                break;
-            }
+        	for (;;) {
+        		detect_canton.v++;
+        		if (0xFF == detect_canton.v) {
+        			detect_state = state_next_detector;
+        			break;
+        		}
+        		// check if canton exists:
+        	    lsblk_num_t lsb = any_lsblk_with_canton(detect_canton);
+        	    if (lsb.n<0) {
+                    itm_debug1(DBG_DETECT, "skip C", detect_canton.v);
+        	    	continue;
+        	    }
+        	    break;
+        	}
+        	if (0xFF == detect_canton.v) break;
+
             itm_debug1(DBG_DETECT, "next C", detect_canton.v);
             detectorstep = NULL;
             detect_state = state_next_step;

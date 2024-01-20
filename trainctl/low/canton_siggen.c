@@ -89,6 +89,7 @@ static void do_frequencies(int cidx, _UNUSED_ int timernum,  const conf_canton_t
 	set_pwm_freq(freqhz, 0); \
 
 #if 0
+	// not ok since "one shot" mode is intended to be used only in slave mode
 	HAL_TIM_Base_Stop(pwm_timer);
 
 	TIM_SlaveConfigTypeDef sSlaveConfig = {0};
@@ -196,7 +197,7 @@ static void do_frequencies(int cidx, _UNUSED_ int timernum,  const conf_canton_t
 
 void start_signal_freqsteps(int cidx, const conf_canton_t *cconf,  canton_vars_t *cvars)
 {
-	itm_debug1(DBG_DETECT, "C/oneshot", cidx);
+	itm_debug1(DBG_DETECT, "C/freqs", cidx);
 	canton_set_volt(cidx, cconf, cvars, 7);
 	do_frequencies(cidx, cconf->pwm_timer_num, cconf, cvars);
 	//canton_set_pwm(cidx, cconf, cvars, 1 /*sdir*/, 10 /*duty*/);

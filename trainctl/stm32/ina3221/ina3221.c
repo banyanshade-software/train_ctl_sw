@@ -688,6 +688,18 @@ typedef struct {
 #define DF_NUMVAL (1024*2)
 static time_val_t timeval[DF_NUMVAL] = {0};
 
+
+typedef struct freq_avg {
+	int32_t sum;
+	uint16_t n;
+} freq_avg_t;
+
+static freq_avg_t freqavg[FREQ_NSTEPS];
+static int freq_st;
+static int freq_idx;
+static uint32_t freq_stoptick;
+static uint32_t freq_starttick;
+
 static void start_detectfreq_read(void)
 {
 	// mode 2 detection, detect2_bitfield is actually ina num
@@ -697,11 +709,19 @@ static void start_detectfreq_read(void)
 	df_t0 = HAL_GetTick();
 	df_idx = 0;
 	memset(timeval, 0, sizeof(timeval));
+
+	memset(freqavg, 0, sizeof(freqavg));
+	freq_st = 0;
+	freq_idx = 0;
+	freq_stoptick = 0;
+	freq_starttick = 0;
+
 	_reg_read(df_dev, df_reg);
 
 }
 
 static void df_complete(void);
+
 static void handle_ina_notif_detectfreq(uint32_t notif)
 {
 	if (notif & NOTIF_INA_TRIG) {
@@ -711,10 +731,58 @@ static void handle_ina_notif_detectfreq(uint32_t notif)
 	if (notif & NOTIF_INA_READ) {
 	}
 	if (notif & NOTIF_INA_RDCOMPL) {
-		itm_debug1(DBG_INA3221, "INA:N:CPL", 0);
-		int16_t val = (int16_t) __builtin_bswap16(ina_uvalues[df_dev*3+df_reg]);
 		uint32_t tick = HAL_GetTick();
 		tick = tick - df_t0;
+		//itm_debug3(DBG_INA3221|DBG_DETECT, "INA:N:CPL", tick, freq_st, freq_idx);
+		int16_t val = (int16_t) __builtin_bswap16(ina_uvalues[df_dev*3+df_reg]);
+		//itm_debug3(DBG_INA3221|DBG_DETECT, "rdcmpl", df_dev, df_reg, val);
+
+		if (val<0) val = -val;
+
+		switch (freq_st) {
+		default:
+		case -1:
+			break;
+
+		case 0:
+			//waiting for begin
+			if (val > 50) {
+				freq_starttick = 0;
+				freq_stoptick = tick+FREQ_FIRST_STEP_DUR-4;
+				itm_debug2(DBG_DETECT, "xxx st", 1, 0);
+				freq_st = 1;
+				freq_idx = 0;
+			}
+			break;
+		case 1:
+			if (tick >= freq_stoptick) {
+				freq_idx++;
+				if (freq_idx >= FREQ_NSTEPS) {
+					itm_debug1(DBG_DETECT, "xxx done",0);
+					freq_st = -1;
+					df_complete();
+					break;
+				}
+				itm_debug2(DBG_DETECT, "xxx st", 2, freq_idx);
+				freq_st = 2;
+				freq_starttick = tick+FREQ_RELAX_TIME;
+			} else {
+				freqavg[freq_idx].sum += val;
+				freqavg[freq_idx].n++;
+			}
+			break;
+		case 2:
+			if (tick >= freq_starttick) {
+				freq_st = 1;
+				freq_stoptick = tick+FREQ_STEP_DUR;
+				itm_debug2(DBG_DETECT, "xxx st", 1, freq_idx);
+			}
+			break;
+		}
+
+		if (freq_st>=0) {
+			_reg_read(df_dev, df_reg);
+		}
 		//itm_debug3(DBG_DETECT, "inardf:", df_dev, df_reg, val /*ina_uvalues[df_dev*3+df_reg]*/);
 		//itm_debug2(DBG_DETECT, "inardf:",df_idx, val );
 
@@ -730,9 +798,8 @@ static void handle_ina_notif_detectfreq(uint32_t notif)
 				c++;
 			}
 
-			_reg_read(df_dev, df_reg);
 		} else {
-			df_complete();
+			//df_complete();
 		}
 		if (df_idx==510) {
 			itm_debug1(DBG_DETECT, "break here", 0);
@@ -759,10 +826,52 @@ static void handle_ina_notif_detectfreq(uint32_t notif)
 
 static void df_complete(void)
 {
+	int32_t v0 = 0;
+	for (int i=0; i<FREQ_NSTEPS; i++) {
+		int32_t k = 0;
+		int32_t val = 0;
+		if (freqavg[i].n) {
+			if (!i) v0 = freqavg[i].sum/freqavg[i].n;
+			val = freqavg[i].sum/freqavg[i].n;
+			if (i) {
+				if (v0) k = (100*val)/v0;
+			} else {
+				k = 100;
+			}
+		}
+		itm_debug3(DBG_DETECT, "inafreq", i, val, k);
+	}
 	for (int i=0; i<DF_NUMVAL; i++) {
+		if (i && !timeval[i].tick) break;
 		itm_debug3(DBG_DETECT, "inard", i, timeval[i].tick, timeval[i].val);
 	}
 	itm_debug1(DBG_DETECT, "done inard", DF_NUMVAL);
 }
 
+typedef enum {
+	loco_unknown = 0,
+	Marklin8805_BR29,
+	Marklin8821_V200,
+} locomotive_t;
 
+typedef struct {
+	locomotive_t loco;
+	uint16_t kval_t[8];
+};
+
+static const kval_t kvals[] =
+{ Marklin8805_BR29, 856,   75, 57, 41, 14,  5,  2,  4},
+{ Marklin8805_BR29, 633,   77, 68, 50, 26, 10,  4,  6},
+{ Marklin8805_BR29, 775,   70, 64, 45, 12,  2,  1,  2},
+{ Marklin8805_BR29, 538,   65, 54, 19,  4,  5,  6,  0},
+{ Marklin8805_BR29, 670,   85, 71, 53, 33, 12,  6,  6},
+
+{ Marklin8821_V200, 692,   88, 90, 59, 45, 23, 17, 17},
+{ Marklin8821_V200, 761,   81, 67, 47, 32, 17, 17, 16},
+{ Marklin8821_V200, 788,   79, 67, 53, 33, 18, 13, 13},
+
+{ loco_unknown,       0,    0,  0,  0,  0,  0,  0,  0}
+};
+
+
+};

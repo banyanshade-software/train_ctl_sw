@@ -23,5 +23,6 @@
 #define FREQ_STEP_DUR	 	20
 #define FREQ_NSTEPS		 	8
 
+#define FREQ_STORE_VAL		1
 
 #endif /* CTRL_DETECT_TRAIN_DETECTORS_PARAMS_H_ */

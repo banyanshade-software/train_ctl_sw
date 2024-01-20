@@ -678,6 +678,9 @@ static int ina3221_write16(int a, int reg, uint16_t v)
 static uint8_t df_dev=0;
 static uint8_t df_reg = 0;
 static uint32_t df_t0 = 0;
+
+#if FREQ_STORE_VAL
+
 static uint16_t df_idx = 0;
 
 typedef struct {
@@ -687,7 +690,7 @@ typedef struct {
 
 #define DF_NUMVAL (1024*2)
 static time_val_t timeval[DF_NUMVAL] = {0};
-
+#endif // FREQ_STORE_VAL
 
 typedef struct freq_avg {
 	int32_t sum;
@@ -707,9 +710,10 @@ static void start_detectfreq_read(void)
 	df_reg = detect2_bitfield % 3;
 	itm_debug3(DBG_DETECT, "inafreq", detect2_bitfield, df_dev, df_reg);
 	df_t0 = HAL_GetTick();
+#if FREQ_STORE_VAL
 	df_idx = 0;
 	memset(timeval, 0, sizeof(timeval));
-
+#endif
 	memset(freqavg, 0, sizeof(freqavg));
 	freq_st = 0;
 	freq_idx = 0;
@@ -786,6 +790,8 @@ static void handle_ina_notif_detectfreq(uint32_t notif)
 		//itm_debug3(DBG_DETECT, "inardf:", df_dev, df_reg, val /*ina_uvalues[df_dev*3+df_reg]*/);
 		//itm_debug2(DBG_DETECT, "inardf:",df_idx, val );
 
+#if FREQ_STORE_VAL
+
 		if (df_idx < DF_NUMVAL) {
 			timeval[df_idx].tick =  (uint16_t) tick;
 			timeval[df_idx].val = val;
@@ -804,6 +810,7 @@ static void handle_ina_notif_detectfreq(uint32_t notif)
 		if (df_idx==510) {
 			itm_debug1(DBG_DETECT, "break here", 0);
 		}
+#endif // FREQ_STORE_VAL
 	}
 	if (notif & NOTIF_INA_ERR) {
 		bkpoint(3, lastErr);
@@ -841,37 +848,53 @@ static void df_complete(void)
 		}
 		itm_debug3(DBG_DETECT, "inafreq", i, val, k);
 	}
+#if FREQ_STORE_VAL
 	for (int i=0; i<DF_NUMVAL; i++) {
 		if (i && !timeval[i].tick) break;
 		itm_debug3(DBG_DETECT, "inard", i, timeval[i].tick, timeval[i].val);
 	}
-	itm_debug1(DBG_DETECT, "done inard", DF_NUMVAL);
+#endif // FREQ_STORE_VAL
+	itm_debug1(DBG_DETECT, "done inard", 0);
 }
+
+
+// TODO: move loco somewhere else
 
 typedef enum {
 	loco_unknown = 0,
 	Marklin8805_BR29,
 	Marklin8821_V200,
+	Marklin8895_BR74,
+	Marklin8875_V160,
 } locomotive_t;
 
 typedef struct {
 	locomotive_t loco;
-	uint16_t kval_t[8];
+	uint16_t k[8];
+} kval_t;
+
+static _UNUSED_ const kval_t kvals[] = {
+{ Marklin8805_BR29, {856,   75, 57, 41, 14,  5,  2,  4}},
+{ Marklin8805_BR29, {633,   77, 68, 50, 26, 10,  4,  6}},
+{ Marklin8805_BR29, {775,   70, 64, 45, 12,  2,  1,  2}},
+{ Marklin8805_BR29, {538,   65, 54, 19,  4,  5,  6,  0}},
+{ Marklin8805_BR29, {670,   85, 71, 53, 33, 12,  6,  6}},
+
+{ Marklin8821_V200, {692,   88, 90, 59, 45, 23, 17, 17}},
+{ Marklin8821_V200, {761,   81, 67, 47, 32, 17, 17, 16}},
+{ Marklin8821_V200, {788,   79, 67, 53, 33, 18, 13, 13}},
+
+{ Marklin8895_BR74, {687,   93, 77, 60, 44, 20, 20, 19}},
+{ Marklin8895_BR74, {653,   82, 73, 59, 36, 21, 15, 14}},
+
+{ Marklin8875_V160, {924,   76, 78, 62, 46, 29, 27, 24}},
+{ Marklin8875_V160, {882,   78, 75, 59, 50, 29, 28, 27}},
+{ Marklin8875_V160, {916,	82, 72, 64, 45, 29, 25, 25}},
+{ Marklin8875_V160, {787,   84, 82, 65, 47, 35, 31, 32}},
+
+
+
+{ loco_unknown,     {  0,    0,  0,  0,  0,  0,  0,  0}},
 };
 
-static const kval_t kvals[] =
-{ Marklin8805_BR29, 856,   75, 57, 41, 14,  5,  2,  4},
-{ Marklin8805_BR29, 633,   77, 68, 50, 26, 10,  4,  6},
-{ Marklin8805_BR29, 775,   70, 64, 45, 12,  2,  1,  2},
-{ Marklin8805_BR29, 538,   65, 54, 19,  4,  5,  6,  0},
-{ Marklin8805_BR29, 670,   85, 71, 53, 33, 12,  6,  6},
 
-{ Marklin8821_V200, 692,   88, 90, 59, 45, 23, 17, 17},
-{ Marklin8821_V200, 761,   81, 67, 47, 32, 17, 17, 16},
-{ Marklin8821_V200, 788,   79, 67, 53, 33, 18, 13, 13},
-
-{ loco_unknown,       0,    0,  0,  0,  0,  0,  0,  0}
-};
-
-
-};

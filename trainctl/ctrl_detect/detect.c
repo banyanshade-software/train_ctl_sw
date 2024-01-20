@@ -596,6 +596,17 @@ static void register_found(train_detector_result_t *res)
 
 const train_detector_result_t *detector_result_for_canton(xblkaddr_t c)
 {
+	//// ---- for test with freq detector only
+	if ((1)) {
+		if (c.v==2) {
+			result[0].canton.v = 2;
+			result[0].ina.v = 7;
+			result[0].lsblk.n = 5;
+			result[0].locotype = 0xFF;
+			return &result[0];
+		}
+	}
+	//// ----
     for (int i=0; i<MAX_DETECT_TRAINS; i++) {
         if (result[i].canton.v == 0xFF) {
         	return NULL;

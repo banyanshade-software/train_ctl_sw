@@ -57,7 +57,7 @@ static void gen_signal(int t, int nbuf)
 // -----------------------------------------------------------------------
 
 
-static void set_oneshot(int cidx, _UNUSED_ int timernum,  const conf_canton_t *cconf, canton_vars_t *cvars)
+static void do_frequencies(int cidx, _UNUSED_ int timernum,  const conf_canton_t *cconf, canton_vars_t *cvars)
 {
 	//TIM_HandleTypeDef *pwm_timer = CantonTimerHandles[timernum];
 	//HAL_StatusTypeDef rc = HAL_TIM_OnePulse_Init(pwm_timer, TIM_OPMODE_SINGLE);
@@ -194,11 +194,11 @@ static void set_oneshot(int cidx, _UNUSED_ int timernum,  const conf_canton_t *c
 #endif
 }
 
-void start_signal_dirac(int cidx, const conf_canton_t *cconf,  canton_vars_t *cvars)
+void start_signal_freqsteps(int cidx, const conf_canton_t *cconf,  canton_vars_t *cvars)
 {
 	itm_debug1(DBG_DETECT, "C/oneshot", cidx);
 	canton_set_volt(cidx, cconf, cvars, 7);
-	set_oneshot(cidx, cconf->pwm_timer_num, cconf, cvars);
+	do_frequencies(cidx, cconf->pwm_timer_num, cconf, cvars);
 	//canton_set_pwm(cidx, cconf, cvars, 1 /*sdir*/, 10 /*duty*/);
 }
 
@@ -208,7 +208,7 @@ void start_signal_gen(int cidx, const conf_canton_t *cconf, _UNUSED_ canton_vars
 {
 	if (p==1) {
 		// dirac
-		start_signal_dirac(cidx, cconf, cvars);
+		start_signal_freqsteps(cidx, cconf, cvars);
 		return;
 	}
 	ngen=0;

@@ -11,6 +11,7 @@
 #include "../msg/trainmsg.h"
 #include "../topology/topology.h"
 #include "train_detectors.h"
+#include "train_detectors_params.h"
 #include "train_detectors_p.h"
 #include "train_detector_freqresp.h"
 
@@ -274,7 +275,7 @@ const train_detect_cons_t alldetectors = {
 		.next = &c1,
 };
 #else
-#if 0
+#ifndef _TEST_FREQ_ON_S5
 
 static const train_detect_cons_t d1 = {
 		.d = &freqresp_detector,
@@ -284,12 +285,12 @@ const train_detect_cons_t alldetectors = {
 		.d = &normal_detector,
 		.next = &d1
 };
-#else
+#else // _TEST_FREQ_ON_S5
 const train_detect_cons_t alldetectors = {
 		.d = &freqresp_detector,
 		.next = NULL
 };
-#endif
+#endif // _TEST_FREQ_ON_S5
 #endif
 
 

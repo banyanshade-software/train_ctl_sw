@@ -20,7 +20,7 @@
 #endif
 
 #include "detect.h"
-
+#include "train_detectors_params.h"
 
 #define MEAS_DURATION  300 //tick = ms
 #define RELAX_DURATION 200
@@ -596,6 +596,7 @@ static void register_found(train_detector_result_t *res)
 
 const train_detector_result_t *detector_result_for_canton(xblkaddr_t c)
 {
+#ifdef _TEST_FREQ_ON_S5
 	//// ---- for test with freq detector only
 	if ((1)) {
 		if (c.v==2) {
@@ -607,6 +608,7 @@ const train_detector_result_t *detector_result_for_canton(xblkaddr_t c)
 		}
 	}
 	//// ----
+#endif // _TEST_FREQ_ON_S5
     for (int i=0; i<MAX_DETECT_TRAINS; i++) {
         if (result[i].canton.v == 0xFF) {
         	return NULL;

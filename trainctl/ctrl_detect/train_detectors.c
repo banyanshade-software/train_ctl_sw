@@ -198,9 +198,9 @@ const train_detector_t normal_detector = {
     .detect_init = NULL,
     .detect_deinit = NULL,
     .detect_parse = detect_ina_parser,
+	.name = "BASE",
     .steps = &_detector1_step0
 };
-
 
 #ifdef TRAIN_SIMU
 

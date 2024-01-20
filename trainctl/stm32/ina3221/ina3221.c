@@ -683,7 +683,7 @@ typedef struct {
 	int16_t val;
 } time_val_t;
 
-#define DF_NUMVAL 512
+#define DF_NUMVAL (1024*2)
 static time_val_t timeval[DF_NUMVAL] = {0};
 
 static void start_detectfreq_read(void)
@@ -694,6 +694,7 @@ static void start_detectfreq_read(void)
 	itm_debug3(DBG_DETECT, "inafreq", detect2_bitfield, df_dev, df_reg);
 	df_t0 = HAL_GetTick();
 	df_idx = 0;
+	memset(timeval, 0, sizeof(timeval));
 	_reg_read(df_dev, df_reg);
 
 }
@@ -712,17 +713,21 @@ static void handle_ina_notif_detectfreq(uint32_t notif)
 		int16_t val = (int16_t) __builtin_bswap16(ina_uvalues[df_dev*3+df_reg]);
 		uint32_t tick = HAL_GetTick();
 		tick = tick - df_t0;
-		itm_debug3(DBG_DETECT, "inardf:", df_dev, df_reg, ina_uvalues[df_dev*3+df_reg]);
-		timeval[df_idx].tick =  (uint16_t) tick;
-		timeval[df_idx].val = val;
-		df_idx++;
+		//itm_debug3(DBG_DETECT, "inardf:", df_dev, df_reg, val /*ina_uvalues[df_dev*3+df_reg]*/);
+		//itm_debug2(DBG_DETECT, "inardf:",df_idx, val );
+
 		if (df_idx < DF_NUMVAL) {
+			timeval[df_idx].tick =  (uint16_t) tick;
+			timeval[df_idx].val = val;
+			df_idx++;
+
 			if ((0)) { // debug/test, read all INAs regs
 				static int c=0;
 				df_dev = (c%12)/3;
 				df_reg = c%3;
 				c++;
 			}
+
 			_reg_read(df_dev, df_reg);
 		} else {
 			df_complete();
@@ -755,6 +760,7 @@ static void df_complete(void)
 	for (int i=0; i<DF_NUMVAL; i++) {
 		itm_debug3(DBG_DETECT, "inard", i, timeval[i].tick, timeval[i].val);
 	}
+	itm_debug1(DBG_DETECT, "done inard", DF_NUMVAL);
 }
 
 

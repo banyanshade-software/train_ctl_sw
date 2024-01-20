@@ -831,32 +831,9 @@ static void handle_ina_notif_detectfreq(uint32_t notif)
 }
 
 
-static void df_complete(void)
-{
-	int32_t v0 = 0;
-	for (int i=0; i<FREQ_NSTEPS; i++) {
-		int32_t k = 0;
-		int32_t val = 0;
-		if (freqavg[i].n) {
-			if (!i) v0 = freqavg[i].sum/freqavg[i].n;
-			val = freqavg[i].sum/freqavg[i].n;
-			if (i) {
-				if (v0) k = (100*val)/v0;
-			} else {
-				k = 100;
-			}
-		}
-		itm_debug3(DBG_DETECT, "inafreq", i, val, k);
-	}
-#if FREQ_STORE_VAL
-	for (int i=0; i<DF_NUMVAL; i++) {
-		if (i && !timeval[i].tick) break;
-		itm_debug3(DBG_DETECT, "inard", i, timeval[i].tick, timeval[i].val);
-	}
-#endif // FREQ_STORE_VAL
-	itm_debug1(DBG_DETECT, "done inard", 0);
-}
-
+// -------------------------------------------------------------------------------------------
+// -------------------------------------------------------------------------------------------
+// -------------------------------------------------------------------------------------------
 
 // TODO: move loco somewhere else
 
@@ -866,14 +843,15 @@ typedef enum {
 	Marklin8821_V200,
 	Marklin8895_BR74,
 	Marklin8875_V160,
-} locomotive_t;
+}  __attribute((packed)) locomotive_t;
 
 typedef struct {
 	locomotive_t loco;
 	uint16_t k[8];
 } kval_t;
 
-static _UNUSED_ const kval_t kvals[] = {
+#define NUM_VALK 14
+static _UNUSED_ const kval_t kvals[NUM_VALK+1] = {
 { Marklin8805_BR29, {856,   75, 57, 41, 14,  5,  2,  4}},
 { Marklin8805_BR29, {633,   77, 68, 50, 26, 10,  4,  6}},
 { Marklin8805_BR29, {775,   70, 64, 45, 12,  2,  1,  2}},
@@ -897,4 +875,92 @@ static _UNUSED_ const kval_t kvals[] = {
 { loco_unknown,     {  0,    0,  0,  0,  0,  0,  0,  0}},
 };
 
+
+static const uint16_t coeff[8] = {1, 5, 10, 10, 10, 10, 10, 5};
+
+
+static void perform_knn(kval_t *pval);
+
+static void df_complete(void)
+{
+	int32_t v0 = 0;
+	kval_t kval = {0};
+	int bad = 0;
+	for (int i=0; i<FREQ_NSTEPS; i++) {
+		int32_t k = 0;
+		int32_t val = 0;
+		if (freqavg[i].n) {
+			if (!i) {
+				v0 = freqavg[i].sum/freqavg[i].n;
+				kval.k[0] = v0;
+			}
+			val = freqavg[i].sum/freqavg[i].n;
+			if (i) {
+				if (v0) {
+					k = (100*val)/v0;
+					kval.k[i] = k;
+				}
+			} else {
+				k = 100;
+			}
+		} else {
+			bad++;
+		}
+		itm_debug3(DBG_DETECT, "inafreq", i, val, k);
+
+	}
+	if (bad) {
+		itm_debug1(DBG_DETECT, "bad freqd", 0);
+	} else {
+		perform_knn(&kval);
+	}
+#if FREQ_STORE_VAL
+	for (int i=0; i<DF_NUMVAL; i++) {
+		if (i && !timeval[i].tick) break;
+		itm_debug3(DBG_DETECT, "inard", i, timeval[i].tick, timeval[i].val);
+	}
+#endif // FREQ_STORE_VAL
+	itm_debug1(DBG_DETECT, "done inard", 0);
+}
+
+
+static inline uint32_t square(int32_t a)
+{
+	return a*a;
+}
+
+#define KNN_K_VALUE 4
+
+static void perform_knn(kval_t *pval)
+{
+	static uint32_t dist[NUM_VALK];
+
+	// distance with register samples
+	memset(dist, 0, sizeof(dist));
+	for (int i=0; i<NUM_VALK; i++) {
+		int32_t d = 0;
+		for (int k=0; k<8; k++) {
+			d += square(pval->k[k] - kvals[i].k[k])*coeff[k];
+		}
+		itm_debug2(DBG_DETECT, "kNN dist", i, d);
+	}
+	// select k smallest distance
+	// smarter alorithms : https://en.wikipedia.org/wiki/Selection_algorithm
+	// we use a simple selection sort
+
+	locomotive_t si[KNN_K_VALUE] = {0};
+	for (int i=0; i<KNN_K_VALUE; i++) {
+		uint32_t min_val = dist[0];
+		int min_idx = 0;
+		for (int k=1; k<NUM_VALK; k++) {
+			if (dist[k] < min_val) {
+				min_val = dist[k];
+				min_idx = k;
+			}
+		}
+		si[i] = kvals[min_idx].loco;
+		dist[min_idx]=0xFFFFFFFF;
+	}
+	itm_debug3(DBG_DETECT, "hop", si[0], si[1], si[2]);
+}
 

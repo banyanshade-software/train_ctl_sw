@@ -943,6 +943,7 @@ static void perform_knn(kval_t *pval)
 			d += square(pval->k[k] - kvals[i].k[k])*coeff[k];
 		}
 		itm_debug2(DBG_DETECT, "kNN dist", i, d);
+		dist[i] = d;
 	}
 	// select k smallest distance
 	// smarter alorithms : https://en.wikipedia.org/wiki/Selection_algorithm

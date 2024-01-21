@@ -56,7 +56,7 @@ typedef struct st_detector {
     void (*const detect_init)(uint8_t p); // parameter unused, 0
     void (*const detect_deinit)(void);
     // parse handles CMD_DETECTION_REPORT
-    int (*const detect_parse)(const msg_64_t *m, train_detector_result_t *d);
+    int (*const detect_parse)(const msg_64_t *m, train_detector_result_t *d, xblkaddr_t canton);
     // ...
     const train_detector_step_t *steps;
     const char *name; // for debug

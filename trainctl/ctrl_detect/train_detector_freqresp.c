@@ -106,7 +106,28 @@ int detect_dirac_stop(xblkaddr_t detect_canton)
 	mqf_write_from_ctrl(&m);
 	return 0;
 }
+// ------------------------
 
+static int detect_freq_parse(const msg_64_t *m,  train_detector_result_t *r, xblkaddr_t canton)
+{
+	if (!MA0_IS_INA(m->from)) {
+		return -1;
+	}
+	_UNUSED_ uint8_t brd = MA0_BOARD(m->from);
+	ina_num_t ina;
+	ina.ina = m->subc;
+	ina.board = brd;
+
+	itm_debug3(DBG_DETECT, "report", ina.v, m->v1u, m->v2);
+	r->canton = canton;
+	r->locotype = m->v1u;
+
+	// other params unchanged
+	r->lsblk.n = -1;
+	r->numlsblk = 0;
+	r->ina.v = -1;
+	return 0;
+}
 
 // ------------------------
 
@@ -150,7 +171,7 @@ static const train_detector_step_t _freq_step0 = {
 const train_detector_t freqresp_detector = {
 		.detect_init = detect_freq_init,
 		.detect_deinit = detect_freq_deinit,
-		.detect_parse = nil_detect_parse,
+		.detect_parse = detect_freq_parse,
 		.steps = &_freq_step0,
 		.name = "FreqResp",
 };

@@ -949,7 +949,8 @@ static void perform_knn(kval_t *pval)
 	// smarter alorithms : https://en.wikipedia.org/wiki/Selection_algorithm
 	// we use a simple selection sort
 
-	locomotive_t si[KNN_K_VALUE] = {0};
+	locomotive_t ksi[KNN_K_VALUE] = {0};
+	uint16_t kdist[KNN_K_VALUE];
 	for (int i=0; i<KNN_K_VALUE; i++) {
 		uint32_t min_val = dist[0];
 		int min_idx = 0;
@@ -959,9 +960,40 @@ static void perform_knn(kval_t *pval)
 				min_idx = k;
 			}
 		}
-		si[i] = kvals[min_idx].loco;
+		ksi[i] = kvals[min_idx].loco;
+		kdist[i] = dist[min_idx];
 		dist[min_idx]=0xFFFFFFFF;
 	}
-	itm_debug3(DBG_DETECT, "hop", si[0], si[1], si[2]);
+	// vote
+	itm_debug3(DBG_DETECT, "vote?", ksi[0], ksi[1], ksi[2]);
+	uint8_t v[KNN_K_VALUE];
+	int maxv = -1;
+	int maxi = 0;
+	for (int i=0; i<KNN_K_VALUE; i++) {
+		v[i]=1;
+		for (int j=0; j<i; j++) {
+			if (ksi[i]==ksi[j]) {
+				if (kdist[j]<10000) v[j]+=2;
+				else v[j]++;
+				if(v[j]>maxv) {
+					maxi = j;
+					maxv = v[j];
+				}
+			}
+		}
+	}
+
+	itm_debug3(DBG_DETECT, "vote!", maxi, maxv, ksi[maxi]);
+
+	// report
+	msg_64_t m = {0};
+	m.from = MA0_INA(oam_localBoardNum());
+	m.to = MA1_CONTROL();
+	m.cmd = CMD_DETECTION_REPORT;
+	m.subc = df_dev*3+df_reg;
+
+	m.v1u = ksi[maxi];
+	m.v2u = maxv;
+	mqf_write_from_ina3221(&m);
 }
 

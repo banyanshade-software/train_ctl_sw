@@ -23,7 +23,7 @@ static _UNUSED_ int nil_detect_parse(_UNUSED_ const msg_64_t *m, train_detector_
     return 0;
 }
 
-static int detect_ina_parser(const msg_64_t *m,  train_detector_result_t *r)
+static int detect_ina_parser(const msg_64_t *m,  train_detector_result_t *r, xblkaddr_t detc)
 {
     if (!MA0_IS_INA(m->from)) {
         return -1;
@@ -36,6 +36,10 @@ static int detect_ina_parser(const msg_64_t *m,  train_detector_result_t *r)
     if (r->canton.v == 0xFF) {
         memset(r, 0, sizeof(*r));
         return -1;
+    }
+    if (r->canton.v != detc.v) {
+    	itm_debug3(DBG_DETECT, "badc", r->canton.v, detc.v, ina.v);
+    	return -1;
     }
     r->ina = ina;
     r->locotype = 0xFF;

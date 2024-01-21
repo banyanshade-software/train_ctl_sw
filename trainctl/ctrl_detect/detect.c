@@ -282,8 +282,8 @@ void detect2_process_msg(_UNUSED_ msg_64_t *m)
                 case state_wait_on:
                 case state_next_step:
                     itm_debug1(DBG_DETECT, "FOUND", m->subc);
-                    train_detector_result_t res;
-                    int rc = detector->d->detect_parse(m, &res);
+                    train_detector_result_t res = {0};
+                    int rc = detector->d->detect_parse(m, &res, detect_canton);
                     if (rc) {
                         itm_debug2(DBG_DETECT|DBG_ERR, "dtprse", m->from, m->subc);
                         break;

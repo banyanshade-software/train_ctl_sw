@@ -39,12 +39,17 @@ typedef  enum {
     state_next_step         = 4,
     state_wait_on           = 5,
     state_next_stop_step    = 6,
-} detector_state_t;
+    state_wait_report       = 7,
+} __attribute((packed)) detector_state_t;
 
 
 static detector_state_t detect_state = state_finished;
+static detector_state_t saved_state = state_finished;
 static xblkaddr_t detect_canton = {.v=0xFF};
 static uint32_t detect_tick = 0;
+static uint32_t waketick = 0;
+static uint8_t gotreport = 0;
+static uint8_t waitreport = 0;
 static const train_detect_cons_t *detector = NULL;
 static const train_detector_step_t *detectorstep = NULL;
 
@@ -156,6 +161,7 @@ void detect2_process_tick(_UNUSED_ uint32_t tick,  _UNUSED_ uint32_t dt)
         case state_next_canton:
         	for (;;) {
         		detect_canton.v++;
+        		gotreport = 0;
         		if (0xFF == detect_canton.v) {
         			detect_state = state_next_detector;
         			break;
@@ -206,9 +212,24 @@ void detect2_process_tick(_UNUSED_ uint32_t tick,  _UNUSED_ uint32_t dt)
             if (rc<0) {
                 detect_state = state_next_canton;
                 break;
+            } else if ((rc>0) && !gotreport) {
+            	saved_state = detect_state;
+            	waketick = tick+(rc & 0xFFFF);
+            	waitreport = rc & (0x10000) ? 1 : 0;
+            	detect_state = state_wait_report;
             }
             break;
-            
+
+        case state_wait_report:
+        	if (tick > waketick) {
+        		itm_debug1(DBG_DETECT|DBG_ERR, "rep timeout", 0);
+        	}
+        	if ((waitreport && gotreport) || (tick > waketick)) {
+        		itm_debug1(DBG_DETECT, "E-wait", gotreport);
+        		detect_state = saved_state;
+        		waketick = 0;
+        	}
+        	break;
         case state_wait_on:
             if (tick>=detect_tick+500) {
                 detect_state = state_next_stop_step;
@@ -243,7 +264,7 @@ static void register_found(train_detector_result_t *res)
             if (res->ina.v != 0xFF) {
             	result[i].ina = res->ina;
             }
-            break;
+            return;
         }
     }
     // too many trains detected
@@ -285,7 +306,9 @@ void detect2_process_msg(_UNUSED_ msg_64_t *m)
             switch (detect_state) {
                 case state_wait_on:
                 case state_next_step:
+                case state_wait_report:
                     itm_debug1(DBG_DETECT, "FOUND", m->subc);
+                    gotreport = 1;
                     train_detector_result_t res = {0};
                     int rc = detector->d->detect_parse(m, &res, detect_canton);
                     if (rc) {

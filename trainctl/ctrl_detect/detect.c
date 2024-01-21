@@ -79,6 +79,10 @@ void detect2_start(void)
 static void _detection_finished(void)
 {
     
+	for (int i=0; i<MAX_DETECT_TRAINS; i++) {
+		if (result[i].canton.v == 0xFF) continue;
+		itm_debug3(DBG_DETECT, "Rdet", result[i].lsblk.n, result[i].canton.v, result[i].locotype);
+	}
     msg_64_t m = {0};
 
     m.cmd = CMD_UI_DETECT;

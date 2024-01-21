@@ -84,7 +84,7 @@ int detect_step_check_detection(xblkaddr_t detect_canton)
 
 // ------------------------
 
-int detect_dirac_start(xblkaddr_t detect_canton)
+int detect_freq_start(xblkaddr_t detect_canton)
 {
 	msg_64_t m = {0};
 	m.from = MA1_CONTROL();
@@ -96,7 +96,7 @@ int detect_dirac_start(xblkaddr_t detect_canton)
 	return 0;
 }
 
-int detect_dirac_stop(xblkaddr_t detect_canton)
+int detect_freq_stop(xblkaddr_t detect_canton)
 {
 	itm_debug1(DBG_DETECT, "O-pwm", detect_canton.v);
 	msg_64_t m = {0};
@@ -132,15 +132,15 @@ static int detect_freq_parse(const msg_64_t *m,  train_detector_result_t *r, xbl
 // ------------------------
 
 static const train_detector_step_t _freq_step4 = {
-    .detect_start_canton = detect_step_wait,
+    .detect_start_canton = detect_step_wait_report,
     .detect_stop_canton = NULL,
     .nextstep = NULL
 };
 
 
 static const train_detector_step_t _freq_step3 = {
-		.detect_start_canton = detect_dirac_start,
-		.detect_stop_canton = detect_dirac_stop,
+		.detect_start_canton = detect_freq_start,
+		.detect_stop_canton = detect_freq_stop,
 		// for testing, safe pwm generator :
 		//.detect_start_canton = detect_step_start_pwm,
 		//.detect_stop_canton = detect_step_stop_pwm,

@@ -753,7 +753,7 @@ static void handle_ina_notif_detectfreq(uint32_t notif)
 			if (val > 50) {
 				freq_starttick = 0;
 				freq_stoptick = tick+FREQ_FIRST_STEP_DUR-4;
-				itm_debug2(DBG_DETECT, "xxx st", 1, 0);
+				itm_debug2(DBG_DETECT, "xxx st0", 1, 0);
 				freq_st = 1;
 				freq_idx = 0;
 			}
@@ -767,7 +767,7 @@ static void handle_ina_notif_detectfreq(uint32_t notif)
 					df_complete();
 					break;
 				}
-				itm_debug2(DBG_DETECT, "xxx st", 2, freq_idx);
+				itm_debug2(DBG_DETECT, "xxx st1", 2, freq_idx);
 				freq_st = 2;
 				freq_starttick = tick+FREQ_RELAX_TIME;
 			} else {
@@ -779,7 +779,7 @@ static void handle_ina_notif_detectfreq(uint32_t notif)
 			if (tick >= freq_starttick) {
 				freq_st = 1;
 				freq_stoptick = tick+FREQ_STEP_DUR;
-				itm_debug2(DBG_DETECT, "xxx st", 1, freq_idx);
+				itm_debug2(DBG_DETECT, "xxx st2", 1, freq_idx);
 			}
 			break;
 		}
@@ -839,10 +839,10 @@ static void handle_ina_notif_detectfreq(uint32_t notif)
 
 typedef enum {
 	loco_unknown = 0,
-	Marklin8805_BR29,
-	Marklin8821_V200,
-	Marklin8895_BR74,
-	Marklin8875_V160,
+	Marklin8805_BR29,		// 1
+	Marklin8821_V200,		// 2
+	Marklin8895_BR74,		// 3
+	Marklin8875_V160,		// 4
 }  __attribute((packed)) locomotive_t;
 
 typedef struct {
@@ -852,20 +852,20 @@ typedef struct {
 
 #define NUM_VALK 14
 static _UNUSED_ const kval_t kvals[NUM_VALK+1] = {
-{ Marklin8805_BR29, {856,   75, 57, 41, 14,  5,  2,  4}},
+{ Marklin8805_BR29, {856,   75, 57, 41, 14,  5,  2,  4}},		//0
 { Marklin8805_BR29, {633,   77, 68, 50, 26, 10,  4,  6}},
 { Marklin8805_BR29, {775,   70, 64, 45, 12,  2,  1,  2}},
 { Marklin8805_BR29, {538,   65, 54, 19,  4,  5,  6,  0}},
 { Marklin8805_BR29, {670,   85, 71, 53, 33, 12,  6,  6}},
 
-{ Marklin8821_V200, {692,   88, 90, 59, 45, 23, 17, 17}},
+{ Marklin8821_V200, {692,   88, 90, 59, 45, 23, 17, 17}},		//5
 { Marklin8821_V200, {761,   81, 67, 47, 32, 17, 17, 16}},
 { Marklin8821_V200, {788,   79, 67, 53, 33, 18, 13, 13}},
 
-{ Marklin8895_BR74, {687,   93, 77, 60, 44, 20, 20, 19}},
+{ Marklin8895_BR74, {687,   93, 77, 60, 44, 20, 20, 19}},		//8
 { Marklin8895_BR74, {653,   82, 73, 59, 36, 21, 15, 14}},
 
-{ Marklin8875_V160, {924,   76, 78, 62, 46, 29, 27, 24}},
+{ Marklin8875_V160, {924,   76, 78, 62, 46, 29, 27, 24}},		//10
 { Marklin8875_V160, {882,   78, 75, 59, 50, 29, 28, 27}},
 { Marklin8875_V160, {916,	82, 72, 64, 45, 29, 25, 25}},
 { Marklin8875_V160, {787,   84, 82, 65, 47, 35, 31, 32}},

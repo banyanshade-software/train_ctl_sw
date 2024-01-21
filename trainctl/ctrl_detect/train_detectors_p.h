@@ -11,7 +11,8 @@
 int detect_step_check_canton_exist(xblkaddr_t);
 int detect_step_notify_ui(xblkaddr_t);
 int detect_step_start_pwm(xblkaddr_t);
-int detect_step_wait(xblkaddr_t);
+int detect_step_wait_300ms(xblkaddr_t);
+int detect_step_wait_report(xblkaddr_t);
 //int detect_step_start_inameas(xblkaddr_t);
 int detect_step_stop_pwm(xblkaddr_t);
 

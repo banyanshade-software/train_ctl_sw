@@ -93,10 +93,16 @@ int detect_step_start_pwm(xblkaddr_t  detect_canton)
     _start_canton(detect_canton, 1, 20);
     return 0;
 }
-int detect_step_wait(xblkaddr_t detect_canton)
+int detect_step_wait_300ms(xblkaddr_t detect_canton)
 {
     itm_debug1(DBG_DETECT, "D-wait", detect_canton.v);
-    return 0;
+    return RC_DELAY(300);
+}
+
+int detect_step_wait_report(xblkaddr_t detect_canton)
+{
+    itm_debug1(DBG_DETECT, "D-waitr", detect_canton.v);
+    return RC_DELAY_R(300);
 }
 static int detect_step_start_inameas(xblkaddr_t detect_canton)
 {
@@ -169,7 +175,7 @@ int detect_step_stop_notify_ui(xblkaddr_t detect_canton)
 
 
 static const train_detector_step_t _detector1_step3 = {
-    .detect_start_canton = detect_step_wait,
+    .detect_start_canton = detect_step_wait_300ms,
     .detect_stop_canton = NULL,
     .nextstep = NULL
 };

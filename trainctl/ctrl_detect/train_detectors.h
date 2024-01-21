@@ -41,7 +41,13 @@ const train_detector_result_t *detector_result_for_canton(xblkaddr_t c);
  
  Each step returns normally 0, and will return -1 if steps should be interrupted
  for this canton.
+
+ wait state may return > 0 : low 16 bits to indicate a sleep in ms
+                             0x10000 indicate wait stop on first report
  */
+
+#define RC_DELAY(_ms) (_ms)
+#define RC_DELAY_R(_ms) (0x10000 | (_ms))
 
 typedef struct st_detector_step {
     const struct st_detector_step *nextstep;
@@ -68,21 +74,7 @@ typedef struct detect_cons {
 } train_detect_cons_t;
 
 
-#if 0
-// now all private
-/* start actions step */
-int detect_step_check_canton_exist(xblkaddr_t);
-int detect_step_notify_ui(xblkaddr_t);
-int detect_step_start_pwm(xblkaddr_t);
-int detect_step_wait(xblkaddr_t);
-int detect_step_start_inameas(xblkaddr_t);
-int detect_step_stop_pwm(xblkaddr_t);
 
-/* stop actions steps */
-int detect_step_stop_pwm(xblkaddr_t);
-int detect_step_stop_inameas(xblkaddr_t);
-int detect_step_stop_notify_ui(xblkaddr_t);
-#endif
 
 /* detectors */
 extern const train_detect_cons_t alldetectors;

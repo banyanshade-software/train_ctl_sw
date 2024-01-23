@@ -49,7 +49,7 @@ static conf_globparam_t conf_globparam[1] = {
      .test_mode = 0,
      .oscillo = 0,
      .ignoreIna3221 = 0,
-     .enable_adjust = 1,
+     .enable_adjust = 0,
      .enable_adjust_steep = 1,
   }
 };
@@ -102,7 +102,7 @@ static conf_globparam_t conf_globparam[1] = {
      .test_mode = 0,
      .oscillo = 0,
      .ignoreIna3221 = 0,
-     .enable_adjust = 1,
+     .enable_adjust = 0,
      .enable_adjust_steep = 1,
   }
 };
@@ -125,7 +125,7 @@ static conf_globparam_t conf_globparam[1] = {
      .test_mode = 0,
      .oscillo = 0,
      .ignoreIna3221 = 0,
-     .enable_adjust = 1,
+     .enable_adjust = 0,
      .enable_adjust_steep = 1,
   }
 };
@@ -193,7 +193,7 @@ static conf_globparam_t conf_globparam[1] = {
      .test_mode = 0,
      .oscillo = 0,
      .ignoreIna3221 = 0,
-     .enable_adjust = 1,
+     .enable_adjust = 0,
      .enable_adjust_steep = 1,
   }
 };

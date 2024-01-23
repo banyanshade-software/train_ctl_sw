@@ -64,6 +64,15 @@ static inline void trace_train_brake(uint32_t tick, int tidx, const train_ctrl_t
 
 }
 
+
+void _trace_train_misc_event(uint32_t tick, int tidx, int evt);
+static inline void trace_train_misc_event(uint32_t tick, int tidx, int evt)
+{
+    if (!trace_train_enable) return;
+    _trace_train_misc_event(tick, tidx, evt);
+}
+
+
 void _trace_train_simu(uint32_t tick, int tidx, int sblk, int canton);
 static inline void trace_train_simu(uint32_t tick, int tidx, int sblk, int canton)
 {
@@ -84,5 +93,18 @@ void trace_train_dumphtml(int tidx);
 
 void trace_train_dumpbuf(void *buf, int numbytes);
 extern void __trace_train_append_line(char *s);
+
+
+
+
+#define TRIGGER_TRACE(_evt) do { \
+  trace_train_misc_event(ctrl_tasklet.last_tick, tidx, (_evt)); \
+  msg_64_t m = {0}; \
+  m.cmd = CMD_USB_TRACETRAIN; \
+  m.from = MA1_CONTROL(); \
+  m.to = MA2_USB_LOCAL; \
+  m.v1 = tidx; \
+  mqf_write_from_ctrl(&m); \
+} while(0)
 
 #endif /* trace_train_h */

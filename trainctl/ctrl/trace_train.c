@@ -89,6 +89,9 @@ typedef struct {
     int on;
 } __attribute__((packed)) train_trace_brake_record_t;
 
+typedef struct {
+	int num;
+} __attribute__((packed)) train_trace_misc_event_t;
 
 typedef enum {
     trace_kind_tick = 1,
@@ -99,19 +102,21 @@ typedef enum {
     trace_kind_ina,
     trace_kind_setc1,
     trace_kind_brake,
+	trace_kind_miscevent
 } __attribute__((packed)) trace_rec_kind_t;
 
 typedef struct {
     uint32_t tick;
     trace_rec_kind_t kind;
     union {
-        train_trace_tick_record_t tickrec;
-        train_trace_trig_record_t trigrec;
-        train_trace_free_record_t freerec;
-        train_trace_simu_record_t simurec;
-        train_trace_ina_record_t  inarec;
+        train_trace_tick_record_t  tickrec;
+        train_trace_trig_record_t  trigrec;
+        train_trace_free_record_t  freerec;
+        train_trace_simu_record_t  simurec;
+        train_trace_ina_record_t   inarec;
         train_trace_setc1_record_t setc1rec;
         train_trace_brake_record_t brake;
+        train_trace_misc_event_t   miscevent;
     } __attribute__((packed));
 } __attribute__((packed)) train_trace_record_t;
 
@@ -258,6 +263,15 @@ void _trace_train_brake(uint32_t tick, int tidx, _UNUSED_ const train_ctrl_t *tv
     rec->tick = tick;
     rec->kind = trace_kind_brake;
     rec->brake.on = on;
+}
+
+void _trace_train_misc_event(uint32_t tick, int tidx, int evt)
+{
+    train_trace_record_t *rec = get_newrec(tidx);
+    if (!rec) return;
+    rec->tick = tick;
+    rec->kind = trace_kind_miscevent;
+    rec->miscevent.num = evt;
 }
 
 void _trace_train_simu(uint32_t tick, int tidx, int sblk, int canton)
@@ -460,6 +474,12 @@ static void _trace_train_dump(train_trace_record_t *records, int numitem, int st
                         rec->brake.on ? "BRAKE on" : "brake off",
                         _cr);
                 break;
+            case trace_kind_miscevent:
+                           sprintf(line, "%2d %6.6d EVT %d%s",
+                                   idx, rec->tick,
+                                   rec->miscevent.num,
+                                   _cr);
+                           break;
             default:
                 break;
         }

@@ -956,6 +956,10 @@ void ctrl3_evt_entered_c2(int tidx, train_ctrl_t *tvars, uint8_t from_bemf)
     tvars->c1c2dir_changed = 1;
     itm_debug1(DBG_CTRL, "c1c2 b", tidx);
     if (tvars->pow_c2_future.v != 0xFF) {
+    	if (tvars->pow_c2_future.v == tvars->can1_xaddr.v) {
+    		itm_debug3(DBG_ERR|DBG_CTRL, "fut is c1", tidx, tvars->canOld_xaddr.v, tvars->can1_xaddr.v);
+    		TRIGGER_TRACE(1);
+    	}
         _set_and_power_c2(tidx, tvars); // this will also call _sendlow_c1c2_dir
     } else {
         _sendlow_c1c2_dir(tidx, tvars);
@@ -1620,7 +1624,7 @@ static void _set_and_power_c2(int tidx, train_ctrl_t *tvars)
 static void _set_and_power_c2_fut(int tidx, train_ctrl_t *tvars, xblkaddr_t fut)
 {
     if (fut.v == 0xFF) {
-        FatalError("FUt2", "bad future c2", Error_FSM_BadFut2c);
+        FatalError("FUtF", "bad future c2", Error_FSM_BadFut2c);
     }
     if (fut.v == tvars->can1_xaddr.v) {
         FatalError("FUt2", "bad future c2", Error_FSM_BadFut2b);

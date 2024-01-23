@@ -458,12 +458,7 @@ static void sub_presence_changed( uint8_t from_addr,  uint8_t inanum,  uint16_t 
                 }
             	itm_debug3(DBG_ERR|DBG_CTRL, "badSub2", tidx, ina.v, tvar->can1_xaddr.v);
             	if ((1)) {
-            		msg_64_t m = {0};
-            		m.cmd = CMD_USB_TRACETRAIN;
-            		m.from = MA1_CONTROL();
-            	    m.to = MA2_USB_LOCAL;
-            	    m.v1 = tidx;
-                    mqf_write_from_ctrl(&m);
+            		TRIGGER_TRACE(2);
             	} else {
             		FatalError("bSub2", "bad subc2", Error_CtrlBadSubc2);
             	}

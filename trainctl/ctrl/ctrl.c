@@ -456,9 +456,10 @@ static void sub_presence_changed( uint8_t from_addr,  uint8_t inanum,  uint16_t 
                         return;
                     }
                 }
-            	itm_debug3(DBG_ERR|DBG_CTRL, "badSub2", tidx, ina.v, tvar->can1_xaddr.v);
+            	itm_debug3(DBG_ERR|DBG_CTRL, "badSub2",  tidx, ina.v, tvar->can1_xaddr.v);
+            	itm_debug3(DBG_ERR|DBG_CTRL, "badSub2.", is_s1, is_s2, is_c2);
             	if ((1)) {
-            		TRIGGER_TRACE(2);
+            		TRIGGER_TRACE(TRACE_TRIGGER_EVT_BAD_SUB2);
             	} else {
             		FatalError("bSub2", "bad subc2", Error_CtrlBadSubc2);
             	}

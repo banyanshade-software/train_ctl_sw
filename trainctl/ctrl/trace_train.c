@@ -475,11 +475,21 @@ static void _trace_train_dump(train_trace_record_t *records, int numitem, int st
                         _cr);
                 break;
             case trace_kind_miscevent:
+                switch (rec->miscevent.num) {
+                    case TRACE_TRIGGER_EVT_FUT_IS_C1:
+                        sprintf(line, "%2d %6.6d EVT fut is c1%s", idx, rec->tick, _cr);
+                        break;
+                    case TRACE_TRIGGER_EVT_BAD_SUB2:
+                        sprintf(line, "%2d %6.6d EVT bad sub2%s", idx, rec->tick, _cr);
+                        break;
+                    default:
                            sprintf(line, "%2d %6.6d EVT %d%s",
                                    idx, rec->tick,
                                    rec->miscevent.num,
                                    _cr);
                            break;
+                }
+                break;
             default:
                 break;
         }

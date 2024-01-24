@@ -26,6 +26,7 @@
 #include "trig_tags.h"
 #include "longtrain4.h"
 
+//#include "trace_train.h"
 
 #ifdef UNIT_TEST
 
@@ -73,8 +74,8 @@ static const int margin_c2free_len_mm = 100;
 
 static void _add_trig(train_ctrl_t *tvars, int left, int c1len, rettrigs_t *rett, pose_trig_tag_t tag, int pos, uint8_t fut)
 {
-    if (rett->ntrig>=NUMTRIGS) {
-        FatalError("ntrg", "too many trigs", Error_Ctrl_TooManyTrigs);
+    if (rett->ntrig >= NUMTRIGS) {
+    	FatalError("ntrg", "too many trigs", Error_Ctrl_TooManyTrigs);
         return;
     }
     if (!left) {
@@ -186,9 +187,9 @@ int _lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int
         maxadvancefortrig = tvars->_curposmm - tvars->beginposmm;
     }
     if (!left && (maxadvancefortrig<=0)) {
-        itm_debug3(DBG_ERR|DBG_CTRL, "neg max", tvars->_curposmm, tvars->beginposmm, c1len);
+        itm_debug3(DBG_ERR|DBG_CTRLLT, "neg max", tvars->_curposmm, tvars->beginposmm, c1len);
         if (maxadvancefortrig<-10) {
-            itm_debug2(DBG_ERR|DBG_CTRL, "big neg", tidx, maxadvancefortrig);
+            itm_debug2(DBG_ERR|DBG_CTRLLT, "big neg", tidx, maxadvancefortrig);
         }
         //FatalError("adv0", "maxadvancefortrig", Error_Other);
     }
@@ -207,7 +208,7 @@ int _lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int
     }
 
     int train_fwd_len = (left ? tconf->trainlen_left_cm : tconf->trainlen_right_cm) * 10;
-    //int maxflen = train_fwd_len+maxmargin;
+
 
     occupency_set_occupied(canton_for_lsblk(c1), tidx, c1, tvars->_sdir);
 
@@ -243,13 +244,15 @@ int _lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int
         } else {
             r = poshead > totallen+alen;
         }
+        itm_debug3(DBG_CTRLLT, "l4gt-r", tidx, r, poshead);
         lsblk_num_t ns;
         if (checkfreeback) {
             ns = next_lsblk(cs, left, &a);
         } else {
             ns = next_lsblk_and_reserve(tidx, tvars, cs, left, &a, r);
         }
-        
+        itm_debug3(DBG_CTRLLT, "l4gt-ns", tidx, ns.n, a);
+
         //do we reach eot or blk wait ?
         if (ns.n == -1) {
             if (!checkfreeback) {
@@ -258,16 +261,20 @@ int _lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int
                 int trg = trgbase - margin_stop_len_mm; // trgbase-margin_stop_len_mm;
                 if (_AFTER_LOCO(trg)) { // (trg > posloco) {
                     if (_BEFORE_C1END(trg)) { //trg <= c1len) {
+                        itm_debug3(DBG_CTRLLT, "l4gt-add1", tidx, c1len, trg);
                         _add_trig(tvars, left, c1len, rett, a ? tag_stop_blk_wait:tag_stop_eot, trg, 0xFF);
                     }
                     trg = trgbase-margin_stop_len_mm - brake_len_mm;
                     if (_AFTER_LOCO(trg)) { //(trg > posloco) {
                         if (_BEFORE_C1END(trg)) { //trg <= c1len) {
+                            itm_debug3(DBG_CTRLLT, "l4gt-addb", tidx, c1len, trg);
                             _add_trig(tvars, left, c1len, rett, tag_brake, trg, 0xFF);
                         }
                     } else {
                         // pos+margin_stop_len_mm <= totallen
                         rc = brake_len_mm+trg-posloco;
+                        itm_debug3(DBG_CTRLLT, "l4gt-rc", tidx, trg, rc);
+
                         /*if (tvars->brake_for_eot||tvars->brake_for_blkwait) {
                             FatalError("BrkS", "brake reason already set", Error_CtrlAlreadyBrake);
                         }*/
@@ -304,7 +311,9 @@ int _lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int
                 // BRKFREE
                 int trg = _BEFORE_END_SBLK(train_fwd_len);
                 trg = trg - margin_c2free_len_mm;
+                itm_debug3(DBG_CTRLLT, "l4gt-chkfree", tidx, trg, margin_c2free_len_mm);
                 if ((trg>=0) && (trg<=posloco) && needfreeback) {
+                    itm_debug3(DBG_CTRLLT, "l4gt-fa", tidx, trg, posloco);
                     _add_trig(tvars, left, c1len, rett, tag_free_back, trg, 0xFF);
                     needfreeback=0;
                     if (ns.n == tvars->brake_on_free.n) {
@@ -312,16 +321,19 @@ int _lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int
                         int trgb = trg + brake_len_mm;
                         if ((trgb>=0) && (trgb<=posloco)) {
                             // set brake trigger
+                            itm_debug2(DBG_CTRLLT, "l4gt-baf", tidx, trgb);
                             _add_trig(tvars, left, c1len, rett, tag_brake_user, trgb, 0xFF);
                         } else if (trgb>posloco) {
                             // brake now
                             rc = brake_len_mm+trg-posloco;
+                            itm_debug2(DBG_CTRLLT, "l4gt-bafrc", tidx, rc);
                             tvars->brake_for_user = 1;
                         }
                     }
                     
                 } else if ((trg>posloco) && (tvars->sblkfreed.n == -1)) {
                     itm_debug3(DBG_CTRL, "free!", tidx, ns.n, ncanton.v);
+                    itm_debug3(DBG_CTRLLT, "l4gt-free", tidx, trg, posloco);
                     tvars->sblkfreed = ns;
                     if (canton_for_lsblk(cs).v != ncanton.v) {
                         tvars->freecanton = ncanton;
@@ -337,14 +349,15 @@ int _lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int
                     //   x
                     int trgbase = _BEFORE_END_SBLK(train_fwd_len);  //totallen + alen - train_fwd_len;
                     int trg = trgbase-margin_c2res_len_mm; //trgbase-margin_c2_len_mm;
+                    itm_debug3(DBG_CTRLLT, "l4gt-x", tidx, trg, margin_c2res_len_mm);
                     if (_AFTER_LOCO(trg)) { //(trg > posloco) {
                         if (_BEFORE_C1END(trg)) { //trg <= c1len) {
-                            itm_debug2(DBG_CTRL, "tresc2", tidx, ncanton.v);
+                            itm_debug2(DBG_CTRLLT, "l4-tresc2", tidx, ncanton.v);
                             _add_trig(tvars, left, c1len, rett, tag_reserve_c2,  trg, ncanton.v);
                         }
                     } else {
                         if (_AFTER_LOCO(trgbase)) { //(trgbase>posloco) {
-                            itm_debug2(DBG_CTRL, "iresc2", tidx, ncanton.v);
+                            itm_debug2(DBG_CTRLLT, "l4-iresc2", tidx, ncanton.v);
                             rett->res_c2 = 1;
                             if (tvars->res_c2_future.v == 0xFF) {
                                 tvars->res_c2_future = ncanton;
@@ -357,6 +370,7 @@ int _lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int
                         trg = trgbase-margin_c2pow_len_mm; //trg = trgbase-margin_c2_len_mm;
                         if (_AFTER_LOCO(trg)) { //trg > posloco) {
                             if (_BEFORE_C1END(trg)) { //trg <= c1len) {
+                                itm_debug3(DBG_CTRLLT, "l4gt-po2", tidx, trg, ncanton.v);
                                 _add_trig(tvars, left, c1len, rett, tag_need_c2,  trg, ncanton.v);
                             }
                         } else {
@@ -365,7 +379,7 @@ int _lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int
                                 if (tvars->pow_c2_future.v == 0xFF) {
                                     tvars->pow_c2_future = ncanton;
                                 } else if (tvars->pow_c2_future.v != ncanton.v) {
-                                    itm_debug3(DBG_CTRL|DBG_ERR, "c2set", tidx, tvars->pow_c2_future.v, ncanton.v);
+                                    itm_debug3(DBG_CTRLLT|DBG_ERR, "c2set", tidx, tvars->pow_c2_future.v, ncanton.v);
                                 }
                             }
                         }
@@ -385,13 +399,16 @@ int _lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int
             }
         }
         if (first) {
+            itm_debug2(DBG_CTRLLT, "l4gt-first", tidx, ns.n);
             nextc1 = ns;
             first = 0;
         }
         if (done) {
+            itm_debug1(DBG_CTRLLT, "l4gt-done", tidx);
             break;
         }
         
+        itm_debug3(DBG_CTRLLT, "l4gt-adv", tidx, advancemm, maxadvancefortrig+maxmargin);
         if (advancemm>maxadvancefortrig+maxmargin) {
             break;
         }

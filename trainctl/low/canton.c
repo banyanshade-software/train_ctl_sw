@@ -226,6 +226,10 @@ static void handle_msg_off(_UNUSED_ msg_64_t *m)
 static void handle_msg_normal(msg_64_t *m)
 {
     int cidx = -1;
+    if (m->cmd == CMD_EMERGENCY_STOP) {
+    	canton_reset();
+    	return;
+    }
     if (!MA0_IS_CANTON(m->to)) return;
     cidx = m->subc; // MA_GET_CANTON_NUM(m->to);
     handle_canton_cmd(cidx, m);

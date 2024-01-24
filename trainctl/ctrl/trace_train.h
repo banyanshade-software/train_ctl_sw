@@ -98,9 +98,13 @@ extern void __trace_train_append_line(char *s);
 #define TRACE_TRIGGER_EVT_FUT_IS_C1 1
 #define TRACE_TRIGGER_EVT_BAD_SUB2	2
 
-#define TRIGGER_TRACE(_evt) do { \
+#define TRIGGER_TRACE(_evt, _halt) do { \
   trace_train_misc_event(ctrl_tasklet.last_tick, tidx, (_evt)); \
   msg_64_t m = {0}; \
+  m.from = MA3_UI_GEN; \
+  m.to = MA3_BROADCAST; \
+  m.cmd = CMD_EMERGENCY_STOP; \
+  if (_halt) mqf_write_from_ctrl(&m); \
   m.cmd = CMD_USB_TRACETRAIN; \
   m.from = MA1_CONTROL(); \
   m.to = MA2_USB_LOCAL; \

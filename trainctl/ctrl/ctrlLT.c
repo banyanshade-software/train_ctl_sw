@@ -958,7 +958,7 @@ void ctrl3_evt_entered_c2(int tidx, train_ctrl_t *tvars, uint8_t from_bemf)
     if (tvars->pow_c2_future.v != 0xFF) {
     	if (tvars->pow_c2_future.v == tvars->can1_xaddr.v) {
     		itm_debug3(DBG_ERR|DBG_CTRL, "fut is c1", tidx, tvars->canOld_xaddr.v, tvars->can1_xaddr.v);
-    		TRIGGER_TRACE(TRACE_TRIGGER_EVT_FUT_IS_C1);
+    		TRIGGER_TRACE(TRACE_TRIGGER_EVT_FUT_IS_C1, 1);
     	}
         _set_and_power_c2(tidx, tvars); // this will also call _sendlow_c1c2_dir
     } else {

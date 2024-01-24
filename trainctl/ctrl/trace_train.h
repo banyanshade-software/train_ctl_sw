@@ -95,8 +95,11 @@ void trace_train_dumpbuf(void *buf, int numbytes);
 extern void __trace_train_append_line(char *s);
 
 
-#define TRACE_TRIGGER_EVT_FUT_IS_C1 1
-#define TRACE_TRIGGER_EVT_BAD_SUB2	2
+#define TRACE_TRIGGER_EVT_FUT_IS_C1 	1
+#define TRACE_TRIGGER_EVT_BAD_SUB2		2
+#define TRACE_TRIGGER_EVT_SHORT_MEAS	3
+#define TRACE_TRIGGER_EVT_LONG_MEAS		4
+#define TRACE_TRIGGER_EVT_NO_TRIG 		5
 
 #define TRIGGER_TRACE(_evt, _halt) do { \
   trace_train_misc_event(ctrl_tasklet.last_tick, tidx, (_evt)); \

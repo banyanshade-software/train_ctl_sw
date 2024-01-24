@@ -482,6 +482,15 @@ static void _trace_train_dump(train_trace_record_t *records, int numitem, int st
                     case TRACE_TRIGGER_EVT_BAD_SUB2:
                         sprintf(line, "%2d %6.6d EVT bad sub2%s", idx, rec->tick, _cr);
                         break;
+                    case TRACE_TRIGGER_EVT_SHORT_MEAS:
+                    	sprintf(line, "%2d %6.6d EVT short meas%s", idx, rec->tick, _cr);
+                    	break;
+                    case TRACE_TRIGGER_EVT_LONG_MEAS:
+                    	sprintf(line, "%2d %6.6d EVT long meas%s", idx, rec->tick, _cr);
+                    	break;
+                    case TRACE_TRIGGER_EVT_NO_TRIG:
+                    	sprintf(line, "%2d %6.6d EVT no trig available%s", idx, rec->tick, _cr);
+                    	break;
                     default:
                            sprintf(line, "%2d %6.6d EVT %d%s",
                                    idx, rec->tick,

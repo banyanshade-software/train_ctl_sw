@@ -442,8 +442,23 @@ static void sub_presence_changed( uint8_t from_addr,  uint8_t inanum,  uint16_t 
             } else if (is_c1 && is_s1) {
                 // normal condition, just a intensity toggled
             } else if (is_c1 && !is_s1 && !is_s2) {
+            	/*
+            	 * ina occurs on a segment that belongs to C1, but is neither s1 nor s2
+            	 * it could be :
+            	 * 1/ previous s1 (when leaving, intensity can be toggled up and down)
+            	 * 2/ a future s2 (when sblk limit is done with bemf estimation, we may reach sblk after s2 before estimating we are on s2)
+            	 * 3/ wrong turnout position : instead of going to s2, we go to another canton
+            	 *
+            	 * TODO: handle case 3
+            	 */
             	// could be next(next(s1), if next(s1) is not ina controlled
                 // and if pose is not correctly adjusted
+            	if (ina.v == get_lsblk_ina3221(tvar->_last_c1_sblk).v) {
+            		/* this does occurs when we leave a sblk, ina can be toggled several times */
+            		/* even with ina3221 hysteris handling */
+            		itm_debug3(DBG_CTRL, "ina old s1", tidx, ina.v, tvar->_last_c1_sblk.n);
+            		return;
+            	}
                 lsblk_num_t b = n2;
                 for (;;) {
                     if (b.n == -1) break; // for first one, n2 might be -1
@@ -452,6 +467,7 @@ static void sub_presence_changed( uint8_t from_addr,  uint8_t inanum,  uint16_t 
                     if (canton_for_lsblk(b).v != tvar->can1_xaddr.v) break; // other canton, stop searching
                     if (get_lsblk_ina3221(b).v == ina.v) {
                         // found
+                    	itm_debug3(DBG_CTRL, "new same", tidx, b.n, ina.v);
                         ctrl3_evt_entered_new_lsblk_same_canton(tidx, tvar, b, 1);
                         return;
                     }
@@ -459,7 +475,7 @@ static void sub_presence_changed( uint8_t from_addr,  uint8_t inanum,  uint16_t 
             	itm_debug3(DBG_ERR|DBG_CTRL, "badSub2",  tidx, ina.v, tvar->can1_xaddr.v);
             	itm_debug3(DBG_ERR|DBG_CTRL, "badSub2.", is_s1, is_s2, is_c2);
             	if ((1)) {
-            		TRIGGER_TRACE(TRACE_TRIGGER_EVT_BAD_SUB2, 0);
+            		TRIGGER_TRACE(TRACE_TRIGGER_EVT_BAD_SUB2, 1);
             	} else {
             		FatalError("bSub2", "bad subc2", Error_CtrlBadSubc2);
             	}

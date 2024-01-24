@@ -566,8 +566,22 @@ static void _read_complete(_UNUSED_ int err)
 	case runmode_normal:
 		for (int i = 0; i<INA3221_NUM_VALS; i++) {
 			if ((i<=2)) itm_debug2(DBG_INA3221, "ina val", i, ina_svalues[i]);
+#if 0
 			int p = (abs(ina_svalues[i])>1000) ? 1 : 0;
 			if (p == presence[i]) continue;
+#else
+			// hysteresis on detection
+			int av = abs(ina_svalues[i]);
+			int p;
+			if (presence[i]) {
+				if (av >= 300) continue;
+				p = 0;
+			} else {
+				if (av <= 1000) continue;
+				p = 1;
+			}
+
+#endif
 			presence[i] = p;
 			itm_debug3(DBG_INA3221|DBG_PRES, "PRSCH", i,p, ina_svalues[i]);
 			// notify change
@@ -578,6 +592,7 @@ static void _read_complete(_UNUSED_ int err)
 			m.v1u = p;
 			m.v2 = ina_svalues[i];
 			mqf_write_from_ina3221(&m);
+
 
 
 			static int cnt=0;

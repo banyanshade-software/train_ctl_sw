@@ -112,6 +112,7 @@ void ctrl3_init_train(int tidx, train_ctrl_t *tvars, lsblk_num_t sblk, int posmm
 
     tvars->beginposmm = 0;
     tvars->_curposmm = posmm; //POSE_UNKNOWN;
+    tvars->_last_c1_sblk.n = -1;
     tvars->c1_sblk = sblk;
     //TODO
     tvars->c1c2dir_changed = 0;
@@ -239,9 +240,20 @@ static void _adjust_posemm(int tidx, train_ctrl_t *tvars, int32_t expmm, int32_t
         measmm = -measmm;
     }
     const conf_train_t *tconf = conf_train_get(tidx);
-    if (expmm<adjust_minmm) return; // 6cm expected, too short for measurement
+    if (expmm<adjust_minmm) {
+        itm_debug2(DBG_POSEADJ, "noadj-s", tidx, expmm);
+    	return; // 6cm expected, too short for measurement
+    }
     int32_t fact100o = (measmm*100)/expmm;
     itm_debug3(DBG_POSEADJ, "adj?", tidx, tconf->pose_per_cm, tconf->pose_per_cm*fact100o/100);
+    if ((1)) {
+    	// sanity check, may be removed as boundaries are arbitrary
+    	if (fact100o < 40) {
+    		TRIGGER_TRACE(TRACE_TRIGGER_EVT_SHORT_MEAS, 1);
+    	} else if (fact100o > 160) {
+    		TRIGGER_TRACE(TRACE_TRIGGER_EVT_LONG_MEAS, 1);
+    	}
+    }
     tvars->num_pos_adjust++;
     tvars->sumfact100 += fact100o;
     
@@ -719,6 +731,7 @@ void ctrl3_pose_triggered(int tidx, train_ctrl_t *tvars, uint8_t trigsn, xblkadd
                     }
                     itm_debug3(DBG_POSEC|DBG_POSEADJ, "beginmm3", tidx, tvars->beginposmm, tvars->_curposmm);
                     trace_train_setc1(ctrl_tasklet.last_tick, tidx, tvars, ns, 0);
+                    tvars->_last_c1_sblk = tvars->c1_sblk;
                     tvars->c1_sblk = ns;
                     _update_c1changed(tidx, tvars, conf_train_get(tidx));
                     _updated_while_running(tidx, tvars);
@@ -900,6 +913,7 @@ void ctrl3_evt_entered_new_lsblk_same_canton(int tidx, train_ctrl_t *tvars, lsbl
     }
     itm_debug3(DBG_POSEC|DBG_POSEADJ, "beginmm1", tidx, tvars->beginposmm, tvars->_curposmm);
     trace_train_setc1(ctrl_tasklet.last_tick, tidx, tvars, sblk, 1);
+    tvars->_last_c1_sblk = tvars->c1_sblk;
     tvars->c1_sblk = sblk;
     
     tvars->canMeasureOnSblk = 1;
@@ -974,6 +988,7 @@ void ctrl3_evt_entered_c2(int tidx, train_ctrl_t *tvars, uint8_t from_bemf)
         FatalError("Nos1", "no s1 for can1", Error_CtrlNoS1);
         return;
     }
+    tvars->_last_c1_sblk = tvars->c1_sblk;
     tvars->c1_sblk = ns;
 
     if (tvars->_sdir >= 0) {
@@ -1026,9 +1041,9 @@ static void _updated_while_running(int tidx, train_ctrl_t *tvars)
     }
     int rc = _train_check_dir(tidx, tvars, tvars->_sdir, &rett);
     if (rett.isoet) {
-        int rc = _train_check_dir(tidx, tvars, tvars->_sdir, &rett);// XXX for debug
-        rc = _train_check_dir(tidx, tvars, tvars->_sdir, &rett);
-        rc = _train_check_dir(tidx, tvars, tvars->_sdir, &rett);
+        //int rc = _train_check_dir(tidx, tvars, tvars->_sdir, &rett);// XXX for debug
+        //rc = _train_check_dir(tidx, tvars, tvars->_sdir, &rett);
+        //rc = _train_check_dir(tidx, tvars, tvars->_sdir, &rett);
         _set_speed(tidx, tvars, 0, 1, rc);
         _set_state(tidx, tvars, train_state_end_of_track0);
         return;
@@ -1174,7 +1189,7 @@ static int _train_check_dir(int tidx, train_ctrl_t *tvars, int sdir, rettrigs_t 
     const conf_train_t *conf = conf_train_get(tidx);
     int rc2 =  lt4_get_trigs(tidx, (sdir<0) ? 1: 0, tvars, conf,   rett);
 
-    
+    itm_debug3(DBG_CTRLLT, "rc2=", tidx, rc2, rett->ntrig);
     freeback(tidx, tvars);
     
     

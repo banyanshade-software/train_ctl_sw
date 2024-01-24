@@ -47,6 +47,7 @@ typedef struct {
     uint8_t         _spd_limit;
     //
     lsblk_num_t c1_sblk;
+    lsblk_num_t _last_c1_sblk;	// used only for ina3221 sanity check. previous value of c1_sblk. May be removed
     xblkaddr_t  canOld_xaddr;
     xblkaddr_t  can1_xaddr;
     xblkaddr_t  can2_xaddr;

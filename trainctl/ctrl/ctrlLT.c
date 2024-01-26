@@ -273,6 +273,8 @@ static void _adjust_posemm(int tidx, train_ctrl_t *tvars, int32_t expmm, int32_t
 
 static void apply_pose_adjust(int tidx, train_ctrl_t *tvars)
 {
+    if (!conf_globparam_get(0)->disable_pose_update) return;
+
     if (!tvars->num_pos_adjust) goto done;
     const conf_train_t *tconf = conf_train_get(tidx);
     int k = 2;
@@ -1091,52 +1093,8 @@ static void _evt_leaved_c1old(int tidx, train_ctrl_t *tvars)
         //printf("break here\n");
     }
 }
-/*
-void ctrl3_evt_leaved_c1(int tidx, train_ctrl_t *tvars)
-{
-    // TODO : KO this is not leave c1, should only update pos
-    itm_debug3(DBG_CTRL|DBG_POSE, "evt_left_c1", tidx, tvars->_state, tvars->can1_xaddr.v);
-    if (tvars->_state != train_state_running) {
-        itm_debug2(DBG_CTRL|DBG_ERR, "leav_c1/bs", tidx, tvars->_state);
-        return;
-    }
-    if (!tvars->c1c2) {
-        itm_debug2(DBG_CTRL|DBG_ERR, "leav_c1/nc1c2", tidx, tvars->_state);
-        return;
-    }
-    if (tvars->pow_c2_future.v != 0xFF) {
-        printf("break here\n");
-    }
-    tvars->c1c2 = 0;
-    tvars->canOld_xaddr.v = 0xFF;
-    tvars->c1c2dir_changed = 1;
-#if 0
-    ctrl_reset_timer(tidx, tvars, TLEAVE_C1);
-    free_block_c1(tidx, tvars);
-    //set_block_addr_occupency(tvars->can1_addr, BLK_OCC_FREE, 0xFF, snone);
-    if (1 == tvars->can2_xaddr.v) { // XXX Hardcoded for now
-        tvars->measure_pose_percm = 1;
-    }
-    itm_debug2(DBG_CTRL, "** C1", tidx, tvars->can1_xaddr.v);
-    tvars->can1_xaddr = tvars->can2_xaddr;
-    tvars->c1_sblk = first_lsblk_with_canton(tvars->can2_xaddr, tvars->c1_sblk);
-    if (tvars->c1_sblk.n == -1) {
-        FatalError("C1no", "No C1 in leaved C1", Error_CtrlNoC1l);
-    }
 
-    int len = get_lsblk_len_cm_steep(tvars->c1_sblk, conf_train_get(tidx), tvars);
-    if (tvars->_dir<0) {
-        tvars->beginposmm =  -len*10;
-    } else {
-        tvars->beginposmm = 0;
-    }
-    itm_debug2(DBG_CTRL|DBG_POSE, "beginpos", tidx, tvars->beginposmm);
 
-    tvars->can2_xaddr.v = 0xFF; // will be updated by update_c2
-    tvars->tick_flags |=  _TFLAG_C1_CHANGED|_TFLAG_C1_CHANGED | _TFLAG_C1LSB_CHANGED;
-#endif
-}
- */
 // -----------------------------------------------------------------
 
 int __from_check_dir = 0; // XXX remove this is for debug
@@ -1144,6 +1102,7 @@ int __from_check_dir = 0; // XXX remove this is for debug
 static void freeback(int tidx, train_ctrl_t *tvars)
 {
     if (tvars->freecanton.v != 0xFF) {
+		itm_debug3(DBG_OCCUP, "freeback", tidx, tvars->_state, tvars->freecanton.v);
         // XXX remove me. For debug, test on canton is enough
         if (tvars->freecanton.v == tvars->can1_xaddr.v) {
             FatalError("FreC1", "free c1?", Error_CtrlFreeC1);
@@ -1153,13 +1112,13 @@ static void freeback(int tidx, train_ctrl_t *tvars)
         	if (tvars->_state == train_state_running) {
         		FatalError("FreC2", "free c2?", Error_CtrlFreeC2);
         	} else {
-        		itm_debug3(DBG_ERR|DBG_CTRL, "free c2", tidx, tvars->_state, tvars->freecanton.v);
+        		itm_debug3(DBG_ERR|DBG_CTRL|DBG_OCCUP, "free c2", tidx, tvars->_state, tvars->freecanton.v);
 
         	}
             return;
         }
         if (tvars->freecanton.v == tvars->canOld_xaddr.v) {
-            itm_debug2(DBG_CTRL, "free old", tidx, tvars->freecanton.v);
+            itm_debug2(DBG_CTRL|DBG_OCCUP, "free old", tidx, tvars->freecanton.v);
             _evt_leaved_c1old(tidx, tvars);
         }
         

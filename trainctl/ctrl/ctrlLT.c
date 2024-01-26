@@ -139,7 +139,8 @@ void turn_train_off(int tidx, train_ctrl_t *tvars)
     tvars->pow_c2_future.v = 0xFF;
     tvars->c1c2dir_changed = 1;
     if (tvars->can2_xaddr.v != 0xFF) {
-        set_block_addr_occupency(tvars->can2_xaddr, BLK_OCC_FREE, tidx, snone);
+    	occupency_set_free(tvars->can2_xaddr, tidx);
+        //set_block_addr_occupency(tvars->can2_xaddr, BLK_OCC_FREE, tidx, snone);
     }
 
     switch (tvars->_state) {
@@ -159,7 +160,8 @@ void turn_train_off(int tidx, train_ctrl_t *tvars)
             break;
     }
     if (tvars->can1_xaddr.v != 0xFF) {
-        set_block_addr_occupency(tvars->can1_xaddr, BLK_OCC_FREE, tidx, tvars->c1_sblk);
+    	occupency_set_free(tvars->can1_xaddr, tidx);
+        //set_block_addr_occupency(tvars->can1_xaddr, BLK_OCC_FREE, tidx, tvars->c1_sblk);
     }
 
 }
@@ -1124,7 +1126,8 @@ static void freeback(int tidx, train_ctrl_t *tvars)
         
 
         trace_train_free(ctrl_tasklet.last_tick, tidx, tvars->sblkfreed.n, tvars->freecanton.v);
-        set_block_addr_occupency(tvars->freecanton, BLK_OCC_FREE, tidx, snone);
+        //set_block_addr_occupency(tvars->freecanton, BLK_OCC_FREE, tidx, snone);
+    	occupency_set_free(tvars->freecanton, tidx);
 
         tvars->freecanton.v = 0xFF;
     }
@@ -1622,14 +1625,17 @@ static void _set_and_power_c2_fut(int tidx, train_ctrl_t *tvars, xblkaddr_t fut)
 static void _reserve_c2(int tidx, train_ctrl_t *tvars)
 {
     lsblk_num_t ns = {-1};
-    set_block_addr_occupency(tvars->res_c2_future, BLK_OCC_C2, tidx, ns);
+    //set_block_addr_occupency(tvars->res_c2_future, BLK_OCC_C2, tidx, ns);
+    occupency_set_occupied_c2(tvars->res_c2_future, tidx, ns, tvars->_sdir);
     tvars->res_c2_future.v = 0xFF;
 }
 
-static void _reserve_c2_fut(int tidx, _UNUSED_ train_ctrl_t *tvars, xblkaddr_t fut)
+static void _reserve_c2_fut(int tidx,  train_ctrl_t *tvars, xblkaddr_t fut)
 {
     lsblk_num_t ns = {-1};
-    set_block_addr_occupency(fut, BLK_OCC_C2, tidx, ns);
+    //set_block_addr_occupency(fut, BLK_OCC_C2, tidx, ns);
+    occupency_set_occupied_c2(fut, tidx, ns, tvars->_sdir);
+
 }
 
 static void _check_c2(int tidx, train_ctrl_t *tvars, const rettrigs_t *rett)

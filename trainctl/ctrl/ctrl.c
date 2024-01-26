@@ -258,10 +258,10 @@ static void _ctrl_init(int normalmode)
             simu_set_train(0, trctl[0].c1_sblk.n, trctl[0]._curposmm);
             ctrl_set_mode(0, train_manual);
 
-            /*
+            
             ctrl3_init_train(1, &trctl[1], s8, 400, 1);
             simu_set_train(1, trctl[1].c1_sblk.n, trctl[1]._curposmm);
-            */
+            
 			//ctrl2_init_train(0, &otrctl[0], s2);
 #else
             //ctrl3_init_train(0, &trctl[0], s0, 260, 1);

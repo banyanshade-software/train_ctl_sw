@@ -24,6 +24,7 @@ typedef struct conf_globparam {
     int ignoreIna3221;
     int enable_adjust;
     int enable_adjust_steep;
+    int disable_pose_update;
 } conf_globparam_t;
 
 

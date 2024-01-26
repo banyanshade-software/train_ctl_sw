@@ -8,6 +8,7 @@ config globparam {
             = (default) 0;
     user int enable_adjust = (default) 0;
     user int enable_adjust_steep = (default) 1;
+    user int disable_pose_update = (default) 1;
 } num = (mainV0) 1
       = (mainV04) 1
       = (simu) 1

@@ -35,6 +35,8 @@ int conf_globparam_fieldnum(const char *str)
          return conf_numfield_globparam_enable_adjust;
     } else if (!strcmp(str, "enable_adjust_steep")) {
          return conf_numfield_globparam_enable_adjust_steep;
+    } else if (!strcmp(str, "disable_pose_update")) {
+         return conf_numfield_globparam_disable_pose_update;
     }
     return -1;
 }
@@ -54,6 +56,8 @@ const char *conf_globparam_fieldname(int f)
          return "enable_adjust";
     } else if (f == conf_numfield_globparam_enable_adjust_steep) {
          return "enable_adjust_steep";
+    } else if (f == conf_numfield_globparam_disable_pose_update) {
+         return "disable_pose_update";
     }
     return NULL;
 }

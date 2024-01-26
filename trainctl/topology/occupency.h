@@ -27,13 +27,14 @@
 #define BLK_OCC_DELAY1      0x10
 #define BLK_OCC_DELAYM      0x16
 
+
 extern uint8_t notify_occupency_change;
 
 void occupency_clear(void);
 
 
 // obsolete
-void set_block_addr_occupency(xblkaddr_t blkaddr, uint8_t v, uint8_t trnum, lsblk_num_t lsb);
+//void set_block_addr_occupency(xblkaddr_t blkaddr, uint8_t v, uint8_t trnum, lsblk_num_t lsb);
 
 /// occupency_set_occupied
 /// set block as occupied by locomomtive
@@ -51,6 +52,14 @@ int occupency_set_occupied(xblkaddr_t blkaddr, uint8_t trnum, lsblk_num_t lsb, i
 /// @param lsb concern lsb
 int occupency_set_occupied_car(xblkaddr_t blkaddr, uint8_t trnum, lsblk_num_t lsb, int sdir);
 
+/// occupency_set_occupied_c2
+/// set block as occupied by C2 reservation
+/// returns -1 if failure (block already occupied)
+/// @param blkaddr block addr
+/// @param trnum train number
+/// @param lsb concern lsb
+int occupency_set_occupied_c2(xblkaddr_t blkaddr, uint8_t trnum, lsblk_num_t lsb, int sdir);
+
 /// occupency_set_free
 /// clear occupency on block
 /// @param blkadrr block addr
@@ -65,14 +74,6 @@ void check_block_delayed(uint32_t tick, uint32_t dt);
 uint8_t occupency_block_is_free(xblkaddr_t blkaddr, uint8_t trnum);
 
 
-
-
-static inline uint8_t occupied(int dir)
-{
-    if (dir<0) return BLK_OCC_LOCO_LEFT;
-    if (dir>0) return BLK_OCC_LOCO_RIGHT;
-    return BLK_OCC_LOCO_STOP;
-}
 
 
 int occupency_turnout_reserve(xtrnaddr_t turnout, int8_t train);

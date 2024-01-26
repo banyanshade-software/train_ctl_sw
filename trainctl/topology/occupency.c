@@ -27,6 +27,15 @@
 #endif
 
 
+
+static inline uint8_t occupied(int dir)
+{
+    if (dir<0) return BLK_OCC_LOCO_LEFT;
+    if (dir>0) return BLK_OCC_LOCO_RIGHT;
+    return BLK_OCC_LOCO_STOP;
+}
+
+
 typedef struct {
     uint8_t occ;
     uint8_t trnum;
@@ -93,7 +102,8 @@ static void notif_blk_occup_chg(xblkaddr_t blk, canton_occ_t *co)
     mqf_write_from_ctrl(&m);
 }
 
-
+// set_block_addr_occupency is obsolete
+#if 0
 void set_block_addr_occupency(xblkaddr_t blkaddr, uint8_t v, uint8_t trnum, lsblk_num_t lsb)
 {
     int chg = 0;
@@ -134,6 +144,7 @@ void set_block_addr_occupency(xblkaddr_t blkaddr, uint8_t v, uint8_t trnum, lsbl
         notif_blk_occup_chg(blkaddr, co);
     }
 }
+#endif
 
 static int _set_occupied(xblkaddr_t blkaddr, uint8_t trnum, lsblk_num_t lsb, int car, int sdir)
 {
@@ -142,8 +153,9 @@ static int _set_occupied(xblkaddr_t blkaddr, uint8_t trnum, lsblk_num_t lsb, int
     //int blknum = addr_to_num(blkaddr);
     canton_occ_t *co = &canton_occ[blkaddr.v];
     if (co->occ != BLK_OCC_FREE) {
+    	itm_debug3(DBG_OCCUP, "occ-upd", trnum, blkaddr.v, car);
         if (co->trnum != trnum) {
-            itm_debug3(DBG_ERR|DBG_CTRL, "blk occ", blkaddr.v, co->trnum, trnum);
+            itm_debug3(DBG_ERR|DBG_OCCUP, "blk occ", blkaddr.v, co->trnum, trnum);
             return -1;
         } else {
             if (!car) {
@@ -155,7 +167,7 @@ static int _set_occupied(xblkaddr_t blkaddr, uint8_t trnum, lsblk_num_t lsb, int
                     topology_updated(trnum);
                     chg = 1;
                 }
-            } else {
+            } else if (1==car) {
                 if ((co->lsblk.n != lsb.n) || (co->occ != BLK_OCC_CARS)) {
                     if (co->occ != BLK_OCC_CARS) {
                         co->occ = BLK_OCC_CARS;
@@ -165,10 +177,22 @@ static int _set_occupied(xblkaddr_t blkaddr, uint8_t trnum, lsblk_num_t lsb, int
                 } else {
                     itm_debug3(DBG_CTRL|DBG_ERR, "not handeled?", trnum, co->occ, lsb.n);
                 }
+            } else {
+            	if ((co->lsblk.n != lsb.n) || (co->occ != BLK_OCC_C2)) {
+            		if (co->occ != BLK_OCC_C2) {
+            			co->occ = BLK_OCC_C2;
+            			chg = 1;
+            		}
+
+            	}
             }
         }
-    } else {
-        uint8_t occ = car ? BLK_OCC_CARS : occupied(sdir);
+    } else { // BLK_OCC_FREE
+        uint8_t occ;
+        if (car==1) occ = BLK_OCC_CARS;
+        else if (car==0) occ = occupied(sdir);
+        else occ = BLK_OCC_C2;
+    	itm_debug3(DBG_OCCUP, "occ-occ", trnum, blkaddr.v, occ);
         if ((co->occ != occ) || (co->trnum != trnum) || (co->lsblk.n != lsb.n)) {
             co->occ = occ;
             co->trnum = trnum;
@@ -194,10 +218,16 @@ int occupency_set_occupied_car(xblkaddr_t blkaddr, uint8_t trnum, lsblk_num_t ls
     return _set_occupied(blkaddr, trnum, lsb, 1, sdir);
 }
 
+int occupency_set_occupied_c2(xblkaddr_t blkaddr, uint8_t trnum, lsblk_num_t lsb, int sdir)
+{
+    return _set_occupied(blkaddr, trnum, lsb, -1, sdir);
+}
+
 
 void occupency_set_free(xblkaddr_t blkaddr, uint8_t trnum)
 {
     int chg = 0;
+	itm_debug2(DBG_OCCUP, "occ-free", trnum, blkaddr.v);
     if (0xFF == blkaddr.v) FatalError("OccFF", "bad occupency", Error_Occupency);
     canton_occ_t *co = &canton_occ[blkaddr.v];
     if (co->occ > BLK_OCC_DELAYM) FatalError("OccD1", "bad occupency", Error_OccDelay);

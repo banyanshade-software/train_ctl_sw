@@ -106,17 +106,23 @@ void set_block_addr_occupency(xblkaddr_t blkaddr, uint8_t v, uint8_t trnum, lsbl
         if (USE_BLOCK_DELAY_FREE && (v==BLK_OCC_FREE)) {
             if (co->occ > BLK_OCC_DELAYM) FatalError("OccD1", "bad occupency", Error_OccDelay);
             co->occ = BLK_OCC_DELAYM;
-            itm_debug1(DBG_CTRL, "delay free", blkaddr.v);
+            itm_debug1(DBG_OCCUP, "delay free", blkaddr.v);
         } else {
             co->occ = v;
             chg = 1;
             if (BLK_OCC_FREE == co->occ) {
+            	itm_debug2(DBG_OCCUP, "occ-free", blkaddr.v, trnum);
             	_block_freed(blkaddr, co);
                 // non delayed free, untested
-                trnum = -1;
+                trnum = 0xFF;
                 lsb.n = -1;
+            } else {
+            	itm_debug3(DBG_OCCUP, "occ-occ", blkaddr.v, trnum, v);
             }
         }
+    }
+    if ((co->trnum != 0xFF) && (trnum != 0xFF) && (co->trnum != trnum)) {
+    	itm_debug3(DBG_ERR|DBG_OCCUP, "occ-TCH", blkaddr.v, co->trnum, trnum);
     }
     co->trnum = trnum;
     if (co->lsblk.n != lsb.n) {

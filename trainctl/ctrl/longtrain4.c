@@ -120,7 +120,15 @@ static lsblk_num_t next_lsblk_and_reserve(int tidx, const train_ctrl_t *tvars, l
     lsblk_num_t a, b;
     xtrnaddr_t tn;
     next_lsblk_nums(sblknum, left, &a, &b, &tn);
-    if (tn.v == 0xFF) return a;
+    if (tn.v == 0xFF) {
+        if (a.n != -1) {
+            xblkaddr_t b = canton_for_lsblk(a);
+            if (!occupency_block_is_free(b, tidx)) {
+                a.n = -1;
+            }
+        }
+        return a;
+    }
     
     if (palternate) *palternate = 1;
     if (!back) {
@@ -144,6 +152,12 @@ static lsblk_num_t next_lsblk_and_reserve(int tidx, const train_ctrl_t *tvars, l
         }
     }
     a = (topology_get_turnout(tn) == topo_tn_turn) ? b : a;
+    if (a.n != -1) {
+        xblkaddr_t b = canton_for_lsblk(a);
+        if (!occupency_block_is_free(b, tidx)) {
+            a.n = -1;
+        }
+    }
     return a;
 }
 

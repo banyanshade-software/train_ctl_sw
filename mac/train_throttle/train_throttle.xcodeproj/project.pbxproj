@@ -157,6 +157,7 @@
 		1BA4B49F2551DAF70043D763 /* StringExtension.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BA4B49E2551DAF70043D763 /* StringExtension.m */; };
 		1BA4B4A22551DE820043D763 /* NSCalendar+Gmt.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BA4B4A12551DE810043D763 /* NSCalendar+Gmt.m */; };
 		1BAC041329527121005DC958 /* TestLTFsm.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BAC041129527121005DC958 /* TestLTFsm.m */; };
+		1BAD0F6B2B6504DC001DDC13 /* uigen.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BAD0F6A2B6504DC001DDC13 /* uigen.c */; };
 		1BC90306272092EC0087CEA7 /* led.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BC90305272092EC0087CEA7 /* led.c */; };
 		1BC903172720AD730087CEA7 /* LedTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC903162720AD730087CEA7 /* LedTest.m */; };
 		1BC903182720B1920087CEA7 /* led.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BC90305272092EC0087CEA7 /* led.c */; };
@@ -408,6 +409,8 @@
 		1BAB9A8D2855D2F8005EF72B /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		1BAB9A8E2855F158005EF72B /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		1BAC041129527121005DC958 /* TestLTFsm.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TestLTFsm.m; sourceTree = "<group>"; };
+		1BAD0F692B6504DC001DDC13 /* uigen.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = uigen.h; sourceTree = "<group>"; };
+		1BAD0F6A2B6504DC001DDC13 /* uigen.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = uigen.c; sourceTree = "<group>"; };
 		1BC90304272092EC0087CEA7 /* led.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = led.h; sourceTree = "<group>"; };
 		1BC90305272092EC0087CEA7 /* led.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = led.c; sourceTree = "<group>"; };
 		1BC9030C2720AD250087CEA7 /* trainctlTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = trainctlTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -524,6 +527,8 @@
 				1B18114D26BD5BA30008F21C /* uitrack.c */,
 				1B18114E26BD5BA30008F21C /* uitrack.h */,
 				1BAB9A83285546B2005EF72B /* README.md */,
+				1BAD0F692B6504DC001DDC13 /* uigen.h */,
+				1BAD0F6A2B6504DC001DDC13 /* uigen.c */,
 			);
 			path = uitrack;
 			sourceTree = "<group>";
@@ -1292,6 +1297,7 @@
 				1B7A2A0B262D595F004E0481 /* inertia.c in Sources */,
 				1B7D0A932815A175008EEDD4 /* oam_error.c in Sources */,
 				1B46EE552692684F00FAC813 /* topology.c in Sources */,
+				1BAD0F6B2B6504DC001DDC13 /* uigen.c in Sources */,
 				1B7A2A02262D5948004E0481 /* turnout.c in Sources */,
 				1B1BBD4A2A785C2400D7A254 /* train_detector_freqresp.c in Sources */,
 				1B76688B2925855C00E2CE96 /* ToolWindow.m in Sources */,

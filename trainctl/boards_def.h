@@ -37,7 +37,7 @@
 #define BOARD_HAS_USB
 //#define BOARD_HAS_CAN
 #define BOARD_HAS_IHM
-//#define BOARD_HAS_UI_GEN
+#define BOARD_HAS_UI_GEN
 #define BOARD_HAS_UI_CTC
 #define BOARD_HAS_LED
 #define BOARD_HAS_TRKPLN

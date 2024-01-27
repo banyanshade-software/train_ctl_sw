@@ -17,6 +17,7 @@
 //#include "low/canton.h"
 #include "StringExtension.h"
 #include "uitrack.h"
+#include "uigen.h"
 #include "topology.h"
 #include "occupency.h"
 
@@ -1291,6 +1292,11 @@ static const char *knownDev[] = {
     }
 }
 
+void received_ui_gen(msg_64_t *m)
+{
+    [theDelegate processMsg64:*m];
+}
+
 - (void) processMsg64:(msg_64_t)m
 {
     if (MA3_UI_CTC==m.to) {
@@ -2306,6 +2312,7 @@ uint32_t SimuTick = 0;
     ctrl_run_tick(notif,    mt, mdt);
      */
     uitrack_run_tick(notif, mt, mdt);
+    uigen_run_tick(notif, mt, mdt);
     ina_simu_tick(notif, mt, mdt);
 }
 

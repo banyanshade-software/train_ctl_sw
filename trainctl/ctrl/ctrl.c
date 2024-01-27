@@ -232,9 +232,10 @@ static void _ctrl_init(int normalmode)
 		ctrl_set_mode(0, train_manual);
 		//ctrl_set_mode(1, train_auto);
 		xtrnaddr_t t0 = { .v = 0};
-		xtrnaddr_t t1 = { .v = 1};
+		xtrnaddr_t t2 = { .v = 2};
 		ctrl_set_turnout(t0, topo_tn_straight, -1);
-		ctrl_set_turnout(t1, topo_tn_straight, -1);
+        //ctrl_set_turnout(t1, topo_tn_turn, -1);
+        ctrl_set_turnout(t2, topo_tn_turn, -1);
 		const _UNUSED_ lsblk_num_t s0 = {0};
 		const _UNUSED_ lsblk_num_t s2 = {2};
 		const _UNUSED_ lsblk_num_t s5 = {5};

@@ -190,14 +190,14 @@ static int _dim(int col, int dim)
         }
     }];
     if (sblk==255) {
-        NSLog(@"hop");
+        //NSLog(@"hop");
     }
     if (sblk>=0) {
         js = [NSString stringWithFormat:@"Array.from(document.getElementsByClassName('trinfo_s%d'), el => el.style.visibility = 'visible'); document.getElementById('tr%d').textContent = '%@';", sblk, sblk,
               strn ? strn : @""];
         [_ctoWebView evaluateJavaScript:js completionHandler:^(id v, NSError *err) {
             if (err) {
-                NSLog(@"js error : %@\n", err);
+                if ((0)) NSLog(@"js error : %@\n", err);
             }
         }];
         

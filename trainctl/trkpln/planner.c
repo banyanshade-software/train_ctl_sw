@@ -229,7 +229,7 @@ static void planner_start_pending3(int n, cauto_path_items_t *pit)
         if (si<0) FatalError("NF", "path not found", Error_Planner_NotFoud); // to be removed
         b = si;
     }
-    printf("hop\n");
+    //printf("hop\n");
 #endif
     // convert to c3auto path list
     int pathindex = 0;

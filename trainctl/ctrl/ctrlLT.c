@@ -1442,7 +1442,16 @@ static void bh(void)
 static void _set_state(int tidx, train_ctrl_t *tvars, train_state_t newstate)
 {
     if (tvars->_state == newstate) return;
+    
+    
     train_state_t oldstate = tvars->_state;
+    
+    if ((1)) {
+        if ((tidx==1) && (oldstate==train_state_blkwait) && (newstate==train_state_running) && (tvars->c1_sblk.n == 6)) {
+            itm_debug1(DBG_CTRL, "bh", 0);
+        }
+    }
+    
     tvars->_state = newstate;
     if (newstate == train_state_blkwait) {
         bh();
@@ -1491,6 +1500,7 @@ static void _set_state(int tidx, train_ctrl_t *tvars, train_state_t newstate)
             break;
     }
     //  sanity check
+    
     if ((0)) {
         // check curposmm coherency
         if (tvars->_curposmm<tvars->beginposmm) {

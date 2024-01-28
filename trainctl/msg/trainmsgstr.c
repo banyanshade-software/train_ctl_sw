@@ -94,7 +94,7 @@ msg_type_t traincmd_format(uint8_t cmd)
 	case CMD_SETRUN_MODE     : return CMD_TYPE_V16;
 	case CMD_SET_C4          : return CMD_TYPE_B4;
 	case CMD_SET_C1_C2old    : return CMD_TYPE_B4;
-	case CMD_SETVPWM         : return CMD_TYPE_V16;
+	case CMD_SETVPWM         : return CMD_TYPE_B4;
 	case CMD_BEMF_ON         : return CMD_TYPE_V32;
 	case CMD_BEMF_OFF        : return CMD_TYPE_V32;
 	case CMD_SET_TARGET_SPEED: return CMD_TYPE_V16;

@@ -94,4 +94,7 @@ extern runmode_t bemf_run_mode;
 extern uint8_t adc_is_reversed;
 
 
+void bemf_test_pose(int cidx);
+void canton_stop(int cidx);
+
 #endif /* LOW_CANTON_BEMF_H_ */

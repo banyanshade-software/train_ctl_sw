@@ -948,159 +948,23 @@ static void _set_speed(int tidx, const conf_train_t *cnf, train_vars_t *vars)
     msg_64_t m = {0};
     m.from = MA1_SPDCTL(tidx);
     m.cmd = CMD_SETVPWM;
-    m.v1u = pvi1;
+    m.vb0 = pvi1;
 
     for (int i=0; i<4; i++) {
         if (vars->Cx[i].v == 0xFF) continue;
         int dir = sig * __spdcx_dir(vars->dirbits, i);
         TO_CANTON(m, vars->Cx[i]);
-        m.v2 = dir*pwm_duty;
+        m.vb1 = dir*pwm_duty;
         mqf_write_from_spdctl(&m);
     }
 }
-#if 0
-	int dir1 = sig * vars->C1_dir;
-	int dir2 = sig * vars->C2_dir;
 
-
-    msg_64_t m = {0};
-    m.from = MA1_SPDCTL(tidx);
-    TO_CANTON(m, vars->C1x);
-    if ((1)) { //  TODO remove sanity check
-        extern void Error_Handler(void);
-        if (7==m.subc) Error_Handler(); // XXX
-    }
-    //m.to = vars->C1;
-    m.cmd = CMD_SETVPWM;
-    m.v1u = pvi1;
-    m.v2 = dir1*pwm_duty;
-    if ((1)) {//  TODO remove sanity check
-        extern void Error_Handler(void);
-        if (7==m.subc) Error_Handler(); // XXX
-    }
-    itm_debug3(DBG_SPDCTL, "setvpwm", m.v1u, m.v2, m.to);
-    mqf_write_from_spdctl(&m);
-
-    if (c2) {
-    	itm_debug3(DBG_SPDCTL, "setvpwm/c2", m.v1u, m.v2, m.to);
-    	m.v1u = pvi2;
-    	m.v2 = dir2*pwm_duty;
-    	TO_CANTON(m, vars->C2x);
-    	//m.to = vars->C2;
-    	mqf_write_from_spdctl(&m);
-    }
-}
-#endif
 
 
 
 /* =========================================================================== */
 
-#if 0
-int train_set_target_speed(int numtrain, int16_t target)
-{
-	if (calibrating) return 1;
-	USE_TRAIN(numtrain) // tconf tvars
-	(void)tconf; // unused
-	if (!tvars) return -1;
-	tvars->target_speed = target;
 
-	/* shall we do something special when target is 0 ?
-	 * this is commented out for now, because I like the slow stop without it..
-	 * if (0 == target) {
-		if (c->enable_pid) {
-			pidctl_reset(&c->pidcnf, &vars->pidvars);
-		}
-	}*/
-
-	return 0;
-}
-#endif
-
-
-/*
-static int _pose_check_trig(int numtrain, train_vars_t *tvars, int32_t lastincr, int32_t pose)
-{
-	if (!pose) return 0;
-#if 0
-	if (pose > 0) {
-		if (lastincr<0) itm_debug3(DBG_ERR|DBG_POSEC, "wrong incr", numtrain, lastincr, pose);
-		if (tvars->position_estimate >= pose) {
-            return 1;
-		}
-	} else { // pose_trig < 0
-		if (lastincr>0) itm_debug3(DBG_ERR|DBG_POSEC, "wrong incr", numtrain, lastincr, pose);
-		if (tvars->position_estimate <= pose) {
-            return 1;
-		}
-    }
-#endif
-    int dir = tvars->C1_dir;
-    if (!dir) return 0;
-    if ((SIGNOF0(lastincr)*dir) < 0) {
-        itm_debug3(DBG_ERR|DBG_POSEC, "wrong incr", numtrain, lastincr, pose);
-    }
-    if (dir >0) {
-        if (tvars->position_estimate >= pose) return 1;
-    } else {
-        if (tvars->position_estimate <= pose) return 1;
-    }
-	return 0;
-}
-*/
-
-/*
-static void pose_check_trig(int numtrain, train_vars_t *tvars, int pi, int32_t lastincr)
-{
-    int rc1 = _pose_check_trig(numtrain, tvars, lastincr, tvars->pose_trig[pi]);
-
-    int r = 0;
-    if (rc1>0) {
-        r = tvars->pose_trig_tag[pi];
-        tvars->pose_trig_tag[pi] = 0; // trig only once
-        itm_debug3(DBG_POSEC, "POSE trg", numtrain, tvars->position_estimate, tvars->pose_trig[pi]);
-    }
-   
-    if (!r) return;
-
-    msg_64_t m = {0};
-    itm_debug3(DBG_POSEC, "POSE tag", numtrain, r, pi);
-
-    m.from = MA1_SPDCTL(numtrain);
-    m.to = MA1_CTRL(numtrain);
-    m.cmd = CMD_POSE_TRIGGERED;
-    m.subc = r;
-    m.v1u = tvars->C1x.v;
-    int32_t p = tvars->position_estimate / 100;
-    if (abs(p)>0x7FFF) {
-        // TODO: problem here pose is > 16bits
-        itm_debug1(DBG_POSEC|DBG_ERR, "L pose", p);
-        p = SIGNOF(p)*0x7FFF;
-    }
-    m.v2 = (int16_t) p;
-    mqf_write_from_spdctl(&m);
-}
-*/
-
-/*
-void train_stop_all(void)
-{
-	stop_all = 1;
-	auto1_reset();
-	railconfig_setup_default();
-	for (int i=0; i<NUM_CANTONS; i++) {
-		USE_CANTON(i) // cconf cvars
-		// setup default has put dir=0 + pwm=0 and a canton_set_pwm(0,0)
-		// would be ignored.
-		canton_set_pwm(cconf, cvars,  1, 0);
-		canton_set_pwm(cconf, cvars,  0, 0);
-		canton_set_volt(cconf, cvars, 15);
-	}
-	railconfig_setup_default();
-	debug_info('G', 0, "STOPALL", 0,0, 0);
-	stop_all = 0;
-}
-*/
 
 /*
  * calibration of BEMF

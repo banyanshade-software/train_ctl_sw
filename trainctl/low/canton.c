@@ -185,7 +185,7 @@ static void canton_enter_runmode(runmode_t m)
 
 //--------------------------------------------
 
-static void handle_canton_cmd(int cidx, msg_64_t *m)
+static void handle_canton_cmd(int cidx, msg_64_t *m, int testmode)
 {
 	if ((m->cmd == CMD_BEMF_OFF) || (m->cmd==CMD_BEMF_ON) || (m->cmd==CMD_POSE_SET_TRIG)) {
 		itm_debug1(DBG_LOWCTRL, "msg-bemf", m->to);
@@ -207,8 +207,12 @@ static void handle_canton_cmd(int cidx, msg_64_t *m)
 		break;
 	case CMD_SETVPWM:
 		itm_debug3(DBG_LOWCTRL, "SETVPWM", cidx, m->v1u, m->v2);
-		canton_set_pwm(cidx, cconf, cvars, SIGNOF0(m->v2), abs(m->v2));
-		canton_set_volt(cidx, cconf, cvars,  m->v1u);
+        if (testmode && m->vb2) {
+            bemf_test_pose(cidx);
+        }
+        int8_t duty = (int8_t)m->vb1;
+		canton_set_pwm(cidx, cconf, cvars, SIGNOF0(duty), abs(duty));
+		canton_set_volt(cidx, cconf, cvars,  m->vb0);
 		break;
 	default:
 		itm_debug1(DBG_LOWCTRL, "not handled msg", m->cmd);
@@ -216,6 +220,12 @@ static void handle_canton_cmd(int cidx, msg_64_t *m)
 	}
 }
 
+void canton_stop(int cidx)
+{
+    USE_CANTON(cidx)
+    canton_set_pwm(cidx, cconf, cvars, 0, 0);
+    canton_set_volt(cidx, cconf, cvars,  7);
+}
 static void handle_msg_off(_UNUSED_ msg_64_t *m)
 {
 	// no handling
@@ -232,7 +242,7 @@ static void handle_msg_normal(msg_64_t *m)
     }
     if (!MA0_IS_CANTON(m->to)) return;
     cidx = m->subc; // MA_GET_CANTON_NUM(m->to);
-    handle_canton_cmd(cidx, m);
+    handle_canton_cmd(cidx, m, 0);
 }
 
 static void handle_msg_detect1(msg_64_t *m)
@@ -308,12 +318,13 @@ static void handle_msg_cantontest(msg_64_t *m)
     	m2.from = m2.to;
     	m2.to = MA3_UI_GEN;
     	mqf_write_from_canton(&m2);
+        
     }
-    if (cidx>=0) handle_canton_cmd(cidx, m);
+    if (cidx>=0) handle_canton_cmd(cidx, m, 1);
     else {
     	// broadcast
     	for (int i=0; i<NUM_CANTONS; i++) {
-    		handle_canton_cmd(i, m);
+    		handle_canton_cmd(i, m, 1);
     	}
     }
 }

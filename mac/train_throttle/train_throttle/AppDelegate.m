@@ -2874,39 +2874,28 @@ didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic
     NSUInteger oldCanton = _testCanton;
     _testCanton = testCanton;
     if (_runMode == 1) {
-        for (int i = 0; i<NUM_CANTONS; i++) {
-            if (i==oldCanton) {
-                msg_64_t m;
-                xblkaddr_t bi = {.v = i};
-                TO_CANTON(m, bi);
-                m.from = MA3_UI_GEN; //(UISUB_USB);
-                m.cmd = CMD_BEMF_OFF;
-                [self sendMsg64:m];
-                continue;
-            }
-            if (i!=testCanton) continue;
-            msg_64_t m;
-            xblkaddr_t bi = {.v = i};
-            TO_CANTON(m, bi);
-            m.from = MA3_UI_GEN; //(UISUB_USB);
-            m.cmd = CMD_BEMF_ON;
-            [self sendMsg64:m];
-            m.cmd = CMD_SETVPWM;
-            m.v1u = 7;
-            m.v2 = 0;
-            [self sendMsg64:m];
-        }
+        msg_64_t m = {0};
+        xblkaddr_t bi = {.v = oldCanton};
+        TO_CANTON(m, bi);
+        m.from = MA3_UI_GEN; //(UISUB_USB);
+        m.cmd = CMD_BEMF_OFF;
+        [self sendMsg64:m];
+        m.cmd = CMD_SETVPWM;
+
+        m.vb0 = 7;
+        m.vb1 = 0;
+        [self sendMsg64:m];
     }
-    NSInteger p = _testPWM;
-    _testPWM = -9999;
-    self.testPWM = p;
+    //NSInteger p = _testPWM;
+    //_testPWM = -9999;
+    //self.testPWM = p;
 }
 - (void) setTestVoltIdx:(NSUInteger)testVoltIdx
 {
     if (!_runMode) return;
     if (testVoltIdx == _testVoltIdx) return;
     _testVoltIdx = testVoltIdx;
-    [self sendVPWM];
+    //[self sendVPWM];
 }
 
 - (void) setTestPWM:(NSInteger)testPWM
@@ -2914,9 +2903,9 @@ didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic
     if (!_runMode) return;
     if (testPWM == _testPWM) return;
     _testPWM = testPWM;
-    [self sendVPWM];
+    //[self sendVPWM];
 }
-- (void) sendVPWM
+- (IBAction)testCantonApply:(id)sender
 {
     msg_64_t m = {0};
     if (_runMode == 1) {
@@ -2928,8 +2917,10 @@ didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic
     //m.to = (_runMode == 1) ? MA_CANTON(0, _testCanton) : MA_BROADCAST;
     m.from = MA3_UI_GEN; //(UISUB_USB);
     m.cmd = CMD_SETVPWM;
-    m.v1u = _testVoltIdx;
-    m.v2 = _testPWM;
+
+    m.vb0 = _testVoltIdx;
+    m.vb1 = _testPWM;
+    m.vb2 = _testPoseMeas ? 1 : 0;
     [self sendMsg64:m];
 }
 

@@ -132,7 +132,12 @@
 @property (nonatomic) NSUInteger testCanton;
 @property (nonatomic) NSUInteger testVoltIdx;
 @property (nonatomic) NSInteger testPWM;
+@property (nonatomic) BOOL testPoseMeas;
 
+- (IBAction)testCantonApply:(id)sender;
+
+
+// 
 - (IBAction) startBLE:(id)sender;
 
 - (IBAction) setTrainMode:(id)sender;

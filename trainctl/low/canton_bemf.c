@@ -46,6 +46,7 @@ typedef struct {
 
 typedef struct{
     uint8_t bemf_to;
+    uint8_t posetest:1;
     int32_t pose;
     bemf_trig_t trigs[NUM_TRIGS];
 } canton_bemf_t;
@@ -65,6 +66,7 @@ void bemf_reset(void)
 	for (int i=0; i<NUM_CANTONS; i++) {
 		cbvars[i].bemf_to = 0xFF;
         cbvars[i].pose = 0;
+        cbvars[i].posetest = 0;
         memset(cbvars[i].trigs, 0, sizeof(bemf_trig_t)*NUM_TRIGS);
 	}
 }
@@ -82,12 +84,14 @@ void bemf_msg(msg_64_t *m)
 		itm_debug1(DBG_SPDCTL|DBG_CTRL|DBG_DETECT, "BEMF OFF", idx);
 		cbvars[idx].bemf_to = 0xFF;
         cbvars[idx].pose = 0;
+        cbvars[idx].posetest = 0;
         memset(cbvars[idx].trigs, 0, sizeof(bemf_trig_t)*NUM_TRIGS);
 		break;
 	case CMD_BEMF_ON:
 		itm_debug2(DBG_SPDCTL|DBG_CTRL|DBG_DETECT, "BEMF ON", idx, m->from);
 		cbvars[idx].bemf_to = m->from;
         cbvars[idx].pose = 0;
+        cbvars[idx].posetest = 0;
 		break;
             
     case CMD_POSE_SET_TRIG:
@@ -112,7 +116,11 @@ void bemf_msg(msg_64_t *m)
 		break;
 	}
 }
-
+void bemf_test_pose(int cidx)
+{
+    cbvars[cidx].pose = 0;
+    cbvars[cidx].posetest = 1;
+}
 void bemf_tick(uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_ uint32_t dt)
 {
 	switch (bemf_run_mode) {
@@ -328,6 +336,22 @@ static void process_adc(volatile adc_result_t *buf, _UNUSED_ uint32_t deltaticks
 			//}
 		}
 
+        if (cvars->posetest) {
+            int32_t b = voff;
+            int32_t pi = (b*100)/tsktick_freqhz;
+            cvars->pose += pi;
+            //itm_debug2(DBG_ERR, "AbsPose", i, abs(cvars->pose));
+        	if (abs(cvars->pose)>40000) {
+        		// stop now
+        		canton_stop(i);
+        		cvars->posetest = 0;
+        		/*
+        		 * V160 c4: 40000 / 13cm -> 3076
+        		 */
+        	}
+            itm_debug3(DBG_ERR, "TstPose", i, cvars->pose, pi);
+        	continue;
+        }
 		/* only send bemf for canton that are active (expecting bemf)
 		 * this could be (and was) done before millivolt conversion,
 		 * but we want some debug
@@ -364,7 +388,7 @@ static void process_adc(volatile adc_result_t *buf, _UNUSED_ uint32_t deltaticks
         int32_t pi = (b*100)/tsktick_freqhz;
         cvars->pose += pi;
         itm_debug3(DBG_POSE, "pose", i, pi, cvars->pose);
-        
+      
         msg_64_t m = {0};
         m.from = MA0_CANTON(oam_localBoardNum());
         m.subc = i;

@@ -3973,11 +3973,11 @@
             <rect key="contentRect" x="109" y="138" width="480" height="270"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1080"/>
             <view key="contentView" id="NAU-Et-RMZ">
-                <rect key="frame" x="0.0" y="0.0" width="480" height="270"/>
+                <rect key="frame" x="0.0" y="0.0" width="480" height="262"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <segmentedControl verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="1yj-3d-cOG">
-                        <rect key="frame" x="18" y="227" width="353" height="24"/>
+                        <rect key="frame" x="18" y="219" width="353" height="24"/>
                         <segmentedCell key="cell" borderStyle="border" alignment="left" style="rounded" trackingMode="selectOne" id="HZj-IR-VWO">
                             <font key="font" metaFont="system"/>
                             <segments>
@@ -3992,14 +3992,14 @@
                         </connections>
                     </segmentedControl>
                     <slider verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Yim-ib-tx9">
-                        <rect key="frame" x="187" y="75" width="100" height="19"/>
+                        <rect key="frame" x="187" y="67" width="100" height="19"/>
                         <sliderCell key="cell" state="on" alignment="left" minValue="-100" maxValue="100" doubleValue="50" tickMarkPosition="above" sliderType="linear" id="596-QM-pIr"/>
                         <connections>
                             <binding destination="Voe-Tx-rLC" name="value" keyPath="testPWM" id="AXw-Eb-FtA"/>
                         </connections>
                     </slider>
                     <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="s1W-l5-T9b">
-                        <rect key="frame" x="189" y="100" width="96" height="21"/>
+                        <rect key="frame" x="189" y="92" width="96" height="21"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="96" id="pCz-3d-YKU"/>
                         </constraints>
@@ -4017,14 +4017,14 @@
                         </connections>
                     </textField>
                     <stepper horizontalHuggingPriority="750" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="E2K-gG-0P1">
-                        <rect key="frame" x="133" y="175" width="19" height="28"/>
+                        <rect key="frame" x="133" y="167" width="19" height="28"/>
                         <stepperCell key="cell" continuous="YES" alignment="left" maxValue="6" id="HYz-uq-rNO"/>
                         <connections>
                             <binding destination="Voe-Tx-rLC" name="value" keyPath="testCanton" id="76b-xX-a9e"/>
                         </connections>
                     </stepper>
                     <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="MTd-C9-HxG">
-                        <rect key="frame" x="32" y="178" width="96" height="21"/>
+                        <rect key="frame" x="32" y="170" width="96" height="21"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="96" id="xwa-ic-vLw"/>
                         </constraints>
@@ -4042,14 +4042,14 @@
                         </connections>
                     </textField>
                     <stepper horizontalHuggingPriority="750" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="hkq-zl-uU1">
-                        <rect key="frame" x="133" y="97" width="19" height="28"/>
+                        <rect key="frame" x="133" y="89" width="19" height="28"/>
                         <stepperCell key="cell" continuous="YES" alignment="left" maxValue="7" id="7iE-Vf-qfm"/>
                         <connections>
                             <binding destination="Voe-Tx-rLC" name="value" keyPath="testVoltIdx" id="bek-FC-o5m"/>
                         </connections>
                     </stepper>
                     <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="wHe-6l-w4M">
-                        <rect key="frame" x="32" y="100" width="96" height="21"/>
+                        <rect key="frame" x="32" y="92" width="96" height="21"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="96" id="fQx-Sd-WrS"/>
                         </constraints>
@@ -4067,7 +4067,7 @@
                         </connections>
                     </textField>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="JOo-zj-1Vg">
-                        <rect key="frame" x="18" y="181" width="14" height="16"/>
+                        <rect key="frame" x="18" y="173" width="14" height="16"/>
                         <textFieldCell key="cell" lineBreakMode="clipping" title="C" id="Bup-uW-Ghl">
                             <font key="font" metaFont="system"/>
                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -4075,7 +4075,7 @@
                         </textFieldCell>
                     </textField>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ugU-sm-qcL">
-                        <rect key="frame" x="30" y="129" width="53" height="16"/>
+                        <rect key="frame" x="30" y="121" width="53" height="16"/>
                         <textFieldCell key="cell" lineBreakMode="clipping" title="Vold idx" id="zKa-7l-Fas">
                             <font key="font" metaFont="system"/>
                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -4083,16 +4083,37 @@
                         </textFieldCell>
                     </textField>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="W8B-mU-ef6">
-                        <rect key="frame" x="187" y="129" width="36" height="16"/>
+                        <rect key="frame" x="187" y="121" width="36" height="16"/>
                         <textFieldCell key="cell" lineBreakMode="clipping" title="PWM" id="ogs-8G-rlZ">
                             <font key="font" metaFont="system"/>
                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                     </textField>
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="vVN-0b-vNm">
+                        <rect key="frame" x="26" y="13" width="75" height="32"/>
+                        <buttonCell key="cell" type="push" title="Apply" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Sf0-1M-lB9">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="testCantonApply:" target="Voe-Tx-rLC" id="g82-2N-Cd3"/>
+                        </connections>
+                    </button>
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Buc-W3-fgl">
+                        <rect key="frame" x="187" y="22" width="108" height="18"/>
+                        <buttonCell key="cell" type="check" title="Pose measure" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="quY-q1-3l5">
+                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <binding destination="Voe-Tx-rLC" name="value" keyPath="testPoseMeas" id="MHX-7g-7Yg"/>
+                        </connections>
+                    </button>
                 </subviews>
                 <constraints>
                     <constraint firstItem="s1W-l5-T9b" firstAttribute="top" secondItem="W8B-mU-ef6" secondAttribute="bottom" constant="8" id="089-pd-84O"/>
+                    <constraint firstAttribute="bottom" secondItem="vVN-0b-vNm" secondAttribute="bottom" constant="20" symbolic="YES" id="0e8-VC-vZ0"/>
                     <constraint firstItem="E2K-gG-0P1" firstAttribute="leading" secondItem="MTd-C9-HxG" secondAttribute="trailing" constant="8" id="1l3-z8-2VB"/>
                     <constraint firstItem="Yim-ib-tx9" firstAttribute="leading" secondItem="W8B-mU-ef6" secondAttribute="leading" id="2wB-gm-1kk"/>
                     <constraint firstItem="1yj-3d-cOG" firstAttribute="leading" secondItem="NAU-Et-RMZ" secondAttribute="leading" constant="20" id="32B-Jc-8NX"/>
@@ -4101,13 +4122,17 @@
                     <constraint firstItem="1yj-3d-cOG" firstAttribute="top" secondItem="NAU-Et-RMZ" secondAttribute="top" constant="20" id="8EQ-dq-9O2"/>
                     <constraint firstItem="E2K-gG-0P1" firstAttribute="centerY" secondItem="MTd-C9-HxG" secondAttribute="centerY" id="9JB-a8-u0b"/>
                     <constraint firstItem="wHe-6l-w4M" firstAttribute="leading" secondItem="MTd-C9-HxG" secondAttribute="leading" id="FDL-R9-yJ3"/>
+                    <constraint firstItem="Buc-W3-fgl" firstAttribute="firstBaseline" secondItem="vVN-0b-vNm" secondAttribute="firstBaseline" id="K1U-bw-Aa9"/>
                     <constraint firstItem="ugU-sm-qcL" firstAttribute="leading" secondItem="MTd-C9-HxG" secondAttribute="leading" id="OAk-5Z-HxG"/>
                     <constraint firstItem="JOo-zj-1Vg" firstAttribute="leading" secondItem="NAU-Et-RMZ" secondAttribute="leading" constant="20" id="Pbc-La-mj1"/>
                     <constraint firstItem="ugU-sm-qcL" firstAttribute="top" secondItem="MTd-C9-HxG" secondAttribute="bottom" constant="33" id="Z0e-6l-Ucz"/>
+                    <constraint firstItem="Buc-W3-fgl" firstAttribute="leading" secondItem="s1W-l5-T9b" secondAttribute="leading" id="a5m-Ek-aMA"/>
                     <constraint firstItem="s1W-l5-T9b" firstAttribute="leading" secondItem="hkq-zl-uU1" secondAttribute="trailing" constant="40" id="aDU-7y-g5u"/>
+                    <constraint firstItem="vVN-0b-vNm" firstAttribute="top" secondItem="wHe-6l-w4M" secondAttribute="bottom" constant="51" id="cQV-dS-o6Z"/>
                     <constraint firstItem="JOo-zj-1Vg" firstAttribute="top" secondItem="1yj-3d-cOG" secondAttribute="bottom" constant="32" id="cbl-ee-1Zn"/>
                     <constraint firstItem="wHe-6l-w4M" firstAttribute="top" secondItem="ugU-sm-qcL" secondAttribute="bottom" constant="8" id="h3G-qs-Dyx"/>
                     <constraint firstItem="hkq-zl-uU1" firstAttribute="centerY" secondItem="wHe-6l-w4M" secondAttribute="centerY" id="hbF-Sv-s8f"/>
+                    <constraint firstItem="vVN-0b-vNm" firstAttribute="leading" secondItem="wHe-6l-w4M" secondAttribute="leading" id="ip3-KG-qsu"/>
                     <constraint firstItem="Yim-ib-tx9" firstAttribute="top" secondItem="s1W-l5-T9b" secondAttribute="bottom" constant="8" id="sUT-Lm-UD9"/>
                     <constraint firstItem="s1W-l5-T9b" firstAttribute="centerY" secondItem="wHe-6l-w4M" secondAttribute="centerY" id="shm-fg-scY"/>
                     <constraint firstItem="Yim-ib-tx9" firstAttribute="trailing" secondItem="s1W-l5-T9b" secondAttribute="trailing" id="vmx-PY-Wec"/>

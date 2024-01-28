@@ -61,7 +61,8 @@ typedef struct {
     uint8_t train;
     uint8_t delay;
     uint8_t target;
-    uint8_t spd;
+    uint8_t spdR;
+    uint8_t spdL;
     uint32_t startTick;
 } pending_t;
 
@@ -91,10 +92,11 @@ static void handle_planner_msg(msg_64_t *m)
 	case CMD_PLANNER_ADD:
 		if (PendingIdx >= NUM_PENDING) break;
 		PlanPending[PendingIdx].train = m->subc;
-		PlanPending[PendingIdx].delay = m->va16;
-		PlanPending[PendingIdx].target = m->vb8;
-		PlanPending[PendingIdx].spd = m->vcu8;
-		PendingIdx++;
+        PlanPending[PendingIdx].target = m->vb0;
+        PlanPending[PendingIdx].delay = m->vb1;
+        PlanPending[PendingIdx].spdR = m->vb2;
+        PlanPending[PendingIdx].spdL = m->vb3;
+        PendingIdx++;
 		break;
 	case CMD_PLANNER_COMMIT:
 		planner_plan_pending(m->v1u);
@@ -180,7 +182,8 @@ static void planner_start_pending3(int n, cauto_path_items_t *pit)
     if (0xFF == train) return;
     PlanPending[n].train = 0xFF;
 
-    int spd2 = PlanPending[n].spd/2;
+    int spd2L = PlanPending[n].spdL/2;
+    int spd2R = PlanPending[n].spdR/2;
     int target = PlanPending[n].target;
     int curpos = ctrl_get_train_curlsblk(train);
     if (curpos == -1) return;
@@ -267,13 +270,13 @@ static void planner_start_pending3(int n, cauto_path_items_t *pit)
             if (!dir) dir = ndir;
             
             pit[pathindex].t = 0;
-            pit[pathindex].val = spd2*dir;
+            pit[pathindex].val = (dir<0) ? -spd2L : spd2R; //spd2*dir;
             pit[pathindex].sblk.n = prevb;
             pathindex++;
             if (dir && (ndir != dir)) {
                 //printf("change dir\n");
                 pit[pathindex].t = 0;
-                pit[pathindex].val = spd2*ndir;
+                pit[pathindex].val = (ndir<0) ? -spd2L : spd2R; //spd2*ndir;
                 pit[pathindex].sblk.n = prevb;
                 pathindex++;
             }

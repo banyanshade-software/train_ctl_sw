@@ -61,11 +61,17 @@
         NSAssert(c, @"no view controller");
         c.trainNum = row;
         tcellCtrl[row] = c;
+        tcellCtrl[row].spdR = 30;
+        tcellCtrl[row].spdL = 30;
         if (0==row) tst = c;
         if (0==row) {
             tcellCtrl[row].trainNum = 0;
-            tcellCtrl[row].spd      = 72;
+            tcellCtrl[row].spdR = 80;
             tcellCtrl[row].targetLSBLK = 9;
+        } else if (1==row) {
+            tcellCtrl[row].trainNum = 1;
+            tcellCtrl[row].targetLSBLK = 2;
+            tcellCtrl[row].spdL = 80;
         }
     }
     //result.autoresizingMask = NSViewHeightSizable ;
@@ -74,7 +80,7 @@
 
 - (CGFloat)tableView:(NSTableView *)tableView heightOfRow:(NSInteger)row
 {
-    if (row<NUM_PLAN_TRAIN) return 100;
+    if (row<NUM_PLAN_TRAIN) return 116;
     return 128;
 }
 
@@ -112,9 +118,10 @@
         NSLog(@"train %d after %d go %d\n", (int) c.trainNum, (int) c.delay, (int) c.targetLSBLK);
         m.cmd = CMD_PLANNER_ADD;
         m.subc = c.trainNum;
-        m.vb8 = c.targetLSBLK;
-        m.va16 = c.delay;
-        m.vcu8 = c.spd;
+        m.vb0 = c.targetLSBLK;
+        m.vb1 = c.delay;
+        m.vb2 = c.spdR;
+        m.vb3 = c.spdL;
         [theDelegate sendMsg64:m];
         nrule++;
     }

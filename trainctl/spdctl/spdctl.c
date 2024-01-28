@@ -363,6 +363,16 @@ static void spdctl_handle_msg(msg_64_t *m)
 			break;
         case CMD_BRAKE:
                 if (m->subc) {
+                    /*
+                     start brake
+                     stopposed10 is the pose value where we re supposed to brake
+                     startbreakd10 is the current pose value, start of brake
+                     spdbrake is the current speed
+                     |----(spdbrake)-\
+                     |                 \
+                     |___________________\____>t
+                               (start)   |    |(stop)
+                     */
                     tvars->brake = 1;
                     tvars->stopposed10 = (int16_t) m->v32;
                     tvars->startbreakd10 = tvars->lastposed10;
@@ -617,6 +627,28 @@ void send_train_stopped(int numtrain, train_vars_t *tvars)
 
 #define punch_start 1
 
+static inline int16_t comp_brake(int16_t startval, int32_t k1000)
+{
+#if 0
+    // linear decrease from startval to 0
+    int16_t target_with_brake = (int16_t)((startval * k1000)/1000);
+    if (abs(target_with_brake)<15) {
+        target_with_brake = 0;
+    }
+    return target_with_brake;
+#endif
+    // linear decrease from startval to minval
+    static const int16_t minval = 15;
+    int16_t v = startval;
+    if (startval > minval) {
+        int16_t t = startval-minval;
+        v = (int16_t)((t * k1000)/1000);
+        v += minval;
+    }
+    if (k1000<=1) return 0;
+    return v;
+}
+
 static void train_periodic_control(int numtrain, _UNUSED_ uint32_t dt)
 {
 	if (stop_all) return;
@@ -646,10 +678,13 @@ static void train_periodic_control(int numtrain, _UNUSED_ uint32_t dt)
         if (k1000<0) {
         	k1000 = 0;
         }
+        target_with_brake = comp_brake(tvars->spdbrake, k1000);
+        /*
         target_with_brake = (int16_t)((tvars->spdbrake * k1000)/1000);
         if (abs(target_with_brake)<15) {
             target_with_brake = 0;
         }
+         */
     	itm_debug3(DBG_BRAKE, "trg:brak", numtrain, k1000, target_with_brake);
     }
 

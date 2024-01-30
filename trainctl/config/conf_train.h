@@ -17,16 +17,8 @@
 
 
 
-typedef enum train_volt_policy /*: uint8_t*/ {
-    vpolicy_normal = 0,
-    vpolicy_pure_pwm,
-    vpolicy_pure_volt,
-} train_volt_policy_t;
-
-
-
 typedef struct conf_train {
-    uint16_t locotype;
+    uint8_t locotype;
     uint8_t enabled:1;
     uint8_t notify_pose:1;
     uint8_t trainlen_left_cm;

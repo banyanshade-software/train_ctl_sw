@@ -6,7 +6,7 @@
 
 
 config train {
-    user uint16_t locotype = (default)0;
+    user uint8_t locotype = (default)0;
     user uint8_t enabled:1
         = (all:0) 1
         = (all:1) 1

@@ -1,0 +1,82 @@
+/*
+
+
+*/
+
+
+subconfig pidctl {
+    user int32_t kP 
+        = (default) 500;
+	user int32_t kI
+        = (default) 100;
+	user int32_t kD
+        = (default) 500; 
+};
+
+subconfig inertia {
+    user int16_t dec
+        = (default) 120;
+    user int16_t acc
+        = (default) 120;
+};
+
+
+
+attrib locomotive h_code {
+
+typedef enum train_volt_policy /*: uint8_t*/ {
+    vpolicy_normal = 0,
+    vpolicy_pure_pwm,
+    vpolicy_pure_volt,
+} train_volt_policy_t;
+
+}
+
+
+config locomotive {
+    sub pidctl;
+    sub inertia;
+    user train_volt_policy_t volt_policy
+        = (default) vpolicy_normal;
+
+    user uint8_t enable_inertia:2
+        = (default) 0;
+    user uint8_t enable_pid:1
+        = (default) 1;
+    const uint8_t fix_bemf:1
+        = (default) 0;
+    const uint8_t en_spd2pow:1
+        = (default) 0;
+
+    user uint8_t reversed:1
+        = (default) 0;
+
+    const uint8_t min_power
+        = (default) 0;
+    
+	const uint8_t notify_pose:1
+        = (default) 0;
+
+    user uint8_t bemfIIR
+        = (default) 0;
+    user uint8_t postIIR
+        = (default) 0;
+
+    user uint8_t slipping
+        = (default) 120;
+    user uint16_t pose_per_cm
+        = (all:0) 450
+        = (all:0) 310
+        = (default) 500;
+
+} num = (mainV0) 8
+      = (mainV04) 8
+      = (simu) 8
+      = (G4master1) 8
+      = (unit_test) 4
+      = (default) 0;
+
+
+attrib locomotive c_code {
+    // this goes only in config_train.c
+}

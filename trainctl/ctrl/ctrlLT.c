@@ -148,6 +148,7 @@ void turn_train_off(int tidx, train_ctrl_t *tvars)
             return;
         case train_state_blkwait:
         case train_state_end_of_track:
+        	itm_debug2(DBG_CTRL, "setdir e", tidx, tvars->_state);
             _set_dir(tidx, tvars, 0);
             // FALLTHRU
         case train_state_station:
@@ -363,6 +364,7 @@ station:
                 return;
             }
             if (rett.isocc) {
+            	itm_debug2(DBG_CTRL, "setdir o", tidx, tvars->_state);
                 _set_dir(tidx, tvars, sdir);
                 _set_speed(tidx, tvars, desired_speed, 0, 0);
                 _set_state(tidx, tvars, train_state_blkwait);
@@ -371,6 +373,7 @@ station:
             if (rc<0) FatalError("FSMd", "setdir", Error_FSM_ChkNeg1);
             // otherwise, start train
             _check_c2(tidx, tvars, &rett);
+        	itm_debug2(DBG_CTRL, "setdir st", tidx, tvars->_state);
             _set_dir(tidx, tvars, sdir);
             _update_spd_limit(tidx, tvars, sdir);
             _set_speed(tidx, tvars, desired_speed, 1, rc);
@@ -429,6 +432,7 @@ void ctrl3_upcmd_set_desired_speed_zero(int tidx, train_ctrl_t *tvars)
             
         case train_state_blkwait:
         case train_state_end_of_track:
+        	itm_debug2(DBG_CTRL, "setdir 0", tidx, tvars->_state);
             _set_dir(tidx, tvars, 0);
             _set_speed(tidx, tvars, 0, 0, 0);
             _sendlow_c1c2_dir(tidx, tvars);
@@ -507,6 +511,7 @@ void ctrl3_stop_detected(int tidx, train_ctrl_t *tvars, int32_t posed10, int fro
         case train_state_running:
             //_updated_while_running(tidx, tvars);
             if (tvars->_target_unisgned_speed == 0) {
+            	itm_debug2(DBG_CTRL, "setdir z", tidx, tvars->_state);
                 _set_dir(tidx, tvars, 0);
                 _set_state(tidx, tvars, train_state_station);
             } else if (frombrake) {
@@ -516,6 +521,7 @@ void ctrl3_stop_detected(int tidx, train_ctrl_t *tvars, int32_t posed10, int fro
                 itm_debug3(DBG_CTRL, "stop from brk", tidx, tvars->brake_for_eot, tvars->brake_for_blkwait);
                 if (tvars->brake_for_eot) {
                     _set_speed(tidx, tvars, 0, 1, 0);
+                	itm_debug2(DBG_CTRL, "setdir be", tidx, tvars->_state);
                     _set_dir(tidx, tvars, 0);
                     _set_state(tidx, tvars, train_state_station);
                 } else if (tvars->brake_for_blkwait) {
@@ -526,11 +532,13 @@ void ctrl3_stop_detected(int tidx, train_ctrl_t *tvars, int32_t posed10, int fro
                         _set_state(tidx, tvars, train_state_blkwait);
                     } else {
                         itm_debug1(DBG_ERR|DBG_CTRL, "brk_w_0", tidx);
+                    	itm_debug2(DBG_CTRL, "setdir w", tidx, tvars->_state);
                         _set_dir(tidx, tvars, 0);
                         _set_state(tidx, tvars, train_state_station);
                     }
                 } else if (tvars->brake_for_user) {
                     _set_speed(tidx, tvars, 0, 1, 0);
+                	itm_debug2(DBG_CTRL, "setdir u", tidx, tvars->_state);
                     _set_dir(tidx, tvars, 0);
                     _set_state(tidx, tvars, train_state_station);
                 } else {
@@ -546,6 +554,7 @@ void ctrl3_stop_detected(int tidx, train_ctrl_t *tvars, int32_t posed10, int fro
             if (tvars->_desired_signed_speed) {
                 _set_state(tidx, tvars, train_state_blkwait);
             } else {
+            	itm_debug2(DBG_CTRL, "setdir Z", tidx, tvars->_state);
                 _set_dir(tidx, tvars, 0);
                 _set_state(tidx, tvars, train_state_station);
             }
@@ -555,6 +564,7 @@ void ctrl3_stop_detected(int tidx, train_ctrl_t *tvars, int32_t posed10, int fro
             if (tvars->_desired_signed_speed) {
                 _set_state(tidx, tvars, train_state_end_of_track);
             } else {
+            	itm_debug2(DBG_CTRL, "setdir E", tidx, tvars->_state);
                 _set_dir(tidx, tvars, 0);
                 _set_state(tidx, tvars, train_state_station);
             }
@@ -1061,6 +1071,7 @@ static void _updated_while_running(int tidx, train_ctrl_t *tvars)
     }
     if (rc<0) FatalError("FSMd", "setdir", Error_FSM_ChkNeg1);
     _check_c2(tidx, tvars, &rett);
+	itm_debug2(DBG_CTRL, "setdir U", tidx, tvars->_state);
     _set_dir(tidx, tvars, tvars->_sdir);
     _update_spd_limit(tidx, tvars, tvars->_sdir);
     _set_speed(tidx, tvars, tvars->_desired_signed_speed, 1, rc);

@@ -86,6 +86,7 @@ const char *loco_detect_name(enum loco_detect_locos l)
 	}
 }
 
+#if 0
 
 // TODO FIXME also defined (but different) in railconfig.c, fix me
 #define DEFAULT_TRAIN_CFG(_R,  _kP, _kI, _kD, _P, _S)  { \
@@ -131,3 +132,4 @@ const conf_train_t *detect_loco_conf(enum loco_detect_locos loco)
     }
     return &trcfg[loco];
 }
+#endif

@@ -27,7 +27,7 @@ typedef struct {
 } rettrigs_t;
 
 // -------------------------------------------------
-int32_t ctrl3_getcurpossmm(train_ctrl_t *tvars, const conf_train_t *tconf, int left);
+int32_t ctrl3_getcurpossmm(int tidx, train_ctrl_t *tvars,  int left);
 
 
 int ctrl3_get_next_sblks_(int tidx, train_ctrl_t *tvars,  const conf_train_t *tconf, int left, lsblk_num_t *resp, int nsblk, int16_t *premainlen);
@@ -68,7 +68,7 @@ int ctrl3_update_front_sblks(int tidx, train_ctrl_t *tvars,  const conf_train_t 
 /// @param left 1 if train is going left, 0 if it is going right
 void ctrl3_update_c1changed(int tidx, train_ctrl_t *tvars,  const conf_train_t *tconf, int left);
 
-int32_t ctrl3_getcurpossmm(train_ctrl_t *tvars, const conf_train_t *tconf, int left);
+int32_t ctrl3_getcurpossmm(int tidx, train_ctrl_t *tvars, int left);
 
 int32_t get_lsblk_len_cm_steep(lsblk_num_t lsbk, const conf_train_t *tconf, train_ctrl_t *tvar);
 

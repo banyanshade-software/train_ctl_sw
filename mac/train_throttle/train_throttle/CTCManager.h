@@ -29,7 +29,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void) uitrac_change_tn_reser:(int)tn train:(int)train;
 
-- (void) uitrac_change_blk:(int) blk val:(int)v train:(int)trn sblk:(int)sblk;
+- (void) uitrac_change_blk:(uint8_t) blk val:(uint8_t)v train:(uint8_t)trn sblk:(uint8_t)sblk;
 
 - (void) uitrac_change_pres:(uint32_t) bitfield;
 

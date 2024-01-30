@@ -44,7 +44,10 @@
 #include "spdcxdir.h"
 
 #include "../config/conf_train.h"
+#include "../config/conf_locomotive.h"
 #include "../config/conf_canton.h"
+#include "train2loco.h"
+
 
 // ----------------------------------------------------------------------------------
 static void spdctl_reset(void);
@@ -103,6 +106,10 @@ static volatile int stop_all = 0;
 uint32_t train_tick_last_dt = 0;
 uint32_t train_ntick = 0;
 
+
+// -----------------------------------------------------------------
+
+// -----------------------------------------------------------------
 
 
 // ------------------------------------------------------
@@ -176,12 +183,13 @@ const stat_val_t statval_spdctrl[] = {
 
 
 #define USE_TRAIN(_idx) \
-		_UNUSED_ const conf_train_t *tconf = conf_train_get(_idx); \
-		train_vars_t                *tvars = &trspc_vars[_idx];
+		train_vars_t                *tvars = &trspc_vars[_idx]; \
+        _UNUSED_ const conf_train_t *trconf = conf_train_get(_idx); \
+        _UNUSED_ const conf_locomotive_t *tconf = getloco(_idx);
 
 
 static void train_periodic_control(int numtrain, uint32_t dt);
-static void _set_speed(int tidx, const conf_train_t *cnf, train_vars_t *vars);
+static void _set_speed(int tidx, const conf_locomotive_t *cnf, train_vars_t *vars);
 static void spdctl_reset(void);
 //static void set_c1_c2(int tidx, train_vars_t *tvars, xblkaddr_t c1, int8_t dir1, xblkaddr_t c2, int8_t dir2);
 
@@ -659,7 +667,7 @@ static void train_periodic_control(int numtrain, _UNUSED_ uint32_t dt)
         if ((0)) itm_debug1(DBG_SPDCTL, "unconf tr", numtrain);
         return;
     }
-	if (!tconf->enabled) {
+	if (!trconf->enabled) {
 		//itm_debug1(DBG_SPDCTL, "disabled", numtrain);
 		return;
 	}
@@ -923,10 +931,10 @@ static void set_c1_c2(int tidx, train_vars_t *tvars, xblkaddr_t c1, int8_t dir1,
 #endif
 
 
-static void _set_speed(int tidx, const conf_train_t *cnf, train_vars_t *vars)
+static void _set_speed(int tidx, const conf_locomotive_t *cnf, train_vars_t *vars)
 {
     const conf_canton_t *c1;
-
+    //const conf_locomotive_t
 
 	int16_t sv100 = vars->last_speed;
 

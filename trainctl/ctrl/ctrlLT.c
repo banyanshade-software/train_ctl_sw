@@ -20,6 +20,7 @@
 
 //#include "../railconfig.h"
 #include "../config/conf_train.h"
+#include "../config/conf_locomotive.h"
 
 #include "ctrl.h"
 #include "ctrlLT.h"
@@ -30,6 +31,8 @@
 //#include "cautoP.h"
 #include "c3autoP.h"
 #include "../spdctl/spdcxdir.h"
+#include "train2loco.h"
+
 
 #ifndef BOARD_HAS_CTRL
 #error BOARD_HAS_CTRL not defined, remove this file from build
@@ -61,8 +64,8 @@ static void _sendlow_c1c2_dir(int tidx, train_ctrl_t *tvars);
 // -----------------------------------------------------------------
 
 
-static int32_t pose_convert_from_mm(const conf_train_t *tconf, int32_t mm);
-static int32_t pose_convert_to_mm( const conf_train_t *tconf, int32_t poseval);
+static int32_t pose_convert_from_mm(const conf_locomotive_t *tconf, int32_t mm);
+static int32_t pose_convert_to_mm( const conf_locomotive_t *tconf, int32_t poseval);
 
 // -----------------------------------------------------------------
 
@@ -72,28 +75,30 @@ static void _release_all_blocks(int tidx, train_ctrl_t *tvars);
 
 // -----------------------------------------------------------------
 
+
 static const int disable_steep = 1;
 
-static int32_t get_lsblk_len_cm_steep(lsblk_num_t lsbk, const conf_train_t *tconf, const train_ctrl_t *tvar)
+static int32_t get_lsblk_len_cm_steep(lsblk_num_t lsbk, int tidx,  train_ctrl_t *tvar)
 {
+    const conf_locomotive_t *loco = getloco(tidx);
     int8_t steep = 0;
     int cm = get_lsblk_len_cm(lsbk, &steep);
     itm_debug3(DBG_CTRL|DBG_POSEC, "steep?", steep, tvar->_sdir, lsbk.n);
     if (disable_steep) return cm;
     if (steep*tvar->_sdir > 0) {
-        if (!tconf->slipping) FatalError("NSLP", "no slipping", Error_Slipping);
+        if (!loco->slipping) FatalError("NSLP", "no slipping", Error_Slipping);
         int cmold = cm;
-        cm = cm * tconf->slipping / 100;
+        cm = cm * loco->slipping / 100;
         itm_debug3(DBG_CTRL|DBG_POSEC, "steep!", lsbk.n, cmold, cm);
     }
     return cm;
 }
 
-int32_t ctrl3_getcurpossmm(train_ctrl_t *tvars, const conf_train_t *tconf, int left)
+int32_t ctrl3_getcurpossmm(int tidx, train_ctrl_t *tvars,  int left)
 {
     if (POSE_UNKNOWN == tvars->_curposmm) {
         if (left) return tvars->beginposmm;
-        return tvars->beginposmm + 10*get_lsblk_len_cm_steep(tvars->c1_sblk, tconf, tvars);
+        return tvars->beginposmm + 10*get_lsblk_len_cm_steep(tvars->c1_sblk, tidx, tvars);
     }
     return tvars->_curposmm;
 }
@@ -232,6 +237,7 @@ static const int adjust_minmm = 60; // minimal length for adjustment
 
 static void _adjust_posemm(int tidx, train_ctrl_t *tvars, int32_t expmm, int32_t measmm)
 {
+
     if (!conf_globparam_get(0)->enable_adjust) return;
     //if (!adjust_pose) return;
     
@@ -242,13 +248,15 @@ static void _adjust_posemm(int tidx, train_ctrl_t *tvars, int32_t expmm, int32_t
     if (measmm < 0) {
         measmm = -measmm;
     }
-    const conf_train_t *tconf = conf_train_get(tidx);
+    //const conf_train_t *tconf = conf_train_get(tidx);
+    const conf_locomotive_t *loco = getloco(tidx);
+    
     if (expmm<adjust_minmm) {
         itm_debug2(DBG_POSEADJ, "noadj-s", tidx, expmm);
     	return; // 6cm expected, too short for measurement
     }
     int32_t fact100o = (measmm*100)/expmm;
-    itm_debug3(DBG_POSEADJ, "adj?", tidx, tconf->pose_per_cm, tconf->pose_per_cm*fact100o/100);
+    itm_debug3(DBG_POSEADJ, "adj?", tidx, loco->pose_per_cm, loco->pose_per_cm*fact100o/100);
     if ((1)) {
     	// sanity check, may be removed as boundaries are arbitrary
     	if (fact100o < 40) {
@@ -260,18 +268,18 @@ static void _adjust_posemm(int tidx, train_ctrl_t *tvars, int32_t expmm, int32_t
     tvars->num_pos_adjust++;
     tvars->sumfact100 += fact100o;
     
-    if ((0)) {
+    /*if ((0)) {
         int n = tvars->num_pos_adjust;
         conf_train_t *wconf = (conf_train_t *)tconf; // writable
         int fact100 = fact100o-100;
         if (n<0xFF) tvars->num_pos_adjust++;
         if (n>20) n = 20;
         if (n<2) n=2;
-        int pose = tconf->pose_per_cm;
+        int pose = loco->pose_per_cm;
 
         fact100 = 100+(fact100/n);
         wconf->pose_per_cm = pose*fact100/100;
-    }
+    }*/
 }
 
 static void apply_pose_adjust(int tidx, train_ctrl_t *tvars)
@@ -279,14 +287,16 @@ static void apply_pose_adjust(int tidx, train_ctrl_t *tvars)
     if (!conf_globparam_get(0)->disable_pose_update) return;
 
     if (!tvars->num_pos_adjust) goto done;
-    const conf_train_t *tconf = conf_train_get(tidx);
+    //const conf_train_t *tconf = conf_train_get(tidx);
+    const conf_locomotive_t *loco = getloco(tidx);
+
     int k = 2;
     if (tvars->num_pos_adjust>=3) k=5;
     int f100 = tvars->sumfact100/tvars->num_pos_adjust;
-    int pose = tconf->pose_per_cm;
+    int pose = loco->pose_per_cm;
     int npose = pose*f100/100;
     int apose = (pose*(10-k)+npose*k)/10;
-    conf_train_t *wconf = (conf_train_t *)tconf; // writable
+    conf_locomotive_t *wconf = (conf_locomotive_t *)loco; // writable
     wconf->pose_per_cm = apose;
     itm_debug3(DBG_POSEADJ, "ADJ app", tidx, pose, apose);
 done:
@@ -475,8 +485,10 @@ static int _check_posmm_overflow(int tidx, train_ctrl_t *tvars, int32_t posmm, l
 
 void ctrl3_stop_detected(int tidx, train_ctrl_t *tvars, int32_t posed10, int frombrake)
 {
-    const conf_train_t *tconf = conf_train_get(tidx);
-    int32_t p = pose_convert_to_mm(tconf, posed10*10);
+    //const conf_train_t *tconf = conf_train_get(tidx);
+    const conf_locomotive_t *loco = getloco(tidx);
+    
+    int32_t p = pose_convert_to_mm(loco, posed10*10);
     itm_debug3(DBG_CTRL, "stop det", tidx, tvars->_curposmm, p);
     if ((1)) {
         if (tvars->_sdir>0) {
@@ -681,12 +693,14 @@ void ctrl3_pose_triggered(int tidx, train_ctrl_t *tvars, uint8_t trigsn, xblkadd
         return;
     }
     
-    const conf_train_t *tconf = conf_train_get(tidx);
+    //const conf_train_t *tconf = conf_train_get(tidx);
+    const conf_locomotive_t *loco = getloco(tidx);
+
     int32_t oldpos = tvars->_curposmm;
-    tvars->_curposmm = pose_convert_to_mm(tconf, cposd10*10);
+    tvars->_curposmm = pose_convert_to_mm(loco, cposd10*10);
     if ((1)) {
         int np = spdctl_get_lastpose(tidx, tvars->can1_xaddr); // TODO only ok because same node
-        int nmm = pose_convert_to_mm(tconf, np*10);
+        int nmm = pose_convert_to_mm(loco, np*10);
         if (abs(nmm - tvars->_curposmm)>5) {
         	itm_debug3(DBG_ERR|DBG_CTRL, "pose?", tidx, tvars->_curposmm, nmm);
         }
@@ -904,9 +918,11 @@ void ctrl3_evt_entered_new_lsblk_same_canton(int tidx, train_ctrl_t *tvars, lsbl
 		itm_debug3(DBG_ERR|DBG_CTRL, "nsblk-bs", tidx, tvars->_state, sblk.n);
 		return;
 	}
-    const conf_train_t *tconf = conf_train_get(tidx);
+    //const conf_train_t *tconf = conf_train_get(tidx);
+    const conf_locomotive_t *loco = getloco(tidx);
+
 	int32_t np = spdctl_get_lastpose(tidx, tvars->can1_xaddr);
-    int nmm = pose_convert_to_mm(tconf, np*10);
+    int nmm = pose_convert_to_mm(loco, np*10);
     itm_debug3(DBG_CTRL, "nsblk-sam", tidx, tvars->_curposmm, nmm);
     tvars->_curposmm = nmm;
 
@@ -942,8 +958,9 @@ void ctrl3_evt_entered_new_lsblk_same_canton(int tidx, train_ctrl_t *tvars, lsbl
 void ctrl3_evt_entered_new_lsblk_c2_canton(int tidx, train_ctrl_t *tvars, _UNUSED_ lsblk_num_t sblk)
 {
 	int32_t np = spdctl_get_lastpose(tidx, tvars->can1_xaddr);
-    const conf_train_t *tconf = conf_train_get(tidx);
-    int nmm = pose_convert_to_mm(tconf, np*10);
+    //const conf_train_t *tconf = conf_train_get(tidx);
+    const conf_locomotive_t *loco = getloco(tidx);
+    int nmm = pose_convert_to_mm(loco, np*10);
 	itm_debug3(DBG_CTRL, "nsblk/np", tidx, tvars->_curposmm, nmm);
     tvars->_curposmm = nmm;
 
@@ -1008,7 +1025,7 @@ void ctrl3_evt_entered_c2(int tidx, train_ctrl_t *tvars, uint8_t from_bemf)
     if (tvars->_sdir >= 0) {
         tvars->beginposmm = 0;
     } else {
-        int len = get_lsblk_len_cm_steep(tvars->c1_sblk, conf_train_get(tidx), tvars);
+        int len = get_lsblk_len_cm_steep(tvars->c1_sblk, tidx, tvars);
         tvars->beginposmm = -len*10;
     }
     itm_debug3(DBG_POSEC|DBG_POSEADJ, "beginmm2", tidx, tvars->beginposmm, tvars->_curposmm);
@@ -1184,6 +1201,7 @@ static int _train_check_dir(int tidx, train_ctrl_t *tvars, int sdir, rettrigs_t 
 
 static inline void _set_one_trig(int numtrain, train_ctrl_t *tvars, const conf_train_t *tconf, int num, int8_t dir,  xblkaddr_t canaddr, int32_t pose, uint8_t tag, int *pseq, uint8_t fut, int *pold)
 {
+    const conf_locomotive_t *loco = getloco(numtrain);
     itm_debug3(DBG_CTRL, "set posetr", numtrain, tag, pose);
     if (!tag) {
         itm_debug2(DBG_ERR|DBG_POSEC, "no tag", numtrain, tag);
@@ -1224,7 +1242,7 @@ static inline void _set_one_trig(int numtrain, train_ctrl_t *tvars, const conf_t
         tvars->purgeTrigs = 0;
     }
     m.vb8 = dir;
-    if (tconf->reversed) m.vb8 = -dir;
+    if (loco->reversed) m.vb8 = -dir;
     itm_debug3(DBG_CTRL|DBG_POSEC, "S_TRIG", numtrain, tag, dir);
     mqf_write_from_ctrl(&m);
 }
@@ -1245,6 +1263,8 @@ static inline int trig_cmp(const struct sttrig a, const struct sttrig b, int lef
 static void _apply_trigs(int tidx, train_ctrl_t *tvars, rettrigs_t *rett)
 {
     const conf_train_t *conf = conf_train_get(tidx);
+    const conf_locomotive_t *loco = getloco(tidx);
+
     // sort trigs
     // using insersion sort
     // https://books.google.fr/books?id=kse_7qbWbjsC&pg=PA116&redir_esc=y#v=onepage&q&f=false
@@ -1278,7 +1298,7 @@ static void _apply_trigs(int tidx, train_ctrl_t *tvars, rettrigs_t *rett)
             numset++;
             int old = 0;
             _set_one_trig(tidx, tvars, conf, i, tvars->_sdir, tvars->can1_xaddr ,
-                      pose_convert_from_mm(conf, rett->trigs[i].posmm),
+                      pose_convert_from_mm(loco, rett->trigs[i].posmm),
                       rett->trigs[i].tag, &seq, rett->trigs[i].fut, &old);
             if (old<2) {
                 if (!numnewset) {
@@ -1334,14 +1354,16 @@ static void _set_speed(int tidx, train_ctrl_t *tvars, int signed_speed, int appl
         trace_train_brake(ctrl_tasklet.last_tick, tidx, tvars, 1);
         itm_debug3(DBG_BRAKE, "BRAKE:on", tidx, brakerc, tvars->_state);
         int sdir = tvars->_sdir;
-        const conf_train_t *conf = conf_train_get(tidx);
-        int32_t stopposmm = ctrl3_getcurpossmm(tvars, conf_train_get(tidx), (sdir<0)) + brakerc*sdir;
+        //const conf_train_t *conf = conf_train_get(tidx);
+        const conf_locomotive_t *loco = getloco(tidx);
+
+        int32_t stopposmm = ctrl3_getcurpossmm(tidx, tvars, (sdir<0)) + brakerc*sdir;
         tvars->brake = 1;
         msg_64_t m = {0};
         m.from = MA1_CTRL(tidx);
         m.to = MA1_SPDCTL(tidx);
         m.cmd = CMD_BRAKE;
-        m.v32 = pose_convert_from_mm(conf, stopposmm)/10;
+        m.v32 = pose_convert_from_mm(loco, stopposmm)/10;
         m.subc = 1;
         mqf_write_from_ctrl(&m);
     } else  if (tvars->brake) {
@@ -1372,7 +1394,7 @@ static void _apply_speed(int tidx, train_ctrl_t *tvars)
 
     // apply brake
 #if 0
-    int32_t pos = ctrl3_getcurpossmm(tvars, conf_train_get(tidx), (tvars->_sdir<0));
+    int32_t pos = ctrl3_getcurpossmm(tidx, tvars, (tvars->_sdir<0));
     if (tvars->brake) {
         int dist = abs(pos - tvars->stopposmm);
         int maxspd = brake_maxspd(dist);
@@ -1417,6 +1439,7 @@ static void _apply_speed(int tidx, train_ctrl_t *tvars)
 
 static void _sendlow_c1c2_dir(int tidx, train_ctrl_t *tvars)
 {
+
     if (!tvars->c1c2dir_changed) {
         FatalError("FSMc", "c1c2dirchanged 0", Error_FSM_C1C2Zero);
         return;
@@ -1430,8 +1453,10 @@ static void _sendlow_c1c2_dir(int tidx, train_ctrl_t *tvars)
     
     int dir = tvars->_sdir;
     
-    const conf_train_t *tconf = conf_train_get(tidx);
-    if (tconf->reversed) dir = -dir;
+    //const conf_train_t *tconf = conf_train_get(tidx);
+    const conf_locomotive_t *loco = getloco(tidx);
+
+    if (loco->reversed) dir = -dir;
     
     uint8_t dirbits = __spdcx_bit(0, dir);
     dirbits |= __spdcx_bit(1, dir);
@@ -1446,6 +1471,8 @@ static void _sendlow_c1c2_dir(int tidx, train_ctrl_t *tvars)
 
     mqf_write_from_ctrl(&m);
 }
+
+
 static void bh(void)
 {
 }
@@ -1677,29 +1704,28 @@ static uint8_t brake_maxspd(int distmm)
     return (distmm>100) ? 100:distmm;
 }
 */
-static int32_t pose_convert_from_mm(const conf_train_t *tconf, int32_t mm);
-static int32_t pose_convert_to_mm( const conf_train_t *tconf, int32_t poseval);
+static int32_t pose_convert_from_mm(const conf_locomotive_t *tconf, int32_t mm);
+static int32_t pose_convert_to_mm( const conf_locomotive_t *tconf, int32_t poseval);
 
 // ---------------------------------------------
 
 
-static int32_t pose_convert_to_mm( const conf_train_t *tconf, int32_t poseval)
+static int32_t pose_convert_to_mm( const conf_locomotive_t *loco, int32_t poseval)
 {
-   
-    int32_t mm = poseval*10/tconf->pose_per_cm;
-    if (tconf->reversed) {
+    int32_t mm = poseval*10/loco->pose_per_cm;
+    if (loco->reversed) {
         //itm_debug2(DBG_ERR, "bh", poseval, mm);
         mm = -mm;
     }
     return mm;
 }
 
-static int32_t pose_convert_from_mm(const conf_train_t *tconf, int32_t mm)
+static int32_t pose_convert_from_mm(const conf_locomotive_t *loco, int32_t mm)
 {
-    if (tconf->reversed) {
+    if (loco->reversed) {
         mm = -mm;
     }
-    int32_t pv = mm * tconf->pose_per_cm / 10;
+    int32_t pv = mm * loco->pose_per_cm / 10;
     return pv;
 }
 

@@ -10,6 +10,7 @@
 #define ctrlLT_h
 
 #include "../config/conf_train.h"
+#include "../config/conf_locomotive.h"
 //#include "ctrlP.h"
 
 #include "trig_tags.h"
@@ -57,6 +58,7 @@ typedef struct {
     xblkaddr_t  res_c2_future;
     xblkaddr_t freecanton;
     lsblk_num_t sblkfreed;
+    
     uint8_t c1c2dir_changed:1;
     //uint8_t measure_pose_percm:1;
     uint8_t c1c2:1;
@@ -94,7 +96,6 @@ typedef struct {
 
 
 extern int ignore_ina_pres(void);
-
 
 // ----------------------------------------------------------------
 
@@ -174,7 +175,7 @@ void ctrl3_set_mode(int tidx, train_ctrl_t *tvar, train_mode_t mode);
 extern int ignore_ina_pres(void);
 extern int ignore_bemf_pres(void);
 
-int32_t ctrl3_getcurpossmm(train_ctrl_t *tvars, const conf_train_t *tconf, int left);
+int32_t ctrl3_getcurpossmm(int tidx, train_ctrl_t *tvars,  int left);
 
 // called by c3auto (thru ctrl_set_brake_on_back)
 void ctrl3_set_brake_on_back(int tidx, train_ctrl_t *tvars, lsblk_num_t ns);

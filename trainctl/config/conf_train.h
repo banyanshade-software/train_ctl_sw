@@ -25,32 +25,10 @@ typedef enum train_volt_policy /*: uint8_t*/ {
 
 
 
-typedef enum train_volt_policy /*: uint8_t*/ {
-    vpolicy_normal = 0,
-    vpolicy_pure_pwm,
-    vpolicy_pure_volt,
-} train_volt_policy_t;
-
-#include "conf_pidctl.h"
-#include "conf_inertia.h"
-
-
 typedef struct conf_train {
-    struct conf_pidctl pidctl;
-    struct conf_inertia inertia;
-    train_volt_policy_t volt_policy;
+    uint16_t locotype;
     uint8_t enabled:1;
-    uint8_t enable_inertia:2;
-    uint8_t enable_pid:1;
-    uint8_t fix_bemf:1;
-    uint8_t en_spd2pow:1;
-    uint8_t reversed:1;
-    uint8_t min_power;
     uint8_t notify_pose:1;
-    uint8_t bemfIIR;
-    uint8_t postIIR;
-    uint8_t slipping;
-    uint16_t pose_per_cm;
     uint8_t trainlen_left_cm;
     uint8_t trainlen_right_cm;
 } conf_train_t;

@@ -1,104 +1,19 @@
 /*
 
-original structure :
-
-typedef struct train_config {
-	pidctl_config_t pidcnf;
-	inertia_config_t inertiacnf;
-	train_volt_policy_t volt_policy;
-
-	uint8_t enable_inertia; // 0=none 1=before PID 2=after PID
-
-    // not as bitfield due to param.h
-	uint8_t enabled;
-	uint8_t enable_pid;
-	uint8_t notify_speed;
-	uint8_t notify_pose;
-	uint8_t bemfIIR;
-    uint8_t postIIR;
-	uint8_t fix_bemf;
-	uint8_t en_spd2pow;
-	uint8_t min_power;
-
-	uint8_t reversed; // if train motor is mounted in the wrong way
-    uint8_t slipping;
-	uint16_t pose_per_cm;
-    uint8_t trainlen_left;
-    uint8_t trainlen_right;
-} train_config_t;
 
 */
 
 
 
-subconfig pidctl {
-    user int32_t kP 
-        = (default) 500;
-	user int32_t kI
-        = (default) 100;
-	user int32_t kD
-        = (default) 500; 
-};
-
-subconfig inertia {
-    user int16_t dec
-        = (default) 120;
-    user int16_t acc
-        = (default) 120;
-};
-
-
-
-attrib train h_code {
-
-typedef enum train_volt_policy /*: uint8_t*/ {
-    vpolicy_normal = 0,
-    vpolicy_pure_pwm,
-    vpolicy_pure_volt,
-} train_volt_policy_t;
-
-}
-
-
 config train {
-    sub pidctl;
-    sub inertia;
-    user train_volt_policy_t volt_policy
-        = (default) vpolicy_normal;
-
+    user uint16_t locotype = (default)0;
     user uint8_t enabled:1
         = (all:0) 1
         = (all:1) 1
         = (default) 0;
-    user uint8_t enable_inertia:2
-        = (default) 0;
-    user uint8_t enable_pid:1
-        = (default) 1;
-    const uint8_t fix_bemf:1
-        = (default) 0;
-    const uint8_t en_spd2pow:1
-        = (default) 0;
-
-    user uint8_t reversed:1
-        = (default) 0;
-
-    const uint8_t min_power
-        = (default) 0;
     
 	const uint8_t notify_pose:1
         = (default) 0;
-
-    user uint8_t bemfIIR
-        = (default) 0;
-    user uint8_t postIIR
-        = (default) 0;
-
-    user uint8_t slipping
-        = (default) 120;
-    user uint16_t pose_per_cm
-        = (all:0) 450
-        = (all:0) 310
-        = (default) 500;
 
     user uint8_t trainlen_left_cm
         = (default) 10

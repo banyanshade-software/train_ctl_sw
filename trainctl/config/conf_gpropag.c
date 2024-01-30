@@ -4,6 +4,8 @@
 
 #include "propag.h"
 
+#include "conf_locomotive.h"
+#include "conf_locomotive.propag.h"
 #include "conf_servo.h"
 #include "conf_servo.propag.h"
 #include "conf_utestloc.h"
@@ -81,6 +83,8 @@ void *conf_local_ptr(unsigned int lconfnum)
 {
     switch (lconfnum) {
        default: return NULL;
+    case conf_lnum_locomotive:
+       return conf_locomotive_ptr();
     case conf_lnum_utestloc:
        return conf_utestloc_ptr();
     case conf_lnum_globparam:
@@ -102,6 +106,8 @@ unsigned int conf_local_size(unsigned int lconfnum)
 {
     switch (lconfnum) {
        default: return 0;
+    case conf_lnum_locomotive:
+       return sizeof(conf_locomotive_t)*conf_locomotive_num_entries();
     case conf_lnum_utestloc:
        return sizeof(conf_utestloc_t)*conf_utestloc_num_entries();
     case conf_lnum_globparam:
@@ -123,6 +129,8 @@ int32_t conf_local_get(unsigned int lconfnum, unsigned int fieldnum, unsigned in
 {
     switch (lconfnum) {
        default: return 0;
+    case conf_lnum_locomotive:
+       return conf_locomotive_local_get(fieldnum, instnum);
     case conf_lnum_utestloc:
        return conf_utestloc_local_get(fieldnum, instnum);
     case conf_lnum_globparam:
@@ -144,6 +152,9 @@ void conf_local_set(unsigned int lconfnum, unsigned int fieldnum, unsigned int i
 {
     switch (lconfnum) {
        default: break;
+    case conf_lnum_locomotive:
+       conf_locomotive_local_set(fieldnum, instnum, v);
+        break;
     case conf_lnum_utestloc:
        conf_utestloc_local_set(fieldnum, instnum, v);
         break;

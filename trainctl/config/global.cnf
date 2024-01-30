@@ -37,6 +37,8 @@ attrib led store = normal
 attrib led stnum = 4
 attrib servo store = normal
 attrib servo stnum = 5
+attrib locomotive store = local
+attrib locomotive stnum = 6
 
 attrib globparam store = local
 attrib globparam stnum = 10

@@ -22,6 +22,8 @@
 
     // this goes only in config_train.c
 
+    // this goes only in config_train.c
+
 
 #ifdef TRN_BOARD_G4SLV1
 

@@ -8,7 +8,7 @@
 #ifndef CTRL_DETECT_LOCO_H_
 #define CTRL_DETECT_LOCO_H_
 
-
+#error obsolete
 
 #define DETECT_NUM_FREQS 3
 

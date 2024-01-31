@@ -161,6 +161,7 @@
 		1BBA76CC2B69966A00489FEB /* train2loco.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BBA76CB2B69966A00489FEB /* train2loco.c */; };
 		1BBA76D62B699FBE00489FEB /* conf_locomotive.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BBA76D42B699FBD00489FEB /* conf_locomotive.c */; };
 		1BBA76DE2B699FFD00489FEB /* conf_locomotive.fields.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BBA76DD2B699FFD00489FEB /* conf_locomotive.fields.c */; };
+		1BBA76E82B6A2A2A00489FEB /* locomotives.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BBA76E72B6A2A2A00489FEB /* locomotives.c */; };
 		1BC90306272092EC0087CEA7 /* led.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BC90305272092EC0087CEA7 /* led.c */; };
 		1BC903172720AD730087CEA7 /* LedTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC903162720AD730087CEA7 /* LedTest.m */; };
 		1BC903182720B1920087CEA7 /* led.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BC90305272092EC0087CEA7 /* led.c */; };
@@ -420,6 +421,9 @@
 		1BBA76D42B699FBD00489FEB /* conf_locomotive.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = conf_locomotive.c; sourceTree = "<group>"; };
 		1BBA76D52B699FBE00489FEB /* conf_locomotive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = conf_locomotive.h; sourceTree = "<group>"; };
 		1BBA76DD2B699FFD00489FEB /* conf_locomotive.fields.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = conf_locomotive.fields.c; sourceTree = "<group>"; };
+		1BBA76E52B6A21C600489FEB /* train_detectors_params.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = train_detectors_params.h; sourceTree = "<group>"; };
+		1BBA76E62B6A2A2A00489FEB /* locomotives.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = locomotives.h; sourceTree = "<group>"; };
+		1BBA76E72B6A2A2A00489FEB /* locomotives.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = locomotives.c; sourceTree = "<group>"; };
 		1BC90304272092EC0087CEA7 /* led.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = led.h; sourceTree = "<group>"; };
 		1BC90305272092EC0087CEA7 /* led.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = led.c; sourceTree = "<group>"; };
 		1BC9030C2720AD250087CEA7 /* trainctlTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = trainctlTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -545,6 +549,7 @@
 		1B1BBD412A785C2400D7A254 /* ctrl_detect */ = {
 			isa = PBXGroup;
 			children = (
+				1BBA76E52B6A21C600489FEB /* train_detectors_params.h */,
 				1B1BBD422A785C2400D7A254 /* train_detector_freqresp.h */,
 				1B1BBD432A785C2400D7A254 /* train_detectors.c */,
 				1B1BBD442A785C2400D7A254 /* detect.h */,
@@ -775,6 +780,8 @@
 				1BAC041129527121005DC958 /* TestLTFsm.m */,
 				1B69247529BD3C5C00ED150F /* c3autoP.h */,
 				1B69247629BD3C5C00ED150F /* c3autoP.c */,
+				1BBA76E62B6A2A2A00489FEB /* locomotives.h */,
+				1BBA76E72B6A2A2A00489FEB /* locomotives.c */,
 			);
 			path = ctrl;
 			sourceTree = "<group>";
@@ -1288,6 +1295,7 @@
 				1B138EE62811C0A500DC181B /* conf_utest.c in Sources */,
 				1B43530028B22C77008811C1 /* msgrecord.c in Sources */,
 				1B455A24280F671000F09E33 /* conf_topology.fields.c in Sources */,
+				1BBA76E82B6A2A2A00489FEB /* locomotives.c in Sources */,
 				1B455A22280F671000F09E33 /* conf_turnout.fields.c in Sources */,
 				1BD93C732546FF44006C4D70 /* train.c in Sources */,
 				1BD93C6C2546FF44006C4D70 /* param.c in Sources */,

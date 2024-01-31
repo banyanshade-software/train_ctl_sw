@@ -40,6 +40,7 @@
 #include "../../statval.h"
 
 #include "../../ctrl_detect/train_detectors_params.h"
+#include "../../ctrl/locomotives.h"
 
 
 #ifndef BOARD_HAS_INA3221

@@ -11,7 +11,7 @@
 #include "../config/conf_train.h"
 #include "detect_loco.h"
 
-
+#error obsolete
 
 
 #define NUM_KNOWN 5

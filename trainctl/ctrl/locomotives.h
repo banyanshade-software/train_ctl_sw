@@ -19,6 +19,6 @@ typedef enum {
     NumKnownLoco            // last in enum
 }  __attribute((packed)) locomotive_t;
 
-const char *locomotiveNames[NumKnownLoco];
+extern const char *locomotiveNames[NumKnownLoco];
 
 #endif /* locomotives_h */

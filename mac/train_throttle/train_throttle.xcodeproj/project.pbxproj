@@ -100,7 +100,6 @@
 		1B67360F2531E4450063EA9A /* SimTrain.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B67360E2531E4450063EA9A /* SimTrain.m */; };
 		1B69246829BCBFEA00ED150F /* TestLongTrainSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B7B5E192971318000955045 /* TestLongTrainSupport.m */; };
 		1B69247729BD3C5C00ED150F /* c3autoP.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B69247629BD3C5C00ED150F /* c3autoP.c */; };
-		1B693C4427D9CFEA0063D8B6 /* detect_loco.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B693C4227D9CFEA0063D8B6 /* detect_loco.c */; };
 		1B6C98B92A6F4C71002FB6D0 /* conf_canton.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B46F7F9280752D500BAD6E8 /* conf_canton.c */; };
 		1B6C98CC2A6F9D49002FB6D0 /* TopologyTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B4B70A12729194F00FBDB52 /* TopologyTest.m */; };
 		1B702E6429CA4AFB00AEEC81 /* TestLongTrainLeft1.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B702E5C29CA4AEA00AEEC81 /* TestLongTrainLeft1.m */; };
@@ -162,6 +161,9 @@
 		1BBA76D62B699FBE00489FEB /* conf_locomotive.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BBA76D42B699FBD00489FEB /* conf_locomotive.c */; };
 		1BBA76DE2B699FFD00489FEB /* conf_locomotive.fields.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BBA76DD2B699FFD00489FEB /* conf_locomotive.fields.c */; };
 		1BBA76E82B6A2A2A00489FEB /* locomotives.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BBA76E72B6A2A2A00489FEB /* locomotives.c */; };
+		1BBA76F72B6AB56400489FEB /* ParamTableController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BBA76F62B6AB56400489FEB /* ParamTableController.m */; };
+		1BBA77002B6AC2FF00489FEB /* TrainParamController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BBA76FF2B6AC2FF00489FEB /* TrainParamController.m */; };
+		1BBA77092B6AC47D00489FEB /* LocoParamController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BBA77082B6AC47D00489FEB /* LocoParamController.m */; };
 		1BC90306272092EC0087CEA7 /* led.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BC90305272092EC0087CEA7 /* led.c */; };
 		1BC903172720AD730087CEA7 /* LedTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC903162720AD730087CEA7 /* LedTest.m */; };
 		1BC903182720B1920087CEA7 /* led.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BC90305272092EC0087CEA7 /* led.c */; };
@@ -341,8 +343,6 @@
 		1B67360E2531E4450063EA9A /* SimTrain.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SimTrain.m; sourceTree = "<group>"; };
 		1B69247529BD3C5C00ED150F /* c3autoP.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = c3autoP.h; sourceTree = "<group>"; };
 		1B69247629BD3C5C00ED150F /* c3autoP.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = c3autoP.c; sourceTree = "<group>"; };
-		1B693C4227D9CFEA0063D8B6 /* detect_loco.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = detect_loco.c; sourceTree = "<group>"; };
-		1B693C4327D9CFEA0063D8B6 /* detect_loco.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = detect_loco.h; sourceTree = "<group>"; };
 		1B702E5C29CA4AEA00AEEC81 /* TestLongTrainLeft1.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TestLongTrainLeft1.m; sourceTree = "<group>"; };
 		1B702E7129CAD7AB00AEEC81 /* TestLongTrainLeft2.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TestLongTrainLeft2.m; sourceTree = "<group>"; };
 		1B7668892925855C00E2CE96 /* ToolWindow.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ToolWindow.h; sourceTree = "<group>"; };
@@ -424,6 +424,12 @@
 		1BBA76E52B6A21C600489FEB /* train_detectors_params.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = train_detectors_params.h; sourceTree = "<group>"; };
 		1BBA76E62B6A2A2A00489FEB /* locomotives.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = locomotives.h; sourceTree = "<group>"; };
 		1BBA76E72B6A2A2A00489FEB /* locomotives.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = locomotives.c; sourceTree = "<group>"; };
+		1BBA76F52B6AB56400489FEB /* ParamTableController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ParamTableController.h; sourceTree = "<group>"; };
+		1BBA76F62B6AB56400489FEB /* ParamTableController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ParamTableController.m; sourceTree = "<group>"; };
+		1BBA76FE2B6AC2FF00489FEB /* TrainParamController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TrainParamController.h; sourceTree = "<group>"; };
+		1BBA76FF2B6AC2FF00489FEB /* TrainParamController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TrainParamController.m; sourceTree = "<group>"; };
+		1BBA77072B6AC47D00489FEB /* LocoParamController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LocoParamController.h; sourceTree = "<group>"; };
+		1BBA77082B6AC47D00489FEB /* LocoParamController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LocoParamController.m; sourceTree = "<group>"; };
 		1BC90304272092EC0087CEA7 /* led.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = led.h; sourceTree = "<group>"; };
 		1BC90305272092EC0087CEA7 /* led.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = led.c; sourceTree = "<group>"; };
 		1BC9030C2720AD250087CEA7 /* trainctlTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = trainctlTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -746,8 +752,6 @@
 		1B92EA2D2631A0BA00558716 /* ctrl */ = {
 			isa = PBXGroup;
 			children = (
-				1B693C4227D9CFEA0063D8B6 /* detect_loco.c */,
-				1B693C4327D9CFEA0063D8B6 /* detect_loco.h */,
 				1B7B5E07296E965900955045 /* trace_train.h */,
 				1B7B5E08296E965900955045 /* trace_train.c */,
 				1B7B5E102970A50800955045 /* ctc_periodic_refresh.h */,
@@ -930,6 +934,12 @@
 				1BED2A9F25173D1F0080FC97 /* main.m */,
 				1BED2AA125173D1F0080FC97 /* train_throttle.entitlements */,
 				1BED2AA7251804310080FC97 /* stop.png */,
+				1BBA76F52B6AB56400489FEB /* ParamTableController.h */,
+				1BBA76F62B6AB56400489FEB /* ParamTableController.m */,
+				1BBA76FE2B6AC2FF00489FEB /* TrainParamController.h */,
+				1BBA76FF2B6AC2FF00489FEB /* TrainParamController.m */,
+				1BBA77072B6AC47D00489FEB /* LocoParamController.h */,
+				1BBA77082B6AC47D00489FEB /* LocoParamController.m */,
 			);
 			path = train_throttle;
 			sourceTree = "<group>";
@@ -1334,6 +1344,7 @@
 				1BFB8A702922F13F00B19C67 /* turnouts.c in Sources */,
 				1BEB93CA2729F10D00508C17 /* occupency.c in Sources */,
 				1B18114F26BD5BA30008F21C /* uitrack.c in Sources */,
+				1BBA76F72B6AB56400489FEB /* ParamTableController.m in Sources */,
 				1B46F806280752D600BAD6E8 /* conf_train.c in Sources */,
 				1BBA76CC2B69966A00489FEB /* train2loco.c in Sources */,
 				1B46F805280752D600BAD6E8 /* conf_topology.c in Sources */,
@@ -1341,6 +1352,7 @@
 				1B455A25280F671000F09E33 /* conf_train.fields.c in Sources */,
 				1B138EF828134CA000DC181B /* conf_utestloc.c in Sources */,
 				1B455A20280F671000F09E33 /* conf_canton.fields.c in Sources */,
+				1BBA77002B6AC2FF00489FEB /* TrainParamController.m in Sources */,
 				1B1BBD492A785C2400D7A254 /* train_detectors.c in Sources */,
 				1B7B5E122970A50800955045 /* ctc_periodic_refresh.c in Sources */,
 				1B238C8A285E54F6000DA9B8 /* tasklet.c in Sources */,
@@ -1349,7 +1361,7 @@
 				1B3657BB275BED540042491A /* CTCManager.m in Sources */,
 				1BF42FD62914F525004EC55B /* servo.c in Sources */,
 				1B46F814280C288E00BAD6E8 /* simu_flash.c in Sources */,
-				1B693C4427D9CFEA0063D8B6 /* detect_loco.c in Sources */,
+				1BBA77092B6AC47D00489FEB /* LocoParamController.m in Sources */,
 				1B4F7DCE2916AEC4002140C9 /* conf_servo.fields.c in Sources */,
 				1B4F7DC92916AEB4002140C9 /* conf_servo.c in Sources */,
 				1B7A2A01262D5948004E0481 /* canton_bemf.c in Sources */,

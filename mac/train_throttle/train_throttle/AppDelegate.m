@@ -26,6 +26,8 @@
 
 #include "conf_train.h"
 #include "conf_train.propag.h"
+#include "conf_locomotive.h"
+#include "conf_locomotive.propag.h"
 #include "conf_canton.h"
 #include "conf_canton.propag.h"
 #include "conf_servo.h"
@@ -601,13 +603,14 @@ typedef void (^respblk_t)(void);
 
     int loc = 0;
     switch (cpsel[0]) {
+        case 'L':
+            loc = 1;
+            confnum = conf_lnum_locomotive;
+            fieldnum = conf_locomotive_fieldnum(cpn);
+            break;
         case 'T':
             loc = 1;
             confnum = conf_lnum_train;
-            /*if (!strcmp(cpn, "ki")) cpn = "kI";
-             if (!strcmp(cpn, "kp")) cpn = "kP";
-             if (!strcmp(cpn, "kd")) cpn = "kD";
-             if (!strcmp(cpn, "en_pid")) cpn = "enable_pid";*/
             fieldnum = conf_train_fieldnum(cpn);
             break;
         case 'G':
@@ -696,6 +699,7 @@ typedef void (^respblk_t)(void);
 int conf_canton_fieldnum(const char *str);
 int conf_turnout_fieldnum(const char *str);
 int conf_train_fieldnum(const char *str);
+int conf_locomotive_fieldnum(const char *str);
 int conf_globparam_fieldnum(const char *str);
 int conf_boards_fieldnum(const char *str);
 int conf_servo_fieldnum(const char *str);
@@ -749,11 +753,12 @@ int conf_servo_fieldnum(const char *str);
             case 'T':
                 loc = 1;
                 confnum = conf_lnum_train;
-                /*if (!strcmp(cpn, "ki")) cpn = "kI";
-                if (!strcmp(cpn, "kp")) cpn = "kP";
-                if (!strcmp(cpn, "kd")) cpn = "kD";
-                if (!strcmp(cpn, "en_pid")) cpn = "enable_pid";*/
                 fieldnum = conf_train_fieldnum(cpn);
+                break;
+            case 'L':
+                loc = 1;
+                confnum = conf_lnum_locomotive;
+                fieldnum = conf_locomotive_fieldnum(cpn);
                 break;
             case 'G':
                 loc = 1;
@@ -795,56 +800,6 @@ int conf_servo_fieldnum(const char *str);
         m.cmd = loc ? CMD_PARAM_LUSER_GET : CMD_PARAM_USER_GET;
         m.val40 = v40;
         [self sendMsg64:m];
-        
-#if 0
-        
-        NSUInteger nl = strlen(cpn);
-        
-        
-        if (nl+4+1+1>=sizeof(gpfrm)) {
-            return;
-        }
-        gpfrm[2]=cpsel[0];
-        uint8_t n = cpsel[1];
-        if (n>='0') n -= '0';
-        gpfrm[3] = n;
-        gpfrm[4] = 'p';
-        memcpy(gpfrm+5, cpn, nl+1);
-        gpfrm[5+nl+1] = '|';
-        NSLog(@"N=%d get param %c%c '%s'\n",  n, cpsel[0], cpsel[1], cpn);
-    
-        if ((0) && (0==(numparam%5))) {
-            //sleep(1);
-            usleep(800);
-        }
-        [self sendFrame:gpfrm len:(int)(5+nl+2) blen:sizeof(gpfrm) then:^{
-            // handle response
-            self->nparamresp++;
-            NSLog(@"param %d resp %d", self->nparam, self->nparamresp);
-            if (self->nparamresp==self->nparam) {
-                if (self.linkok<LINK_OK) self.linkok = LINK_OK;
-            }
-            if (self->frm.retcode) {
-                NSLog(@"error getting param rc=%d", self->frm.retcode);
-                return;
-            }
-            if (self->frm.pidx != 4*sizeof(int32_t)) {
-                NSLog(@"bad len %d", self->frm.pidx);
-                if (self->nparamresp==self->nparam) self.linkok = LINK_OK;
-                return ;
-            }
-            NSAssert(self->frm.pidx == 4*sizeof(int32_t), @"wrong resp len");
-            NSLog(@"param val");
-            int32_t val, min, max, def;
-            memcpy(&val, self->frm.param + 0*sizeof(int32_t), sizeof(int32_t));
-            memcpy(&def, self->frm.param + 1*sizeof(int32_t), sizeof(int32_t));
-            memcpy(&min, self->frm.param + 2*sizeof(int32_t), sizeof(int32_t));
-            memcpy(&max, self->frm.param + 3*sizeof(int32_t), sizeof(int32_t));
-            [self setParameter:c value:val def:def min:min max:max enable:YES];
-            NSLog(@"val %d def %d min %d max %d\n", val, def ,min, max);
-        }];
-#endif
-        //NSLog(@"hop");
     }];
 }
 
@@ -864,6 +819,7 @@ int conf_servo_fieldnum(const char *str);
     
     // proto not generated
     const char *conf_train_fieldname(int f);
+    const char *conf_locomotive_fieldname(int f);
     const char *conf_globparam_fieldname(int f);
     const char *conf_boards_fieldname(int f);
     const char *conf_canton_fieldname(int f);
@@ -876,6 +832,10 @@ int conf_servo_fieldnum(const char *str);
     
     if (loc) {
         switch (fnum) {
+            case conf_lnum_locomotive:
+                t = 'L';
+                fld = conf_locomotive_fieldname(field);
+                break;
             case conf_lnum_train:
                 t = 'T';
                 fld = conf_train_fieldname(field);

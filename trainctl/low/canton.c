@@ -206,7 +206,7 @@ static void handle_canton_cmd(int cidx, msg_64_t *m, int testmode)
 		canton_set_volt(cidx, cconf, cvars,  7);
 		break;
 	case CMD_SETVPWM:
-		itm_debug3(DBG_LOWCTRL, "SETVPWM", cidx, m->v1u, m->v2);
+		itm_debug3(DBG_LOWCTRL|DBG_CTRL, "SETVPWM", cidx, m->vb1, m->vb0);
         if (testmode && m->vb2) {
             bemf_test_pose(cidx);
         }
@@ -215,7 +215,7 @@ static void handle_canton_cmd(int cidx, msg_64_t *m, int testmode)
 		canton_set_volt(cidx, cconf, cvars,  m->vb0);
 		break;
 	default:
-		itm_debug1(DBG_LOWCTRL, "not handled msg", m->cmd);
+		itm_debug3(DBG_LOWCTRL, "l msg?", m->cmd, m->from, m->to);
 		break;
 	}
 }
@@ -308,7 +308,7 @@ static void handle_msg_cantontest(msg_64_t *m)
 	} else if (MA0_IS_CANTON(m->to)) {
 		cidx = m->subc; // MA_GET_CANTON_NUM(m->to);
 	} else {
-		itm_debug1(DBG_LOWCTRL, "not handled msg", m->cmd);
+		itm_debug3(DBG_LOWCTRL, "lt msg?", m->cmd, m->from, m->to);
 		return;
 	}
     if (CMD_SETVPWM == m->cmd) {

@@ -39,10 +39,10 @@ static const int margin_c2free_len_mm = 100;
 #else
 
 static const int brake_len_mm = 180;
-static const int margin_stop_len_mm = 50;
+static const int margin_stop_len_mm = 100;
 static const int margin_c2res_len_mm = 200;
 static const int margin_c2pow_len_mm = 300;
-static const int margin_c2free_len_mm = 100;
+static const int margin_c2free_len_mm = 50;
 
 #endif
 
@@ -332,14 +332,15 @@ int _lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int
                     needfreeback=0;
                     if (ns.n == tvars->brake_on_free.n) {
                         // BRKFREE
-                        int trgb = trg + brake_len_mm;
+                    	static const int brkfreeoffset = -50;
+                        int trgb = trg + brake_len_mm +brkfreeoffset; // + 20;
                         if ((trgb>=0) && (trgb<=posloco)) {
                             // set brake trigger
                             itm_debug2(DBG_CTRLLT, "l4gt-baf", tidx, trgb);
                             _add_trig(tvars, left, c1len, rett, tag_brake_user, trgb, 0xFF);
                         } else if (trgb>posloco) {
                             // brake now
-                            rc = brake_len_mm+trg-posloco;
+                            rc = brake_len_mm+trg-posloco +brkfreeoffset;
                             itm_debug2(DBG_CTRLLT, "l4gt-bafrc", tidx, rc);
                             tvars->brake_for_user = 1;
                         }

@@ -724,6 +724,81 @@ int conf_servo_fieldnum(const char *str);
     nextParamGet = np1;
     [self _getParams];
 }
+
+- (BOOL) queryParam:(NSString *)s
+{
+    
+    NSArray *pa = [self splitParamName:s];
+    if ([pa count] != 3) {
+        return NO;
+    }
+    NSString *psel = [pa objectAtIndex:1];
+    NSString *pn = [pa objectAtIndex:2];
+    if ([psel length] != 2) {
+        return NO;
+    }
+    const char *cpsel = [psel cStringUsingEncoding:NSUTF8StringEncoding];
+    const char *cpn = [pn cStringUsingEncoding:NSUTF8StringEncoding];
+    
+    int confnum = -1;
+    int instnum = cpsel[1]-'0';
+    int fieldnum = -1;
+    int boardnum = 0;
+    
+    //TODO handle board num
+    int loc = 0;
+    switch (cpsel[0]) {
+        case 'T':
+            loc = 1;
+            confnum = conf_lnum_train;
+            fieldnum = conf_train_fieldnum(cpn);
+            break;
+        case 'L':
+            loc = 1;
+            confnum = conf_lnum_locomotive;
+            fieldnum = conf_locomotive_fieldnum(cpn);
+            break;
+        case 'G':
+            loc = 1;
+            confnum = conf_lnum_globparam;
+            fieldnum = conf_globparam_fieldnum(cpn);
+            break;
+        case 't':
+            confnum = conf_pnum_turnout;
+            fieldnum = conf_turnout_fieldnum(cpn);
+            break;
+        case 'C':
+            confnum = conf_pnum_canton;
+            fieldnum = conf_canton_fieldnum(cpn);
+            break;
+        case 'B': // 'B'
+            loc = 1;
+            confnum = conf_lnum_boards;
+            fieldnum = conf_boards_fieldnum(cpn);
+            break;
+        case 'S':
+            confnum = conf_pnum_servo;
+            fieldnum = conf_servo_fieldnum(cpn);
+            boardnum = 1; //XXX
+            break;
+        default:
+            NSLog(@"bad param def");
+            break;
+    }
+    if ((confnum<0)||(fieldnum<0)) {
+        return NO;
+    }
+    
+    uint64_t v40;
+    oam_encode_val40(&v40, confnum, boardnum, instnum, fieldnum, 0);
+    msg_64_t m = {0};
+    m.to = MA0_OAM(0);
+    m.from = MA3_UI_GEN;
+    m.cmd = loc ? CMD_PARAM_LUSER_GET : CMD_PARAM_USER_GET;
+    m.val40 = v40;
+    [self sendMsg64:m];
+    return  YES;
+}
 - (void) _getParams
 {
     int np1 = nextParamGet;
@@ -740,78 +815,11 @@ int conf_servo_fieldnum(const char *str);
         
         NSString *s = c.identifier;
         self->parctl[s] = c;
-        //if (![s isKindOfClass:[NSString class]]) return NO;
-        //if (![s hasPrefix:@"par_"]) return NO;
-        NSArray *pa = [self splitParamName:s];
-        if ([pa count] != 3) {
-            return;
-        }
-        NSString *psel = [pa objectAtIndex:1];
-        NSString *pn = [pa objectAtIndex:2];
-        if ([psel length] != 2) {
-            return;
-        }
-        const char *cpsel = [psel cStringUsingEncoding:NSUTF8StringEncoding];
-        const char *cpn = [pn cStringUsingEncoding:NSUTF8StringEncoding];
-        
-        int confnum = -1;
-        int instnum = cpsel[1]-'0';
-        int fieldnum = -1;
-        int boardnum = 0;
-        
-        //TODO handle board num
-        int loc = 0;
-        switch (cpsel[0]) {
-            case 'T':
-                loc = 1;
-                confnum = conf_lnum_train;
-                fieldnum = conf_train_fieldnum(cpn);
-                break;
-            case 'L':
-                loc = 1;
-                confnum = conf_lnum_locomotive;
-                fieldnum = conf_locomotive_fieldnum(cpn);
-                break;
-            case 'G':
-                loc = 1;
-                confnum = conf_lnum_globparam;
-                fieldnum = conf_globparam_fieldnum(cpn);
-                break;
-            case 't':
-                confnum = conf_pnum_turnout;
-                fieldnum = conf_turnout_fieldnum(cpn);
-                break;
-            case 'C':
-                confnum = conf_pnum_canton;
-                fieldnum = conf_canton_fieldnum(cpn);
-                break;
-            case 'B': // 'B'
-                loc = 1;
-                confnum = conf_lnum_boards;
-                fieldnum = conf_boards_fieldnum(cpn);
-                break;
-            case 'S':
-                confnum = conf_pnum_servo;
-                fieldnum = conf_servo_fieldnum(cpn);
-                boardnum = 1; //XXX
-                break;
-            default:
-                NSLog(@"bad param def");
-                break;
-        }
-        if ((confnum<0)||(fieldnum<0)) {
+       
+        BOOL exists = [self queryParam:s];
+        if (!exists) {
             numparam--;
-            return;
         }
-        
-        uint64_t v40;
-        oam_encode_val40(&v40, confnum, boardnum, instnum, fieldnum, 0);
-        msg_64_t m = {0};
-        m.to = MA0_OAM(0);
-        m.from = MA3_UI_GEN;
-        m.cmd = loc ? CMD_PARAM_LUSER_GET : CMD_PARAM_USER_GET;
-        m.val40 = v40;
-        [self sendMsg64:m];
     }];
 }
 

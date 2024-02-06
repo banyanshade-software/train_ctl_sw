@@ -99,7 +99,8 @@ typedef void (^respblk_t)(void);
 
 @interface AppDelegate () {
     int retry;
-    int nextParamGet;
+    int nextParamFieldGet;
+    int nextParamTableGet;
     NSMutableDictionary *parctl;
     
     NSFileHandle *usb;
@@ -147,6 +148,8 @@ typedef void (^respblk_t)(void);
     BOOL processingStatFrame;
     BOOL undefinedKey;
     NSMutableSet *unhandled_key;
+    
+    NSArray *tableParams; // list of params handled by ParamTableController instances
 }
 
 @property (weak) IBOutlet NSWindow *window;
@@ -692,11 +695,17 @@ typedef void (^respblk_t)(void);
 - (void) getParams
 {
     nparamresp = 0;
-    [self getTableViewParams];
-    [self getParams:0];
+    if (!tableParams) {
+        tableParams = [self getTableViewParams];
+    }
+    if ([tableParams count]) {
+        [self getParamsTable:0];
+    } else {
+        [self getParamsFields:0];
+    }
 }
 
-- (void)getTableViewParams
+- (NSArray <NSString *> *)getTableViewParams
 {
     NSArray *paramCtrls = [[ParamTableController class]instances];
     NSLog(@"hop1 %@", paramCtrls);
@@ -706,6 +715,7 @@ typedef void (^respblk_t)(void);
         [allparams addObjectsFromArray:p];
     }
     NSLog(@"hop2 %@", allparams);
+    return allparams;
 }
 // TODO conf generator does not produce .h
 int conf_canton_fieldnum(const char *str);
@@ -719,9 +729,9 @@ int conf_servo_fieldnum(const char *str);
 
 
 
-- (void) getParams:(int)np1
+- (void) getParamsFields:(int)np1
 {
-    nextParamGet = np1;
+    nextParamFieldGet = np1;
     [self _getParams];
 }
 
@@ -799,14 +809,17 @@ int conf_servo_fieldnum(const char *str);
     [self sendMsg64:m];
     return  YES;
 }
+
+
+
 - (void) _getParams
 {
-    int np1 = nextParamGet;
-    int np2 = nextParamGet+4;
+    int np1 = nextParamFieldGet;
+    int np2 = nextParamFieldGet+4;
     parctl = [NSMutableDictionary dictionaryWithCapacity:5];
     //static uint8_t gpfrm[80] = "|xT\0p......";
     int __block numparam = -1;
-    nextParamGet = np2;
+    nextParamFieldGet = np2;
     [self forAllParamsDo:^(NSControl *c){
         numparam++;
         if (numparam < np1) return;
@@ -823,14 +836,51 @@ int conf_servo_fieldnum(const char *str);
     }];
 }
 
+- (void)getParamsTable:(int)start
+{
+    nextParamTableGet = start;
+    [self _getParamsTable];
+}
+- (void) _getParamsTable
+{
+    NSInteger start = nextParamTableGet;
+    NSInteger m = [tableParams count];
+    if (start >= m) {
+        // all done for table, query for fields
+        nparamresp = 0;
+        [self getParamsFields:0];
+        return;
+    }
+    NSInteger m1 = start+5;
+    for (NSInteger i = start; (i<m) && (i<m1); i++) {
+        NSString *s = [tableParams objectAtIndex:i];
+        self->parctl[s] = nil;
+        BOOL exists = [self queryParam:s];
+        if (!exists) {
+            m1++;
+            continue;
+        }
+        nextParamTableGet++;
+    }
+}
+
 - (void) paramUserVal:(msg_64_t)m locstore:(int)loc
 {
-    self->nparamresp++;
-    if (self->nparamresp==self->nparam) {
-        if (self.linkok<LINK_OK) self.linkok = LINK_OK;
-    }
-    if (self->nparamresp == nextParamGet) {
-        [self performSelectorOnMainThread:@selector(_getParams) withObject:NULL waitUntilDone:NO];
+    nparamresp++;
+    
+    if (!nextParamFieldGet) {
+        // query for table params
+        NSAssert(nextParamTableGet>0, @"should have nextParamTableGet");
+        if (nparamresp == nextParamTableGet) {
+            [self performSelectorOnMainThread:@selector(_getParamsTable) withObject:NULL waitUntilDone:NO];
+        }
+    } else {
+        if (nparamresp == nparam) {
+            if (self.linkok<LINK_OK) self.linkok = LINK_OK;
+        }
+        if (nparamresp == nextParamFieldGet) {
+            [self performSelectorOnMainThread:@selector(_getParams) withObject:NULL waitUntilDone:NO];
+        }
     }
     
     unsigned int fnum; unsigned int brd; unsigned int inst; unsigned int field; int32_t v;

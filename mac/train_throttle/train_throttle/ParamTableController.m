@@ -24,7 +24,7 @@ static NSMutableArray *_instances = nil;
 {
     return _instances;
 }
-+ (void) registerInstance:(NSMutableArray*)s
++ (void) registerInstance:(ParamTableController *)s
 {
     static dispatch_once_t onceToken = (dispatch_once_t)0;
     dispatch_once(&onceToken, ^{
@@ -40,20 +40,21 @@ static NSMutableArray *_instances = nil;
     return 1;
 }
 
- 
+ /*
 - (void) initParams
 {
     NSAssert(_tableview, @"tableview not set");
     NSInteger nc = _tableview.numberOfColumns;
     NSInteger nr = _tableview.numberOfRows;
 }
+  */
 
 - (void)awakeFromNib
 {
     [super awakeFromNib];
     if (!_initDone) {
         [[self class]registerInstance:self];
-        [self initParams];
+        //[self initParams];
         _initDone = YES;
     }
 }
@@ -68,16 +69,39 @@ static NSMutableArray *_instances = nil;
     return 0;
 }
 
-- (NSArray<NSString *> *) columnsIds
+- (NSArray<NSString *> *) columnsParamIds
 {
+    NSAssert(_tableview, @"tableview not set");
     NSArray *cl = [_tableview tableColumns];
     NSAssert(([cl isKindOfClass:[NSArray class]]), @"should have an array");
     NSMutableArray *res= [NSMutableArray arrayWithCapacity:10];
     for (NSTableColumn *col in cl) {
         NSString *s = [col identifier];
+        if (!s) continue;
+        if ([s isEqual:@""]) continue;
+        if ([s isEqual:@"num"]) continue;
+        if ([s hasPrefix:@"Auto"]) continue;
         [res addObject:s];
     }
     return res;
+}
+
+- (NSArray<NSString *> *) getAllParamNames
+{
+    //NSInteger nc = _tableview.numberOfColumns;
+    NSInteger nr = _tableview.numberOfRows;
+    NSArray *parids = [self columnsParamIds];
+    char pchar = [self paramChar];
+    NSMutableArray *res = [NSMutableArray arrayWithCapacity:200];
+    for (NSInteger r = 0; r < nr; r++) {
+        for (NSString *fld in parids) {
+            NSString *pnam = [NSString stringWithFormat:@"par_%c%d_%@",
+                              pchar, (int)r, fld];
+            [res addObject:pnam];
+        }
+    }
+    return res;
+    
 }
 #pragma mark -
 

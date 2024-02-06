@@ -14,8 +14,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, weak) IBOutlet NSTableView *tableview;
 
 
-- (NSArray<NSString *> *) columnsIds;
-
+- (NSArray<NSString *> *) columnsParamIds;
+- (NSArray<NSString *> *) getAllParamNames;
 // should be redefined by subclasses. returns 'T' for train, etc..
 - (char) paramChar;
 // should be redefined by subclasses.

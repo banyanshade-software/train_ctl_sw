@@ -699,7 +699,13 @@ typedef void (^respblk_t)(void);
 - (void)getTableViewParams
 {
     NSArray *paramCtrls = [[ParamTableController class]instances];
-    NSLog(@"hop %@", paramCtrls);
+    NSLog(@"hop1 %@", paramCtrls);
+    NSMutableArray *allparams = [NSMutableArray arrayWithCapacity:1000];
+    for (ParamTableController *ctrl in paramCtrls) {
+        NSArray *p = [ctrl getAllParamNames];
+        [allparams addObjectsFromArray:p];
+    }
+    NSLog(@"hop2 %@", allparams);
 }
 // TODO conf generator does not produce .h
 int conf_canton_fieldnum(const char *str);

@@ -3003,38 +3003,6 @@
             endingLineNumber = "719"
             landmarkName = "-_getParams"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "CADE572A-EA4C-416A-A742-EC7AB32E18F1 - c2cf284eb8ab69bf"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "-[AppDelegate _getParams]"
-                  moduleName = "train_throttle"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/danielbraun/devel/train/_sw/mac/train_throttle/train_throttle/AppDelegate.m"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "719"
-                  endingLineNumber = "719"
-                  offsetFromSymbolStart = "170">
-               </Location>
-               <Location
-                  uuid = "CADE572A-EA4C-416A-A742-EC7AB32E18F1 - 23c0bcc5d588f90a"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "__25-[AppDelegate _getParams]_block_invoke"
-                  moduleName = "train_throttle"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/danielbraun/devel/train/_sw/mac/train_throttle/train_throttle/AppDelegate.m"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "719"
-                  endingLineNumber = "719"
-                  offsetFromSymbolStart = "18">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy

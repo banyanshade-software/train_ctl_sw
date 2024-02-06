@@ -806,6 +806,19 @@
 			path = topology;
 			sourceTree = "<group>";
 		};
+		1BC00A202B71FA9100019507 /* params */ = {
+			isa = PBXGroup;
+			children = (
+				1BBA76F52B6AB56400489FEB /* ParamTableController.h */,
+				1BBA76F62B6AB56400489FEB /* ParamTableController.m */,
+				1BBA76FE2B6AC2FF00489FEB /* TrainParamController.h */,
+				1BBA76FF2B6AC2FF00489FEB /* TrainParamController.m */,
+				1BBA77072B6AC47D00489FEB /* LocoParamController.h */,
+				1BBA77082B6AC47D00489FEB /* LocoParamController.m */,
+			);
+			name = params;
+			sourceTree = "<group>";
+		};
 		1BC90303272091870087CEA7 /* leds */ = {
 			isa = PBXGroup;
 			children = (
@@ -934,12 +947,7 @@
 				1BED2A9F25173D1F0080FC97 /* main.m */,
 				1BED2AA125173D1F0080FC97 /* train_throttle.entitlements */,
 				1BED2AA7251804310080FC97 /* stop.png */,
-				1BBA76F52B6AB56400489FEB /* ParamTableController.h */,
-				1BBA76F62B6AB56400489FEB /* ParamTableController.m */,
-				1BBA76FE2B6AC2FF00489FEB /* TrainParamController.h */,
-				1BBA76FF2B6AC2FF00489FEB /* TrainParamController.m */,
-				1BBA77072B6AC47D00489FEB /* LocoParamController.h */,
-				1BBA77082B6AC47D00489FEB /* LocoParamController.m */,
+				1BC00A202B71FA9100019507 /* params */,
 			);
 			path = train_throttle;
 			sourceTree = "<group>";

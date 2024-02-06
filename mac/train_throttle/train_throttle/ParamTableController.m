@@ -18,7 +18,8 @@
 
 @synthesize tableview = _tableview;
 
-- (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView {
+- (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView
+{
     NSAssert(0, @"should be overriden");
     return 1;
 }
@@ -27,6 +28,26 @@
 {
     return 'T';
 }
+
+- (NSInteger)paramNum
+{
+    NSAssert(0, @"should be overriden");
+    return 0;
+}
+
+- (NSArray<NSString *> *) columnsIds
+{
+    NSArray *cl = [_tableview tableColumns];
+    NSAssert(([cl isKindOfClass:[NSArray class]]), @"should have an array");
+    NSMutableArray *res= [NSMutableArray arrayWithCapacity:10];
+    for (NSTableColumn *col in cl) {
+        NSString *s = [col identifier];
+        [res addObject:s];
+    }
+    return res;
+}
+#pragma mark -
+
 - (NSString *) idForRow:(NSInteger)row col:(NSString *)col
 {
     // par_T0_trainlen_left_cm

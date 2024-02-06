@@ -8,6 +8,7 @@
 
 #import "LocoParamController.h"
 #import "conf_locomotive.h"
+#import "conf_locomotive.propag.h"
 #import "train2loco.h"
 #import "locomotives.h"
 
@@ -21,5 +22,10 @@
 - (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView
 {
     return NumKnownLoco-1;
+}
+
+- (NSInteger)paramNum
+{
+    return conf_lnum_locomotive;
 }
 @end

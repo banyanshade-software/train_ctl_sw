@@ -8,6 +8,7 @@
 
 #import "TrainParamController.h"
 #import "conf_train.h"
+#import "conf_train.propag.h"
 
 @implementation TrainParamController
 
@@ -21,4 +22,8 @@
     return NUM_TRAINS;
 }
 
+- (NSInteger)paramNum
+{
+    return conf_lnum_train;
+}
 @end

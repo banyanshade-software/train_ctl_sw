@@ -14,15 +14,48 @@
 @implementation ParamTableController {
     char _paramchar;
     NSMutableDictionary *paramValues;
+    BOOL _initDone;
 }
 
 @synthesize tableview = _tableview;
+
+static NSMutableArray *_instances = nil;
++ (NSArray *) instances
+{
+    return _instances;
+}
++ (void) registerInstance:(NSMutableArray*)s
+{
+    static dispatch_once_t onceToken = (dispatch_once_t)0;
+    dispatch_once(&onceToken, ^{
+        _instances = [[NSMutableArray alloc]initWithCapacity:5];
+    });
+    [_instances addObject:s];
+}
+
 
 - (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView {
     NSAssert(0, @"should be overriden");
     return 1;
 }
 
+ 
+- (void) initParams
+{
+    NSAssert(_tableview, @"tableview not set");
+    NSInteger nc = _tableview.numberOfColumns;
+    NSInteger nr = _tableview.numberOfRows;
+}
+
+- (void)awakeFromNib
+{
+    [super awakeFromNib];
+    if (!_initDone) {
+        [[self class]registerInstance:self];
+        [self initParams];
+        _initDone = YES;
+    }
+}
 - (char) paramChar
 {
     return 'T';

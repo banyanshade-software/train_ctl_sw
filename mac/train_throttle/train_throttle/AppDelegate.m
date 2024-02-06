@@ -47,6 +47,7 @@
 #include "servo.h"
 #include "trace_train.h"
 
+#include "ParamTableController.h"
 #import "AppDelegateP.h"
 
 #define BEMF_MULTIPLICATOR (1.0)
@@ -691,10 +692,15 @@ typedef void (^respblk_t)(void);
 - (void) getParams
 {
     nparamresp = 0;
-
+    [self getTableViewParams];
     [self getParams:0];
 }
 
+- (void)getTableViewParams
+{
+    NSArray *paramCtrls = [[ParamTableController class]instances];
+    NSLog(@"hop %@", paramCtrls);
+}
 // TODO conf generator does not produce .h
 int conf_canton_fieldnum(const char *str);
 int conf_turnout_fieldnum(const char *str);

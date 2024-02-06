@@ -18,6 +18,9 @@ NS_ASSUME_NONNULL_BEGIN
 // should be redefined by subclasses.
 - (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView;
 
+
++ (NSArray *) instances;
+
 @end
 
 NS_ASSUME_NONNULL_END

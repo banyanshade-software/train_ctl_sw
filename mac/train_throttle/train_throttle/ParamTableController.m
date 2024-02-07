@@ -40,20 +40,13 @@ static NSMutableArray *_instances = nil;
     return 1;
 }
 
- /*
-- (void) initParams
-{
-    NSAssert(_tableview, @"tableview not set");
-    NSInteger nc = _tableview.numberOfColumns;
-    NSInteger nr = _tableview.numberOfRows;
-}
-  */
 
 - (void)awakeFromNib
 {
     [super awakeFromNib];
     if (!_initDone) {
         [[self class]registerInstance:self];
+        paramValues = [[NSMutableDictionary alloc]initWithCapacity:50];
         //[self initParams];
         _initDone = YES;
     }
@@ -103,6 +96,22 @@ static NSMutableArray *_instances = nil;
     return res;
     
 }
+
+#pragma mark -
+
+- (void) setParam:(NSString *)pnam  parChar:(char)c value:(int32_t)v
+{
+    NSAssert(c==[self paramChar], @"bad controller");
+    //NSInteger col = [_tableview columnWithIdentifier:field];
+    [paramValues setObject:[NSNumber numberWithInt:v] forKey:pnam];
+    [self setNeedReload];
+}
+
+- (void) setNeedReload
+{
+    // TODO: coales
+    [_tableview reloadData];
+}
 #pragma mark -
 
 - (NSString *) idForRow:(NSInteger)row col:(NSString *)col
@@ -113,6 +122,9 @@ static NSMutableArray *_instances = nil;
     }
     return [NSString stringWithFormat:@"par_%c%d_%@", _paramchar, (int)row, col];
 }
+
+
+#pragma mark -
 
 - (nullable id)tableView:(NSTableView *)tableView objectValueForTableColumn:(nullable NSTableColumn *)tableColumn row:(NSInteger)row
 {

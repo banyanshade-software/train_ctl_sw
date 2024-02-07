@@ -101,6 +101,8 @@ typedef void (^respblk_t)(void);
     int retry;
     int nextParamFieldGet;
     int nextParamTableGet;
+    NSArray *tableParams; // list of params handled by ParamTableController instances
+    int tableParamsIndex;
     NSMutableDictionary *parctl;
     
     NSFileHandle *usb;
@@ -149,7 +151,6 @@ typedef void (^respblk_t)(void);
     BOOL undefinedKey;
     NSMutableSet *unhandled_key;
     
-    NSArray *tableParams; // list of params handled by ParamTableController instances
 }
 
 @property (weak) IBOutlet NSWindow *window;
@@ -699,20 +700,20 @@ typedef void (^respblk_t)(void);
         tableParams = [self getTableViewParams];
     }
     if ([tableParams count]) {
-        [self getParamsTable:0];
+        [self getParamsTableFirst];
     } else {
-        [self getParamsFields:0];
+        [self getParamsFieldsFirst];
     }
 }
 
-- (NSArray <NSString *> *)getTableViewParams
+- (NSArray <NSArray *> *)getTableViewParams
 {
     NSArray *paramCtrls = [[ParamTableController class]instances];
     NSLog(@"hop1 %@", paramCtrls);
-    NSMutableArray *allparams = [NSMutableArray arrayWithCapacity:1000];
+    NSMutableArray *allparams = [NSMutableArray arrayWithCapacity:4];
     for (ParamTableController *ctrl in paramCtrls) {
         NSArray *p = [ctrl getAllParamNames];
-        [allparams addObjectsFromArray:p];
+        [allparams addObject:p];
     }
     NSLog(@"hop2 %@", allparams);
     return allparams;
@@ -729,9 +730,9 @@ int conf_servo_fieldnum(const char *str);
 
 
 
-- (void) getParamsFields:(int)np1
+- (void) getParamsFieldsFirst
 {
-    nextParamFieldGet = np1;
+    nextParamFieldGet = 0;
     [self _getParams];
 }
 
@@ -836,24 +837,35 @@ int conf_servo_fieldnum(const char *str);
     }];
 }
 
-- (void)getParamsTable:(int)start
+- (void)getParamsTableFirst
 {
-    nextParamTableGet = start;
+    tableParamsIndex = 0;
+    nextParamTableGet = 0;
     [self _getParamsTable];
 }
 - (void) _getParamsTable
 {
-    NSInteger start = nextParamTableGet;
-    NSInteger m = [tableParams count];
-    if (start >= m) {
+startGet:
+    NSLog(@"getParamsTable %d %d\n", tableParamsIndex, nextParamTableGet);
+    if (tableParamsIndex >= [tableParams count]) {
         // all done for table, query for fields
         nparamresp = 0;
-        [self getParamsFields:0];
+        [self getParamsFieldsFirst];
         return;
+    }
+    NSArray *t = [tableParams objectAtIndex:tableParamsIndex];
+    NSInteger start = nextParamTableGet;
+    NSInteger m = [t count];
+    if (start >= m) {
+        // all done for this controler
+        nextParamTableGet = 0;
+        nparamresp = 0;
+        tableParamsIndex++;
+        goto startGet;
     }
     NSInteger m1 = start+5;
     for (NSInteger i = start; (i<m) && (i<m1); i++) {
-        NSString *s = [tableParams objectAtIndex:i];
+        NSString *s = [t objectAtIndex:i];
         self->parctl[s] = nil;
         BOOL exists = [self queryParam:s];
         if (!exists) {
@@ -867,13 +879,15 @@ int conf_servo_fieldnum(const char *str);
 - (void) paramUserVal:(msg_64_t)m locstore:(int)loc
 {
     nparamresp++;
-    
+    BOOL table = NO;
     if (!nextParamFieldGet) {
         // query for table params
+        table = YES;
         NSAssert(nextParamTableGet>0, @"should have nextParamTableGet");
         if (nparamresp == nextParamTableGet) {
             [self performSelectorOnMainThread:@selector(_getParamsTable) withObject:NULL waitUntilDone:NO];
         }
+        
     } else {
         if (nparamresp == nparam) {
             if (self.linkok<LINK_OK) self.linkok = LINK_OK;
@@ -946,8 +960,14 @@ int conf_servo_fieldnum(const char *str);
     }
     NSString *pnam = [NSString stringWithFormat:@"par_%c%d_%s", t, n, fld];
     NSLog(@"val for '%@'", pnam);
-    NSControl *c = parctl[pnam];
-    [self setParameter:c value:v enable:YES];
+    if (!table) {
+        NSControl *targetControl = parctl[pnam];
+        [self setParameter:targetControl value:v enable:YES];
+    } else {
+        NSArray *paramCtrls = [[ParamTableController class]instances];
+        ParamTableController *targetCtrl = [paramCtrls objectAtIndex:tableParamsIndex];
+        [targetCtrl setParam:pnam  parChar:t value:v];
+    }
 }
 
 - (void) setParameter:(NSControl *)c value:(int)v /*def:(int)def min:(int)min max:(int)max*/ enable:(BOOL)ena

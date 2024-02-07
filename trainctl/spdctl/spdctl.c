@@ -635,7 +635,7 @@ void send_train_stopped(int numtrain, train_vars_t *tvars)
 
 #define punch_start 1
 
-static inline int16_t comp_brake(int16_t startval, int32_t k1000)
+static inline int16_t comp_brake(int16_t startval, int32_t k1000, const conf_locomotive_t *lconf)
 {
 #if 0
     // linear decrease from startval to 0
@@ -646,7 +646,8 @@ static inline int16_t comp_brake(int16_t startval, int32_t k1000)
     return target_with_brake;
 #endif
     // linear decrease from startval to minval
-    static const int16_t minval = 15;
+    //static const int16_t minval = 15;
+    int16_t minval = lconf->min_power_dec;
     int16_t v = startval;
     if (startval > minval) {
         int16_t t = startval-minval;
@@ -686,7 +687,7 @@ static void train_periodic_control(int numtrain, _UNUSED_ uint32_t dt)
         if (k1000<0) {
         	k1000 = 0;
         }
-        target_with_brake = comp_brake(tvars->spdbrake, k1000);
+        target_with_brake = comp_brake(tvars->spdbrake, k1000, tconf);
         /*
         target_with_brake = (int16_t)((tvars->spdbrake * k1000)/1000);
         if (abs(target_with_brake)<15) {

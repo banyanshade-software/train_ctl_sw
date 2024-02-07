@@ -47,14 +47,14 @@ unsigned int conf_train_num_entries(void)
 
 static conf_train_t conf_train[8] = {
   {     // 0
-     .locotype = 0,
+     .locotype = 2,
      .enabled = 1,
      .notify_pose = 0,
      .trainlen_left_cm = 1,
      .trainlen_right_cm = 1,
   },
   {     // 1
-     .locotype = 0,
+     .locotype = 4,
      .enabled = 1,
      .notify_pose = 0,
      .trainlen_left_cm = 15,
@@ -118,14 +118,14 @@ unsigned int conf_train_num_entries(void)
 
 static conf_train_t conf_train[4] = {
   {     // 0
-     .locotype = 0,
+     .locotype = 2,
      .enabled = 1,
      .notify_pose = 0,
      .trainlen_left_cm = 1,
      .trainlen_right_cm = 1,
   },
   {     // 1
-     .locotype = 0,
+     .locotype = 4,
      .enabled = 1,
      .notify_pose = 0,
      .trainlen_left_cm = 15,
@@ -176,14 +176,14 @@ unsigned int conf_train_num_entries(void)
 
 static conf_train_t conf_train[8] = {
   {     // 0
-     .locotype = 0,
+     .locotype = 2,
      .enabled = 1,
      .notify_pose = 0,
      .trainlen_left_cm = 1,
      .trainlen_right_cm = 1,
   },
   {     // 1
-     .locotype = 0,
+     .locotype = 4,
      .enabled = 1,
      .notify_pose = 0,
      .trainlen_left_cm = 15,
@@ -247,14 +247,14 @@ unsigned int conf_train_num_entries(void)
 
 static conf_train_t conf_train[8] = {
   {     // 0
-     .locotype = 0,
+     .locotype = 2,
      .enabled = 1,
      .notify_pose = 0,
      .trainlen_left_cm = 1,
      .trainlen_right_cm = 1,
   },
   {     // 1
-     .locotype = 0,
+     .locotype = 4,
      .enabled = 1,
      .notify_pose = 0,
      .trainlen_left_cm = 15,
@@ -363,14 +363,14 @@ unsigned int conf_train_num_entries(void)
 
 static conf_train_t conf_train[4] = {
   {     // 0
-     .locotype = 0,
+     .locotype = 2,
      .enabled = 1,
      .notify_pose = 0,
      .trainlen_left_cm = 1,
      .trainlen_right_cm = 1,
   },
   {     // 1
-     .locotype = 0,
+     .locotype = 4,
      .enabled = 1,
      .notify_pose = 0,
      .trainlen_left_cm = 15,

@@ -28,4 +28,18 @@
 {
     return conf_lnum_locomotive;
 }
+
+
+
+- (nullable id)tableView:(NSTableView *)tableView objectValueForTableColumn:(nullable NSTableColumn *)tableColumn row:(NSInteger)row
+{
+    NSString *cn = [tableColumn identifier];
+    if ([cn isEqual:@"num"]) {
+        if (row>=NumKnownLoco) return @"???";
+        if (row<0) return @"???";
+        const char *str = locomotiveNames[row];
+        return [NSString stringWithCString:str encoding:NSUTF8StringEncoding];
+    }
+    return [super tableView:tableView objectValueForTableColumn:tableColumn row:row];
+}
 @end

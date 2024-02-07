@@ -7223,7 +7223,7 @@
                                             </textFieldCell>
                                             <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                         </tableColumn>
-                                        <tableColumn width="69" minWidth="40" maxWidth="1000" id="Awx-DY-nqb">
+                                        <tableColumn identifier="locotype" width="69" minWidth="40" maxWidth="1000" id="Awx-DY-nqb">
                                             <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" title="Locomotive">
                                                 <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
@@ -7244,7 +7244,7 @@
                                             </popUpButtonCell>
                                             <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                         </tableColumn>
-                                        <tableColumn width="102" minWidth="10" maxWidth="3.4028234663852886e+38" id="hbX-SH-gc9">
+                                        <tableColumn identifier="enabled" width="102" minWidth="10" maxWidth="3.4028234663852886e+38" id="hbX-SH-gc9">
                                             <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Enable">
                                                 <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>

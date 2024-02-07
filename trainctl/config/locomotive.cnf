@@ -1,15 +1,20 @@
 /*
 
 
+CAUTION
+must be coherent with locomotives.h
 */
 
 
 subconfig pidctl {
     user int32_t kP 
+        = (all:*) table(ltpid, kP)
         = (default) 500;
 	user int32_t kI
+        = (all:*) table(ltpid, kI)
         = (default) 100;
 	user int32_t kD
+        = (all:*) table(ltpid, kD)
         = (default) 500; 
 };
 
@@ -49,34 +54,58 @@ config locomotive {
         = (default) 0;
 
     user uint8_t reversed:1
+        = (all:4) 1
         = (default) 0;
 
-    const uint8_t min_power
-        = (default) 0;
+    const uint8_t min_power /* for en_spd2pow */
+        = (default) 20;
+    const uint8_t min_power_acc
+        = (default) 20;
+    const uint8_t min_power_dec
+        = (default) 10;
     
-	const uint8_t notify_pose:1
+    const uint8_t notify_pose:1
         = (default) 0;
 
     user uint8_t bemfIIR
-        = (default) 0;
+        = (default) 80;
     user uint8_t postIIR
         = (default) 0;
 
     user uint8_t slipping
         = (default) 120;
     user uint16_t pose_per_cm
-        = (all:0) 450
-        = (all:0) 310
-        = (default) 500;
+        = (all:*) table(ltpose, pcm)
+        = (default) 450;
 
-} num = (mainV0) 8
-      = (mainV04) 8
-      = (simu) 8
-      = (G4master1) 8
-      = (unit_test) 4
+} num = (mainV0) 5
+      = (mainV04) 5
+      = (simu) 5
+      = (G4master1) 5
+      = (unit_test) 5
       = (default) 0;
 
+
+/* pid values */
+table ltpid
+       			  ( kP,      Ki,      Kd)
+/* 0 unknown */           (500,     100,     500)
+/* 0 Marklin8805_BR29 */  (500,     100,     500)
+/* 0 Marklin8821_V200 */  (400,     150,     300)
+/* 0 Marklin8895_BR74 */  (500,     100,     500)
+/* 0 Marklin8875_V160 */  (600,     200,     300)
+;
+
+table ltpose              (pcm)
+/* 0 unknown */           (450)
+/* 0 Marklin8805_BR29 */  (450)
+/* 0 Marklin8821_V200 */  (350)
+/* 0 Marklin8895_BR74 */  (450)
+/* 0 Marklin8875_V160 */  (400)
+;
 
 attrib locomotive c_code {
     // this goes only in config_train.c
 }
+
+

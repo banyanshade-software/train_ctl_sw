@@ -42,14 +42,14 @@ static conf_locomotive_t conf_locomotive[0] = {
 
 unsigned int conf_locomotive_num_entries(void)
 {
-    return 8; // 8 
+    return 5; // 5 
 }
 
-static conf_locomotive_t conf_locomotive[8] = {
+static conf_locomotive_t conf_locomotive[5] = {
   {     // 0
      .pidctl = {
      .kP = 500,
-     .kI = 100,
+     .kI = 500,
      .kD = 500,
      },
      .inertia = {
@@ -62,9 +62,11 @@ static conf_locomotive_t conf_locomotive[8] = {
      .fix_bemf = 0,
      .en_spd2pow = 0,
      .reversed = 0,
-     .min_power = 0,
+     .min_power = 20,
+     .min_power_acc = 20,
+     .min_power_dec = 10,
      .notify_pose = 0,
-     .bemfIIR = 0,
+     .bemfIIR = 80,
      .postIIR = 0,
      .slipping = 120,
      .pose_per_cm = 450,
@@ -72,7 +74,7 @@ static conf_locomotive_t conf_locomotive[8] = {
   {     // 1
      .pidctl = {
      .kP = 500,
-     .kI = 100,
+     .kI = 500,
      .kD = 500,
      },
      .inertia = {
@@ -85,18 +87,20 @@ static conf_locomotive_t conf_locomotive[8] = {
      .fix_bemf = 0,
      .en_spd2pow = 0,
      .reversed = 0,
-     .min_power = 0,
+     .min_power = 20,
+     .min_power_acc = 20,
+     .min_power_dec = 10,
      .notify_pose = 0,
-     .bemfIIR = 0,
+     .bemfIIR = 80,
      .postIIR = 0,
      .slipping = 120,
-     .pose_per_cm = 500,
+     .pose_per_cm = 450,
   },
   {     // 2
      .pidctl = {
-     .kP = 500,
-     .kI = 100,
-     .kD = 500,
+     .kP = 400,
+     .kI = 400,
+     .kD = 400,
      },
      .inertia = {
      .dec = 120,
@@ -108,17 +112,19 @@ static conf_locomotive_t conf_locomotive[8] = {
      .fix_bemf = 0,
      .en_spd2pow = 0,
      .reversed = 0,
-     .min_power = 0,
+     .min_power = 20,
+     .min_power_acc = 20,
+     .min_power_dec = 10,
      .notify_pose = 0,
-     .bemfIIR = 0,
+     .bemfIIR = 80,
      .postIIR = 0,
      .slipping = 120,
-     .pose_per_cm = 500,
+     .pose_per_cm = 350,
   },
   {     // 3
      .pidctl = {
      .kP = 500,
-     .kI = 100,
+     .kI = 500,
      .kD = 500,
      },
      .inertia = {
@@ -131,18 +137,20 @@ static conf_locomotive_t conf_locomotive[8] = {
      .fix_bemf = 0,
      .en_spd2pow = 0,
      .reversed = 0,
-     .min_power = 0,
+     .min_power = 20,
+     .min_power_acc = 20,
+     .min_power_dec = 10,
      .notify_pose = 0,
-     .bemfIIR = 0,
+     .bemfIIR = 80,
      .postIIR = 0,
      .slipping = 120,
-     .pose_per_cm = 500,
+     .pose_per_cm = 450,
   },
   {     // 4
      .pidctl = {
-     .kP = 500,
-     .kI = 100,
-     .kD = 500,
+     .kP = 600,
+     .kI = 600,
+     .kD = 600,
      },
      .inertia = {
      .dec = 120,
@@ -153,82 +161,15 @@ static conf_locomotive_t conf_locomotive[8] = {
      .enable_pid = 1,
      .fix_bemf = 0,
      .en_spd2pow = 0,
-     .reversed = 0,
-     .min_power = 0,
+     .reversed = 1,
+     .min_power = 20,
+     .min_power_acc = 20,
+     .min_power_dec = 10,
      .notify_pose = 0,
-     .bemfIIR = 0,
+     .bemfIIR = 80,
      .postIIR = 0,
      .slipping = 120,
-     .pose_per_cm = 500,
-  },
-  {     // 5
-     .pidctl = {
-     .kP = 500,
-     .kI = 100,
-     .kD = 500,
-     },
-     .inertia = {
-     .dec = 120,
-     .acc = 120,
-     },
-     .volt_policy = vpolicy_normal,
-     .enable_inertia = 0,
-     .enable_pid = 1,
-     .fix_bemf = 0,
-     .en_spd2pow = 0,
-     .reversed = 0,
-     .min_power = 0,
-     .notify_pose = 0,
-     .bemfIIR = 0,
-     .postIIR = 0,
-     .slipping = 120,
-     .pose_per_cm = 500,
-  },
-  {     // 6
-     .pidctl = {
-     .kP = 500,
-     .kI = 100,
-     .kD = 500,
-     },
-     .inertia = {
-     .dec = 120,
-     .acc = 120,
-     },
-     .volt_policy = vpolicy_normal,
-     .enable_inertia = 0,
-     .enable_pid = 1,
-     .fix_bemf = 0,
-     .en_spd2pow = 0,
-     .reversed = 0,
-     .min_power = 0,
-     .notify_pose = 0,
-     .bemfIIR = 0,
-     .postIIR = 0,
-     .slipping = 120,
-     .pose_per_cm = 500,
-  },
-  {     // 7
-     .pidctl = {
-     .kP = 500,
-     .kI = 100,
-     .kD = 500,
-     },
-     .inertia = {
-     .dec = 120,
-     .acc = 120,
-     },
-     .volt_policy = vpolicy_normal,
-     .enable_inertia = 0,
-     .enable_pid = 1,
-     .fix_bemf = 0,
-     .en_spd2pow = 0,
-     .reversed = 0,
-     .min_power = 0,
-     .notify_pose = 0,
-     .bemfIIR = 0,
-     .postIIR = 0,
-     .slipping = 120,
-     .pose_per_cm = 500,
+     .pose_per_cm = 400,
   }
 };
 
@@ -241,14 +182,14 @@ static conf_locomotive_t conf_locomotive[8] = {
 
 unsigned int conf_locomotive_num_entries(void)
 {
-    return 4; // 4 
+    return 5; // 5 
 }
 
-static conf_locomotive_t conf_locomotive[4] = {
+static conf_locomotive_t conf_locomotive[5] = {
   {     // 0
      .pidctl = {
      .kP = 500,
-     .kI = 100,
+     .kI = 500,
      .kD = 500,
      },
      .inertia = {
@@ -261,9 +202,11 @@ static conf_locomotive_t conf_locomotive[4] = {
      .fix_bemf = 0,
      .en_spd2pow = 0,
      .reversed = 0,
-     .min_power = 0,
+     .min_power = 20,
+     .min_power_acc = 20,
+     .min_power_dec = 10,
      .notify_pose = 0,
-     .bemfIIR = 0,
+     .bemfIIR = 80,
      .postIIR = 0,
      .slipping = 120,
      .pose_per_cm = 450,
@@ -271,7 +214,7 @@ static conf_locomotive_t conf_locomotive[4] = {
   {     // 1
      .pidctl = {
      .kP = 500,
-     .kI = 100,
+     .kI = 500,
      .kD = 500,
      },
      .inertia = {
@@ -284,18 +227,20 @@ static conf_locomotive_t conf_locomotive[4] = {
      .fix_bemf = 0,
      .en_spd2pow = 0,
      .reversed = 0,
-     .min_power = 0,
+     .min_power = 20,
+     .min_power_acc = 20,
+     .min_power_dec = 10,
      .notify_pose = 0,
-     .bemfIIR = 0,
+     .bemfIIR = 80,
      .postIIR = 0,
      .slipping = 120,
-     .pose_per_cm = 500,
+     .pose_per_cm = 450,
   },
   {     // 2
      .pidctl = {
-     .kP = 500,
-     .kI = 100,
-     .kD = 500,
+     .kP = 400,
+     .kI = 400,
+     .kD = 400,
      },
      .inertia = {
      .dec = 120,
@@ -307,17 +252,19 @@ static conf_locomotive_t conf_locomotive[4] = {
      .fix_bemf = 0,
      .en_spd2pow = 0,
      .reversed = 0,
-     .min_power = 0,
+     .min_power = 20,
+     .min_power_acc = 20,
+     .min_power_dec = 10,
      .notify_pose = 0,
-     .bemfIIR = 0,
+     .bemfIIR = 80,
      .postIIR = 0,
      .slipping = 120,
-     .pose_per_cm = 500,
+     .pose_per_cm = 350,
   },
   {     // 3
      .pidctl = {
      .kP = 500,
-     .kI = 100,
+     .kI = 500,
      .kD = 500,
      },
      .inertia = {
@@ -330,12 +277,39 @@ static conf_locomotive_t conf_locomotive[4] = {
      .fix_bemf = 0,
      .en_spd2pow = 0,
      .reversed = 0,
-     .min_power = 0,
+     .min_power = 20,
+     .min_power_acc = 20,
+     .min_power_dec = 10,
      .notify_pose = 0,
-     .bemfIIR = 0,
+     .bemfIIR = 80,
      .postIIR = 0,
      .slipping = 120,
-     .pose_per_cm = 500,
+     .pose_per_cm = 450,
+  },
+  {     // 4
+     .pidctl = {
+     .kP = 600,
+     .kI = 600,
+     .kD = 600,
+     },
+     .inertia = {
+     .dec = 120,
+     .acc = 120,
+     },
+     .volt_policy = vpolicy_normal,
+     .enable_inertia = 0,
+     .enable_pid = 1,
+     .fix_bemf = 0,
+     .en_spd2pow = 0,
+     .reversed = 1,
+     .min_power = 20,
+     .min_power_acc = 20,
+     .min_power_dec = 10,
+     .notify_pose = 0,
+     .bemfIIR = 80,
+     .postIIR = 0,
+     .slipping = 120,
+     .pose_per_cm = 400,
   }
 };
 
@@ -363,14 +337,14 @@ static conf_locomotive_t conf_locomotive[0] = {
 
 unsigned int conf_locomotive_num_entries(void)
 {
-    return 8; // 8 
+    return 5; // 5 
 }
 
-static conf_locomotive_t conf_locomotive[8] = {
+static conf_locomotive_t conf_locomotive[5] = {
   {     // 0
      .pidctl = {
      .kP = 500,
-     .kI = 100,
+     .kI = 500,
      .kD = 500,
      },
      .inertia = {
@@ -383,9 +357,11 @@ static conf_locomotive_t conf_locomotive[8] = {
      .fix_bemf = 0,
      .en_spd2pow = 0,
      .reversed = 0,
-     .min_power = 0,
+     .min_power = 20,
+     .min_power_acc = 20,
+     .min_power_dec = 10,
      .notify_pose = 0,
-     .bemfIIR = 0,
+     .bemfIIR = 80,
      .postIIR = 0,
      .slipping = 120,
      .pose_per_cm = 450,
@@ -393,7 +369,7 @@ static conf_locomotive_t conf_locomotive[8] = {
   {     // 1
      .pidctl = {
      .kP = 500,
-     .kI = 100,
+     .kI = 500,
      .kD = 500,
      },
      .inertia = {
@@ -406,18 +382,20 @@ static conf_locomotive_t conf_locomotive[8] = {
      .fix_bemf = 0,
      .en_spd2pow = 0,
      .reversed = 0,
-     .min_power = 0,
+     .min_power = 20,
+     .min_power_acc = 20,
+     .min_power_dec = 10,
      .notify_pose = 0,
-     .bemfIIR = 0,
+     .bemfIIR = 80,
      .postIIR = 0,
      .slipping = 120,
-     .pose_per_cm = 500,
+     .pose_per_cm = 450,
   },
   {     // 2
      .pidctl = {
-     .kP = 500,
-     .kI = 100,
-     .kD = 500,
+     .kP = 400,
+     .kI = 400,
+     .kD = 400,
      },
      .inertia = {
      .dec = 120,
@@ -429,17 +407,19 @@ static conf_locomotive_t conf_locomotive[8] = {
      .fix_bemf = 0,
      .en_spd2pow = 0,
      .reversed = 0,
-     .min_power = 0,
+     .min_power = 20,
+     .min_power_acc = 20,
+     .min_power_dec = 10,
      .notify_pose = 0,
-     .bemfIIR = 0,
+     .bemfIIR = 80,
      .postIIR = 0,
      .slipping = 120,
-     .pose_per_cm = 500,
+     .pose_per_cm = 350,
   },
   {     // 3
      .pidctl = {
      .kP = 500,
-     .kI = 100,
+     .kI = 500,
      .kD = 500,
      },
      .inertia = {
@@ -452,18 +432,20 @@ static conf_locomotive_t conf_locomotive[8] = {
      .fix_bemf = 0,
      .en_spd2pow = 0,
      .reversed = 0,
-     .min_power = 0,
+     .min_power = 20,
+     .min_power_acc = 20,
+     .min_power_dec = 10,
      .notify_pose = 0,
-     .bemfIIR = 0,
+     .bemfIIR = 80,
      .postIIR = 0,
      .slipping = 120,
-     .pose_per_cm = 500,
+     .pose_per_cm = 450,
   },
   {     // 4
      .pidctl = {
-     .kP = 500,
-     .kI = 100,
-     .kD = 500,
+     .kP = 600,
+     .kI = 600,
+     .kD = 600,
      },
      .inertia = {
      .dec = 120,
@@ -474,82 +456,15 @@ static conf_locomotive_t conf_locomotive[8] = {
      .enable_pid = 1,
      .fix_bemf = 0,
      .en_spd2pow = 0,
-     .reversed = 0,
-     .min_power = 0,
+     .reversed = 1,
+     .min_power = 20,
+     .min_power_acc = 20,
+     .min_power_dec = 10,
      .notify_pose = 0,
-     .bemfIIR = 0,
+     .bemfIIR = 80,
      .postIIR = 0,
      .slipping = 120,
-     .pose_per_cm = 500,
-  },
-  {     // 5
-     .pidctl = {
-     .kP = 500,
-     .kI = 100,
-     .kD = 500,
-     },
-     .inertia = {
-     .dec = 120,
-     .acc = 120,
-     },
-     .volt_policy = vpolicy_normal,
-     .enable_inertia = 0,
-     .enable_pid = 1,
-     .fix_bemf = 0,
-     .en_spd2pow = 0,
-     .reversed = 0,
-     .min_power = 0,
-     .notify_pose = 0,
-     .bemfIIR = 0,
-     .postIIR = 0,
-     .slipping = 120,
-     .pose_per_cm = 500,
-  },
-  {     // 6
-     .pidctl = {
-     .kP = 500,
-     .kI = 100,
-     .kD = 500,
-     },
-     .inertia = {
-     .dec = 120,
-     .acc = 120,
-     },
-     .volt_policy = vpolicy_normal,
-     .enable_inertia = 0,
-     .enable_pid = 1,
-     .fix_bemf = 0,
-     .en_spd2pow = 0,
-     .reversed = 0,
-     .min_power = 0,
-     .notify_pose = 0,
-     .bemfIIR = 0,
-     .postIIR = 0,
-     .slipping = 120,
-     .pose_per_cm = 500,
-  },
-  {     // 7
-     .pidctl = {
-     .kP = 500,
-     .kI = 100,
-     .kD = 500,
-     },
-     .inertia = {
-     .dec = 120,
-     .acc = 120,
-     },
-     .volt_policy = vpolicy_normal,
-     .enable_inertia = 0,
-     .enable_pid = 1,
-     .fix_bemf = 0,
-     .en_spd2pow = 0,
-     .reversed = 0,
-     .min_power = 0,
-     .notify_pose = 0,
-     .bemfIIR = 0,
-     .postIIR = 0,
-     .slipping = 120,
-     .pose_per_cm = 500,
+     .pose_per_cm = 400,
   }
 };
 
@@ -562,14 +477,14 @@ static conf_locomotive_t conf_locomotive[8] = {
 
 unsigned int conf_locomotive_num_entries(void)
 {
-    return 8; // 8 
+    return 5; // 5 
 }
 
-static conf_locomotive_t conf_locomotive[8] = {
+static conf_locomotive_t conf_locomotive[5] = {
   {     // 0
      .pidctl = {
      .kP = 500,
-     .kI = 100,
+     .kI = 500,
      .kD = 500,
      },
      .inertia = {
@@ -582,9 +497,11 @@ static conf_locomotive_t conf_locomotive[8] = {
      .fix_bemf = 0,
      .en_spd2pow = 0,
      .reversed = 0,
-     .min_power = 0,
+     .min_power = 20,
+     .min_power_acc = 20,
+     .min_power_dec = 10,
      .notify_pose = 0,
-     .bemfIIR = 0,
+     .bemfIIR = 80,
      .postIIR = 0,
      .slipping = 120,
      .pose_per_cm = 450,
@@ -592,7 +509,7 @@ static conf_locomotive_t conf_locomotive[8] = {
   {     // 1
      .pidctl = {
      .kP = 500,
-     .kI = 100,
+     .kI = 500,
      .kD = 500,
      },
      .inertia = {
@@ -605,18 +522,20 @@ static conf_locomotive_t conf_locomotive[8] = {
      .fix_bemf = 0,
      .en_spd2pow = 0,
      .reversed = 0,
-     .min_power = 0,
+     .min_power = 20,
+     .min_power_acc = 20,
+     .min_power_dec = 10,
      .notify_pose = 0,
-     .bemfIIR = 0,
+     .bemfIIR = 80,
      .postIIR = 0,
      .slipping = 120,
-     .pose_per_cm = 500,
+     .pose_per_cm = 450,
   },
   {     // 2
      .pidctl = {
-     .kP = 500,
-     .kI = 100,
-     .kD = 500,
+     .kP = 400,
+     .kI = 400,
+     .kD = 400,
      },
      .inertia = {
      .dec = 120,
@@ -628,17 +547,19 @@ static conf_locomotive_t conf_locomotive[8] = {
      .fix_bemf = 0,
      .en_spd2pow = 0,
      .reversed = 0,
-     .min_power = 0,
+     .min_power = 20,
+     .min_power_acc = 20,
+     .min_power_dec = 10,
      .notify_pose = 0,
-     .bemfIIR = 0,
+     .bemfIIR = 80,
      .postIIR = 0,
      .slipping = 120,
-     .pose_per_cm = 500,
+     .pose_per_cm = 350,
   },
   {     // 3
      .pidctl = {
      .kP = 500,
-     .kI = 100,
+     .kI = 500,
      .kD = 500,
      },
      .inertia = {
@@ -651,18 +572,20 @@ static conf_locomotive_t conf_locomotive[8] = {
      .fix_bemf = 0,
      .en_spd2pow = 0,
      .reversed = 0,
-     .min_power = 0,
+     .min_power = 20,
+     .min_power_acc = 20,
+     .min_power_dec = 10,
      .notify_pose = 0,
-     .bemfIIR = 0,
+     .bemfIIR = 80,
      .postIIR = 0,
      .slipping = 120,
-     .pose_per_cm = 500,
+     .pose_per_cm = 450,
   },
   {     // 4
      .pidctl = {
-     .kP = 500,
-     .kI = 100,
-     .kD = 500,
+     .kP = 600,
+     .kI = 600,
+     .kD = 600,
      },
      .inertia = {
      .dec = 120,
@@ -673,82 +596,15 @@ static conf_locomotive_t conf_locomotive[8] = {
      .enable_pid = 1,
      .fix_bemf = 0,
      .en_spd2pow = 0,
-     .reversed = 0,
-     .min_power = 0,
+     .reversed = 1,
+     .min_power = 20,
+     .min_power_acc = 20,
+     .min_power_dec = 10,
      .notify_pose = 0,
-     .bemfIIR = 0,
+     .bemfIIR = 80,
      .postIIR = 0,
      .slipping = 120,
-     .pose_per_cm = 500,
-  },
-  {     // 5
-     .pidctl = {
-     .kP = 500,
-     .kI = 100,
-     .kD = 500,
-     },
-     .inertia = {
-     .dec = 120,
-     .acc = 120,
-     },
-     .volt_policy = vpolicy_normal,
-     .enable_inertia = 0,
-     .enable_pid = 1,
-     .fix_bemf = 0,
-     .en_spd2pow = 0,
-     .reversed = 0,
-     .min_power = 0,
-     .notify_pose = 0,
-     .bemfIIR = 0,
-     .postIIR = 0,
-     .slipping = 120,
-     .pose_per_cm = 500,
-  },
-  {     // 6
-     .pidctl = {
-     .kP = 500,
-     .kI = 100,
-     .kD = 500,
-     },
-     .inertia = {
-     .dec = 120,
-     .acc = 120,
-     },
-     .volt_policy = vpolicy_normal,
-     .enable_inertia = 0,
-     .enable_pid = 1,
-     .fix_bemf = 0,
-     .en_spd2pow = 0,
-     .reversed = 0,
-     .min_power = 0,
-     .notify_pose = 0,
-     .bemfIIR = 0,
-     .postIIR = 0,
-     .slipping = 120,
-     .pose_per_cm = 500,
-  },
-  {     // 7
-     .pidctl = {
-     .kP = 500,
-     .kI = 100,
-     .kD = 500,
-     },
-     .inertia = {
-     .dec = 120,
-     .acc = 120,
-     },
-     .volt_policy = vpolicy_normal,
-     .enable_inertia = 0,
-     .enable_pid = 1,
-     .fix_bemf = 0,
-     .en_spd2pow = 0,
-     .reversed = 0,
-     .min_power = 0,
-     .notify_pose = 0,
-     .bemfIIR = 0,
-     .postIIR = 0,
-     .slipping = 120,
-     .pose_per_cm = 500,
+     .pose_per_cm = 400,
   }
 };
 
@@ -806,14 +662,14 @@ static conf_locomotive_t conf_locomotive[0] = {
 
 unsigned int conf_locomotive_num_entries(void)
 {
-    return 8; // 8 
+    return 5; // 5 
 }
 
-static conf_locomotive_t conf_locomotive[8] = {
+static conf_locomotive_t conf_locomotive[5] = {
   {     // 0
      .pidctl = {
      .kP = 500,
-     .kI = 100,
+     .kI = 500,
      .kD = 500,
      },
      .inertia = {
@@ -826,9 +682,11 @@ static conf_locomotive_t conf_locomotive[8] = {
      .fix_bemf = 0,
      .en_spd2pow = 0,
      .reversed = 0,
-     .min_power = 0,
+     .min_power = 20,
+     .min_power_acc = 20,
+     .min_power_dec = 10,
      .notify_pose = 0,
-     .bemfIIR = 0,
+     .bemfIIR = 80,
      .postIIR = 0,
      .slipping = 120,
      .pose_per_cm = 450,
@@ -836,7 +694,7 @@ static conf_locomotive_t conf_locomotive[8] = {
   {     // 1
      .pidctl = {
      .kP = 500,
-     .kI = 100,
+     .kI = 500,
      .kD = 500,
      },
      .inertia = {
@@ -849,18 +707,20 @@ static conf_locomotive_t conf_locomotive[8] = {
      .fix_bemf = 0,
      .en_spd2pow = 0,
      .reversed = 0,
-     .min_power = 0,
+     .min_power = 20,
+     .min_power_acc = 20,
+     .min_power_dec = 10,
      .notify_pose = 0,
-     .bemfIIR = 0,
+     .bemfIIR = 80,
      .postIIR = 0,
      .slipping = 120,
-     .pose_per_cm = 500,
+     .pose_per_cm = 450,
   },
   {     // 2
      .pidctl = {
-     .kP = 500,
-     .kI = 100,
-     .kD = 500,
+     .kP = 400,
+     .kI = 400,
+     .kD = 400,
      },
      .inertia = {
      .dec = 120,
@@ -872,17 +732,19 @@ static conf_locomotive_t conf_locomotive[8] = {
      .fix_bemf = 0,
      .en_spd2pow = 0,
      .reversed = 0,
-     .min_power = 0,
+     .min_power = 20,
+     .min_power_acc = 20,
+     .min_power_dec = 10,
      .notify_pose = 0,
-     .bemfIIR = 0,
+     .bemfIIR = 80,
      .postIIR = 0,
      .slipping = 120,
-     .pose_per_cm = 500,
+     .pose_per_cm = 350,
   },
   {     // 3
      .pidctl = {
      .kP = 500,
-     .kI = 100,
+     .kI = 500,
      .kD = 500,
      },
      .inertia = {
@@ -895,18 +757,20 @@ static conf_locomotive_t conf_locomotive[8] = {
      .fix_bemf = 0,
      .en_spd2pow = 0,
      .reversed = 0,
-     .min_power = 0,
+     .min_power = 20,
+     .min_power_acc = 20,
+     .min_power_dec = 10,
      .notify_pose = 0,
-     .bemfIIR = 0,
+     .bemfIIR = 80,
      .postIIR = 0,
      .slipping = 120,
-     .pose_per_cm = 500,
+     .pose_per_cm = 450,
   },
   {     // 4
      .pidctl = {
-     .kP = 500,
-     .kI = 100,
-     .kD = 500,
+     .kP = 600,
+     .kI = 600,
+     .kD = 600,
      },
      .inertia = {
      .dec = 120,
@@ -917,82 +781,15 @@ static conf_locomotive_t conf_locomotive[8] = {
      .enable_pid = 1,
      .fix_bemf = 0,
      .en_spd2pow = 0,
-     .reversed = 0,
-     .min_power = 0,
+     .reversed = 1,
+     .min_power = 20,
+     .min_power_acc = 20,
+     .min_power_dec = 10,
      .notify_pose = 0,
-     .bemfIIR = 0,
+     .bemfIIR = 80,
      .postIIR = 0,
      .slipping = 120,
-     .pose_per_cm = 500,
-  },
-  {     // 5
-     .pidctl = {
-     .kP = 500,
-     .kI = 100,
-     .kD = 500,
-     },
-     .inertia = {
-     .dec = 120,
-     .acc = 120,
-     },
-     .volt_policy = vpolicy_normal,
-     .enable_inertia = 0,
-     .enable_pid = 1,
-     .fix_bemf = 0,
-     .en_spd2pow = 0,
-     .reversed = 0,
-     .min_power = 0,
-     .notify_pose = 0,
-     .bemfIIR = 0,
-     .postIIR = 0,
-     .slipping = 120,
-     .pose_per_cm = 500,
-  },
-  {     // 6
-     .pidctl = {
-     .kP = 500,
-     .kI = 100,
-     .kD = 500,
-     },
-     .inertia = {
-     .dec = 120,
-     .acc = 120,
-     },
-     .volt_policy = vpolicy_normal,
-     .enable_inertia = 0,
-     .enable_pid = 1,
-     .fix_bemf = 0,
-     .en_spd2pow = 0,
-     .reversed = 0,
-     .min_power = 0,
-     .notify_pose = 0,
-     .bemfIIR = 0,
-     .postIIR = 0,
-     .slipping = 120,
-     .pose_per_cm = 500,
-  },
-  {     // 7
-     .pidctl = {
-     .kP = 500,
-     .kI = 100,
-     .kD = 500,
-     },
-     .inertia = {
-     .dec = 120,
-     .acc = 120,
-     },
-     .volt_policy = vpolicy_normal,
-     .enable_inertia = 0,
-     .enable_pid = 1,
-     .fix_bemf = 0,
-     .en_spd2pow = 0,
-     .reversed = 0,
-     .min_power = 0,
-     .notify_pose = 0,
-     .bemfIIR = 0,
-     .postIIR = 0,
-     .slipping = 120,
-     .pose_per_cm = 500,
+     .pose_per_cm = 400,
   }
 };
 

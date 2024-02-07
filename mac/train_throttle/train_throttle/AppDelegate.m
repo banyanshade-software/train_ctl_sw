@@ -46,7 +46,7 @@
 #include "planner.h"
 #include "servo.h"
 #include "trace_train.h"
-
+#include "locomotives.h"
 #include "ParamTableController.h"
 #import "AppDelegateP.h"
 
@@ -206,6 +206,21 @@ typedef void (^respblk_t)(void);
 }
 
 
+- (NSArray <NSString *> *) locoNames
+{
+    static NSArray *locos;
+    static dispatch_once_t onceToken = (dispatch_once_t)0;
+    dispatch_once(&onceToken, ^{
+        // TODO
+        NSMutableArray *l = [[NSMutableArray alloc]initWithCapacity:NumKnownLoco];
+        for (int i=0; i<NumKnownLoco; i++) {
+            NSString *s = [NSString stringWithCString:locomotiveNames[i] encoding:NSUTF8StringEncoding];
+            [l addObject:s];
+        }
+        locos = l;
+    });
+    return locos;
+}
  
 - (void) setShunting:(int)s
 {

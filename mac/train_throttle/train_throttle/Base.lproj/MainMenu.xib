@@ -7109,14 +7109,14 @@
                                                 <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                             </tableHeaderCell>
-                                            <popUpButtonCell key="dataCell" type="bevel" title="Item 1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="bezel" imageScaling="proportionallyDown" inset="2" arrowPosition="arrowAtCenter" preferredEdge="maxY" selectedItem="geP-fp-5I9" id="96B-vl-bF3">
+                                            <popUpButtonCell key="dataCell" type="bevel" title="No" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="bezel" imageScaling="proportionallyDown" inset="2" arrowPosition="arrowAtCenter" preferredEdge="maxY" selectedItem="geP-fp-5I9" id="96B-vl-bF3">
                                                 <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                                 <font key="font" metaFont="system"/>
                                                 <menu key="menu" id="g2f-Q1-gbQ">
                                                     <items>
-                                                        <menuItem title="Item 1" state="on" id="geP-fp-5I9"/>
-                                                        <menuItem title="Item 2" id="1U5-jF-fWf"/>
-                                                        <menuItem title="Item 3" id="7RW-b4-H8D"/>
+                                                        <menuItem title="No" state="on" id="geP-fp-5I9"/>
+                                                        <menuItem title="Before PID" id="1U5-jF-fWf"/>
+                                                        <menuItem title="After PID" id="7RW-b4-H8D"/>
                                                     </items>
                                                 </menu>
                                             </popUpButtonCell>
@@ -7238,6 +7238,9 @@
                                                         <menuItem title="Item 3" id="joZ-e1-j9T"/>
                                                     </items>
                                                 </menu>
+                                                <connections>
+                                                    <binding destination="Voe-Tx-rLC" name="contentValues" keyPath="locoNames" id="CuZ-Ps-c1T"/>
+                                                </connections>
                                             </popUpButtonCell>
                                             <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                         </tableColumn>

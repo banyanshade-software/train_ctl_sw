@@ -21,7 +21,7 @@
 
 - (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView
 {
-    return NumKnownLoco-1;
+    return NumKnownLoco;
 }
 
 - (NSInteger)paramNum

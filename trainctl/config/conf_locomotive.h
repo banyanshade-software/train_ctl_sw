@@ -37,6 +37,8 @@ typedef struct conf_locomotive {
     uint8_t en_spd2pow:1;
     uint8_t reversed:1;
     uint8_t min_power;
+    uint8_t min_power_acc;
+    uint8_t min_power_dec;
     uint8_t notify_pose:1;
     uint8_t bemfIIR;
     uint8_t postIIR;
@@ -57,13 +59,13 @@ const conf_locomotive_t *conf_locomotive_get(int num);
 
 
 #ifdef TRN_BOARD_G4MASTER1
-#define NUM_LOCOMOTIVES 8 // 8 
+#define NUM_LOCOMOTIVES 5 // 5 
 #endif // TRN_BOARD_G4MASTER1
 
 
 
 #ifdef TRN_BOARD_UNIT_TEST
-#define NUM_LOCOMOTIVES 4 // 4 
+#define NUM_LOCOMOTIVES 5 // 5 
 #endif // TRN_BOARD_UNIT_TEST
 
 
@@ -75,13 +77,13 @@ const conf_locomotive_t *conf_locomotive_get(int num);
 
 
 #ifdef TRN_BOARD_MAINV04
-#define NUM_LOCOMOTIVES 8 // 8 
+#define NUM_LOCOMOTIVES 5 // 5 
 #endif // TRN_BOARD_MAINV04
 
 
 
 #ifdef TRN_BOARD_MAINV0
-#define NUM_LOCOMOTIVES 8 // 8 
+#define NUM_LOCOMOTIVES 5 // 5 
 #endif // TRN_BOARD_MAINV0
 
 
@@ -105,11 +107,11 @@ const conf_locomotive_t *conf_locomotive_get(int num);
 
 
 #ifdef TRN_BOARD_SIMU
-#define NUM_LOCOMOTIVES 8 // 8 
+#define NUM_LOCOMOTIVES 5 // 5 
 #endif // TRN_BOARD_SIMU
 
 
-#define MAX_LOCOMOTIVES 8
+#define MAX_LOCOMOTIVES 5
 
 
 

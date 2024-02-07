@@ -144,7 +144,7 @@
 
 - (void) toggleTurnout:(int)tn;
 
-
+- (NSArray <NSString *> *) locoNames;
 @property (nonatomic, weak) IBOutlet NSWindow *trainParamWin;
 
 @end

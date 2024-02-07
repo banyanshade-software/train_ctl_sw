@@ -603,8 +603,11 @@ typedef void (^respblk_t)(void);
         v = c.intValue;
     }
     NSLog(@"changeParam %@ -> %d", x, (int)v);
-    
-    
+    [self updateParameter:x value:v];
+}
+
+- (void) updateParameter:(NSString *)x value:(int)v
+{
     NSArray *pa = [self splitParamName:x];
     NSString *psel = [pa objectAtIndex:1];
     NSString *pn = [pa objectAtIndex:2];

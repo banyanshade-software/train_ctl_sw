@@ -147,5 +147,6 @@
 - (NSArray <NSString *> *) locoNames;
 @property (nonatomic, weak) IBOutlet NSWindow *trainParamWin;
 
+- (void) updateParameter:(NSString *)x value:(int)v;
 @end
 

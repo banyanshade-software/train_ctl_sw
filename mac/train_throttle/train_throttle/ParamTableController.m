@@ -137,4 +137,23 @@ static NSMutableArray *_instances = nil;
     return value;
 }
 
+
+- (BOOL)tableView:(NSTableView *)tableView shouldEditTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row
+{
+    NSString *cn = [tableColumn identifier];
+    if ([cn isEqual:@"num"]) return NO;
+    return YES;
+}
+
+- (void)tableView:(NSTableView *)tableView setObjectValue:(nullable id)object forTableColumn:(nullable NSTableColumn *)tableColumn row:(NSInteger)row;
+{
+    NSString *cn = [tableColumn identifier];
+    if (![cn length]) return;
+    if ([cn isEqual:@"num"]) return;
+    NSString *paramid = [self idForRow:row col:cn];
+    int v = [object intValue];
+    AppDelegate *appdelegate = [[NSApplication sharedApplication] delegate];
+    [appdelegate updateParameter:paramid value:v];
+}
+
 @end

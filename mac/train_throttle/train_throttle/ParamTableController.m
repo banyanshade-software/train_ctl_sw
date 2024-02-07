@@ -152,8 +152,10 @@ static NSMutableArray *_instances = nil;
     if ([cn isEqual:@"num"]) return;
     NSString *paramid = [self idForRow:row col:cn];
     int v = [object intValue];
-    AppDelegate *appdelegate = [[NSApplication sharedApplication] delegate];
+    AppDelegate *appdelegate = (AppDelegate *)[[NSApplication sharedApplication] delegate];
     [appdelegate updateParameter:paramid value:v];
+    
+    [paramValues setObject:[NSNumber numberWithInt:v] forKey:paramid];
 }
 
 @end

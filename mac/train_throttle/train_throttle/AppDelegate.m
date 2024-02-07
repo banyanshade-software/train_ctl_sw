@@ -606,9 +606,9 @@ typedef void (^respblk_t)(void);
     [self updateParameter:x value:v];
 }
 
-- (void) updateParameter:(NSString *)x value:(int)v
+- (void) updateParameter:(NSString *)paramid value:(int)v
 {
-    NSArray *pa = [self splitParamName:x];
+    NSArray *pa = [self splitParamName:paramid];
     NSString *psel = [pa objectAtIndex:1];
     NSString *pn = [pa objectAtIndex:2];
     if ([psel length] != 2) {

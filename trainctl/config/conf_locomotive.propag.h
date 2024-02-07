@@ -25,10 +25,12 @@ int32_t conf_locomotive_default_value(unsigned int numinst, unsigned int numfiel
 #define conf_numfield_locomotive_enable_inertia 		6
 #define conf_numfield_locomotive_enable_pid 		7
 #define conf_numfield_locomotive_reversed 		8
-#define conf_numfield_locomotive_bemfIIR 		9
-#define conf_numfield_locomotive_postIIR 		10
-#define conf_numfield_locomotive_slipping 		11
-#define conf_numfield_locomotive_pose_per_cm 		12
+#define conf_numfield_locomotive_min_power_acc 		9
+#define conf_numfield_locomotive_min_power_dec 		10
+#define conf_numfield_locomotive_bemfIIR 		11
+#define conf_numfield_locomotive_postIIR 		12
+#define conf_numfield_locomotive_slipping 		13
+#define conf_numfield_locomotive_pose_per_cm 		14
 
 
 void *conf_locomotive_ptr(void);

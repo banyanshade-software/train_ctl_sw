@@ -727,13 +727,13 @@ typedef void (^respblk_t)(void);
 - (NSArray <NSArray *> *)getTableViewParams
 {
     NSArray *paramCtrls = [[ParamTableController class]instances];
-    NSLog(@"hop1 %@", paramCtrls);
+    //NSLog(@"hop1 %@", paramCtrls);
     NSMutableArray *allparams = [NSMutableArray arrayWithCapacity:4];
     for (ParamTableController *ctrl in paramCtrls) {
         NSArray *p = [ctrl getAllParamNames];
         [allparams addObject:p];
     }
-    NSLog(@"hop2 %@", allparams);
+    //NSLog(@"hop2 %@", allparams);
     return allparams;
 }
 // TODO conf generator does not produce .h
@@ -876,6 +876,7 @@ startGet:
     NSInteger m = [t count];
     if (start >= m) {
         // all done for this controler
+        NSLog(@"done for this controller %d %d\n", (int) start, (int) m);
         nextParamTableGet = 0;
         nparamresp = 0;
         tableParamsIndex++;
@@ -885,10 +886,12 @@ startGet:
     for (NSInteger i = start; (i<m) && (i<m1); i++) {
         NSString *s = [t objectAtIndex:i];
         self->parctl[s] = nil;
+        NSLog(@"query %@ nextParamTableGet=%d", s, nextParamTableGet);
         BOOL exists = [self queryParam:s];
         if (!exists) {
             m1++;
             continue;
+            // TODO: bug here if last param does not exists
         }
         nextParamTableGet++;
     }

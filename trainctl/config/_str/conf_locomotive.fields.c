@@ -41,6 +41,10 @@ int conf_locomotive_fieldnum(const char *str)
          return conf_numfield_locomotive_enable_pid;
     } else if (!strcmp(str, "reversed")) {
          return conf_numfield_locomotive_reversed;
+    } else if (!strcmp(str, "min_power_acc")) {
+         return conf_numfield_locomotive_min_power_acc;
+    } else if (!strcmp(str, "min_power_dec")) {
+         return conf_numfield_locomotive_min_power_dec;
     } else if (!strcmp(str, "bemfIIR")) {
          return conf_numfield_locomotive_bemfIIR;
     } else if (!strcmp(str, "postIIR")) {
@@ -74,6 +78,10 @@ const char *conf_locomotive_fieldname(int f)
          return "enable_pid";
     } else if (f == conf_numfield_locomotive_reversed) {
          return "reversed";
+    } else if (f == conf_numfield_locomotive_min_power_acc) {
+         return "min_power_acc";
+    } else if (f == conf_numfield_locomotive_min_power_dec) {
+         return "min_power_dec";
     } else if (f == conf_numfield_locomotive_bemfIIR) {
          return "bemfIIR";
     } else if (f == conf_numfield_locomotive_postIIR) {

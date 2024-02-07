@@ -59,9 +59,9 @@ config locomotive {
 
     const uint8_t min_power /* for en_spd2pow */
         = (default) 20;
-    const uint8_t min_power_acc
+    user uint8_t min_power_acc
         = (default) 20;
-    const uint8_t min_power_dec
+    user uint8_t min_power_dec
         = (default) 10;
     
     const uint8_t notify_pose:1

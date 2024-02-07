@@ -840,6 +840,10 @@ int32_t conf_locomotive_local_get(unsigned int fieldnum, unsigned int instnum)
         return c->enable_pid;
     case conf_numfield_locomotive_reversed:
         return c->reversed;
+    case conf_numfield_locomotive_min_power_acc:
+        return c->min_power_acc;
+    case conf_numfield_locomotive_min_power_dec:
+        return c->min_power_dec;
     case conf_numfield_locomotive_bemfIIR:
         return c->bemfIIR;
     case conf_numfield_locomotive_postIIR:
@@ -887,6 +891,12 @@ void conf_locomotive_local_set(unsigned int fieldnum, unsigned int instnum, int3
         break;
     case conf_numfield_locomotive_reversed:
         c->reversed = v;
+        break;
+    case conf_numfield_locomotive_min_power_acc:
+        c->min_power_acc = v;
+        break;
+    case conf_numfield_locomotive_min_power_dec:
+        c->min_power_dec = v;
         break;
     case conf_numfield_locomotive_bemfIIR:
         c->bemfIIR = v;

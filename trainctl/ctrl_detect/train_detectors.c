@@ -18,7 +18,7 @@
 
 /* parser */
 
-static _UNUSED_ int nil_detect_parse(_UNUSED_ const msg_64_t *m, train_detector_result_t *r, xblkaddr_t detc)
+static _UNUSED_ int nil_detect_parse(_UNUSED_ const msg_64_t *m, train_detector_result_t *r, _UNUSED_ xblkaddr_t detc)
 {
     memset(r, 0, sizeof(*r));
     return 0;

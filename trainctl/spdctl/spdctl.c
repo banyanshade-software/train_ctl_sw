@@ -46,7 +46,7 @@
 #include "../config/conf_train.h"
 #include "../config/conf_locomotive.h"
 #include "../config/conf_canton.h"
-#include "train2loco.h"
+#include "../ctrl/train2loco.h"
 
 
 // ----------------------------------------------------------------------------------

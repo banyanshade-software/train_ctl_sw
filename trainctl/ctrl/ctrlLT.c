@@ -1200,7 +1200,7 @@ static int _train_check_dir(int tidx, train_ctrl_t *tvars, int sdir, rettrigs_t 
 
 
 
-static inline void _set_one_trig(int numtrain, train_ctrl_t *tvars, const conf_train_t *tconf, int num, int8_t dir,  xblkaddr_t canaddr, int32_t pose, uint8_t tag, int *pseq, uint8_t fut, int *pold)
+static inline void _set_one_trig(int numtrain, train_ctrl_t *tvars, _UNUSED_ const conf_train_t *tconf, int num, int8_t dir,  xblkaddr_t canaddr, int32_t pose, uint8_t tag, int *pseq, uint8_t fut, int *pold)
 {
     const conf_locomotive_t *loco = getloco(numtrain);
     itm_debug3(DBG_CTRL, "set posetr", numtrain, tag, pose);

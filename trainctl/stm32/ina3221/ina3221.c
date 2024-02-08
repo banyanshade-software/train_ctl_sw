@@ -853,14 +853,6 @@ static void handle_ina_notif_detectfreq(uint32_t notif)
 
 // TODO: move loco somewhere else
 
-typedef enum {
-	loco_unknown = 0,
-	Marklin8805_BR29,		// 1
-	Marklin8821_V200,		// 2
-	Marklin8895_BR74,		// 3
-	Marklin8875_V160,		// 4
-}  __attribute((packed)) locomotive_t;
-
 typedef struct {
 	locomotive_t loco;
 	uint16_t k[8];

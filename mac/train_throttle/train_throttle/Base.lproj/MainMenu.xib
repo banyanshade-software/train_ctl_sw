@@ -7135,7 +7135,7 @@
                                             </tableHeaderCell>
                                             <popUpButtonCell key="dataCell" type="bevel" title="No" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="bezel" imageScaling="proportionallyDown" inset="2" arrowPosition="arrowAtCenter" preferredEdge="maxY" selectedItem="geP-fp-5I9" id="96B-vl-bF3">
                                                 <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                                                <font key="font" metaFont="system"/>
+                                                <font key="font" metaFont="menu"/>
                                                 <menu key="menu" id="g2f-Q1-gbQ">
                                                     <items>
                                                         <menuItem title="No" state="on" id="geP-fp-5I9"/>
@@ -7146,7 +7146,7 @@
                                             </popUpButtonCell>
                                             <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                         </tableColumn>
-                                        <tableColumn width="54" minWidth="10" maxWidth="3.4028234663852886e+38" id="1qe-Kn-TsR">
+                                        <tableColumn identifier="acc" width="54" minWidth="10" maxWidth="3.4028234663852886e+38" id="1qe-Kn-TsR">
                                             <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="acc">
                                                 <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -7158,7 +7158,7 @@
                                             </textFieldCell>
                                             <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                         </tableColumn>
-                                        <tableColumn width="61" minWidth="10" maxWidth="3.4028234663852886e+38" id="7rR-PS-6I0">
+                                        <tableColumn identifier="dec" width="61" minWidth="10" maxWidth="3.4028234663852886e+38" id="7rR-PS-6I0">
                                             <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="dec">
                                                 <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>

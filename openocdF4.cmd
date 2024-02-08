@@ -1,6 +1,6 @@
 #!/bin/sh
 
-P=/Users/danielbraun/devel/train/_sw_lt7
+P=/Users/danielbraun/devel/train/_sw_M8detect
 C=/opt/openocd
 
 

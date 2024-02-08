@@ -43,8 +43,8 @@ void inertia_reset(int tidx, _UNUSED_ const struct conf_inertia *cnf, inertia_va
 
 int16_t inertia_value(int tidx, const struct conf_inertia *config, inertia_vars_t *vars, int *pchanged)
 {
-	int st =  SIGNOF0(vars->target);
-	int sc =  SIGNOF0(vars->cur100);
+	int targetsign =  SIGNOF0(vars->target);
+	int abs100 =  SIGNOF0(vars->cur100);
 	int inc;
 
 	int32_t dt100 = (100*1000)/tsktick_freqhz;
@@ -58,27 +58,27 @@ int16_t inertia_value(int tidx, const struct conf_inertia *config, inertia_vars_
 
     itm_debug3(DBG_INERTIA, "i/val", tidx, vars->cur100, vars->target);
 
-	if (st*sc >= 0) {
+	if (targetsign*abs100 >= 0) {
 		// same direction
-        if (!sc) sc = st; // case where cur=0
+        if (!abs100) abs100 = targetsign; // case where cur=0
 		if (trga100 > abs(vars->cur100)) {
 			// acceleration
 			inc = (config->acc * dt100) / 10000;
 			inc = MIN(inc, trga100-abs(vars->cur100));
-			inc = sc * inc;
+			inc = abs100 * inc;
 	    	itm_debug3(DBG_INERTIA, "i/acc", tidx, inc, dt100);
 		} else {
 			// deceleration
 			inc = (config->dec * dt100) / 10000;
 			inc = MIN(inc, -trga100+abs(vars->cur100));
-			inc = -sc * inc;
+			inc = -abs100 * inc;
 	    	itm_debug3(DBG_INERTIA, "i/dec", tidx, inc, dt100);
 		}
 	} else {
 		// dir change
 		inc = config->dec * dt100 / 10000;
         inc = MIN(inc, abs(vars->target*100-vars->cur100));
-        inc = -1 * sc * inc;
+        inc = -1 * abs100 * inc;
 		itm_debug2(DBG_INERTIA, "i/dir chg", tidx, inc);
 	}
 	int vold = vars->cur100/100;

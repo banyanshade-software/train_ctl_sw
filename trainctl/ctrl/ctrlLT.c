@@ -1005,8 +1005,10 @@ void ctrl3_evt_entered_c2(int tidx, train_ctrl_t *tvars, uint8_t from_bemf)
     		itm_debug3(DBG_ERR|DBG_CTRL, "fut is c1", tidx, tvars->canOld_xaddr.v, tvars->can1_xaddr.v);
     		TRIGGER_TRACE(TRACE_TRIGGER_EVT_FUT_IS_C1, 1);
     	}
+        //itm_debug1(DBG_CTRL, "powc2fut", tidx);
         _set_and_power_c2(tidx, tvars); // this will also call _sendlow_c1c2_dir
     } else {
+        //itm_debug1(DBG_CTRL, "sendlow", tidx);
         _sendlow_c1c2_dir(tidx, tvars);
     }
     /*if (2 == tvars->can1_xaddr.v) { // XXX Hardcoded for now
@@ -1088,7 +1090,7 @@ static void _updated_while_running(int tidx, train_ctrl_t *tvars)
     }
     if (rc<0) FatalError("FSMd", "setdir", Error_FSM_ChkNeg1);
     _check_c2(tidx, tvars, &rett);
-	itm_debug2(DBG_CTRL, "setdir U", tidx, tvars->_state);
+	itm_debug3(DBG_CTRL, "setdir U", tidx, tvars->_state, tvars->_sdir);
     _set_dir(tidx, tvars, tvars->_sdir);
     _update_spd_limit(tidx, tvars, tvars->_sdir);
     _set_speed(tidx, tvars, tvars->_desired_signed_speed, 1, rc);
@@ -1181,7 +1183,6 @@ static int _train_check_dir(int tidx, train_ctrl_t *tvars, int sdir, rettrigs_t 
 
     itm_debug3(DBG_CTRLLT, "rc2=", tidx, rc2, rett->ntrig);
     freeback(tidx, tvars);
-    
     
     
     if (rc2 < 0) {
@@ -1401,7 +1402,7 @@ static void _apply_speed(int tidx, train_ctrl_t *tvars)
         if (spd>maxspd) spd = maxspd;
     }
 #endif
-    
+    //itm_debug3(DBG_CTRL, "appspd", tidx, spd, tvars->_target_unisgned_speed );
     if (tvars->_target_unisgned_speed == spd) {
         // dont send if same value
         if (tvars->c1c2dir_changed) {
@@ -1444,7 +1445,7 @@ static void _sendlow_c1c2_dir(int tidx, train_ctrl_t *tvars)
         FatalError("FSMc", "c1c2dirchanged 0", Error_FSM_C1C2Zero);
         return;
     }
-    itm_debug1(DBG_CTRL, "c1c2dir", tidx);
+    itm_debug3(DBG_CTRL, "c1c2dir", tidx,  tvars->can1_xaddr.v, tvars->can2_xaddr.v);
     tvars->c1c2dir_changed = 0;
     msg_64_t m = {0};
     m.from = MA1_CTRL(tidx);

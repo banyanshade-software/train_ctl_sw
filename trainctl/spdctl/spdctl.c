@@ -124,6 +124,7 @@ typedef struct train_vars {
 	inertia_vars_t inertiavars;
 
     uint8_t     dirbits;
+    uint8_t     canton_added;
     xblkaddr_t  Cx[4];
     
 	//xblkaddr_t C1x;	// current canton adress
@@ -363,7 +364,7 @@ static void spdctl_handle_msg(msg_64_t *m)
 #endif
                 
 		case CMD_SET_TARGET_SPEED:
-			itm_debug1(DBG_SPDCTL, "set_t_spd", m->v1u);
+			itm_debug2(DBG_SPDCTL, "set_t_spd", tidx, m->v1u);
 			if (!tvars->target_speed && (m->v1u > 10)) {
 				oscillo_trigger_start = 1;
 			}
@@ -393,7 +394,8 @@ static void spdctl_handle_msg(msg_64_t *m)
                 }
                 break;
         case CMD_SET_C4:
-                itm_debug3(DBG_SPDCTL|DBG_CTRL, "set_c4", tidx, m->vbytes[0], m->vbytes[1]);
+            itm_debug3(DBG_SPDCTL|DBG_CTRL, "set_c4", tidx, m->vbytes[0], m->vbytes[1]);
+            itm_debug3(DBG_SPDCTL|DBG_CTRL, "set_c4.", tidx, m->vbytes[2], m->vbytes[3]);
                 tvars->c2bemf = 0;
                 tvars->dirbits = m->subc;
                 for (int i=0; i<4; i++) {
@@ -416,6 +418,7 @@ static void spdctl_handle_msg(msg_64_t *m)
                     }
                     if (i==4) {
                         _start_canton(tidx, v);
+                        tvars->canton_added = 1;
                     }
                 }
                 for (int i=0; i<4; i++) {
@@ -540,7 +543,6 @@ void spdctl_run_tick(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, uint
                             	m.from = MA1_SPDCTL(tidx);
                             	m.to = MA1_CTRL(tidx);
                         		m.cmd = CMD_BEMF_DETECT_ON_C2;
-<<<<<<< HEAD
                             	m.v1u = tvars->C2x.v;
                             	int32_t p = tvars->position_estimate / 100;
                             	if (abs(p)>0x7FFF) {
@@ -549,10 +551,6 @@ void spdctl_run_tick(_UNUSED_ uint32_t notif_flags, _UNUSED_ uint32_t tick, uint
                             		p = SIGNOF(p)*0x7FFF;
                             	}
                             	m.v2 = (int16_t) p;
-=======
-                        		m.v1u = tvars->C2;
-                        		m.v2 = tvars->lastpose;
->>>>>>> origin/M6longtain
                         		mqf_write_from_spdctl(&m);
 
                         		tvars->c2hicnt = 0;
@@ -798,6 +796,12 @@ static void train_periodic_control(int numtrain, _UNUSED_ uint32_t dt)
 
     itm_debug3(DBG_PID|DBG_SPDCTL, "spd", numtrain, target_with_brake, changed);
 
+    // force resending spd if cantons were added
+    if (tvars->canton_added) {
+    	tvars->canton_added = 0;
+    	changed = 1;
+    }
+
     if (changed) {
     	_set_speed(numtrain, tconf, tvars);
         if ((0)) { // TODO remove
@@ -865,7 +869,7 @@ static void _stop_canton(int tidx, uint8_t v)
     xblkaddr_t c;
     c.v = v;
     TO_CANTON(m, c);
-    itm_debug1(DBG_SPDCTL, "stp c2", tidx);
+    itm_debug2(DBG_SPDCTL, "stp c2", tidx, v);
     m.cmd = CMD_STOP;
     mqf_write_from_spdctl(&m);
     m.cmd = CMD_BEMF_OFF;
@@ -935,9 +939,11 @@ static void set_c1_c2(int tidx, train_vars_t *tvars, xblkaddr_t c1, int8_t dir1,
 static void _set_speed(int tidx, const conf_locomotive_t *cnf, train_vars_t *vars)
 {
     const conf_canton_t *c1;
-    //const conf_locomotive_t
 
 	int16_t sv100 = vars->last_speed;
+    itm_debug3(DBG_SPDCTL, "setspd ", tidx, sv100, vars->Cx[0].v);
+    itm_debug3(DBG_SPDCTL, "setspd.", vars->Cx[1].v, vars->Cx[2].v, vars->Cx[3].v);
+
 
     c1 =  conf_canton_template(); //conf_canton_get(vars->C1);
 
@@ -963,6 +969,7 @@ static void _set_speed(int tidx, const conf_locomotive_t *cnf, train_vars_t *var
         if (vars->Cx[i].v == 0xFF) continue;
         int dir = sig * __spdcx_dir(vars->dirbits, i);
         TO_CANTON(m, vars->Cx[i]);
+        itm_debug3(DBG_SPDCTL, "setvpwm", tidx, vars->Cx[i].v, dir*pwm_duty);
         m.vb1 = dir*pwm_duty;
         mqf_write_from_spdctl(&m);
     }

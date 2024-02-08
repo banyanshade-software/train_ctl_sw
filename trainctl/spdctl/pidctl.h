@@ -42,7 +42,7 @@ typedef struct pidctl_vars {
     uint8_t stopped:1;
 } pidctl_vars_t;
 
-void pidctl_reset(const struct conf_pidctl *c, pidctl_vars_t *v);
+void pidctl_reset(pidctl_vars_t *v);
 
 void pidctl_set_target(const struct conf_pidctl *c, pidctl_vars_t *v, int32_t val);
 int32_t pidctl_value(const struct conf_pidctl *c, pidctl_vars_t *v, int32_t cur_v);

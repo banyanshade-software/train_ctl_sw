@@ -27,22 +27,23 @@
 #include "../misc.h"
 #include "inertia.h"
 
-
+#include "../config/conf_locomotive.h"
 
 #ifndef BOARD_HAS_CTRL
 #error BOARD_HAS_CTRL not defined, remove this file from build
 #endif
 
 
-void inertia_reset(int tidx, _UNUSED_ const struct conf_inertia *cnf, inertia_vars_t *vars)
+void inertia_reset(int tidx,  inertia_vars_t *vars)
 {
 	itm_debug1(DBG_INERTIA, "i/rst", tidx);
 	vars->target = 0;
 	vars->cur100 = 0;
 }
 
-int16_t inertia_value(int tidx, const struct conf_inertia *config, inertia_vars_t *vars, int *pchanged)
+int16_t inertia_value(int tidx, const conf_locomotive_t *lconf, inertia_vars_t *vars, int *pchanged)
 {
+    const struct conf_inertia *inertiaconfig = &lconf->inertia;
 	int targetsign =  SIGNOF0(vars->target);
 	int abs100 =  SIGNOF0(vars->cur100);
 	int inc;
@@ -63,20 +64,20 @@ int16_t inertia_value(int tidx, const struct conf_inertia *config, inertia_vars_
         if (!abs100) abs100 = targetsign; // case where cur=0
 		if (trga100 > abs(vars->cur100)) {
 			// acceleration
-			inc = (config->acc * dt100) / 10000;
+			inc = (inertiaconfig->acc * dt100) / 10000;
 			inc = MIN(inc, trga100-abs(vars->cur100));
 			inc = abs100 * inc;
 	    	itm_debug3(DBG_INERTIA, "i/acc", tidx, inc, dt100);
 		} else {
 			// deceleration
-			inc = (config->dec * dt100) / 10000;
+			inc = (inertiaconfig->dec * dt100) / 10000;
 			inc = MIN(inc, -trga100+abs(vars->cur100));
 			inc = -abs100 * inc;
 	    	itm_debug3(DBG_INERTIA, "i/dec", tidx, inc, dt100);
 		}
 	} else {
 		// dir change
-		inc = config->dec * dt100 / 10000;
+		inc = inertiaconfig->dec * dt100 / 10000;
         inc = MIN(inc, abs(vars->target*100-vars->cur100));
         inc = -1 * abs100 * inc;
 		itm_debug2(DBG_INERTIA, "i/dir chg", tidx, inc);

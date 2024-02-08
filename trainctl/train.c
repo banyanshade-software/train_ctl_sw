@@ -45,7 +45,7 @@ typedef struct train_vars {
 	 */
 	memset(v, 0, sizeof(*v));
 	pidctl_reset(&c->pidcnf, &v->pidvars);
-	inertia_reset(&c->inertiacnf, &v->inertiavars);
+	inertia_reset(c->inertiacnf, &v->inertiavars);
 	//v->lasttick = 0;
 	v->current_canton = 0; // XXX
 	v->next_canton = 0;	   // XXX

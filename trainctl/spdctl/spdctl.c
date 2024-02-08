@@ -213,6 +213,9 @@ static void spdctl_reset(void)
         trspc_vars[i].dirbits = 0;
         for (int k=0; k<4; k++) trspc_vars[i].Cx[k].v = 0xFF;
         trspc_vars[i].pidvars.stopped = 1;
+        
+        inertia_reset(i, &trspc_vars[i].inertiavars);
+        pidctl_reset(&trspc_vars[i].pidvars);
 		//trspc_vars[i].C1x.v = 0xFF;
 		//trspc_vars[i].C2x.v = 0xFF;
 	}
@@ -705,7 +708,7 @@ static void train_periodic_control(int numtrain, _UNUSED_ uint32_t dt)
             int changed;
             inertia_set_target(numtrain, &tconf->inertia, &tvars->inertiavars, tvars->target_speed);
             //tvars->inertiavars.target = tvars->target_speed;
-            target_with_brake = inertia_value(numtrain, &tconf->inertia, &tvars->inertiavars, &changed);
+            target_with_brake = inertia_value(numtrain, tconf, &tvars->inertiavars, &changed);
             itm_debug3(DBG_INERTIA, "inertia", numtrain, tvars->target_speed, target_with_brake);
         }
 	}
@@ -737,7 +740,8 @@ static void train_periodic_control(int numtrain, _UNUSED_ uint32_t dt)
     	}
         if (!tvars->pidvars.stopped && (target_with_brake == 0) && (abs(tvars->bemf_mv)<100)) {
     		itm_debug1(DBG_PID|DBG_SPDCTL, "stop", numtrain);
-			pidctl_reset(&tconf->pidctl, &tvars->pidvars);
+			pidctl_reset(&tvars->pidvars);
+            inertia_reset(numtrain, &tvars->inertiavars);
 			debug_info('T', numtrain, "STOP_PID", 0,0, 0);
 			tvars->pidvars.stopped = 1;
             send_train_stopped(numtrain, tvars);
@@ -774,7 +778,7 @@ static void train_periodic_control(int numtrain, _UNUSED_ uint32_t dt)
         if (!tvars->brake) {
             inertia_set_target(numtrain, &tconf->inertia, &tvars->inertiavars, target_with_brake);
             //tvars->inertiavars.target = v;
-            target_with_brake = inertia_value(numtrain, &tconf->inertia, &tvars->inertiavars, NULL);
+            target_with_brake = inertia_value(numtrain, tconf, &tvars->inertiavars, NULL);
         }
     }
 

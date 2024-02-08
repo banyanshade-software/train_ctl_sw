@@ -36,7 +36,7 @@
 #error BOARD_HAS_CTRL not defined, remove this file from build
 #endif
 
-void pidctl_reset(_UNUSED_ const struct conf_pidctl *c, pidctl_vars_t *v)
+void pidctl_reset(pidctl_vars_t *v)
 {
     v->has_last = 0;
 	v->last_err = 0;
@@ -48,7 +48,7 @@ void pidctl_reset(_UNUSED_ const struct conf_pidctl *c, pidctl_vars_t *v)
 
 void pidctl_set_target(_UNUSED_ const struct conf_pidctl *c, pidctl_vars_t *v, int32_t val)
 {
-	if ((0)) pidctl_reset(c,v);
+	if ((0)) pidctl_reset(v);
     if ((0)) v->sume = val;
     itm_debug1(DBG_PID, "pid trg", val);
 	v->target_v = val;

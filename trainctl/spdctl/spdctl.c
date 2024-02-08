@@ -385,10 +385,26 @@ static void spdctl_handle_msg(msg_64_t *m)
                      |___________________\____>t
                                (start)   |    |(stop)
                      */
-                    tvars->brake = 1;
-                    tvars->stopposed10 = (int16_t) m->v32;
-                    tvars->startbreakd10 = tvars->lastposed10;
-                    tvars->spdbrake = tvars->target_speed;
+                	if (tvars->brake) {
+                		// this occurs if other events arrived while braking, such as leav_c1
+                		// rc would require brake, but without handling here, it will restart braking at
+                		itm_debug3(DBG_BRAKE, "BRAKbrak", tvars->target_speed,  tvars->startbreakd10, tvars->spdbrake);
+                		/*
+                		 * XXX TODO
+                		 * check if stoppoesed10 is identical ??
+                		 */
+                		break;
+                        tvars->stopposed10 = (int16_t) m->v32;
+                        tvars->startbreakd10 = tvars->lastposed10;
+                        tvars->spdbrake = tvars->last_speed;
+                	} else {
+                		tvars->brake = 1;
+                		tvars->stopposed10 = (int16_t) m->v32;
+                		tvars->startbreakd10 = tvars->lastposed10;
+                		tvars->spdbrake = tvars->target_speed; // XXX or tvars->last_speed ?
+                        //tvars->spdbrake = tvars->last_speed;
+
+                	}
                     itm_debug3(DBG_BRAKE, "BRAK", tidx, tvars->startbreakd10, tvars->stopposed10);
                 } else {
                     itm_debug1(DBG_BRAKE, "BRAK:off", tidx);

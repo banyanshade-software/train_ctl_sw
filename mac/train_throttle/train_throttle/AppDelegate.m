@@ -183,6 +183,9 @@ typedef void (^respblk_t)(void);
     nparam = 0;
     [self forAllParamsDo:^(NSControl *c){
         c.enabled = NO;
+        NSString *s = c.identifier;
+        BOOL exists = [self queryParam:s checkOnly:YES];
+        if (!exists) return;
         self->nparam++;
     }];
     self.numtrains = 1; //XXX obsolete
@@ -766,7 +769,7 @@ int conf_servo_fieldnum(const char *str);
     [self _getParams];
 }
 
-- (BOOL) queryParam:(NSString *)s
+- (BOOL) queryParam:(NSString *)s checkOnly:(BOOL)checkonly
 {
     
     NSArray *pa = [self splitParamName:s];
@@ -830,6 +833,7 @@ int conf_servo_fieldnum(const char *str);
         return NO;
     }
     
+    if (checkonly) return YES;
     uint64_t v40;
     oam_encode_val40(&v40, confnum, boardnum, instnum, fieldnum, 0);
     msg_64_t m = {0};
@@ -853,16 +857,19 @@ int conf_servo_fieldnum(const char *str);
     nextParamFieldGet = np2;
     [self forAllParamsDo:^(NSControl *c){
         numparam++;
+        //NSLog(@"getParam %d (%d-%d)\n", numparam, np1, np2);
         if (numparam < np1) return;
         if (numparam >= np2) return;
-        NSLog(@"getParam %d", numparam);
         
         NSString *s = c.identifier;
+        //NSLog(@"getParam %d : %@", numparam, s);
+
         self->parctl[s] = c;
        
-        BOOL exists = [self queryParam:s];
+        BOOL exists = [self queryParam:s checkOnly:NO];
         if (!exists) {
             numparam--;
+            NSLog(@"does not exist %@, numparam=%d", s, numparam);
         }
     }];
 }
@@ -899,7 +906,7 @@ startGet:
         NSString *s = [t objectAtIndex:i];
         self->parctl[s] = nil;
         NSLog(@"query %@ nextParamTableGet=%d", s, nextParamTableGet);
-        BOOL exists = [self queryParam:s];
+        BOOL exists = [self queryParam:s checkOnly:NO];
         if (!exists) {
             m1++;
             continue;
@@ -932,7 +939,7 @@ startGet:
     
     unsigned int fnum; unsigned int brd; unsigned int inst; unsigned int field; int32_t v;
     oam_decode_val40(m.val40, &fnum, &brd, &inst, &field, &v);
-    NSLog(@"paramUserVal");
+    //NSLog(@"paramUserVal nparam=%d nparamresp=%d", nparam, nparamresp);
     
     // proto not generated
     const char *conf_train_fieldname(int f);

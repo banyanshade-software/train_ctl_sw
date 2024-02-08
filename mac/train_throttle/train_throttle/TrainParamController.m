@@ -27,11 +27,13 @@
     return conf_lnum_train;
 }
 
-
+#if 0
 - (void) setNeedReload
 {
     // for debug
     NSLog(@"train reload");
     [super setNeedReload];
 }
+#endif
+
 @end

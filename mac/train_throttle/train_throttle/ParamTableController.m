@@ -158,4 +158,11 @@ static NSMutableArray *_instances = nil;
     [paramValues setObject:[NSNumber numberWithInt:v] forKey:paramid];
 }
 
+#pragma mark -
+
+- (IBAction) commitChanges:(id)sender
+{
+    AppDelegate *appdelegate = (AppDelegate *)[[NSApplication sharedApplication] delegate];
+    [appdelegate commitLParams:(int)[self paramNum]];
+}
 @end

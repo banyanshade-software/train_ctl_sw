@@ -148,5 +148,7 @@
 @property (nonatomic, weak) IBOutlet NSWindow *trainParamWin;
 
 - (void) updateParameter:(NSString *)x value:(int)v;
+- (void)commitLParams:(int)parlnum;
+
 @end
 

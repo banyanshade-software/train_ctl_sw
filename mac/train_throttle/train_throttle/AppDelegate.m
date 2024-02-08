@@ -693,6 +693,7 @@ typedef void (^respblk_t)(void);
 #endif
 }
 
+/*
 - (IBAction)commitTrains:(id)sender
 {
     msg_64_t m = {0};
@@ -700,6 +701,17 @@ typedef void (^respblk_t)(void);
     m.from = MA3_UI_GEN;
     m.cmd = CMD_PARAM_LUSER_COMMIT;
     m.v1 = conf_lnum_train;
+    [self sendMsg64:m];
+}
+ */
+
+- (void)commitLParams:(int)parlnum
+{
+    msg_64_t m = {0};
+    m.to = MA0_OAM(0);
+    m.from = MA3_UI_GEN;
+    m.cmd = CMD_PARAM_LUSER_COMMIT;
+    m.v1 = parlnum;
     [self sendMsg64:m];
 }
 - (NSArray *) splitParamName:(NSString *)s

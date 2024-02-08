@@ -6991,20 +6991,20 @@
         <window title="Locomotives Parameters" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" frameAutosaveName="" animationBehavior="default" id="bBH-zo-yw0" customClass="ToolWindow">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-            <rect key="contentRect" x="196" y="213" width="1242" height="270"/>
+            <rect key="contentRect" x="196" y="213" width="1242" height="321"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1440" height="900"/>
             <view key="contentView" id="gcZ-K4-cAf">
-                <rect key="frame" x="0.0" y="0.0" width="1242" height="270"/>
+                <rect key="frame" x="0.0" y="0.0" width="1242" height="321"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <scrollView autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="avK-EY-hCI">
-                        <rect key="frame" x="20" y="20" width="1202" height="230"/>
+                        <rect key="frame" x="20" y="61" width="1202" height="240"/>
                         <clipView key="contentView" id="qDG-Jn-jYf">
-                            <rect key="frame" x="1" y="0.0" width="1200" height="229"/>
+                            <rect key="frame" x="1" y="0.0" width="1200" height="239"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
                                 <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" headerView="m2M-mJ-yvq" id="eV4-vC-AmX">
-                                    <rect key="frame" x="0.0" y="0.0" width="1200" height="204"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="1200" height="214"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <size key="intercellSpacing" width="3" height="2"/>
                                     <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -7215,33 +7215,45 @@
                             <autoresizingMask key="autoresizingMask"/>
                         </tableHeaderView>
                     </scrollView>
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="9c5-CT-JSd">
+                        <rect key="frame" x="1140" y="13" width="88" height="32"/>
+                        <buttonCell key="cell" type="push" title="Commit" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="06n-EG-4C2">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="commitChanges:" target="6jU-yL-zjy" id="YE9-ZP-arD"/>
+                        </connections>
+                    </button>
                 </subviews>
                 <constraints>
                     <constraint firstItem="avK-EY-hCI" firstAttribute="top" secondItem="gcZ-K4-cAf" secondAttribute="top" constant="20" symbolic="YES" id="My9-2f-6Uj"/>
-                    <constraint firstAttribute="bottom" secondItem="avK-EY-hCI" secondAttribute="bottom" constant="20" symbolic="YES" id="QkU-O1-YQ7"/>
                     <constraint firstAttribute="trailing" secondItem="avK-EY-hCI" secondAttribute="trailing" constant="20" symbolic="YES" id="aEG-PX-jLY"/>
+                    <constraint firstAttribute="bottom" secondItem="9c5-CT-JSd" secondAttribute="bottom" constant="20" symbolic="YES" id="ayd-BR-BLE"/>
+                    <constraint firstAttribute="trailing" secondItem="9c5-CT-JSd" secondAttribute="trailing" constant="20" symbolic="YES" id="ecx-hj-Oxb"/>
                     <constraint firstItem="avK-EY-hCI" firstAttribute="leading" secondItem="gcZ-K4-cAf" secondAttribute="leading" constant="20" symbolic="YES" id="fbJ-oU-7lu"/>
+                    <constraint firstItem="9c5-CT-JSd" firstAttribute="top" secondItem="avK-EY-hCI" secondAttribute="bottom" constant="20" symbolic="YES" id="pSL-wM-PGc"/>
                 </constraints>
             </view>
-            <point key="canvasLocation" x="518" y="2623"/>
+            <point key="canvasLocation" x="518" y="2648.5"/>
         </window>
         <window title="Train Parameters" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" frameAutosaveName="" animationBehavior="default" id="Y9l-TO-dUh" userLabel="Train Parameters" customClass="ToolWindow">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-            <rect key="contentRect" x="196" y="213" width="548" height="277"/>
+            <rect key="contentRect" x="196" y="213" width="548" height="331"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1440" height="900"/>
             <view key="contentView" id="4eq-Fx-peU">
-                <rect key="frame" x="0.0" y="0.0" width="548" height="277"/>
+                <rect key="frame" x="0.0" y="0.0" width="548" height="331"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <scrollView autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="SKm-G1-lxZ">
-                        <rect key="frame" x="20" y="20" width="508" height="237"/>
+                        <rect key="frame" x="20" y="61" width="508" height="250"/>
                         <clipView key="contentView" id="QU1-rM-LYm">
-                            <rect key="frame" x="1" y="0.0" width="506" height="236"/>
+                            <rect key="frame" x="1" y="0.0" width="506" height="249"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
                                 <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" headerView="yU3-Ao-hm4" id="xZV-eH-f4u">
-                                    <rect key="frame" x="0.0" y="0.0" width="506" height="211"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="506" height="224"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <size key="intercellSpacing" width="3" height="2"/>
                                     <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -7336,15 +7348,27 @@
                             <autoresizingMask key="autoresizingMask"/>
                         </tableHeaderView>
                     </scrollView>
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="xRD-dT-xbq">
+                        <rect key="frame" x="446" y="13" width="88" height="32"/>
+                        <buttonCell key="cell" type="push" title="Commit" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="TTp-KH-hVo">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                            <connections>
+                                <action selector="commitChanges:" target="pJG-3e-K06" id="kCO-DF-1ef"/>
+                            </connections>
+                        </buttonCell>
+                    </button>
                 </subviews>
                 <constraints>
-                    <constraint firstAttribute="bottom" secondItem="SKm-G1-lxZ" secondAttribute="bottom" constant="20" symbolic="YES" id="D9z-DX-WPK"/>
+                    <constraint firstAttribute="bottom" secondItem="xRD-dT-xbq" secondAttribute="bottom" constant="20" symbolic="YES" id="8UQ-ml-ezD"/>
                     <constraint firstItem="SKm-G1-lxZ" firstAttribute="leading" secondItem="4eq-Fx-peU" secondAttribute="leading" constant="20" symbolic="YES" id="OUB-Sg-0GC"/>
+                    <constraint firstItem="xRD-dT-xbq" firstAttribute="top" secondItem="SKm-G1-lxZ" secondAttribute="bottom" constant="20" symbolic="YES" id="bCU-eB-ftH"/>
                     <constraint firstAttribute="trailing" secondItem="SKm-G1-lxZ" secondAttribute="trailing" constant="20" symbolic="YES" id="sXh-3m-dKR"/>
                     <constraint firstItem="SKm-G1-lxZ" firstAttribute="top" secondItem="4eq-Fx-peU" secondAttribute="top" constant="20" symbolic="YES" id="vB9-Bw-g29"/>
+                    <constraint firstAttribute="trailing" secondItem="xRD-dT-xbq" secondAttribute="trailing" constant="20" symbolic="YES" id="xA7-8F-m2j"/>
                 </constraints>
             </view>
-            <point key="canvasLocation" x="171" y="2985.5"/>
+            <point key="canvasLocation" x="171" y="3012.5"/>
         </window>
     </objects>
     <resources>

@@ -29,6 +29,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (NSInteger)paramNum;
 
+- (IBAction) commitChanges:(id)sender;
+
 @end
 
 NS_ASSUME_NONNULL_END

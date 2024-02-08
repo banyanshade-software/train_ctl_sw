@@ -697,11 +697,17 @@ static void train_periodic_control(int numtrain, _UNUSED_ uint32_t dt)
 
     // inertia before PID
 	if (1==tconf->enable_inertia) {
-		int changed;
-		inertia_set_target(numtrain, &tconf->inertia, &tvars->inertiavars, tvars->target_speed);
-		//tvars->inertiavars.target = tvars->target_speed;
-		target_with_brake = inertia_value(numtrain, &tconf->inertia, &tvars->inertiavars, &changed);
-		itm_debug3(DBG_INERTIA, "inertia", numtrain, tvars->target_speed, target_with_brake);
+        /* dont apply inertia when brake is on progress
+         * the inertia effect is performed by brake, because we
+         * need precise stop position
+         */
+        if (!tvars->brake) {
+            int changed;
+            inertia_set_target(numtrain, &tconf->inertia, &tvars->inertiavars, tvars->target_speed);
+            //tvars->inertiavars.target = tvars->target_speed;
+            target_with_brake = inertia_value(numtrain, &tconf->inertia, &tvars->inertiavars, &changed);
+            itm_debug3(DBG_INERTIA, "inertia", numtrain, tvars->target_speed, target_with_brake);
+        }
 	}
     
 
@@ -765,9 +771,11 @@ static void train_periodic_control(int numtrain, _UNUSED_ uint32_t dt)
     }
     // or inertia after PID
     if (2==tconf->enable_inertia) {
-		inertia_set_target(numtrain, &tconf->inertia, &tvars->inertiavars, target_with_brake);
-        //tvars->inertiavars.target = v;
-        target_with_brake = inertia_value(numtrain, &tconf->inertia, &tvars->inertiavars, NULL);
+        if (!tvars->brake) {
+            inertia_set_target(numtrain, &tconf->inertia, &tvars->inertiavars, target_with_brake);
+            //tvars->inertiavars.target = v;
+            target_with_brake = inertia_value(numtrain, &tconf->inertia, &tvars->inertiavars, NULL);
+        }
     }
 
     if (tconf->en_spd2pow) {

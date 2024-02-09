@@ -133,9 +133,10 @@ typedef struct train_vars {
 	//int8_t  C1_dir; // -1 or +1
 	//int8_t  C2_dir;
 
-	int16_t last_speed;
-	int16_t prev_last_speed;
-
+	int16_t last_speed;         // last spd value sent to canton
+	int16_t prev_last_speed;    // previous value of last_speed (to detect direction change)
+    int16_t last_trgbrk_spd;    // last spd value before PID (after brake and inertia)
+    
 	uint16_t C1_cur_volt_idx;
 	uint16_t C2_cur_volt_idx;
 
@@ -393,10 +394,9 @@ static void spdctl_handle_msg(msg_64_t *m)
                 		 * XXX TODO
                 		 * check if stoppoesed10 is identical ??
                 		 */
-                		break;
                         tvars->stopposed10 = (int16_t) m->v32;
                         tvars->startbreakd10 = tvars->lastposed10;
-                        tvars->spdbrake = tvars->last_speed;
+                        tvars->spdbrake = tvars->last_trgbrk_spd;
                 	} else {
                 		tvars->brake = 1;
                 		tvars->stopposed10 = (int16_t) m->v32;
@@ -729,7 +729,8 @@ static void train_periodic_control(int numtrain, _UNUSED_ uint32_t dt)
         }
 	}
     
-
+    tvars->last_trgbrk_spd = target_with_brake;
+    
     if (tconf->enable_pid) {
         // corresponding BEMF target
         // 100% = 1.5V

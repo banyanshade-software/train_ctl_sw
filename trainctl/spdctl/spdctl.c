@@ -391,9 +391,9 @@ static void spdctl_handle_msg(msg_64_t *m)
                 		// rc would require brake, but without handling here, it will restart braking at
                 		itm_debug3(DBG_BRAKE, "BRAKbrak", tvars->target_speed,  tvars->startbreakd10, tvars->spdbrake);
                 		/*
-                		 * XXX TODO
                 		 * check if stoppoesed10 is identical ??
                 		 */
+                		if (abs(tvars->stopposed10 - ((int16_t) m->v32)) < 10) break;
                         tvars->stopposed10 = (int16_t) m->v32;
                         tvars->startbreakd10 = tvars->lastposed10;
                         tvars->spdbrake = tvars->last_trgbrk_spd;

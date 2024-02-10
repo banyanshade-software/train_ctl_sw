@@ -14,6 +14,7 @@
 #include "../topology/occupency.h"
 
 #include "../ctrl/ctrl.h"
+#include "../ctrl/locomotives.h"
 
 #ifndef BOARD_HAS_CTRL
 #error BOARD_HAS_CTRL not defined, remove this file from build
@@ -79,7 +80,8 @@ void detect2_start(void)
     save_freq = get_pwm_freq();
 }
 
-
+static void send_oam_none(void);
+static void send_oam_report(train_detector_result_t *r, int last);
 
 static void _detection_finished(void)
 {
@@ -88,6 +90,31 @@ static void _detection_finished(void)
 		if (result[i].canton.v == 0xFF) continue;
 		itm_debug3(DBG_DETECT, "Rdet", result[i].lsblk.n, result[i].canton.v, result[i].locotype);
 	}
+#ifdef TRAIN_SIMU
+    /* set fixed repport values for O&M tests*/
+    result[0].locotype = Marklin8821_V200;
+    
+    result[1].locotype = Marklin8875_V160;
+    result[1].canton.v = 4;
+    result[1].ina.v = 0xF;
+    result[1].lsblk.n = 8;
+    result[1].numlsblk = 2;
+
+#endif
+    for (int i=0; i<MAX_DETECT_TRAINS; i++) {
+        int last = 0;
+        if ((i==MAX_DETECT_TRAINS-1) || (result[i+1].canton.v = 0xFF)) {
+            last = 1; // this is last report
+        }
+        if (last && (0xFF==result[i].canton.v)) {
+            // none found
+            send_oam_none();
+            break;
+        }
+        send_oam_report(&result[i], last);
+    }
+
+    // notify UI
     msg_64_t m = {0};
 
     m.cmd = CMD_UI_DETECT;
@@ -96,6 +123,7 @@ static void _detection_finished(void)
     m.to = MA3_UI_GEN; //(UISUB_TFT);
     mqf_write_from_ctrl(&m);
 
+    // XXX to be moved to oam
     if ((1)) {
         //osDelay(500);
         msg_64_t md;
@@ -104,7 +132,7 @@ static void _detection_finished(void)
         md.cmd = CMD_SETRUN_MODE;
         md.v1u = runmode_normal;
 
-        mqf_write_from_nowhere(&md); // XXX it wont be sent to ctl
+        mqf_write_from_nowhere(&md);
     }
 }
 
@@ -330,3 +358,36 @@ void detect2_process_msg(_UNUSED_ msg_64_t *m)
     }
 }
 
+/* OAM reporting */
+
+
+static void send_oam_none(void)
+{
+    msg_64_t m = {0};
+    m.from = MA3_BROADCAST; // XXX
+    m.to = MA0_OAM(0);
+    m.cmd = CMD_OAM_DETECTREPORT;
+    m.subc = 0xFF;
+    m.vb0 = 0xFF;
+    m.vb1 = 0xFF;
+    m.vb2 = 0;
+    m.vb3 = 0;
+    
+    mqf_write_from_nowhere(&m); // XXX it wont be sent to ctl
+}
+
+static void send_oam_report(train_detector_result_t *r, int last)
+{
+    msg_64_t m = {0};
+    m.from = MA3_BROADCAST; // XXX
+    m.to = MA0_OAM(0);
+    m.cmd = CMD_OAM_DETECTREPORT;
+    m.subc = last;
+    m.vb0 = r->canton.v;
+    m.vb1 = r->lsblk.n;
+    m.vb2 = r->locotype;
+    m.vb3 = r->numlsblk;
+    
+    mqf_write_from_nowhere(&m); // XXX it wont be sent to ctl
+
+}

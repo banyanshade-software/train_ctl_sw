@@ -765,6 +765,7 @@ int conf_servo_fieldnum(const char *str);
 
 - (void) getParamsFieldsFirst
 {
+    nextParamTableGet = 0;
     nextParamFieldGet = 0;
     [self _getParams];
 }
@@ -878,6 +879,7 @@ int conf_servo_fieldnum(const char *str);
 {
     tableParamsIndex = 0;
     nextParamTableGet = 0;
+    nextParamFieldGet = 0;
     [self _getParamsTable];
 }
 - (void) _getParamsTable
@@ -939,7 +941,7 @@ startGet:
     
     unsigned int fnum; unsigned int brd; unsigned int inst; unsigned int field; int32_t v;
     oam_decode_val40(m.val40, &fnum, &brd, &inst, &field, &v);
-    //NSLog(@"paramUserVal nparam=%d nparamresp=%d", nparam, nparamresp);
+    NSLog(@"paramUserVal nparam=%d nparamresp=%d", nparam, nparamresp);
     
     // proto not generated
     const char *conf_train_fieldname(int f);

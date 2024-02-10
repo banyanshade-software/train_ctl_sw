@@ -2199,8 +2199,8 @@
             filePath = "train_throttle/AppDelegate.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "3021"
-            endingLineNumber = "3021"
+            startingLineNumber = "3023"
+            endingLineNumber = "3023"
             landmarkName = "-triggerOscillo:"
             landmarkType = "7">
          </BreakpointContent>
@@ -2999,8 +2999,8 @@
             filePath = "train_throttle/AppDelegate.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "769"
-            endingLineNumber = "769"
+            startingLineNumber = "770"
+            endingLineNumber = "770"
             landmarkName = "-getParamsFieldsFirst"
             landmarkType = "7">
          </BreakpointContent>
@@ -3015,8 +3015,8 @@
             filePath = "train_throttle/AppDelegate.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1399"
-            endingLineNumber = "1399"
+            startingLineNumber = "1401"
+            endingLineNumber = "1401"
             landmarkName = "-processMsg64:"
             landmarkType = "7">
          </BreakpointContent>
@@ -3031,8 +3031,8 @@
             filePath = "train_throttle/AppDelegate.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1402"
-            endingLineNumber = "1402"
+            startingLineNumber = "1404"
+            endingLineNumber = "1404"
             landmarkName = "-processMsg64:"
             landmarkType = "7">
          </BreakpointContent>
@@ -3095,8 +3095,8 @@
             filePath = "train_throttle/AppDelegate.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1656"
-            endingLineNumber = "1656"
+            startingLineNumber = "1658"
+            endingLineNumber = "1658"
             landmarkName = "-frameMsg64"
             landmarkType = "7">
          </BreakpointContent>
@@ -3111,8 +3111,8 @@
             filePath = "train_throttle/AppDelegate.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1653"
-            endingLineNumber = "1653"
+            startingLineNumber = "1655"
+            endingLineNumber = "1655"
             landmarkName = "-frameMsg64"
             landmarkType = "7">
          </BreakpointContent>
@@ -3159,8 +3159,8 @@
             filePath = "train_throttle/AppDelegate.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1633"
-            endingLineNumber = "1633"
+            startingLineNumber = "1635"
+            endingLineNumber = "1635"
             landmarkName = "-frameMsg64"
             landmarkType = "7">
          </BreakpointContent>
@@ -3175,8 +3175,8 @@
             filePath = "train_throttle/AppDelegate.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1535"
-            endingLineNumber = "1535"
+            startingLineNumber = "1537"
+            endingLineNumber = "1537"
             landmarkName = "-processFrames:"
             landmarkType = "7">
          </BreakpointContent>
@@ -3207,10 +3207,10 @@
             filePath = "train_throttle/AppDelegate.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "2905"
-            endingLineNumber = "2905"
-            landmarkName = "-peripheral:didUpdateNotificationStateForCharacteristic:error:"
-            landmarkType = "7">
+            startingLineNumber = "2907"
+            endingLineNumber = "2907"
+            landmarkName = "AppDelegate"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -3383,8 +3383,8 @@
             filePath = "train_throttle/AppDelegate.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "2995"
-            endingLineNumber = "2995"
+            startingLineNumber = "2997"
+            endingLineNumber = "2997"
             landmarkName = "-setTestPWM:"
             landmarkType = "7">
          </BreakpointContent>
@@ -3399,8 +3399,8 @@
             filePath = "train_throttle/AppDelegate.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "2956"
-            endingLineNumber = "2956"
+            startingLineNumber = "2958"
+            endingLineNumber = "2958"
             landmarkName = "-setRunMode:"
             landmarkType = "7">
          </BreakpointContent>
@@ -3415,8 +3415,8 @@
             filePath = "train_throttle/AppDelegate.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "3008"
-            endingLineNumber = "3008"
+            startingLineNumber = "3010"
+            endingLineNumber = "3010"
             landmarkName = "-testCantonApply:"
             landmarkType = "7">
          </BreakpointContent>
@@ -3479,8 +3479,8 @@
             filePath = "train_throttle/AppDelegate.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "867"
-            endingLineNumber = "867"
+            startingLineNumber = "868"
+            endingLineNumber = "868"
             landmarkName = "-_getParams"
             landmarkType = "7">
          </BreakpointContent>
@@ -3495,8 +3495,8 @@
             filePath = "train_throttle/AppDelegate.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "775"
-            endingLineNumber = "775"
+            startingLineNumber = "776"
+            endingLineNumber = "776"
             landmarkName = "-queryParam:checkOnly:"
             landmarkType = "7">
          </BreakpointContent>
@@ -3511,8 +3511,8 @@
             filePath = "train_throttle/AppDelegate.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "873"
-            endingLineNumber = "873"
+            startingLineNumber = "874"
+            endingLineNumber = "874"
             landmarkName = "-_getParams"
             landmarkType = "7">
          </BreakpointContent>
@@ -3527,8 +3527,8 @@
             filePath = "train_throttle/AppDelegate.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "997"
-            endingLineNumber = "997"
+            startingLineNumber = "999"
+            endingLineNumber = "999"
             landmarkName = "-paramUserVal:locstore:"
             landmarkType = "7">
          </BreakpointContent>
@@ -3575,8 +3575,8 @@
             filePath = "train_throttle/AppDelegate.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "909"
-            endingLineNumber = "909"
+            startingLineNumber = "911"
+            endingLineNumber = "911"
             landmarkName = "-_getParamsTable"
             landmarkType = "7">
          </BreakpointContent>
@@ -3591,8 +3591,8 @@
             filePath = "train_throttle/AppDelegate.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "895"
-            endingLineNumber = "895"
+            startingLineNumber = "897"
+            endingLineNumber = "897"
             landmarkName = "-_getParamsTable"
             landmarkType = "7">
          </BreakpointContent>
@@ -3607,8 +3607,8 @@
             filePath = "train_throttle/AppDelegate.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "921"
-            endingLineNumber = "921"
+            startingLineNumber = "923"
+            endingLineNumber = "923"
             landmarkName = "-paramUserVal:locstore:"
             landmarkType = "7">
          </BreakpointContent>
@@ -3623,8 +3623,8 @@
             filePath = "train_throttle/AppDelegate.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "928"
-            endingLineNumber = "928"
+            startingLineNumber = "930"
+            endingLineNumber = "930"
             landmarkName = "-paramUserVal:locstore:"
             landmarkType = "7">
          </BreakpointContent>
@@ -3655,8 +3655,8 @@
             filePath = "train_throttle/AppDelegate.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "887"
-            endingLineNumber = "887"
+            startingLineNumber = "889"
+            endingLineNumber = "889"
             landmarkName = "-_getParamsTable"
             landmarkType = "7">
          </BreakpointContent>
@@ -3671,8 +3671,8 @@
             filePath = "train_throttle/AppDelegate.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "899"
-            endingLineNumber = "899"
+            startingLineNumber = "901"
+            endingLineNumber = "901"
             landmarkName = "-_getParamsTable"
             landmarkType = "7">
          </BreakpointContent>
@@ -3699,8 +3699,8 @@
             filePath = "train_throttle/AppDelegate.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "890"
-            endingLineNumber = "890"
+            startingLineNumber = "892"
+            endingLineNumber = "892"
             landmarkName = "-_getParamsTable"
             landmarkType = "7">
          </BreakpointContent>
@@ -3779,8 +3779,8 @@
             filePath = "train_throttle/AppDelegate.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "902"
-            endingLineNumber = "902"
+            startingLineNumber = "904"
+            endingLineNumber = "904"
             landmarkName = "-_getParamsTable"
             landmarkType = "7">
          </BreakpointContent>
@@ -3795,8 +3795,8 @@
             filePath = "train_throttle/AppDelegate.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "932"
-            endingLineNumber = "932"
+            startingLineNumber = "934"
+            endingLineNumber = "934"
             landmarkName = "-paramUserVal:locstore:"
             landmarkType = "7">
          </BreakpointContent>
@@ -3907,8 +3907,8 @@
             filePath = "train_throttle/AppDelegate.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "911"
-            endingLineNumber = "911"
+            startingLineNumber = "913"
+            endingLineNumber = "913"
             landmarkName = "-_getParamsTable"
             landmarkType = "7">
          </BreakpointContent>
@@ -3923,8 +3923,8 @@
             filePath = "train_throttle/AppDelegate.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "782"
-            endingLineNumber = "782"
+            startingLineNumber = "783"
+            endingLineNumber = "783"
             landmarkName = "-queryParam:checkOnly:"
             landmarkType = "7">
          </BreakpointContent>
@@ -3939,8 +3939,8 @@
             filePath = "train_throttle/AppDelegate.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "777"
-            endingLineNumber = "777"
+            startingLineNumber = "778"
+            endingLineNumber = "778"
             landmarkName = "-queryParam:checkOnly:"
             landmarkType = "7">
          </BreakpointContent>
@@ -3955,8 +3955,8 @@
             filePath = "train_throttle/AppDelegate.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "833"
-            endingLineNumber = "833"
+            startingLineNumber = "834"
+            endingLineNumber = "834"
             landmarkName = "-queryParam:checkOnly:"
             landmarkType = "7">
          </BreakpointContent>
@@ -4051,8 +4051,8 @@
             filePath = "train_throttle/AppDelegate.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "933"
-            endingLineNumber = "933"
+            startingLineNumber = "935"
+            endingLineNumber = "935"
             landmarkName = "-paramUserVal:locstore:"
             landmarkType = "7">
          </BreakpointContent>
@@ -4077,7 +4077,7 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "7C59A079-4FA0-4B91-AC19-26273E2BF20F"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../../trainctl/ctrl/ctrlLT.c"
@@ -4093,7 +4093,7 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "F765AD7F-0617-4202-BB4A-A87F516D95E4"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../../trainctl/spdctl/spdctl.c"
@@ -4103,6 +4103,70 @@
             endingLineNumber = "411"
             landmarkName = "spdctl_handle_msg(m)"
             landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "70287BAB-7199-48F9-8FC0-4C80FD35A792"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../trainctl/spdctl/spdctl.c"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "755"
+            endingLineNumber = "755"
+            landmarkName = "train_periodic_control(numtrain, dt)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "67353E8D-4F2A-4E6E-A66D-01A64B082CDB"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../trainctl/spdctl/inertia.h"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "50"
+            endingLineNumber = "50"
+            landmarkName = "inertia_set_target(tidx, cnf, vars, v)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "5A17A071-FBE7-438A-B032-DB9911061552"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "train_throttle/AppDelegate.m"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1004"
+            endingLineNumber = "1004"
+            landmarkName = "-paramUserVal:locstore:"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "D967DBDC-1949-405C-812C-3D34503CC3EA"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "train_throttle/AppDelegate.m"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "881"
+            endingLineNumber = "881"
+            landmarkName = "-getParamsTableFirst"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

@@ -823,6 +823,9 @@ static void train_periodic_control(int numtrain, _UNUSED_ uint32_t dt)
         }
     }
     
+    if (punchit) {
+    	target_processed = 100;
+    }
     
     int changed = (tvars->last_speed != target_processed);
     tvars->last_speed = target_processed;

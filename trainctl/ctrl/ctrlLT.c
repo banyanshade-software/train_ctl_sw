@@ -1557,14 +1557,14 @@ static void _set_state(int tidx, train_ctrl_t *tvars, train_state_t newstate)
             uint8_t trn;
             uint8_t occ = occupency_block_addr_info(tvars->canOld_xaddr, &trn, NULL);
             if ((trn != tidx) || ((occ != BLK_OCC_LOCO_LEFT) && (occ != BLK_OCC_LOCO_RIGHT))) {
-                itm_debug3(DBG_ERR|DBG_CTRL, "sa/co", tidx, tvars->canOld_xaddr.v, occ);
+                itm_debug3(DBG_ERR|DBG_CTRL, "sa-co", tidx, tvars->canOld_xaddr.v, occ);
             }
         }
         if (tvars->can2_xaddr.v != 0xFF) {
             uint8_t trn;
             uint8_t occ = occupency_block_addr_info(tvars->can2_xaddr, &trn, NULL);
             if ((trn != tidx) || ((occ != BLK_OCC_C2) && (occ!=BLK_OCC_CARS))) {
-                itm_debug2(DBG_ERR|DBG_CTRL, "sa/c2", tidx, tvars->can2_xaddr.v);
+                itm_debug3(DBG_ERR|DBG_CTRL, "sa-c2", tidx, tvars->can2_xaddr.v, occ);
             }
         }
     }

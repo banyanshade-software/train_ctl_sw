@@ -277,8 +277,6 @@ static void _ctrl_init(int normalmode)
             */
 #endif
 
-			
-
 
 		} else {
             //ctrl2_init_train(0, &otrctl[0], s0);
@@ -346,13 +344,7 @@ static void ctrl_tick(uint32_t tick, _UNUSED_ uint32_t dt)
         if (0==(occ & v)) continue;
         ctrl3_occupency_updated(tidx, tvars);
         
-        /*
-         train_oldctrl_t *otvars = &otrctl[tidx];
-         const conf_train_t *tconf = conf_train_get(tidx);
-         if (!tconf->enabled) continue;
-         if (tvars->_mode == train_notrunning) continue;
-         if ((0)) ctrl2_tick_process(tidx, otvars, tconf, occ); // xxxxxx
-         */
+       
     }
     
 
@@ -502,43 +494,8 @@ static void sub_presence_changed( uint8_t from_addr,  uint8_t inanum,  uint16_t 
 
 // ----------------------------------------------------------------------------
 
-/*
-static void posecm_measured(int tidx, int32_t pose, lsblk_num_t blk1, lsblk_num_t blk2)
-{
-	int cm = get_lsblk_len_cm(blk1, NULL);
-	if (blk2.n >= 0) cm += get_lsblk_len_cm(blk2, NULL);
-	int32_t ppcm = pose / cm;
-	itm_debug2(DBG_POSEC, "ppcm", tidx, ppcm);
-	debug_info('P', tidx, "PPCM", ppcm, 0,0);
-
-	if (abs(ppcm)<250) {
-		itm_debug2(DBG_ERR, "sucp PPCM", tidx, ppcm);
-		return;
-	}
-	const conf_train_t *tconf = conf_train_get(tidx);
-	conf_train_t *wconf = (conf_train_t *)tconf; // writable
-	const int alpha = 80; //0.80
-	ppcm = abs(ppcm);
-	wconf->pose_per_cm = (tconf->pose_per_cm * alpha + (100-alpha) * ppcm)/100;
-	itm_debug2(DBG_CTRL|DBG_POSEC, "PPCM updated", tidx, wconf->pose_per_cm);
-
-}
-*/
-
 // ----------------------------------------------------------------------------
 
-/* to be refactor
-static uint8_t auto_code[8][64];
-
-uint8_t *ctrl_get_autocode(int numtrain)
-{
-	train_oldctrl_t *tvar = ctrl_get_tvar(numtrain);
-	if (!tvar->route) {
-		tvar->route = auto_code[numtrain];
-	}
-	return tvar->route;
-}
- */
 void ctrl_delayed_set_desired_spd(int tidx, int spd)
 {
     train_ctrl_t *tvars = &trctl[tidx];

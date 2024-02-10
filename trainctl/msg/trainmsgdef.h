@@ -92,6 +92,7 @@ typedef enum {
 	CMD_PLANNER_ADD               , // 0xf5 (245) // UI->planner
 	CMD_PLANNER_CANCEL            , // 0xf6 (246) // UI->planner
 	CMD_PLANNER_COMMIT            , // 0xf7 (247) // UI->planner
+	CMD_OAM_DETECTREPORT          , // 0xf8 (248) // ctrl-detect -> oam 		report presence detection
 } cmd_msg_t;
 
 #endif

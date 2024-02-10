@@ -107,3 +107,4 @@ start 0xE0  // 111 xxxxx  Debug and misc low prio
     CMD_PLANNER_CANCEL        tbd // UI->planner
     CMD_PLANNER_COMMIT        tbd // UI->planner
 
+    CMD_OAM_DETECTREPORT     b4  // ctrl-detect -> oam 		report presence detection

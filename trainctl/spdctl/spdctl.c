@@ -655,14 +655,6 @@ void send_train_stopped(int numtrain, train_vars_t *tvars)
 
 static inline int16_t comp_brake(int16_t startval, int32_t k1000, const conf_locomotive_t *lconf)
 {
-#if 0
-    // linear decrease from startval to 0
-    int16_t target_with_brake = (int16_t)((startval * k1000)/1000);
-    if (abs(target_with_brake)<15) {
-        target_with_brake = 0;
-    }
-    return target_with_brake;
-#endif
     // linear decrease from startval to minval
     //static const int16_t minval = 15;
     int16_t minval = lconf->min_power_dec;
@@ -692,6 +684,7 @@ static void train_periodic_control(int numtrain, _UNUSED_ uint32_t dt)
 	}
 	int16_t target_with_brake = tvars->target_speed;
 
+    // ----- handling brake
 	itm_debug2(DBG_SPDCTL, "target", numtrain, target_with_brake);
     if (tvars->brake) {
     	// XXX possible div0 here
@@ -706,15 +699,12 @@ static void train_periodic_control(int numtrain, _UNUSED_ uint32_t dt)
         	k1000 = 0;
         }
         target_with_brake = comp_brake(tvars->spdbrake, k1000, tconf);
-        /*
-        target_with_brake = (int16_t)((tvars->spdbrake * k1000)/1000);
-        if (abs(target_with_brake)<15) {
-            target_with_brake = 0;
-        }
-         */
     	itm_debug3(DBG_BRAKE, "trg:brak", numtrain, k1000, target_with_brake);
     }
 
+    int16_t target_processed = target_with_brake;
+    
+    // ----- handling inertia
     // inertia before PID
 	if (1==tconf->enable_inertia) {
         /* dont apply inertia when brake is on progress
@@ -722,58 +712,65 @@ static void train_periodic_control(int numtrain, _UNUSED_ uint32_t dt)
          * need precise stop position
          */
         if (!tvars->brake) {
-            inertia_set_target(numtrain, &tconf->inertia, &tvars->inertiavars, tvars->target_speed);
+            inertia_set_target(numtrain, &tconf->inertia, &tvars->inertiavars, target_processed);
             if (!tvars->pidvars.trstopped) {
                 int changed;
                 //tvars->inertiavars.target = tvars->target_speed;
-                target_with_brake = inertia_value(numtrain, tconf, &tvars->inertiavars, &changed);
-                itm_debug3(DBG_INERTIA, "inertia", numtrain, tvars->target_speed, target_with_brake);
+                target_processed = inertia_value(numtrain, tconf, &tvars->inertiavars, &changed);
+                itm_debug3(DBG_INERTIA, "inertia", numtrain, tvars->target_speed, target_processed);
             }
         } else if (tvars->brake) {
-        	inertia_temporary_deactivated(numtrain, &tconf->inertia, &tvars->inertiavars, target_with_brake);
+        	inertia_temporary_deactivated(numtrain, &tconf->inertia, &tvars->inertiavars, target_processed);
         }
 	}
     
-    tvars->last_trgbrk_spd = target_with_brake;
+    tvars->last_trgbrk_spd = target_processed;
     
+    // ----- PID set target
+
     if (tconf->enable_pid) {
         // corresponding BEMF target
-        // 100% = 1.5V
         int8_t dir = __spdcx_dir(tvars->dirbits, 0);
-        int32_t tbemf = 1800*target_with_brake/100 * dir;
+        int32_t tbemf = 1800*target_processed/100 * dir;
         //tbemf = tbemf / 4; //XXX why ?? new cables (more capacitance ?)
         // TODO make this divisor a parameter
         pidctl_set_target(&tconf->pidctl, &tvars->pidvars, tbemf);
         // XXXX notif_target_bemf(tconf, tvars, tbemf);
     }
 
+    // IIR before pid
+    
     int32_t bemf_mv = tvars->bemf_mv;
     if (tconf->bemfIIR) {
     	tvars->bemfiir = (tconf->bemfIIR*tvars->bemfiir + (100-tconf->bemfIIR)*bemf_mv)/100;
     	bemf_mv = tvars->bemfiir;
     }
+    
+    // PID handling
+    int punchit = 0;
     if (tconf->enable_pid) {
     	if (target_with_brake) {
     		if ((punch_start) && (tvars->pidvars.trstopped)) {
     			itm_debug3(DBG_PID|DBG_SPDCTL|DBG_INERTIA, "punch", numtrain, target_with_brake, tvars->brake);
-    			target_with_brake=100;
+                punchit = 1;
     		}
             tvars->pidvars.trstopped = 0;
     	}
-        if (!tvars->pidvars.trstopped && (target_with_brake == 0) && (abs(tvars->bemf_mv)<100)) {
+        if (!tvars->pidvars.trstopped && (target_with_brake == 0) && (target_processed==0) && (abs(tvars->bemf_mv)<100)) {
     		itm_debug1(DBG_PID|DBG_SPDCTL|DBG_BRAKE, "stop", numtrain);
 			pidctl_reset(&tvars->pidvars);
             inertia_reset(numtrain, &tvars->inertiavars);
 			debug_info('T', numtrain, "STOP_PID", 0,0, 0);
 			tvars->pidvars.trstopped = 1;
             send_train_stopped(numtrain, tvars);
+            target_processed = 0;
             
-        	target_with_brake = 0;
         } else if (tvars->pidvars.trstopped) {
-    		itm_debug2(DBG_PID|DBG_BRAKE, "trstopped", numtrain, target_with_brake);
-        	target_with_brake = 0;
+    		//itm_debug2(DBG_PID|DBG_BRAKE, "trstopped", numtrain, target_processed);
+            target_processed = 0;
+            
         } else {
-        	itm_debug3(DBG_PID, "pid", numtrain, bemf_mv, target_with_brake);
+        	itm_debug3(DBG_PID, "pid", numtrain, bemf_mv, target_processed);
         	if (bemf_mv>MAX_PID_VALUE)  {
         		itm_debug3(DBG_PID|DBG_SPDCTL, "MAX_PID", numtrain, bemf_mv, MAX_PID_VALUE);
         		bemf_mv = MAX_PID_VALUE; // XXX
@@ -788,36 +785,36 @@ static void train_periodic_control(int numtrain, _UNUSED_ uint32_t dt)
         	v3 = (v2>100) ? 100 : v2;
         	v3 = (v3<-100) ? -100: v3;
         	itm_debug3(DBG_PID, "pid/r", numtrain, v3, v2);
-            target_with_brake = (int16_t)v3 * __spdcx_dir(tvars->dirbits, 0); // because it will be multiplied again when setting pwm
+            target_processed = (int16_t)v3 * __spdcx_dir(tvars->dirbits, 0); // because it will be multiplied again when setting pwm
         }
     }
     if (tconf->postIIR) {
-        tvars->v_iir = (tconf->postIIR*tvars->v_iir+(100-tconf->postIIR)*target_with_brake)/100;
-        target_with_brake = tvars->v_iir;
+        tvars->v_iir = (tconf->postIIR*tvars->v_iir+(100-tconf->postIIR)*target_processed)/100;
+        target_processed = tvars->v_iir;
     }
-    // or inertia after PID
+    //  ---------   inertia after PID, obsolete, to be removed
     if (2==tconf->enable_inertia) {
         if (!tvars->brake && !tvars->pidvars.trstopped) {
-            inertia_set_target(numtrain, &tconf->inertia, &tvars->inertiavars, target_with_brake);
+            inertia_set_target(numtrain, &tconf->inertia, &tvars->inertiavars, target_processed);
             //tvars->inertiavars.target = v;
-            target_with_brake = inertia_value(numtrain, tconf, &tvars->inertiavars, NULL);
+            target_processed = inertia_value(numtrain, tconf, &tvars->inertiavars, NULL);
         } else {
-        	inertia_temporary_deactivated(numtrain, &tconf->inertia, &tvars->inertiavars, target_with_brake);
+        	inertia_temporary_deactivated(numtrain, &tconf->inertia, &tvars->inertiavars, target_processed);
         }
     }
 
     if (tconf->en_spd2pow) {
     	// [0-100] -> [min_pwm .. MAX_PWM]
-    	int s = SIGNOF(target_with_brake);
-    	int a = abs(target_with_brake);
+    	int s = SIGNOF(target_processed);
+    	int a = abs(target_processed);
     	int v2 = (a>1) ? a * (MAX_PWM-tconf->min_power)/100 + tconf->min_power : 0;
-    	target_with_brake = s * v2;
+        target_processed = s * v2;
     }
 
     if (!tconf->enable_pid) {
         // stop detection without PID - but we still use pidvars.stopped, this is a little bit ugly
         if (!tvars->pidvars.trstopped) {
-            if (!tvars->target_speed && !target_with_brake) {
+            if (!tvars->target_speed && !target_with_brake && !target_processed) {
                 tvars->pidvars.trstopped = 1;
                 send_train_stopped(numtrain, tvars);
             }
@@ -827,10 +824,10 @@ static void train_periodic_control(int numtrain, _UNUSED_ uint32_t dt)
     }
     
     
-    int changed = (tvars->last_speed != target_with_brake);
-    tvars->last_speed = target_with_brake;
+    int changed = (tvars->last_speed != target_processed);
+    tvars->last_speed = target_processed;
 
-    itm_debug3(DBG_PID|DBG_SPDCTL, "spd", numtrain, target_with_brake, changed);
+    itm_debug3(DBG_PID|DBG_SPDCTL, "spd", numtrain, target_processed, changed);
 
     // force resending spd if cantons were added
     if (tvars->canton_added) {
@@ -845,45 +842,11 @@ static void train_periodic_control(int numtrain, _UNUSED_ uint32_t dt)
             m.from = MA1_SPDCTL(numtrain);
             m.to = MA3_UI_GEN;
             m.cmd = CMD_NOTIF_SPEED;
-            m.v1 = target_with_brake;
+            m.v1 = target_processed;
             mqf_write_from_spdctl(&m);
         }
     }
-    /*
-    if (tconf->notify_speed) { // to be removed
-    	struct spd_notif n;
-    	n.sv100 = v;
-    	n.pid_target = tvars->pidvars.target_v;
-    	//canton_vars_t *cv1 = get_canton_vars(tvars->current_canton);
-    	n.bemf_centivolt = tvars->bemf_mv/10; //cv1->bemf_centivolt;
-    	train_notif(numtrain, 'V', (void *)&n, sizeof(n));
-    }
-    */
-
-    /* estimate speed/position with bemf */
-    /*
-    if ((0)) {
-        int32_t b = tvars->bemf_mv;
-        if (abs(b)<100) b = 0; // XXX XXXX
-
-        // TODO: BEMF to speed. currently part of it is done in convert_to_centivolt
-        //       but we assume speed is really proportional to BEMF
-
-        //  dt is not precise enough
-        int32_t pi = (b*100)/tsktick_freqhz;
-        tvars->position_estimate += pi;
-        itm_debug3(DBG_POSE, "pose", numtrain, tvars->position_estimate, b);
-        itm_debug3(DBG_POSE, "pi", b, dt,  pi);
-
-        for (int i=0; i<MAX_TRIG; i++) {
-            if (!tvars->pose_trig_tag[i]) continue;
-            pose_check_trig(numtrain, tvars, i, b);
-        }
-        if (tconf->notify_pose) {
-    		train_notif(numtrain, 'i', (void *)&tvars->position_estimate, sizeof(int32_t));
-        }
-    }
-     */
+   
 }
 
 

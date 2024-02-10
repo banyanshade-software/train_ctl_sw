@@ -36,7 +36,7 @@
 
 void inertia_reset(int tidx,  inertia_vars_t *vars)
 {
-	itm_debug1(DBG_INERTIA, "i/rst", tidx);
+	itm_debug1(DBG_INERTIA, "i-rst", tidx);
 	vars->target = 0;
 	vars->cur100 = 0;
 }
@@ -53,11 +53,11 @@ int16_t inertia_value(int tidx, const conf_locomotive_t *lconf, inertia_vars_t *
     
     if (pchanged) *pchanged = 0;
     if (vars->target == vars->cur100/100) {
-    	itm_debug1(DBG_INERTIA, "i/no chg", tidx);
+    	itm_debug1(DBG_INERTIA, "i-no chg", tidx);
     	return vars->target;
     }
 
-    itm_debug3(DBG_INERTIA, "i/val", tidx, vars->cur100, vars->target);
+    itm_debug3(DBG_INERTIA, "i-val", tidx, vars->cur100, vars->target);
 
 	if (targetsign*abs100 >= 0) {
 		// same direction
@@ -67,20 +67,20 @@ int16_t inertia_value(int tidx, const conf_locomotive_t *lconf, inertia_vars_t *
 			inc = (inertiaconfig->acc * dt100) / 10000;
 			inc = MIN(inc, trga100-abs(vars->cur100));
 			inc = abs100 * inc;
-	    	itm_debug3(DBG_INERTIA, "i/acc", tidx, inc, dt100);
+	    	itm_debug3(DBG_INERTIA, "i-acc", tidx, inc, dt100);
 		} else {
 			// deceleration
 			inc = (inertiaconfig->dec * dt100) / 10000;
 			inc = MIN(inc, -trga100+abs(vars->cur100));
 			inc = -abs100 * inc;
-	    	itm_debug3(DBG_INERTIA, "i/dec", tidx, inc, dt100);
+	    	itm_debug3(DBG_INERTIA, "i-dec", tidx, inc, dt100);
 		}
 	} else {
 		// dir change
 		inc = inertiaconfig->dec * dt100 / 10000;
         inc = MIN(inc, abs(vars->target*100-vars->cur100));
         inc = -1 * abs100 * inc;
-		itm_debug2(DBG_INERTIA, "i/dir chg", tidx, inc);
+		itm_debug2(DBG_INERTIA, "i-dir chg", tidx, inc);
 	}
 	int vold = vars->cur100/100;
 	vars->cur100 += inc;

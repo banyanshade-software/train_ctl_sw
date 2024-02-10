@@ -213,7 +213,7 @@ static void spdctl_reset(void)
 	for (int  i = 0; i<NUM_TRAINS; i++) {
         trspc_vars[i].dirbits = 0;
         for (int k=0; k<4; k++) trspc_vars[i].Cx[k].v = 0xFF;
-        trspc_vars[i].pidvars.stopped = 1;
+        trspc_vars[i].pidvars.trstopped = 1;
         
         inertia_reset(i, &trspc_vars[i].inertiavars);
         pidctl_reset(&trspc_vars[i].pidvars);
@@ -407,7 +407,7 @@ static void spdctl_handle_msg(msg_64_t *m)
                 	}
                     itm_debug3(DBG_BRAKE, "BRAK", tidx, tvars->startbreakd10, tvars->stopposed10);
                 } else {
-                    itm_debug1(DBG_BRAKE, "BRAK:off", tidx);
+                    itm_debug1(DBG_BRAKE|DBG_INERTIA, "BRAK:off", tidx);
                     tvars->brake = 0;
                     tvars->stopposed10 = 0;
                 }
@@ -648,6 +648,7 @@ void send_train_stopped(int numtrain, train_vars_t *tvars)
     
     tvars->brake = 0;
     tvars->target_speed = 0;
+    //tvars->inertiavars.cur100 = 0;
 }
 
 #define punch_start 1
@@ -721,11 +722,15 @@ static void train_periodic_control(int numtrain, _UNUSED_ uint32_t dt)
          * need precise stop position
          */
         if (!tvars->brake) {
-            int changed;
             inertia_set_target(numtrain, &tconf->inertia, &tvars->inertiavars, tvars->target_speed);
-            //tvars->inertiavars.target = tvars->target_speed;
-            target_with_brake = inertia_value(numtrain, tconf, &tvars->inertiavars, &changed);
-            itm_debug3(DBG_INERTIA, "inertia", numtrain, tvars->target_speed, target_with_brake);
+            if (!tvars->pidvars.trstopped) {
+                int changed;
+                //tvars->inertiavars.target = tvars->target_speed;
+                target_with_brake = inertia_value(numtrain, tconf, &tvars->inertiavars, &changed);
+                itm_debug3(DBG_INERTIA, "inertia", numtrain, tvars->target_speed, target_with_brake);
+            }
+        } else if (tvars->brake) {
+        	inertia_temporary_deactivated(numtrain, &tconf->inertia, &tvars->inertiavars, target_with_brake);
         }
 	}
     
@@ -749,23 +754,23 @@ static void train_periodic_control(int numtrain, _UNUSED_ uint32_t dt)
     }
     if (tconf->enable_pid) {
     	if (target_with_brake) {
-    		if ((punch_start) && (tvars->pidvars.stopped)) {
-    			itm_debug3(DBG_PID|DBG_SPDCTL, "punch", numtrain, target_with_brake, tvars->brake);
+    		if ((punch_start) && (tvars->pidvars.trstopped)) {
+    			itm_debug3(DBG_PID|DBG_SPDCTL|DBG_INERTIA, "punch", numtrain, target_with_brake, tvars->brake);
     			target_with_brake=100;
     		}
-            tvars->pidvars.stopped = 0;
+            tvars->pidvars.trstopped = 0;
     	}
-        if (!tvars->pidvars.stopped && (target_with_brake == 0) && (abs(tvars->bemf_mv)<100)) {
-    		itm_debug1(DBG_PID|DBG_SPDCTL, "stop", numtrain);
+        if (!tvars->pidvars.trstopped && (target_with_brake == 0) && (abs(tvars->bemf_mv)<100)) {
+    		itm_debug1(DBG_PID|DBG_SPDCTL|DBG_BRAKE, "stop", numtrain);
 			pidctl_reset(&tvars->pidvars);
             inertia_reset(numtrain, &tvars->inertiavars);
 			debug_info('T', numtrain, "STOP_PID", 0,0, 0);
-			tvars->pidvars.stopped = 1;
+			tvars->pidvars.trstopped = 1;
             send_train_stopped(numtrain, tvars);
             
         	target_with_brake = 0;
-        } else if (tvars->pidvars.stopped) {
-    		itm_debug2(DBG_PID, "stopped", numtrain, target_with_brake);
+        } else if (tvars->pidvars.trstopped) {
+    		itm_debug2(DBG_PID|DBG_BRAKE, "trstopped", numtrain, target_with_brake);
         	target_with_brake = 0;
         } else {
         	itm_debug3(DBG_PID, "pid", numtrain, bemf_mv, target_with_brake);
@@ -792,10 +797,12 @@ static void train_periodic_control(int numtrain, _UNUSED_ uint32_t dt)
     }
     // or inertia after PID
     if (2==tconf->enable_inertia) {
-        if (!tvars->brake) {
+        if (!tvars->brake && !tvars->pidvars.trstopped) {
             inertia_set_target(numtrain, &tconf->inertia, &tvars->inertiavars, target_with_brake);
             //tvars->inertiavars.target = v;
             target_with_brake = inertia_value(numtrain, tconf, &tvars->inertiavars, NULL);
+        } else {
+        	inertia_temporary_deactivated(numtrain, &tconf->inertia, &tvars->inertiavars, target_with_brake);
         }
     }
 
@@ -809,13 +816,13 @@ static void train_periodic_control(int numtrain, _UNUSED_ uint32_t dt)
 
     if (!tconf->enable_pid) {
         // stop detection without PID - but we still use pidvars.stopped, this is a little bit ugly
-        if (!tvars->pidvars.stopped) {
+        if (!tvars->pidvars.trstopped) {
             if (!tvars->target_speed && !target_with_brake) {
-                tvars->pidvars.stopped = 1;
+                tvars->pidvars.trstopped = 1;
                 send_train_stopped(numtrain, tvars);
             }
         } else if (tvars->target_speed) {
-            tvars->pidvars.stopped = 0;
+            tvars->pidvars.trstopped = 0;
         }
     }
     

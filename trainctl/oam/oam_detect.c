@@ -8,9 +8,10 @@
 
 #include <stdint.h>
 
+#include "misc.h"
 #include "oam_detect.h"
 #include "../config/conf_train.h"
-#include "locomotives.h"
+#include "../ctrl/locomotives.h"
 
 static uint8_t sblk[NUM_TRAINS];
 
@@ -20,7 +21,7 @@ void oam_detect_reset(void)
         sblk[i] = 0xFF;
     }
 }
-void oam_train_detected(uint8_t canton, uint8_t lsblk, uint8_t _loco, uint8_t reserved)
+void oam_train_detected(uint8_t canton, uint8_t lsblk, uint8_t _loco, _UNUSED_ uint8_t reserved)
 {
     //locomotive_t loco = (locomotive_t) _loco;
     int n = conf_train_num_entries();

@@ -42,7 +42,7 @@ void pidctl_reset(pidctl_vars_t *v)
 	v->last_err = 0;
 	v->sume     = 0;
 	v->target_v = 0;
-	v->stopped = 1;
+	v->trstopped = 1;
 	v->has_last = 0;
 }
 

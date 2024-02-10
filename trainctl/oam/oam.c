@@ -31,12 +31,14 @@
 #include "../config/conf_globparam.propag.h"
 #include "../config/conf_utest.propag.h"
 
+#include "oam_detect.h"
 
 #ifdef STM32G4
 #include "stm32g4xx_ll_utils.h"
 #endif
 
 int OAM_NeedsReschedule = 0;
+static runmode_t _run_mode = runmode_off;
 
 
 
@@ -249,6 +251,12 @@ static void OAM_change_mode(runmode_t run_mode)
 	if (run_mode == runmode_testcan) {
 		respok = 0;
 	}
+    if (_run_mode != run_mode) {
+        _run_mode = run_mode;
+        if (_run_mode == runmode_detect2) {
+            oam_detect_reset();
+        }
+    }
 }
 
 static void _bcast_normal(void)
@@ -824,9 +832,37 @@ static int _handle_msg_master(msg_64_t *m)
     }
 }
 
+static int _handle_msg_detect2(msg_64_t *m)
+{
+    if (m->cmd == CMD_OAM_DETECTREPORT) {
+        if (0xFF != m->vb0) {
+            // train found
+            oam_train_detected(m->vb0, m->vb1, m->vb2, m->vb3);
+        }
+        if (m->subc) {
+            // all done for this board
+            // TODO : check all boards ok
+            if ((1)) {
+                //osDelay(500);
+                msg_64_t md;
+                md.from = MA3_BROADCAST;
+                md.to = MA3_BROADCAST;
+                md.cmd = CMD_SETRUN_MODE;
+                md.v1u = runmode_normal;
+
+                mqf_write_from_nowhere(&md);
+            }
+        }
+        return 1;
+    }
+    return 0;
+}
 static void handle_msg_master(msg_64_t *m)
 {
     if (_handle_msg_master(m)) return;
+    if (runmode_detect2 == _run_mode) {
+        if (_handle_msg_detect2(m)) return;
+    }
     handle_msg_common(m);
 }
 

@@ -15,6 +15,15 @@
 
 static uint8_t sblk[NUM_TRAINS];
 
+void oam_detect_init(void)
+{
+    for (int i=0; i<NUM_TRAINS; i++) {
+        sblk[i] = 0xFF;
+    }
+#if 0
+    sblk[0] = 5;
+#endif
+}
 void oam_detect_reset(void)
 {
     for (int i=0; i<NUM_TRAINS; i++) {

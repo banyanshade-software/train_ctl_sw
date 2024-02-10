@@ -164,6 +164,7 @@
 		1BBA76F72B6AB56400489FEB /* ParamTableController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BBA76F62B6AB56400489FEB /* ParamTableController.m */; };
 		1BBA77002B6AC2FF00489FEB /* TrainParamController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BBA76FF2B6AC2FF00489FEB /* TrainParamController.m */; };
 		1BBA77092B6AC47D00489FEB /* LocoParamController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BBA77082B6AC47D00489FEB /* LocoParamController.m */; };
+		1BC00A3B2B77D59400019507 /* oam_detect.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BC00A3A2B77D59300019507 /* oam_detect.c */; };
 		1BC90306272092EC0087CEA7 /* led.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BC90305272092EC0087CEA7 /* led.c */; };
 		1BC903172720AD730087CEA7 /* LedTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC903162720AD730087CEA7 /* LedTest.m */; };
 		1BC903182720B1920087CEA7 /* led.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BC90305272092EC0087CEA7 /* led.c */; };
@@ -430,6 +431,8 @@
 		1BBA76FF2B6AC2FF00489FEB /* TrainParamController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TrainParamController.m; sourceTree = "<group>"; };
 		1BBA77072B6AC47D00489FEB /* LocoParamController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LocoParamController.h; sourceTree = "<group>"; };
 		1BBA77082B6AC47D00489FEB /* LocoParamController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LocoParamController.m; sourceTree = "<group>"; };
+		1BC00A392B77D59300019507 /* oam_detect.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = oam_detect.h; sourceTree = "<group>"; };
+		1BC00A3A2B77D59300019507 /* oam_detect.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = oam_detect.c; sourceTree = "<group>"; };
 		1BC90304272092EC0087CEA7 /* led.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = led.h; sourceTree = "<group>"; };
 		1BC90305272092EC0087CEA7 /* led.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = led.c; sourceTree = "<group>"; };
 		1BC9030C2720AD250087CEA7 /* trainctlTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = trainctlTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -647,6 +650,8 @@
 				1B46F80F280C283C00BAD6E8 /* oam_flash.c */,
 				1B46F810280C283C00BAD6E8 /* oam_flash.h */,
 				1B46F7EC28074DDF00BAD6E8 /* oam.c */,
+				1BC00A392B77D59300019507 /* oam_detect.h */,
+				1BC00A3A2B77D59300019507 /* oam_detect.c */,
 				1B46F7ED28074DDF00BAD6E8 /* boards.h */,
 				1B46F7EE28074DDF00BAD6E8 /* boards.c */,
 				1B46F7EF28074DDF00BAD6E8 /* oam.h */,
@@ -1316,6 +1321,7 @@
 				1BBA76E82B6A2A2A00489FEB /* locomotives.c in Sources */,
 				1B455A22280F671000F09E33 /* conf_turnout.fields.c in Sources */,
 				1BD93C732546FF44006C4D70 /* train.c in Sources */,
+				1BC00A3B2B77D59400019507 /* oam_detect.c in Sources */,
 				1BD93C6C2546FF44006C4D70 /* param.c in Sources */,
 				1BED2A9825173CF40080FC97 /* AppDelegate.m in Sources */,
 				1B67360F2531E4450063EA9A /* SimTrain.m in Sources */,

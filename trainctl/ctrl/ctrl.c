@@ -32,6 +32,7 @@
 #include "../config/conf_globparam.h"
 #include "trace_train.h"
 #include "../oam/oam.h"
+#include "../oam/oam_detect.h"
 #include "ctc_periodic_refresh.h"
 
 #ifndef BOARD_HAS_CTRL
@@ -243,7 +244,7 @@ static void _ctrl_init(int normalmode)
 		const _UNUSED_ lsblk_num_t s7 = {7};
         const _UNUSED_ lsblk_num_t s8 = {8};
         const _UNUSED_ lsblk_num_t s9 = {9};
-		if ((1)) {
+		if ((0)) {
 #ifdef TRAIN_SIMU
             void simu_set_train(int tidx, int sblk, int posmm); // SimTrain.m
 
@@ -279,13 +280,23 @@ static void _ctrl_init(int normalmode)
 
 
 		} else {
-            //ctrl2_init_train(0, &otrctl[0], s0);
-            //ctrl2_init_train(0, &otrctl[0], s0);
-            ctrl3_init_train(0, &trctl[0], s0, 300, 1);
-            //ctrl3_init_train(0, &trctl[0], s0, 1);
-			//ctrl2_init_train(1, &trctl[1], s2);
-			ctrl_set_mode(0, train_manual);
-			ctrl_set_mode(1, train_notrunning);
+            int n = conf_train_num_entries();
+            for (int i=0; i<n; i++) {
+                const conf_train_t *conf = conf_train_get(i);
+                if (!conf) continue;
+                if (!conf->enabled) goto offtrain;
+                uint8_t nls = oam_start_sblk_for_train(i);
+                if (0xFF == nls) goto offtrain;
+                lsblk_num_t lsb;
+                lsb.n = nls;
+                ctrl3_init_train(i, &trctl[i], lsb, 0, 1);
+                ctrl_set_mode(i, train_manual);
+                continue;
+            offtrain:
+                lsb.n = 0xFF;
+                //ctrl3_init_train(i, &trctl[i], lsb, POSE_UNKNOWN, 0);
+                ctrl_set_mode(i, train_notrunning);
+            }
 		}
 	}
 }

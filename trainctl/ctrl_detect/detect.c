@@ -93,7 +93,11 @@ static void _detection_finished(void)
 #ifdef TRAIN_SIMU
     /* set fixed repport values for O&M tests*/
     result[0].locotype = Marklin8821_V200;
-    
+    result[0].canton.v = 2;
+    result[0].ina.v = 0xF;
+    result[0].lsblk.n = 5;
+    result[0].numlsblk = 1;
+
     result[1].locotype = Marklin8875_V160;
     result[1].canton.v = 4;
     result[1].ina.v = 0xF;
@@ -103,7 +107,7 @@ static void _detection_finished(void)
 #endif
     for (int i=0; i<MAX_DETECT_TRAINS; i++) {
         int last = 0;
-        if ((i==MAX_DETECT_TRAINS-1) || (result[i+1].canton.v = 0xFF)) {
+        if ((i==MAX_DETECT_TRAINS-1) || (result[i+1].canton.v == 0xFF)) {
             last = 1; // this is last report
         }
         if (last && (0xFF==result[i].canton.v)) {
@@ -123,8 +127,8 @@ static void _detection_finished(void)
     m.to = MA3_UI_GEN; //(UISUB_TFT);
     mqf_write_from_ctrl(&m);
 
-    // XXX to be moved to oam
-    if ((1)) {
+    // moved to oam
+    if ((0)) {
         //osDelay(500);
         msg_64_t md;
         md.from = MA3_BROADCAST;

@@ -168,7 +168,7 @@ static uint32_t bootcount=0;
 
 static void OAM_Init(void)
 {
-    //initdone=1;
+    oam_detect_init();
     
     // init flash
 #ifdef BOARD_HAS_FLASH

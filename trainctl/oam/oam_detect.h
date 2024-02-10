@@ -9,6 +9,7 @@
 #ifndef oam_detect_h
 #define oam_detect_h
 
+void oam_detect_init(void);
 void oam_detect_reset(void);
 void oam_train_detected(uint8_t canton, uint8_t lsblk, uint8_t loco, uint8_t reserved);
 

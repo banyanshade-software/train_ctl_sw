@@ -20,9 +20,9 @@ subconfig pidctl {
 
 subconfig inertia {
     user int16_t dec
-        = (default) 120;
+        = (default) 180;
     user int16_t acc
-        = (default) 120;
+        = (default) 200;
 };
 
 
@@ -45,7 +45,7 @@ config locomotive {
         = (default) vpolicy_normal;
 
     user uint8_t enable_inertia:2
-        = (default) 0;
+        = (default) 1;
     user uint8_t enable_pid:1
         = (default) 1;
     const uint8_t fix_bemf:1
@@ -58,7 +58,7 @@ config locomotive {
         = (default) 0;
 
     const uint8_t min_power /* for en_spd2pow */
-        = (default) 20;
+        = (default) 18;
     user uint8_t min_power_acc
         = (default) 20;
     user uint8_t min_power_dec
@@ -73,7 +73,7 @@ config locomotive {
         = (default) 0;
 
     user uint8_t slipping
-        = (default) 120;
+        = (default) 100;
     user uint16_t pose_per_cm
         = (all:*) table(ltpose, pcm)
         = (default) 450;
@@ -101,7 +101,7 @@ table ltpose              (pcm)
 /* 0 Marklin8805_BR29 */  (450)
 /* 0 Marklin8821_V200 */  (350)
 /* 0 Marklin8895_BR74 */  (450)
-/* 0 Marklin8875_V160 */  (400)
+/* 0 Marklin8875_V160 */  (320)
 ;
 
 attrib locomotive c_code {

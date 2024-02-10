@@ -712,7 +712,7 @@ static void train_periodic_control(int numtrain, _UNUSED_ uint32_t dt)
          * need precise stop position
          */
         if (!tvars->brake) {
-            inertia_set_target(numtrain, &tconf->inertia, &tvars->inertiavars, target_processed);
+            inertia_set_target(numtrain, tconf, &tvars->inertiavars, target_processed);
             if (!tvars->pidvars.trstopped) {
                 int changed;
                 //tvars->inertiavars.target = tvars->target_speed;
@@ -795,7 +795,7 @@ static void train_periodic_control(int numtrain, _UNUSED_ uint32_t dt)
     //  ---------   inertia after PID, obsolete, to be removed
     if (2==tconf->enable_inertia) {
         if (!tvars->brake && !tvars->pidvars.trstopped) {
-            inertia_set_target(numtrain, &tconf->inertia, &tvars->inertiavars, target_processed);
+            inertia_set_target(numtrain, tconf, &tvars->inertiavars, target_processed);
             //tvars->inertiavars.target = v;
             target_processed = inertia_value(numtrain, tconf, &tvars->inertiavars, NULL);
         } else {

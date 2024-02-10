@@ -40,10 +40,15 @@ typedef struct {
 int16_t inertia_value(int tidx, const conf_locomotive_t *lconf, inertia_vars_t *var, int *pchanged);
 void    inertia_reset(int tidx, inertia_vars_t *var);
 
-static inline void inertia_set_target(_UNUSED_ int tidx, _UNUSED_ const struct conf_inertia *cnf, inertia_vars_t *vars, int16_t v)
+static inline void inertia_set_target(_UNUSED_ int tidx,  const struct conf_locomotive *cnf, inertia_vars_t *vars, int16_t v)
 {
 	itm_debug2(DBG_INERTIA, "i-targ", tidx, v);
 	vars->target = v;
+    if (v && !vars->cur100) {
+        int mval = cnf->min_power_acc;
+        mval = MIN(v, mval);
+        vars->cur100 = mval*100;
+    }
 }
 static inline void inertia_temporary_deactivated(_UNUSED_ int tidx, _UNUSED_ const struct conf_inertia *cnf,  inertia_vars_t *vars, int16_t v)
 {

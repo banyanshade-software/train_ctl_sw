@@ -140,7 +140,26 @@ static void _detection_finished(void)
     }
 }
 
+
+static int detect_step_notify_ui(int numdetector, xblkaddr_t detect_canton)
+{
+    itm_debug1(DBG_DETECT, "D-gui", detect_canton.v);
+    if ((1)) {
+        msg_64_t m = {0};
+        
+        m.cmd = CMD_UI_DETECT;
+        m.v1 = detect_canton.v;
+        m.v2 = numdetector;
+        m.to = MA3_UI_GEN; //(UISUB_TFT);
+        m.from = MA1_CONTROL();
+        mqf_write_from_ctrl(&m);
+    }
+    return 0;
+}
+
 #define DELAY_INITIAL 100
+
+static int num_detector = 0; // for UI notification
 
 void detect2_process_tick(_UNUSED_ uint32_t tick,  _UNUSED_ uint32_t dt)
 {
@@ -157,6 +176,7 @@ void detect2_process_tick(_UNUSED_ uint32_t tick,  _UNUSED_ uint32_t dt)
             break;
         case state_start:
             detector = NULL;
+            num_detector = 0;
             if (tick >= detect_tick+500) {
             	detect_state = state_next_detector;
             }
@@ -168,8 +188,10 @@ void detect2_process_tick(_UNUSED_ uint32_t tick,  _UNUSED_ uint32_t dt)
             }
             if (!detector) {
                 detector = &alldetectors;
+                num_detector = 0;
             } else {
                 detector = detector->next;
+                num_detector++;
             }
             if (!detector) {
                 // all done
@@ -234,6 +256,7 @@ void detect2_process_tick(_UNUSED_ uint32_t tick,  _UNUSED_ uint32_t dt)
             int rc = 0;
             if (detect_state == state_next_step) {
                 if (detectorstep->detect_start_canton) {
+                    detect_step_notify_ui(num_detector, detect_canton);
                     rc = detectorstep->detect_start_canton(detect_canton);
                 }
             } else {

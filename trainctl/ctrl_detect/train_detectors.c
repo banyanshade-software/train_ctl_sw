@@ -63,20 +63,6 @@ int detect_step_check_canton_exist(xblkaddr_t detect_canton)
     return 0;
 }
 
-int detect_step_notify_ui(xblkaddr_t detect_canton)
-{
-    itm_debug1(DBG_DETECT, "D-gui", detect_canton.v);
-    if ((1)) {
-        msg_64_t m = {0};
-        
-        m.cmd = CMD_UI_DETECT;
-        m.v1 = detect_canton.v;
-        m.v2 = 0;
-        m.to = MA3_UI_GEN; //(UISUB_TFT);
-        mqf_write_from_ctrl(&m);
-    }
-    return 0;
-}
 
 static void _start_canton(xblkaddr_t detect_canton, uint8_t method, uint16_t param)
 {

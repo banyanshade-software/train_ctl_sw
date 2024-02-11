@@ -190,16 +190,20 @@ typedef char compile_assert[(sizeof(msg_64_t) == 8) ? 1 : -1];
 static_assert(sizeof(msg_64_t) == 8);
 #endif
 
+/* note that runmode value must match button tag value
+   in user interface.
+   Hence the values are fixed
+ */
 typedef enum {
-	runmode_off,				// when switching mode
-    runmode_master,
-    runmode_slave,
-	runmode_normal,
-	runmode_testcanton,
-	runmode_detect_experiment,	// obsolete, used for experimentation
-	runmode_detect2,			// auto detect trains
+	runmode_off = 0,				// when switching mode
+    runmode_master = 1,
+    runmode_slave = 2,
+	runmode_normal = 3,
+	runmode_testcanton = 4,
+	runmode_detect_experiment = 5,	// obsolete, used for experimentation
+	runmode_detect2 = 6,			// auto detect trains
 
-	runmode_testcan,			// test CAN bus
+	runmode_testcan = 7,			// test CAN bus
 } runmode_t;
 
 #ifdef BOARD_HAS_CAN

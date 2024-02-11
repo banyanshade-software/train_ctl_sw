@@ -463,7 +463,7 @@ static void sub_presence_changed( uint8_t from_addr,  uint8_t inanum,  uint16_t 
             	 */
             	// could be next(next(s1), if next(s1) is not ina controlled
                 // and if pose is not correctly adjusted
-            	if (ina.v == get_lsblk_ina3221(tvar->_last_c1_sblk).v) {
+            	if ((tvar->_last_c1_sblk.n != -1) && (ina.v == get_lsblk_ina3221(tvar->_last_c1_sblk).v)) {
             		/* this does occurs when we leave a sblk, ina can be toggled several times */
             		/* even with ina3221 hysteris handling */
             		itm_debug3(DBG_CTRL, "ina old s1", tidx, ina.v, tvar->_last_c1_sblk.n);

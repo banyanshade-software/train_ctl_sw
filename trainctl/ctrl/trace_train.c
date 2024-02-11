@@ -130,7 +130,7 @@ typedef struct {
     train_trace_record_t rec[NUM_TRACE_ITEM];
 } train_trace_t;
 
-#define NUM_TRAIN_TRACE 2
+#define NUM_TRAIN_TRACE 3
 
 static train_trace_t trace[NUM_TRAIN_TRACE];
 

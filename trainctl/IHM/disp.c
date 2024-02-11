@@ -230,7 +230,8 @@ static const uint8_t layout_detect1[] = {
 static const uint8_t layout_detect2[] = {
 		CODE_ZONE_STATUS, CODE_STR|32, // detect
 		CODE_ZONE_TEXT1,  CODE_STR|33, CODE_UVAL,    0, // c:xx
-		CODE_ZONE_TEXT2,  CODE_UVAL,	 1, CODE_STR|34, // ? Hz
+		CODE_ZONE_TEXT2,  CODE_STR|34,  CODE_UVAL,	 1,
+		//CODE_ZONE_TEXT2,  CODE_UVAL,	 1, CODE_STR|34, // ? Hz
 		CODE_END
 };
 
@@ -360,9 +361,9 @@ static const char *ui_strings[] = {
 /*30*/		"W ",
 /*31*/		"Vidx=",
 
-/*32*/      "Detect",
-/*33*/      "C:",
-/*34*/		"Hz",
+/*32*/      "DETECT",
+/*33*/      "C=",
+/*34*/		"D=",
 
 /* 35*/		"CAN:",
 /* 36*/		"! Fatal ",

@@ -107,6 +107,7 @@ void ctrl3_init_train(int tidx, train_ctrl_t *tvars, lsblk_num_t sblk, int posmm
 {
     itm_debug1(DBG_CTRL, "INIT", tidx);
     memset(tvars, 0, sizeof(*tvars));
+
     tvars->_desired_signed_speed = 0;
     tvars->_mode = train_manual;
     tvars->_sdir = 0;
@@ -131,7 +132,13 @@ void ctrl3_init_train(int tidx, train_ctrl_t *tvars, lsblk_num_t sblk, int posmm
     tvars->sblkfreed.n = -1;
     tvars->brake_on_free.n = -1;
     
-    if (on) turn_train_on(tidx, tvars);
+    if (on) {
+        turn_train_on(tidx, tvars);
+#ifdef TRAIN_SIMU
+        void simu_set_train(int tidx, int sblk, int posmm); // SimTrain.m
+        simu_set_train(tidx, sblk.n, posmm);
+#endif
+    }
 
 }
 
@@ -961,7 +968,7 @@ void ctrl3_evt_entered_new_lsblk_c2_canton(int tidx, train_ctrl_t *tvars, _UNUSE
     //const conf_train_t *tconf = conf_train_get(tidx);
     const conf_locomotive_t *loco = getloco(tidx);
     int nmm = pose_convert_to_mm(loco, np*10);
-	itm_debug3(DBG_CTRL, "nsblk/np", tidx, tvars->_curposmm, nmm);
+	itm_debug3(DBG_CTRL, "nsblk-np", tidx, tvars->_curposmm, nmm);
     tvars->_curposmm = nmm;
 
     if (tvars->canMeasureOnSblk) {

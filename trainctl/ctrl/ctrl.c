@@ -195,6 +195,12 @@ static void set_door_ack(xtrnaddr_t tn, enum topo_turnout_state v);
 
 void ctrl_set_mode(int trnum, train_mode_t mode)
 {
+#ifdef TRAIN_SIMU
+    if (mode == train_notrunning) {
+        void simu_set_train(int tidx, int sblk, int posmm); // SimTrain.m
+        simu_set_train(trnum, -1, 0);
+    }
+#endif
     ctrl3_set_mode(trnum, &trctl[trnum], mode);
     trctl[trnum]._mode = mode;
 }
@@ -230,7 +236,7 @@ static void _ctrl_init(int normalmode)
 	occupency_clear();
 
 	if (normalmode) {
-		ctrl_set_mode(0, train_manual);
+		//ctrl_set_mode(0, train_manual);
 		//ctrl_set_mode(1, train_auto);
 		xtrnaddr_t t0 = { .v = 0};
 		xtrnaddr_t t2 = { .v = 2};

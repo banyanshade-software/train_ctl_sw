@@ -1426,8 +1426,12 @@ void received_broadcast(msg_64_t *m)
             
     case CMD_TRSTATE_NOTIF:
     case CMD_TRTSPD_NOTIF:
+    case CMD_TRMODE_NOTIF:
     case CMD_CANTEST:
-            break;
+    case CMD_UI_DETECT:
+        break;
+    case CMD_SETRUN_MODE:
+        [self setRunMode:m.v1 recv:YES];
         break;
     default:
         NSLog(@"frameMsg64 UI msg not handled 0x%X", m.cmd);
@@ -2975,6 +2979,8 @@ didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic
     m.to = MA3_BROADCAST;
     m.from = MA3_UI_GEN; //(UISUB_USB);
     m.cmd = CMD_SETRUN_MODE;
+    m.v1u = newMode;
+    /*
     switch (newMode) {
         case 0: m.v1u = runmode_normal; break;
         case 1: m.v1u = runmode_testcanton; break;
@@ -2986,6 +2992,7 @@ didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic
         default:
             break;
     }
+     */
     [self sendMsg64:m];
 }
 

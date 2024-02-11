@@ -916,7 +916,7 @@
                         <rect key="frame" x="283" y="8" width="684" height="91"/>
                         <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="GXn-x7-4go">
                             <rect key="frame" x="0.0" y="0.0" width="684" height="91"/>
-                            <autoresizingMask key="autoresizingMask"/>
+                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
                                 <textView editable="NO" importsGraphics="NO" richText="NO" verticallyResizable="YES" smartInsertDelete="YES" id="YXl-3q-GOv">
                                     <rect key="frame" x="0.0" y="0.0" width="684" height="91"/>
@@ -937,7 +937,7 @@
                             <autoresizingMask key="autoresizingMask"/>
                         </scroller>
                         <scroller key="verticalScroller" wantsLayer="YES" verticalHuggingPriority="750" horizontal="NO" id="9q2-xn-bbQ">
-                            <rect key="frame" x="669" y="0.0" width="15" height="91"/>
+                            <rect key="frame" x="668" y="0.0" width="16" height="91"/>
                             <autoresizingMask key="autoresizingMask"/>
                         </scroller>
                     </scrollView>
@@ -1051,7 +1051,7 @@
                             <rect key="frame" x="3" y="3" width="133" height="60"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
-                                <button verticalHuggingPriority="750" tag="8" translatesAutoresizingMaskIntoConstraints="NO" id="972-61-OaF">
+                                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="972-61-OaF">
                                     <rect key="frame" x="2" y="26" width="60" height="32"/>
                                     <buttonCell key="cell" type="push" title="Off" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="UPf-1Q-Raa">
                                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -1061,7 +1061,7 @@
                                         <action selector="btnRunMode:" target="Voe-Tx-rLC" id="xEN-Sg-dKJ"/>
                                     </connections>
                                 </button>
-                                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Jjn-BZ-9aa">
+                                <button verticalHuggingPriority="750" tag="3" translatesAutoresizingMaskIntoConstraints="NO" id="Jjn-BZ-9aa">
                                     <rect key="frame" x="54" y="26" width="50" height="32"/>
                                     <buttonCell key="cell" type="push" title="N" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="LXp-MH-UB9">
                                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -1071,7 +1071,7 @@
                                         <action selector="btnRunMode:" target="Voe-Tx-rLC" id="u1T-qc-EVC"/>
                                     </connections>
                                 </button>
-                                <button verticalHuggingPriority="750" tag="4" translatesAutoresizingMaskIntoConstraints="NO" id="P9f-ZG-zrh">
+                                <button verticalHuggingPriority="750" tag="6" translatesAutoresizingMaskIntoConstraints="NO" id="P9f-ZG-zrh">
                                     <rect key="frame" x="2" y="1" width="58" height="32"/>
                                     <buttonCell key="cell" type="push" title="D2" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="K3k-JX-coB">
                                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -1081,7 +1081,7 @@
                                         <action selector="btnRunMode:" target="Voe-Tx-rLC" id="Td6-kP-vJM"/>
                                     </connections>
                                 </button>
-                                <button verticalHuggingPriority="750" tag="6" translatesAutoresizingMaskIntoConstraints="NO" id="9Uh-pS-m8Z">
+                                <button verticalHuggingPriority="750" tag="7" translatesAutoresizingMaskIntoConstraints="NO" id="9Uh-pS-m8Z">
                                     <rect key="frame" x="54" y="1" width="64" height="32"/>
                                     <buttonCell key="cell" type="push" title="Can" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="OWl-CB-HXi">
                                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -1233,7 +1233,7 @@
                                     <rect key="frame" x="4" y="12" width="242" height="617"/>
                                     <clipView key="contentView" id="psq-It-49t">
                                         <rect key="frame" x="1" y="1" width="240" height="615"/>
-                                        <autoresizingMask key="autoresizingMask"/>
+                                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                         <subviews>
                                             <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnReordering="NO" columnResizing="NO" multipleSelection="NO" autosaveColumns="NO" typeSelect="NO" rowSizeStyle="automatic" viewBased="YES" floatsGroupRows="NO" id="MGJ-N1-5ON">
                                                 <rect key="frame" x="0.0" y="0.0" width="240" height="615"/>

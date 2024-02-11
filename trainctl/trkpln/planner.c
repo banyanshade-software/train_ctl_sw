@@ -19,7 +19,7 @@
 #include "../ctrl/ctrl.h"
 //#include "../ctrl/ctrlP.h"
 #include "../ctrl/ctrlLT.h"
-#include "../ctrl/cautoP.h"
+//#include "../ctrl/cautoP.h"
 #include "../ctrl/c3autoP.h"
 #include "../leds/led.h"
 

@@ -20,8 +20,9 @@ void oam_detect_init(void)
     for (int i=0; i<NUM_TRAINS; i++) {
         sblk[i] = 0xFF;
     }
-#if 0
+#if 1
     sblk[0] = 5;
+    sblk[1] = 9;
 #endif
 }
 void oam_detect_reset(void)
@@ -43,21 +44,24 @@ void oam_train_detected(uint8_t canton, uint8_t lsblk, uint8_t _loco, _UNUSED_ u
         if (conf->locotype == _loco) {
             sblk[i] = lsblk;
             wconf->enabled = 1;
-            continue;
-        } else if (!conf->enabled && (conf->locotype == 0)) {
-            idxavail = i;
-        }
-        // not found : add a train
-        if (idxavail<0) {
-            itm_debug3(DBG_ERR, "cantadd", canton, lsblk, _loco);
             return;
+        } else if (!conf->enabled && (conf->locotype == 0)) {
+            if (idxavail<0) idxavail = i;
         }
-        sblk[idxavail] = lsblk;
-        wconf->enabled = 1;
-        wconf->locotype = _loco;
-        if (!conf->trainlen_right_cm) wconf->trainlen_right_cm = 10;
-        if (!conf->trainlen_left_cm) wconf->trainlen_left_cm = 10;
     }
+    // not found : add a train
+    if (idxavail<0) {
+        itm_debug3(DBG_ERR, "cantadd", canton, lsblk, _loco);
+        return;
+    }
+    const conf_train_t *conf = conf_train_get(idxavail);
+    conf_train_t *wconf = (conf_train_t *)conf; // writable
+    sblk[idxavail] = lsblk;
+    wconf->enabled = 1;
+    wconf->locotype = _loco;
+    if (!conf->trainlen_right_cm) wconf->trainlen_right_cm = 10;
+    if (!conf->trainlen_left_cm) wconf->trainlen_left_cm = 10;
+    
 
 }
 

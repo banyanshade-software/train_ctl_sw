@@ -112,6 +112,11 @@ static NSMutableArray *_instances = nil;
     // TODO: coales
     [_tableview reloadData];
 }
+
+- (void) clearParams
+{
+    paramValues = [[NSMutableDictionary alloc]initWithCapacity:50];
+}
 #pragma mark -
 
 - (NSString *) idForRow:(NSInteger)row col:(NSString *)col

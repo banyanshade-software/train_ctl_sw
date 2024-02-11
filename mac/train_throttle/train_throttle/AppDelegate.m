@@ -1389,6 +1389,20 @@ void received_ui_gen(msg_64_t *m)
     [theDelegate processMsg64:*m];
 }
 
+void received_broadcast(msg_64_t *m)
+{
+    [theDelegate processBcastMsg64:*m];
+}
+- (void) processBcastMsg64:(msg_64_t)m
+{
+    switch (m.cmd) {
+        case CMD_SETRUN_MODE:
+            [self setRunMode:m.v1 recv:YES];
+            break;
+        default:
+            break;
+    }
+}
 - (void) processMsg64:(msg_64_t)m
 {
     if (MA3_UI_CTC==m.to) {
@@ -1409,10 +1423,11 @@ void received_ui_gen(msg_64_t *m)
     case CMD_PARAM_LUSER_VAL:
         [self paramUserVal:m locstore:1];
         break;
-    case CMD_SETRUN_MODE:
+            
     case CMD_TRSTATE_NOTIF:
     case CMD_TRTSPD_NOTIF:
     case CMD_CANTEST:
+            break;
         break;
     default:
         NSLog(@"frameMsg64 UI msg not handled 0x%X", m.cmd);
@@ -1664,6 +1679,9 @@ static int frm_unescape(uint8_t *buf, int len)
             [self paramUserVal:m locstore:1];
             break;
         case CMD_SETRUN_MODE:
+            NSLog(@"CMD_SETRUN_MODE %d", m.v1);
+            break;
+            
         case CMD_TRSTATE_NOTIF:
         case CMD_TRTSPD_NOTIF:
         case CMD_CANTEST:
@@ -2294,7 +2312,7 @@ AppDelegate *theDelegate = nil;
     [[NSRunLoop mainRunLoop]addTimer:simuTimer forMode:NSDefaultRunLoopMode];
 
     _runMode = -1;
-    [self setRunMode:0];
+    [self setRunMode:0 recv:NO];
     
 }
 
@@ -2933,19 +2951,31 @@ didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic
      (see below)
      */
     _runMode = -1;
-    [self setRunMode:tag];
+    [self setRunMode:tag recv:NO];
 }
-- (void) setRunMode:(NSUInteger)testMode
+- (void) setRunMode:(NSUInteger)newMode recv:(BOOL)recv
 {
-    if (testMode == _runMode) return;
-    _runMode = testMode;
+    if (newMode == _runMode) return;
     
-   
+    if ((newMode == runmode_normal) && (_runMode == runmode_detect2)) {
+        // reload train params
+        [self performSelectorOnMainThread:@selector(getParams) withObject:nil waitUntilDone:NO];
+        NSArray *paramCtrls = [[ParamTableController class]instances];
+        for (ParamTableController *c in paramCtrls) {
+            //if ([c paramNum] == conf_lnum_train) {
+                [c clearParams];
+            //}
+        }
+    }
+    _runMode = newMode;
+
+    if (recv) return;
+    
     msg_64_t m;
     m.to = MA3_BROADCAST;
     m.from = MA3_UI_GEN; //(UISUB_USB);
     m.cmd = CMD_SETRUN_MODE;
-    switch (testMode) {
+    switch (newMode) {
         case 0: m.v1u = runmode_normal; break;
         case 1: m.v1u = runmode_testcanton; break;
         case 2: m.v1u = runmode_testcanton; break;

@@ -19,6 +19,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void) setParam:(NSString *)pnam  parChar:(char)c value:(int32_t)v;
 
 - (void) setNeedReload;
+- (void) clearParams;
+
 
 // should be redefined by subclasses. returns 'T' for train, etc..
 - (char) paramChar;

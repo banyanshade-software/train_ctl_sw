@@ -16,6 +16,8 @@
 #error BOARD_HAS_CTRL not defined, remove this file from build
 #endif
 
+#error obsolete
+
 #if 0 // to be completely refactor with LT
 
 #include "ctrl.h"

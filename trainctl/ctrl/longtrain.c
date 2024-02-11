@@ -6,6 +6,7 @@
 //  Copyright © 2022 Daniel BRAUN. All rights reserved.
 //
 
+#error obsolete
 #if 0
 
 #include "../misc.h"

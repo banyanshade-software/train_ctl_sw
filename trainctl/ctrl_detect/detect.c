@@ -98,7 +98,7 @@ static void _detection_finished(void)
     result[0].lsblk.n = 5;
     result[0].numlsblk = 1;
 
-    result[1].locotype = Marklin8875_V160;
+    result[1].locotype = Marklin8895_BR74;
     result[1].canton.v = 4;
     result[1].ina.v = 0xF;
     result[1].lsblk.n = 8;
@@ -116,6 +116,7 @@ static void _detection_finished(void)
             break;
         }
         send_oam_report(&result[i], last);
+        if (last) break;
     }
 
     // notify UI

@@ -638,9 +638,6 @@ static void normal_process_msg(msg_64_t *m)
             }
             break;
         case CMD_PRESENCE_SUB_CHANGE:
-            if ((1)) {
-                debug_info('I', m->subc, "INA", m->v1u, m->v2, 0);
-            }
             notify_presence_changed(m->from, m->subc, m->v1u, m->v2u);
             if (ignore_ina_pres()) break;
             sub_presence_changed(m->from, m->subc, m->v1u, m->v2);

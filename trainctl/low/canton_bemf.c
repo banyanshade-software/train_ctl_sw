@@ -144,7 +144,7 @@ void bemf_tick(uint32_t notif_flags, _UNUSED_ uint32_t tick, _UNUSED_ uint32_t d
 	if (notif_flags & NOTIF_NEW_ADC_1) {
 		if (notif_flags & NOTIF_NEW_ADC_2) {
 			itm_debug1(DBG_ERR|DBG_LOWCTRL|DBG_TIM, "both", (int) notif_flags);
-			runtime_error(ERR_DMA, "both NEW_ADC1 and NEW_ADC2");
+			//XXXINFO runtime_error(ERR_DMA, "both NEW_ADC1 and NEW_ADC2");
 		}
 		process_adc(&adc_result[0], dt);
 	}

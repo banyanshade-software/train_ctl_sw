@@ -453,7 +453,7 @@ void canton_set_pwm(int cidx, const conf_canton_t *c, canton_vars_t *v,  int8_t 
 			pwm_timer->Instance->CCR4 = CNT_OFF;
 			break;
 		default:
-			canton_error(ERR_BAD_PARAM_TIM, "bad timer channel");
+			//XXXINFO canton_error(ERR_BAD_PARAM_TIM, "bad timer channel");
 			break;
 		}
 	}
@@ -475,7 +475,7 @@ void canton_set_pwm(int cidx, const conf_canton_t *c, canton_vars_t *v,  int8_t 
 		pwm_timer->Instance->CCR4 = CNT_ON(t);
 		break;
 	default:
-		canton_error(ERR_BAD_PARAM_TIM, "bad timer channel");
+		//XXXINFO canton_error(ERR_BAD_PARAM_TIM, "bad timer channel");
 		break;
 	}
 
@@ -486,10 +486,10 @@ void canton_set_volt(int cidx, const conf_canton_t *c, canton_vars_t *v, int vol
     v->selected_centivolt =  (c->volts_cv[v->cur_voltidx]);
 	itm_debug3(DBG_LOWCTRL, "c/set_volt", cidx, voltidx, v->selected_centivolt);
 
-    if ((0)) debug_info('C', 0, "SET VLT ", voltidx,  v->selected_centivolt,0);
-    if ((0)) debug_info('C', 0, "VLT BIT ", (voltidx & 0x03) ? 1 : 0,
-    				(voltidx & 0x02) ? 1 : 0,
-    				(voltidx & 0x01) ? 1 : 0);
+	//XXXINFO  if ((0)) debug_info('C', 0, "SET VLT ", voltidx,  v->selected_centivolt,0);
+	//XXXINFO if ((0)) debug_info('C', 0, "VLT BIT ", (voltidx & 0x03) ? 1 : 0,
+	//XXXINFO 				(voltidx & 0x02) ? 1 : 0,
+	//XXXINFO  				(voltidx & 0x01) ? 1 : 0);
 
 	HAL_GPIO_WritePin(c->volt_port_b0, c->volt_b0, (voltidx & 0x01) ? GPIO_PIN_SET : GPIO_PIN_RESET);
 	HAL_GPIO_WritePin(c->volt_port_b1, c->volt_b1, (voltidx & 0x02) ? GPIO_PIN_SET : GPIO_PIN_RESET);

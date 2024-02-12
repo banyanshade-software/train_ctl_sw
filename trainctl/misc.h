@@ -58,6 +58,7 @@ static inline int signof0(int v)
 
 /* ================================================================= */
 
+#if 0
 #define ERR_UNKNOWN         -1
 #define ERR_BAD_PARAM       -2
 #define ERR_BAD_PARAM_TIM   -3
@@ -140,6 +141,8 @@ static inline void debug_info(uint32_t sel, uint32_t num, char *msg, int v1, int
 {
 	trainctl_notif2(sel, num, 'D', msg, v1, v2, v3);
 }
+#endif
+
 /* ================================================================= */
 
 //void Error_Handler(void);

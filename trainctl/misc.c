@@ -71,7 +71,7 @@ void flash_led(void)
 }
 
 
-
+#if 0
 
 int trainctl_error(_UNUSED_ char l, int code, _UNUSED_ const char *msg)
 {
@@ -95,7 +95,7 @@ void __attribute__((weak)) trainctl_notif2(_UNUSED_ uint8_t sel, _UNUSED_ uint8_
 
 }
 
-
+#endif
 
 void long_isr(uint32_t dur)
 {

@@ -218,10 +218,12 @@ static void process_turnout_cmd(msg_64_t *m)
 	uint8_t tidx = m->subc;
 	USE_TURNOUT(tidx)
 	if (!aconf || !avars) {
-		turnout_error(ERR_BAD_PARAM, "bad idx");
+		//XXXINFO turnout_error(ERR_BAD_PARAM, "bad idx");
 		return;
 	}
-	if ((DBG_MSG_TURNOUT)) debug_info('A', 0, "CMD", tidx, m->cmd, avars->value);
+	if ((DBG_MSG_TURNOUT)) {
+		//XXXINFO debug_info('A', 0, "CMD", tidx, m->cmd, avars->value);
+	}
 #ifndef TRAIN_SIMU
 	// unconfigured turnout
 	if ((!aconf->cmd_portA) || (!aconf->cmd_portB)) {
@@ -275,7 +277,7 @@ static void turnout_init(void)
 		HAL_GPIO_WritePin(aconf->cmd_portB, aconf->pinB, GPIO_PIN_RESET);
 #endif
 		itm_debug1(DBG_TURNOUT, "A/RESET", tidx);
-		debug_info('A', 0, "RESET", 0, 0,0);
+		//XXXINFO debug_info('A', 0, "RESET", 0, 0,0);
 		(void)aconf; // unused
 	}
 }
@@ -311,7 +313,7 @@ static void process_turnout_timers(_UNUSED_ uint32_t tick, _UNUSED_ uint32_t dt)
 #endif
 			avars->st = ST_RESETA;
 			itm_debug1(DBG_TURNOUT, "A/SETA", i);
-			if ((DBG_MSG_TURNOUT)) debug_info('A', 0, "A0/SETA", 0, 0,0);
+			//XXXINFO if ((DBG_MSG_TURNOUT)) debug_info('A', 0, "A0/SETA", 0, 0,0);
 			break;
 		case ST_SETB:
 #ifndef TRAIN_SIMU
@@ -319,7 +321,7 @@ static void process_turnout_timers(_UNUSED_ uint32_t tick, _UNUSED_ uint32_t dt)
 #endif
 			avars->st = ST_RESETB;
 			itm_debug1(DBG_TURNOUT, "A/SETB", i);
-			if ((DBG_MSG_TURNOUT)) debug_info('A', 0, "A0/SETB", 0, 0,0);
+			//XXXINFO if ((DBG_MSG_TURNOUT)) debug_info('A', 0, "A0/SETB", 0, 0,0);
 			break;
 		case ST_RESETA:
 #ifndef TRAIN_SIMU
@@ -327,7 +329,7 @@ static void process_turnout_timers(_UNUSED_ uint32_t tick, _UNUSED_ uint32_t dt)
 #endif
 			avars->st = ST_IDLE;
 			itm_debug1(DBG_TURNOUT, "A/RESETA", i);
-			if ((DBG_MSG_TURNOUT)) debug_info('A', 0, "A0/RESETA", 0, 0,0);
+			//XXXINFO if ((DBG_MSG_TURNOUT)) debug_info('A', 0, "A0/RESETA", 0, 0,0);
 			break;
 		case ST_RESETB:
 #ifndef TRAIN_SIMU
@@ -335,7 +337,7 @@ static void process_turnout_timers(_UNUSED_ uint32_t tick, _UNUSED_ uint32_t dt)
 #endif
 			avars->st = ST_IDLE;
 			itm_debug1(DBG_TURNOUT, "A/RESETB", i);
-			if ((DBG_MSG_TURNOUT)) debug_info('A', 0, "A0/RESETB", 0, 0,0);
+			//XXXINFO if ((DBG_MSG_TURNOUT)) debug_info('A', 0, "A0/RESETB", 0, 0,0);
 			break;
 			/*
 		case ST_TEST:
@@ -347,7 +349,7 @@ static void process_turnout_timers(_UNUSED_ uint32_t tick, _UNUSED_ uint32_t dt)
 			 */
 		default:
 			itm_debug1(DBG_TURNOUT|DBG_ERR, "bad state", avars->st);
-			turnout_error(ERR_BAD_STATE, "bad state");
+			//XXXINFO turnout_error(ERR_BAD_STATE, "bad state");
 			break;
 		}
 	}

@@ -760,7 +760,7 @@ static void train_periodic_control(int numtrain, _UNUSED_ uint32_t dt)
     		itm_debug1(DBG_PID|DBG_SPDCTL|DBG_BRAKE, "stop", numtrain);
 			pidctl_reset(&tvars->pidvars);
             inertia_reset(numtrain, &tvars->inertiavars);
-			debug_info('T', numtrain, "STOP_PID", 0,0, 0);
+			//XXXINFO debug_info('T', numtrain, "STOP_PID", 0,0, 0);
 			tvars->pidvars.trstopped = 1;
             send_train_stopped(numtrain, tvars);
             target_processed = 0;
@@ -952,7 +952,7 @@ static void _set_speed(int tidx, const conf_locomotive_t *cnf, train_vars_t *var
     
     if (!c1) {
     	itm_debug1(DBG_ERR|DBG_SPDCTL, "no canton", sv100);
-        train_error(ERR_CANTON_NONE, "no canton");
+    	//XXXINFO train_error(ERR_CANTON_NONE, "no canton");
         return;
     }
 
@@ -1214,11 +1214,14 @@ static int volt_index(uint16_t mili_power,
 	*pvi2 = MAX_PVI;
 
 	//if (mili_power <0)    return canton_error_rc(0, ERR_BAD_PARAM_MPOW, "negative milipower");
-	if (mili_power >1000) return canton_error_rc(0, ERR_BAD_PARAM_MPOW, "milipower should be 0-999");
+	if (mili_power >1000) {
+		//XXXINFO return canton_error_rc(0, ERR_BAD_PARAM_MPOW, "milipower should be 0-999");
+		return 0;
+	}
 	switch (pol) {
 	default :
         duty = 0;
-		return canton_error_rc(0, ERR_BAD_PARAM_VPOL, "bad volt policy");
+		return 0; //XXXINFO  canton_error_rc(0, ERR_BAD_PARAM_VPOL, "bad volt policy");
 		break;
 	case vpolicy_pure_pwm:
 		*pvi1 = 0;

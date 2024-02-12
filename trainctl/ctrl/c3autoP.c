@@ -124,7 +124,7 @@ void c3auto_freeback(int tidx, lsblk_num_t freelsblk)
             if (prev.n == freelsblk.n) {
                 // all train is now on current sblk (and next sblk)
                 // stop to go to station mode
-                debug_info('T', tidx, "AUTO: reverse dir", 0,0, 0);
+            	//XXXINFO debug_info('T', tidx, "AUTO: reverse dir", 0,0, 0);
                 c3avar[tidx].brake_end = 0;
                 ctrl_delayed_set_desired_spd(tidx, 0);
                 c3avar[tidx].spd = 0;
@@ -136,14 +136,14 @@ void c3auto_freeback(int tidx, lsblk_num_t freelsblk)
 void c3auto_station(int tidx)
 {
     if (c3avar[tidx].brake_end) {
-        debug_info('T', tidx, "AUTO: done", 0,0, 0);
+    	//XXXINFO debug_info('T', tidx, "AUTO: done", 0,0, 0);
         itm_debug1(DBG_AUTO, "Adone", tidx);
         ctrl_set_mode(tidx, train_manual);
         return;
     }
     if (c3avar[tidx].spd) {
         // not triggered by us
-        debug_info('T', tidx, "AUTO: unexpected stop", 0,0, 0);
+    	//XXXINFO debug_info('T', tidx, "AUTO: unexpected stop", 0,0, 0);
         itm_debug2(DBG_AUTO|DBG_ERR, "station?", tidx, c3avar[tidx].spd);
         return;
     }

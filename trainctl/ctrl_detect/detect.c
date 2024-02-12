@@ -179,7 +179,7 @@ void detect2_process_tick(_UNUSED_ uint32_t tick,  _UNUSED_ uint32_t dt)
             detector = NULL;
             num_detector = 0;
             if (tick >= detect_tick+500) {
-                debug_info('X', 0, "Start detect", 0,0,0);
+            	//XXXINFO debug_info('X', 0, "Start detect", 0,0,0);
             	detect_state = state_next_detector;
             }
             break;
@@ -297,7 +297,7 @@ void detect2_process_tick(_UNUSED_ uint32_t tick,  _UNUSED_ uint32_t dt)
     
 static void register_found(train_detector_result_t *res)
 {
-    debug_info('X', 0, "found presence", res->canton.v, res->lsblk.n, res->locotype);
+	//XXXINFO debug_info('X', 0, "found presence", res->canton.v, res->lsblk.n, res->locotype);
     for (int i=0; i<MAX_DETECT_TRAINS; i++) {
         if (result[i].canton.v == 0xFF) {
             memcpy(&result[i], res, sizeof(*res));

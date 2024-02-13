@@ -197,7 +197,7 @@ static const uint8_t layout_auto[] = {
 };
 
 static const uint8_t layout_no_train[] = {
-		CODE_ZONE_STATUS, 	CODE_STR|4, CODE_DIGIT, 0, CODE_STR|10,
+		CODE_ZONE_STATUS, 	CODE_STR|4, CODE_DIGIT, 0, CODE_STR|20, CODE_STR|10,
 		CODE_END
 };
 
@@ -341,7 +341,7 @@ static const char *ui_strings[] = {
 /*12*/		"sta",
 /*13*/		"blk",
 /*14*/		"eot",
-/*15*/		"...",
+/*15*/		"eot0",
 /*16*/		"...",
 /*17*/		"...",
 /*18*/		"...",

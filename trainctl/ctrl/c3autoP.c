@@ -24,6 +24,8 @@
 
 #include "c3autoP.h"
 
+#include "../utils/ihm_messages.h"
+#define IHM_MSG(_m, _s, _v) do { ihm_message(mqf_write_from_ctrl, _m, _s, _v); } while(0)
 
 #ifndef __clang__
 static_assert(sizeof(cauto_path_items_t) == 2);
@@ -51,6 +53,7 @@ static int is_eop(const cauto_path_items_t *p)
 
 void c3auto_start(int tidx)
 {
+    IHM_MSG(MSG_AUTO_START, tidx, 0);
     c3avar[tidx].cidx = 0;
     c3avar[tidx].spd = 0;
 }
@@ -124,7 +127,7 @@ void c3auto_freeback(int tidx, lsblk_num_t freelsblk)
             if (prev.n == freelsblk.n) {
                 // all train is now on current sblk (and next sblk)
                 // stop to go to station mode
-            	//XXXINFO debug_info('T', tidx, "AUTO: reverse dir", 0,0, 0);
+                IHM_MSG(MSG_AUTO_CHDIR, tidx, 0);
                 c3avar[tidx].brake_end = 0;
                 ctrl_delayed_set_desired_spd(tidx, 0);
                 c3avar[tidx].spd = 0;
@@ -136,14 +139,14 @@ void c3auto_freeback(int tidx, lsblk_num_t freelsblk)
 void c3auto_station(int tidx)
 {
     if (c3avar[tidx].brake_end) {
-    	//XXXINFO debug_info('T', tidx, "AUTO: done", 0,0, 0);
+        IHM_MSG(MSG_AUTO_DONE, tidx, 0);
         itm_debug1(DBG_AUTO, "Adone", tidx);
         ctrl_set_mode(tidx, train_manual);
         return;
     }
     if (c3avar[tidx].spd) {
         // not triggered by us
-    	//XXXINFO debug_info('T', tidx, "AUTO: unexpected stop", 0,0, 0);
+        IHM_MSG(MSG_AUTO_UNEXPSTOP, tidx, 0);
         itm_debug2(DBG_AUTO|DBG_ERR, "station?", tidx, c3avar[tidx].spd);
         return;
     }

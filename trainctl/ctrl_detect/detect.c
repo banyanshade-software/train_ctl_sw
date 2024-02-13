@@ -32,6 +32,10 @@
 
 #include "train_detectors.h"
 
+#include "../utils/ihm_messages.h"
+#define IHM_MSG(_m, _s, _v) do { ihm_message(mqf_write_from_ctrl, _m, _s, _v); } while(0)
+
+
 typedef  enum {
     state_finished          = 0,
     state_start             = 1,
@@ -179,7 +183,7 @@ void detect2_process_tick(_UNUSED_ uint32_t tick,  _UNUSED_ uint32_t dt)
             detector = NULL;
             num_detector = 0;
             if (tick >= detect_tick+500) {
-            	//XXXINFO debug_info('X', 0, "Start detect", 0,0,0);
+                IHM_MSG(MSG_DETECT_START, 0, 0);
             	detect_state = state_next_detector;
             }
             break;
@@ -297,7 +301,7 @@ void detect2_process_tick(_UNUSED_ uint32_t tick,  _UNUSED_ uint32_t dt)
     
 static void register_found(train_detector_result_t *res)
 {
-	//XXXINFO debug_info('X', 0, "found presence", res->canton.v, res->lsblk.n, res->locotype);
+    IHM_MSG(MSG_DETECT_FOUND, res->lsblk.n, res->locotype);
     for (int i=0; i<MAX_DETECT_TRAINS; i++) {
         if (result[i].canton.v == 0xFF) {
             memcpy(&result[i], res, sizeof(*res));

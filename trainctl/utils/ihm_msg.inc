@@ -4,7 +4,7 @@
   // Presence detection
   /*   1 */   	_M(MSG_DETECT_START, 	"__Detect", 	"G  Detection started"),
   /*   2 */     _M(MSG_DETECT_FOUND,	"CLFound",		"G  Found presence canton=%d loco=%d"),
-  /*   3 */     _RESERVED(r3),
+  /*   3 */     _M(MSG_DETECT_END,      NULL,           "G  Detection done"),
   /*   4 */     _RESERVED(r4),
   /*   5 */     _RESERVED(r5),
   /*   6 */     _RESERVED(r6),

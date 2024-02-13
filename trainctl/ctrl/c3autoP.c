@@ -127,7 +127,7 @@ void c3auto_freeback(int tidx, lsblk_num_t freelsblk)
             if (prev.n == freelsblk.n) {
                 // all train is now on current sblk (and next sblk)
                 // stop to go to station mode
-                IHM_MSG(MSG_AUTO_CHDIR, tidx, 0);
+                if (c3avar[tidx].spd) IHM_MSG(MSG_AUTO_CHDIR, tidx, 0);
                 c3avar[tidx].brake_end = 0;
                 ctrl_delayed_set_desired_spd(tidx, 0);
                 c3avar[tidx].spd = 0;

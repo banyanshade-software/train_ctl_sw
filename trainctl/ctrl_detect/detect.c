@@ -89,7 +89,7 @@ static void send_oam_report(train_detector_result_t *r, int last);
 
 static void _detection_finished(void)
 {
-    
+    IHM_MSG(MSG_DETECT_END, 0, 0);
 	for (int i=0; i<MAX_DETECT_TRAINS; i++) {
 		if (result[i].canton.v == 0xFF) continue;
 		itm_debug3(DBG_DETECT, "Rdet", result[i].lsblk.n, result[i].canton.v, result[i].locotype);

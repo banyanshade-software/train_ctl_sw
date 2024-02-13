@@ -49,6 +49,7 @@
 #include "locomotives.h"
 #include "ParamTableController.h"
 #import "AppDelegateP.h"
+#include "ihm_messages.h"
 
 #define BEMF_MULTIPLICATOR (1.0)
 
@@ -1424,6 +1425,9 @@ void received_broadcast(msg_64_t *m)
         [self paramUserVal:m locstore:1];
         break;
             
+    case CMD_UI_MSG:
+        [self ui_message:m.v1u subc:m.subc v2:m.v2];
+        break;
     case CMD_TRSTATE_NOTIF:
     case CMD_TRTSPD_NOTIF:
     case CMD_TRMODE_NOTIF:
@@ -1460,6 +1464,12 @@ void received_broadcast(msg_64_t *m)
     }
 }
 
+- (void) ui_message:(ihm_msg_t)m subc:(uint8_t)subc v2:(int16_t)v2
+{
+    NSString *s = [NSString stringWithUTF8String:ihmmsglist[m]];
+    NSString *str = [NSString stringWithFormat:s , subc, v2];
+    [self addLog:str important:NO error:NO];
+}
 
 #if 0 // OLD_FRAMING
 

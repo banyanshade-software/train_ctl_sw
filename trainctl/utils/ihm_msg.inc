@@ -16,4 +16,11 @@
   /*  10 */		_M(MSG_AUTO_DONE,		"T_A:Done",		"T%d AUTO: Done"),
   /*  11 */		_M(MSG_AUTO_UNEXPSTOP, 	"T_A:Stp?",		"T%d AUTO: Unexpected stop"),
   /*  12 */     _RESERVED(r12),
+  /*  13 */     _RESERVED(r13),
+  /*  14 */     _RESERVED(r14),
+  /*  15 */     _RESERVED(r15),
+
+// Ctrl
+  /*  16 */     _M(MSG_TRAIN_ON,		"T_ON",			"T%d Train ON"),
+  /*  17 */		_M(MSG_TRAIN_OFF,      	"T_OFF",        "T%d Train off"),
 

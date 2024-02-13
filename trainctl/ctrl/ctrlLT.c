@@ -34,6 +34,10 @@
 #include "train2loco.h"
 
 
+#include "../utils/ihm_messages.h"
+#define IHM_MSG(_m, _s, _v) do { ihm_message(mqf_write_from_ctrl, _m, _s, _v); } while(0)
+
+
 #ifndef BOARD_HAS_CTRL
 #error BOARD_HAS_CTRL not defined, remove this file from build
 #endif
@@ -154,6 +158,9 @@ void turn_train_off(int tidx, train_ctrl_t *tvars)
     	occupency_set_free(tvars->can2_xaddr, tidx);
         //set_block_addr_occupency(tvars->can2_xaddr, BLK_OCC_FREE, tidx, snone);
     }
+    if (tvars->_state != train_state_off) {
+        IHM_MSG(MSG_TRAIN_OFF, tidx, tvars->_state);
+    }
 
     switch (tvars->_state) {
         case train_state_off:
@@ -185,6 +192,8 @@ void turn_train_on(int tidx, train_ctrl_t *tvars)
         itm_debug2(DBG_ERR|DBG_CTRL, "not off", tidx, tvars->_state);
         return;
     }
+    IHM_MSG(MSG_TRAIN_ON, tidx, tvars->_state);
+    
     const conf_train_t *conf = conf_train_get(tidx);
     // lt4_get_trigs() only to reserve block, rett is ignored
     rettrigs_t rett = {0};

@@ -158,7 +158,7 @@ void turn_train_off(int tidx, train_ctrl_t *tvars)
     	occupency_set_free(tvars->can2_xaddr, tidx);
         //set_block_addr_occupency(tvars->can2_xaddr, BLK_OCC_FREE, tidx, snone);
     }
-    if (tvars->_state != train_state_off) {
+    if (tvars->_state != train_state_off) {
         IHM_MSG(MSG_TRAIN_OFF, tidx, tvars->_state);
     }
 

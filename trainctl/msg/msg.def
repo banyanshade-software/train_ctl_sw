@@ -44,7 +44,7 @@ start 0x80 // 100 xxxxx
     CMD_STOP_DETECT_TRAIN  void    // [detect2] ctrl->canton                     stop train detection
     CMD_START_INA_MONITOR  v16,v8,v8u  // [detect2] ctrl->ina3221                    start monitoring current
     CMD_DETECTION_REPORT    v1,v2    // [detect2] ina3221,bemf...->ctrl            report presence detection
-    CMD_UI_DETECT          v1,v2u // [detect2] ctrl->ui                        detection info
+    CMD_UI_DETECT          v1,v2u // [detect2] ctrl->ui                        detection info // any->UI(gen) message to be displayed
     
     CMD_SERVO_SET        v1u,v2u    // any -> servo  subc=servn v1u=pos v2u=spd_or_0
     CMD_SERVO_ACK        v1u        // servo->sender subc=servn v1u=pos
@@ -108,3 +108,4 @@ start 0xE0  // 111 xxxxx  Debug and misc low prio
     CMD_PLANNER_COMMIT        tbd // UI->planner
 
     CMD_OAM_DETECTREPORT     b4  // ctrl-detect -> oam 		report presence detection
+    CMD_UI_MSG               v16,v8,v8u // any->UI(gen) message to be displayed

@@ -82,6 +82,7 @@ const char *traincmd_name(uint8_t cmd)
 	case CMD_PLANNER_CANCEL  : return "CMD_PLANNER_CANCEL";
 	case CMD_PLANNER_COMMIT  : return "CMD_PLANNER_COMMIT";
 	case CMD_OAM_DETECTREPORT: return "CMD_OAM_DETECTREPORT";
+	case CMD_UI_MSG          : return "CMD_UI_MSG";
     }
 }
 
@@ -164,6 +165,7 @@ msg_type_t traincmd_format(uint8_t cmd)
 	case CMD_PLANNER_CANCEL  : return CMD_TYPE_V32;
 	case CMD_PLANNER_COMMIT  : return CMD_TYPE_V32;
 	case CMD_OAM_DETECTREPORT: return CMD_TYPE_B4;
+	case CMD_UI_MSG          : return CMD_TYPE_VCU;
     }
 }
 

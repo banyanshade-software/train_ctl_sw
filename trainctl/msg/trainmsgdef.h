@@ -40,7 +40,7 @@ typedef enum {
 	CMD_STOP_DETECT_TRAIN         , // 0x81 (129) // [detect2] ctrl->canton                     stop train detection
 	CMD_START_INA_MONITOR         , // 0x82 (130) // [detect2] ctrl->ina3221                    start monitoring current
 	CMD_DETECTION_REPORT          , // 0x83 (131) // [detect2] ina3221,bemf...->ctrl            report presence detection
-	CMD_UI_DETECT                 , // 0x84 (132) // [detect2] ctrl->ui                        detection info
+	CMD_UI_DETECT                 , // 0x84 (132) // [detect2] ctrl->ui                        detection info // any->UI(gen) message to be displayed
 	CMD_SERVO_SET                 , // 0x85 (133) // any -> servo  subc=servn v1u=pos v2u=spd_or_0
 	CMD_SERVO_ACK                 , // 0x86 (134) // servo->sender subc=servn v1u=pos
 	CMD_SERVODOOR_SET             , // 0x87 (135) // any -> servo  subc=servn v1u=1 open, 0 close
@@ -93,6 +93,7 @@ typedef enum {
 	CMD_PLANNER_CANCEL            , // 0xf6 (246) // UI->planner
 	CMD_PLANNER_COMMIT            , // 0xf7 (247) // UI->planner
 	CMD_OAM_DETECTREPORT          , // 0xf8 (248) // ctrl-detect -> oam 		report presence detection
+	CMD_UI_MSG                    , // 0xf9 (249) // any->UI(gen) message to be displayed
 } cmd_msg_t;
 
 #endif

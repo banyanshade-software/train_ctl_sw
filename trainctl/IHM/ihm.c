@@ -407,10 +407,7 @@ static void ihmmsg_normal(msg_64_t *m)
 	default:
 		break;
 
-	case CMD_SETVPWM:	// TODO remove
-		//if (test_mode) ui_canton_pwm(m->from, m->v1u, m->v2);
-		return;
-		break;
+
 	case CMD_VOFF_NOTIF:
 		if (NOTIF_VOFF /*&& (!is_special_dispmode())*/) {
 			disp_setvar(0, 2, m->v1/2);

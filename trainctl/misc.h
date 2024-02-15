@@ -149,6 +149,10 @@ static inline void debug_info(uint32_t sel, uint32_t num, char *msg, int v1, int
 
 
 #ifndef TRAIN_SIMU
+
+// useful everywhere for profiling and logging, even
+// in files that do not need to include HAL
+
 uint32_t HAL_GetTick(void);
 
 static inline uint32_t GetCurrentMicro(void)

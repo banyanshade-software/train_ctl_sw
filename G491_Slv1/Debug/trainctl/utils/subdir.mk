@@ -7,6 +7,7 @@
 C_SRCS += \
 /Users/danielbraun/devel/train/sw/trainctl/utils/adc_mean.c \
 /Users/danielbraun/devel/train/sw/trainctl/utils/framing.c \
+/Users/danielbraun/devel/train/sw/trainctl/utils/ihm_messages.c \
 /Users/danielbraun/devel/train/sw/trainctl/utils/itm_debug.c \
 /Users/danielbraun/devel/train/sw/trainctl/utils/lf_mqueue.c \
 /Users/danielbraun/devel/train/sw/trainctl/utils/measval.c 
@@ -14,6 +15,7 @@ C_SRCS += \
 OBJS += \
 ./trainctl/utils/adc_mean.o \
 ./trainctl/utils/framing.o \
+./trainctl/utils/ihm_messages.o \
 ./trainctl/utils/itm_debug.o \
 ./trainctl/utils/lf_mqueue.o \
 ./trainctl/utils/measval.o 
@@ -21,6 +23,7 @@ OBJS += \
 C_DEPS += \
 ./trainctl/utils/adc_mean.d \
 ./trainctl/utils/framing.d \
+./trainctl/utils/ihm_messages.d \
 ./trainctl/utils/itm_debug.d \
 ./trainctl/utils/lf_mqueue.d \
 ./trainctl/utils/measval.d 
@@ -30,6 +33,8 @@ C_DEPS += \
 trainctl/utils/adc_mean.o: /Users/danielbraun/devel/train/sw/trainctl/utils/adc_mean.c trainctl/utils/subdir.mk
 	arm-none-eabi-gcc "$<" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32G491xx -c -I"/Users/danielbraun/devel/train/sw/trainctl" -I../Core/Inc -I../Drivers/STM32G4xx_HAL_Driver/Inc -I../Drivers/STM32G4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32G4xx/Include -I../Drivers/CMSIS/Include -I../Middlewares/Third_Party/FreeRTOS/Source/include -I../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F -O0 -ffunction-sections -fdata-sections -Wall -Wextra -Werror -Wswitch-default -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "$@"
 trainctl/utils/framing.o: /Users/danielbraun/devel/train/sw/trainctl/utils/framing.c trainctl/utils/subdir.mk
+	arm-none-eabi-gcc "$<" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32G491xx -c -I"/Users/danielbraun/devel/train/sw/trainctl" -I../Core/Inc -I../Drivers/STM32G4xx_HAL_Driver/Inc -I../Drivers/STM32G4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32G4xx/Include -I../Drivers/CMSIS/Include -I../Middlewares/Third_Party/FreeRTOS/Source/include -I../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F -O0 -ffunction-sections -fdata-sections -Wall -Wextra -Werror -Wswitch-default -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "$@"
+trainctl/utils/ihm_messages.o: /Users/danielbraun/devel/train/sw/trainctl/utils/ihm_messages.c trainctl/utils/subdir.mk
 	arm-none-eabi-gcc "$<" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32G491xx -c -I"/Users/danielbraun/devel/train/sw/trainctl" -I../Core/Inc -I../Drivers/STM32G4xx_HAL_Driver/Inc -I../Drivers/STM32G4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32G4xx/Include -I../Drivers/CMSIS/Include -I../Middlewares/Third_Party/FreeRTOS/Source/include -I../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F -O0 -ffunction-sections -fdata-sections -Wall -Wextra -Werror -Wswitch-default -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "$@"
 trainctl/utils/itm_debug.o: /Users/danielbraun/devel/train/sw/trainctl/utils/itm_debug.c trainctl/utils/subdir.mk
 	arm-none-eabi-gcc "$<" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32G491xx -c -I"/Users/danielbraun/devel/train/sw/trainctl" -I../Core/Inc -I../Drivers/STM32G4xx_HAL_Driver/Inc -I../Drivers/STM32G4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32G4xx/Include -I../Drivers/CMSIS/Include -I../Middlewares/Third_Party/FreeRTOS/Source/include -I../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F -O0 -ffunction-sections -fdata-sections -Wall -Wextra -Werror -Wswitch-default -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "$@"
@@ -41,7 +46,7 @@ trainctl/utils/measval.o: /Users/danielbraun/devel/train/sw/trainctl/utils/measv
 clean: clean-trainctl-2f-utils
 
 clean-trainctl-2f-utils:
-	-$(RM) ./trainctl/utils/adc_mean.cyclo ./trainctl/utils/adc_mean.d ./trainctl/utils/adc_mean.o ./trainctl/utils/adc_mean.su ./trainctl/utils/framing.cyclo ./trainctl/utils/framing.d ./trainctl/utils/framing.o ./trainctl/utils/framing.su ./trainctl/utils/itm_debug.cyclo ./trainctl/utils/itm_debug.d ./trainctl/utils/itm_debug.o ./trainctl/utils/itm_debug.su ./trainctl/utils/lf_mqueue.cyclo ./trainctl/utils/lf_mqueue.d ./trainctl/utils/lf_mqueue.o ./trainctl/utils/lf_mqueue.su ./trainctl/utils/measval.cyclo ./trainctl/utils/measval.d ./trainctl/utils/measval.o ./trainctl/utils/measval.su
+	-$(RM) ./trainctl/utils/adc_mean.cyclo ./trainctl/utils/adc_mean.d ./trainctl/utils/adc_mean.o ./trainctl/utils/adc_mean.su ./trainctl/utils/framing.cyclo ./trainctl/utils/framing.d ./trainctl/utils/framing.o ./trainctl/utils/framing.su ./trainctl/utils/ihm_messages.cyclo ./trainctl/utils/ihm_messages.d ./trainctl/utils/ihm_messages.o ./trainctl/utils/ihm_messages.su ./trainctl/utils/itm_debug.cyclo ./trainctl/utils/itm_debug.d ./trainctl/utils/itm_debug.o ./trainctl/utils/itm_debug.su ./trainctl/utils/lf_mqueue.cyclo ./trainctl/utils/lf_mqueue.d ./trainctl/utils/lf_mqueue.o ./trainctl/utils/lf_mqueue.su ./trainctl/utils/measval.cyclo ./trainctl/utils/measval.d ./trainctl/utils/measval.o ./trainctl/utils/measval.su
 
 .PHONY: clean-trainctl-2f-utils
 

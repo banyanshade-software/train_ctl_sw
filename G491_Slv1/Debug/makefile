@@ -10,6 +10,7 @@ RM := rm -rf
 # All of the sources participating in the build are defined here
 -include sources.mk
 -include trainctl/utils/subdir.mk
+-include trainctl/uitrack/subdir.mk
 -include trainctl/stm32/ina3221/subdir.mk
 -include trainctl/stm32/subdir.mk
 -include trainctl/oam/subdir.mk

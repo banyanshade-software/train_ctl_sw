@@ -39,5 +39,6 @@ trainctl/msg \
 trainctl/oam \
 trainctl/stm32 \
 trainctl/stm32/ina3221 \
+trainctl/uitrack \
 trainctl/utils \
 

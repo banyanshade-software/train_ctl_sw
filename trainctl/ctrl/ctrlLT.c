@@ -113,7 +113,7 @@ void ctrl3_init_train(int tidx, train_ctrl_t *tvars, lsblk_num_t sblk, int posmm
     memset(tvars, 0, sizeof(*tvars));
 
     tvars->_desired_signed_speed = 0;
-    tvars->_mode = train_manual;
+    tvars->_mode = train_notrunning;
     tvars->_sdir = 0;
     tvars->_spd_limit = 100;
     tvars->_state = train_state_off;
@@ -322,6 +322,7 @@ done:
 static void adjust_measure_lens1(int tidx, train_ctrl_t *tvars)
 {
     int8_t steep = 0;
+    if (POSE_UNKNOWN == tvars->_curposmm) return;
     int nmm = tvars->_curposmm;  // TODO only ok because same node
     //const conf_train_t *tconf = conf_train_get(tidx);
     int l = get_lsblk_len_cm(tvars->c1_sblk, &steep);
@@ -334,6 +335,7 @@ static void adjust_measure_lens1(int tidx, train_ctrl_t *tvars)
 
 static void adjust_measure_ends1fromc1(int tidx, train_ctrl_t *tvars)
 {
+    if (POSE_UNKNOWN == tvars->_curposmm) return;
     int np = tvars->_curposmm;
     //const conf_train_t *tconf = conf_train_get(tidx);
     //int nmm = pose_convert_to_mm(tconf, np*10);
@@ -712,7 +714,7 @@ void ctrl3_pose_triggered(int tidx, train_ctrl_t *tvars, uint8_t trigsn, xblkadd
     //const conf_train_t *tconf = conf_train_get(tidx);
     const conf_locomotive_t *loco = getloco(tidx);
 
-    int32_t oldpos = tvars->_curposmm;
+    int32_t oldpos = ctrl3_getcurpossmm(tidx, tvars, (tvars->_sdir<0)); //tvars->_curposmm;
     tvars->_curposmm = pose_convert_to_mm(loco, cposd10*10);
     if ((1)) {
         int np = spdctl_get_lastpose(tidx, tvars->can1_xaddr); // TODO only ok because same node
@@ -951,7 +953,9 @@ void ctrl3_evt_entered_new_lsblk_same_canton(int tidx, train_ctrl_t *tvars, lsbl
             tvars->canMeasureOnCanton = 0;
         }
     }
-    
+    if (POSE_UNKNOWN == tvars->_curposmm) {
+        itm_debug1(DBG_ERR|DBG_CTRL, "use unk", tidx);
+    }
     if (tvars->_sdir>0) {
         tvars->beginposmm = tvars->_curposmm;
     } else {
@@ -1445,7 +1449,7 @@ static void _apply_speed(int tidx, train_ctrl_t *tvars)
     if (ctrl_flag_notify_speed) {
         msg_64_t mn = {0};
         mn.from = MA1_CTRL(tidx);
-        m.to = MA3_UI_GEN; //(UISUB_TFT);
+        mn.to = MA3_UI_GEN; //(UISUB_TFT);
         mn.cmd = CMD_TRTSPD_NOTIF;
         mn.v1u = tvars->_target_unisgned_speed;
         mn.v2 = tvars->_sdir;

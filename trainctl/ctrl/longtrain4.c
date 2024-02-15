@@ -194,11 +194,13 @@ int _lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int
     int maxadvancefortrig;
     lsblk_num_t c1 = tvars->c1_sblk;
     int c1len = 10*get_lsblk_len_cm(c1, NULL);
+    
+    int32_t cposmm =  ctrl3_getcurpossmm(tidx, tvars, left);
     if (!left) {
-        maxadvancefortrig = c1len - (tvars->_curposmm - tvars->beginposmm);
+        maxadvancefortrig = c1len - (cposmm - tvars->beginposmm);
     } else {
         // left
-        maxadvancefortrig = tvars->_curposmm - tvars->beginposmm;
+        maxadvancefortrig = cposmm - tvars->beginposmm;
     }
     if (!left && (maxadvancefortrig<=0)) {
         itm_debug3(DBG_ERR|DBG_CTRLLT, "neg max", tvars->_curposmm, tvars->beginposmm, c1len);
@@ -229,9 +231,13 @@ int _lt4_get_trigs(int tidx, train_ctrl_t *tvars, const conf_train_t *tconf, int
     
     int clen = maxadvancefortrig;
     int alen = c1len;
-    int totallen = 0;//c1len;
+    int totallen = 0; //c1len;
     int rc = 0;
-    const int posloco = left ? (c1len - tvars->_curposmm + tvars->beginposmm) : ( tvars->_curposmm - tvars->beginposmm); // curposmm, without beginposmm
+    
+    
+    //int32_t cposmm = ctrl3_getcurpossmm(tidx, tvars, left);
+    
+    const int posloco = left ? (c1len - cposmm + tvars->beginposmm) : ( cposmm - tvars->beginposmm); // curposmm, without beginposmm
     //const int poshead = left ? posloco-train_fwd_len : posloco+train_fwd_len;
     //const int poshead = _pose_sub(posloco, -train_fwd_len, left);
     const int poshead = posloco + train_fwd_len; // _pose_sub(posloco, -train_fwd_len, left);

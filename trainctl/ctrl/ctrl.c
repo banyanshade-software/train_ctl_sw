@@ -202,7 +202,7 @@ void ctrl_set_mode(int trnum, train_mode_t mode)
     }
 #endif
     ctrl3_set_mode(trnum, &trctl[trnum], mode);
-    trctl[trnum]._mode = mode;
+    //trctl[trnum]._mode = mode;
 }
 
 // ----------------------------------------------------------------------------
@@ -295,7 +295,7 @@ static void _ctrl_init(int normalmode)
                 if (0xFF == nls) goto offtrain;
                 lsblk_num_t lsb;
                 lsb.n = nls;
-                ctrl3_init_train(i, &trctl[i], lsb, 0, 1);
+                ctrl3_init_train(i, &trctl[i], lsb, POSE_UNKNOWN, 1);
                 ctrl_set_mode(i, train_manual);
                 continue;
             offtrain:

@@ -50,7 +50,7 @@ static int check_right_tn(int8_t lsblk, uint8_t tn, uint8_t expright, int nright
         case -1:
             return 0;
         case 1:
-            if (s->right2 != -1) {
+            if ((s->right2 != -1) && (s->right1 != -1)) {
                 return check_left_has_two;
             }
             break;
@@ -70,7 +70,7 @@ static int check_left_tn(int8_t lsblk, uint8_t tn, uint8_t expleft, int nleft)
         case -1:
             return 0;
         case 1:
-            if (s->left2 != -1) {
+            if ((s->left2 != -1) && (s->left1 != -1)) {
                 return check_right_has_two;
             }
             break;
@@ -87,7 +87,9 @@ topology_check_rc_t topology_check(int *plsblk, int *secsblk)
     int n = conf_topology_num_entries();
     for (int i = 0; i<n; i++) {
         const conf_topology_t *s = conf_topology_get(i);
-        if (!s) break;
+        if (!s) {
+            break;
+        };
         if (plsblk) *plsblk = i;
         int rc;
         
@@ -117,6 +119,17 @@ topology_check_rc_t topology_check(int *plsblk, int *secsblk)
             if (rc) {
                 return rc;
             }
+        } else if (s->left2 != -1) {
+            *secsblk = s->left2;
+            if ((s->ltn != 0xFF) && (s->left1 != -1)) {
+                rc = check_right_tn(s->left2, s->ltn, i, 1);
+            } else {
+                rc = check_right_tn(s->left2, s->ltn, i, -1);
+            }
+            if (rc) {
+                return rc;
+            }
+
         } else {
             // no left
             if (s->ltn != 0xFF) {
@@ -151,6 +164,16 @@ topology_check_rc_t topology_check(int *plsblk, int *secsblk)
             if (rc) {
                 return rc;
             }
+        } else if (s->right2 != -1) {
+            *secsblk = s->right2;
+            if ((s->rtn != 0xFF) && (s->right1 != -1)) {
+                rc = check_left_tn(s->right2, s->rtn, i, 1);
+            } else {
+                rc = check_left_tn(s->right2, s->rtn, i, -1);
+            }
+            if (rc) {
+                return rc;
+            }
         } else {
             // no right
             if (s->rtn != 0xFF) {
@@ -158,5 +181,5 @@ topology_check_rc_t topology_check(int *plsblk, int *secsblk)
             }
         }
     }
-    return -1;
+    return 0;
 }

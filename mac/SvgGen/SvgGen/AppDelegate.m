@@ -32,9 +32,18 @@
 
 - (void) startgen
 {
+    // first display it, even if not correct
+    // because it is easier to understand the error
+    [self generateAndDisplaySvg:nil];
+    [self performSelectorOnMainThread:@selector(checkTopologyAndDisplay) withObject:nil waitUntilDone:NO];
+}
+- (void) checkTopologyAndDisplay
+{
+    NSLog(@"check");
     BOOL ok = [self checkTopology];
+    NSLog(@"ok=%d\n", ok);
     if (ok) {
-        [self generateAndDisplaySvg:nil];
+        NSLog(@"OK");
     } else {
         NSAlert *alert = [[NSAlert alloc]init];
         alert.informativeText = error ? error : @"unknown";
@@ -48,12 +57,44 @@
 
 - (BOOL) checkTopology
 {
-    int rc = topology_check();
-    if (rc) {
-        error = @"test error";
-        return NO;
+    int lsblk = -1;
+    int secblk = -1;
+    topology_check_rc_t rc = topology_check(&lsblk, &secblk);
+    if (!rc) return YES;
+    NSString *err = nil;
+    switch (rc) {
+        default:
+            err = @"unknown error";
+            break;
+        case check_no_ltn:
+            err = @"two left, but no ltn";
+            break;
+        case check_no_left_but_ltn:
+            err = @"no left but ltn";
+            break;
+        case check_left_has_bad_rtn:
+            err = @"left blk has bad rtn";
+            break;
+        case check_left_bad_right_lsb:
+            err = @"left blk has bad right lsb";
+            break;
+        case check_left_has_two:
+            err = @"left blk should have only one right";
+            break;
+            
+        case check_no_rtn:
+        case check_no_right_but_rtn:
+        case check_right_has_bad_ltn:
+        case check_right_bad_right_lsb:
+        case check_right_has_two:
+            err = @"....";
+            break;
     }
-    return YES;
+    error = [NSString stringWithFormat:@"lsblk=%d %@", lsblk, err];
+    if (secblk != -1) {
+        error = [error stringByAppendingFormat:@" (in block %d)", secblk];
+    }
+    return NO;
 }
 - (void)applicationWillTerminate:(NSNotification *)aNotification {
     // Insert code here to tear down your application

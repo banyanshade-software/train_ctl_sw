@@ -11,6 +11,21 @@
 
 #include <stdint.h>
 
-int topology_check(void);
+typedef enum {
+    check_ok=0,
+    check_no_ltn,
+    check_no_left_but_ltn,
+    check_left_has_bad_rtn,
+    check_left_bad_right_lsb,
+    check_left_has_two,
+    
+    check_no_rtn,
+    check_no_right_but_rtn,
+    check_right_has_bad_ltn,
+    check_right_bad_right_lsb,
+    check_right_has_two,
+} topology_check_rc_t;
+
+topology_check_rc_t topology_check(int *plsblk, int *secsblk);
 
 #endif /* check_topology_h */

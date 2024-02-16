@@ -43,15 +43,15 @@
 static int check_right_tn(int8_t lsblk, uint8_t tn, uint8_t expright, int nright)
 {
     const conf_topology_t *s = conf_topology_get(lsblk);
-    if (s->rtn != tn) return -5;
-    if ((s->right1 != expright) && (s->right2 != expright)) return -6;
+    if (s->rtn != tn) return check_left_has_bad_rtn;
+    if ((s->right1 != expright) && (s->right2 != expright)) return check_left_bad_right_lsb;
     switch (nright) {
         default: //FALLTHRU
         case -1:
             return 0;
         case 1:
             if (s->right2 != -1) {
-                return -7;
+                return check_left_has_two;
             }
             break;
         /*case 2:
@@ -60,34 +60,43 @@ static int check_right_tn(int8_t lsblk, uint8_t tn, uint8_t expright, int nright
     }
     return 0;
 }
-int topology_check(void)
+topology_check_rc_t topology_check(int *plsblk, int *secsblk)
 {
     int n = conf_topology_num_entries();
     for (int i = 0; i<n; i++) {
         const conf_topology_t *s = conf_topology_get(i);
+        if (!s) break;
+        if (plsblk) *plsblk = i;
         int rc;
+        *secsblk = -1;
         if ((s->left1 != -1) && (s->left2 != -1)) {
             if (s->ltn == 0xFF) {
-                return -2;
+                return check_no_ltn;
             }
+            *secsblk = s->left1;
             rc = check_right_tn(s->left1, s->ltn, i, 1);
             if (rc) {
                 return rc;
             }
+            *secsblk = s->left2;
             rc = check_right_tn(s->left2, s->ltn, i, 1);
             if (rc) {
                 return rc;
             }
         } else if (s->left1 != -1) {
-            if (s->ltn != 0xFF) {
+            *secsblk = s->left1;
+            if ((s->ltn != 0xFF) && (s->left2 != -1)) {
                 rc = check_right_tn(s->left1, s->ltn, i, 1);
             } else {
                 rc = check_right_tn(s->left1, s->ltn, i, -1);
             }
+            if (rc) {
+                return rc;
+            }
         } else {
             // no left
             if (s->ltn != 0xFF) {
-                return -3;
+                return check_no_left_but_ltn;
             }
         }
     }

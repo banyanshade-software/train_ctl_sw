@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="15702" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="17701" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="15702"/>
-        <plugIn identifier="com.apple.WebKit2IBPlugin" version="15702"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17701"/>
+        <plugIn identifier="com.apple.WebKit2IBPlugin" version="17701"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -13,10 +13,11 @@
             </connections>
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
-        <customObject id="-3" userLabel="Application"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <customObject id="Voe-Tx-rLC" customClass="AppDelegate">
             <connections>
                 <outlet property="ctoWebView" destination="QKO-nt-oH9" id="6ux-jQ-8UU"/>
+                <outlet property="sheet" destination="ZYi-fo-E7a" id="ezC-zp-Cdq"/>
                 <outlet property="window" destination="QvC-M9-y7g" id="gIp-Ho-8D9"/>
             </connections>
         </customObject>
@@ -687,7 +688,7 @@
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="335" y="390" width="1045" height="553"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1280" height="800"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1440" height="900"/>
             <view key="contentView" id="EiT-Mj-1SZ">
                 <rect key="frame" x="0.0" y="0.0" width="1045" height="553"/>
                 <autoresizingMask key="autoresizingMask"/>
@@ -751,6 +752,45 @@
                 </constraints>
             </view>
             <point key="canvasLocation" x="421.5" y="-23.5"/>
+        </window>
+        <window title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" frameAutosaveName="" animationBehavior="default" id="ZYi-fo-E7a" customClass="NSPanel">
+            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
+            <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
+            <rect key="contentRect" x="131" y="165" width="480" height="270"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1440" height="900"/>
+            <view key="contentView" id="7HV-yt-iOz">
+                <rect key="frame" x="0.0" y="0.0" width="480" height="229"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="B9u-Iy-2Sh">
+                        <rect key="frame" x="18" y="49" width="444" height="160"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="160" id="Lg3-sf-zVT"/>
+                        </constraints>
+                        <textFieldCell key="cell" lineBreakMode="clipping" title="Label" id="7xT-Ks-sva">
+                            <font key="font" usesAppearanceFont="YES"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="QEm-x1-trZ">
+                        <rect key="frame" x="403" y="13" width="63" height="32"/>
+                        <buttonCell key="cell" type="push" title="Exit" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="430-Sx-cpt">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                    </button>
+                </subviews>
+                <constraints>
+                    <constraint firstItem="QEm-x1-trZ" firstAttribute="top" secondItem="B9u-Iy-2Sh" secondAttribute="bottom" constant="8" symbolic="YES" id="1Ha-ep-GHp"/>
+                    <constraint firstItem="B9u-Iy-2Sh" firstAttribute="top" secondItem="7HV-yt-iOz" secondAttribute="top" constant="20" symbolic="YES" id="Jzg-Rp-LcI"/>
+                    <constraint firstAttribute="bottom" secondItem="QEm-x1-trZ" secondAttribute="bottom" constant="20" symbolic="YES" id="Sx7-uY-Ypw"/>
+                    <constraint firstAttribute="trailing" secondItem="B9u-Iy-2Sh" secondAttribute="trailing" constant="20" symbolic="YES" id="UIZ-xW-NuO"/>
+                    <constraint firstItem="B9u-Iy-2Sh" firstAttribute="leading" secondItem="7HV-yt-iOz" secondAttribute="leading" constant="20" symbolic="YES" id="dsx-x2-r7d"/>
+                    <constraint firstAttribute="trailing" secondItem="QEm-x1-trZ" secondAttribute="trailing" constant="20" symbolic="YES" id="gMP-iL-dQx"/>
+                </constraints>
+            </view>
+            <point key="canvasLocation" x="-50" y="407"/>
         </window>
     </objects>
 </document>

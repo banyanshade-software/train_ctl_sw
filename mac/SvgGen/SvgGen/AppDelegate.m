@@ -11,6 +11,8 @@
 
 #include "topologyP.h"
 #include "topology.h"
+#include "check_topology.h"
+
 
 #define MAX_POINTS 4
 @interface AppDelegate ()
@@ -20,14 +22,39 @@
 
 @implementation AppDelegate {
     NSString *svgHtml;
+    NSString *error;
 }
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
     // Insert code here to initialize your application
-    [self generateAndDisplaySvg:nil];
+    [self performSelectorOnMainThread:@selector(startgen) withObject:nil waitUntilDone:NO];
 }
 
+- (void) startgen
+{
+    BOOL ok = [self checkTopology];
+    if (ok) {
+        [self generateAndDisplaySvg:nil];
+    } else {
+        NSAlert *alert = [[NSAlert alloc]init];
+        alert.informativeText = error ? error : @"unknown";
+        alert.messageText = @"Topology error";
+        NSWindow *mwin = NSApp.mainWindow;
+        [alert beginSheetModalForWindow:mwin completionHandler:^(NSModalResponse r) {
+            [NSApp terminate:nil];
+        }];
+    }
+}
 
+- (BOOL) checkTopology
+{
+    int rc = topology_check();
+    if (rc) {
+        error = @"test error";
+        return NO;
+    }
+    return YES;
+}
 - (void)applicationWillTerminate:(NSNotification *)aNotification {
     // Insert code here to tear down your application
 }

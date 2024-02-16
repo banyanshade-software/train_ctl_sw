@@ -12,9 +12,11 @@
 @interface AppDelegate : NSObject <NSApplicationDelegate, WKUIDelegate, WKNavigationDelegate>
 
 @property (nonatomic, weak) IBOutlet WKWebView *ctoWebView;
+@property (nonatomic, weak) IBOutlet NSPanel *sheet;
 
 - (IBAction) generateAndDisplaySvg:(id)sender;
 - (IBAction) saveToFile:(id)sender;
+
 
 @end
 

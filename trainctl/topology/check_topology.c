@@ -60,6 +60,28 @@ static int check_right_tn(int8_t lsblk, uint8_t tn, uint8_t expright, int nright
     }
     return 0;
 }
+static int check_left_tn(int8_t lsblk, uint8_t tn, uint8_t expleft, int nleft)
+{
+    const conf_topology_t *s = conf_topology_get(lsblk);
+    if (s->ltn != tn) return check_right_has_bad_ltn;
+    if ((s->left1 != expleft) && (s->left2 != expleft)) return check_right_bad_left_lsb;
+    switch (nleft) {
+        default: //FALLTHRU
+        case -1:
+            return 0;
+        case 1:
+            if (s->left2 != -1) {
+                return check_right_has_two;
+            }
+            break;
+        /*case 2:
+            if (s->right2 == -1) return -8;
+            break; */
+    }
+    return 0;
+}
+
+
 topology_check_rc_t topology_check(int *plsblk, int *secsblk)
 {
     int n = conf_topology_num_entries();
@@ -68,6 +90,8 @@ topology_check_rc_t topology_check(int *plsblk, int *secsblk)
         if (!s) break;
         if (plsblk) *plsblk = i;
         int rc;
+        
+        // LEFT
         *secsblk = -1;
         if ((s->left1 != -1) && (s->left2 != -1)) {
             if (s->ltn == 0xFF) {
@@ -97,6 +121,40 @@ topology_check_rc_t topology_check(int *plsblk, int *secsblk)
             // no left
             if (s->ltn != 0xFF) {
                 return check_no_left_but_ltn;
+            }
+        }
+        
+        
+        // right
+        *secsblk = -1;
+        if ((s->right1 != -1) && (s->right2 != -1)) {
+            if (s->rtn == 0xFF) {
+                return check_no_rtn;
+            }
+            *secsblk = s->right1;
+            rc = check_left_tn(s->right1, s->rtn, i, 1);
+            if (rc) {
+                return rc;
+            }
+            *secsblk = s->right2;
+            rc = check_left_tn(s->right2, s->rtn, i, 1);
+            if (rc) {
+                return rc;
+            }
+        } else if (s->right1 != -1) {
+            *secsblk = s->right1;
+            if ((s->rtn != 0xFF) && (s->right2 != -1)) {
+                rc = check_left_tn(s->right1, s->rtn, i, 1);
+            } else {
+                rc = check_left_tn(s->right1, s->rtn, i, -1);
+            }
+            if (rc) {
+                return rc;
+            }
+        } else {
+            // no right
+            if (s->rtn != 0xFF) {
+                return check_no_right_but_rtn;
             }
         }
     }

@@ -83,11 +83,19 @@
             break;
             
         case check_no_rtn:
+            err = @"two right, but no rtn";
+            break;
         case check_no_right_but_rtn:
+            err = @"no right but rtn";
+            break;
         case check_right_has_bad_ltn:
-        case check_right_bad_right_lsb:
+            err = @"right blk has bad ltn";
+            break;
+        case check_right_bad_left_lsb:
+            err = @"right blk has bad left lsb";
+            break;
         case check_right_has_two:
-            err = @"....";
+            err = @"right blk should have only one left";
             break;
     }
     error = [NSString stringWithFormat:@"lsblk=%d %@", lsblk, err];

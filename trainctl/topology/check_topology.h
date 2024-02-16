@@ -22,7 +22,7 @@ typedef enum {
     check_no_rtn,
     check_no_right_but_rtn,
     check_right_has_bad_ltn,
-    check_right_bad_right_lsb,
+    check_right_bad_left_lsb,
     check_right_has_two,
 } topology_check_rc_t;
 

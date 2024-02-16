@@ -65,6 +65,9 @@
 
 - (void) setTrain:(int)tidx sblk:(int)sblk posmm:(int)posmm
 {
+    if (posmm==POSE_UNKNOWN) {
+        posmm = 0;
+    }
     _positionmm[tidx] = posmm;
     _s1[tidx].n = sblk;
     

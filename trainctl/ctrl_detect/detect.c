@@ -97,10 +97,10 @@ static void _detection_finished(void)
 #ifdef TRAIN_SIMU
     /* set fixed repport values for O&M tests*/
     result[0].locotype = Marklin8821_V200;
-    result[0].canton.v = 2;
+    result[0].canton.v = 3;
     result[0].ina.v = 0xF;
-    result[0].lsblk.n = 5;
-    result[0].numlsblk = 1;
+    result[0].lsblk.n = 13;
+    result[0].numlsblk = 2;
 
     result[1].locotype = Marklin8895_BR74;
     result[1].canton.v = 4;

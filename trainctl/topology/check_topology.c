@@ -14,8 +14,10 @@
 #include "boards_def.h"
 #endif
 
+//#include "../misc.h"
 
 #ifndef TRACKPLAN_TESTPGM
+#include "../msg/trainmsg.h"
 #include "../railconfig.h"
 #else
 #include <stdio.h>
@@ -33,7 +35,7 @@
 
 //#include "topology.h"
 #include "topologyP.h"
-#include "conf_topology.h"
+#include "../config/conf_topology.h"
 
 #include "check_topology.h"
 

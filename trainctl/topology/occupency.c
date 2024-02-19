@@ -51,6 +51,7 @@ static uint32_t lastcheck = 0;
 
 void occupency_clear(void)
 {
+	itm_debug1(DBG_OCCUP, "occ clear", 0);
     lastcheck = 0;
     memset(canton_occ, 0, sizeof(canton_occ));
     for (int i=0; i<NUM_OCC_CANTON; i++) {
@@ -61,6 +62,7 @@ void occupency_clear(void)
 
 void occupency_remove_train(int trnum)
 {
+	itm_debug1(DBG_OCCUP, "occ rm tr", trnum);
     for (int i=0; i<NUM_OCC_CANTON; i++) {
         if (canton_occ[i].trnum == trnum) {
             canton_occ[i].trnum = 0xFF;
@@ -151,6 +153,8 @@ static int _set_occupied(xblkaddr_t blkaddr, uint8_t trnum, lsblk_num_t lsb, int
     int chg = 0;
     if (0xFF == blkaddr.v) FatalError("OccFF", "bad occupency", Error_Occupency);
 
+    itm_debug3(DBG_OCCUP, "occ set", trnum, blkaddr.v, car);
+
     canton_occ_t *co = &canton_occ[blkaddr.v];
     if (co->occ != BLK_OCC_FREE) {
     	itm_debug3(DBG_OCCUP, "occ-upd", trnum, blkaddr.v, car);
@@ -207,6 +211,15 @@ void occupency_set_free(xblkaddr_t blkaddr, uint8_t trnum)
     if (BLK_OCC_FREE == co->occ) return;
     if (co->occ>=BLK_OCC_DELAY1) return;
     
+    if (co->trnum != trnum) {
+    	/*
+    	 * do not free a block occupied by another train !
+    	 * this could happen on freeback, when train is stopped (freeback would free were the canton the train
+    	 * may have reserved, but in cas of blk_wait, it is used by another train)
+    	 */
+    	itm_debug3(DBG_ERR|DBG_OCCUP, "bad trnum", blkaddr.v, co->trnum, trnum);
+    	return;
+    }
     chg = 1;
     if (USE_BLOCK_DELAY_FREE) {
         co->occ = BLK_OCC_DELAYM;

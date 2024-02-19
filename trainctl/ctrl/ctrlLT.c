@@ -395,6 +395,8 @@ station:
             	itm_debug2(DBG_CTRL, "setdir o", tidx, tvars->_state);
                 _set_dir(tidx, tvars, sdir);
                 _set_speed(tidx, tvars, desired_speed, 0, 0);
+                tvars->c1c2dir_changed = 0; // was set by _set_dir, but there is no reason to propagate down since
+                                            // we were stopped and still are
                 _set_state(tidx, tvars, train_state_blkwait);
                 return;
             }

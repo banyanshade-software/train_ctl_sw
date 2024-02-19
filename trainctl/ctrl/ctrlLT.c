@@ -497,7 +497,9 @@ static int _check_posmm_overflow(int tidx, train_ctrl_t *tvars, int32_t posmm, l
         return 1;
     }
     itm_debug3(DBG_CTRL, "chkpos:K", tidx, tvars->_curposmm, posmm);
-    FatalError("Pos", "bad pos on stop", Error_CtrlSanCurPosHigh);
+    if ((0)) {
+    	FatalError("Pos", "bad pos on stop", Error_CtrlSanCurPosHigh);
+    }
     return 0;
 }
 

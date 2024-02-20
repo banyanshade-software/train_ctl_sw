@@ -206,7 +206,7 @@ static void handle_canton_cmd(int cidx, msg_64_t *m, int testmode)
 		canton_set_volt(cidx, cconf, cvars,  7);
 		break;
 	case CMD_SETVPWM:
-		itm_debug3(DBG_LOWCTRL|DBG_CTRL, "SETVPWM", cidx, m->vb1, m->vb0);
+		itm_debug3(DBG_LOWCTRL, "SETVPWM", cidx, m->vb1, m->vb0);
         if (testmode && m->vb2) {
             bemf_test_pose(cidx);
         }

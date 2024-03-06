@@ -1290,11 +1290,14 @@ static void _apply_trigs(int tidx, train_ctrl_t *tvars, rettrigs_t *rett)
     const conf_train_t *conf = conf_train_get(tidx);
     const conf_locomotive_t *loco = getloco(tidx);
 
+    const int left = (tvars->_sdir<0) ? 1 : 0;
+
     // sort trigs
     // using insersion sort
     // https://books.google.fr/books?id=kse_7qbWbjsC&pg=PA116&redir_esc=y#v=onepage&q&f=false
 
-    const int left = (tvars->_sdir<0) ? 1 : 0;
+    // TODO: replace by utils/sort_insertion.h
+    // SORT_INSERTION(struct sttrig, rett->trigs, rett->ntrig, trig_cmp, left)
     
     for (int i=1; i<rett->ntrig; i++) {
         struct sttrig t = rett->trigs[i];

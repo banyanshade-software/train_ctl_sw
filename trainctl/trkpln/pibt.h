@@ -18,5 +18,6 @@
 #include "../msg/tasklet.h"
 
 void pibt_test1(void);
+void pibt_test2(void);
 
 #endif /* pibt_h */

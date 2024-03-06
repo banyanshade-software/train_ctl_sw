@@ -52,7 +52,10 @@ static int nb_agent = 0;
 
 static agent_t agents[MAX_AGENT];
 
-
+typedef enum {
+    valid = 0,
+    invalid
+} pibt_rc_t;
 
 static void init_target_dist(agent_t *pagent);
 
@@ -70,7 +73,7 @@ static void init_agent(int n, uint8_t startpos, uint8_t targetpos)
 }
 #define PRIO_INCREMENT MAX_AGENT
 
-static int pibt(int t, int agent, int fromagent);
+static pibt_rc_t pibt(int t, int agent, int fromagent);
 
 static void pibt_step(int t)
 {
@@ -93,7 +96,7 @@ static void pibt_step(int t)
     int nproc = 0;
     for (;;) {
         // get agent with highest prio < p
-        int maxp = 0;
+        int maxp = -1;
         int maxi = -1;
         for (int i=0; i<nb_agent; i++) {
             if (agents[i].prio >= p) continue;
@@ -106,6 +109,7 @@ static void pibt_step(int t)
         nproc++;
         if (nproc>nb_agent) {
             // should never occur, if all priorities are unique
+            abort();
             break;
         }
         p = maxp;
@@ -115,7 +119,10 @@ static void pibt_step(int t)
             pibt(t, maxi, -1);
         }
     }
-    if (nproc != nb_agent) abort();
+    if (nproc != nb_agent) {
+        printf("*** nproc %d\n", nproc);
+        //abort();
+    }
 }
 
 static int cmp_dist_target(lsblk_num_t s1, lsblk_num_t s2, agent_t *pagent)
@@ -125,9 +132,9 @@ static int cmp_dist_target(lsblk_num_t s1, lsblk_num_t s2, agent_t *pagent)
     if (pagent->targetdist[s1.n] > pagent->targetdist[s2.n]) return 1;
     return 0;
 }
-static int pibt(int t, int agent, int maxagent)
+static pibt_rc_t pibt(int t, int agent, int fromagent)
 {
-    printf("PIBT t=%d agent=%d from=%d\n", t, agent, maxagent);
+    printf("PIBT t=%d agent=%d from=%d\n", t, agent, fromagent);
     // [1] line 9 reachable neighboors plus self
     agent_t *pagent = &agents[agent];
     uint8_t curn = pagent->pi[t];
@@ -137,9 +144,53 @@ static int pibt(int t, int agent, int maxagent)
     next_lsblk_nums(C[4], 0, &C[0], &C[1], NULL);
     next_lsblk_nums(C[4], 1, &C[2], &C[3], NULL);
     
+    // [1] line 10
     //  sort by increasing order of distance to target
     SORT_INSERTION(lsblk_num_t, C, 5, cmp_dist_target, pagent);
-    return 0;
+    
+    // [1] line 11 : for v ∈ C do
+    for (int i=0; i<5; i++) {
+        if (C[i].n == -1) break;
+        // [1] line 12 : if ∃ ak ∈ A s.t. πk [t + 1] = v then continue
+        int exist = 0;
+        for (int ak = 0; ak<nb_agent; ak++) {
+            agent_t *pak = &agents[ak];
+            if (pak->pi[t+1] == C[i].n) {
+                // yes it exist
+                exist = 1;
+                break;
+            }
+        }
+        if (exist) continue;
+        // [1] line 13 : if aj ̸=⊥∧πj[t]= v then continue
+        if (fromagent != -1) {
+            if (agents[fromagent].pi[t] == C[i].n) continue;
+        }
+        // [1] line 14: πi [t + 1] ← v
+        pagent->pi[t+1] = C[i].n;
+        
+        // [1] line 15: if ∃ ak ∈ A s.t. πk[t] = v ∧ πk[t + 1] = ⊥ then
+        exist = 0;
+        for (int ak = 0; ak<nb_agent; ak++) {
+            agent_t *pak = &agents[ak];
+            if ((pak->pi[t] == C[i].n) && (pak->pi[t+1] == 0xFF)) {
+                // [1] line 15 : if PIBT(ak , ai ) is invalid then continue
+                pibt_rc_t rc = pibt(t, ak, agent);
+                if (rc == invalid) {
+                    // invalid
+                    exist = 1;
+                }
+                break;
+            }
+        }
+        if (exist) continue;
+        
+        // [1] line 18: return valid
+        return valid;
+    }
+    // [1] line 20: πi[t+1]←πi[t]
+    pagent->pi[t+1] = pagent->pi[t];
+    return invalid;
     
     /* 4 dist 2
        5 dist 3
@@ -158,8 +209,20 @@ void pibt_test1(void)
     for (int t=0; t<MAX_T-1; t++) {
         pibt_step(t);
     }
+    printf("done");
 }
 
+void pibt_test2(void)
+{
+    init_agent(0, 0, 5);
+    init_agent(1, 9, 0);
+    init_agent(2, 23, 2);
+    nb_agent = 3;
+    for (int t=0; t<MAX_T-1; t++) {
+        pibt_step(t);
+    }
+    printf("done");
+}
 
 
 #pragma mark -

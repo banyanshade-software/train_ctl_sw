@@ -380,6 +380,7 @@
 		1B7D0A922815A175008EEDD4 /* oam_error.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = oam_error.c; sourceTree = "<group>"; };
 		1B7F508B2B98F81700630B6A /* pibt.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = pibt.h; sourceTree = "<group>"; };
 		1B7F508C2B98F81700630B6A /* pibt.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = pibt.c; sourceTree = "<group>"; };
+		1B7F50942B990EA000630B6A /* sort_insertion.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = sort_insertion.h; sourceTree = "<group>"; };
 		1B82CBE6276A96FB000304A8 /* trainmsgdef.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = trainmsgdef.h; sourceTree = "<group>"; };
 		1B92EA292631A02900558716 /* spdctl.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = spdctl.c; sourceTree = "<group>"; };
 		1B92EA2A2631A02900558716 /* spdctl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = spdctl.h; sourceTree = "<group>"; };
@@ -749,6 +750,7 @@
 				1BA12A31291E3DFA003D6E58 /* bitarray.h */,
 				1BA12A36291E4527003D6E58 /* dynamic_perfect_hash.h */,
 				1BA12A3B291E4BE2003D6E58 /* TestHash.m */,
+				1B7F50942B990EA000630B6A /* sort_insertion.h */,
 			);
 			path = utils;
 			sourceTree = "<group>";

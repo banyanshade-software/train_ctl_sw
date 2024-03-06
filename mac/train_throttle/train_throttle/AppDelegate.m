@@ -551,6 +551,9 @@ typedef void (^respblk_t)(void);
     // ...
     void pibt_test1(void);
     pibt_test1();
+    void pibt_test2(void);
+    pibt_test2();
+
 }
 
 

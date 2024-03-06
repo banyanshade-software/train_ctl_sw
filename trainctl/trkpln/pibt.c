@@ -40,7 +40,7 @@
 
 
 #define MAX_AGENT 4
-#define MAX_T    10
+#define MAX_T    20
 typedef struct {
     int16_t prio;
     uint8_t target;
@@ -71,24 +71,33 @@ static void init_agent(int n, uint8_t startpos, uint8_t targetpos)
     
     init_target_dist(&agents[n]);
 }
+
+#pragma mark - PIBT algorithm
+
 #define PRIO_INCREMENT MAX_AGENT
 
 static pibt_rc_t pibt(int t, int agent, int fromagent);
 
-static void pibt_step(int t)
+static int pibt_step(int t)
 {
     if (t>=MAX_T-1) abort();
     
     // [1] line 3
     // article says "(for each timestep t = 1, 2, . . . until terminates, repeat the following)"
     // but t should start at 0 (right ?)
+    int ntodo = 0;
     for (int i = 0; i<nb_agent; i++) {
         if (agents[i].pi[t]==agents[i].target) {
             // i is our epsilon
             agents[i].prio = i;
         } else {
+            ntodo++;
             agents[i].prio += PRIO_INCREMENT;
         }
+    }
+    if (!ntodo) {
+        // all done
+        return 1;
     }
     // process in decreasing priority
     // [1] line 4,5
@@ -123,6 +132,7 @@ static void pibt_step(int t)
         printf("*** nproc %d\n", nproc);
         //abort();
     }
+    return 0;
 }
 
 static int cmp_dist_target(lsblk_num_t s1, lsblk_num_t s2, agent_t *pagent)
@@ -200,16 +210,21 @@ static pibt_rc_t pibt(int t, int agent, int fromagent)
 
 #pragma mark -
 
-
+static void run_pibt(void)
+{
+    int t;
+    for (t=0; t<MAX_T-1; t++) {
+        int rc = pibt_step(t);
+        if (rc) break;
+    }
+    printf("done t=%d\n", t);
+}
 void pibt_test1(void)
 {
     init_agent(0, 0, 5);
     init_agent(1, 5, 0);
     nb_agent = 2;
-    for (int t=0; t<MAX_T-1; t++) {
-        pibt_step(t);
-    }
-    printf("done");
+    run_pibt();
 }
 
 void pibt_test2(void)
@@ -218,14 +233,11 @@ void pibt_test2(void)
     init_agent(1, 9, 0);
     init_agent(2, 23, 2);
     nb_agent = 3;
-    for (int t=0; t<MAX_T-1; t++) {
-        pibt_step(t);
-    }
-    printf("done");
+    run_pibt();
 }
 
 
-#pragma mark -
+#pragma mark - initial distance to target
 
 /*
  helper function

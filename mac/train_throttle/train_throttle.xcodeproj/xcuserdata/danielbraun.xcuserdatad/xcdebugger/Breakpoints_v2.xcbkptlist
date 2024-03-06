@@ -5027,8 +5027,8 @@
             filePath = "../../trainctl/trkpln/pibt.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "99"
-            endingLineNumber = "99"
+            startingLineNumber = "108"
+            endingLineNumber = "108"
             landmarkName = "pibt_step(t)"
             landmarkType = "9">
          </BreakpointContent>
@@ -5043,8 +5043,8 @@
             filePath = "../../trainctl/trkpln/pibt.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "80"
-            endingLineNumber = "80"
+            startingLineNumber = "83"
+            endingLineNumber = "83"
             landmarkName = "pibt_step(t)"
             landmarkType = "9">
          </BreakpointContent>
@@ -5059,8 +5059,8 @@
             filePath = "../../trainctl/trkpln/pibt.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "115"
-            endingLineNumber = "115"
+            startingLineNumber = "124"
+            endingLineNumber = "124"
             landmarkName = "pibt_step(t)"
             landmarkType = "9">
          </BreakpointContent>
@@ -5075,8 +5075,8 @@
             filePath = "../../trainctl/trkpln/pibt.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "237"
-            endingLineNumber = "237"
+            startingLineNumber = "249"
+            endingLineNumber = "249"
             landmarkName = "update_dist(pagent, lsblk, dist)"
             landmarkType = "9">
          </BreakpointContent>
@@ -5107,8 +5107,8 @@
             filePath = "../../trainctl/trkpln/pibt.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "243"
-            endingLineNumber = "243"
+            startingLineNumber = "255"
+            endingLineNumber = "255"
             landmarkName = "update_dist(pagent, lsblk, dist)"
             landmarkType = "9">
          </BreakpointContent>
@@ -5123,8 +5123,8 @@
             filePath = "../../trainctl/trkpln/pibt.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "240"
-            endingLineNumber = "240"
+            startingLineNumber = "252"
+            endingLineNumber = "252"
             landmarkName = "update_dist(pagent, lsblk, dist)"
             landmarkType = "9">
          </BreakpointContent>
@@ -5139,8 +5139,8 @@
             filePath = "../../trainctl/trkpln/pibt.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "149"
-            endingLineNumber = "149"
+            startingLineNumber = "159"
+            endingLineNumber = "159"
             landmarkName = "pibt(t, agent, fromagent)"
             landmarkType = "9">
             <Locations>
@@ -5187,8 +5187,8 @@
             filePath = "../../trainctl/trkpln/pibt.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "192"
-            endingLineNumber = "192"
+            startingLineNumber = "202"
+            endingLineNumber = "202"
             landmarkName = "pibt(t, agent, fromagent)"
             landmarkType = "9">
          </BreakpointContent>
@@ -5203,8 +5203,8 @@
             filePath = "../../trainctl/trkpln/pibt.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "113"
-            endingLineNumber = "113"
+            startingLineNumber = "122"
+            endingLineNumber = "122"
             landmarkName = "pibt_step(t)"
             landmarkType = "9">
          </BreakpointContent>
@@ -5219,25 +5219,9 @@
             filePath = "../../trainctl/trkpln/pibt.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "123"
-            endingLineNumber = "123"
+            startingLineNumber = "132"
+            endingLineNumber = "132"
             landmarkName = "pibt_step(t)"
-            landmarkType = "9">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "9FCC2909-ED01-4CA5-9EE2-925047DC72E8"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../../trainctl/trkpln/pibt.c"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "212"
-            endingLineNumber = "212"
-            landmarkName = "pibt_test1()"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -5251,8 +5235,8 @@
             filePath = "../../trainctl/trkpln/pibt.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "178"
-            endingLineNumber = "178"
+            startingLineNumber = "188"
+            endingLineNumber = "188"
             landmarkName = "pibt(t, agent, fromagent)"
             landmarkType = "9">
          </BreakpointContent>
@@ -5260,16 +5244,16 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "49E89426-E120-4102-A039-D73C39A77720"
+            uuid = "57A28A23-03DF-4E65-A0E9-9F577DB346A2"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../../trainctl/trkpln/pibt.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "224"
-            endingLineNumber = "224"
-            landmarkName = "pibt_test2()"
+            startingLineNumber = "220"
+            endingLineNumber = "220"
+            landmarkName = "run_pibt()"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>

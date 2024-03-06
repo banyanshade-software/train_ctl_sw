@@ -75,8 +75,8 @@ typedef union {
 /// @param left 0=right, 1=left
 /// @param pb1 returns next lsblk if turnout=0
 /// @param pb2 returns next lsblk if turnout=1
-/// @param ptn returns turnout number, 0xFF if none
-void next_lsblk_nums(lsblk_num_t blknum, uint8_t left, lsblk_num_t *pb1, lsblk_num_t *pb2, xtrnaddr_t *ptn);
+/// @param ptn_or_null returns turnout number, 0xFF if none. can be NULL
+void next_lsblk_nums(lsblk_num_t blknum, uint8_t left, lsblk_num_t *pb1, lsblk_num_t *pb2, xtrnaddr_t *ptn_or_null);
 
 
 /// next_lsblk

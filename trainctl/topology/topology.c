@@ -141,11 +141,11 @@ static void bh(void)
 {
 }
 
-void next_lsblk_nums(lsblk_num_t blknum, uint8_t left, lsblk_num_t *pb1, lsblk_num_t *pb2, xtrnaddr_t *tn)
+void next_lsblk_nums(lsblk_num_t blknum, uint8_t left, lsblk_num_t *pb1, lsblk_num_t *pb2, xtrnaddr_t *tn_or_null)
 {
     pb1->n = -1;
     pb2->n = -1;
-    tn->v = -1;
+    if (tn_or_null) tn_or_null->v = -1;
     if (blknum.n<0) {
     	itm_debug1(DBG_ERR|DBG_CTRL, "next_lsblk_nums", 0);
     	FatalError("ABRT", "next_lsblk_nums", Error_Topology_BlkNum);
@@ -155,11 +155,11 @@ void next_lsblk_nums(lsblk_num_t blknum, uint8_t left, lsblk_num_t *pb1, lsblk_n
     if (left) {
         pb1->n = Topology(blknum)->left1;
         pb2->n = Topology(blknum)->left2;
-        tn->v =  Topology(blknum)->ltn;
+        if (tn_or_null) tn_or_null->v =  Topology(blknum)->ltn;
     } else {
         pb1->n = Topology(blknum)->right1;
         pb2->n = Topology(blknum)->right2;
-        tn->v =  Topology(blknum)->rtn;
+        if (tn_or_null) tn_or_null->v =  Topology(blknum)->rtn;
     }
     if ((pb1->n>=0) && (Topology(*pb1)->canton_addr == 0xFF)) {
         pb1->n = -1; // inactive/future lsblk
@@ -168,10 +168,10 @@ void next_lsblk_nums(lsblk_num_t blknum, uint8_t left, lsblk_num_t *pb1, lsblk_n
         pb2->n = -1; // inactive/future lsblk
     }
     //if (tn->v>=6) tn->v = -1; // XXX
-    if (tn->v == 4) {
+    /*if (tn_or_null && (tn_or_null->v == 4)) {
         bh();
         //tn->v = -1; //XXX
-    }
+    }*/
     // if (*tn  == 0xFF) tn  = -1;
 }
 

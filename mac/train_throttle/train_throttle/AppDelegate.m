@@ -95,6 +95,7 @@ typedef struct {
 #define LINK_OK        3   // fully ok
 #define LINK_SIMUHI    4
 #define LINK_SIMULOW   5
+#define LINK_TEST_MAPF 6
 
 typedef void (^respblk_t)(void);
 
@@ -543,6 +544,15 @@ typedef void (^respblk_t)(void);
 #endif
     [self startSimu];
 }
+
+- (IBAction) testMAPF:(id)sender
+{
+    self.linkok = LINK_TEST_MAPF;
+    // ...
+    void pibt_test1(void);
+    pibt_test1();
+}
+
 
 #pragma mark -
 
@@ -1213,6 +1223,7 @@ static const char *knownDev[] = {
 - (void) openUsb
 {
     if ((_linkok == LINK_SIMUHI) || (_linkok == LINK_SIMULOW)) return;
+    if (_linkok == LINK_TEST_MAPF) return;
     
     if (!knownDev[retry]) retry=0;
     const char *dev = knownDev[retry];

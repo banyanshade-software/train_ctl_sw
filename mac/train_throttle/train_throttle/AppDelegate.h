@@ -112,6 +112,7 @@
 //@property (nonatomic,strong) NSMutableAttributedString *attribLog;
 
 - (IBAction) connectSimu:(id)sender;
+- (IBAction) testMAPF:(id)sender;
 
 - (IBAction) triggerOscillo:(id)sender;
 - (IBAction) recordMsg:(id)sender;

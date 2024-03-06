@@ -2149,6 +2149,21 @@
                             <binding destination="Voe-Tx-rLC" name="selectedIdentifier" keyPath="selectedPanel" id="9Eo-ni-nLJ"/>
                         </connections>
                     </tabView>
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="tKQ-zE-hHu">
+                        <rect key="frame" x="209" y="601" width="66" height="16"/>
+                        <buttonCell key="cell" type="push" title="Tst MAPF" bezelStyle="rounded" alignment="center" controlSize="mini" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="oP7-d8-3R4">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="label" size="9"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="testMAPF:" target="Voe-Tx-rLC" id="HTu-ut-T9A"/>
+                            <binding destination="Voe-Tx-rLC" name="enabled" keyPath="linkok" id="PbT-4B-syk">
+                                <dictionary key="options">
+                                    <string key="NSValueTransformerName">NSNegateBoolean</string>
+                                </dictionary>
+                            </binding>
+                        </connections>
+                    </button>
                 </subviews>
                 <constraints>
                     <constraint firstItem="6XJ-qb-ztK" firstAttribute="centerX" secondItem="bUt-k0-TMM" secondAttribute="centerX" id="0U0-Nv-T4w"/>
@@ -2157,6 +2172,7 @@
                     <constraint firstItem="3uL-fG-uOm" firstAttribute="centerX" secondItem="0Q4-va-RcS" secondAttribute="centerX" id="1NR-cw-pY0"/>
                     <constraint firstItem="nzF-gJ-afL" firstAttribute="top" secondItem="SxW-AB-WBA" secondAttribute="bottom" constant="8" id="1qt-xx-g9V"/>
                     <constraint firstItem="Oda-jb-qBx" firstAttribute="leading" secondItem="SxW-AB-WBA" secondAttribute="leading" id="4KX-YH-egf"/>
+                    <constraint firstItem="tKQ-zE-hHu" firstAttribute="leading" secondItem="CHp-cN-u7U" secondAttribute="trailing" constant="12" id="4RM-ds-cSh"/>
                     <constraint firstItem="hKn-Uc-u5t" firstAttribute="top" secondItem="0Q4-va-RcS" secondAttribute="top" id="4v4-Ua-on6"/>
                     <constraint firstItem="bUf-Lh-0CM" firstAttribute="leading" secondItem="meg-8k-fj4" secondAttribute="leading" id="59g-zP-gwM"/>
                     <constraint firstItem="NEf-Jx-eCJ" firstAttribute="top" relation="greaterThanOrEqual" secondItem="hKn-Uc-u5t" secondAttribute="bottom" constant="16" id="7Se-Qr-8zK"/>
@@ -2185,6 +2201,7 @@
                     <constraint firstItem="tdC-eC-MRV" firstAttribute="top" secondItem="hKn-Uc-u5t" secondAttribute="bottom" constant="8" id="PQf-yj-aln"/>
                     <constraint firstItem="NEf-Jx-eCJ" firstAttribute="trailing" secondItem="ZAS-Xg-SGX" secondAttribute="trailing" id="PZk-CA-ZUZ"/>
                     <constraint firstItem="QAh-kS-wgj" firstAttribute="leading" secondItem="zel-gZ-UMO" secondAttribute="trailing" constant="24" id="Pxf-ks-PIw"/>
+                    <constraint firstItem="tKQ-zE-hHu" firstAttribute="firstBaseline" secondItem="CHp-cN-u7U" secondAttribute="firstBaseline" id="Qiy-9i-qqY"/>
                     <constraint firstItem="c36-X0-NSd" firstAttribute="leading" secondItem="EiT-Mj-1SZ" secondAttribute="leading" constant="16" id="RFj-61-5rH"/>
                     <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="NEf-Jx-eCJ" secondAttribute="bottom" constant="20" id="THe-pG-e5e"/>
                     <constraint firstAttribute="trailing" secondItem="cJY-lA-mhI" secondAttribute="trailing" constant="16" id="U8e-Oc-vQR"/>
@@ -7001,7 +7018,7 @@
                         <rect key="frame" x="20" y="61" width="1202" height="240"/>
                         <clipView key="contentView" id="qDG-Jn-jYf">
                             <rect key="frame" x="1" y="0.0" width="1200" height="239"/>
-                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                            <autoresizingMask key="autoresizingMask"/>
                             <subviews>
                                 <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" headerView="m2M-mJ-yvq" id="eV4-vC-AmX">
                                     <rect key="frame" x="0.0" y="0.0" width="1200" height="214"/>
@@ -7250,7 +7267,7 @@
                         <rect key="frame" x="20" y="61" width="508" height="250"/>
                         <clipView key="contentView" id="QU1-rM-LYm">
                             <rect key="frame" x="1" y="0.0" width="506" height="249"/>
-                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                            <autoresizingMask key="autoresizingMask"/>
                             <subviews>
                                 <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" headerView="yU3-Ao-hm4" id="xZV-eH-f4u">
                                     <rect key="frame" x="0.0" y="0.0" width="506" height="224"/>

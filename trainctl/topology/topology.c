@@ -68,6 +68,7 @@ unsigned int conf_topology_num_entries(void);
 const conf_topology_t *conf_topology_get(int num);
  */
 
+int topology_uses_future = 0;
 static  const topo_lsblk_t *_Topology = NULL;
 static  int _numTopology = 0;
 
@@ -161,18 +162,14 @@ void next_lsblk_nums(lsblk_num_t blknum, uint8_t left, lsblk_num_t *pb1, lsblk_n
         pb2->n = Topology(blknum)->right2;
         if (tn_or_null) tn_or_null->v =  Topology(blknum)->rtn;
     }
-    if ((pb1->n>=0) && (Topology(*pb1)->canton_addr == 0xFF)) {
-        pb1->n = -1; // inactive/future lsblk
+    if (!topology_uses_future) {
+        if ((pb1->n>=0) && (Topology(*pb1)->canton_addr == 0xFF)) {
+            pb1->n = -1; // inactive/future lsblk
+        }
+        if ((pb2->n>=0) && (Topology(*pb2)->canton_addr == 0xFF)) {
+            pb2->n = -1; // inactive/future lsblk
+        }
     }
-    if ((pb2->n>=0) && (Topology(*pb2)->canton_addr == 0xFF)) {
-        pb2->n = -1; // inactive/future lsblk
-    }
-    //if (tn->v>=6) tn->v = -1; // XXX
-    /*if (tn_or_null && (tn_or_null->v == 4)) {
-        bh();
-        //tn->v = -1; //XXX
-    }*/
-    // if (*tn  == 0xFF) tn  = -1;
 }
 
 int get_lsblk_len_cm(lsblk_num_t blknum, int8_t *psteep)

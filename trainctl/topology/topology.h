@@ -68,6 +68,10 @@ typedef union {
     uint8_t v;
 } ina_num_t;
 
+/*
+ for trkpln test, set to 1 to use complete topology, including future lsblk
+ */
+extern int topology_uses_future;
 
 
 /// next_lsblk_nums

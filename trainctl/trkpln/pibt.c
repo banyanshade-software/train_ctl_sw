@@ -43,7 +43,9 @@
 #define MAX_T    20
 typedef struct {
     int16_t prio;
+    uint16_t curt;
     uint8_t target;
+    uint8_t backtracking:1;
     uint8_t pi[MAX_T];
     uint8_t targetdist[256];
 } agent_t;
@@ -135,18 +137,37 @@ static int pibt_step(int t)
     return 0;
 }
 
+static int _getdist(agent_t *pagent, int pos)
+{
+    uint8_t d = pagent->targetdist[pos];
+    /*if ((pos != pagent->target) && (pagent->pi[pagent->curt] == pos)) {
+        if (d<128) d = 128; // penalty for same position
+    }*/
+    return d;
+}
+
 static int cmp_dist_target(lsblk_num_t s1, lsblk_num_t s2, agent_t *pagent)
 {
     if (s1.n == -1) return 1;
     if (s2.n == -1) return 0;
-    if (pagent->targetdist[s1.n] > pagent->targetdist[s2.n]) return 1;
+    int d1 = _getdist(pagent, s1.n);
+    int d2 = _getdist(pagent, s2.n);
+    if (d1 > d2) return 1;
     return 0;
 }
+
+static int collide(uint8_t pos1, uint8_t pos2)
+{
+    if (pos1 == pos2) return 1;
+    return 0;
+}
+
 static pibt_rc_t pibt(int t, int agent, int fromagent)
 {
     printf("PIBT t=%d agent=%d from=%d\n", t, agent, fromagent);
     // [1] line 9 reachable neighboors plus self
     agent_t *pagent = &agents[agent];
+    pagent->curt = t;
     uint8_t curn = pagent->pi[t];
     if (curn == 0xFF) abort();
     lsblk_num_t C[5];
@@ -159,13 +180,14 @@ static pibt_rc_t pibt(int t, int agent, int fromagent)
     SORT_INSERTION(lsblk_num_t, C, 5, cmp_dist_target, pagent);
     
     // [1] line 11 : for v ∈ C do
+    pagent->backtracking = 0;
     for (int i=0; i<5; i++) {
         if (C[i].n == -1) break;
         // [1] line 12 : if ∃ ak ∈ A s.t. πk [t + 1] = v then continue
         int exist = 0;
         for (int ak = 0; ak<nb_agent; ak++) {
             agent_t *pak = &agents[ak];
-            if (pak->pi[t+1] == C[i].n) {
+            if (collide(pak->pi[t+1], C[i].n)) { //if (pak->pi[t+1] == C[i].n) {
                 // yes it exist
                 exist = 1;
                 break;
@@ -174,7 +196,8 @@ static pibt_rc_t pibt(int t, int agent, int fromagent)
         if (exist) continue;
         // [1] line 13 : if aj ̸=⊥∧πj[t]= v then continue
         if (fromagent != -1) {
-            if (agents[fromagent].pi[t] == C[i].n) continue;
+            //if (agents[fromagent].pi[t] == C[i].n) continue;
+            if (collide(agents[fromagent].pi[t], C[i].n)) continue;
         }
         // [1] line 14: πi [t + 1] ← v
         pagent->pi[t+1] = C[i].n;
@@ -183,7 +206,7 @@ static pibt_rc_t pibt(int t, int agent, int fromagent)
         exist = 0;
         for (int ak = 0; ak<nb_agent; ak++) {
             agent_t *pak = &agents[ak];
-            if ((pak->pi[t] == C[i].n) && (pak->pi[t+1] == 0xFF)) {
+            if (collide(pak->pi[t], C[i].n) && (pak->pi[t+1] == 0xFF)) {
                 // [1] line 15 : if PIBT(ak , ai ) is invalid then continue
                 pibt_rc_t rc = pibt(t, ak, agent);
                 if (rc == invalid) {
@@ -193,8 +216,11 @@ static pibt_rc_t pibt(int t, int agent, int fromagent)
                 break;
             }
         }
-        if (exist) continue;
-        
+        if (exist) {
+            printf("backtrack a=%d t=%d\n", agent, t);
+            pagent->backtracking = 1;
+            continue;
+        }
         // [1] line 18: return valid
         return valid;
     }
@@ -248,8 +274,8 @@ void pibt_test2(void)
 void pibt_test3(void)
 {
     int a=0;
-    init_agent(a++, 9, 23);
     init_agent(a++, 0, 9);
+    init_agent(a++, 9, 23);
     init_agent(a++, 2, 7);
     nb_agent = a;
     run_pibt();
@@ -258,6 +284,7 @@ void pibt_test(void)
 {
     pibt_test1();
     pibt_test2();
+    topology_uses_future = 1;
     pibt_test3();
     printf("done\n");
 }

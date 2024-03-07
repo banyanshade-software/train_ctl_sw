@@ -549,10 +549,9 @@ typedef void (^respblk_t)(void);
 {
     self.linkok = LINK_TEST_MAPF;
     // ...
-    void pibt_test1(void);
-    pibt_test1();
-    void pibt_test2(void);
-    pibt_test2();
+    void pibt_test(void);
+    pibt_test();
+    
 
 }
 

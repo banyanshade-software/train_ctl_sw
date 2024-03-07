@@ -213,11 +213,20 @@ static pibt_rc_t pibt(int t, int agent, int fromagent)
 static void run_pibt(void)
 {
     int t;
+    int rc = 0;
     for (t=0; t<MAX_T-1; t++) {
-        int rc = pibt_step(t);
+        rc = pibt_step(t);
         if (rc) break;
     }
-    printf("done t=%d\n", t);
+    printf("\ndone t=%d\n", t);
+    for (int a=0; a<nb_agent; a++) {
+        printf("T%d (%2d to %2d): ", a, agents[a].pi[0], agents[a].target);
+        for (int step=0; step<t+1; step++) {
+            printf(" %2d -", agents[a].pi[step]);
+        }
+        if (rc) printf(" done\n");
+        else    printf(" stop\n");
+    }
 }
 void pibt_test1(void)
 {
@@ -236,6 +245,22 @@ void pibt_test2(void)
     run_pibt();
 }
 
+void pibt_test3(void)
+{
+    int a=0;
+    init_agent(a++, 9, 23);
+    init_agent(a++, 0, 9);
+    init_agent(a++, 2, 7);
+    nb_agent = a;
+    run_pibt();
+}
+void pibt_test(void)
+{
+    pibt_test1();
+    pibt_test2();
+    pibt_test3();
+    printf("done\n");
+}
 
 #pragma mark - initial distance to target
 

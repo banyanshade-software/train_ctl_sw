@@ -17,7 +17,9 @@
 #include "../misc.h"
 #include "../msg/tasklet.h"
 
+void pibt_test(void);
 void pibt_test1(void);
 void pibt_test2(void);
+void pibt_test3(void);
 
 #endif /* pibt_h */
